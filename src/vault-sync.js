@@ -1341,6 +1341,7 @@
       ".vs-item .vs-s{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vs-item small{display:block;color:var(--text-muted)}.vs-item .vs-cur{color:var(--interactive-accent)}" +
       ".vs-main{flex:1;display:flex;flex-direction:column;min-width:0;padding:14px 20px 16px;gap:10px}.vs-meta{color:var(--text-muted);font-size:var(--font-ui-small)}.vs-meta b{color:var(--text-normal)}" +
       ".vs-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.vs-bar .vs-tab{padding:4px 12px}.vs-bar .vs-gap{flex:1}" +
+      ".vs-tab{background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;clip-path:none;box-shadow:none;color:var(--text-muted)}.vs-tab.is-on{color:var(--text-normal);border-bottom-color:var(--interactive-accent)}" +
       ".vs-view.vs-live{position:relative;padding:0;overflow:hidden}" +
       ".vs-view{flex:1;overflow:auto;border:1px solid var(--background-modifier-border);padding:16px 22px;background:var(--background-primary-alt, var(--background-secondary))}" +
       ".vs-view h1,.vs-view h2,.vs-view h3,.vs-view h4{margin:.9em 0 .4em}.vs-view h1{font-size:1.6em}.vs-view h2{font-size:1.35em}.vs-view p{margin:.5em 0}.vs-view ul,.vs-view ol{margin:.4em 0 .4em 1.3em}" +
@@ -1585,7 +1586,7 @@
         if ((m = /^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,(\d+))?/.exec(l))) {
           a = +m[1]; b = +m[2]; const len = m[3] == null ? 1 : +m[3]; const sec = sectionAt(b + 2);
           cur = { at: b, len, a: 0, d: 0 }; marks.push(cur);
-          rows.push(`<div class="vs-hunk">строки <b>${b}–${b + Math.max(0, len - 1)}</b>${sec ? ` · раздел <span class="vs-sec">«${esc(sec)}»</span>` : ""}</div>`); continue;
+          rows.push(`<div class="vs-hunk">строки <b>${b}−${b + Math.max(0, len - 1)}</b>${sec ? ` · раздел <span class="vs-sec">«${esc(sec)}»</span>` : ""}</div>`); continue;
         }
         if (/^(diff |index |--- |\+\+\+ |new file|deleted file|similarity|rename |old mode|new mode|\\ No newline)/.test(l) || l === "") continue;
         const c = l[0], t = l.slice(1);
@@ -1688,7 +1689,7 @@
     const render = async () => {
       if (!cur) return;
       const my = ++token;
-      for (const [k, b] of Object.entries(tabBtns)) b.classList.toggle("mod-cta", k === mode);
+      for (const [k, b] of Object.entries(tabBtns)) b.classList.toggle("is-on", k === mode);
       meta.innerHTML = `<span class="vs-chip ${cur.st}">${CHIP[cur.st]}</span><b>${esc(cur.subject || "(без описания)")}</b><br>${esc(new Date(cur.date).toLocaleString())} · ${esc(cur.author)} · <code>${esc(cur.short)}</code>`;
       if (pvLive) { pvLive.destroy(); pvLive = null; }
       view.textContent = "…";
@@ -1720,7 +1721,7 @@
     const itemEl = (v, first) => {
       const it = document.createElement("div"); it.className = "vs-item";
       it.innerHTML = '<div class="vs-s"></div><small></small><div class="vs-mrow"></div>';
-      it.firstChild.textContent = v.subject || "(без описания)";
+      it.firstChild.textContent = (v.subject || "(без описания)").replace(/^(Создано|Удалено|Изменено): [^(→\n]*?(?= \(|$)/, "$1").replace(/ \(\+(\d+) −(\d+)\)/, " · +$1 −$2");
       it.children[1].innerHTML = `<span class="vs-chip ${v.st}">${CHIP[v.st]}</span>${esc(hhmm(v.date))} · ${esc(v.author)}${first ? ' · <span class="vs-cur">текущая</span>' : ""}`;
       it.lastChild.innerHTML = magHtml(v.add, v.del);
       it.addEventListener("click", (e) => { e.stopPropagation(); listEl.querySelectorAll(".vs-item").forEach((x) => x.classList.remove("is-active")); it.classList.add("is-active"); cur = v; render(); });
@@ -1734,7 +1735,7 @@
       const add = g.items.reduce((n, x) => n + (x.add || 0), 0), del = g.items.reduce((n, x) => n + (x.del || 0), 0);
       const grp = document.createElement("div"); grp.className = "vs-grp";
       const gh = document.createElement("div"); gh.className = "vs-gh";
-      gh.innerHTML = `<span class="vs-n">${plural(g.items.length, "правка", "правки", "правок")}</span><small class="vs-sum">${esc(hhmm(g.items[g.items.length - 1].date))}–${esc(hhmm(g.items[0].date))}</small>${magHtml(add, del)}<span class="vs-car"></span>`;
+      gh.innerHTML = `<span class="vs-n">${plural(g.items.length, "правка", "правки", "правок")}</span><small class="vs-sum">${esc(hhmm(g.items[g.items.length - 1].date))}−${esc(hhmm(g.items[0].date))}</small>${magHtml(add, del)}<span class="vs-car"></span>`;
       const gb = document.createElement("div"); gb.className = "vs-gb";
       g.items.forEach((v, k) => gb.appendChild(itemEl(v, idx === 0 && k === 0)));
       idx += g.items.length;
@@ -1848,7 +1849,7 @@
         const key = g.items[0].full, isOpen = open.has(key);
         const el = document.createElement("div"); el.className = "vs-card2 " + (s.d && !s.a && !s.m ? "d" : s.a && !s.m && !s.d ? "a" : "m") + (isOpen ? " is-open" : "");
         const head = g.items.length === 1 ? g.items[0].subject || "(без описания)" : `${plural(g.items.length, "правка", "правки", "правок")} за сеанс · ${plural(files.length, "файл", "файла", "файлов")}`;
-        const when = g.items.length === 1 ? hhmm(g.items[0].date) : `${hhmm(g.items[g.items.length - 1].date)}–${hhmm(g.items[0].date)}`;
+        const when = g.items.length === 1 ? hhmm(g.items[0].date) : `${hhmm(g.items[g.items.length - 1].date)}−${hhmm(g.items[0].date)}`;
         el.innerHTML = `<div class="vs-ch"><b></b><small>${esc(when)} · ${esc(g.author)}${g.items.length === 1 ? ` · <code>${esc(g.items[0].short)}</code>` : ""}</small></div><div class="vs-chips">${chipsHtml(s)}</div>`;
         el.querySelector("b").textContent = head;
         if (isOpen) {
