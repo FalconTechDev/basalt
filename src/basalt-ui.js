@@ -262,3 +262,22 @@
   };
   new MutationObserver(addRow).observe(document.body, { childList: true, subtree: true });
 })();
+
+// Recently used colours, shared by every colour picker of the application (canvas card colour, drawing, graph groups)
+(() => {
+  const KEY = "bs-recent-colors", MAX = 7, HEX = /^#[0-9a-f]{6}$/i;
+  const get = () => { try { return JSON.parse(localStorage.getItem(KEY) || "[]").filter((c) => HEX.test(c)); } catch (e) { return []; } };
+  const add = (c) => { if (!HEX.test(c || "")) return; c = c.toLowerCase(); const l = [c, ...get().filter((x) => x !== c)].slice(0, MAX); try { localStorage.setItem(KEY, JSON.stringify(l)); } catch (e) { /* full */ } };
+  window.__bsRecent = { get, add };
+  // after the custom colour of the canvas colour menu: the recent ones, one click applies
+  window.__bsRecentRow = (menu, apply) => {
+    const l = get(); if (!l.length) return;
+    const sep = document.createElement("div"); sep.style.cssText = "width:1px;background:var(--background-modifier-border);margin:0 6px;flex:none"; menu.appendChild(sep);
+    for (const c of l) {
+      const d = document.createElement("div"); d.className = "canvas-color-picker-item"; d.title = c;
+      d.style.setProperty("--canvas-color", parseInt(c.slice(1, 3), 16) + "," + parseInt(c.slice(3, 5), 16) + "," + parseInt(c.slice(5, 7), 16));
+      d.addEventListener("click", () => { add(c); apply(c); });
+      menu.appendChild(d);
+    }
+  };
+})();

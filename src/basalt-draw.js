@@ -267,7 +267,8 @@
       if (kind === "color") {
         for (const [name, c] of PALETTE) { const b = document.createElement("button"); b.className = "bsd-c" + (state.color === c ? " is-on" : ""); b.style.background = c || "#8a8a8a"; b.title = name === "default" ? "По умолчанию" : name; b.addEventListener("click", () => { state.color = c; if (state.sel && ctl.recolor) ctl.recolor(c); sync(); closePop(); }); pop.appendChild(b); }
         const rb = document.createElement("button"); rb.className = "bsd-c rainbow" + (state.color && !PALETTE.some(([, c]) => c === state.color) ? " is-on" : ""); rb.title = "Свой цвет";
-        const inp = document.createElement("input"); inp.type = "color"; inp.value = state.color || "#ffffff"; inp.addEventListener("input", () => { state.color = inp.value; if (state.sel && ctl.recolor) ctl.recolor(inp.value); sync(); }); inp.addEventListener("change", closePop); rb.appendChild(inp); pop.appendChild(rb);
+        const inp = document.createElement("input"); inp.type = "color"; inp.value = state.color || "#ffffff"; inp.addEventListener("input", () => { state.color = inp.value; if (state.sel && ctl.recolor) ctl.recolor(inp.value); sync(); }); inp.addEventListener("change", () => { window.__bsRecent && window.__bsRecent.add(inp.value); closePop(); }); rb.appendChild(inp); pop.appendChild(rb);
+        for (const c of (window.__bsRecent ? window.__bsRecent.get() : [])) { const b = document.createElement("button"); b.className = "bsd-c" + (state.color === c ? " is-on" : ""); b.style.background = c; b.title = "Недавний цвет " + c; b.addEventListener("click", () => { window.__bsRecent.add(c); state.color = c; if (state.sel && ctl.recolor) ctl.recolor(c); sync(); closePop(); }); pop.appendChild(b); }
       } else {
         // a slider with a live sample of the stroke, and the usual sizes
         const col = document.createElement("div"); col.style.cssText = "display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:210px";

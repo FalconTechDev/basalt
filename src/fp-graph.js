@@ -572,7 +572,15 @@
       for (const g of STORE.groups) {
         const st = new S(p).setName(g.name).setDesc(plural(counts[g.id] || 0));
         st.settingEl.toggleClass("bsg-off", !!g.hidden); st.settingEl.toggleClass("bsg-solo", STORE.solo.includes(g.id));
-        if (!g.system) st.addColorPicker((cp) => cp.setValue(g.color).onChange((v) => { g.color = v; saveStore(); this.dirty = true; }));
+        if (!g.system) {
+          let recT = 0;
+          st.addColorPicker((cp) => cp.setValue(g.color).onChange((v) => { g.color = v; saveStore(); this.dirty = true; clearTimeout(recT); recT = setTimeout(() => window.__bsRecent && window.__bsRecent.add(v), 700); }));
+          if (window.__bsRecent && window.__bsRecent.get().length) st.addExtraButton((b) => b.setIcon("lucide-history").setTooltip("Недавние цвета").onClick(() => {
+            const m = new (api2().Menu)();
+            for (const c of window.__bsRecent.get()) m.addItem((i) => { i.setTitle(c); try { const sw = document.createElement("span"); sw.style.cssText = "display:inline-block;width:12px;height:12px;margin-right:8px;background:" + c; (i.dom || i.titleEl).querySelector(".menu-item-title").prepend(sw); } catch (e) { /* no swatch */ } i.onClick(() => { g.color = c; saveStore(); this.dirty = true; window.__bsRecent.add(c); this.buildPanel(); }); });
+            const r = b.extraSettingsEl.getBoundingClientRect(); m.showAtPosition({ x: r.left, y: r.bottom });
+          }));
+        }
         st.addExtraButton((b) => b.setIcon(g.hidden ? "lucide-eye-off" : "lucide-eye").setTooltip(g.hidden ? "Показать группу" : "Скрыть группу").onClick(() => { g.hidden = !g.hidden; if (g.hidden) STORE.solo = STORE.solo.filter((x) => x !== g.id); saveStore(); apply(); }));
         st.addExtraButton((b) => b.setIcon("lucide-focus").setTooltip("Показать только эту группу (Shift: добавить ещё)").onClick(() => {
           const on = STORE.solo.includes(g.id), sh = window.event && window.event.shiftKey;

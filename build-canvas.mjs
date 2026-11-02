@@ -68,6 +68,7 @@ const patch = (from, to) => {
 patch('return A?[2,{value:void 0}]:(Y.x=Y.tx=z+e*R,', 'return A?[2,{value:void 0}]:(window.__fpExportTile&&window.__fpExportTile(D,V,H,e,G,_,W,0),Y.x=Y.tx=z+e*R,');
 patch('D.setMessage("Rendering tiles... (".concat(_,"/").concat(W,")")),', 'D.setMessage("Съёмка секторов (".concat(_,"/").concat(W,")")),window.__fpExportTile&&window.__fpExportTile(D,V,H,e,G,_,W,1),');
 patch('D=new pD(S.document)).show(),D.setMessage("Rendering tiles..."),', 'D=new pD(S.document)).show(),D.setMessage("Съёмка холста…"),window.__fpExportOpen&&window.__fpExportOpen(),');
+patch('u.addEventListener("change",(function(){return n(u.value)})),u.addEventListener("input",(function(){return n(u.value,!1)}))}}));', 'u.addEventListener("change",(function(){window.__bsRecent&&window.__bsRecent.add(u.value);return n(u.value)})),u.addEventListener("input",(function(){return n(u.value,!1)})),window.__bsRecentRow&&window.__bsRecentRow(g,n)}}));');
 patch('prototype.showMenu=function(e){var t=this,n=this.canvas;n.readonly||e.addItem((function(e){return e.setSection("danger")',
   'prototype.showMenu=function(e){var t=this,n=this.canvas;window.__fpNodeMenu&&window.__fpNodeMenu(e,t);n.readonly||e.addItem((function(e){return e.setSection("danger")');
 patch('var k=Rb(Fb(["Shift"],"2"));if(b(s,j3.actionZoomToSelection()',
