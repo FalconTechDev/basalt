@@ -6,6 +6,7 @@
   css.textContent = `
     .bset { width: min(1100px, 94vw); max-width: none; height: min(720px, 88vh); padding: 0; display: flex; flex-direction: row; overflow: hidden; }
     .bset-nav { flex: 0 0 230px; background: var(--background-secondary); border-right: 1px solid var(--background-modifier-border); display: flex; flex-direction: column; padding: 14px 10px; gap: 2px; overflow: auto; }
+    .bset-hks { display: inline-flex; flex-wrap: wrap; gap: 4px; align-items: center; justify-content: flex-end; } .bset-hk { display: inline-flex; align-items: center; gap: 4px; } .bset-hk-x { display: inline-flex; width: 14px; height: 14px; cursor: pointer; color: var(--text-faint); } .bset-hk-x:hover { color: var(--text-normal); } .bset-hk-x svg { width: 12px; height: 12px; }
     .bset-ni { display: inline-flex; width: 16px; height: 16px; flex: none; } .bset-ni svg { width: 16px; height: 16px; }
     .bset-find { margin-bottom: 8px; } .bset-find input { width: 100%; }
     .bset-nav button.bset-n { text-align: left; justify-content: flex-start; background: transparent; box-shadow: none; clip-path: none; border-radius: var(--bs-r); padding: 7px 12px; color: var(--text-muted); height: auto; display: flex; align-items: center; gap: 10px; }
@@ -108,6 +109,7 @@
     add("keys", "Горячие клавиши", "keys", (h) => {
       const hm = app.hotkeyManager, wrap = document.createElement("div"); h.appendChild(wrap);
       const fmt = (k) => [...(k.modifiers || []).map((m) => ({ Mod: "Ctrl", Ctrl: "Ctrl", Meta: "Win", Alt: "Alt", Shift: "Shift" }[m] || m)), (k.key || "").length === 1 ? k.key.toUpperCase() : ({ ArrowLeft: "←", ArrowRight: "→", ArrowUp: "↑", ArrowDown: "↓", Escape: "Esc", " ": "Пробел", Backspace: "⌫", Delete: "Del", Enter: "Enter" }[k.key] || k.key)].join(" + ");
+      const norm = (k) => [...(k.modifiers || []).map((m) => (m === "Ctrl" ? "Mod" : m)).sort(), (k.key || "").length === 1 ? k.key.toUpperCase() : k.key].join("+");
       const list = () => Object.values(app.commands.commands).filter((c) => c && c.name).sort((a, b) => a.name.localeCompare(b.name));
       const draw = () => {
         wrap.textContent = "";
@@ -118,15 +120,38 @@
           if (!q && !(hm.getHotkeys(c.id) || hm.getDefaultHotkeys(c.id) || []).length && shown > 150) continue;
           if (++shown > 220) break;
           const keys = hm.getHotkeys(c.id) || hm.getDefaultHotkeys(c.id) || [];
-          const holder = document.createElement("span"); const paint = () => { holder.textContent = ""; const ks = hm.getHotkeys(c.id) || hm.getDefaultHotkeys(c.id) || []; if (!ks.length) holder.innerHTML = '<small style="color:var(--text-faint)">не задано</small>'; for (const k of ks) { const s = document.createElement("span"); s.className = "bset-hk"; s.textContent = fmt(k); holder.appendChild(s); } };
-          void keys; paint();
-          const rec = button("Назначить", () => {
-            const tag = document.createElement("span"); tag.className = "bset-hk is-rec"; tag.textContent = "нажмите сочетание…"; holder.textContent = ""; holder.appendChild(tag);
-            const on = (e) => { if (["Control", "Shift", "Alt", "Meta"].includes(e.key)) return; e.preventDefault(); e.stopPropagation(); document.removeEventListener("keydown", on, true); if (e.key === "Escape") return paint(); const mods = []; if (e.ctrlKey) mods.push("Mod"); if (e.metaKey) mods.push("Meta"); if (e.altKey) mods.push("Alt"); if (e.shiftKey) mods.push("Shift"); hm.setHotkeys(c.id, [{ modifiers: mods, key: e.key.length === 1 ? e.key.toUpperCase() : e.key }]); hm.bake && hm.bake(); hm.save && hm.save(); paint(); };
+          const eff = (id) => hm.getHotkeys(id) || hm.getDefaultHotkeys(id) || [];
+          const same = (x, y) => norm(x) === norm(y);
+          const icon = (el, n) => { try { window.__bsApi.setIcon(el, n); } catch (e) { el.textContent = "×"; } return el; };
+          const holder = document.createElement("span"); holder.className = "bset-hks";
+          const store = (id, ks) => { hm.setHotkeys(id, ks); hm.bake && hm.bake(); hm.save && hm.save(); };
+          const paint = () => {
+            holder.textContent = ""; const ks = eff(c.id);
+            if (!ks.length) { const n = document.createElement("small"); n.style.color = "var(--text-faint)"; n.textContent = "отключено"; holder.appendChild(n); }
+            ks.forEach((k) => { const chip = document.createElement("span"); chip.className = "bset-hk"; const t = document.createElement("span"); t.textContent = fmt(k); const x = icon(document.createElement("span"), "lucide-x"); x.className = "bset-hk-x"; x.title = "Убрать это сочетание"; x.addEventListener("click", () => { store(c.id, eff(c.id).filter((y) => !same(y, k))); paint(); }); chip.append(t, x); holder.appendChild(chip); });
+          };
+          paint();
+          // add one more combination (the old ones stay); one that is already used by another command is taken from it
+          const rec = icon(button("", () => {
+            const tag = document.createElement("span"); tag.className = "bset-hk is-rec"; tag.textContent = "нажмите сочетание…"; holder.appendChild(tag);
+            const on = (e) => {
+              if (["Control", "Shift", "Alt", "Meta"].includes(e.key)) return;
+              e.preventDefault(); e.stopPropagation(); document.removeEventListener("keydown", on, true);
+              if (e.key === "Escape") return paint();
+              const mods = []; if (e.ctrlKey) mods.push("Mod"); if (e.metaKey) mods.push("Meta"); if (e.altKey) mods.push("Alt"); if (e.shiftKey) mods.push("Shift");
+              const key = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3) : /^Digit[0-9]$/.test(e.code) ? e.code.slice(5) : e.key.length === 1 ? e.key.toUpperCase() : e.key;
+              const nk = { modifiers: mods, key };
+              const taken = [];
+              for (const o of list()) { if (o.id === c.id) continue; const ks = eff(o.id); if (ks.some((y) => same(y, nk))) { store(o.id, ks.filter((y) => !same(y, nk))); taken.push(o.name); } }
+              if (!eff(c.id).some((y) => same(y, nk))) store(c.id, [...eff(c.id), nk]);
+              if (taken.length) new window.__bsApi.Notice("«" + fmt(nk) + "» теперь только у «" + c.name + "»; снято у: " + taken.join(", "), 6000);
+              draw();
+            };
             document.addEventListener("keydown", on, true);
-          });
-          const reset = button("Сбросить", () => { hm.removeHotkeys && hm.removeHotkeys(c.id); hm.bake && hm.bake(); hm.save && hm.save(); paint(); });
-          row(wrap, c.name, null, [holder, rec, reset]);
+          }), "lucide-plus"); rec.title = "Добавить сочетание"; rec.className = "clickable-icon";
+          const off = icon(button("", () => { store(c.id, []); paint(); }), "lucide-ban"); off.title = "Отключить все сочетания"; off.className = "clickable-icon";
+          const reset = icon(button("", () => { hm.removeHotkeys && hm.removeHotkeys(c.id); hm.bake && hm.bake(); hm.save && hm.save(); paint(); }), "lucide-rotate-ccw"); reset.title = "Вернуть по умолчанию"; reset.className = "clickable-icon";
+          row(wrap, c.name, null, [holder, rec, off, reset]);
         }
         if (!shown) wrap.innerHTML = '<div class="bset-empty">Команды не найдены</div>';
       };
