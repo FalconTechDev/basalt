@@ -6,6 +6,7 @@
   css.textContent = `
     .bset { width: min(1100px, 94vw); max-width: none; height: min(720px, 88vh); padding: 0; display: flex; flex-direction: row; overflow: hidden; }
     .bset-nav { flex: 0 0 230px; background: var(--background-secondary); border-right: 1px solid var(--background-modifier-border); display: flex; flex-direction: column; padding: 14px 10px; gap: 2px; overflow: auto; }
+    .bset-ni { display: inline-flex; width: 16px; height: 16px; flex: none; } .bset-ni svg { width: 16px; height: 16px; }
     .bset-find { margin-bottom: 8px; } .bset-find input { width: 100%; }
     .bset-nav button.bset-n { text-align: left; justify-content: flex-start; background: transparent; box-shadow: none; clip-path: none; border-radius: var(--bs-r); padding: 7px 12px; color: var(--text-muted); height: auto; display: flex; align-items: center; gap: 10px; }
     .bset-nav button.bset-n:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
@@ -132,7 +133,7 @@
       h.__redraw = draw; draw();
     });
 
-    add("mini", "Мини-функции", "mods", (h) => {
+    add("mini", "Мини-функции", "mini", (h) => {
       const mf = window.__bsMiniFeatures; if (!mf) { row(h, "Мини-функции", "Модуль не загружен.", document.createElement("span")); return; }
       head(h, "Картинки");
       mf.section(h, row, toggle, select, text);
@@ -162,7 +163,7 @@
         // the module draws its own page into a container; it is placed here and restyled by .bset-legacy
         try { const c = t.containerEl || document.createElement("div"); c.textContent = ""; box.appendChild(c); t.display(); } catch (e) { box.textContent = "Не удалось показать страницу: " + e.message; }
       };
-      for (const t of tabs) { const c = document.createElement("div"); c.className = "bset-card"; c.dataset.q = (t.name || "").toLowerCase(); c.innerHTML = "<b></b><small>Открыть параметры</small>"; c.firstChild.textContent = t.name; c.addEventListener("click", () => openTab(t)); grid.appendChild(c); }
+      for (const t of tabs) row(grid, t.name || t.id, "Параметры модуля", button("Открыть", () => openTab(t)));
       view.style.display = "none"; h.append(grid, view);
       if (pendingTab) { const t = tabs.find((x) => x.id === pendingTab); pendingTab = null; if (t) openTab(t); }
     });
@@ -190,7 +191,7 @@
     const nav = wrap.querySelector(".bset-nav"), main = wrap.querySelector(".bset-main"), input = wrap.querySelector("input");
     const prev = document.activeElement; const S = { query: "", cur: "general", render: () => draw(), legacy: (id) => { close(); try { window.__bsStock = true; app.setting.open(); app.setting.openTabById(id); } finally { setTimeout(() => { window.__bsStock = false; }, 300); } } };
     const secs = build(S);
-    const btns = secs.map((s) => { const b = document.createElement("button"); b.className = "bset-n"; b.innerHTML = svg(s.icon) + "<span></span>"; b.lastChild.textContent = s.title; b.addEventListener("click", () => { S.query = ""; input.value = ""; S.cur = s.id; draw(); }); nav.appendChild(b); return [s.id, b]; });
+    const btns = secs.map((s) => { const b = document.createElement("button"); b.className = "bset-n"; b.innerHTML = "<i class=\"bset-ni\"></i><span></span>"; { const L = { gen: "settings", look: "palette", edit: "pen-line", files: "folder", keys: "keyboard", mods: "blocks", mini: "wand-sparkles", plug: "plug", about: "info" }[s.icon]; try { window.__bsApi.setIcon(b.firstChild, "lucide-" + L); } catch (e) { b.firstChild.innerHTML = svg(s.icon); } } b.lastChild.textContent = s.title; b.addEventListener("click", () => { S.query = ""; input.value = ""; S.cur = s.id; draw(); }); nav.appendChild(b); return [s.id, b]; });
     function draw() {
       const q = input.value.trim().toLowerCase(); S.query = q; main.textContent = "";
       btns.forEach(([id, b]) => b.classList.toggle("is-on", !q && id === S.cur));
