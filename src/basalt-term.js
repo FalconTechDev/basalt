@@ -40,7 +40,7 @@
   const css = document.createElement("style");
   css.textContent = `
     .bst { display: flex; flex-direction: column; height: 100%; background: var(--background-primary); }
-    .bst-bar { display: flex; gap: 8px; align-items: center; padding: 4px 10px; background: var(--background-secondary); font-size: var(--font-ui-small); }
+    .bst-bar { display: flex; gap: 8px; align-items: center; padding: 4px 10px; background: var(--background-primary); border-bottom: 1px solid var(--background-modifier-border); font-size: var(--font-ui-small); }
     .bst-bar select { height: 26px; } .bst-bar .bst-gap { flex: 1; } .bst-bar button { padding: 2px 10px; }
     .bst-body { flex: 1; min-height: 0; padding: 6px 8px; } .bst-body .xterm { height: 100%; } .bst-body .xterm-viewport { background: transparent !important; }
     .basalt-term-real { background: var(--background-primary); padding: 4px 6px; min-height: 160px; width: 100%; box-sizing: border-box; border: 1px solid var(--background-modifier-border); }
@@ -123,8 +123,8 @@
       getIcon() { return "lucide-terminal"; }
       async onOpen() {
         const root = this.contentEl; root.empty && root.empty(); root.style.padding = "0"; root.style.overflow = "hidden";
-        root.innerHTML = '<div class="bst"><div class="bst-bar"><select class="dropdown"></select><span class="bst-gap"></span><button>Новая сессия</button></div><div class="bst-body"></div></div>';
-        const sel = root.querySelector("select"), body = root.querySelector(".bst-body"), again = root.querySelector("button");
+        root.innerHTML = '<div class="bst"><div class="bst-bar"><select class="dropdown"></select><span class="bst-gap"></span><button class="clickable-icon" aria-label="Новая сессия"></button></div><div class="bst-body"></div></div>';
+        const sel = root.querySelector("select"), body = root.querySelector(".bst-body"), again = root.querySelector("button"); try { window.__bsApi.setIcon(again, "lucide-plus"); } catch (e) { again.textContent = "+"; }
         for (const s of SHELLS) { const o = document.createElement("option"); o.value = s.id; o.textContent = s.name; if (s.id === getShell().id) o.selected = true; sel.appendChild(o); }
         const start = async () => {
           if (this.t) this.t.dispose(); body.textContent = "";
