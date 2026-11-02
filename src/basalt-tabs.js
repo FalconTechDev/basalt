@@ -50,12 +50,18 @@
       t.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         const m = new api.Menu();
+        const closeOthers = (pred) => g.children.slice().forEach((o, k) => { if (o !== leaf && !o.pinned && pred(k)) o.detach(); });
         m.addItem((i) => i.setTitle("Закрыть").setIcon("lucide-x").onClick(() => leaf.detach()));
-        m.addItem((i) => i.setTitle("Закрыть остальные").setIcon("lucide-x-circle").onClick(() => g.children.slice().forEach((o) => { if (o !== leaf && !o.pinned) o.detach(); })));
-        m.addItem((i) => i.setTitle("Закрыть справа").setIcon("lucide-chevrons-right").onClick(() => g.children.slice(idx + 1).forEach((o) => { if (!o.pinned) o.detach(); })));
+        m.addItem((i) => i.setTitle("Закрыть остальные вкладки").setIcon("lucide-x").onClick(() => closeOthers(() => true)));
+        m.addItem((i) => i.setTitle("Закрыть вкладки справа").setIcon("lucide-x").onClick(() => closeOthers((k) => k > idx)));
+        m.addItem((i) => i.setTitle("Закрыть все вкладки").setIcon("lucide-x").onClick(() => { g.children.slice().forEach((o) => { if (!o.pinned) o.detach(); }); }));
         m.addSeparator();
-        m.addItem((i) => i.setTitle(leaf.pinned ? "Открепить" : "Закрепить вкладку").setIcon("lucide-pin").onClick(() => leaf.togglePinned && leaf.togglePinned()));
-        m.addItem((i) => i.setTitle("Дублировать").setIcon("lucide-copy").onClick(() => app.workspace.duplicateLeaf(leaf, "tab")));
+        m.addItem((i) => i.setTitle(leaf.pinned ? "Открепить" : "Закрепить").setIcon("lucide-pin").onClick(() => leaf.togglePinned && leaf.togglePinned()));
+        m.addSeparator();
+        m.addItem((i) => i.setTitle("Переместить в новое окно").setIcon("lucide-external-link").onClick(() => { try { app.workspace.moveLeafToPopout(leaf); } catch (err) { /* no popout */ } }));
+        m.addItem((i) => i.setTitle("Открыть в новом окне").setIcon("lucide-app-window").onClick(() => { try { app.workspace.duplicateLeaf(leaf, "window"); } catch (err) { /* no popout */ } }));
+        m.addSeparator();
+        try { leaf.view && leaf.view.onPaneMenu && leaf.view.onPaneMenu(m, "tab-header"); } catch (err) { /* view has no menu */ }
         try { app.workspace.trigger("tab-menu", m, leaf.view && leaf.view.file, "tab-header", leaf); } catch (err) { /* plugins */ }
         m.showAtMouseEvent(e);
       });

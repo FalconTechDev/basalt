@@ -127,7 +127,7 @@
     .bsg-controls .canvas-control-group { background: var(--background-secondary); border-radius: 0; box-shadow: none; clip-path: var(--bs-clip); }
     .bsg-controls .canvas-control-item { background: transparent; }
     .bsg-controls .canvas-control-item:hover { background: var(--background-modifier-hover); }
-    .bsg-panel { position: absolute; right: 60px; top: 12px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
+    .bsg-panel { overflow-x: hidden; box-sizing: border-box; position: absolute; right: 60px; top: 12px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
     .bsg-panel.is-open { display: block; }
     .bsg-panel .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; color: var(--text-muted); }
     .bsg-panel input[type=range] { width: 120px; }
@@ -329,9 +329,8 @@
       heading("Раскладка", "lucide-network");
       slider("Длина связей", "lucide-ruler", "", "linkDistance", 10, 120, 2, () => this.forces());
       slider("Притяжение", "lucide-magnet", "Насколько связанные узлы тянутся друг к другу", "linkStrength", 0.1, 1.5, 0.05, () => this.forces());
-      new S(p)
-        .addButton((b) => b.setIcon("lucide-rotate-ccw").setTooltip("Сбросить длину и притяжение").onClick(() => { c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); }))
-        .addButton((b) => b.setIcon("lucide-shuffle").setTooltip("Пересчитать: раскидать узлы заново").onClick(() => { this.ex.ge_reheat(1); this.running = true; }));
+      lead(new S(p).setName("Пересчитать раскладку").setDesc("Раскидать узлы заново"), "lucide-shuffle").addButton((b) => b.setIcon("lucide-shuffle").setTooltip("Пересчитать").onClick(() => { this.ex.ge_reheat(1); this.running = true; }));
+      lead(new S(p).setName("Сбросить силы").setDesc("Длина и притяжение связей по умолчанию"), "lucide-rotate-ccw").addButton((b) => b.setIcon("lucide-rotate-ccw").setTooltip("Сбросить").onClick(() => { c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); }));
       this.panelFocus(p, heading);
       this.panelGroups(p, heading);
     }
@@ -588,7 +587,7 @@
         new S(p).setName("Узлов не больше").addSlider((sl) => sl.setLimits(10, 500, 10).setValue(STORE.max).setDynamicTooltip().onChange((v) => { STORE.max = v; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }));
         new S(p).addButton((b) => b.setButtonText("Показать весь граф").onClick(() => this.clearFocus()));
       }
-      new S(p).addButton((b) => b.setButtonText("Новая группа").onClick(() => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }));
+      new S(p).setName("Новая группа").setDesc("Из узлов, отмеченных Shift").addButton((b) => b.setIcon("lucide-plus").setTooltip("Создать группу").onClick(() => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }));
     }
     newGroup(name, keys) {
       const uniqueName = () => { let i = STORE.groups.length + 1; while (STORE.groups.some((x) => x.name === "Группа " + i)) i++; return "Группа " + i; };

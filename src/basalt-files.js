@@ -21,6 +21,8 @@
     .bsf-r.is-focus { outline: 1px solid color-mix(in srgb, var(--interactive-accent) 55%, transparent); outline-offset: -1px; }
     .bsf-r.is-drop { background: color-mix(in srgb, var(--interactive-accent) 28%, transparent); outline: 1px dashed var(--interactive-accent); }
     .bsf-r.is-dir { color: var(--text-normal); font-weight: 600; }
+    .bsf-r { position: relative; }
+    .bsf-guide { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--background-modifier-border); pointer-events: none; }
     .bsf-car { width: 14px; height: 14px; flex: none; transition: transform .1s; color: var(--text-faint); } .bsf-r.is-open > .bsf-car { transform: rotate(90deg); }
     .bsf-sp { width: 14px; flex: none; }
     .bsf-i { color: var(--text-faint); display: inline-flex; } .bsf-r.is-dir .bsf-i { color: var(--interactive-accent); }
@@ -147,6 +149,7 @@
           r.dataset.path = f.path; r.draggable = true; r.style.paddingLeft = 6 + depth * 14 + "px";
           const ext = !dir && f.extension !== "md" && f.extension !== "canvas" ? `<span class="bsf-x">${f.extension}</span>` : "";
           r.innerHTML = (dir ? svg("car", "bsf-car") : '<span class="bsf-sp"></span>') + `<span class="bsf-i">${svg(kindOf(f))}</span><span class="bsf-n"></span>${!dir && pins.has(f.path) ? svg("pin", "bsf-pin") : ""}${ext}`;
+          for (let d = 1; d <= depth; d++) { const gl = document.createElement("i"); gl.className = "bsf-guide"; gl.style.left = 6 + (d - 1) * 14 + 7 + "px"; r.appendChild(gl); }
           const n = r.querySelector(".bsf-n"); n.textContent = dir ? f.name : f.name.replace(/\.(md|canvas)$/i, "");
           if (flat && f.parent && f.parent.path !== "/") { const s = document.createElement("small"); s.textContent = f.parent.path; n.appendChild(s); }
           this.wire(r, f);
