@@ -222,13 +222,17 @@ pub extern "C" fn ge_set_graph(words: u32, byte_len: u32) {
         let mut delay2 = vec![0.0f32; n];
         let mut delay3 = vec![0.0f32; n];
         if mode == 1 {
-            let r2: Vec<f32> = to2.iter().map(|p| (p[0] * p[0] + p[1] * p[1]).sqrt()).collect();
-            let r3: Vec<f32> = to3.iter().map(|p| (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt()).collect();
-            let m2 = r2.iter().cloned().fold(1e-3, f32::max);
-            let m3 = r3.iter().cloned().fold(1e-3, f32::max);
+            // as in Obsidian: the picture grows out of a small copy of itself, the nodes setting off one after another in no particular order
+            let hash = |i: usize| (((i as u32).wrapping_mul(2654435761) >> 8) & 1023) as f32 / 1023.0;
             for i in 0..n {
-                delay2[i] = r2[i] / m2;
-                delay3[i] = r3[i] / m3;
+                delay2[i] = hash(i);
+                delay3[i] = hash(i + 7919);
+                for a in 0..2 {
+                    f2[i][a] = to2[i][a] * 0.18;
+                }
+                for a in 0..3 {
+                    f3[i][a] = to3[i][a] * 0.18;
+                }
             }
         } else if keeping {
             let old_len = keep.iter().filter(|&&k| k != u32::MAX).count();

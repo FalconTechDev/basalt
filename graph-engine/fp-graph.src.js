@@ -123,6 +123,7 @@
     .bsg-seg button:not(.is-on):hover, .bsg-btn:hover { color: var(--text-normal); }
     .bsg-search { width: 260px; height: 30px; border-radius: 0 !important; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); padding: 0 10px; font-size: 12.5px; }
     .bsg-panel .setting-item-info { flex: 1 1 auto; min-width: 0; } .bsg-panel .setting-item-control { flex: 0 0 auto; } .bsg-panel .setting-item-control input[type=range] { width: 140px; }
+    .bsg-panel .setting-item-heading { background: none; border: 0; border-top: 1px solid var(--background-modifier-border); border-radius: 0; margin-top: 12px; padding: 14px 4px 6px; } .bsg-panel .setting-item-heading:first-child { border-top: 0; margin-top: 0; }
     .bsg-controls { position: absolute; right: 12px; top: 12px; z-index: 6; }
     .bsg-controls .canvas-control-group { background: var(--background-secondary); border-radius: 0; box-shadow: none; clip-path: var(--bs-clip); }
     .bsg-controls .canvas-control-item { background: transparent; }
@@ -426,7 +427,7 @@
       // the wheel adds to a pending zoom that is played out over a few frames: smooth instead of stepping
       cv.addEventListener("wheel", (e) => { e.preventDefault(); const [x, y] = at(e); this.zoomAt = [x, y]; this.zoomAcc = (this.zoomAcc || 0) + Math.max(-3, Math.min(3, e.deltaY / 100)); this.dirty = true; }, { passive: false });
       this.root.tabIndex = 0; this.root.style.outline = "none";
-      cv.addEventListener("pointerdown", () => { this.closeMenu(); this.root.focus({ preventScroll: true }); }, true);
+      cv.addEventListener("pointerdown", () => { this.closeMenu(); this.panel.classList.remove("is-open"); this.root.focus({ preventScroll: true }); }, true);
       this.root.addEventListener("keydown", (e) => {
         const tag = (e.target && e.target.tagName) || ""; if (/INPUT|TEXTAREA/.test(tag)) return;
         if (e.key === "Escape") { if (this.menuEl) this.closeMenu(); else if (this.panel.classList.contains("is-open") || this.helpEl.classList.contains("is-open")) { this.panel.classList.remove("is-open"); this.helpEl.classList.remove("is-open"); } else { this.multi = new Set(); this.setSel(-1); } e.preventDefault(); }
@@ -599,7 +600,7 @@
     targets(hit) { if (hit >= 0 && this.multi && this.multi.size > 1 && this.multi.has(hit)) return Array.from(this.multi); return hit >= 0 ? [hit] : []; }
     hideNodes(idx) { const g = hiddenGroup(); g.hidden = true; for (const i of idx) { const n = this.g.nodes[i]; if (n) STORE.assign[n.key] = g.id; } this.multi = new Set(); this.sel = -1; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); }
     // the picture built around some nodes (not a group): they are shown with what is around them; a bar at the top says so and ends it
-    focusOn(idx) { STORE.focusKeys = idx.map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean); STORE.fdepth = 1; saveStore(); this.afterState(); this.panel.classList.add("is-open"); this.helpEl.classList.remove("is-open"); }
+    focusOn(idx) { STORE.focusKeys = idx.map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean); STORE.fdepth = 1; saveStore(); this.afterState(); this.helpEl.classList.remove("is-open"); }
     clearFocus() { STORE.focusKeys = []; STORE.solo = []; saveStore(); this.afterState(); }
     afterState() { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); this.updateFocusBar(); }
     updateFocusBar() { /* the focus lives in the settings now */ }
