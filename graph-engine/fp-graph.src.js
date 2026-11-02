@@ -11,15 +11,30 @@
   const save = (c) => { try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) { /* private mode */ } };
 
   // ---------------------------------------------------------------- groups and hidden notes (kept in the vault's config folder)
-  const STORE = { groups: [], assign: {}, hidden: [], loaded: false };
+  const STORE = { groups: [], assign: {}, solo: [], depth: 1, max: 150, loaded: false };
+  const HIDDEN_ID = "hidden"; // the built-in group "Скрытые": what you hide goes there, its eye is off
   const GROUP_COLORS = ["#c98d5b", "#6e96be", "#7fbe8b", "#af8ceb", "#e17878", "#e6be5a", "#5abebe", "#dccdb9"];
   const storeFile = () => app.vault.configDir + "/graph-groups.json";
   async function loadStore() {
-    try { const a = app.vault.adapter; if (await a.exists(storeFile())) { const j = JSON.parse(await a.read(storeFile())); STORE.groups = Array.isArray(j.groups) ? j.groups : []; STORE.assign = j.assign && typeof j.assign === "object" ? j.assign : {}; STORE.hidden = Array.isArray(j.hidden) ? j.hidden : []; } } catch (e) { /* a fresh vault */ }
+    try {
+      const a = app.vault.adapter;
+      if (await a.exists(storeFile())) {
+        const j = JSON.parse(await a.read(storeFile()));
+        STORE.groups = Array.isArray(j.groups) ? j.groups : []; STORE.assign = j.assign && typeof j.assign === "object" ? j.assign : {};
+        STORE.solo = Array.isArray(j.solo) ? j.solo : []; STORE.depth = Number.isFinite(j.depth) ? j.depth : 1; STORE.max = Number.isFinite(j.max) ? j.max : 150;
+        // the old separate list of hidden notes becomes the group "Скрытые"
+        if (Array.isArray(j.hidden) && j.hidden.length) { const g = hiddenGroup(); for (const k of j.hidden) STORE.assign[k] = g.id; }
+      }
+    } catch (e) { /* a fresh vault */ }
     STORE.loaded = true;
   }
+  function hiddenGroup() {
+    let g = STORE.groups.find((x) => x.id === HIDDEN_ID);
+    if (!g) { g = { id: HIDDEN_ID, name: "Скрытые", color: "#8a8a8a", hidden: true, system: true }; STORE.groups.push(g); }
+    return g;
+  }
   let storeT = 0;
-  const saveStore = () => { clearTimeout(storeT); storeT = setTimeout(() => { try { app.vault.adapter.write(storeFile(), JSON.stringify({ groups: STORE.groups, assign: STORE.assign, hidden: STORE.hidden }, null, 1)).catch(() => {}); } catch (e) { /* not writable */ } }, 400); };
+  const saveStore = () => { clearTimeout(storeT); storeT = setTimeout(() => { try { app.vault.adapter.write(storeFile(), JSON.stringify({ groups: STORE.groups, assign: STORE.assign, solo: STORE.solo, depth: STORE.depth, max: STORE.max }, null, 1)).catch(() => {}); } catch (e) { /* not writable */ } }, 400); };
 
   // ---------------------------------------------------------------- the engine
   const B64 = "__WASM_B64__";
@@ -33,8 +48,7 @@
   function vaultGraph(app, c, anchor, local) {
     const IMGX = /^(png|jpe?g|gif|webp|bmp|avif|svg)$/i;
     const linkedTo = new Set(); if (c.images) for (const dests of Object.values(app.metadataCache.resolvedLinks || {})) for (const d of Object.keys(dests)) linkedTo.add(d);
-    const hiddenSet = new Set(STORE.hidden);
-    const files = app.vault.getFiles().filter((f) => !hiddenSet.has(f.path) && (f.extension === "md" || (c.canvases && f.extension === "canvas") || (c.images && IMGX.test(f.extension) && linkedTo.has(f.path))));
+    const files = app.vault.getFiles().filter((f) => (f.extension === "md" || (c.canvases && f.extension === "canvas") || (c.images && IMGX.test(f.extension) && linkedTo.has(f.path))));
     const resolved = app.metadataCache.resolvedLinks || {}, unres = app.metadataCache.unresolvedLinks || {};
     const idx = new Map(), nodes = [];
     const add = (key, name, extra) => { if (idx.has(key)) return idx.get(key); const i = nodes.length; idx.set(key, i); nodes.push(Object.assign({ key, name, file: null, unresolved: false, folder: "" }, extra)); return i; };
@@ -42,7 +56,7 @@
     const have = new Set(files.map((f) => f.path)), seen = new Set(), edges = [];
     const link = (a, b) => { if (a === b) return; const k = a < b ? a * 1048576 + b : b * 1048576 + a; if (seen.has(k)) return; seen.add(k); edges.push([a, b]); };
     for (const [src, dests] of Object.entries(resolved)) if (have.has(src)) for (const dest of Object.keys(dests)) if (have.has(dest)) link(idx.get(src), idx.get(dest));
-    if (c.unresolved) for (const [src, dests] of Object.entries(unres)) if (have.has(src)) for (const name of Object.keys(dests)) { if (hiddenSet.has("?" + name)) continue; link(idx.get(src), add("?" + name, name, { unresolved: true })); }
+    if (c.unresolved) for (const [src, dests] of Object.entries(unres)) if (have.has(src)) for (const name of Object.keys(dests)) link(idx.get(src), add("?" + name, name, { unresolved: true }));
     const deg = new Array(nodes.length).fill(0); edges.forEach(([a, b]) => { deg[a]++; deg[b]++; });
     let keep = nodes.map((_, i) => c.orphans || local || deg[i] > 0);
     if (local) {
@@ -52,6 +66,21 @@
       const dist = new Array(nodes.length).fill(-1); dist[root] = 0; const q = [root];
       for (let h = 0; h < q.length; h++) { const u = q[h]; if (dist[u] >= c.localDepth) continue; for (const v of nb[u]) if (dist[v] < 0) { dist[v] = dist[u] + 1; q.push(v); } }
       keep = dist.map((d) => d >= 0);
+    }
+    // groups decide what is shown: a group with its eye off is gone; with "only this" on, the picture is built around those groups
+    {
+      const grp = (nd) => { const id = STORE.assign[nd.key]; return id ? STORE.groups.find((g) => g.id === id) : null; };
+      const gone = nodes.map((nd) => { const g = grp(nd); return !!(g && g.hidden); });
+      const solo = new Set(STORE.solo.filter((id) => STORE.groups.some((g) => g.id === id)));
+      if (solo.size) {
+        const nbr = nodes.map(() => []); edges.forEach(([a, b]) => { nbr[a].push(b); nbr[b].push(a); });
+        const dist = new Array(nodes.length).fill(-1), q = [];
+        nodes.forEach((nd, i) => { if (solo.has(STORE.assign[nd.key])) { dist[i] = 0; q.push(i); } });
+        for (let h = 0; h < q.length; h++) { const u = q[h]; if (dist[u] >= STORE.depth) continue; for (const v of nbr[u]) if (dist[v] < 0 && !gone[v]) { dist[v] = dist[u] + 1; q.push(v); } }
+        let cand = q.slice();
+        if (cand.length > STORE.max) cand = cand.sort((a, b) => dist[a] - dist[b] || deg[b] - deg[a]).slice(0, STORE.max);
+        const ok = new Set(cand); keep = keep.map((k, i) => ok.has(i));
+      } else keep = keep.map((k, i) => k && !gone[i]);
     }
     let list = nodes.map((_, i) => i).filter((i) => keep[i]);
     if (list.length > c.maxNodes) list = list.sort((a, b) => deg[b] - deg[a]).slice(0, c.maxNodes);
@@ -93,6 +122,10 @@
     .bsg-panel .hd { margin: 14px 0 6px; padding-top: 10px; border-top: 1px solid var(--background-modifier-border); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); }
     .bsg-panel .grp { gap: 6px; } .bsg-panel .grp input[type=color] { width: 22px; height: 22px; padding: 0; border: 0; background: none; flex: none; }
     .bsg-panel .grp .nm { flex: 1; min-width: 0; height: 24px; padding: 0 6px; font-size: 12px; } .bsg-panel .grp .n { color: var(--text-faint); font-size: 11px; min-width: 16px; text-align: right; }
+    .bsg-panel .grp.is-off .nm, .bsg-panel .grp.is-off .n { opacity: .45; } .bsg-panel .grp.is-solo { background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); }
+    .bsg-panel .grp .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-faint); cursor: pointer; border-radius: var(--bs-r); flex: none; }
+    .bsg-panel .grp .ic svg { width: 15px; height: 15px; } .bsg-panel .grp .ic:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-panel .grp .ic.on { color: var(--interactive-accent); }
+    .bsg-panel .focusbox { margin: 8px 0; padding: 8px 10px; border: 1px solid var(--background-modifier-border); } .bsg-panel .focusbox .row b { min-width: 28px; text-align: right; color: var(--text-muted); font-weight: 500; }
     .bsg-panel .grp .x, .bsg-panel .wide { background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); }
     .bsg-panel .grp .x { width: 22px; height: 22px; padding: 0; } .bsg-panel .wide { width: 100%; height: 28px; margin: 4px 0; font-size: 12px; } .bsg-panel .wide:hover, .bsg-panel .grp .x:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
     .bsg-panel .mute { font-size: 11.5px; color: var(--text-faint); }
@@ -261,6 +294,7 @@
       if (!grow && this.keyIndex) { const pk = ex.ge_keep(n || 1), ku = new Uint32Array(ex.memory.buffer, pk, n || 1); g.nodes.forEach((x, k) => { ku[k] = this.keyIndex.has(x.key) ? this.keyIndex.get(x.key) : 0xffffffff; }); } /* the layout keeps its places: a change moves only what changed */
       const prevSel = this.sel >= 0 && this.oldNodes ? this.oldNodes[this.sel] : null;
       ex.ge_set_graph(words, bytes.length);
+      if (this.regroup) { this.regroup = false; ex.ge_reheat(0.9); ex.ge_fit(); this.running = true; } /* the picture is rebuilt around the chosen groups: settle again and fit */
       this.keyIndex = new Map(g.nodes.map((x, k) => [x.key, k])); this.oldNodes = g.nodes.map((x) => x.key);
       this.hover = -1; this.hlTo = undefined; { const k = prevSel && this.keyIndex.has(prevSel) ? this.keyIndex.get(prevSel) : -1; this.sel = k; ex.ge_select(k, 1); this.cardFor(k); }
       this.running = true; this.dirty = true;       this.empty.style.display = n ? "none" : "flex";
@@ -428,19 +462,31 @@
       const head = (t) => { const h = document.createElement("div"); h.className = "hd"; h.textContent = t; p.appendChild(h); return h; };
       head("Группы");
       const counts = {}; for (const k of Object.values(STORE.assign)) counts[k] = (counts[k] || 0) + 1;
+      const ico = (b, name, fallback) => { if (api2().setIcon) api2().setIcon(b, name); else b.textContent = fallback; };
+      const apply = () => { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); };
+      if (!STORE.groups.length) { const e = document.createElement("div"); e.className = "mute"; e.textContent = "Групп нет. Правая кнопка по узлу, «Группа», или кнопка ниже."; p.appendChild(e); }
       for (const g of STORE.groups) {
-        const r = document.createElement("div"); r.className = "row grp";
+        const r = document.createElement("div"); r.className = "row grp" + (g.hidden ? " is-off" : "") + (STORE.solo.includes(g.id) ? " is-solo" : "");
         const col = document.createElement("input"); col.type = "color"; col.value = g.color; col.addEventListener("input", () => { g.color = col.value; saveStore(); this.dirty = true; });
-        const nm = document.createElement("input"); nm.type = "text"; nm.value = g.name; nm.className = "nm"; nm.addEventListener("change", () => { g.name = nm.value.trim() || g.name; saveStore(); });
+        const nm = document.createElement("input"); nm.type = "text"; nm.value = g.name; nm.className = "nm"; nm.readOnly = !!g.system; nm.addEventListener("change", () => { g.name = nm.value.trim() || g.name; saveStore(); });
         const n = document.createElement("span"); n.className = "n"; n.textContent = counts[g.id] || 0;
-        const del = document.createElement("button"); del.className = "x"; del.textContent = "×"; del.title = "Удалить группу"; del.addEventListener("click", () => { STORE.groups = STORE.groups.filter((x) => x !== g); for (const k of Object.keys(STORE.assign)) if (STORE.assign[k] === g.id) delete STORE.assign[k]; saveStore(); this.buildPanel(); this.dirty = true; });
-        r.append(col, nm, n, del); p.appendChild(r);
+        const eye = document.createElement("button"); eye.className = "ic"; eye.title = g.hidden ? "Показать группу" : "Скрыть группу"; ico(eye, g.hidden ? "lucide-eye-off" : "lucide-eye", g.hidden ? "—" : "o"); eye.addEventListener("click", () => { g.hidden = !g.hidden; if (g.hidden) STORE.solo = STORE.solo.filter((x) => x !== g.id); saveStore(); apply(); });
+        const only = document.createElement("button"); only.className = "ic" + (STORE.solo.includes(g.id) ? " on" : ""); only.title = "Показать только эту группу (Shift: добавить ещё)"; ico(only, "lucide-focus", "◎");
+        only.addEventListener("click", (e) => { const on = STORE.solo.includes(g.id); if (e.shiftKey) STORE.solo = on ? STORE.solo.filter((x) => x !== g.id) : [...STORE.solo, g.id]; else STORE.solo = on && STORE.solo.length === 1 ? [] : [g.id]; if (STORE.solo.length) g.hidden = false; saveStore(); apply(); });
+        r.append(col, nm, n, eye, only);
+        if (!g.system) { const del = document.createElement("button"); del.className = "ic"; del.title = "Удалить группу"; ico(del, "lucide-trash-2", "×"); del.addEventListener("click", () => { STORE.groups = STORE.groups.filter((x) => x !== g); STORE.solo = STORE.solo.filter((x) => x !== g.id); for (const k of Object.keys(STORE.assign)) if (STORE.assign[k] === g.id) delete STORE.assign[k]; saveStore(); apply(); }); r.appendChild(del); }
+        p.appendChild(r);
       }
-      const add = document.createElement("button"); add.className = "wide"; add.textContent = "+ Новая группа"; add.addEventListener("click", () => { this.newGroup("", []); }); p.appendChild(add);
-      head("Скрытые" + (STORE.hidden.length ? " (" + STORE.hidden.length + ")" : ""));
-      if (STORE.hidden.length) {
-        const all = document.createElement("button"); all.className = "wide"; all.textContent = "Показать все"; all.addEventListener("click", () => { STORE.hidden = []; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); }); p.appendChild(all);
-      } else { const e = document.createElement("div"); e.className = "mute"; e.textContent = "Ничего не скрыто. Правая кнопка по узлу, «Скрыть»."; p.appendChild(e); }
+      if (STORE.solo.length) {
+        // only the chosen groups are shown, plus what is around them: how far, and how many at most
+        const box = document.createElement("div"); box.className = "focusbox";
+        const t = document.createElement("div"); t.className = "mute"; t.textContent = "Показано: выбранные группы и всё вокруг них"; box.appendChild(t);
+        const mkS = (label, key, min, max, step) => { const rr = document.createElement("div"); rr.className = "row"; const l = document.createElement("span"); l.textContent = label; const i = document.createElement("input"); i.type = "range"; i.min = min; i.max = max; i.step = step; i.value = STORE[key]; const v = document.createElement("b"); v.textContent = STORE[key]; i.addEventListener("input", () => { STORE[key] = +i.value; v.textContent = i.value; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }); rr.append(l, i, v); box.appendChild(rr); };
+        mkS("Уровней от группы", "depth", 0, 5, 1); mkS("Узлов не больше", "max", 10, 500, 10);
+        const off = document.createElement("button"); off.className = "wide"; off.textContent = "Показать весь граф"; off.addEventListener("click", () => { STORE.solo = []; saveStore(); apply(); }); box.appendChild(off);
+        p.appendChild(box);
+      }
+      const add = document.createElement("button"); add.className = "wide"; add.textContent = "+ Новая группа"; add.addEventListener("click", () => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }); p.appendChild(add);
     }
     newGroup(name, keys) {
       const g = { id: "g" + Date.now().toString(36), name: name || "Группа " + (STORE.groups.length + 1), color: GROUP_COLORS[STORE.groups.length % GROUP_COLORS.length] };
@@ -449,7 +495,9 @@
     groupOf(n) { const id = STORE.assign[n.key]; return id ? STORE.groups.find((g) => g.id === id) : null; }
     // which nodes a command applies to: the ones marked with Shift, if the node under the pointer is one of them
     targets(hit) { if (hit >= 0 && this.multi && this.multi.size > 1 && this.multi.has(hit)) return Array.from(this.multi); return hit >= 0 ? [hit] : []; }
-    hideNodes(idx) { for (const i of idx) { const n = this.g.nodes[i]; if (n && !STORE.hidden.includes(n.key)) STORE.hidden.push(n.key); } this.multi = new Set(); this.sel = -1; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); }
+    hideNodes(idx) { const g = hiddenGroup(); g.hidden = true; for (const i of idx) { const n = this.g.nodes[i]; if (n) STORE.assign[n.key] = g.id; } this.multi = new Set(); this.sel = -1; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); }
+    // the picture built around some nodes: they become a group, shown alone with their neighbours
+    focusOn(idx) { const keys = idx.map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean); let g = STORE.groups.find((x) => x.id === "focus"); if (!g) { g = { id: "focus", name: "Фокус", color: "#c98d5b" }; STORE.groups.push(g); } for (const k of Object.keys(STORE.assign)) if (STORE.assign[k] === "focus") delete STORE.assign[k]; for (const k of keys) STORE.assign[k] = "focus"; STORE.solo = ["focus"]; saveStore(); this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); this.panel.classList.add("is-open"); }
     closeMenu() { if (this.menuEl) { this.menuEl.remove(); this.menuEl = null; } if (this.menuOff) { document.removeEventListener("pointerdown", this.menuOff, true); document.removeEventListener("keydown", this.menuKey, true); this.menuOff = null; } }
     showMenu(cx, cy, hit) {
       this.closeMenu();
@@ -466,14 +514,14 @@
         item("Новая группа…", () => this.newGroup("", nodes.map((n) => n.key)), { sub: true });
         if (nodes.some((n) => STORE.assign[n.key])) item("Убрать из группы", () => { for (const n of nodes) delete STORE.assign[n.key]; saveStore(); this.buildPanel(); this.dirty = true; }, { sub: true });
         sep();
-        item(many ? "Скрыть выбранные" : "Скрыть из графа", () => this.hideNodes(tg));
+        item(many ? "Скрыть выбранные" : "Скрыть", () => this.hideNodes(tg));
         if (!many && nodes[0].file) item("Собрать холст из его окружения", () => { const nb = Array.from(this.adjOf(hit)); this.toCanvas(hit, nb); });
-        if (!many) item("Оставить только его окружение", () => { const keep = new Set([hit, ...this.adjOf(hit)]); this.hideNodes(this.g.nodes.map((_, i) => i).filter((i) => !keep.has(i))); });
+        item(many ? "Показать только их и окружение" : "Показать только его и окружение", () => this.focusOn(tg));
         if (this.multi && this.multi.size) item("Снять выбор", () => { this.multi = new Set(); this.dirty = true; });
       } else {
         title("Граф");
-        item("Вписать в окно", () => { this.ex.ge_freeze_bounds(0); this.ex.ge_fit(); this.dirty = true; });
-        item("Показать скрытые" + (STORE.hidden.length ? " (" + STORE.hidden.length + ")" : ""), () => { STORE.hidden = []; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); }, { off: !STORE.hidden.length });
+        item("Вписать в окно", () => this.fitView());
+        if (STORE.solo.length) item("Показать весь граф", () => { STORE.solo = []; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); });
         item("Новая группа…", () => this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)));
         item("Настройки графа", () => this.panel.classList.add("is-open"));
         if (this.multi && this.multi.size) item("Снять выбор", () => { this.multi = new Set(); this.dirty = true; });
