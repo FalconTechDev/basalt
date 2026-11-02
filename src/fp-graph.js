@@ -120,7 +120,7 @@
     .bsg-seg button.is-on { background: var(--interactive-accent); color: var(--text-on-accent); }
     .bsg-seg button:not(.is-on):hover, .bsg-btn:hover { color: var(--text-normal); }
     .bsg-search { width: 260px; height: 30px; border-radius: 0; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); padding: 0 10px; font-size: 12.5px; }
-    .bsg-panel { position: absolute; right: 14px; top: 52px; width: 250px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
+    .bsg-panel { position: absolute; right: 14px; top: 52px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
     .bsg-panel.is-open { display: block; }
     .bsg-panel .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; color: var(--text-muted); }
     .bsg-panel input[type=range] { width: 120px; }
@@ -175,10 +175,13 @@
     .bsg-panel .row.focus .nm { color: var(--text-normal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsg-panel .row.focus .n { color: var(--text-muted); min-width: 36px; text-align: center; font-size: 12px; }
     .bsg-panel .row.focus .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); flex: none; } .bsg-panel .row.focus .ic:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-panel .row.focus .ic svg { width: 15px; height: 15px; }
     .bsg-panel .wide .li, .bsg-panel .btns button .li { margin-right: 6px; } .bsg-panel .wide, .bsg-panel .btns button { display: inline-flex; align-items: center; justify-content: center; }
-    .bsg-status {
     .bsg-focus { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); display: none; align-items: center; gap: 6px; padding: 4px 6px 4px 12px; background: var(--background-secondary); border: 1px solid var(--interactive-accent); border-radius: 0; clip-path: var(--bs-clip); font-size: 12.5px; z-index: 6; }
     .bsg-focus.is-on { display: flex; } .bsg-focus .t { color: var(--text-normal); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 4px; } .bsg-focus .n { min-width: 34px; text-align: center; color: var(--text-muted); }
     .bsg-focus button { width: 24px; height: 24px; padding: 0; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); } .bsg-focus button:hover { color: var(--text-normal); background: var(--background-modifier-hover); }
+    .bsg-panel .setting-item { padding: 8px 0; } .bsg-panel .setting-item-heading { padding-top: 14px; } .bsg-panel .setting-item-name { display: flex; align-items: center; }
+    .bsg-panel .bsg-si { display: inline-flex; width: 16px; height: 16px; margin-right: 8px; color: var(--interactive-accent); flex: none; } .bsg-panel .bsg-si svg { width: 16px; height: 16px; }
+    .bsg-panel .bsg-t2.is-enabled { background-color: #6e96be; }
+    .bsg-panel .bsg-off .setting-item-name, .bsg-panel .bsg-off .setting-item-description { opacity: .45; } .bsg-panel .bsg-solo { background: color-mix(in srgb, var(--interactive-accent) 12%, transparent); }
     .bsg-status { position: absolute; left: 14px; bottom: 10px; font-size: 11.5px; color: var(--text-faint); pointer-events: none; display: flex; gap: 14px; }
     .bsg-status b { color: var(--text-muted); font-weight: 600; }
     .bsg-empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--text-faint); pointer-events: none; }`;
@@ -199,9 +202,9 @@
     open2() {
       injectCss();
       const root = this.contentEl; root.empty && root.empty(); root.style.padding = "0"; root.style.overflow = "hidden"; root.style.position = "relative";
-      root.innerHTML = '<div class="bsg"><canvas></canvas><div class="bsg-top"></div><div class="bsg-panel"></div><div class="bsg-help"></div><div class="bsg-card"></div><div class="bsg-status"></div><div class="bsg-empty">В графе пока нет заметок</div></div>';
+      root.innerHTML = '<div class="bsg"><canvas></canvas><div class="bsg-top"></div><div class="bsg-panel"></div><div class="bsg-card"></div><div class="bsg-status"></div><div class="bsg-empty">В графе пока нет заметок</div></div>';
       this.root = root.querySelector(".bsg"); this.cv = this.root.querySelector("canvas"); this.ctx = this.cv.getContext("2d");
-      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = this.root.querySelector(".bsg-help"); this.buildHelp(); this.empty = this.root.querySelector(".bsg-empty");
+      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = { classList: { add() {}, remove() {}, contains() { return false; }, toggle() {} } }; this.empty = this.root.querySelector(".bsg-empty");
       this.ex = instance();
       this.buildTop(); this.buildPanel(); this.bind();
       this.alive = true; this.ready = true; VIEWS.add(this);
@@ -233,32 +236,26 @@
       setTimeout(() => { this.recovering = false; }, 1500);
     }
     // ---- chrome
-    buildHelp() {
-      const rows = [
-        ["Приблизить / отдалить", [["Scroll"]]],
-        ["Сдвинуть граф", [["Drag"], ["Shift", "Drag"]]],
-        ["Переместить узел (2D)", [["Drag"]]],
-        ["Выделить, подсветить связанные", [["Click"]]],
-        ["Открыть заметку", [["Double Click"]]],
-        ["Вписать граф в окно", [["Double Click"], ["0"]]],
-        ["Пометить несколько узлов", [["Shift", "Click"]]],
-        ["Меню: группа, скрыть, открыть", [["Right Click"]]],
-        ["Скрыть выделенное", [["Delete"], ["Backspace"]]],
-        ["Найти заметку", [["Ctrl", "F"], ["/"]]],
-        ["Следующий найденный", [["Enter"], ["Shift", "Enter"]]],
-        ["Снять выделение, закрыть окно", [["Esc"]]],
-        ["Отменить", [["Ctrl", "Z"]]],
-        ["Применить", [["Ctrl", "Y"], ["Ctrl", "Shift", "Z"]]],
-      ];
-      const h = this.helpEl; h.textContent = "";
-      const top = document.createElement("div"); top.className = "ht"; const t = document.createElement("span"); t.textContent = "Справка"; top.appendChild(t);
-      const x = document.createElement("button"); x.className = "hx"; x.title = "Закрыть"; if (api2().setIcon) api2().setIcon(x, "lucide-x"); else x.textContent = "x"; x.addEventListener("click", () => h.classList.remove("is-open")); top.appendChild(x); h.appendChild(top);
-      for (const [label, combos] of rows) {
-        const row = document.createElement("div"); row.className = "hr"; const l = document.createElement("span"); l.textContent = label; row.appendChild(l);
-        const ks = document.createElement("span"); ks.className = "ks";
-        for (const combo of combos) { const k = document.createElement("kbd"); k.textContent = combo.join(" + "); ks.appendChild(k); }
-        row.appendChild(ks); h.appendChild(row);
-      }
+    // the help is the application's own window (the same classes as the canvas help: mod-canvas-help, canvas-instruction, setting-hotkey)
+    openHelp() {
+      const m = new (api2().Modal)(this.app); m.modalEl.addClass("mod-canvas-help"); m.setTitle("Справка");
+      const box = m.contentEl.createDiv("canvas-help");
+      const row = (label, combos) => box.createDiv({ cls: "canvas-instruction" }, (rw) => { rw.createDiv({ cls: "canvas-instruction-label", text: label }); rw.createDiv({ cls: "canvas-instruction-desc" }, (d) => { for (const k of combos) d.createSpan({ cls: "setting-hotkey", text: k.join(" + ") }); }); });
+      row("Приблизить / отдалить", [["Scroll"]]);
+      row("Сдвинуть граф", [["Drag"], ["Shift", "Drag"]]);
+      row("Переместить узел (2D)", [["Drag"]]);
+      row("Выделить, подсветить связанные", [["Click"]]);
+      row("Открыть заметку", [["Double Click"]]);
+      row("Вписать граф в окно", [["Double Click"], ["0"]]);
+      row("Пометить несколько узлов", [["Shift", "Click"]]);
+      row("Меню: группа, скрыть, открыть", [["Right Click"]]);
+      row("Скрыть выделенное", [["Delete"], ["Backspace"]]);
+      row("Найти заметку", [["Ctrl", "F"], ["/"]]);
+      row("Следующий найденный", [["Enter"], ["Shift", "Enter"]]);
+      row("Снять выделение, закрыть окно", [["Esc"]]);
+      row("Отменить", [["Ctrl", "Z"]]);
+      row("Применить", [["Ctrl", "Y"], ["Ctrl", "Shift", "Z"]]);
+      m.open();
     }
     buildTop() {
       const t = this.top; t.textContent = "";
@@ -285,57 +282,48 @@
       const sp = document.createElement("div"); sp.className = "sp"; t.appendChild(sp);
       const mk = (icon, title, fn) => { const b = document.createElement("button"); b.className = "bsg-btn"; b.title = title; if (api2().setIcon) api2().setIcon(b, icon); b.addEventListener("click", fn); t.appendChild(b); return b; };
       mk("lucide-locate-fixed", "Вписать весь граф в окно (двойной клик по пустому месту)", () => this.fitView());
-      mk("lucide-circle-help", "Как управлять", () => { this.helpEl.classList.toggle("is-open"); this.panel.classList.remove("is-open"); });
+      mk("lucide-circle-help", "Справка", () => { this.panel.classList.remove("is-open"); this.openHelp(); });
       mk("lucide-settings", "Настройки графа", () => { this.panel.classList.toggle("is-open"); this.helpEl.classList.remove("is-open"); });
     }
     fitView() { this.ex.ge_freeze_bounds(0); this.ex.ge_fit(); this.dirty = true; this.frozen = false; setTimeout(() => { if (this.ex && !this.running) { this.ex.ge_freeze_bounds(1); this.frozen = true; } }, 1800); }
     buildPanel() {
-      const p = this.panel; p.textContent = ""; const c = this.c;
-      const icon = (host, name) => { const i = document.createElement("span"); i.className = "li"; if (api2().setIcon) api2().setIcon(i, name); host.appendChild(i); return i; };
-      const head = (t, ic) => { const h = document.createElement("div"); h.className = "hd"; if (ic) icon(h, ic); h.appendChild(document.createTextNode(t)); p.appendChild(h); return h; };
-      const row = (label, ic, hint, control) => { const r = document.createElement("div"); r.className = "row"; const l = document.createElement("span"); l.className = "lb"; if (ic) icon(l, ic); l.appendChild(document.createTextNode(label)); if (hint) r.title = hint; r.append(l, control); p.appendChild(r); return r; };
-      const box = (get, set, tip, cls) => { const i = document.createElement("input"); i.type = "checkbox"; i.checked = !!get(); if (tip) i.title = tip; if (cls) i.className = cls; i.addEventListener("change", () => { set(i.checked); save(c); }); return i; };
-      const check = (label, ic, hint, get, set) => row(label, ic, hint, box(get, set));
-      const slider = (label, ic, hint, key, min, max, step, apply) => { const i = document.createElement("input"); i.type = "range"; i.min = min; i.max = max; i.step = step; i.value = c[key]; i.addEventListener("input", () => { c[key] = +i.value; save(c); apply(); }); return row(label, ic, hint, i); };
-      // two ticks: the first puts the nodes in the graph, the second (other colour) draws them as pictures; off, they are plain balls
-      const pair = (label, ic, hint, g1, s1, g2, s2) => { const w = document.createElement("div"); w.className = "cbs"; w.append(box(g1, s1, "Показывать в графе"), box(g2, s2, "Рисовать значком-превью (выключено: простой шарик)", "cb2")); return row(label, ic, hint, w); };
-      const cap = document.createElement("div"); cap.className = "cap"; cap.innerHTML = "<span>в графе</span><span>значком</span>";
-      head("Что показывать", "lucide-eye"); p.appendChild(cap);
-      pair("Холсты", "lucide-layout-dashboard", "Файлы .canvas", () => c.canvases, (v) => { c.canvases = v; this.rebuild(); }, () => c.thumbCanvas, (v) => { c.thumbCanvas = v; this.dirty = true; });
-      pair("Картинки", "lucide-image", "Картинки, на которые есть ссылки", () => c.images, (v) => { c.images = v; this.rebuild(); }, () => c.thumbImg, (v) => { c.thumbImg = v; this.dirty = true; });
-      check("Заметки без связей", "lucide-circle-dashed", "Одиночные заметки, которые ни с чем не связаны", () => c.orphans, (v) => { c.orphans = v; this.rebuild(); });
-      check("Ссылки на несозданные", "lucide-file-question", "Заметки, на которые есть ссылка, но файла ещё нет", () => c.unresolved, (v) => { c.unresolved = v; this.rebuild(); });
+      const p = this.panel; p.textContent = ""; const c = this.c; const S = api2().Setting, ico = api2().setIcon;
+      const lead = (st, name) => { if (ico && name) { const i = document.createElement("span"); i.className = "bsg-si"; ico(i, name); st.nameEl.prepend(i); } return st; };
+      const heading = (t, name) => lead(new S(p).setName(t).setHeading(), name);
+      const toggle = (name, ic, desc, get, set) => lead(new S(p).setName(name).setDesc(desc || ""), ic).addToggle((t) => t.setValue(!!get()).onChange((v) => { set(v); save(c); }));
+      // two toggles in a row: the first puts the nodes in the graph, the second (other colour) draws them as pictures; off they are plain balls
+      const pair = (name, ic, desc, g1, s1, g2, s2) => lead(new S(p).setName(name).setDesc(desc), ic)
+        .addToggle((t) => { t.setTooltip("Показывать в графе"); t.setValue(!!g1()).onChange((v) => { s1(v); save(c); }); })
+        .addToggle((t) => { t.setTooltip("Рисовать значком (выключено: простой шарик)"); t.toggleEl.addClass("bsg-t2"); t.setValue(!!g2()).onChange((v) => { s2(v); save(c); }); });
+      const slider = (name, ic, desc, key, min, max, step, apply) => lead(new S(p).setName(name).setDesc(desc || ""), ic).addSlider((sl) => sl.setLimits(min, max, step).setValue(c[key]).setDynamicTooltip().onChange((v) => { c[key] = v; save(c); apply(); }));
+      heading("Что показывать", "lucide-eye");
+      pair("Холсты", "lucide-layout-dashboard", "Файлы .canvas: в графе / значком", () => c.canvases, (v) => { c.canvases = v; this.rebuild(); }, () => c.thumbCanvas, (v) => { c.thumbCanvas = v; this.dirty = true; });
+      pair("Картинки", "lucide-image", "Картинки со ссылками: в графе / значком", () => c.images, (v) => { c.images = v; this.rebuild(); }, () => c.thumbImg, (v) => { c.thumbImg = v; this.dirty = true; });
+      toggle("Заметки без связей", "lucide-circle-dashed", "Одиночные заметки, которые ни с чем не связаны", () => c.orphans, (v) => { c.orphans = v; this.rebuild(); });
+      toggle("Ссылки на несозданные", "lucide-file-question", "Ссылка есть, а файла ещё нет", () => c.unresolved, (v) => { c.unresolved = v; this.rebuild(); });
       if (type === "localgraph") slider("Глубина", "lucide-layers", "Сколько шагов от открытой заметки", "localDepth", 1, 6, 1, () => this.rebuild());
-      head("Вид", "lucide-palette");
-      const seg = document.createElement("div"); seg.className = "bsg-seg mini";
-      for (const [k, label] of [["auto", "Авто"], ["all", "Все"], ["none", "Нет"]]) { const b = document.createElement("button"); b.textContent = label; b.className = c.labelMode === k ? "is-on" : ""; b.addEventListener("click", () => { c.labelMode = k; save(c); for (const x of seg.children) x.classList.toggle("is-on", x === b); this.style(); }); seg.appendChild(b); }
-      row("Подписи", "lucide-type", "Авто: у главных узлов; Все: у каждого; Нет: без подписей", seg);
+      heading("Вид", "lucide-palette");
+      lead(new S(p).setName("Подписи").setDesc("Авто: у главных узлов"), "lucide-type").addDropdown((d) => d.addOptions({ auto: "Авто", all: "Все", none: "Нет" }).setValue(c.labelMode).onChange((v) => { c.labelMode = v; save(c); this.style(); }));
       slider("Размер узлов", "lucide-circle-dot", "", "nodeScale", 0.5, 2.5, 0.1, () => this.style());
       slider("Яркость связей", "lucide-sun", "", "edgeAlpha", 0.1, 1, 0.05, () => this.style());
-      head("Раскладка", "lucide-network");
+      heading("Раскладка", "lucide-network");
       slider("Длина связей", "lucide-ruler", "", "linkDistance", 10, 120, 2, () => this.forces());
-      slider("Притяжение", "lucide-magnet", "Насколько сильно связанные узлы тянутся друг к другу", "linkStrength", 0.1, 1.5, 0.05, () => this.forces());
-      const rb = document.createElement("div"); rb.className = "btns";
-      const mkb = (label, ic, title, fn) => { const b = document.createElement("button"); icon(b, ic); b.appendChild(document.createTextNode(label)); b.title = title; b.addEventListener("click", fn); rb.appendChild(b); };
-      mkb("Сбросить", "lucide-rotate-ccw", "Вернуть длину и притяжение по умолчанию", () => { c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); });
-      mkb("Пересчитать", "lucide-shuffle", "Раскидать узлы заново", () => { this.ex.ge_reheat(1); this.running = true; });
-      p.appendChild(rb);
-      this.panelFocus(p, head, icon);
-      this.panelGroups(p);
+      slider("Притяжение", "lucide-magnet", "Насколько связанные узлы тянутся друг к другу", "linkStrength", 0.1, 1.5, 0.05, () => this.forces());
+      new S(p)
+        .addButton((b) => b.setIcon("lucide-rotate-ccw").setTooltip("Сбросить длину и притяжение").onClick(() => { c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); }))
+        .addButton((b) => b.setIcon("lucide-shuffle").setTooltip("Пересчитать: раскидать узлы заново").onClick(() => { this.ex.ge_reheat(1); this.running = true; }));
+      this.panelFocus(p, heading);
+      this.panelGroups(p, heading);
     }
-    // the focus (a picture built around some nodes) is a part of the settings, with the same icon buttons as the rest
-    panelFocus(p, head, icon) {
+    // the focus (a picture built around some nodes) is a part of the settings
+    panelFocus(p, heading) {
       if (!STORE.focusKeys.length) return;
-      head("Фокус", "lucide-focus");
+      heading("Фокус", "lucide-focus");
       const nm = STORE.focusKeys.length === 1 ? STORE.focusKeys[0].split("/").pop().replace(/[.]md$/, "") : STORE.focusKeys.length + " узлов";
-      const r = document.createElement("div"); r.className = "row focus";
-      const l = document.createElement("span"); l.className = "lb nm"; l.textContent = nm; r.appendChild(l);
-      const mk = (ic, title, fn) => { const b = document.createElement("button"); b.className = "ic"; b.title = title; icon(b, ic); b.addEventListener("click", fn); r.appendChild(b); return b; };
-      mk("lucide-minus", "Меньше окружения", () => { STORE.fdepth = Math.max(0, STORE.fdepth - 1); saveStore(); this.afterState(); });
-      const n = document.createElement("span"); n.className = "n"; n.textContent = STORE.fdepth + " ур."; r.appendChild(n);
-      mk("lucide-plus", "Больше окружения", () => { STORE.fdepth = Math.min(6, STORE.fdepth + 1); saveStore(); this.afterState(); });
-      mk("lucide-x", "Показать весь граф", () => this.clearFocus());
-      p.appendChild(r);
+      new (api2().Setting)(p).setName(nm).setDesc(STORE.fdepth + " ур. окружения")
+        .addExtraButton((b) => b.setIcon("lucide-minus").setTooltip("Меньше окружения").onClick(() => { STORE.fdepth = Math.max(0, STORE.fdepth - 1); saveStore(); this.afterState(); }))
+        .addExtraButton((b) => b.setIcon("lucide-plus").setTooltip("Больше окружения").onClick(() => { STORE.fdepth = Math.min(6, STORE.fdepth + 1); saveStore(); this.afterState(); }))
+        .addExtraButton((b) => b.setIcon("lucide-x").setTooltip("Показать весь граф").onClick(() => this.clearFocus()));
     }
     setMode(m) { const was = this.c.view; this.c.view = m === "3d" ? "3d" : "2d"; save(this.c); if (this.ready && this.W && was !== this.c.view) { this.fade = null; this.anim = { t0: performance.now(), dur: 750, img: this.snap("A") }; } this.ex && this.ex.ge_set_mode(this.c.view === "3d" ? 3 : 2); for (const k in this.segBtns) this.segBtns[k].classList.toggle("is-on", k === this.c.view); this.running = true; this.dirty = true; }
     style() {
@@ -555,35 +543,31 @@
       else if (n.kind === "canvas" && window.__fpRenderNested) { const cv = document.createElement("canvas"); box.appendChild(cv); el.appendChild(box); Promise.resolve(window.__fpRenderNested(f, 512)).then((r) => { if (!r || !r.bmp) { box.remove(); return; } const W = 560, H = 300; cv.width = W; cv.height = H; const g = cv.getContext("2d"), k = Math.min(W / r.bmp.width, H / r.bmp.height); g.drawImage(r.bmp, (W - r.bmp.width * k) / 2, (H - r.bmp.height * k) / 2, r.bmp.width * k, r.bmp.height * k); }).catch(() => box.remove()); }
     }
     // groups you make yourself and the notes you hid: both live in the panel and in the right-click menu
-    panelGroups(p) {
-      const head = (t) => { const h = document.createElement("div"); h.className = "hd"; h.textContent = t; p.appendChild(h); return h; };
-      const hg = head("Группы"); if (api2().setIcon) { const i = document.createElement("span"); i.className = "li"; api2().setIcon(i, "lucide-folder-tree"); hg.prepend(i); }
+    panelGroups(p, heading) {
+      const S = api2().Setting; heading("Группы", "lucide-folder-tree");
       const counts = {}; for (const k of Object.values(STORE.assign)) counts[k] = (counts[k] || 0) + 1;
-      const ico = (b, name, fallback) => { if (api2().setIcon) api2().setIcon(b, name); else b.textContent = fallback; };
       const apply = () => { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); };
-      if (!STORE.groups.length) { const e = document.createElement("div"); e.className = "mute"; e.textContent = "Групп нет. Правая кнопка по узлу, «Группа», или кнопка ниже."; p.appendChild(e); }
+      if (!STORE.groups.length) new S(p).setDesc("Групп нет. Правая кнопка по узлу, «Группа», или кнопка ниже.");
       for (const g of STORE.groups) {
-        const r = document.createElement("div"); r.className = "row grp" + (g.hidden ? " is-off" : "") + (STORE.solo.includes(g.id) ? " is-solo" : "");
-        const col = document.createElement("input"); col.type = "color"; col.value = g.color; col.addEventListener("input", () => { g.color = col.value; saveStore(); this.dirty = true; });
-        const nm = document.createElement("input"); nm.type = "text"; nm.value = g.name; nm.className = "nm"; nm.readOnly = !!g.system; nm.addEventListener("change", () => { g.name = nm.value.trim() || g.name; saveStore(); });
-        const n = document.createElement("span"); n.className = "n"; n.textContent = counts[g.id] || 0;
-        const eye = document.createElement("button"); eye.className = "ic"; eye.title = g.hidden ? "Показать группу" : "Скрыть группу"; ico(eye, g.hidden ? "lucide-eye-off" : "lucide-eye", g.hidden ? "—" : "o"); eye.addEventListener("click", () => { g.hidden = !g.hidden; if (g.hidden) STORE.solo = STORE.solo.filter((x) => x !== g.id); saveStore(); apply(); });
-        const only = document.createElement("button"); only.className = "ic" + (STORE.solo.includes(g.id) ? " on" : ""); only.title = "Показать только эту группу (Shift: добавить ещё)"; ico(only, "lucide-focus", "◎");
-        only.addEventListener("click", (e) => { const on = STORE.solo.includes(g.id); if (e.shiftKey) STORE.solo = on ? STORE.solo.filter((x) => x !== g.id) : [...STORE.solo, g.id]; else STORE.solo = on && STORE.solo.length === 1 ? [] : [g.id]; if (STORE.solo.length) g.hidden = false; saveStore(); apply(); });
-        r.append(col, nm, n, eye, only);
-        if (!g.system) { const del = document.createElement("button"); del.className = "ic"; del.title = "Удалить группу"; ico(del, "lucide-trash-2", "×"); del.addEventListener("click", () => { STORE.groups = STORE.groups.filter((x) => x !== g); STORE.solo = STORE.solo.filter((x) => x !== g.id); for (const k of Object.keys(STORE.assign)) if (STORE.assign[k] === g.id) delete STORE.assign[k]; saveStore(); apply(); }); r.appendChild(del); }
-        p.appendChild(r);
+        const st = new S(p).setName(g.name).setDesc((counts[g.id] || 0) + " узлов");
+        st.settingEl.toggleClass("bsg-off", !!g.hidden); st.settingEl.toggleClass("bsg-solo", STORE.solo.includes(g.id));
+        if (!g.system) st.addColorPicker((cp) => cp.setValue(g.color).onChange((v) => { g.color = v; saveStore(); this.dirty = true; }));
+        st.addExtraButton((b) => b.setIcon(g.hidden ? "lucide-eye-off" : "lucide-eye").setTooltip(g.hidden ? "Показать группу" : "Скрыть группу").onClick(() => { g.hidden = !g.hidden; if (g.hidden) STORE.solo = STORE.solo.filter((x) => x !== g.id); saveStore(); apply(); }));
+        st.addExtraButton((b) => b.setIcon("lucide-focus").setTooltip("Показать только эту группу (Shift: добавить ещё)").onClick(() => {
+          const on = STORE.solo.includes(g.id), sh = window.event && window.event.shiftKey;
+          if (sh) STORE.solo = on ? STORE.solo.filter((x) => x !== g.id) : [...STORE.solo, g.id]; else STORE.solo = on && STORE.solo.length === 1 ? [] : [g.id];
+          if (STORE.solo.length) g.hidden = false; saveStore(); apply();
+        }));
+        if (!g.system) st.addExtraButton((b) => b.setIcon("lucide-trash-2").setTooltip("Удалить группу").onClick(() => { STORE.groups = STORE.groups.filter((x) => x !== g); STORE.solo = STORE.solo.filter((x) => x !== g.id); for (const k of Object.keys(STORE.assign)) if (STORE.assign[k] === g.id) delete STORE.assign[k]; saveStore(); apply(); }));
+        if (!g.system) { const nameInput = st.nameEl; nameInput.setAttribute("contenteditable", "true"); nameInput.addEventListener("blur", () => { const t = nameInput.textContent.trim(); if (t && t !== g.name) { g.name = t; saveStore(); } }); nameInput.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); nameInput.blur(); } }); }
       }
       if (STORE.solo.length) {
         // only the chosen groups are shown, plus what is around them: how far, and how many at most
-        const box = document.createElement("div"); box.className = "focusbox";
-        const t = document.createElement("div"); t.className = "mute"; t.textContent = "Показано: выбранные группы и всё вокруг них"; box.appendChild(t);
-        const mkS = (label, key, min, max, step) => { const rr = document.createElement("div"); rr.className = "row"; const l = document.createElement("span"); l.textContent = label; const i = document.createElement("input"); i.type = "range"; i.min = min; i.max = max; i.step = step; i.value = STORE[key]; const v = document.createElement("b"); v.textContent = STORE[key]; i.addEventListener("input", () => { STORE[key] = +i.value; v.textContent = i.value; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }); rr.append(l, i, v); box.appendChild(rr); };
-        mkS("Уровней от группы", "depth", 0, 5, 1); mkS("Узлов не больше", "max", 10, 500, 10);
-        const off = document.createElement("button"); off.className = "wide"; ico(off, "lucide-eye", ""); off.appendChild(document.createTextNode("Показать весь граф")); off.addEventListener("click", () => this.clearFocus()); box.appendChild(off);
-        p.appendChild(box);
+        new S(p).setName("Уровней от группы").setDesc("Что вокруг выбранных групп").addSlider((sl) => sl.setLimits(0, 5, 1).setValue(STORE.depth).setDynamicTooltip().onChange((v) => { STORE.depth = v; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }));
+        new S(p).setName("Узлов не больше").addSlider((sl) => sl.setLimits(10, 500, 10).setValue(STORE.max).setDynamicTooltip().onChange((v) => { STORE.max = v; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }));
+        new S(p).addButton((b) => b.setButtonText("Показать весь граф").onClick(() => this.clearFocus()));
       }
-      const add = document.createElement("button"); add.className = "wide"; ico(add, "lucide-plus", "+"); add.appendChild(document.createTextNode("Новая группа")); add.addEventListener("click", () => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }); p.appendChild(add);
+      new S(p).addButton((b) => b.setButtonText("Новая группа").onClick(() => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }));
     }
     newGroup(name, keys) {
       const g = { id: "g" + Date.now().toString(36), name: name || "Группа " + (STORE.groups.length + 1), color: GROUP_COLORS[STORE.groups.length % GROUP_COLORS.length] };
@@ -598,36 +582,33 @@
     clearFocus() { STORE.focusKeys = []; STORE.solo = []; saveStore(); this.afterState(); }
     afterState() { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); this.updateFocusBar(); }
     updateFocusBar() { /* the focus lives in the settings now */ }
-    closeMenu() { if (this.menuEl) { this.menuEl.remove(); this.menuEl = null; } if (this.menuOff) { document.removeEventListener("pointerdown", this.menuOff, true); document.removeEventListener("keydown", this.menuKey, true); this.menuOff = null; } }
+    closeMenu() { if (this.menu) { try { this.menu.hide(); } catch (e) { /* closed */ } this.menu = null; } }
     showMenu(cx, cy, hit) {
       this.closeMenu();
-      const m = document.createElement("div"); m.className = "bsg-menu"; this.menuEl = m; this.root.appendChild(m);
+      const Menu = api2().Menu, m = this.menu = new Menu();
       const tg = this.targets(hit), many = tg.length > 1, nodes = tg.map((i) => this.g.nodes[i]).filter(Boolean);
-      const item = (label, fn, o = {}) => { const b = document.createElement("div"); b.className = "it" + (o.sub ? " sub" : "") + (o.off ? " off" : ""); if (o.dot) { const d = document.createElement("i"); d.style.background = o.dot; b.appendChild(d); } const t = document.createElement("span"); t.textContent = label; b.appendChild(t); if (o.check) { const c = document.createElement("b"); c.textContent = "✓"; b.appendChild(c); } if (!o.off) b.addEventListener("click", () => { this.closeMenu(); fn(); }); m.appendChild(b); return b; };
-      const sep = () => { const d = document.createElement("div"); d.className = "sp"; m.appendChild(d); };
-      const title = (t) => { const d = document.createElement("div"); d.className = "ti"; d.textContent = t; m.appendChild(d); };
+      const add = (menu, title, icon, fn, o = {}) => menu.addItem((it) => { it.setTitle(title).setIcon(icon).onClick(fn); if (o.checked) it.setChecked(true); if (o.disabled) it.setDisabled(true); if (o.section) it.setSection(o.section); });
       if (nodes.length) {
-        title(many ? nodes.length + " узлов" : nodes[0].name);
-        if (!many && nodes[0].file) { item("Открыть", () => this.openNote(hit, false)); item("Открыть в новой вкладке", () => this.openNote(hit, true)); }
-        sep(); title("Группа");
-        for (const g of STORE.groups) item(g.name, () => { for (const n of nodes) STORE.assign[n.key] = g.id; saveStore(); this.buildPanel(); this.dirty = true; }, { dot: g.color, check: nodes.every((n) => STORE.assign[n.key] === g.id), sub: true });
-        item("Новая группа…", () => this.newGroup("", nodes.map((n) => n.key)), { sub: true });
-        if (nodes.some((n) => STORE.assign[n.key])) item("Убрать из группы", () => { for (const n of nodes) delete STORE.assign[n.key]; saveStore(); this.buildPanel(); this.dirty = true; }, { sub: true });
-        sep();
-        item(many ? "Скрыть выбранные" : "Скрыть", () => this.hideNodes(tg));
-        item(many ? "Показать только их и окружение" : "Показать только его и окружение", () => this.focusOn(tg));
-        if (this.multi && this.multi.size) item("Снять выбор", () => { this.multi = new Set(); this.dirty = true; });
+        if (!many && nodes[0].file) { add(m, "Открыть", "lucide-file-text", () => this.openNote(hit, false)); add(m, "Открыть в новой вкладке", "lucide-file-plus", () => this.openNote(hit, true)); m.addSeparator(); }
+        m.addItem((it) => {
+          it.setTitle("Группа").setIcon("lucide-folder-tree"); const sub = it.setSubmenu();
+          for (const g of STORE.groups) { if (g.system) continue; sub.addItem((x) => x.setTitle(g.name).setIcon("lucide-circle").setChecked(nodes.every((n) => STORE.assign[n.key] === g.id)).onClick(() => { for (const n of nodes) STORE.assign[n.key] = g.id; saveStore(); this.buildPanel(); this.dirty = true; })); }
+          if (STORE.groups.some((g) => !g.system)) sub.addSeparator();
+          sub.addItem((x) => x.setTitle("Новая группа…").setIcon("lucide-plus").onClick(() => this.newGroup("", nodes.map((n) => n.key))));
+          if (nodes.some((n) => STORE.assign[n.key])) sub.addItem((x) => x.setTitle("Убрать из группы").setIcon("lucide-minus").onClick(() => { for (const n of nodes) delete STORE.assign[n.key]; saveStore(); this.buildPanel(); this.dirty = true; }));
+        });
+        m.addSeparator();
+        add(m, many ? "Скрыть выбранные" : "Скрыть", "lucide-eye-off", () => this.hideNodes(tg));
+        add(m, many ? "Показать только их и окружение" : "Показать только его и окружение", "lucide-focus", () => this.focusOn(tg));
+        if (this.multi && this.multi.size) { m.addSeparator(); add(m, "Снять выбор", "lucide-x", () => { this.multi = new Set(); this.dirty = true; }); }
       } else {
-        title("Граф");
-        item("Вписать в окно", () => this.fitView());
-        if (STORE.solo.length || STORE.focusKeys.length) item("Показать весь граф", () => this.clearFocus());
-        item("Новая группа…", () => this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)));
-        item("Настройки графа", () => this.panel.classList.add("is-open"));
-        if (this.multi && this.multi.size) item("Снять выбор", () => { this.multi = new Set(); this.dirty = true; });
+        add(m, "Вписать в окно", "lucide-locate-fixed", () => this.fitView());
+        if (STORE.solo.length || STORE.focusKeys.length) add(m, "Показать весь граф", "lucide-eye", () => this.clearFocus());
+        add(m, "Новая группа…", "lucide-plus", () => this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)));
+        add(m, "Настройки графа", "lucide-settings", () => this.panel.classList.add("is-open"));
+        if (this.multi && this.multi.size) { m.addSeparator(); add(m, "Снять выбор", "lucide-x", () => { this.multi = new Set(); this.dirty = true; }); }
       }
-      const rc = this.root.getBoundingClientRect(); m.style.left = Math.min(cx - rc.left, rc.width - 240) + "px"; m.style.top = Math.min(cy - rc.top, Math.max(10, rc.height - m.offsetHeight - 10)) + "px";
-      this.menuOff = (e) => { if (!m.contains(e.target)) this.closeMenu(); }; this.menuKey = (e) => { if (e.key === "Escape") this.closeMenu(); };
-      setTimeout(() => { document.addEventListener("pointerdown", this.menuOff, true); document.addEventListener("keydown", this.menuKey, true); }, 0);
+      m.showAtPosition({ x: cx, y: cy });
     }
     // nodes of your own groups are drawn over the engine's balls in the colour of the group; marked nodes get a ring
     drawGroups(ex) {

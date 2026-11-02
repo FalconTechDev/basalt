@@ -98,7 +98,7 @@ patch(
   'if(!Bg.isModEvent(e)){'
 );
 // the classes our own views are built on, for scripts outside the bundle
-patch('this.cli=new CA(this),o.addClass("obsidian-app")', 'window.__bsApi={ItemView:Yg,Modal:tb,Notice:fb,Menu:Ug,setIcon:tv},this.cli=new CA(this),o.addClass("obsidian-app")');
+patch('this.cli=new CA(this),o.addClass("obsidian-app")', 'window.__bsApi={ItemView:Yg,Modal:tb,Notice:fb,Menu:Ug,setIcon:tv,Setting:zk},this.cli=new CA(this),o.addClass("obsidian-app")');
 // Basalt keeps its own settings folder (.basalt) so changing the theme or plugins in Obsidian never touches it. On the first
 // open of a vault the Obsidian folder is copied over once.
 patch('var YT=".obsidian",', 'var YT=".basalt",');
