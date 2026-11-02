@@ -98,6 +98,7 @@
     }
     .modal:not(.mod-settings), .prompt, .menu, .suggestion-container, .popover, .notice { border-radius: 0; }
     .menu-item, .suggestion-item { border-radius: 0; }
+    .status-bar { border-radius: 0; }
     /* tabs: a flat strip, the open tab lifts to the page colour and carries an accent line on top */
     .workspace-tab-header { position: relative; transition: background .12s, color .12s; border-radius: 0; }
     .workspace-tab-header-inner-title { font-weight: 500; letter-spacing: .01em; }

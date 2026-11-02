@@ -132,8 +132,8 @@
       h.__redraw = draw; draw();
     });
 
-    add("mini", "mini-features", "mods", (h) => {
-      const mf = window.__bsMiniFeatures; if (!mf) { row(h, "mini-features", "Модуль не загружен.", document.createElement("span")); return; }
+    add("mini", "Мини-функции", "mods", (h) => {
+      const mf = window.__bsMiniFeatures; if (!mf) { row(h, "Мини-функции", "Модуль не загружен.", document.createElement("span")); return; }
       head(h, "Картинки");
       mf.section(h, row, toggle, select, text);
     });

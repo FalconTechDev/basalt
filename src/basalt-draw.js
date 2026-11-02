@@ -427,7 +427,7 @@
     const code = pre.querySelector("code"); if (!code || !/language-basalt-draw/.test(code.className) || pre.dataset.bsd) return;
     pre.dataset.bsd = "1"; const src = code.textContent, d = parse(src) || blank();
     const box = document.createElement("div"); box.className = "bsd"; box.appendChild(svgOf(d));
-    const b = document.createElement("button"); b.className = "bsd-edit"; b.textContent = "✎ Рисовать"; const host = pre.closest(".canvas-node");
+    const b = document.createElement("button"); b.className = "bsd-edit"; b.textContent = "Рисовать"; try { const ic = document.createElement("span"); window.__bsApi.setIcon(ic, "lucide-pencil"); b.prepend(ic); } catch (e) { /* ok */ } const host = pre.closest(".canvas-node");
     b.addEventListener("click", (e) => { e.stopPropagation(); editor(d, sourceUpdater(host, src)); });
     for (const ev of ["pointerdown", "mousedown", "dblclick"]) b.addEventListener(ev, (e) => e.stopPropagation());
     box.appendChild(b); pre.replaceWith(box); if (host) host.classList.add("bsd-card");

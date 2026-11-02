@@ -14,6 +14,7 @@
   const STORE = { groups: [], assign: {}, solo: [], depth: 1, max: 150, focusKeys: [], fdepth: 1, loaded: false };
   const VIEWS = new Set(); // every open graph view of the vault
   const HIDDEN_ID = "hidden"; // the built-in group "Скрытые": what you hide goes there, its eye is off
+  const plural = (n) => { const a = n % 100, b = n % 10; return n + (a > 10 && a < 15 ? " узлов" : b === 1 ? " узел" : b > 1 && b < 5 ? " узла" : " узлов"); };
   const GROUP_COLORS = ["#c98d5b", "#6e96be", "#7fbe8b", "#af8ceb", "#e17878", "#e6be5a", "#5abebe", "#dccdb9"];
   const storeFile = () => app.vault.configDir + "/graph-groups.json";
   async function loadStore() {
@@ -241,20 +242,20 @@
       const m = new (api2().Modal)(this.app); m.modalEl.addClass("mod-canvas-help"); m.setTitle("Справка");
       const box = m.contentEl.createDiv("canvas-help");
       const row = (label, combos) => box.createDiv({ cls: "canvas-instruction" }, (rw) => { rw.createDiv({ cls: "canvas-instruction-label", text: label }); rw.createDiv({ cls: "canvas-instruction-desc" }, (d) => { for (const k of combos) d.createSpan({ cls: "setting-hotkey", text: k.join(" + ") }); }); });
-      row("Приблизить / отдалить", [["Scroll"]]);
-      row("Сдвинуть граф", [["Drag"], ["Shift", "Drag"]]);
-      row("Переместить узел (2D)", [["Drag"]]);
-      row("Выделить, подсветить связанные", [["Click"]]);
-      row("Открыть заметку", [["Double Click"]]);
-      row("Вписать граф в окно", [["Double Click"], ["0"]]);
-      row("Пометить несколько узлов", [["Shift", "Click"]]);
-      row("Меню: группа, скрыть, открыть", [["Right Click"]]);
+      row("Приблизить / отдалить", [["Колесо"]]);
+      row("Сдвинуть граф", [["Перетащить"], ["Shift", "Перетащить"]]);
+      row("Переместить узел (2D)", [["Перетащить"]]);
+      row("Выделить, подсветить связанные", [["Клик"]]);
+      row("Открыть заметку", [["Двойной клик"]]);
+      row("Вписать граф в окно", [["Двойной клик"], ["0"]]);
+      row("Пометить несколько узлов", [["Shift", "Клик"]]);
+      row("Меню: группа, скрыть, открыть", [["Правый клик"]]);
       row("Скрыть выделенное", [["Delete"], ["Backspace"]]);
       row("Найти заметку", [["Ctrl", "F"], ["/"]]);
       row("Следующий найденный", [["Enter"], ["Shift", "Enter"]]);
       row("Снять выделение, закрыть окно", [["Esc"]]);
       row("Отменить", [["Ctrl", "Z"]]);
-      row("Применить", [["Ctrl", "Y"], ["Ctrl", "Shift", "Z"]]);
+      row("Повторить", [["Ctrl", "Y"], ["Ctrl", "Shift", "Z"]]);
       m.open();
     }
     buildTop() {
@@ -319,7 +320,7 @@
     panelFocus(p, heading) {
       if (!STORE.focusKeys.length) return;
       heading("Фокус", "lucide-focus");
-      const nm = STORE.focusKeys.length === 1 ? STORE.focusKeys[0].split("/").pop().replace(/[.]md$/, "") : STORE.focusKeys.length + " узлов";
+      const nm = STORE.focusKeys.length === 1 ? STORE.focusKeys[0].split("/").pop().replace(/[.]md$/, "") : plural(STORE.focusKeys.length);
       new (api2().Setting)(p).setName(nm).setDesc(STORE.fdepth + " ур. окружения")
         .addExtraButton((b) => b.setIcon("lucide-minus").setTooltip("Меньше окружения").onClick(() => { STORE.fdepth = Math.max(0, STORE.fdepth - 1); saveStore(); this.afterState(); }))
         .addExtraButton((b) => b.setIcon("lucide-plus").setTooltip("Больше окружения").onClick(() => { STORE.fdepth = Math.min(6, STORE.fdepth + 1); saveStore(); this.afterState(); }))
@@ -549,7 +550,7 @@
       const apply = () => { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); };
       if (!STORE.groups.length) new S(p).setDesc("Групп нет. Правая кнопка по узлу, «Группа», или кнопка ниже.");
       for (const g of STORE.groups) {
-        const st = new S(p).setName(g.name).setDesc((counts[g.id] || 0) + " узлов");
+        const st = new S(p).setName(g.name).setDesc(plural(counts[g.id] || 0));
         st.settingEl.toggleClass("bsg-off", !!g.hidden); st.settingEl.toggleClass("bsg-solo", STORE.solo.includes(g.id));
         if (!g.system) st.addColorPicker((cp) => cp.setValue(g.color).onChange((v) => { g.color = v; saveStore(); this.dirty = true; }));
         st.addExtraButton((b) => b.setIcon(g.hidden ? "lucide-eye-off" : "lucide-eye").setTooltip(g.hidden ? "Показать группу" : "Скрыть группу").onClick(() => { g.hidden = !g.hidden; if (g.hidden) STORE.solo = STORE.solo.filter((x) => x !== g.id); saveStore(); apply(); }));
@@ -570,7 +571,8 @@
       new S(p).addButton((b) => b.setButtonText("Новая группа").onClick(() => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }));
     }
     newGroup(name, keys) {
-      const g = { id: "g" + Date.now().toString(36), name: name || "Группа " + (STORE.groups.length + 1), color: GROUP_COLORS[STORE.groups.length % GROUP_COLORS.length] };
+      const uniqueName = () => { let i = STORE.groups.length + 1; while (STORE.groups.some((x) => x.name === "Группа " + i)) i++; return "Группа " + i; };
+      const g = { id: "g" + Date.now().toString(36), name: name || uniqueName(), color: GROUP_COLORS[STORE.groups.length % GROUP_COLORS.length] };
       STORE.groups.push(g); for (const k of keys) STORE.assign[k] = g.id; saveStore(); this.buildPanel(); this.dirty = true; return g;
     }
     groupOf(n) { const id = STORE.assign[n.key]; return id ? STORE.groups.find((g) => g.id === id) : null; }

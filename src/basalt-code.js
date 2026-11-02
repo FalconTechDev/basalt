@@ -119,8 +119,8 @@
     if (!lang) return;
     pre.dataset.basaltRun = "1";
     const bar = document.createElement("div"); bar.className = "basalt-run-bar";
-    const run = document.createElement("button"); run.className = "mod-cta"; run.textContent = "▶ Запустить";
-    const stop = document.createElement("button"); stop.textContent = "■ Стоп"; stop.style.display = "none";
+    const run = document.createElement("button"); run.className = "mod-cta"; run.textContent = "Запустить"; try { const ic = document.createElement("span"); window.__bsApi.setIcon(ic, "lucide-play"); run.prepend(ic); } catch (e) { /* ok */ }
+    const stop = document.createElement("button"); stop.textContent = "Стоп"; try { const ic = document.createElement("span"); window.__bsApi.setIcon(ic, "lucide-square"); stop.prepend(ic); } catch (e) { /* ok */ } stop.style.display = "none";
     const info = document.createElement("span"); info.textContent = LABEL[lang] + " · процесс в отдельной папке, лимит 15 с";
     bar.append(run, stop, info);
     pre.after(bar);

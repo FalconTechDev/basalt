@@ -37,7 +37,7 @@ if (!process.argv.includes("--no-cargo")) {
   execSync("cargo build --release", { cwd: pty, stdio: "inherit", env: { ...process.env, CARGO_TARGET_DIR: ptarget } });
 }
 const exe = path.join(ptarget, "release", process.platform === "win32" ? "basalt-pty.exe" : "basalt-pty");
-if (fs.existsSync(exe)) { fs.mkdirSync(path.join(src, "bin"), { recursive: true }); fs.copyFileSync(exe, path.join(src, "bin", path.basename(exe))); }
+if (fs.existsSync(exe)) { fs.mkdirSync(path.join(src, "bin"), { recursive: true }); const dst = path.join(src, "bin", path.basename(exe)); try { if (!fs.existsSync(dst) || fs.statSync(dst).size !== fs.statSync(exe).size) fs.copyFileSync(exe, dst); } catch (e) { console.warn("pty exe is busy, kept the old one"); } }
 
 // the note search (Rust/WASM index) -> src/basalt-search.js
 const seng = path.join(root, "search-engine");

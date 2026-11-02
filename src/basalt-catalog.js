@@ -95,7 +95,7 @@
     const wrap = document.createElement("div"); wrap.className = "modal-container mod-dim";
     wrap.innerHTML = '<div class="modal-bg"></div><div class="modal bsc"><div class="modal-close-button"></div><div class="bsc-head"><div class="bsc-title">Плагины</div><div class="bsc-sub">Установка напрямую из GitHub: без магазина и модерации. Плагины на Wasm изолированы, JS-плагины получают полный доступ.</div></div><div class="bsc-add"><input type="text" placeholder="Поиск по сообществу, либо owner/repo для прямой установки"><button class="mod-cta">Установить</button></div><div class="bsc-tabs"></div><div class="bsc-body"></div></div>';
     const q = (s) => wrap.querySelector(s), body = q(".bsc-body"), input = q("input");
-    const prev = document.activeElement; const close = () => { wrap.remove(); try { prev && prev.focus && prev.focus(); } catch (e) { /* gone */ } };
+    const prev = document.activeElement; const onEsc = (e) => { if (e.key === "Escape") close(); }; document.addEventListener("keydown", onEsc, true); const close = () => { document.removeEventListener("keydown", onEsc, true); wrap.remove(); try { prev && prev.focus && prev.focus(); } catch (e) { /* gone */ } };
     q(".modal-close-button").addEventListener("click", close); q(".modal-bg").addEventListener("click", close);
     wrap.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
     let tab = "community", shown = 60, lastQuery = "";

@@ -12,7 +12,7 @@
     @keyframes bsv-in { from { opacity: 0; } to { opacity: 1; } }
     .bsv-stage { flex: 1; position: relative; overflow: hidden; cursor: grab; touch-action: none; }
     .bsv-stage.is-drag { cursor: grabbing; }
-    .bsv-stage img { position: absolute; left: 0; top: 0; transform-origin: 0 0; max-width: none; max-height: none; will-change: transform; -webkit-user-drag: none; user-select: none; pointer-events: none; box-shadow: 0 12px 50px rgba(0,0,0,.6); }
+    .bsv-stage img { position: absolute; left: 0; top: 0; transform-origin: 0 0; max-width: none; max-height: none; will-change: transform; -webkit-user-drag: none; user-select: none; pointer-events: none; }
     .bsv-stage img.is-px { image-rendering: pixelated; }
     .bsv-title { position: absolute; left: 18px; top: 14px; display: flex; flex-direction: column; gap: 2px; padding: 8px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  max-width: 46vw; }
     .bsv-title b { color: var(--text-normal); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsv-title small { color: var(--text-muted); }

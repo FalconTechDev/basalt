@@ -64,6 +64,6 @@
       if (Date.now() - started < 4000 || !f || f.children || !IMG.test(f.extension || "")) return;
       setTimeout(() => place(f), 900); window.__bsMiniFeatures.last = ["scheduled", f.path];
     });
-    app.commands.addCommand({ id: "mini-features:move-images", name: "mini-features: перенести картинки открытой заметки в папку картинок", checkCallback: (chk) => { const host = app.workspace.getActiveFile(); if (!host) return false; if (chk) return true; (async () => { const links = Object.keys((app.metadataCache.resolvedLinks || {})[host.path] || {}).map((p) => app.vault.getAbstractFileByPath(p)).filter((f) => f && IMG.test(f.extension || "")); const was = cfg.images.enabled; cfg.images.enabled = true; for (const f of links) await place(f); cfg.images.enabled = was; notice(`Проверено картинок: ${links.length}`); })(); return true; } });
+    app.commands.addCommand({ id: "mini-features:move-images", name: "Мини-функции: перенести картинки открытой заметки в папку картинок", checkCallback: (chk) => { const host = app.workspace.getActiveFile(); if (!host) return false; if (chk) return true; (async () => { const links = Object.keys((app.metadataCache.resolvedLinks || {})[host.path] || {}).map((p) => app.vault.getAbstractFileByPath(p)).filter((f) => f && IMG.test(f.extension || "")); const was = cfg.images.enabled; cfg.images.enabled = true; for (const f of links) await place(f); cfg.images.enabled = was; notice(`Проверено картинок: ${links.length}`); })(); return true; } });
   }, 800);
 })();
