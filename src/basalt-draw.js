@@ -23,6 +23,7 @@
     .bsd-tb button { background: transparent; box-shadow: none; clip-path: none; width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--bs-r); color: var(--text-muted); }
     .bsd-tb button:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .bsd-tb button.is-on { background: color-mix(in srgb, var(--interactive-accent) 24%, transparent); color: var(--interactive-accent); }
     .bsd-tb button svg { width: 18px; height: 18px; } .bsd-sep { width: 1px; height: 22px; margin: 0 6px; background: var(--background-modifier-border); }
+    .canvas-wrapper:has(.bsd-tb) .canvas-menu-container, .canvas-wrapper:has(.bsd-tb) .canvas-selection { display: none !important; }
     .bsd-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--background-modifier-border-hover); display: inline-block; }
     .bsd-pop { position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%); padding: 8px 12px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: flex; gap: 12px; align-items: center; z-index: 31; }
     .bsd-pop .bsd-c { width: 30px; height: 30px; border-radius: 50%; border: 0; cursor: pointer; padding: 0; position: relative; transition: transform .08s; clip-path: none; box-shadow: none; } .bsd-pop .bsd-c:hover { transform: scale(1.08); }
@@ -226,6 +227,16 @@
   }
 
   // ======================================================================== toolbar + palette (like the canvas card menu)
+  // the keys of the drawing mode, in the same window layout as the canvas help
+  function showHelp() {
+    const A = window.__bsApi; if (!A || !A.Modal) return;
+    const m = new A.Modal(window.app); m.modalEl.addClass("mod-canvas-help"); m.setTitle("Рисование");
+    const box = m.contentEl.createDiv("canvas-help");
+    const row = (label, combos) => box.createDiv({ cls: "canvas-instruction" }, (rw) => { rw.createDiv({ cls: "canvas-instruction-label", text: label }); rw.createDiv({ cls: "canvas-instruction-desc" }, (d) => { combos.forEach((c) => d.createSpan({ cls: "setting-hotkey", text: c.join(" + ") })); }); });
+    row("Выделение", [["V"]]); row("Текст", [["T"]]); row("Кисть", [["P"]]); row("Прямая линия кистью", [["Shift"]]); row("Маркер", [["H"]]); row("Линия", [["L"]]); row("Стрелка", [["A"]]);
+    row("Прямоугольник", [["R"]]); row("Эллипс", [["O"]]); row("Ластик", [["E"]]); row("Отменить", [["Ctrl", "Z"]]); row("Повторить", [["Ctrl", "Y"]]); row("Выйти из рисования", [["Alt", "D"], ["Esc"]]);
+    m.open();
+  }
   function toolbar(state, host, ctl) {
     const bar = document.createElement("div"); bar.className = "bsd-tb";
     let pop = null;
@@ -241,6 +252,7 @@
     const snapB = btn("lucide-wand-2", "Выравнивать фигуры", () => { state.snap = !state.snap; sync(); });
     btn("lucide-undo-2", "Отменить (Ctrl+Z)", () => ctl.undo()); btn("lucide-redo-2", "Повторить (Ctrl+Y)", () => ctl.redo());
     sep();
+    btn("lucide-circle-help", "Клавиши рисования", () => showHelp());
     const done = btn("lucide-check", "Готово (Alt+D)", () => ctl.done()); done.style.color = "var(--interactive-accent)";
     function sync() {
       toolBtns.forEach((b) => b.classList.toggle("is-on", b.dataset.tool === state.tool)); snapB.classList.toggle("is-on", state.snap);
@@ -369,7 +381,7 @@
     document.addEventListener("keydown", key, true);
     function stop() { wrap.removeEventListener("dblclick", noDbl, true); wrap.removeEventListener("drop", noDbl, true); wrap.removeEventListener("pointermove", hover, true); document.removeEventListener("keydown", key, true); wrap.removeEventListener("pointerdown", down, true); window.removeEventListener("pointermove", move, true); window.removeEventListener("pointerup", up, true); window.removeEventListener("pointercancel", up, true); wrap.classList.remove("bsink-on"); drawer.cancel(); tb.destroy(); modes.delete(canvas); }
     modes.set(canvas, { stop });
-    new window.__bsApi.Notice("Рисование: V выделение, T текст, P кисть (Shift — прямая), H маркер, L линия, A стрелка, R прямоугольник, O эллипс, E ластик. Alt+D или Esc: выйти", 4500);
+    new window.__bsApi.Notice("Рисование включено. Клавиши: кнопка справки на панели", 3500);
   }
 
   // ======================================================================== blocks in notes
