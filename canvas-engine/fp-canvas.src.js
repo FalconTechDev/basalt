@@ -1607,8 +1607,33 @@
     });
   }
 
+  // the progress window of the image export gets a map of its sectors (called by the export for every sector: before it is scanned and after)
+  window.__fpExportTile = (dlg, cols, rows, col, row, done, total, finished) => {
+    try {
+      const el = dlg && dlg.el; if (!el) return; const doc = el.ownerDocument;
+      let m = dlg.__fpMap;
+      if (!m) {
+        const box = doc.createElement("div"); box.style.cssText = "margin:18px auto 0;width:300px;max-width:90%;text-align:center;font-size:12px;opacity:.9";
+        const grid = doc.createElement("div"); grid.style.cssText = "display:grid;gap:3px;grid-template-columns:repeat(" + cols + ",1fr);padding:6px;border:1px solid rgba(128,128,128,.4)";
+        const cells = [];
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const d = doc.createElement("div"); d.style.cssText = "height:" + Math.max(10, Math.min(34, Math.floor(160 / rows))) + "px;background:rgba(128,128,128,.22);transition:background .15s"; grid.appendChild(d); cells.push(d); }
+        const cap = doc.createElement("div"); cap.style.cssText = "margin-top:8px;opacity:.8";
+        box.append(grid, cap); el.appendChild(box); m = dlg.__fpMap = { cells, cap, cols };
+      }
+      const cell = m.cells[row * m.cols + col]; if (!cell) return;
+      if (finished) { cell.style.background = "var(--interactive-accent, #c98d5b)"; cell.style.outline = "none"; m.cap.textContent = "Готово секторов: " + done + " из " + total; }
+      else { cell.style.background = "rgba(201,141,91,.45)"; cell.style.outline = "2px solid var(--interactive-accent, #c98d5b)"; m.cap.textContent = "Сканируется сектор " + (done + 1) + " из " + total; }
+    } catch (e) { /* the map is only a picture of the progress */ }
+  };
   window.__fpToolbar = (menuEl, sel, canvas) => {
     if (canvas.readonly || !sel.length) return;
+    // copy / cut / duplicate of the selection, next to the other actions
+    if (!sel.every(isEdge)) {
+      const act = (icon, title, fn) => { const b = menuEl.createEl("button", "clickable-icon"); b.setAttribute("aria-label", title); try { window.__bsApi.setIcon(b, icon); } catch (e) { b.textContent = title[0]; } b.addEventListener("click", (e) => { e.stopPropagation(); fn(); }); return b; };
+      const viaClipboard = (cmd) => () => { try { (canvas.wrapperEl || canvas.view.containerEl).focus({ preventScroll: true }); document.execCommand(cmd); } catch (e) { /* no clipboard */ } };
+      act("lucide-scissors", "Вырезать", viaClipboard("cut"));
+      act("lucide-copy", "Копировать", viaClipboard("copy"));
+    }
     if (sel.every(isEdge)) { edgePicker(menuEl, sel, canvas); return; }
     if (sel.some((n) => isEdge(n) || !n.unknownData || !n.nodeEl || n.nodeEl.classList.contains("canvas-node-group"))) return;
     const btn = menuEl.createEl("button", "clickable-icon");
