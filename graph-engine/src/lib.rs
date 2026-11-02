@@ -32,6 +32,23 @@ static mut LOCK: bool = false;
 static mut FREEZE: bool = false;
 /// For the next graph: per new node the index it had in the old graph (u32::MAX if it is new), so the layout keeps its places and only the changes move.
 static mut KEEP: Vec<u32> = Vec::new();
+/// How the next graph arrives: 0 live physics as before, 1 revealed from the centre outwards, 2 moves from where it was, 3 the same with a new camera frame.
+static mut TW_MODE: u32 = 0;
+static mut TW_DUR: f32 = 900.0;
+
+/// The positions are computed first (the layout runs to rest out of sight); what the eye sees is a tween from the start to the finished places,
+/// so nothing wobbles or is pulled by springs while it appears.
+struct Tween {
+    from2: Vec<[f32; 2]>,
+    to2: Vec<[f32; 2]>,
+    from3: Vec<[f32; 3]>,
+    to3: Vec<[f32; 3]>,
+    delay2: Vec<f32>,
+    delay3: Vec<f32>,
+    t: f32,
+    dur: f32,
+}
+static mut TW: Option<Tween> = None;
 
 #[allow(static_mut_refs)]
 fn st() -> &'static mut State {
@@ -182,13 +199,69 @@ pub extern "C" fn ge_set_graph(words: u32, byte_len: u32) {
     s.v3.selected = None;
     // a first stretch of steps so the first picture is already roughly settled
     let pre = unsafe { PRERUN };
-    let steps = if keeping { 0 } else if pre >= 0 { pre as usize } else if n > 3000 { 40 } else if n > 800 { 150 } else { 400 };
+    let mode = unsafe { TW_MODE };
+    unsafe {
+        TW = None;
+    }
+    let from2: Vec<[f32; 2]> = if mode == 1 || !keeping { vec![[0.0; 2]; n] } else { s.l2.pos.clone() };
+    let from3: Vec<[f32; 3]> = if mode == 1 || !keeping { vec![[0.0; 3]; n] } else { s.l3.pos.clone() };
+    let steps = if pre >= 0 { pre as usize } else if n > 3000 { 40 } else if n > 800 { 150 } else if keeping { 200 } else { 400 };
+    let steps = if keeping && mode == 0 { 0 } else { steps };
     s.l2.run(&s.graph, steps);
     s.l3.run(&s.graph, steps);
-    if keeping {
+    if keeping && mode == 0 {
         s.l2.reheat(0.3);
         s.l3.reheat(0.3);
     }
+    if mode != 0 && n > 0 {
+        let to2 = s.l2.pos.clone();
+        let to3 = s.l3.pos.clone();
+        // a node that did not exist before starts where its neighbour ends up
+        let mut f2 = from2.clone();
+        let mut f3 = from3.clone();
+        let mut delay2 = vec![0.0f32; n];
+        let mut delay3 = vec![0.0f32; n];
+        if mode == 1 {
+            let r2: Vec<f32> = to2.iter().map(|p| (p[0] * p[0] + p[1] * p[1]).sqrt()).collect();
+            let r3: Vec<f32> = to3.iter().map(|p| (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt()).collect();
+            let m2 = r2.iter().cloned().fold(1e-3, f32::max);
+            let m3 = r3.iter().cloned().fold(1e-3, f32::max);
+            for i in 0..n {
+                delay2[i] = r2[i] / m2;
+                delay3[i] = r3[i] / m3;
+            }
+        } else if keeping {
+            let old_len = keep.iter().filter(|&&k| k != u32::MAX).count();
+            let _ = old_len;
+            for k in 0..m {
+                let (a, b) = (w[base + k * 2] as usize, w[base + k * 2 + 1] as usize);
+                if a < n && b < n {
+                    for (x, y) in [(a, b), (b, a)] {
+                        if keep[x] == u32::MAX && keep[y] != u32::MAX {
+                            f2[x] = to2[y];
+                            f3[x] = to3[y];
+                        }
+                    }
+                }
+            }
+        }
+        // the camera frame of the finished picture, known in advance
+        if mode == 1 || mode == 3 || s.bounds.is_none() {
+            let (lo, hi) = {
+                let saved = std::mem::replace(&mut s.l2.pos, to2.clone());
+                let b = s.l2.display_bounds(s.v2.fit_trim);
+                s.l2.pos = saved;
+                b
+            };
+            s.bounds = Some((lo, hi));
+        }
+        s.l2.pos = f2.clone();
+        s.l3.pos = f3.clone();
+        unsafe {
+            TW = Some(Tween { from2: f2, to2, from3: f3, to3, delay2, delay3, t: 0.0, dur: TW_DUR });
+        }
+
+}
 }
 
 /// How the next graph starts: `prerun` steps before the first picture (negative: default) and the start spread (0.05 = a tight knot that grows).
@@ -229,6 +302,51 @@ pub extern "C" fn ge_keep(len: u32) -> *mut u32 {
 pub extern "C" fn ge_freeze_bounds(on: u32) {
     unsafe {
         FREEZE = on != 0;
+    }
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn ge_set_tween(mode: u32, dur_ms: f32) {
+    unsafe {
+        TW_MODE = mode;
+        TW_DUR = dur_ms.max(100.0);
+    }
+}
+
+/// Advances the arrival by `dt` milliseconds. Returns 1 while it is still moving.
+#[unsafe(no_mangle)]
+#[allow(static_mut_refs)]
+pub extern "C" fn ge_tween_step(dt: f32) -> u32 {
+    unsafe {
+        let s = st();
+        let Some(tw) = TW.as_mut() else { return 0 };
+        let n = tw.to2.len();
+        if s.l2.pos.len() != n || s.l3.pos.len() != n {
+            TW = None;
+            return 0;
+        }
+        tw.t += dt;
+        let d = tw.dur * 0.5;
+        let ease = |k: f32| 1.0 - (1.0 - k.clamp(0.0, 1.0)).powi(3);
+        for i in 0..n {
+            let k2 = ease((tw.t - tw.delay2[i] * (tw.dur - d)) / d);
+            for a in 0..2 {
+                s.l2.pos[i][a] = tw.from2[i][a] + (tw.to2[i][a] - tw.from2[i][a]) * k2;
+            }
+            let k3 = ease((tw.t - tw.delay3[i] * (tw.dur - d)) / d);
+            for a in 0..3 {
+                s.l3.pos[i][a] = tw.from3[i][a] + (tw.to3[i][a] - tw.from3[i][a]) * k3;
+            }
+        }
+        if tw.t >= tw.dur {
+            for i in 0..n {
+                s.l2.pos[i] = tw.to2[i];
+                s.l3.pos[i] = tw.to3[i];
+            }
+            TW = None;
+            return 0;
+        }
+        1
     }
 }
 

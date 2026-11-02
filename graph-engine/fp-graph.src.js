@@ -11,7 +11,8 @@
   const save = (c) => { try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) { /* private mode */ } };
 
   // ---------------------------------------------------------------- groups and hidden notes (kept in the vault's config folder)
-  const STORE = { groups: [], assign: {}, solo: [], depth: 1, max: 150, loaded: false };
+  const STORE = { groups: [], assign: {}, solo: [], depth: 1, max: 150, focusKeys: [], fdepth: 1, loaded: false };
+  const VIEWS = new Set(); // every open graph view of the vault
   const HIDDEN_ID = "hidden"; // the built-in group "Скрытые": what you hide goes there, its eye is off
   const GROUP_COLORS = ["#c98d5b", "#6e96be", "#7fbe8b", "#af8ceb", "#e17878", "#e6be5a", "#5abebe", "#dccdb9"];
   const storeFile = () => app.vault.configDir + "/graph-groups.json";
@@ -26,15 +27,32 @@
         if (Array.isArray(j.hidden) && j.hidden.length) { const g = hiddenGroup(); for (const k of j.hidden) STORE.assign[k] = g.id; }
       }
     } catch (e) { /* a fresh vault */ }
-    STORE.loaded = true;
+    STORE.loaded = true; HIST.st = []; HIST.i = -1; pushHist();
   }
   function hiddenGroup() {
     let g = STORE.groups.find((x) => x.id === HIDDEN_ID);
     if (!g) { g = { id: HIDDEN_ID, name: "Скрытые", color: "#8a8a8a", hidden: true, system: true }; STORE.groups.push(g); }
     return g;
   }
+  // ---- undo / redo of everything done with groups, hiding and focus
+  const HIST = { st: [], i: -1, lock: false };
+  const snapState = () => JSON.stringify({ groups: STORE.groups, assign: STORE.assign, solo: STORE.solo, depth: STORE.depth, max: STORE.max, focusKeys: STORE.focusKeys, fdepth: STORE.fdepth });
+  function pushHist() {
+    if (HIST.lock) return; const sn = snapState(); if (HIST.st[HIST.i] === sn) return;
+    HIST.st.length = HIST.i + 1; HIST.st.push(sn); HIST.i++; if (HIST.st.length > 100) { HIST.st.shift(); HIST.i--; }
+  }
+  function goHist(d) {
+    clearTimeout(storeT); pushHist(); // a change made a moment ago is already in the list
+    const to = HIST.i + d; if (to < 0 || to >= HIST.st.length) return false;
+    HIST.i = to; const j = JSON.parse(HIST.st[to]);
+    STORE.groups = j.groups; STORE.assign = j.assign; STORE.solo = j.solo; STORE.depth = j.depth; STORE.max = j.max; STORE.focusKeys = j.focusKeys || []; STORE.fdepth = j.fdepth || 1;
+    HIST.lock = true; writeStore(); HIST.lock = false;
+    for (const v of VIEWS) v.afterState();
+    return true;
+  }
   let storeT = 0;
-  const saveStore = () => { clearTimeout(storeT); storeT = setTimeout(() => { try { app.vault.adapter.write(storeFile(), JSON.stringify({ groups: STORE.groups, assign: STORE.assign, solo: STORE.solo, depth: STORE.depth, max: STORE.max }, null, 1)).catch(() => {}); } catch (e) { /* not writable */ } }, 400); };
+  const writeStore = () => { try { app.vault.adapter.write(storeFile(), JSON.stringify({ groups: STORE.groups, assign: STORE.assign, solo: STORE.solo, depth: STORE.depth, max: STORE.max }, null, 1)).catch(() => {}); } catch (e) { /* not writable */ } };
+  const saveStore = () => { clearTimeout(storeT); storeT = setTimeout(() => { pushHist(); try { app.vault.adapter.write(storeFile(), JSON.stringify({ groups: STORE.groups, assign: STORE.assign, solo: STORE.solo, depth: STORE.depth, max: STORE.max }, null, 1)).catch(() => {}); } catch (e) { /* not writable */ } }, 400); };
 
   // ---------------------------------------------------------------- the engine
   const B64 = "__WASM_B64__";
@@ -71,12 +89,13 @@
     {
       const grp = (nd) => { const id = STORE.assign[nd.key]; return id ? STORE.groups.find((g) => g.id === id) : null; };
       const gone = nodes.map((nd) => { const g = grp(nd); return !!(g && g.hidden); });
-      const solo = new Set(STORE.solo.filter((id) => STORE.groups.some((g) => g.id === id)));
-      if (solo.size) {
+      const solo = new Set(STORE.solo.filter((id) => STORE.groups.some((g) => g.id === id))), fk = new Set(STORE.focusKeys);
+      if (solo.size || fk.size) {
         const nbr = nodes.map(() => []); edges.forEach(([a, b]) => { nbr[a].push(b); nbr[b].push(a); });
         const dist = new Array(nodes.length).fill(-1), q = [];
-        nodes.forEach((nd, i) => { if (solo.has(STORE.assign[nd.key])) { dist[i] = 0; q.push(i); } });
-        for (let h = 0; h < q.length; h++) { const u = q[h]; if (dist[u] >= STORE.depth) continue; for (const v of nbr[u]) if (dist[v] < 0 && !gone[v]) { dist[v] = dist[u] + 1; q.push(v); } }
+        const reach = fk.size ? STORE.fdepth : STORE.depth;
+        nodes.forEach((nd, i) => { if (fk.size ? fk.has(nd.key) : solo.has(STORE.assign[nd.key])) { dist[i] = 0; q.push(i); } });
+        for (let h = 0; h < q.length; h++) { const u = q[h]; if (dist[u] >= reach) continue; for (const v of nbr[u]) if (dist[v] < 0 && !gone[v]) { dist[v] = dist[u] + 1; q.push(v); } }
         let cand = q.slice();
         if (cand.length > STORE.max) cand = cand.sort((a, b) => dist[a] - dist[b] || deg[b] - deg[a]).slice(0, STORE.max);
         const ok = new Set(cand); keep = keep.map((k, i) => ok.has(i));
@@ -144,6 +163,9 @@
     .bsg-panel .btns { display: flex; gap: 6px; margin: 6px 0 2px; } .bsg-panel .btns button { flex: 1; height: 26px; font-size: 12px; background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); border-radius: var(--bs-r); cursor: pointer; } .bsg-panel .btns button:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
     .bsg-help { position: absolute; right: 14px; top: 52px; width: 330px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip); display: none; font-size: 12.5px; }
     .bsg-help.is-open { display: block; } .bsg-help .hr { display: flex; gap: 10px; justify-content: space-between; margin: 6px 0; color: var(--text-muted); } .bsg-help .hr b { color: var(--text-normal); font-weight: 600; white-space: nowrap; } .bsg-help .hr span { text-align: right; }
+    .bsg-focus { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); display: none; align-items: center; gap: 6px; padding: 4px 6px 4px 12px; background: var(--background-secondary); border: 1px solid var(--interactive-accent); border-radius: 0; clip-path: var(--bs-clip); font-size: 12.5px; z-index: 6; }
+    .bsg-focus.is-on { display: flex; } .bsg-focus .t { color: var(--text-normal); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 4px; } .bsg-focus .n { min-width: 34px; text-align: center; color: var(--text-muted); }
+    .bsg-focus button { width: 24px; height: 24px; padding: 0; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); } .bsg-focus button:hover { color: var(--text-normal); background: var(--background-modifier-hover); }
     .bsg-status { position: absolute; left: 14px; bottom: 10px; font-size: 11.5px; color: var(--text-faint); pointer-events: none; display: flex; gap: 14px; }
     .bsg-status b { color: var(--text-muted); font-weight: 600; }
     .bsg-empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--text-faint); pointer-events: none; }`;
@@ -164,12 +186,19 @@
     open2() {
       injectCss();
       const root = this.contentEl; root.empty && root.empty(); root.style.padding = "0"; root.style.overflow = "hidden"; root.style.position = "relative";
-      root.innerHTML = '<div class="bsg"><canvas></canvas><div class="bsg-top"></div><div class="bsg-panel"></div><div class="bsg-help"></div><div class="bsg-card"></div><div class="bsg-status"></div><div class="bsg-empty">В графе пока нет заметок</div></div>';
+      root.innerHTML = '<div class="bsg"><canvas></canvas><div class="bsg-top"></div><div class="bsg-panel"></div><div class="bsg-help"></div><div class="bsg-focus"></div><div class="bsg-card"></div><div class="bsg-status"></div><div class="bsg-empty">В графе пока нет заметок</div></div>';
       this.root = root.querySelector(".bsg"); this.cv = this.root.querySelector("canvas"); this.ctx = this.cv.getContext("2d");
-      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = this.root.querySelector(".bsg-help"); this.buildHelp(); this.empty = this.root.querySelector(".bsg-empty");
+      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = this.root.querySelector(".bsg-help"); this.focusEl = this.root.querySelector(".bsg-focus"); this.buildHelp(); this.empty = this.root.querySelector(".bsg-empty");
       this.ex = instance();
       this.buildTop(); this.buildPanel(); this.bind();
-      this.alive = true; this.ready = true;
+      this.alive = true; this.ready = true; VIEWS.add(this);
+      this.keyUndo = (e) => {
+        if (!this.alive || !(e.ctrlKey || e.metaKey)) return;
+        const act = this.app.workspace.activeLeaf; if (!act || act.view !== this) return;
+        if (/INPUT|TEXTAREA/.test((e.target && e.target.tagName) || "")) return;
+        if (e.code === "KeyZ" || e.code === "KeyY") { e.preventDefault(); e.stopPropagation(); goHist(e.code === "KeyY" || e.shiftKey ? 1 : -1); }
+      };
+      window.addEventListener("keydown", this.keyUndo, true);
       if (!this.anchor) this.anchor = this.app.workspace.getActiveFile();
       this.style(); this.setMode(this.c.view);
       (STORE.loaded ? Promise.resolve() : loadStore()).then(() => { if (this.alive) { this.buildPanel(); this.rebuild(); } });
@@ -181,7 +210,7 @@
       const loop = () => { if (!this.alive) return; this.raf = requestAnimationFrame(loop); try { this.frame(); } catch (e) { if (!this.logged) { console.error("[bs-graph]", e); this.logged = true; } this.recover(e); } };
       this.raf = requestAnimationFrame(loop);
     }
-    async onClose() { this.alive = false; cancelAnimationFrame(this.raf); clearTimeout(this.rt); this.themeObs && this.themeObs.disconnect(); this.ex = null; }
+    async onClose() { this.alive = false; VIEWS.delete(this); window.removeEventListener("keydown", this.keyUndo, true); cancelAnimationFrame(this.raf); clearTimeout(this.rt); this.themeObs && this.themeObs.disconnect(); this.ex = null; }
 
     // a trap inside the engine would leave the graph dead: start a fresh engine and load the vault into it again
     recover(e) {
@@ -192,7 +221,7 @@
     }
     // ---- chrome
     buildHelp() {
-      const rows = [["Колесо", "приблизить / отдалить"], ["Перетащить пустое место", "сдвинуть граф (любой кнопкой мыши)"], ["Перетащить узел", "переместить его (в 2D)"], ["Клик по узлу", "выделить и подсветить связанные"], ["Двойной клик по узлу", "открыть заметку"], ["Двойной клик по пустому", "вписать граф в окно"], ["Shift + клик", "пометить несколько узлов"], ["Правая кнопка", "меню: группа, скрыть, открыть"], ["Delete", "скрыть выделенное"], ["Ctrl + F  или  /", "поиск"], ["Esc", "снять выделение, закрыть окна"]];
+      const rows = [["Колесо", "приблизить / отдалить"], ["Перетащить пустое место", "сдвинуть граф (любой кнопкой мыши)"], ["Перетащить узел", "переместить его (в 2D)"], ["Клик по узлу", "выделить и подсветить связанные"], ["Двойной клик по узлу", "открыть заметку"], ["Двойной клик по пустому", "вписать граф в окно"], ["Shift + клик", "пометить несколько узлов"], ["Shift + перетащить", "сдвинуть камеру (даже над узлом)"], ["Ctrl + Z / Ctrl + Y", "отменить / вернуть группы, скрытие, фокус"], ["Правая кнопка", "меню: группа, скрыть, открыть"], ["Delete", "скрыть выделенное"], ["Ctrl + F  или  /", "поиск"], ["Esc", "снять выделение, закрыть окна"]];
       this.helpEl.innerHTML = '<div class="hd first">Управление</div>' + rows.map((x) => '<div class="hr"><b>' + x[0] + '</b><span>' + x[1] + '</span></div>').join("");
     }
     buildTop() {
@@ -293,11 +322,13 @@
       ex.ge_set_intro(grow ? 0 : -1, grow ? 0.5 : 1); ex.ge_lock_bounds(grow ? 1 : 0); ex.ge_set_max_step(grow ? 5 : 0); this.grow = grow ? performance.now() : 0; this.growLabels = grow;
       if (!grow && this.keyIndex) { const pk = ex.ge_keep(n || 1), ku = new Uint32Array(ex.memory.buffer, pk, n || 1); g.nodes.forEach((x, k) => { ku[k] = this.keyIndex.has(x.key) ? this.keyIndex.get(x.key) : 0xffffffff; }); } /* the layout keeps its places: a change moves only what changed */
       const prevSel = this.sel >= 0 && this.oldNodes ? this.oldNodes[this.sel] : null;
+      // the finished positions are computed out of sight; the eye only sees them move there (the first picture spreads from the centre, outwards)
+      const mode = this.regroup ? 3 : (this.tweenedOnce ? 2 : 1); this.tweenedOnce = true; this.regroup = false;
+      ex.ge_set_tween(mode, mode === 1 ? 2000 : mode === 3 ? 1000 : 650);
       ex.ge_set_graph(words, bytes.length);
-      if (this.regroup) { this.regroup = false; ex.ge_reheat(0.9); ex.ge_fit(); this.running = true; } /* the picture is rebuilt around the chosen groups: settle again and fit */
       this.keyIndex = new Map(g.nodes.map((x, k) => [x.key, k])); this.oldNodes = g.nodes.map((x) => x.key);
       this.hover = -1; this.hlTo = undefined; { const k = prevSel && this.keyIndex.has(prevSel) ? this.keyIndex.get(prevSel) : -1; this.sel = k; ex.ge_select(k, 1); this.cardFor(k); }
-      this.running = true; this.dirty = true;       this.empty.style.display = n ? "none" : "flex";
+      this.tweening = n > 0; this.running = false; this.lastT = performance.now(); this.growLabels = n > 0; this.style(); ex.ge_freeze_bounds(1); this.frozen = true; this.dirty = true; this.empty.style.display = n ? "none" : "flex";
     }
 
     // ---- pointer
@@ -305,9 +336,9 @@
       const cv = this.cv, at = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
       let drag = null;
       cv.addEventListener("pointerdown", (e) => {
-        if (e.button > 2) return; e.preventDefault(); cv.setPointerCapture(e.pointerId);
+        if (e.button > 2) return; e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch (err) { /* a pointer that is already gone */ }
         const [x, y] = at(e), hit = this.pickAt(x, y, this.W, this.H);
-        drag = { x, y, lx: x, ly: y, node: e.button === 0 && this.c.view === "2d" ? hit : -1, hit, moved: false, button: e.button };
+        drag = { x, y, lx: x, ly: y, node: e.button === 0 && this.c.view === "2d" && !e.shiftKey ? hit : -1, hit, moved: false, button: e.button };
       });
       cv.addEventListener("pointermove", (e) => {
         const [x, y] = at(e);
@@ -354,6 +385,8 @@
       if (this.wantHover >= 0 && now >= this.wantAt) { const hh = this.wantHover; this.wantHover = -2; if (hh !== this.hover) hoverTo(hh); }
       if (this.leaveAt && now >= this.leaveAt) { this.leaveAt = 0; hoverTo(-1); } /* a pointer that slips off a node for a moment does not make the whole graph flash */
       if (this.zoomAcc && Math.abs(this.zoomAcc) > 0.004) { const step = this.zoomAcc * 0.3; this.zoomAcc -= step; ex.ge_zoom(this.zoomAt[0], this.zoomAt[1], this.c.view === "3d" ? -step : step); this.dirty = true; } else if (this.zoomAcc) this.zoomAcc = 0;
+      if (this.tweening) { const dt = Math.min(50, now - (this.lastT || now)); const more = ex.ge_tween_step(dt); this.dirty = true; if (!more) { this.tweening = false; this.growLabels = false; this.style(); } }
+      this.lastT = now;
       if (this.running) { if (this.frozen !== false) { this.frozen = false; ex.ge_freeze_bounds(0); } const settled = ex.ge_step(this.grow ? 2 : this.g.nodes.length > 2500 ? 1 : 2); this.dirty = true; if (this.grow && (settled || now - this.grow > 4500)) { this.grow = 0; ex.ge_lock_bounds(0); ex.ge_set_max_step(0); this.growLabels = false; this.style(); } if (settled) { this.running = false; setTimeout(() => { if (this.ex && !this.running) { this.ex.ge_freeze_bounds(1); this.frozen = true; } }, 900); } }
       if (!this.dirty) return;
       this.dirty = false;
@@ -483,7 +516,7 @@
         const t = document.createElement("div"); t.className = "mute"; t.textContent = "Показано: выбранные группы и всё вокруг них"; box.appendChild(t);
         const mkS = (label, key, min, max, step) => { const rr = document.createElement("div"); rr.className = "row"; const l = document.createElement("span"); l.textContent = label; const i = document.createElement("input"); i.type = "range"; i.min = min; i.max = max; i.step = step; i.value = STORE[key]; const v = document.createElement("b"); v.textContent = STORE[key]; i.addEventListener("input", () => { STORE[key] = +i.value; v.textContent = i.value; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }); rr.append(l, i, v); box.appendChild(rr); };
         mkS("Уровней от группы", "depth", 0, 5, 1); mkS("Узлов не больше", "max", 10, 500, 10);
-        const off = document.createElement("button"); off.className = "wide"; off.textContent = "Показать весь граф"; off.addEventListener("click", () => { STORE.solo = []; saveStore(); apply(); }); box.appendChild(off);
+        const off = document.createElement("button"); off.className = "wide"; off.textContent = "Показать весь граф"; off.addEventListener("click", () => this.clearFocus()); box.appendChild(off);
         p.appendChild(box);
       }
       const add = document.createElement("button"); add.className = "wide"; add.textContent = "+ Новая группа"; add.addEventListener("click", () => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }); p.appendChild(add);
@@ -496,8 +529,22 @@
     // which nodes a command applies to: the ones marked with Shift, if the node under the pointer is one of them
     targets(hit) { if (hit >= 0 && this.multi && this.multi.size > 1 && this.multi.has(hit)) return Array.from(this.multi); return hit >= 0 ? [hit] : []; }
     hideNodes(idx) { const g = hiddenGroup(); g.hidden = true; for (const i of idx) { const n = this.g.nodes[i]; if (n) STORE.assign[n.key] = g.id; } this.multi = new Set(); this.sel = -1; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); }
-    // the picture built around some nodes: they become a group, shown alone with their neighbours
-    focusOn(idx) { const keys = idx.map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean); let g = STORE.groups.find((x) => x.id === "focus"); if (!g) { g = { id: "focus", name: "Фокус", color: "#c98d5b" }; STORE.groups.push(g); } for (const k of Object.keys(STORE.assign)) if (STORE.assign[k] === "focus") delete STORE.assign[k]; for (const k of keys) STORE.assign[k] = "focus"; STORE.solo = ["focus"]; saveStore(); this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); this.panel.classList.add("is-open"); }
+    // the picture built around some nodes (not a group): they are shown with what is around them; a bar at the top says so and ends it
+    focusOn(idx) { STORE.focusKeys = idx.map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean); STORE.fdepth = 1; saveStore(); this.afterState(); }
+    clearFocus() { STORE.focusKeys = []; STORE.solo = []; saveStore(); this.afterState(); }
+    afterState() { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); this.updateFocusBar(); }
+    updateFocusBar() {
+      const el = this.focusEl; if (!el) return; el.textContent = "";
+      if (!STORE.focusKeys.length) { el.classList.remove("is-on"); return; }
+      const nm = STORE.focusKeys.length === 1 ? (STORE.focusKeys[0].split("/").pop().replace(/[.]md$/, "")) : STORE.focusKeys.length + " узлов";
+      const lab = document.createElement("span"); lab.className = "t"; lab.textContent = "Фокус: " + nm; el.appendChild(lab);
+      const mk = (t, title, fn) => { const b = document.createElement("button"); b.textContent = t; b.title = title; b.addEventListener("click", fn); el.appendChild(b); return b; };
+      mk("−", "Меньше окружения", () => { STORE.fdepth = Math.max(0, STORE.fdepth - 1); saveStore(); this.afterState(); });
+      const n = document.createElement("span"); n.className = "n"; n.textContent = STORE.fdepth + " ур."; el.appendChild(n);
+      mk("+", "Больше окружения", () => { STORE.fdepth = Math.min(6, STORE.fdepth + 1); saveStore(); this.afterState(); });
+      mk("✕", "Показать весь граф", () => this.clearFocus());
+      el.classList.add("is-on");
+    }
     closeMenu() { if (this.menuEl) { this.menuEl.remove(); this.menuEl = null; } if (this.menuOff) { document.removeEventListener("pointerdown", this.menuOff, true); document.removeEventListener("keydown", this.menuKey, true); this.menuOff = null; } }
     showMenu(cx, cy, hit) {
       this.closeMenu();
@@ -515,13 +562,12 @@
         if (nodes.some((n) => STORE.assign[n.key])) item("Убрать из группы", () => { for (const n of nodes) delete STORE.assign[n.key]; saveStore(); this.buildPanel(); this.dirty = true; }, { sub: true });
         sep();
         item(many ? "Скрыть выбранные" : "Скрыть", () => this.hideNodes(tg));
-        if (!many && nodes[0].file) item("Собрать холст из его окружения", () => { const nb = Array.from(this.adjOf(hit)); this.toCanvas(hit, nb); });
         item(many ? "Показать только их и окружение" : "Показать только его и окружение", () => this.focusOn(tg));
         if (this.multi && this.multi.size) item("Снять выбор", () => { this.multi = new Set(); this.dirty = true; });
       } else {
         title("Граф");
         item("Вписать в окно", () => this.fitView());
-        if (STORE.solo.length) item("Показать весь граф", () => { STORE.solo = []; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); });
+        if (STORE.solo.length || STORE.focusKeys.length) item("Показать весь граф", () => this.clearFocus());
         item("Новая группа…", () => this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)));
         item("Настройки графа", () => this.panel.classList.add("is-open"));
         if (this.multi && this.multi.size) item("Снять выбор", () => { this.multi = new Set(); this.dirty = true; });
@@ -563,23 +609,6 @@
       if (nb.length > 14) mk("m", "и ещё " + (nb.length - 14));
       const open = document.createElement("button"); open.className = "open"; open.textContent = "Открыть"; open.addEventListener("click", () => this.openNote(i, false)); el.appendChild(open);
       el.classList.add("is-on");
-    }
-    // the note and its neighbours as cards on a new canvas: the note in the middle, the others on a ring, a link to each
-    async toCanvas(i, nb) {
-      const g = this.g, n = g.nodes[i], list = nb.map((j) => g.nodes[j]).filter((x) => x.file);
-      const cards = [{ id: "c0", type: "file", file: n.file.path, x: -220, y: -150, width: 440, height: 300 }], edges = [];
-      const R = Math.max(620, list.length * 95);
-      list.forEach((x, k) => {
-        const a = (k / list.length) * Math.PI * 2 - Math.PI / 2, cx = Math.cos(a) * R, cy = Math.sin(a) * R * 0.78;
-        cards.push({ id: "c" + (k + 1), type: "file", file: x.file.path, x: Math.round(cx - 150), y: Math.round(cy - 100), width: 300, height: 200 });
-        const horiz = Math.abs(Math.cos(a)) > Math.abs(Math.sin(a) * 0.78);
-        edges.push({ id: "e" + (k + 1), fromNode: "c0", toNode: "c" + (k + 1), fromSide: horiz ? (Math.cos(a) > 0 ? "right" : "left") : (Math.sin(a) > 0 ? "bottom" : "top"), toSide: horiz ? (Math.cos(a) > 0 ? "left" : "right") : (Math.sin(a) > 0 ? "top" : "bottom") });
-      });
-      const dir = n.file.parent && n.file.parent.path !== "/" ? n.file.parent.path + "/" : "";
-      let path = dir + n.name + " — окружение.canvas", c = 1;
-      while (this.app.vault.getAbstractFileByPath(path)) path = dir + n.name + " — окружение " + ++c + ".canvas";
-      const f = await this.app.vault.create(path, JSON.stringify({ nodes: cards, edges }, null, "	"));
-      await this.app.workspace.getLeaf("tab").openFile(f);
     }
     snap(slot) {
       const k = "snap" + slot; let b = this[k];
