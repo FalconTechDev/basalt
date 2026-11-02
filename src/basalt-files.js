@@ -26,7 +26,7 @@
     .bsf-i { color: var(--text-faint); display: inline-flex; } .bsf-r.is-dir .bsf-i { color: var(--interactive-accent); }
     .bsf-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bsf-n small { color: var(--text-faint); font-weight: 400; margin-left: 8px; }
-    .bsf-x { font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
+    .bsf-x { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
     .bsf-pin { width: 12px; height: 12px; color: var(--interactive-accent); flex: none; }
     .bsf-r input.bsf-ren { flex: 1; min-width: 0; height: 22px; padding: 0 4px; }
     .bsf-empty { padding: 18px 12px; color: var(--text-faint); font-size: var(--font-ui-small); }

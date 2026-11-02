@@ -116,10 +116,10 @@
     .bsg-top .sp { flex: 1; pointer-events: none; }
     .bsg-seg { display: flex; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  overflow: hidden; }
     .bsg-seg button, .bsg-btn { background: transparent; box-shadow: none; clip-path: none; border: 0; border-radius: var(--bs-r); color: var(--text-muted); padding: 0 12px; height: 30px; font-size: 12px; cursor: pointer; }
-    .bsg-btn { background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 8px; width: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+    .bsg-btn { background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r); width: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
     .bsg-seg button.is-on { background: var(--interactive-accent); color: var(--text-on-accent); }
     .bsg-seg button:not(.is-on):hover, .bsg-btn:hover { color: var(--text-normal); }
-    .bsg-search { width: 260px; height: 30px; border-radius: 0; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); padding: 0 10px; font-size: 12.5px; }
+    .bsg-search { width: 260px; height: 30px; border-radius: 0 !important; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); padding: 0 10px; font-size: 12.5px; }
     .bsg-panel { position: absolute; right: 14px; top: 52px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
     .bsg-panel.is-open { display: block; }
     .bsg-panel .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; color: var(--text-muted); }
