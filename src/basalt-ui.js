@@ -99,6 +99,14 @@
     .modal:not(.mod-settings), .prompt, .menu, .suggestion-container, .popover, .notice { border-radius: 0; }
     .menu-item, .suggestion-item { border-radius: 0; }
     .status-bar { border-radius: 0; }
+    /* one look for the two search overlays (quick switcher, note search): size, place, backdrop, panel, input, rows */
+    body .bpal-wrap, body .bss-wrap { padding-top: 12vh; background: rgba(0,0,0,.4); }
+    body .bpal, body .bss { width: min(700px, 92vw); max-height: 70vh; background: var(--modal-background, var(--background-primary)); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip); box-shadow: none; }
+    body .bpal-in, body .bss-in { padding: 12px 16px; gap: 10px; }
+    body .bpal-in input, body .bss-in input, body .bpal-in input:focus, body .bss-in input:focus { font-size: 16px; border: 0 !important; box-shadow: none !important; outline: none !important; border-radius: 0 !important; background: transparent !important; }
+    body .bss-in svg { width: 16px; height: 16px; }
+    body .bss-item { padding: 7px 16px; border-left-width: 0; border-radius: var(--bs-r); margin: 0 4px; }
+
     /* tabs: a flat strip, the open tab lifts to the page colour and carries an accent line on top */
     .workspace-tab-header { position: relative; transition: background .12s, color .12s; border-radius: 0; }
     .workspace-tab-header-inner-title { font-weight: 500; letter-spacing: .01em; }
