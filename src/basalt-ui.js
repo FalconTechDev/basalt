@@ -32,7 +32,9 @@
     for (const nav of root.querySelectorAll('.vertical-tab-nav-item[data-setting-id="publish"]')) hide(nav);
   }
 
+  // the backlinks counter means something only for a note
   function sweepChrome(root) {
+    try { const v = window.app && app.workspace && app.workspace.getActiveViewOfType && app.workspace.activeLeaf && app.workspace.activeLeaf.view; const md = !v || v.getViewType() === "markdown"; for (const el of root.querySelectorAll(".status-bar-item.plugin-backlink")) el.style.display = md ? "" : "none"; } catch (e) { /* not ready */ }
     for (const el of root.querySelectorAll(".status-bar-item.plugin-sync")) hide(el);
     for (const el of root.querySelectorAll(".side-dock-ribbon-action")) {
       if (/publish|публик/i.test(el.getAttribute("aria-label") || "")) hide(el);
@@ -99,6 +101,8 @@
     .modal:not(.mod-settings), .prompt, .menu, .suggestion-container, .popover, .notice { border-radius: 0; }
     .menu-item, .suggestion-item { border-radius: 0; }
     .status-bar { border-radius: 0; }
+    .notice { background: var(--background-secondary); color: var(--text-normal); }
+    kbd, .setting-hotkey { font-family: var(--font-interface); }
     /* one look for the two search overlays (quick switcher, note search): size, place, backdrop, panel, input, rows */
     body .bpal-wrap, body .bss-wrap { padding-top: 12vh; background: rgba(0,0,0,.4); }
     body .bpal, body .bss { width: min(700px, 92vw); max-height: 70vh; background: var(--modal-background, var(--background-primary)); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip); box-shadow: none; }

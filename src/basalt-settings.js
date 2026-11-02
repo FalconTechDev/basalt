@@ -106,7 +106,7 @@
 
     add("keys", "Горячие клавиши", "keys", (h) => {
       const hm = app.hotkeyManager, wrap = document.createElement("div"); h.appendChild(wrap);
-      const fmt = (k) => [...(k.modifiers || []).map((m) => ({ Mod: "Ctrl", Ctrl: "Ctrl", Meta: "Win", Alt: "Alt", Shift: "Shift" }[m] || m)), (k.key || "").length === 1 ? k.key.toUpperCase() : k.key].join("+");
+      const fmt = (k) => [...(k.modifiers || []).map((m) => ({ Mod: "Ctrl", Ctrl: "Ctrl", Meta: "Win", Alt: "Alt", Shift: "Shift" }[m] || m)), (k.key || "").length === 1 ? k.key.toUpperCase() : ({ ArrowLeft: "←", ArrowRight: "→", ArrowUp: "↑", ArrowDown: "↓", Escape: "Esc", " ": "Пробел", Backspace: "⌫", Delete: "Del", Enter: "Enter" }[k.key] || k.key)].join(" + ");
       const list = () => Object.values(app.commands.commands).filter((c) => c && c.name).sort((a, b) => a.name.localeCompare(b.name));
       const draw = () => {
         wrap.textContent = "";
@@ -156,7 +156,7 @@
       const note = document.createElement("div"); note.className = "bset-empty"; note.textContent = "Параметры встроенных модулей."; grid.appendChild(note);
       const openTab = (t) => {
         grid.style.display = "none"; view.textContent = ""; view.style.display = "";
-        const back = document.createElement("button"); back.className = "bset-back"; back.textContent = "← Модули"; back.addEventListener("click", () => { try { t.hide && t.hide(); } catch (e) { /* ok */ } view.style.display = "none"; grid.style.display = ""; });
+        const back = document.createElement("button"); back.className = "bset-back"; back.textContent = "Модули"; try { const ic = document.createElement("span"); window.__bsApi.setIcon(ic, "lucide-arrow-left"); back.prepend(ic); } catch (e) { /* ok */ } back.addEventListener("click", () => { try { t.hide && t.hide(); } catch (e) { /* ok */ } view.style.display = "none"; grid.style.display = ""; });
         const title = document.createElement("h2"); title.textContent = t.name; view.append(back, title);
         const box = document.createElement("div"); box.className = "bset-legacy vertical-tab-content"; view.appendChild(box);
         // the module draws its own page into a container; it is placed here and restyled by .bset-legacy
