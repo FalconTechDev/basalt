@@ -71,7 +71,7 @@
     const need = (m.permissions || []).filter((p) => !(state.approved[m.id] || []).includes(p));
     if (need.length) {
       const text = `Плагин «${m.name || m.id}» (WebAssembly) просит разрешения:\n\n` + need.map((p) => "• " + (PERMS[p] || p)).join("\n") + "\n\nБез этих разрешений он не сможет ничего сделать. Разрешить?";
-      if (!(await window.__bsConfirm(text))) return false;
+      if (!(await window.__bsConfirm(text, { title: "Разрешения модуля" }))) return false;
       state.approved[m.id] = (m.permissions || []).slice();
     }
     if (!state.enabled.includes(m.id)) state.enabled.push(m.id);

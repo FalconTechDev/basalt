@@ -54,7 +54,7 @@
     const main = asset(wasm ? manifest.wasm : "main.js");
     if (!main) throw new Error(`в релизе ${rel.tag_name} нет файла ${wasm ? manifest.wasm : "main.js"}`);
     const verb = wasm ? "Wasm-плагин (изолирован, получает только разрешённое)" : "плагин на JavaScript (получает полный доступ к приложению и файлам)";
-    if (!(await window.__bsConfirm(`Установить «${manifest.name || manifest.id}» ${manifest.version || rel.tag_name}\nиз github.com/${repo}\n\nЭто ${verb}.\nУстанавливайте только то, чему доверяете.`))) return null;
+    if (!(await window.__bsConfirm(`Установить «${manifest.name || manifest.id}» ${manifest.version || rel.tag_name}\nиз github.com/${repo}\n\nЭто ${verb}.\nУстанавливайте только то, чему доверяете.`, { title: "Установка плагина", ok: "Установить" }))) return null;
     const a = app.vault.adapter, dir = (wasm ? app.vault.configDir + "/wasm-plugins/" : app.vault.configDir + "/plugins/") + manifest.id;
     if (!(await a.exists(dir))) await a.mkdir(dir).catch(async () => { await a.mkdir(dir.slice(0, dir.lastIndexOf("/"))).catch(() => {}); await a.mkdir(dir); });
     await a.write(dir + "/manifest.json", JSON.stringify(manifest, null, 2));
@@ -115,7 +115,7 @@
           const btns = [];
           btns.push([p.enabled ? "Выключить" : "Включить", async () => { if (p.kind === "wasm") { p.enabled ? await window.__bsWasm.disable(p.id) : await window.__bsWasm.enable(p.m); } else { p.enabled ? await app.plugins.disablePluginAndSave(p.id) : await app.plugins.enablePluginAndSave(p.id); } }]);
           if (p.repo) btns.push(["Обновить", async () => { await doInstall(p.repo); }]);
-          btns.push(["Удалить", async () => { if (!(await window.__bsConfirm(`Удалить плагин «${p.name || p.id}»?`))) return; if (p.kind === "wasm") await window.__bsWasm.remove(p.id); else await app.plugins.uninstallPlugin(p.id); delete cat.repos[p.id]; await saveCat(); }, "mod-warning"]);
+          btns.push(["Удалить", async () => { if (!(await window.__bsConfirm(`Удалить плагин «${p.name || p.id}»?`, { title: "Удаление плагина", ok: "Удалить", danger: true }))) return; if (p.kind === "wasm") await window.__bsWasm.remove(p.id); else await app.plugins.uninstallPlugin(p.id); delete cat.repos[p.id]; await saveCat(); }, "mod-warning"]);
           frag.appendChild(row(p.name || p.id, `${p.version || ""}${p.repo ? " · github.com/" + p.repo : ""}${p.enabled ? " · включён" : " · выключен"}`, p.kind === "wasm" ? "wasm" : "js", btns));
         }
       } else if (tab === "community") {

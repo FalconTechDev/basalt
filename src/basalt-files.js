@@ -223,7 +223,7 @@
       }
       async remove(files) {
         const names = files.map((f) => f.name).slice(0, 4).join(", ") + (files.length > 4 ? "…" : "");
-        if (!(await window.__bsConfirm(`Удалить в корзину: ${names}?`, { ok: "Удалить", danger: true }))) return;
+        if (!(await window.__bsConfirm(`Удалить в корзину: ${names}?`, { title: "Удаление", ok: "Удалить", danger: true }))) return;
         for (const f of files) { try { await app.fileManager.trashFile(f); } catch (err) { new api.Notice("Не удалось удалить: " + err.message); } }
         this.sel.clear(); this.render();
       }

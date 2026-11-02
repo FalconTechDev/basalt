@@ -191,19 +191,19 @@
   const css = document.createElement("style");
   css.textContent = ".bs-confirm{width:min(460px,92vw)!important;max-width:none}.bs-confirm .bs-confirm-text{white-space:pre-wrap;margin:6px 0 18px;line-height:1.5;word-break:break-word}.bs-confirm .modal-button-container{display:flex;gap:8px;justify-content:flex-end}";
   document.head.appendChild(css);
+  // the application's own Modal: a title, the close cross, the dim backdrop, Esc / Enter
   window.__bsConfirm = (text, opts = {}) => new Promise((resolve) => {
-    const wrap = document.createElement("div"); wrap.className = "modal-container mod-dim";
-    wrap.innerHTML = '<div class="modal bs-confirm"><div class="modal-content"><div class="bs-confirm-text"></div><div class="modal-button-container"><button class="bs-no"></button><button class="bs-yes"></button></div></div></div>';
-    wrap.insertAdjacentHTML("afterbegin", '<div class="modal-bg"></div>');
-    wrap.querySelector(".bs-confirm-text").textContent = text;
-    const yes = wrap.querySelector(".bs-yes"), no = wrap.querySelector(".bs-no");
-    yes.textContent = opts.ok || "OK"; no.textContent = opts.cancel || "Отмена"; yes.className = "bs-yes " + (opts.danger ? "mod-warning" : "mod-cta");
-    const prev = document.activeElement;
-    const done = (v) => { document.removeEventListener("keydown", key, true); wrap.remove(); try { prev && prev.focus && prev.focus(); } catch (e) { /* gone */ } resolve(v); };
-    const key = (e) => { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); done(false); } else if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); done(true); } };
-    yes.addEventListener("click", () => done(true)); no.addEventListener("click", () => done(false)); wrap.querySelector(".modal-bg").addEventListener("click", () => done(false));
-    document.addEventListener("keydown", key, true);
-    document.body.appendChild(wrap); yes.focus();
+    const Modal = window.__bsApi && window.__bsApi.Modal; if (!Modal) { resolve(window.confirm(text)); return; }
+    const m = new Modal(window.app); m.modalEl.addClass("bs-confirm"); m.setTitle(opts.title || (opts.danger ? "Подтвердите удаление" : "Подтверждение"));
+    let answer = false;
+    m.contentEl.createDiv({ cls: "bs-confirm-text", text });
+    const bar = m.contentEl.createDiv("modal-button-container");
+    const no = bar.createEl("button", { text: opts.cancel || "Отмена" }), yes = bar.createEl("button", { text: opts.ok || "OK", cls: opts.danger ? "mod-warning" : "mod-cta" });
+    const done = (v) => { answer = v; m.close(); };
+    yes.addEventListener("click", () => done(true)); no.addEventListener("click", () => done(false));
+    m.scope.register([], "Enter", () => { done(true); return false; });
+    m.onClose = () => resolve(answer);
+    m.open(); setTimeout(() => yes.focus(), 30);
   });
 })();
 
