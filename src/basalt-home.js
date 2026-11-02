@@ -19,7 +19,9 @@
     .bsh kbd { font-family: var(--font-monospace); font-size: 11px; padding: 2px 7px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); color: var(--text-faint); }
     .bsh-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .bsh-tile { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 16px 16px 14px; cursor: pointer; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  transition: transform .12s, border-color .12s, background .12s; }
-    .bsh-tile:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.28); }
+    .bsh-tile:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); }
+    .bsh-tile .bsh-ti { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--bs-r); background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); color: var(--interactive-accent); align-self: flex-start; }
+    .bsh-tile .bsh-ti svg { width: 20px; height: 20px; padding: 0; box-sizing: border-box; background: none; border-radius: 0; }
     .bsh-tile svg { padding: 7px; box-sizing: content-box; width: 22px; height: 22px; border-radius: var(--bs-r); background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); }
     .bsh-tile svg { color: var(--interactive-accent); }
     .bsh-tile b { font-weight: 600; } .bsh-tile small { color: var(--text-faint); font-size: var(--font-ui-smaller); }
@@ -74,17 +76,18 @@
     el.querySelector("p").textContent = app.vault.getName();
     el.querySelector(".bsh-search").addEventListener("click", () => cmd("basalt:quick-search"));
     const tiles = [
-      ["note", "Новая заметка", "Ctrl + N", () => cmd("file-explorer:new-file")],
+      ["note", "Новая заметка", "пустая заметка|Ctrl+N", () => cmd("file-explorer:new-file")],
       ["canvas", "Новый холст", "карточки и связи", () => cmd("canvas:new-file")],
       ["term", "Терминал", "в этой вкладке", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
       ["graph", "Граф", "связи хранилища", () => leaf && leaf.setViewState({ type: "graph", active: true, state: {} })],
-      ["file", "Перейти к файлу", "Ctrl + O", () => cmd("switcher:open")],
+      ["file", "Перейти к файлу", "быстрый переход|Ctrl+O", () => cmd("switcher:open")],
       ["history", "Журнал действий", "что и где менялось", () => window.__vaultSyncFeed && window.__vaultSyncFeed()],
       ["plug", "Плагины", "каталог из GitHub", () => window.__bsCatalog && window.__bsCatalog.open()],
       ["gear", "Настройки", "вид и параметры", () => cmd("app:open-settings")],
     ];
     const tl = el.querySelector(".bsh-tiles");
-    for (const [ic, t, sub, fn] of tiles) { const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `${svg(ic)}<div><b>${esc(t)}</b><br><small>${esc(sub)}</small></div>`; d.addEventListener("click", fn); tl.appendChild(d); }
+    const LI = { note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };
+    for (const [ic, t, sub, fn] of tiles) { const [desc, keys] = sub.split("|"); const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `<span class="bsh-ti"></span><div><b>${esc(t)}</b><br><small>${esc(desc)}</small>${keys ? " " + keys.split("+").map((k) => `<kbd>${esc(k)}</kbd>`).join("") : ""}</div>`; try { window.__bsApi.setIcon(d.firstChild, "lucide-" + LI[ic]); } catch (e) { d.firstChild.innerHTML = svg(ic); } d.addEventListener("click", fn); tl.appendChild(d); }
     const rl = el.querySelector(".bsh-recent");
     if (!recent.length) rl.innerHTML = '<div class="bsh-rec" style="cursor:default"><div><small>Пока ничего не открывали</small></div></div>';
     for (const f of recent) {
