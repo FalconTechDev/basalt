@@ -105,6 +105,9 @@
     .canvas-control-group { background: var(--background-secondary); }
     .canvas-card-menu { --icon-size: 18px; --icon-stroke: 1.75px; }
     .canvas-card-menu .canvas-card-menu-button svg { width: 18px; height: 18px; }
+    /* one search field everywhere: explorer filter, graph search, settings search, plugin catalog, the two search overlays */
+    body .bsf-find input, body .bsg-search, body .bset-find input, body .bsc-add input { height: 30px; box-sizing: border-box; padding: 0 10px; font-size: 13px; border: 1px solid var(--background-modifier-border) !important; border-radius: 0 !important; background: var(--background-primary) !important; color: var(--text-normal); box-shadow: none !important; outline: none !important; }
+    body .bsf-find input:focus, body .bsg-search:focus, body .bset-find input:focus, body .bsc-add input:focus { border-color: var(--interactive-accent) !important; box-shadow: none !important; }
     .notice { background: var(--background-secondary); color: var(--text-normal); }
     kbd, .setting-hotkey { font-family: var(--font-interface); }
     /* one look for the two search overlays (quick switcher, note search): size, place, backdrop, panel, input, rows */
