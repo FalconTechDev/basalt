@@ -164,6 +164,7 @@
       };
       for (const t of tabs) { const c = document.createElement("div"); c.className = "bset-card"; c.dataset.q = (t.name || "").toLowerCase(); c.innerHTML = "<b></b><small>Открыть параметры</small>"; c.firstChild.textContent = t.name; c.addEventListener("click", () => openTab(t)); grid.appendChild(c); }
       view.style.display = "none"; h.append(grid, view);
+      if (pendingTab) { const t = tabs.find((x) => x.id === pendingTab); pendingTab = null; if (t) openTab(t); }
     });
 
     add("about", "О программе", "about", (h) => {
@@ -181,6 +182,7 @@
   }
 
   let open = null, stockOpen = null;
+  let pendingTab = null;
   function show(startId) {
     if (open) { open.go(startId); return; }
     const wrap = document.createElement("div"); wrap.className = "modal-container mod-dim";
@@ -216,6 +218,9 @@
     // every way into the settings (command, gear, status bar) opens ours; the old window only for the pages that are not ported
     app.setting.open = function (...a) { if (window.__bsStock) return stockOpen(...a); show(); };
     const c = app.commands.commands["app:open-settings"]; if (c) { delete c.checkCallback; c.callback = () => show(); }
+    // a module asking for its own page (the sync status bar, a command) lands on it, not on the first page
+    const stockById = app.setting.openTabById.bind(app.setting);
+    app.setting.openTabById = function (id) { if (window.__bsStock) return stockById(id); const t = (app.setting.pluginTabs || []).find((x) => x.id === id); if (t) { pendingTab = id; show("modules"); return; } return stockById(id); };
     window.__bsSettings = { show };
   }, 600);
 })();
