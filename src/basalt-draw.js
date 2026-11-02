@@ -287,7 +287,7 @@
     layers.set(canvas, L);
     // the ink travels with the canvas data: saved, loaded and undone together with the cards
     const getData = canvas.getData.bind(canvas), importData = canvas.importData.bind(canvas);
-    canvas.getData = function () { const d = getData(); if (L.strokes.length) d.fpInk = L.strokes.map((s) => { const c = { ...s }; delete c._d; return c; }); return d; };
+    canvas.getData = function () { const d = getData(); if (!L.file && canvas.view && canvas.view.file) L.file = canvas.view.file; const mine = !L.file || !canvas.view || canvas.view.file === L.file; if (mine && L.strokes.length) d.fpInk = L.strokes.map((s) => { const c = { ...s }; delete c._d; return c; }); return d; };
     // importData(data, true) loads a whole board (the file, undo, redo); importData(data, false) only adds pasted or duplicated cards
     canvas.importData = function (d, full, ...a) {
       const whole = full === true;

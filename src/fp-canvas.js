@@ -783,7 +783,9 @@
     const L = { leaf: null, box: null, host, ro: null, dead: false, n }; n.__bsLive = L; lives.add(L);
     try {
       const ref = app.workspace.getMostRecentLeaf() || app.workspace.activeLeaf; const Leaf = ref.constructor; // a leaf that belongs to no tab: it only holds the view
-      L.leaf = new Leaf(app);
+      L.leaf = new Leaf(app); L.leaf.__bsLive = true;
+      // a leaf that only holds a card's picture must never become the active one (keys, "open file", undo would land in it)
+      if (!app.workspace.__bsLiveGuard) { app.workspace.__bsLiveGuard = true; const sal = app.workspace.setActiveLeaf; app.workspace.setActiveLeaf = function (leaf, ...rest) { if (leaf && leaf.__bsLive) return; return sal.call(this, leaf, ...rest); }; }
       await L.leaf.openFile(n.file, { active: false });
       if (n.__bsLive !== L || !n.nodeEl || !n.nodeEl.isConnected) { destroyLive(n); return; }
       const v = L.leaf.view, c2 = v && v.canvas; if (!c2) { destroyLive(n); return; }
