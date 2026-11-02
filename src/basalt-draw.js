@@ -7,7 +7,7 @@
 
   const SVGNS = "http://www.w3.org/2000/svg";
   const PALETTE = [["default", null], ["red", "#fb464c"], ["orange", "#e9973f"], ["yellow", "#e0de71"], ["green", "#44cf6e"], ["cyan", "#53dfdd"], ["purple", "#a882ff"]];
-  const TOOLS = [["select", "lucide-mouse-pointer-2", "Выделение: двигать, перекрашивать, Delete (V)"], ["pen", "lucide-pencil", "Кисть (задержка в конце штриха выравнивает фигуру)"], ["line", "lucide-minus", "Прямая линия"], ["arrow", "lucide-move-up-right", "Стрелка"], ["rect", "lucide-square", "Прямоугольник"], ["ellipse", "lucide-circle", "Эллипс / круг"], ["hl", "lucide-highlighter", "Маркер (H)"], ["text", "lucide-type", "Текст (T): клик и печатай, Enter — готово, Shift+Enter — новая строка"], ["erase", "lucide-eraser", "Ластик (E)"]];
+  const TOOLS = [["select", "lucide-mouse-pointer-2", "Выделение: двигать, перекрашивать, Delete (V)"], ["pen", "lucide-pencil", "Кисть (задержка в конце штриха выравнивает фигуру)"], ["line", "lucide-slash", "Прямая линия"], ["arrow", "lucide-move-up-right", "Стрелка"], ["rect", "lucide-square", "Прямоугольник"], ["ellipse", "lucide-circle", "Эллипс / круг"], ["hl", "lucide-highlighter", "Маркер (H)"], ["text", "lucide-type", "Текст (T): клик и печатай, Enter — готово, Shift+Enter — новая строка"], ["erase", "lucide-eraser", "Ластик (E)"]];
   const css = document.createElement("style");
   css.textContent = `
     .bsink, .bsink-live { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }

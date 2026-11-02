@@ -235,7 +235,7 @@
         if (!f.children && !many) menu.addItem((i) => i.setTitle("Дублировать").setIcon("lucide-copy").onClick(async () => { const dot = f.name.lastIndexOf("."), stem = f.name.slice(0, dot), ext = f.name.slice(dot), dir = f.parent && f.parent.path !== "/" ? f.parent.path + "/" : ""; let n = `${stem} копия`, i = 1; while (app.vault.getAbstractFileByPath(dir + n + ext)) n = `${stem} копия ${++i}`; try { await app.vault.copy(f, dir + n + ext); } catch (err) { new api.Notice("Не удалось скопировать: " + err.message); } }));
         if (f.path !== "/" && !many) menu.addItem((i) => i.setTitle("Переименовать").setIcon("lucide-pencil").onClick(() => this.rename(f)));
         try { app.workspace.trigger("file-menu", menu, f, "file-explorer"); } catch (err) { /* plugins */ }
-        if (f.path !== "/") { menu.addItem((i) => i.setTitle("Копировать путь").setIcon("lucide-link").onClick(() => navigator.clipboard.writeText(f.path))); menu.addSeparator(); menu.addItem((i) => { i.setTitle(many ? `Удалить (${this.sel.size})` : "Удалить").setIcon("lucide-trash-2"); if (i.setWarning) i.setWarning(true); i.onClick(() => this.remove(many ? list() : [f])); }); }
+        if (f.path !== "/") { menu.addSeparator(); menu.addItem((i) => { i.setTitle(many ? `Удалить (${this.sel.size})` : "Удалить").setIcon("lucide-trash-2"); if (i.setWarning) i.setWarning(true); i.onClick(() => this.remove(many ? list() : [f])); }); }
         menu.showAtMouseEvent(e);
       }
       onKey(e) {
