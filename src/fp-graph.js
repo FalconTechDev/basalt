@@ -41,6 +41,7 @@
   function pushHist() {
     if (HIST.lock) return; const sn = snapState(); if (HIST.st[HIST.i] === sn) return;
     HIST.st.length = HIST.i + 1; HIST.st.push(sn); HIST.i++; if (HIST.st.length > 100) { HIST.st.shift(); HIST.i--; }
+    for (const v of VIEWS) v.updHist && v.updHist();
   }
   function goHist(d) {
     clearTimeout(storeT); pushHist(); // a change made a moment ago is already in the list
@@ -112,7 +113,7 @@
   const CSS = `
     .bsg { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 42%, color-mix(in srgb, var(--interactive-accent) 9%, var(--background-primary)), var(--background-primary) 72%); user-select: none; }
     .bsg canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
-    .bsg-top { position: absolute; left: 14px; right: 14px; top: 12px; display: flex; gap: 8px; align-items: center; pointer-events: none; }
+    .bsg-top { position: absolute; left: 14px; right: 60px; top: 12px; display: flex; gap: 8px; align-items: center; pointer-events: none; }
     .bsg-top > * { pointer-events: auto; }
     .bsg-top .sp { flex: 1; pointer-events: none; }
     .bsg-seg { display: flex; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  overflow: hidden; }
@@ -121,7 +122,12 @@
     .bsg-seg button.is-on { background: var(--interactive-accent); color: var(--text-on-accent); }
     .bsg-seg button:not(.is-on):hover, .bsg-btn:hover { color: var(--text-normal); }
     .bsg-search { width: 260px; height: 30px; border-radius: 0 !important; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); padding: 0 10px; font-size: 12.5px; }
-    .bsg-panel { position: absolute; right: 14px; top: 52px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
+    .bsg-panel .setting-item-info { flex: 1 1 auto; min-width: 0; } .bsg-panel .setting-item-control { flex: 0 0 auto; } .bsg-panel .setting-item-control input[type=range] { width: 140px; }
+    .bsg-controls { position: absolute; right: 12px; top: 12px; z-index: 6; }
+    .bsg-controls .canvas-control-group { background: var(--background-secondary); border-radius: 0; box-shadow: none; clip-path: var(--bs-clip); }
+    .bsg-controls .canvas-control-item { background: transparent; }
+    .bsg-controls .canvas-control-item:hover { background: var(--background-modifier-hover); }
+    .bsg-panel { position: absolute; right: 60px; top: 12px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
     .bsg-panel.is-open { display: block; }
     .bsg-panel .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; color: var(--text-muted); }
     .bsg-panel input[type=range] { width: 120px; }
@@ -149,7 +155,7 @@
     .bsg-panel .grp .x, .bsg-panel .wide { background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); }
     .bsg-panel .grp .x { width: 22px; height: 22px; padding: 0; } .bsg-panel .wide { width: 100%; height: 28px; margin: 4px 0; font-size: 12px; } .bsg-panel .wide:hover, .bsg-panel .grp .x:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
     .bsg-panel .mute { font-size: 11.5px; color: var(--text-faint); }
-    .bsg-panel { max-height: calc(100% - 70px); overflow-y: auto; }
+    .bsg-panel { max-height: calc(100% - 60px); overflow-y: auto; }
     .bsg-menu { position: absolute; z-index: 60; min-width: 220px; max-width: 280px; padding: 6px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip); font-size: 12.5px; }
     .bsg-menu .ti { padding: 6px 10px 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bsg-menu .sp { height: 1px; margin: 5px 4px; background: var(--background-modifier-border); }
@@ -258,6 +264,7 @@
       row("Повторить", [["Ctrl", "Y"], ["Ctrl", "Shift", "Z"]]);
       m.open();
     }
+    updHist() { if (this.undoB) { this.undoB.toggleClass("is-disabled", HIST.i <= 0); this.redoB.toggleClass("is-disabled", HIST.i >= HIST.st.length - 1); } }
     buildTop() {
       const t = this.top; t.textContent = "";
       const seg = document.createElement("div"); seg.className = "bsg-seg";
@@ -281,10 +288,22 @@
       });
       box.append(search, count); t.appendChild(box);
       const sp = document.createElement("div"); sp.className = "sp"; t.appendChild(sp);
-      const mk = (icon, title, fn) => { const b = document.createElement("button"); b.className = "bsg-btn"; b.title = title; if (api2().setIcon) api2().setIcon(b, icon); b.addEventListener("click", fn); t.appendChild(b); return b; };
-      mk("lucide-locate-fixed", "Вписать весь граф в окно (двойной клик по пустому месту)", () => this.fitView());
-      mk("lucide-circle-help", "Справка", () => { this.panel.classList.remove("is-open"); this.openHelp(); });
-      mk("lucide-settings", "Настройки графа", () => { this.panel.classList.toggle("is-open"); this.helpEl.classList.remove("is-open"); });
+      // the controls column of the canvas, built from the same stock classes: settings | zoom | history | help
+      const gl = this.root; const old = gl.querySelector(".canvas-controls"); if (old) old.remove();
+      const col = gl.createDiv({ cls: "canvas-controls bsg-controls" });
+      const grp = () => col.createDiv("canvas-control-group");
+      const mk = (g, icon, title, fn) => { const b = g.createDiv({ cls: "canvas-control-item", attr: { "aria-label": title } }); if (api2().setIcon) api2().setIcon(b, icon); b.addEventListener("click", fn); return b; };
+      const zoom = (k) => { const cv = this.cv; this.zoomAt = [cv.clientWidth / 2, cv.clientHeight / 2]; this.zoomAcc = (this.zoomAcc || 0) + k; this.dirty = true; };
+      mk(grp(), "lucide-settings", "Настройки графа", () => { this.panel.classList.toggle("is-open"); this.helpEl && this.helpEl.classList.remove("is-open"); });
+      const z = grp();
+      mk(z, "lucide-plus", "Приблизить", () => zoom(-1.5));
+      mk(z, "lucide-maximize", "Вписать весь граф в окно", () => this.fitView());
+      mk(z, "lucide-minus", "Отдалить", () => zoom(1.5));
+      const h = grp();
+      this.undoB = mk(h, "lucide-undo-2", "Отменить (Ctrl+Z)", () => { goHist(-1); this.updHist(); });
+      this.redoB = mk(h, "lucide-redo-2", "Повторить (Ctrl+Y)", () => { goHist(1); this.updHist(); });
+      mk(grp(), "lucide-circle-help", "Справка", () => { this.panel.classList.remove("is-open"); this.openHelp(); });
+      this.updHist();
     }
     fitView() { this.ex.ge_freeze_bounds(0); this.ex.ge_fit(); this.dirty = true; this.frozen = false; setTimeout(() => { if (this.ex && !this.running) { this.ex.ge_freeze_bounds(1); this.frozen = true; } }, 1800); }
     buildPanel() {
