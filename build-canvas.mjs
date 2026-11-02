@@ -66,7 +66,8 @@ const patch = (from, to) => {
 };
 // the image export: a map of the sectors in the progress window, the sector being scanned is marked and a finished one is filled
 patch('return A?[2,{value:void 0}]:(Y.x=Y.tx=z+e*R,', 'return A?[2,{value:void 0}]:(window.__fpExportTile&&window.__fpExportTile(D,V,H,e,G,_,W,0),Y.x=Y.tx=z+e*R,');
-patch('D.setMessage("Rendering tiles... (".concat(_,"/").concat(W,")")),', 'D.setMessage("Rendering tiles... (".concat(_,"/").concat(W,")")),window.__fpExportTile&&window.__fpExportTile(D,V,H,e,G,_,W,1),');
+patch('D.setMessage("Rendering tiles... (".concat(_,"/").concat(W,")")),', 'D.setMessage("Съёмка секторов (".concat(_,"/").concat(W,")")),window.__fpExportTile&&window.__fpExportTile(D,V,H,e,G,_,W,1),');
+patch('D=new pD(S.document)).show(),D.setMessage("Rendering tiles..."),', 'D=new pD(S.document)).show(),D.setMessage("Съёмка холста…"),function(){try{S.focus()}catch(e){}}(),');
 patch('prototype.showMenu=function(e){var t=this,n=this.canvas;n.readonly||e.addItem((function(e){return e.setSection("danger")',
   'prototype.showMenu=function(e){var t=this,n=this.canvas;window.__fpNodeMenu&&window.__fpNodeMenu(e,t);n.readonly||e.addItem((function(e){return e.setSection("danger")');
 patch('var k=Rb(Fb(["Shift"],"2"));if(b(s,j3.actionZoomToSelection()',
@@ -109,7 +110,7 @@ patch('t.prototype.setupConfig=function(){', 't.prototype.setupConfig=function()
 // PNG export: sharper by default (2x, up to 4x on the slider) - the stock default was 1x
 patch('h=Math.min(2,16284/s/c,16284/s/u),p="",d=Math.min(1,h)', 'h=Math.min(4,16284/s/c,16284/s/u),p="",d=Math.min(2,h)');
 // PNG export: the titles above cards stick out of the cards: the frame takes them in, like it does for a card that does not fit
-patch('l=y3(g3(Array.from(this.nodes.values()).map(m3)),100),c=l.maxX-l.minX', 'l=y3(g3(Array.from(this.nodes.values()).map(m3)),100+160/Math.max(.15,this.scale)),c=l.maxX-l.minX');
+patch('l=y3(g3(Array.from(this.nodes.values()).map(m3)),100),c=l.maxX-l.minX', 'l=y3(g3(Array.from(this.nodes.values()).map(m3).concat(window.__fpInkBoxes?window.__fpInkBoxes(this):[])),100+160/Math.max(.15,this.scale)),c=l.maxX-l.minX');
 app = brandApp(app);
 fs.writeFileSync(appPath, app);
 

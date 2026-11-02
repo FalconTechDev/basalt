@@ -12,6 +12,9 @@
   css.textContent = `
     .bsink, .bsink-live { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }
     .bsink-live { z-index: 21; }
+    /* the drawing lies under the controls of the board: it never covers the buttons, the minimap or the toolbars */
+    .canvas-wrapper .canvas-controls, .canvas-wrapper .fp-minimap, .canvas-wrapper .canvas-card-menu, .canvas-wrapper .canvas-menu-container, .canvas-wrapper .canvas-selection-menu { z-index: 40; }
+    .canvas-wrapper { overflow: hidden; }
     .bsink-on, .bsink-on * { cursor: crosshair !important; }
     .bsink-on .canvas-card-menu { display: none !important; }
     .bsd { position: relative; margin: 4px 0; line-height: 0; } .bsd svg { width: 100%; height: auto; display: block; }

@@ -1607,6 +1607,15 @@
     });
   }
 
+  // the drawing of a board (strokes, text) counts for the extent of the exported picture
+  window.__fpInkBoxes = (canvas) => {
+    try {
+      const S = window.__bsInk && window.__bsInk.state(canvas); if (!S || !S.strokes.length) return [];
+      let x0 = 1e12, y0 = 1e12, x1 = -1e12, y1 = -1e12;
+      for (const sk of S.strokes) { const b = window.__bsInk.box(sk); x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[2]); y1 = Math.max(y1, b[3]); }
+      return x0 > x1 ? [] : [{ minX: x0, minY: y0, maxX: x1, maxY: y1 }];
+    } catch (e) { return []; }
+  };
   // the progress window of the image export gets a map of its sectors (called by the export for every sector: before it is scanned and after)
   window.__fpExportTile = (dlg, cols, rows, col, row, done, total, finished) => {
     try {
@@ -1627,13 +1636,6 @@
   };
   window.__fpToolbar = (menuEl, sel, canvas) => {
     if (canvas.readonly || !sel.length) return;
-    // copy / cut / duplicate of the selection, next to the other actions
-    if (!sel.every(isEdge)) {
-      const act = (icon, title, fn) => { const b = menuEl.createEl("button", "clickable-icon"); b.setAttribute("aria-label", title); try { window.__bsApi.setIcon(b, icon); } catch (e) { b.textContent = title[0]; } b.addEventListener("click", (e) => { e.stopPropagation(); fn(); }); return b; };
-      const viaClipboard = (cmd) => () => { try { (canvas.wrapperEl || canvas.view.containerEl).focus({ preventScroll: true }); document.execCommand(cmd); } catch (e) { /* no clipboard */ } };
-      act("lucide-scissors", "Вырезать", viaClipboard("cut"));
-      act("lucide-copy", "Копировать", viaClipboard("copy"));
-    }
     if (sel.every(isEdge)) { edgePicker(menuEl, sel, canvas); return; }
     if (sel.some((n) => isEdge(n) || !n.unknownData || !n.nodeEl || n.nodeEl.classList.contains("canvas-node-group"))) return;
     const btn = menuEl.createEl("button", "clickable-icon");
