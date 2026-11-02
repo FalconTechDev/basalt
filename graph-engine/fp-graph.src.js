@@ -161,8 +161,20 @@
     .bsg-seg.mini { height: 24px; } .bsg-seg.mini button { height: 24px; padding: 0 9px; font-size: 11.5px; }
     .bsg-panel .hd.first { margin-top: 2px; padding-top: 0; border-top: 0; }
     .bsg-panel .btns { display: flex; gap: 6px; margin: 6px 0 2px; } .bsg-panel .btns button { flex: 1; height: 26px; font-size: 12px; background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); border-radius: var(--bs-r); cursor: pointer; } .bsg-panel .btns button:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
-    .bsg-help { position: absolute; right: 14px; top: 52px; width: 330px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip); display: none; font-size: 12.5px; }
-    .bsg-help.is-open { display: block; } .bsg-help .hr { display: flex; gap: 10px; justify-content: space-between; margin: 6px 0; color: var(--text-muted); } .bsg-help .hr b { color: var(--text-normal); font-weight: 600; white-space: nowrap; } .bsg-help .hr span { text-align: right; }
+    .bsg-help { position: absolute; left: 50%; top: 60px; transform: translateX(-50%); width: min(640px, calc(100% - 40px)); max-height: calc(100% - 90px); overflow-y: auto; padding: 14px 18px 10px; z-index: 40; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip); display: none; font-size: 12.5px; }
+    .bsg-help.is-open { display: block; } .bsg-help .ht { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 20px; font-weight: 600; color: var(--text-normal); }
+    .bsg-help .hx { width: 30px; height: 30px; padding: 0; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); } .bsg-help .hx:hover { color: var(--text-normal); background: var(--background-modifier-hover); }
+    .bsg-help .hr { display: flex; gap: 16px; align-items: center; justify-content: space-between; padding: 7px 0; color: var(--text-normal); font-size: 14px; }
+    .bsg-help .ks { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .bsg-help kbd { font-family: var(--font-monospace); font-size: 12.5px; padding: 3px 8px; background: var(--background-modifier-hover); color: var(--text-normal); border: 0; border-radius: var(--bs-r); box-shadow: none; white-space: nowrap; }
+    .bsg-panel .li { display: inline-flex; width: 15px; height: 15px; margin-right: 7px; color: var(--text-faint); vertical-align: -3px; flex: none; } .bsg-panel .li svg { width: 15px; height: 15px; }
+    .bsg-panel .hd { display: flex; align-items: center; } .bsg-panel .hd .li { color: var(--interactive-accent); }
+    .bsg-panel .row .lb { display: flex; align-items: center; flex: 1; min-width: 0; }
+    .bsg-panel .cbs { display: flex; gap: 10px; } .bsg-panel .cb2:checked { background-color: #6e96be !important; border-color: #6e96be !important; --interactive-accent: #6e96be; }
+    .bsg-panel .cap { display: flex; justify-content: flex-end; gap: 4px; margin: -2px 0 2px; font-size: 10.5px; color: var(--text-faint); } .bsg-panel .cap span { width: 40px; text-align: center; }
+    .bsg-panel .row.focus .nm { color: var(--text-normal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsg-panel .row.focus .n { color: var(--text-muted); min-width: 36px; text-align: center; font-size: 12px; }
+    .bsg-panel .row.focus .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); flex: none; } .bsg-panel .row.focus .ic:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-panel .row.focus .ic svg { width: 15px; height: 15px; }
+    .bsg-panel .wide .li, .bsg-panel .btns button .li { margin-right: 6px; } .bsg-panel .wide, .bsg-panel .btns button { display: inline-flex; align-items: center; justify-content: center; }
     .bsg-focus { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); display: none; align-items: center; gap: 6px; padding: 4px 6px 4px 12px; background: var(--background-secondary); border: 1px solid var(--interactive-accent); border-radius: 0; clip-path: var(--bs-clip); font-size: 12.5px; z-index: 6; }
     .bsg-focus.is-on { display: flex; } .bsg-focus .t { color: var(--text-normal); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 4px; } .bsg-focus .n { min-width: 34px; text-align: center; color: var(--text-muted); }
     .bsg-focus button { width: 24px; height: 24px; padding: 0; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); } .bsg-focus button:hover { color: var(--text-normal); background: var(--background-modifier-hover); }
@@ -186,9 +198,9 @@
     open2() {
       injectCss();
       const root = this.contentEl; root.empty && root.empty(); root.style.padding = "0"; root.style.overflow = "hidden"; root.style.position = "relative";
-      root.innerHTML = '<div class="bsg"><canvas></canvas><div class="bsg-top"></div><div class="bsg-panel"></div><div class="bsg-help"></div><div class="bsg-focus"></div><div class="bsg-card"></div><div class="bsg-status"></div><div class="bsg-empty">В графе пока нет заметок</div></div>';
+      root.innerHTML = '<div class="bsg"><canvas></canvas><div class="bsg-top"></div><div class="bsg-panel"></div><div class="bsg-help"></div><div class="bsg-card"></div><div class="bsg-status"></div><div class="bsg-empty">В графе пока нет заметок</div></div>';
       this.root = root.querySelector(".bsg"); this.cv = this.root.querySelector("canvas"); this.ctx = this.cv.getContext("2d");
-      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = this.root.querySelector(".bsg-help"); this.focusEl = this.root.querySelector(".bsg-focus"); this.buildHelp(); this.empty = this.root.querySelector(".bsg-empty");
+      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = this.root.querySelector(".bsg-help"); this.buildHelp(); this.empty = this.root.querySelector(".bsg-empty");
       this.ex = instance();
       this.buildTop(); this.buildPanel(); this.bind();
       this.alive = true; this.ready = true; VIEWS.add(this);
@@ -221,8 +233,31 @@
     }
     // ---- chrome
     buildHelp() {
-      const rows = [["Колесо", "приблизить / отдалить"], ["Перетащить пустое место", "сдвинуть граф (любой кнопкой мыши)"], ["Перетащить узел", "переместить его (в 2D)"], ["Клик по узлу", "выделить и подсветить связанные"], ["Двойной клик по узлу", "открыть заметку"], ["Двойной клик по пустому", "вписать граф в окно"], ["Shift + клик", "пометить несколько узлов"], ["Shift + перетащить", "сдвинуть камеру (даже над узлом)"], ["Ctrl + Z / Ctrl + Y", "отменить / вернуть группы, скрытие, фокус"], ["Правая кнопка", "меню: группа, скрыть, открыть"], ["Delete", "скрыть выделенное"], ["Ctrl + F  или  /", "поиск"], ["Esc", "снять выделение, закрыть окна"]];
-      this.helpEl.innerHTML = '<div class="hd first">Управление</div>' + rows.map((x) => '<div class="hr"><b>' + x[0] + '</b><span>' + x[1] + '</span></div>').join("");
+      const rows = [
+        ["Приблизить / отдалить", [["Scroll"]]],
+        ["Сдвинуть граф", [["Drag"], ["Shift", "Drag"]]],
+        ["Переместить узел (2D)", [["Drag"]]],
+        ["Выделить, подсветить связанные", [["Click"]]],
+        ["Открыть заметку", [["Double Click"]]],
+        ["Вписать граф в окно", [["Double Click"], ["0"]]],
+        ["Пометить несколько узлов", [["Shift", "Click"]]],
+        ["Меню: группа, скрыть, открыть", [["Right Click"]]],
+        ["Скрыть выделенное", [["Delete"], ["Backspace"]]],
+        ["Найти заметку", [["Ctrl", "F"], ["/"]]],
+        ["Следующий найденный", [["Enter"], ["Shift", "Enter"]]],
+        ["Снять выделение, закрыть окно", [["Esc"]]],
+        ["Отменить", [["Ctrl", "Z"]]],
+        ["Применить", [["Ctrl", "Y"], ["Ctrl", "Shift", "Z"]]],
+      ];
+      const h = this.helpEl; h.textContent = "";
+      const top = document.createElement("div"); top.className = "ht"; const t = document.createElement("span"); t.textContent = "Справка"; top.appendChild(t);
+      const x = document.createElement("button"); x.className = "hx"; x.title = "Закрыть"; if (api2().setIcon) api2().setIcon(x, "lucide-x"); else x.textContent = "x"; x.addEventListener("click", () => h.classList.remove("is-open")); top.appendChild(x); h.appendChild(top);
+      for (const [label, combos] of rows) {
+        const row = document.createElement("div"); row.className = "hr"; const l = document.createElement("span"); l.textContent = label; row.appendChild(l);
+        const ks = document.createElement("span"); ks.className = "ks";
+        for (const combo of combos) { const k = document.createElement("kbd"); k.textContent = combo.join(" + "); ks.appendChild(k); }
+        row.appendChild(ks); h.appendChild(row);
+      }
     }
     buildTop() {
       const t = this.top; t.textContent = "";
@@ -255,32 +290,51 @@
     fitView() { this.ex.ge_freeze_bounds(0); this.ex.ge_fit(); this.dirty = true; this.frozen = false; setTimeout(() => { if (this.ex && !this.running) { this.ex.ge_freeze_bounds(1); this.frozen = true; } }, 1800); }
     buildPanel() {
       const p = this.panel; p.textContent = ""; const c = this.c;
-      const head = (t) => { const h = document.createElement("div"); h.className = "hd first"; h.textContent = t; p.appendChild(h); };
-      const row = (label, hint, control) => { const r = document.createElement("div"); r.className = "row"; const l = document.createElement("span"); l.textContent = label; if (hint) l.title = hint; r.append(l, control); p.appendChild(r); return r; };
-      const check = (label, hint, get, set) => { const i = document.createElement("input"); i.type = "checkbox"; i.checked = !!get(); i.addEventListener("change", () => { set(i.checked); save(c); }); return row(label, hint, i); };
-      const slider = (label, hint, key, min, max, step, apply) => { const i = document.createElement("input"); i.type = "range"; i.min = min; i.max = max; i.step = step; i.value = c[key]; i.addEventListener("input", () => { c[key] = +i.value; save(c); apply(); }); return row(label, hint, i); };
-      head("Что показывать");
-      check("Холсты", "Показывать файлы .canvas как узлы", () => c.canvases, (v) => { c.canvases = v; this.rebuild(); });
-      check("Картинки", "Показывать картинки, на которые есть ссылки", () => c.images, (v) => { c.images = v; this.rebuild(); });
-      check("Заметки без связей", "Одиночные заметки, которые ни с чем не связаны", () => c.orphans, (v) => { c.orphans = v; this.rebuild(); });
-      check("Ссылки на несозданные", "Заметки, на которые есть ссылка, но файла ещё нет", () => c.unresolved, (v) => { c.unresolved = v; this.rebuild(); });
-      if (type === "localgraph") slider("Глубина", "Сколько шагов от открытой заметки", "localDepth", 1, 6, 1, () => this.rebuild());
-      head("Вид");
+      const icon = (host, name) => { const i = document.createElement("span"); i.className = "li"; if (api2().setIcon) api2().setIcon(i, name); host.appendChild(i); return i; };
+      const head = (t, ic) => { const h = document.createElement("div"); h.className = "hd"; if (ic) icon(h, ic); h.appendChild(document.createTextNode(t)); p.appendChild(h); return h; };
+      const row = (label, ic, hint, control) => { const r = document.createElement("div"); r.className = "row"; const l = document.createElement("span"); l.className = "lb"; if (ic) icon(l, ic); l.appendChild(document.createTextNode(label)); if (hint) r.title = hint; r.append(l, control); p.appendChild(r); return r; };
+      const box = (get, set, tip, cls) => { const i = document.createElement("input"); i.type = "checkbox"; i.checked = !!get(); if (tip) i.title = tip; if (cls) i.className = cls; i.addEventListener("change", () => { set(i.checked); save(c); }); return i; };
+      const check = (label, ic, hint, get, set) => row(label, ic, hint, box(get, set));
+      const slider = (label, ic, hint, key, min, max, step, apply) => { const i = document.createElement("input"); i.type = "range"; i.min = min; i.max = max; i.step = step; i.value = c[key]; i.addEventListener("input", () => { c[key] = +i.value; save(c); apply(); }); return row(label, ic, hint, i); };
+      // two ticks: the first puts the nodes in the graph, the second (other colour) draws them as pictures; off, they are plain balls
+      const pair = (label, ic, hint, g1, s1, g2, s2) => { const w = document.createElement("div"); w.className = "cbs"; w.append(box(g1, s1, "Показывать в графе"), box(g2, s2, "Рисовать значком-превью (выключено: простой шарик)", "cb2")); return row(label, ic, hint, w); };
+      const cap = document.createElement("div"); cap.className = "cap"; cap.innerHTML = "<span>в графе</span><span>значком</span>";
+      head("Что показывать", "lucide-eye"); p.appendChild(cap);
+      pair("Холсты", "lucide-layout-dashboard", "Файлы .canvas", () => c.canvases, (v) => { c.canvases = v; this.rebuild(); }, () => c.thumbCanvas, (v) => { c.thumbCanvas = v; this.dirty = true; });
+      pair("Картинки", "lucide-image", "Картинки, на которые есть ссылки", () => c.images, (v) => { c.images = v; this.rebuild(); }, () => c.thumbImg, (v) => { c.thumbImg = v; this.dirty = true; });
+      check("Заметки без связей", "lucide-circle-dashed", "Одиночные заметки, которые ни с чем не связаны", () => c.orphans, (v) => { c.orphans = v; this.rebuild(); });
+      check("Ссылки на несозданные", "lucide-file-question", "Заметки, на которые есть ссылка, но файла ещё нет", () => c.unresolved, (v) => { c.unresolved = v; this.rebuild(); });
+      if (type === "localgraph") slider("Глубина", "lucide-layers", "Сколько шагов от открытой заметки", "localDepth", 1, 6, 1, () => this.rebuild());
+      head("Вид", "lucide-palette");
       const seg = document.createElement("div"); seg.className = "bsg-seg mini";
       for (const [k, label] of [["auto", "Авто"], ["all", "Все"], ["none", "Нет"]]) { const b = document.createElement("button"); b.textContent = label; b.className = c.labelMode === k ? "is-on" : ""; b.addEventListener("click", () => { c.labelMode = k; save(c); for (const x of seg.children) x.classList.toggle("is-on", x === b); this.style(); }); seg.appendChild(b); }
-      row("Подписи", "Авто: у главных узлов; Все: у каждого; Нет: без подписей", seg);
-      check("Превью картинок и холстов", "Вместо точек рисовать маленькие превью", () => c.thumbImg && c.thumbCanvas, (v) => { c.thumbImg = c.thumbCanvas = v; this.dirty = true; });
-      slider("Размер узлов", "", "nodeScale", 0.5, 2.5, 0.1, () => this.style());
-      slider("Яркость связей", "", "edgeAlpha", 0.1, 1, 0.05, () => this.style());
-      head("Раскладка");
-      slider("Разброс", "Чем больше, тем дальше узлы друг от друга", "repulsion", 200, 3000, 50, () => this.forces());
-      slider("Длина связей", "", "linkDistance", 10, 120, 2, () => this.forces());
-      slider("Притяжение", "Насколько сильно связанные узлы тянутся друг к другу", "linkStrength", 0.1, 1.5, 0.05, () => this.forces());
+      row("Подписи", "lucide-type", "Авто: у главных узлов; Все: у каждого; Нет: без подписей", seg);
+      slider("Размер узлов", "lucide-circle-dot", "", "nodeScale", 0.5, 2.5, 0.1, () => this.style());
+      slider("Яркость связей", "lucide-sun", "", "edgeAlpha", 0.1, 1, 0.05, () => this.style());
+      head("Раскладка", "lucide-network");
+      slider("Длина связей", "lucide-ruler", "", "linkDistance", 10, 120, 2, () => this.forces());
+      slider("Притяжение", "lucide-magnet", "Насколько сильно связанные узлы тянутся друг к другу", "linkStrength", 0.1, 1.5, 0.05, () => this.forces());
       const rb = document.createElement("div"); rb.className = "btns";
-      const b1 = document.createElement("button"); b1.textContent = "Сбросить"; b1.addEventListener("click", () => { c.repulsion = CFG0.repulsion; c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); });
-      const b2 = document.createElement("button"); b2.textContent = "Пересчитать"; b2.title = "Раскидать узлы заново"; b2.addEventListener("click", () => { this.ex.ge_reheat(1); this.running = true; });
-      rb.append(b1, b2); p.appendChild(rb);
+      const mkb = (label, ic, title, fn) => { const b = document.createElement("button"); icon(b, ic); b.appendChild(document.createTextNode(label)); b.title = title; b.addEventListener("click", fn); rb.appendChild(b); };
+      mkb("Сбросить", "lucide-rotate-ccw", "Вернуть длину и притяжение по умолчанию", () => { c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); });
+      mkb("Пересчитать", "lucide-shuffle", "Раскидать узлы заново", () => { this.ex.ge_reheat(1); this.running = true; });
+      p.appendChild(rb);
+      this.panelFocus(p, head, icon);
       this.panelGroups(p);
+    }
+    // the focus (a picture built around some nodes) is a part of the settings, with the same icon buttons as the rest
+    panelFocus(p, head, icon) {
+      if (!STORE.focusKeys.length) return;
+      head("Фокус", "lucide-focus");
+      const nm = STORE.focusKeys.length === 1 ? STORE.focusKeys[0].split("/").pop().replace(/[.]md$/, "") : STORE.focusKeys.length + " узлов";
+      const r = document.createElement("div"); r.className = "row focus";
+      const l = document.createElement("span"); l.className = "lb nm"; l.textContent = nm; r.appendChild(l);
+      const mk = (ic, title, fn) => { const b = document.createElement("button"); b.className = "ic"; b.title = title; icon(b, ic); b.addEventListener("click", fn); r.appendChild(b); return b; };
+      mk("lucide-minus", "Меньше окружения", () => { STORE.fdepth = Math.max(0, STORE.fdepth - 1); saveStore(); this.afterState(); });
+      const n = document.createElement("span"); n.className = "n"; n.textContent = STORE.fdepth + " ур."; r.appendChild(n);
+      mk("lucide-plus", "Больше окружения", () => { STORE.fdepth = Math.min(6, STORE.fdepth + 1); saveStore(); this.afterState(); });
+      mk("lucide-x", "Показать весь граф", () => this.clearFocus());
+      p.appendChild(r);
     }
     setMode(m) { const was = this.c.view; this.c.view = m === "3d" ? "3d" : "2d"; save(this.c); if (this.ready && this.W && was !== this.c.view) { this.fade = null; this.anim = { t0: performance.now(), dur: 750, img: this.snap("A") }; } this.ex && this.ex.ge_set_mode(this.c.view === "3d" ? 3 : 2); for (const k in this.segBtns) this.segBtns[k].classList.toggle("is-on", k === this.c.view); this.running = true; this.dirty = true; }
     style() {
@@ -324,8 +378,9 @@
       const prevSel = this.sel >= 0 && this.oldNodes ? this.oldNodes[this.sel] : null;
       // the finished positions are computed out of sight; the eye only sees them move there (the first picture spreads from the centre, outwards)
       const mode = this.regroup ? 3 : (this.tweenedOnce ? 2 : 1); this.tweenedOnce = true; this.regroup = false;
-      ex.ge_set_tween(mode, mode === 1 ? 2000 : mode === 3 ? 1000 : 650);
+      ex.ge_set_tween(mode, mode === 1 ? 3200 : mode === 3 ? 1300 : 800);
       ex.ge_set_graph(words, bytes.length);
+      if (mode === 1) { this.cv.style.transition = "none"; this.cv.style.opacity = "0"; requestAnimationFrame(() => requestAnimationFrame(() => { this.cv.style.transition = "opacity 1.1s ease"; this.cv.style.opacity = "1"; })); }
       this.keyIndex = new Map(g.nodes.map((x, k) => [x.key, k])); this.oldNodes = g.nodes.map((x) => x.key);
       this.hover = -1; this.hlTo = undefined; { const k = prevSel && this.keyIndex.has(prevSel) ? this.keyIndex.get(prevSel) : -1; this.sel = k; ex.ge_select(k, 1); this.cardFor(k); }
       this.tweening = n > 0; this.running = false; this.lastT = performance.now(); this.growLabels = n > 0; this.style(); ex.ge_freeze_bounds(1); this.frozen = true; this.dirty = true; this.empty.style.display = n ? "none" : "flex";
@@ -385,7 +440,8 @@
       if (this.wantHover >= 0 && now >= this.wantAt) { const hh = this.wantHover; this.wantHover = -2; if (hh !== this.hover) hoverTo(hh); }
       if (this.leaveAt && now >= this.leaveAt) { this.leaveAt = 0; hoverTo(-1); } /* a pointer that slips off a node for a moment does not make the whole graph flash */
       if (this.zoomAcc && Math.abs(this.zoomAcc) > 0.004) { const step = this.zoomAcc * 0.3; this.zoomAcc -= step; ex.ge_zoom(this.zoomAt[0], this.zoomAt[1], this.c.view === "3d" ? -step : step); this.dirty = true; } else if (this.zoomAcc) this.zoomAcc = 0;
-      if (this.tweening) { const dt = Math.min(50, now - (this.lastT || now)); const more = ex.ge_tween_step(dt); this.dirty = true; if (!more) { this.tweening = false; this.growLabels = false; this.style(); } }
+      if (this.tweening) { const dt = Math.min(50, now - (this.lastT || now)); const more = ex.ge_tween_step(dt); this.dirty = true; if (!more) { this.tweening = false; this.growLabels = false; this.labelA = 0; this.labelT0 = now; this.style(); } }
+      if (this.labelT0) { const kk = Math.min(1, (now - this.labelT0) / 500); this.labelA = kk; this.dirty = true; if (kk >= 1) this.labelT0 = 0; }
       this.lastT = now;
       if (this.running) { if (this.frozen !== false) { this.frozen = false; ex.ge_freeze_bounds(0); } const settled = ex.ge_step(this.grow ? 2 : this.g.nodes.length > 2500 ? 1 : 2); this.dirty = true; if (this.grow && (settled || now - this.grow > 4500)) { this.grow = 0; ex.ge_lock_bounds(0); ex.ge_set_max_step(0); this.growLabels = false; this.style(); } if (settled) { this.running = false; setTimeout(() => { if (this.ex && !this.running) { this.ex.ge_freeze_bounds(1); this.frozen = true; } }, 900); } }
       if (!this.dirty) return;
@@ -397,6 +453,7 @@
       if (this.hlTo === undefined) this.hlTo = this.hlFrom = target;
       if (target !== this.hlTo) { this.hlFrom = this.hlTo; this.hlTo = target; this.hlT0 = now; }
       const hk = Math.min(1, (now - this.hlT0) / 200), blend = !this.anim && hk < 1 && this.hlFrom !== this.hlTo;
+      this.hlK = blend ? ease(hk) : 1;
       if (blend) { this.dirty = true; this.paintBlend(ex, w, h, dpr, target, ease(hk)); this.halos(ex); this.drawGroups(ex); this.drawThumbs(ex); this.status.innerHTML = this.statusHtml(); return; }
       ex.ge_select(target, 1);
       const layered = !!(this.anim || this.fade);
@@ -446,8 +503,8 @@
         if (!ex.ge_screen_of(i)) continue; const f = new Float32Array(ex.memory.buffer, ex.ge_input(2), 2), x = f[0], y = f[1];
         if (x < -40 || y < -40 || x > this.W + 40 || y > this.H + 40) continue;
         const t = this.thumb(n); drawn++; { const hw = n.kind === "img" ? 22 * sc : 34 * sc * 0.9, hh2 = n.kind === "img" ? 22 * sc : 17 * sc; this.thumbRects.push([i, x - hw, y - hh2, x + hw, y + hh2]); }
-        const lit = target < 0 || i === target || (nbs && nbs.has(i)), hot = i === target;
-        c.save(); c.globalAlpha = lit ? 1 : 0.16; try {
+        const hot = i === target;
+        c.save(); c.globalAlpha = this.alphaOf(i); try {
         if (n.kind === "img") {
           const r = 22 * sc, q = 6; c.beginPath(); cut(c, x - r, y - r, r * 2, r * 2, Math.min(8, r * 0.4)); c.save(); c.clip();
           if (t) { const s2 = (r * 2) / Math.min(t.bmp.width, t.bmp.height); c.drawImage(t.bmp, x - (t.bmp.width * s2) / 2, y - (t.bmp.height * s2) / 2, t.bmp.width * s2, t.bmp.height * s2); } else { c.fillStyle = "rgba(128,128,128,.4)"; c.fill(); }
@@ -463,6 +520,12 @@
       }
     }
     pickAt(x, y, w, h) { for (const [i, x0, y0, x1, y1] of this.thumbRects || []) if (x >= x0 && x <= x1 && y >= y0 && y <= y1) return i; return this.ex.ge_pick(x, y, w, h); }
+    // how bright a node drawn over the engine's picture is: the same fade as the engine's own highlight (between the old and the new state)
+    alphaOf(i) {
+      const lit = (id) => (id === undefined || id < 0 || i === id || this.adjOf(id).has(i) ? 1 : 0);
+      const a = lit(this.hlFrom), b = lit(this.hlTo), k = this.hlK === undefined ? 1 : this.hlK;
+      return 0.17 + 0.83 * (a + (b - a) * k);
+    }
     adjOf(i) { if (!this.adj || this.adjFor !== this.g) { this.adjFor = this.g; this.adj = this.g.nodes.map(() => new Set()); this.g.edges.forEach(([a, b]) => { this.adj[a].add(b); this.adj[b].add(a); }); } return this.adj[i]; }
     // select a node: highlight its neighbourhood, show its card and bring it to the middle of the window (2D)
     setSel(i, center) {
@@ -493,7 +556,7 @@
     // groups you make yourself and the notes you hid: both live in the panel and in the right-click menu
     panelGroups(p) {
       const head = (t) => { const h = document.createElement("div"); h.className = "hd"; h.textContent = t; p.appendChild(h); return h; };
-      head("Группы");
+      const hg = head("Группы"); if (api2().setIcon) { const i = document.createElement("span"); i.className = "li"; api2().setIcon(i, "lucide-folder-tree"); hg.prepend(i); }
       const counts = {}; for (const k of Object.values(STORE.assign)) counts[k] = (counts[k] || 0) + 1;
       const ico = (b, name, fallback) => { if (api2().setIcon) api2().setIcon(b, name); else b.textContent = fallback; };
       const apply = () => { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); };
@@ -516,10 +579,10 @@
         const t = document.createElement("div"); t.className = "mute"; t.textContent = "Показано: выбранные группы и всё вокруг них"; box.appendChild(t);
         const mkS = (label, key, min, max, step) => { const rr = document.createElement("div"); rr.className = "row"; const l = document.createElement("span"); l.textContent = label; const i = document.createElement("input"); i.type = "range"; i.min = min; i.max = max; i.step = step; i.value = STORE[key]; const v = document.createElement("b"); v.textContent = STORE[key]; i.addEventListener("input", () => { STORE[key] = +i.value; v.textContent = i.value; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }); rr.append(l, i, v); box.appendChild(rr); };
         mkS("Уровней от группы", "depth", 0, 5, 1); mkS("Узлов не больше", "max", 10, 500, 10);
-        const off = document.createElement("button"); off.className = "wide"; off.textContent = "Показать весь граф"; off.addEventListener("click", () => this.clearFocus()); box.appendChild(off);
+        const off = document.createElement("button"); off.className = "wide"; ico(off, "lucide-eye", ""); off.appendChild(document.createTextNode("Показать весь граф")); off.addEventListener("click", () => this.clearFocus()); box.appendChild(off);
         p.appendChild(box);
       }
-      const add = document.createElement("button"); add.className = "wide"; add.textContent = "+ Новая группа"; add.addEventListener("click", () => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }); p.appendChild(add);
+      const add = document.createElement("button"); add.className = "wide"; ico(add, "lucide-plus", "+"); add.appendChild(document.createTextNode("Новая группа")); add.addEventListener("click", () => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }); p.appendChild(add);
     }
     newGroup(name, keys) {
       const g = { id: "g" + Date.now().toString(36), name: name || "Группа " + (STORE.groups.length + 1), color: GROUP_COLORS[STORE.groups.length % GROUP_COLORS.length] };
@@ -530,21 +593,10 @@
     targets(hit) { if (hit >= 0 && this.multi && this.multi.size > 1 && this.multi.has(hit)) return Array.from(this.multi); return hit >= 0 ? [hit] : []; }
     hideNodes(idx) { const g = hiddenGroup(); g.hidden = true; for (const i of idx) { const n = this.g.nodes[i]; if (n) STORE.assign[n.key] = g.id; } this.multi = new Set(); this.sel = -1; saveStore(); this.sig = null; this.rebuild(); this.buildPanel(); }
     // the picture built around some nodes (not a group): they are shown with what is around them; a bar at the top says so and ends it
-    focusOn(idx) { STORE.focusKeys = idx.map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean); STORE.fdepth = 1; saveStore(); this.afterState(); }
+    focusOn(idx) { STORE.focusKeys = idx.map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean); STORE.fdepth = 1; saveStore(); this.afterState(); this.panel.classList.add("is-open"); this.helpEl.classList.remove("is-open"); }
     clearFocus() { STORE.focusKeys = []; STORE.solo = []; saveStore(); this.afterState(); }
     afterState() { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); this.updateFocusBar(); }
-    updateFocusBar() {
-      const el = this.focusEl; if (!el) return; el.textContent = "";
-      if (!STORE.focusKeys.length) { el.classList.remove("is-on"); return; }
-      const nm = STORE.focusKeys.length === 1 ? (STORE.focusKeys[0].split("/").pop().replace(/[.]md$/, "")) : STORE.focusKeys.length + " узлов";
-      const lab = document.createElement("span"); lab.className = "t"; lab.textContent = "Фокус: " + nm; el.appendChild(lab);
-      const mk = (t, title, fn) => { const b = document.createElement("button"); b.textContent = t; b.title = title; b.addEventListener("click", fn); el.appendChild(b); return b; };
-      mk("−", "Меньше окружения", () => { STORE.fdepth = Math.max(0, STORE.fdepth - 1); saveStore(); this.afterState(); });
-      const n = document.createElement("span"); n.className = "n"; n.textContent = STORE.fdepth + " ур."; el.appendChild(n);
-      mk("+", "Больше окружения", () => { STORE.fdepth = Math.min(6, STORE.fdepth + 1); saveStore(); this.afterState(); });
-      mk("✕", "Показать весь граф", () => this.clearFocus());
-      el.classList.add("is-on");
-    }
+    updateFocusBar() { /* the focus lives in the settings now */ }
     closeMenu() { if (this.menuEl) { this.menuEl.remove(); this.menuEl = null; } if (this.menuOff) { document.removeEventListener("pointerdown", this.menuOff, true); document.removeEventListener("keydown", this.menuKey, true); this.menuOff = null; } }
     showMenu(cx, cy, hit) {
       this.closeMenu();
@@ -588,8 +640,7 @@
         if (!ex.ge_screen_of(i)) continue; const f = new Float32Array(ex.memory.buffer, ex.ge_input(2), 2), x = f[0], y = f[1];
         if (x < -30 || y < -30 || x > this.W + 30 || y > this.H + 30) continue;
         const deg = this.adjOf(i).size, r = Math.min((3.2 + 2.6 * Math.sqrt(deg)) * sc, 16 * Math.max(sc, 0.6));
-        const lit = target < 0 || i === target || (nbs && nbs.has(i));
-        c.save(); c.globalAlpha = lit ? 1 : 0.18;
+        c.save(); c.globalAlpha = this.alphaOf(i);
         if (g && n.kind === "note" && this.c.view === "2d") { const gr = c.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r); gr.addColorStop(0, mix(g.color, 0.45)); gr.addColorStop(1, mix(g.color, -0.12)); c.fillStyle = gr; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); c.lineWidth = 1; c.strokeStyle = mix(g.color, -0.55); c.stroke(); }
         else if (g) { c.lineWidth = 2; c.strokeStyle = g.color; c.beginPath(); c.arc(x, y, this.c.view === "3d" ? 9 : r + 5, 0, 6.2832); c.stroke(); }
         if (marked) { c.lineWidth = 1.5; c.strokeStyle = "#ffffff"; c.setLineDash([3, 3]); c.beginPath(); c.arc(x, y, r + 7, 0, 6.2832); c.stroke(); }
@@ -658,7 +709,7 @@
               c.fillStyle = gr; c.beginPath(); c.arc(x, y, rad, 0, 6.2832); c.fill(); c.lineWidth = 1; c.strokeStyle = base.rim; c.stroke(); } c.globalAlpha = 1; }
           else { c.fillStyle = base.lo; c.beginPath(); for (let k = 0; k < n; k++) { const x = d[pts + k * 2], y = d[pts + k * 2 + 1]; c.moveTo(x + rad, y); c.arc(x, y, rad, 0, 6.2832); } c.fill(); } }
         else if (op === 7) { const x = d[i++], y = d[i++], size = d[i++]; c.fillStyle = col(i); i += 4; const ha = d[i++], va = d[i++], n = d[i++]; let s = ""; for (let k = 0; k < n; k++) s += String.fromCharCode(d[i++]); c.font = size + "px " + (this.font || (this.font = (getComputedStyle(document.body).getPropertyValue("--font-interface") || "").trim() || "system-ui, sans-serif"));
-          c.textAlign = ha === 1 ? "center" : ha === 2 ? "right" : "left"; c.textBaseline = va === 1 ? "middle" : va === 2 ? "bottom" : "top"; c.lineWidth = 3; c.strokeStyle = this.bgCss; c.strokeText(s, x, y); c.fillText(s, x, y); }
+          c.textAlign = ha === 1 ? "center" : ha === 2 ? "right" : "left"; c.textBaseline = va === 1 ? "middle" : va === 2 ? "bottom" : "top"; c.lineWidth = 3; c.strokeStyle = this.bgCss; c.globalAlpha = this.labelA === undefined ? 1 : this.labelA; c.strokeText(s, x, y); c.fillText(s, x, y); c.globalAlpha = 1; }
         else if (op === 4) { c.save(); clips++; c.beginPath(); c.rect(d[i], d[i + 1], d[i + 2] - d[i], d[i + 3] - d[i + 1]); c.clip(); i += 4; }
         else if (op === 5) { if (clips) { c.restore(); clips--; } }
         else break;

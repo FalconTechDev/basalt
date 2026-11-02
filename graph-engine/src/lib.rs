@@ -326,8 +326,11 @@ pub extern "C" fn ge_tween_step(dt: f32) -> u32 {
             return 0;
         }
         tw.t += dt;
-        let d = tw.dur * 0.5;
-        let ease = |k: f32| 1.0 - (1.0 - k.clamp(0.0, 1.0)).powi(3);
+        let d = tw.dur * 0.6;
+        let ease = |k: f32| {
+            let k = k.clamp(0.0, 1.0);
+            k * k * k * (k * (k * 6.0 - 15.0) + 10.0)
+        };
         for i in 0..n {
             let k2 = ease((tw.t - tw.delay2[i] * (tw.dur - d)) / d);
             for a in 0..2 {
