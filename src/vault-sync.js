@@ -332,12 +332,19 @@
     for (;;) {
       try { fd = fs.openSync(file, "wx"); fs.writeSync(fd, String(process.pid)); break; } catch (e) {
         if (e.code !== "EEXIST") { release(); throw e; }
-        try { if (Date.now() - fs.statSync(file).mtimeMs > 10 * 60 * 1000) { fs.unlinkSync(file); continue; } } catch (x) { /* raced */ }
+        try {
+          // the lock of a process that is gone (Basalt was closed or restarted in the middle of a sync) is taken over at once, not after ten minutes
+          let dead = false;
+          try { const pid = parseInt(fs.readFileSync(file, "utf8"), 10); if (pid && pid !== process.pid) { try { process.kill(pid, 0); } catch (k) { dead = k.code === "ESRCH"; } } else if (pid === process.pid && !chains.get(k + "#held")) dead = true; } catch (x) { /* unreadable: leave it to the age check */ }
+          if (dead || Date.now() - fs.statSync(file).mtimeMs > 10 * 60 * 1000) { fs.unlinkSync(file); continue; }
+        } catch (x) { /* raced */ }
         if (Date.now() > deadline) { release(); throw new Error(`другая синхронизация уже работает с «${r.name}» — ждал ${Math.round(waitMs / 1000)} с`); }
         await new Promise((res) => setTimeout(res, 150));
       }
     }
+    chains.set(k + "#held", true);
     try { return await fn(); } finally {
+      chains.delete(k + "#held");
       try { fs.closeSync(fd); fs.unlinkSync(file); } catch (e) { /* already gone */ }
       release();
     }
