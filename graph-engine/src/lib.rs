@@ -45,6 +45,11 @@ struct Tween {
     to3: Vec<[f32; 3]>,
     delay2: Vec<f32>,
     delay3: Vec<f32>,
+    /// growing arrival: the node leaves the place of the node it hangs on, in the order of this list (parents first)
+    parent: Vec<u32>,
+    order: Vec<u32>,
+    start: Vec<f32>,
+    leg: f32,
     t: f32,
     dur: f32,
 }
@@ -221,18 +226,50 @@ pub extern "C" fn ge_set_graph(words: u32, byte_len: u32) {
         let mut f3 = from3.clone();
         let mut delay2 = vec![0.0f32; n];
         let mut delay3 = vec![0.0f32; n];
+        let mut grow = (Vec::<u32>::new(), Vec::<u32>::new(), Vec::<f32>::new(), 0.0f32);
         if mode == 1 {
-            // as in Obsidian: the picture grows out of a small copy of itself, the nodes setting off one after another in no particular order
-            let hash = |i: usize| (((i as u32).wrapping_mul(2654435761) >> 8) & 1023) as f32 / 1023.0;
+            // as in Obsidian: the graph grows node by node, each new one leaving the place of the node it is linked to, the hub first
+            let mut adj: Vec<Vec<u32>> = vec![Vec::new(); n];
+            for k in 0..m {
+                let (x, y) = (w[base + k * 2] as usize, w[base + k * 2 + 1] as usize);
+                if x < n && y < n && x != y {
+                    adj[x].push(y as u32);
+                    adj[y].push(x as u32);
+                }
+            }
+            let mut by_deg: Vec<usize> = (0..n).collect();
+            by_deg.sort_by(|&p, &q| adj[q].len().cmp(&adj[p].len()));
+            let mut parent = vec![u32::MAX; n];
+            let mut seen = vec![false; n];
+            let mut order: Vec<u32> = Vec::with_capacity(n);
+            for &root in &by_deg {
+                if seen[root] {
+                    continue;
+                }
+                seen[root] = true;
+                let mut q = std::collections::VecDeque::new();
+                q.push_back(root);
+                while let Some(u) = q.pop_front() {
+                    order.push(u as u32);
+                    for &v in &adj[u] {
+                        if !seen[v as usize] {
+                            seen[v as usize] = true;
+                            parent[v as usize] = u as u32;
+                            q.push_back(v as usize);
+                        }
+                    }
+                }
+            }
+            let leg = 900.0f32;
+            let gap = (3600.0f32 / n.max(1) as f32).min(90.0);
+            let mut start = vec![0.0f32; n];
+            for (r, &i) in order.iter().enumerate() {
+                start[i as usize] = r as f32 * gap;
+            }
+            grow = (parent, order, start, leg);
             for i in 0..n {
-                delay2[i] = hash(i);
-                delay3[i] = hash(i + 7919);
-                for a in 0..2 {
-                    f2[i][a] = to2[i][a] * 0.18;
-                }
-                for a in 0..3 {
-                    f3[i][a] = to3[i][a] * 0.18;
-                }
+                f2[i] = [0.0; 2];
+                f3[i] = [0.0; 3];
             }
         } else if keeping {
             let old_len = keep.iter().filter(|&&k| k != u32::MAX).count();
@@ -262,7 +299,9 @@ pub extern "C" fn ge_set_graph(words: u32, byte_len: u32) {
         s.l2.pos = f2.clone();
         s.l3.pos = f3.clone();
         unsafe {
-            TW = Some(Tween { from2: f2, to2, from3: f3, to3, delay2, delay3, t: 0.0, dur: TW_DUR });
+            let (parent, order, start, leg) = grow;
+            let dur = if mode == 1 && !order.is_empty() { start[order[order.len() - 1] as usize] + leg } else { TW_DUR };
+            TW = Some(Tween { from2: f2, to2, from3: f3, to3, delay2, delay3, parent, order, start, leg, t: 0.0, dur });
         }
 
 }
@@ -335,6 +374,21 @@ pub extern "C" fn ge_tween_step(dt: f32) -> u32 {
             let k = k.clamp(0.0, 1.0);
             k * k * k * (k * (k * 6.0 - 15.0) + 10.0)
         };
+        if !tw.order.is_empty() {
+            for &iu in &tw.order {
+                let i = iu as usize;
+                let k = ease((tw.t - tw.start[i]) / tw.leg);
+                let p = tw.parent[i];
+                let o2 = if p == u32::MAX { [0.0; 2] } else { s.l2.pos[p as usize] };
+                let o3 = if p == u32::MAX { [0.0; 3] } else { s.l3.pos[p as usize] };
+                for a in 0..2 {
+                    s.l2.pos[i][a] = o2[a] + (tw.to2[i][a] - o2[a]) * k;
+                }
+                for a in 0..3 {
+                    s.l3.pos[i][a] = o3[a] + (tw.to3[i][a] - o3[a]) * k;
+                }
+            }
+        } else {
         for i in 0..n {
             let k2 = ease((tw.t - tw.delay2[i] * (tw.dur - d)) / d);
             for a in 0..2 {
@@ -344,6 +398,7 @@ pub extern "C" fn ge_tween_step(dt: f32) -> u32 {
             for a in 0..3 {
                 s.l3.pos[i][a] = tw.from3[i][a] + (tw.to3[i][a] - tw.from3[i][a]) * k3;
             }
+        }
         }
         if tw.t >= tw.dur {
             for i in 0..n {

@@ -389,7 +389,7 @@
       const mode = this.regroup ? 3 : (this.tweenedOnce ? 2 : 1); this.tweenedOnce = true; this.regroup = false;
       ex.ge_set_tween(mode, mode === 1 ? 3200 : mode === 3 ? 1300 : 800);
       ex.ge_set_graph(words, bytes.length);
-      if (mode === 1) { this.cv.style.transition = "none"; this.cv.style.opacity = "0"; requestAnimationFrame(() => requestAnimationFrame(() => { this.cv.style.transition = "opacity 1.1s ease"; this.cv.style.opacity = "1"; })); }
+      if (mode === 1) { this.cv.style.transition = "none"; this.cv.style.opacity = "0"; requestAnimationFrame(() => requestAnimationFrame(() => { this.cv.style.transition = "opacity .3s ease"; this.cv.style.opacity = "1"; })); }
       this.keyIndex = new Map(g.nodes.map((x, k) => [x.key, k])); this.oldNodes = g.nodes.map((x) => x.key);
       this.hover = -1; this.hlTo = undefined; { const k = prevSel && this.keyIndex.has(prevSel) ? this.keyIndex.get(prevSel) : -1; this.sel = k; ex.ge_select(k, 1); this.cardFor(k); }
       this.tweening = n > 0; this.running = false; this.lastT = performance.now(); this.growLabels = n > 0; this.style(); ex.ge_freeze_bounds(1); this.frozen = true; this.dirty = true; this.empty.style.display = n ? "none" : "flex";
