@@ -67,7 +67,7 @@ const patch = (from, to) => {
 // the image export: a map of the sectors in the progress window, the sector being scanned is marked and a finished one is filled
 patch('return A?[2,{value:void 0}]:(Y.x=Y.tx=z+e*R,', 'return A?[2,{value:void 0}]:(window.__fpExportTile&&window.__fpExportTile(D,V,H,e,G,_,W,0),Y.x=Y.tx=z+e*R,');
 patch('D.setMessage("Rendering tiles... (".concat(_,"/").concat(W,")")),', 'D.setMessage("Съёмка секторов (".concat(_,"/").concat(W,")")),window.__fpExportTile&&window.__fpExportTile(D,V,H,e,G,_,W,1),');
-patch('D=new pD(S.document)).show(),D.setMessage("Rendering tiles..."),', 'D=new pD(S.document)).show(),D.setMessage("Съёмка холста…"),function(){try{S.focus()}catch(e){}}(),');
+patch('D=new pD(S.document)).show(),D.setMessage("Rendering tiles..."),', 'D=new pD(S.document)).show(),D.setMessage("Съёмка холста…"),window.__fpExportOpen&&window.__fpExportOpen(),');
 patch('prototype.showMenu=function(e){var t=this,n=this.canvas;n.readonly||e.addItem((function(e){return e.setSection("danger")',
   'prototype.showMenu=function(e){var t=this,n=this.canvas;window.__fpNodeMenu&&window.__fpNodeMenu(e,t);n.readonly||e.addItem((function(e){return e.setSection("danger")');
 patch('var k=Rb(Fb(["Shift"],"2"));if(b(s,j3.actionZoomToSelection()',

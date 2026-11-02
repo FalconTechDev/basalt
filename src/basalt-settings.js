@@ -154,7 +154,7 @@
       const tabs = (app.setting.pluginTabs || []);
       const view = document.createElement("div"); view.className = "bset-embed";
       const grid = document.createElement("div");
-      const note = document.createElement("div"); note.className = "bset-empty"; note.textContent = "Параметры встроенных модулей."; grid.appendChild(note);
+      const note = document.createElement("div"); note.className = "bset-empty"; note.textContent = ""; grid.appendChild(note);
       const openTab = (t) => {
         grid.style.display = "none"; view.textContent = ""; view.style.display = "";
         const back = document.createElement("button"); back.className = "bset-back"; back.textContent = "Модули"; try { const ic = document.createElement("span"); window.__bsApi.setIcon(ic, "lucide-arrow-left"); back.prepend(ic); } catch (e) { /* ok */ } back.addEventListener("click", () => { try { t.hide && t.hide(); } catch (e) { /* ok */ } view.style.display = "none"; grid.style.display = ""; });
@@ -163,7 +163,7 @@
         // the module draws its own page into a container; it is placed here and restyled by .bset-legacy
         try { const c = t.containerEl || document.createElement("div"); c.textContent = ""; box.appendChild(c); t.display(); } catch (e) { box.textContent = "Не удалось показать страницу: " + e.message; }
       };
-      for (const t of tabs) row(grid, t.name || t.id, "Параметры модуля", button("Открыть", () => openTab(t)));
+      for (const t of tabs) row(grid, t.name || t.id, "", button("Открыть", () => openTab(t)));
       view.style.display = "none"; h.append(grid, view);
       if (pendingTab) { const t = tabs.find((x) => x.id === pendingTab); pendingTab = null; if (t) openTab(t); }
     });

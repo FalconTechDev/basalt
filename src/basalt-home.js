@@ -76,18 +76,18 @@
     el.querySelector("p").textContent = app.vault.getName();
     el.querySelector(".bsh-search").addEventListener("click", () => cmd("basalt:quick-search"));
     const tiles = [
-      ["note", "Новая заметка", "пустая заметка|Ctrl+N", () => cmd("file-explorer:new-file")],
-      ["canvas", "Новый холст", "карточки и связи", () => cmd("canvas:new-file")],
-      ["term", "Терминал", "в этой вкладке", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
-      ["graph", "Граф", "связи хранилища", () => leaf && leaf.setViewState({ type: "graph", active: true, state: {} })],
-      ["file", "Перейти к файлу", "быстрый переход|Ctrl+O", () => cmd("switcher:open")],
-      ["history", "Журнал действий", "что и где менялось", () => window.__vaultSyncFeed && window.__vaultSyncFeed()],
-      ["plug", "Плагины", "каталог из GitHub", () => window.__bsCatalog && window.__bsCatalog.open()],
-      ["gear", "Настройки", "вид и параметры", () => cmd("app:open-settings")],
+      ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
+      ["canvas", "Новый холст", "", () => cmd("canvas:new-file")],
+      ["term", "Терминал", "", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
+      ["graph", "Граф", "", () => leaf && leaf.setViewState({ type: "graph", active: true, state: {} })],
+      ["file", "Перейти к файлу", "|Ctrl+O", () => cmd("switcher:open")],
+      ["history", "Журнал действий", "", () => window.__vaultSyncFeed && window.__vaultSyncFeed()],
+      ["plug", "Плагины", "", () => window.__bsCatalog && window.__bsCatalog.open()],
+      ["gear", "Настройки", "", () => cmd("app:open-settings")],
     ];
     const tl = el.querySelector(".bsh-tiles");
     const LI = { note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };
-    for (const [ic, t, sub, fn] of tiles) { const [desc, keys] = sub.split("|"); const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `<span class="bsh-ti"></span><div><b>${esc(t)}</b><br><small>${esc(desc)}</small>${keys ? " " + keys.split("+").map((k) => `<kbd>${esc(k)}</kbd>`).join("") : ""}</div>`; try { window.__bsApi.setIcon(d.firstChild, "lucide-" + LI[ic]); } catch (e) { d.firstChild.innerHTML = svg(ic); } d.addEventListener("click", fn); tl.appendChild(d); }
+    for (const [ic, t, sub, fn] of tiles) { const [desc, keys] = sub.split("|"); const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `<span class="bsh-ti"></span><div><b>${esc(t)}</b>${desc ? `<br><small>${esc(desc)}</small>` : ""}${keys ? " " + keys.split("+").map((k) => `<kbd>${esc(k)}</kbd>`).join("") : ""}</div>`; try { window.__bsApi.setIcon(d.firstChild, "lucide-" + LI[ic]); } catch (e) { d.firstChild.innerHTML = svg(ic); } d.addEventListener("click", fn); tl.appendChild(d); }
     const rl = el.querySelector(".bsh-recent");
     if (!recent.length) rl.innerHTML = '<div class="bsh-rec" style="cursor:default"><div><small>Пока ничего не открывали</small></div></div>';
     for (const f of recent) {

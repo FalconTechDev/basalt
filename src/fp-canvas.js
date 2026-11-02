@@ -1616,23 +1616,55 @@
       return x0 > x1 ? [] : [{ minX: x0, minY: y0, maxX: x1, maxY: y1 }];
     } catch (e) { return []; }
   };
-  // the progress window of the image export gets a map of its sectors (called by the export for every sector: before it is scanned and after)
+  // The progress of the image export: a bar and a map of the sectors, the one being scanned marked and the finished ones filled.
+  // It is shown in the progress window of the export and also over the board itself (hidden for the instant a sector is photographed, so it is not in the picture).
+  function exportMap(doc, host, cols, rows) {
+    const box = doc.createElement("div");
+    box.style.cssText = "margin:18px auto 0;width:300px;max-width:90%;text-align:center;font-size:12px;opacity:.95";
+    const bar = doc.createElement("div"); bar.style.cssText = "height:6px;background:rgba(128,128,128,.28);margin-bottom:10px;overflow:hidden";
+    const fill = doc.createElement("div"); fill.style.cssText = "height:100%;width:0;background:var(--interactive-accent,#c98d5b);transition:width .15s"; bar.appendChild(fill);
+    const grid = doc.createElement("div"); grid.style.cssText = "display:grid;gap:3px;grid-template-columns:repeat(" + cols + ",1fr);padding:6px;border:1px solid rgba(128,128,128,.4)";
+    const cells = [];
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const d = doc.createElement("div"); d.style.cssText = "height:" + Math.max(10, Math.min(34, Math.floor(160 / rows))) + "px;background:rgba(128,128,128,.22);transition:background .15s"; grid.appendChild(d); cells.push(d); }
+    const cap = doc.createElement("div"); cap.style.cssText = "margin-top:8px;opacity:.85";
+    box.append(bar, grid, cap); host.appendChild(box);
+    return { box, fill, cells, cap, cols };
+  }
+  // A window of its own (always on top, not part of the board) shows the same bar and map: the board is photographed through the main window,
+  // so anything drawn inside it would be in the picture.
+  let exportWin = null, exportWinT = 0;
+  const WIN_HTML = '<!doctype html><meta charset="utf-8"><title>Съёмка холста</title><body style="margin:0;font:13px system-ui,sans-serif;background:#2a221c;color:#ece4db;padding:14px 18px;user-select:none"><div style="font-weight:600;text-align:center;margin-bottom:10px">Съёмка холста</div><div style="height:6px;background:#4a3f36;overflow:hidden"><div id="f" style="height:100%;width:0;background:#c98d5b"></div></div><div id="g" style="display:grid;gap:3px;padding:6px;margin-top:10px;border:1px solid #4a3f36"></div><div id="c" style="margin-top:8px;text-align:center;opacity:.85"></div><div id="w" style="display:none;margin-top:10px;padding:8px 10px;background:#7a3b2e;color:#fff;text-align:center;font-weight:600"></div><script>window.__init=function(c,r){var g=document.getElementById("g");g.style.gridTemplateColumns="repeat("+c+",1fr)";for(var i=0;i<c*r;i++){var d=document.createElement("div");d.style.cssText="height:"+Math.max(10,Math.min(34,Math.floor(160/r)))+"px;background:#4a3f36";g.appendChild(d)}};window.__warn=function(on){var w=document.getElementById("w");w.style.display=on?"block":"none";w.textContent="Вернитесь в окно Basalt: пока оно не на переднем плане, съёмка может остановиться"};window.__set=function(i,fin,done,total){var g=document.getElementById("g");var d=g.children[i];if(d){d.style.background=fin?"#c98d5b":"#8a6a4c";d.style.outline=fin?"none":"2px solid #c98d5b"}document.getElementById("f").style.width=Math.round(done/Math.max(1,total)*100)+"%";document.getElementById("c").textContent=fin?"Готово секторов: "+done+" из "+total:"Сканируется сектор "+(done+1)+" из "+total}<\/script>';
+  let exportFocusT = 0;
+  const closeExportWin = () => { clearInterval(exportFocusT); try { exportWin && exportWin.close(); } catch (e) { /* gone */ } exportWin = null; };
+  const openExportWin = () => {
+    const remote = window.electron && window.electron.remote; if (!remote) return null;
+    const me = remote.getCurrentWindow(), bd = me.getBounds(), w = 380, h = 330;
+    const win = new remote.BrowserWindow({ width: w, height: h, x: Math.round(bd.x + (bd.width - w) / 2), y: Math.round(bd.y + 30), frame: false, resizable: false, minimizable: false, maximizable: false, skipTaskbar: true, show: false, alwaysOnTop: true, focusable: false, backgroundColor: "#2a221c", webPreferences: { sandbox: true, contextIsolation: true } });
+    win.setAlwaysOnTop(true, "screen-saver");
+    win.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(WIN_HTML));
+    win.webContents.once("did-finish-load", () => { try { win.showInactive(); } catch (e) { /* gone */ } });
+    return win;
+  };
+  // called when the export starts, before the board is rearranged for the photographs (opening a window in the middle of them spoils the first one)
+  window.__fpExportOpen = () => { try { closeExportWin(); exportWin = openExportWin(); exportWin.__fpInit = false; exportWinT = setTimeout(closeExportWin, 30000); } catch (e) { exportWin = null; } };
   window.__fpExportTile = (dlg, cols, rows, col, row, done, total, finished) => {
     try {
-      const el = dlg && dlg.el; if (!el) return; const doc = el.ownerDocument;
-      let m = dlg.__fpMap;
-      if (!m) {
-        const box = doc.createElement("div"); box.style.cssText = "margin:18px auto 0;width:300px;max-width:90%;text-align:center;font-size:12px;opacity:.9";
-        const grid = doc.createElement("div"); grid.style.cssText = "display:grid;gap:3px;grid-template-columns:repeat(" + cols + ",1fr);padding:6px;border:1px solid rgba(128,128,128,.4)";
-        const cells = [];
-        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const d = doc.createElement("div"); d.style.cssText = "height:" + Math.max(10, Math.min(34, Math.floor(160 / rows))) + "px;background:rgba(128,128,128,.22);transition:background .15s"; grid.appendChild(d); cells.push(d); }
-        const cap = doc.createElement("div"); cap.style.cssText = "margin-top:8px;opacity:.8";
-        box.append(grid, cap); el.appendChild(box); m = dlg.__fpMap = { cells, cap, cols };
-      }
-      const cell = m.cells[row * m.cols + col]; if (!cell) return;
-      if (finished) { cell.style.background = "var(--interactive-accent, #c98d5b)"; cell.style.outline = "none"; m.cap.textContent = "Готово секторов: " + done + " из " + total; }
-      else { cell.style.background = "rgba(201,141,91,.45)"; cell.style.outline = "2px solid var(--interactive-accent, #c98d5b)"; m.cap.textContent = "Сканируется сектор " + (done + 1) + " из " + total; }
+      const el = dlg && dlg.el;
+      if (el) { if (!dlg.__fpMap) dlg.__fpMap = exportMap(el.ownerDocument, el, cols, rows); paintMap(dlg.__fpMap, col, row, done, total, finished); }
     } catch (e) { /* the map is only a picture of the progress */ }
+    try {
+      if (!exportWin || exportWin.isDestroyed()) {
+        exportWin = openExportWin();
+        clearInterval(exportFocusT);
+        exportFocusT = setInterval(() => { try { if (!exportWin || exportWin.isDestroyed()) { clearInterval(exportFocusT); return; } exportWin.webContents.executeJavaScript("window.__warn&&window.__warn(" + (document.hasFocus() ? 0 : 1) + ")").catch(() => {}); } catch (e) { clearInterval(exportFocusT); } }, 400);
+      }
+      if (exportWin) {
+        if (!exportWin.__fpInit) { exportWin.__fpInit = true; exportWin.webContents.executeJavaScript("window.__init(" + cols + "," + rows + ")").catch(() => {}); }
+        const i = row * cols + col;
+        exportWin.webContents.executeJavaScript("window.__set&&window.__set(" + i + "," + (finished ? 1 : 0) + "," + done + "," + total + ")").catch(() => {});
+        clearTimeout(exportWinT); exportWinT = setTimeout(closeExportWin, finished && done >= total ? 1200 : 30000);
+      }
+    } catch (e) { /* ditto */ }
   };
   window.__fpToolbar = (menuEl, sel, canvas) => {
     if (canvas.readonly || !sel.length) return;

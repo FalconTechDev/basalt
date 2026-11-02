@@ -318,20 +318,20 @@
         .addToggle((t) => { t.setTooltip("Рисовать значком (выключено: простой шарик)"); t.toggleEl.addClass("bsg-t2"); t.setValue(!!g2()).onChange((v) => { s2(v); save(c); }); });
       const slider = (name, ic, desc, key, min, max, step, apply) => lead(new S(p).setName(name).setDesc(desc || ""), ic).addSlider((sl) => sl.setLimits(min, max, step).setValue(c[key]).setDynamicTooltip().onChange((v) => { c[key] = v; save(c); apply(); }));
       heading("Что показывать", "lucide-eye");
-      pair("Холсты", "lucide-layout-dashboard", "Файлы .canvas: в графе / значком", () => c.canvases, (v) => { c.canvases = v; this.rebuild(); }, () => c.thumbCanvas, (v) => { c.thumbCanvas = v; this.dirty = true; });
-      pair("Картинки", "lucide-image", "Картинки со ссылками: в графе / значком", () => c.images, (v) => { c.images = v; this.rebuild(); }, () => c.thumbImg, (v) => { c.thumbImg = v; this.dirty = true; });
-      toggle("Заметки без связей", "lucide-circle-dashed", "Одиночные заметки, которые ни с чем не связаны", () => c.orphans, (v) => { c.orphans = v; this.rebuild(); });
-      toggle("Ссылки на несозданные", "lucide-file-question", "Ссылка есть, а файла ещё нет", () => c.unresolved, (v) => { c.unresolved = v; this.rebuild(); });
+      pair("Холсты", "lucide-layout-dashboard", "в графе · значком", () => c.canvases, (v) => { c.canvases = v; this.rebuild(); }, () => c.thumbCanvas, (v) => { c.thumbCanvas = v; this.dirty = true; });
+      pair("Картинки", "lucide-image", "в графе · значком", () => c.images, (v) => { c.images = v; this.rebuild(); }, () => c.thumbImg, (v) => { c.thumbImg = v; this.dirty = true; });
+      toggle("Заметки без связей", "lucide-circle-dashed", "", () => c.orphans, (v) => { c.orphans = v; this.rebuild(); });
+      toggle("Ссылки на несозданные", "lucide-file-question", "", () => c.unresolved, (v) => { c.unresolved = v; this.rebuild(); });
       if (type === "localgraph") slider("Глубина", "lucide-layers", "Сколько шагов от открытой заметки", "localDepth", 1, 6, 1, () => this.rebuild());
       heading("Вид", "lucide-palette");
-      lead(new S(p).setName("Подписи").setDesc("Авто: у главных узлов"), "lucide-type").addDropdown((d) => d.addOptions({ auto: "Авто", all: "Все", none: "Нет" }).setValue(c.labelMode).onChange((v) => { c.labelMode = v; save(c); this.style(); }));
+      lead(new S(p).setName("Подписи"), "lucide-type").addDropdown((d) => d.addOptions({ auto: "Авто", all: "Все", none: "Нет" }).setValue(c.labelMode).onChange((v) => { c.labelMode = v; save(c); this.style(); }));
       slider("Размер узлов", "lucide-circle-dot", "", "nodeScale", 0.5, 2.5, 0.1, () => this.style());
       slider("Яркость связей", "lucide-sun", "", "edgeAlpha", 0.1, 1, 0.05, () => this.style());
       heading("Раскладка", "lucide-network");
       slider("Длина связей", "lucide-ruler", "", "linkDistance", 10, 120, 2, () => this.forces());
-      slider("Притяжение", "lucide-magnet", "Насколько связанные узлы тянутся друг к другу", "linkStrength", 0.1, 1.5, 0.05, () => this.forces());
-      lead(new S(p).setName("Пересчитать раскладку").setDesc("Раскидать узлы заново"), "lucide-shuffle").addButton((b) => b.setIcon("lucide-shuffle").setTooltip("Пересчитать").onClick(() => { this.ex.ge_reheat(1); this.running = true; }));
-      lead(new S(p).setName("Сбросить силы").setDesc("Длина и притяжение связей по умолчанию"), "lucide-rotate-ccw").addButton((b) => b.setIcon("lucide-rotate-ccw").setTooltip("Сбросить").onClick(() => { c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); }));
+      slider("Притяжение", "lucide-magnet", "", "linkStrength", 0.1, 1.5, 0.05, () => this.forces());
+      lead(new S(p).setName("Пересчитать раскладку"), "lucide-shuffle").addButton((b) => b.setIcon("lucide-shuffle").setTooltip("Пересчитать").onClick(() => { this.ex.ge_reheat(1); this.running = true; }));
+      lead(new S(p).setName("Сбросить силы"), "lucide-rotate-ccw").addButton((b) => b.setIcon("lucide-rotate-ccw").setTooltip("Сбросить").onClick(() => { c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); }));
       this.panelFocus(p, heading);
       this.panelGroups(p, heading);
     }
@@ -568,7 +568,7 @@
       const S = api2().Setting; heading("Группы", "lucide-folder-tree");
       const counts = {}; for (const k of Object.values(STORE.assign)) counts[k] = (counts[k] || 0) + 1;
       const apply = () => { this.regroup = true; this.sig = null; this.rebuild(); this.buildPanel(); };
-      if (!STORE.groups.length) new S(p).setDesc("Групп нет. Правая кнопка по узлу, «Группа», или кнопка ниже.");
+      if (!STORE.groups.length) new S(p).setDesc("Групп нет");
       for (const g of STORE.groups) {
         const st = new S(p).setName(g.name).setDesc(plural(counts[g.id] || 0));
         st.settingEl.toggleClass("bsg-off", !!g.hidden); st.settingEl.toggleClass("bsg-solo", STORE.solo.includes(g.id));
@@ -584,11 +584,11 @@
       }
       if (STORE.solo.length) {
         // only the chosen groups are shown, plus what is around them: how far, and how many at most
-        new S(p).setName("Уровней от группы").setDesc("Что вокруг выбранных групп").addSlider((sl) => sl.setLimits(0, 5, 1).setValue(STORE.depth).setDynamicTooltip().onChange((v) => { STORE.depth = v; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }));
+        new S(p).setName("Уровней от группы").addSlider((sl) => sl.setLimits(0, 5, 1).setValue(STORE.depth).setDynamicTooltip().onChange((v) => { STORE.depth = v; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }));
         new S(p).setName("Узлов не больше").addSlider((sl) => sl.setLimits(10, 500, 10).setValue(STORE.max).setDynamicTooltip().onChange((v) => { STORE.max = v; clearTimeout(this.focT); this.focT = setTimeout(() => { saveStore(); this.regroup = true; this.sig = null; this.rebuild(); }, 250); }));
         new S(p).addButton((b) => b.setButtonText("Показать весь граф").onClick(() => this.clearFocus()));
       }
-      new S(p).setName("Новая группа").setDesc("Из узлов, отмеченных Shift").addButton((b) => b.setIcon("lucide-plus").setTooltip("Создать группу").onClick(() => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }));
+      new S(p).setName("Новая группа").addButton((b) => b.setIcon("lucide-plus").setTooltip("Создать группу").onClick(() => { this.newGroup("", Array.from(this.multi || []).map((i) => this.g.nodes[i] && this.g.nodes[i].key).filter(Boolean)); }));
     }
     newGroup(name, keys) {
       const uniqueName = () => { let i = STORE.groups.length + 1; while (STORE.groups.some((x) => x.name === "Группа " + i)) i++; return "Группа " + i; };
