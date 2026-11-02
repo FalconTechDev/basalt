@@ -101,6 +101,10 @@
     .modal:not(.mod-settings), .prompt, .menu, .suggestion-container, .popover, .notice { border-radius: 0; }
     .menu-item, .suggestion-item { border-radius: 0; }
     .status-bar { border-radius: 0; }
+    .canvas-control-group, .canvas-card-menu, .canvas-menu-container .menu-container { border-radius: 0; box-shadow: none; clip-path: var(--bs-clip); }
+    .canvas-control-group { background: var(--background-secondary); }
+    .canvas-card-menu { --icon-size: 18px; --icon-stroke: 1.75px; }
+    .canvas-card-menu .canvas-card-menu-button svg { width: 18px; height: 18px; }
     .notice { background: var(--background-secondary); color: var(--text-normal); }
     kbd, .setting-hotkey { font-family: var(--font-interface); }
     /* one look for the two search overlays (quick switcher, note search): size, place, backdrop, panel, input, rows */

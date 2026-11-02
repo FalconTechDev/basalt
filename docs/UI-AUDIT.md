@@ -152,3 +152,8 @@ Collected by hand on 2026-11-02 in the test window (dark "basalt" for every scre
 
 ### Not checked in this pass
 - Compare tabs of the history window, sync settings page, feed view, database view, daily notes, backlinks pane, graph 3D in light theme, per-control hover/focus states and long-name overflow beyond the explorer.
+
+## Fixed so far (2026-11-02)
+12, 13 (one copy-path entry), 15, 31, 36 (name), 46, 55, 58, 65, 74, 85-88 not touched; 97, 100, 101, 102, 104; 23, 26, 29 (switcher and search share one look); 34, 48 (settings, catalog, history share size and place); 40 (shortcut chips); 21 (backlinks counter only on notes); 61, 62, 63 (canvas bars: one panel shape, 18px icons); 83, 91, 103; 86 (history canvas preview and graph card use the real canvas view); the graph controls column (49, 57) was rebuilt from the canvas control classes.
+Checked and not a bug: 76-78 (the dark card on the light canvas is a pasted screenshot image, its label is the image name).
+Still open: 1-11, 14, 16-20, 22, 24, 25, 27, 28, 30, 32, 33, 35, 37-39, 41-45, 47, 50-54, 56, 59, 60, 64, 66-73, 75, 77-82, 84, 89, 90, 92-96, 98, 99, 105-107.
