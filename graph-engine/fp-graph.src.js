@@ -156,7 +156,7 @@
     .bsg-panel .grp .x, .bsg-panel .wide { background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); }
     .bsg-panel .grp .x { width: 22px; height: 22px; padding: 0; } .bsg-panel .wide { width: 100%; height: 28px; margin: 4px 0; font-size: 12px; } .bsg-panel .wide:hover, .bsg-panel .grp .x:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
     .bsg-panel .mute { font-size: 11.5px; color: var(--text-faint); }
-    .bsg-panel { max-height: calc(100% - 60px); overflow-y: auto; }
+    .bsg-panel { max-height: calc(100% - 66px); overflow-y: auto; }
     .bsg-menu { position: absolute; z-index: 60; min-width: 220px; max-width: 280px; padding: 6px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip); font-size: 12.5px; }
     .bsg-menu .ti { padding: 6px 10px 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bsg-menu .sp { height: 1px; margin: 5px 4px; background: var(--background-modifier-border); }
@@ -697,7 +697,7 @@
     paint(d, w, h, dpr) {
       const c = this.ctx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
       const col = (i) => "rgba(" + d[i] + "," + d[i + 1] + "," + d[i + 2] + "," + d[i + 3] + ")";
-      let i = 0, clips = 0;
+      let i = 0, clips = 0; const placed = []; /* label boxes already drawn in this frame: a label that would lie over one of them is left out */
       c.lineJoin = "round"; c.lineCap = "round"; if (!this.bgCss) this.style();
       while (i < d.length) {
         const op = d[i++];
@@ -713,7 +713,7 @@
               c.fillStyle = gr; c.beginPath(); c.arc(x, y, rad, 0, 6.2832); c.fill(); c.lineWidth = 1; c.strokeStyle = base.rim; c.stroke(); } c.globalAlpha = 1; }
           else { c.fillStyle = base.lo; c.beginPath(); for (let k = 0; k < n; k++) { const x = d[pts + k * 2], y = d[pts + k * 2 + 1]; c.moveTo(x + rad, y); c.arc(x, y, rad, 0, 6.2832); } c.fill(); } }
         else if (op === 7) { const x = d[i++], y = d[i++], size = d[i++]; c.fillStyle = col(i); i += 4; const ha = d[i++], va = d[i++], n = d[i++]; let s = ""; for (let k = 0; k < n; k++) s += String.fromCharCode(d[i++]); c.font = size + "px " + (this.font || (this.font = (getComputedStyle(document.body).getPropertyValue("--font-interface") || "").trim() || "system-ui, sans-serif"));
-          c.textAlign = ha === 1 ? "center" : ha === 2 ? "right" : "left"; c.textBaseline = va === 1 ? "middle" : va === 2 ? "bottom" : "top"; c.lineWidth = 3; c.strokeStyle = this.bgCss; c.globalAlpha = this.labelA === undefined ? 1 : this.labelA; c.strokeText(s, x, y); c.fillText(s, x, y); c.globalAlpha = 1; }
+          c.textAlign = ha === 1 ? "center" : ha === 2 ? "right" : "left"; c.textBaseline = va === 1 ? "middle" : va === 2 ? "bottom" : "top"; const tw = c.measureText(s).width, bx = ha === 1 ? x - tw / 2 : ha === 2 ? x - tw : x, by = va === 1 ? y - size / 2 : va === 2 ? y - size : y; let hit = false; if (placed.length < 400) for (const r of placed) { if (bx < r[2] + 2 && bx + tw + 2 > r[0] && by < r[3] + 1 && by + size + 1 > r[1]) { hit = true; break; } } if (!hit) { placed.push([bx, by, bx + tw, by + size]); c.lineWidth = 3; c.strokeStyle = this.bgCss; c.globalAlpha = this.labelA === undefined ? 1 : this.labelA; c.strokeText(s, x, y); c.fillText(s, x, y); c.globalAlpha = 1; } }
         else if (op === 4) { c.save(); clips++; c.beginPath(); c.rect(d[i], d[i + 1], d[i + 2] - d[i], d[i + 3] - d[i + 1]); c.clip(); i += 4; }
         else if (op === 5) { if (clips) { c.restore(); clips--; } }
         else break;

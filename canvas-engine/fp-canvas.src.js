@@ -149,7 +149,7 @@
     .fp-end-item { display: flex; align-items: center; gap: 8px; padding: 4px 6px; cursor: pointer; color: var(--text-muted); font-size: var(--font-ui-small); }
     .fp-end-item:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .fp-end-item.is-active { color: var(--interactive-accent); background: var(--background-modifier-hover); }
-    .fp-minimap { position: absolute; right: 14px; bottom: 14px; z-index: 5; padding: 0; background: var(--background-primary); border: 1px solid var(--background-modifier-border-hover); border-radius: 0; clip-path: var(--bs-clip);  overflow: hidden;
+    .fp-minimap { position: absolute; right: 14px; bottom: 38px; z-index: 5; padding: 0; background: var(--background-primary); border: 1px solid var(--background-modifier-border-hover); border-radius: 0; clip-path: var(--bs-clip);  overflow: hidden;
       cursor: crosshair;  }
     .fp-minimap canvas { display: block; }
     .fp-minimap:hover { border-color: var(--interactive-accent); }
