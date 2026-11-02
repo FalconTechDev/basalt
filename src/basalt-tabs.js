@@ -16,7 +16,7 @@
     .bt-i { display: inline-flex; flex: none; color: var(--interactive-accent); opacity: .85; } .bt-i svg { width: 15px; height: 15px; }
     .bt-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; font-size: var(--font-ui-small); }
     .bt-p { width: 11px; height: 11px; color: var(--interactive-accent); flex: none; }
-    .bt-x { width: 18px; height: 18px; flex: none; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; opacity: 0; color: var(--text-muted); font-size: 15px; line-height: 1; }
+    .bt-x { width: 18px; height: 18px; flex: none; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; opacity: 0; color: var(--text-muted); font-size: 15px; line-height: 1; } .bt-x svg { width: 16px; height: 16px; }
     .bt-t:hover .bt-x, .bt-t.is-cur .bt-x { opacity: .75; } .bt-x:hover { opacity: 1 !important; background: var(--background-modifier-hover); color: var(--text-normal); }
   `;
   document.head.appendChild(css);
@@ -42,8 +42,9 @@
       let title = ""; try { title = leaf.getDisplayText(); } catch (e) { /* loading */ }
       if (title === "New tab" && /^ru/i.test(navigator.language)) title = "Новая вкладка";
       t.title = title;
-      t.innerHTML = '<span class="bt-i"></span><span class="bt-n"></span>' + (leaf.pinned ? '<svg class="bt-p" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/></svg>' : '') + '<span class="bt-x" title="Закрыть">×</span>';
+      t.innerHTML = '<span class="bt-i"></span><span class="bt-n"></span>' + (leaf.pinned ? '<svg class="bt-p" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/></svg>' : '') + '<span class="bt-x" title="Закрыть"></span>';
       t.querySelector(".bt-n").textContent = title || "Без названия";
+      try { api.setIcon(t.querySelector(".bt-x"), "lucide-x"); } catch (e) { t.querySelector(".bt-x").textContent = "×"; }
       try { api.setIcon(t.querySelector(".bt-i"), leaf.getIcon()); } catch (e) { /* no icon */ }
       t.addEventListener("click", (e) => { if (e.target.closest(".bt-x")) { leaf.detach(); return; } g.selectTab(leaf); app.workspace.setActiveLeaf(leaf, { focus: true }); });
       t.addEventListener("auxclick", (e) => { if (e.button === 1) { e.preventDefault(); if (!leaf.pinned) leaf.detach(); } });

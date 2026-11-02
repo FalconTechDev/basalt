@@ -137,7 +137,7 @@
     .nav-file-title.is-active, .nav-folder-title.is-active, .tree-item-self.is-active { background: color-mix(in srgb, var(--interactive-accent) 16%, transparent); color: var(--text-normal); box-shadow: inset 2px 0 0 var(--interactive-accent); }
     .nav-folder-title { font-weight: 600; color: var(--text-normal); }
     .nav-file-title-content, .tree-item-inner { letter-spacing: .005em; }
-    .nav-file-tag { border-radius: 3px; font-size: 9px; letter-spacing: .06em; }
+    .nav-file-tag { border-radius: 3px; font-size: 10px; letter-spacing: .06em; }
     .nav-folder-children { border-left: 1px solid var(--background-modifier-border); margin-left: 14px; }
     .nav-header .clickable-icon, .nav-buttons-container .clickable-icon { border-radius: 4px; }
     .nav-buttons-container { gap: 2px; padding: 6px 8px; }
@@ -175,7 +175,7 @@
     }
     .modal.mod-settings .setting-item { border-color: var(--divider-color); }
     .modal.mod-settings .vertical-tab-header { border-inline-end-color: var(--divider-color); }
-    .modal.mod-settings .vertical-tab-header-group-title { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
+    .modal.mod-settings .vertical-tab-header-group-title { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
     .modal.mod-settings .vertical-tab-nav-item { border-radius: 0; position: relative; clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px); }
     .modal.mod-settings .vertical-tab-nav-item.is-active { background: var(--background-modifier-hover); color: var(--text-normal); box-shadow: inset 3px 0 0 var(--interactive-accent); }
     .modal.mod-settings .vertical-tab-nav-item.is-active .vertical-tab-nav-item-icon { color: var(--interactive-accent); }
