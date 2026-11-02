@@ -1078,8 +1078,10 @@
     ex.ce_set_shape(opts(canvas).shape);
     ex.ce_set_grid(opts(canvas).gridStep);
     // zoomed in: the original links (arrow heads) in the DOM; zoomed out: the engine draws them (visible and cheap, the DOM paths would lag)
-    const farLinks = !(canvas.zoom > canvas.zoomBreakpoint);
+    // the same threshold as the one that takes the links away from the DOM (canvas.edges below), so there is no scale at which neither draws them
+    const farLinks = canvas.scale < opts(canvas).edgeScale;
     if (canvas.wrapperEl.classList.contains("fp-farlinks") !== farLinks) canvas.wrapperEl.classList.toggle("fp-farlinks", farLinks);
+    if (st.lastFar !== farLinks) { st.lastFar = farLinks; requestAnimationFrame(() => { try { st.dirty = true; canvas.viewportChanged = true; canvas.requestFrame(); } catch (e) { /* closed */ } }); }
     ex.ce_set_edges_on(farLinks && !canvas.canvasEl.classList.contains("is-connecting") ? 1 : 0);
     updateHandles(canvas);
     const ptr = ex.ce_render(v.cx, v.cy, v.scale, v.vw, v.vh, st.accent, st.zooming ? 1 : 0);
@@ -1117,6 +1119,8 @@
     canvas.canvasEl.style.visibility = "";
     canvas.viewportChanged = true;
     canvas.requestFrame();
+    // the picture of the engine (links, far cards) is made once more when everything has settled: the last frame of a zoom can be one of the old scale
+    for (const ms of [80, 300]) setTimeout(() => { try { st.dirty = true; canvas.viewportChanged = true; canvas.requestFrame(); } catch (e) { /* closed */ } }, ms);
   }
 
   // context-menu entry for a card (called from the patched node showMenu)
@@ -2274,6 +2278,7 @@
     draw(canvas, st);
   };
 
+  window.__fpDebug = { ex: () => ex, st: (c) => states.get(c) };
   window.__fpFrame = (canvas, changed) => {
     if (!ex) return;
     const st = ensure(canvas);
