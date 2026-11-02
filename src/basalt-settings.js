@@ -4,7 +4,7 @@
   "use strict";
   const css = document.createElement("style");
   css.textContent = `
-    .bset { width: min(1040px, 95vw); max-width: none; height: min(720px, 90vh); padding: 0; display: flex; flex-direction: row; overflow: hidden; }
+    .bset { width: min(1100px, 94vw); max-width: none; height: min(720px, 88vh); padding: 0; display: flex; flex-direction: row; overflow: hidden; }
     .bset-nav { flex: 0 0 230px; background: var(--background-secondary); border-right: 1px solid var(--background-modifier-border); display: flex; flex-direction: column; padding: 14px 10px; gap: 2px; overflow: auto; }
     .bset-find { margin-bottom: 8px; } .bset-find input { width: 100%; }
     .bset-nav button.bset-n { text-align: left; justify-content: flex-start; background: transparent; box-shadow: none; clip-path: none; border-radius: var(--bs-r); padding: 7px 12px; color: var(--text-muted); height: auto; display: flex; align-items: center; gap: 10px; }

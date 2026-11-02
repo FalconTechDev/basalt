@@ -1331,7 +1331,7 @@
   const BINARY_EXT = /\.(png|jpe?g|gif|webp|bmp|ico|pdf|zip|mp3|wav|ogg|m4a|mp4|webm|mov|mkv|ttf|otf|woff2?|docx?|xlsx?|pptx?)$/i;
 
   const HISTORY_CSS =
-      ".vs-history{width:min(1100px,94vw);max-width:none;height:min(700px,88vh);display:flex;flex-direction:column;padding:0}" +
+      ".vs-history{width:min(1100px,94vw);max-width:none;height:min(720px,88vh);display:flex;flex-direction:column;padding:0}" +
       ".vs-head{padding:18px 24px 12px;border-bottom:1px solid var(--background-modifier-border)}.vs-title{font-size:var(--font-ui-large);font-weight:600}.vs-sub{color:var(--text-muted);font-size:var(--font-ui-small)}" +
       ".vs-body{display:flex;flex:1;min-height:0}.vs-list{flex:0 0 310px;overflow:auto;padding:10px 6px 10px 18px;border-right:1px solid var(--background-modifier-border)}" +
       ".vs-day{margin:14px 0 6px 18px;font-size:var(--font-ui-smaller);text-transform:uppercase;letter-spacing:.08em;color:var(--text-faint)}" +

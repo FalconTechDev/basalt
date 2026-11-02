@@ -7,7 +7,7 @@
   const https = window.require("https");
   const css = document.createElement("style");
   css.textContent = `
-    .bsc { width: min(880px, 94vw); max-width: none; height: min(680px, 88vh); display: flex; flex-direction: column; padding: 0; }
+    .bsc { width: min(1100px, 94vw); max-width: none; height: min(720px, 88vh); display: flex; flex-direction: column; padding: 0; }
     .bsc-head { padding: 18px 64px 12px 24px; border-bottom: 1px solid var(--background-modifier-border); }
     .bsc-title { font-size: var(--font-ui-large); font-weight: 600; color: var(--text-normal); } .bsc-row b { color: var(--text-normal); } .bsc-sub { color: var(--text-muted); font-size: var(--font-ui-small); margin-top: 2px; }
     .bsc-add { display: flex; gap: 8px; padding: 12px 24px; border-bottom: 1px solid var(--background-modifier-border); } .bsc-add input { flex: 1; }
