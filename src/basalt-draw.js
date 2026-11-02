@@ -298,7 +298,7 @@
       return importData(d, full, ...a);
     };
     // data that was loaded before this layer existed
-    const view = app.workspace.getLeavesOfType("canvas").map((l) => l.view).find((v) => v && v.canvas === canvas);
+    const view = canvas.view || app.workspace.getLeavesOfType("canvas").map((l) => l.view).find((v) => v && v.canvas === canvas); /* a board inside a card has its view on the canvas, it is not in the workspace list */
     if (view && view.file) app.vault.cachedRead(view.file).then((t) => { if (L.loaded) return; try { const j = JSON.parse(t); if (Array.isArray(j.fpInk)) { L.strokes = j.fpInk; L.dirty = true; canvas.requestFrame && canvas.requestFrame(); } } catch (e) { /* not json */ } L.loaded = true; });
     return L;
   }
@@ -315,9 +315,12 @@
     setT(ctx, v); const vx0 = v.cx - v.vw / 2 / v.scale, vy0 = v.cy - v.vh / 2 / v.scale, vx1 = v.cx + v.vw / 2 / v.scale, vy1 = v.cy + v.vh / 2 / v.scale;
     for (const s of L.strokes) { const pts = ptsOf(s), b = bboxOf(pts); if (b.x1 + (s.w || 0) < vx0 || b.x0 - (s.w || 0) > vx1 || b.y1 + (s.w || 0) < vy0 || b.y0 - (s.w || 0) > vy1) continue; paint(ctx, s); }
   }
-  window.__bsInkFrame = (canvas, v) => {
+  // the drawing follows the board's own camera, read live (a board that lives inside a card, like a nested canvas, may not report its view on every change)
+  const liveView = (canvas, v0) => { const wrap = canvas.wrapperEl; return { cx: canvas.x, cy: canvas.y, scale: canvas.scale, vw: (wrap && wrap.clientWidth) || (v0 && v0.vw) || 1, vh: (wrap && wrap.clientHeight) || (v0 && v0.vh) || 1 }; };
+  window.__bsInkFrame = (canvas, v0) => {
     const L = layerOf(canvas); if (!L) return;
-    L.view = v; const sig = [v.cx, v.cy, v.scale, v.vw, v.vh, L.strokes.length].join("|");
+    const v = liveView(canvas, v0); L.view = v;
+    if (!L.poll) { L.poll = true; const tick = () => { const w = canvas.wrapperEl; if (!w || !w.isConnected) { L.poll = false; return; } try { window.__bsInkFrame(canvas, null); } catch (e) { /* gone */ } requestAnimationFrame(tick); }; requestAnimationFrame(tick); } const sig = [v.cx, v.cy, v.scale, v.vw, v.vh, L.strokes.length].join("|");
     if (L.dirty || sig !== L.sig) { L.sig = sig; L.dirty = false; repaint(L); }
   };
 

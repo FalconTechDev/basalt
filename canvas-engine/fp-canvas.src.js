@@ -771,7 +771,7 @@
   const MAX_LIVE = 6;
   function destroyLive(n) {
     const L = n.__bsLive; if (!L) return; n.__bsLive = null; lives.delete(L);
-    try { L.ro && L.ro.disconnect(); } catch (e) { /* gone */ }
+    try { L.ro && L.ro.disconnect(); clearInterval(L.sigT); } catch (e) { /* gone */ }
     try { L.leaf.detach(); } catch (e) { /* not attached */ }
     try { L.leaf.view && L.leaf.view.onunload && L.leaf.view.onunload(); } catch (e) { /* gone */ }
     try { L.box.remove(); } catch (e) { /* gone */ }
@@ -791,7 +791,22 @@
       L.box = document.createElement("div"); L.box.className = "bs-live"; host.appendChild(L.box); L.box.appendChild(v.containerEl);
       host.classList.add("bs-live-on");
       try { c2.setReadonly && c2.setReadonly(true); } catch (e) { /* ok */ }
-      const fit = () => { try { if (c2.wrapperEl && c2.wrapperEl.clientWidth > 4) c2.zoomToFit && c2.zoomToFit(); } catch (e) { /* ok */ } };
+      // the view shows the cards AND the drawing of the board (the drawing may reach past the cards)
+      const fit = () => {
+        try {
+          if (!c2.wrapperEl || c2.wrapperEl.clientWidth <= 4) return;
+          let x0 = 1e12, y0 = 1e12, x1 = -1e12, y1 = -1e12;
+          for (const nn of c2.nodes.values()) { x0 = Math.min(x0, nn.x); y0 = Math.min(y0, nn.y); x1 = Math.max(x1, nn.x + nn.width); y1 = Math.max(y1, nn.y + nn.height); }
+          const inkS = window.__bsInk && window.__bsInk.state(c2);
+          if (inkS) for (const sk of inkS.strokes) { const b = window.__bsInk.box(sk); x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[2]); y1 = Math.max(y1, b[3]); }
+          if (x0 > x1) { c2.zoomToFit && c2.zoomToFit(); return; }
+          const pd = Math.max(20, Math.max(x1 - x0, y1 - y0) * 0.03);
+          c2.zoomToBbox({ minX: x0 - pd, minY: y0 - pd, maxX: x1 + pd, maxY: y1 + pd });
+        } catch (e) { /* ok */ }
+      };
+      // refit when the contents change (a card added, a stroke drawn in that board)
+      let lastSig = "";
+      L.sigT = setInterval(() => { const inkS = window.__bsInk && window.__bsInk.state(c2); const sg = c2.nodes.size + ":" + (inkS ? inkS.strokes.length + ":" + inkS.ver : "0"); if (sg !== lastSig) { lastSig = sg; fit(); } }, 800);
       L.ro = new ResizeObserver(() => { clearTimeout(L.fitT); L.fitT = setTimeout(fit, 120); }); L.ro.observe(L.box);
       setTimeout(fit, 250); setTimeout(fit, 900);
       L.view = v; L.fit = fit;
