@@ -1,0 +1,8 @@
+{
+  "id": "hello-wasm",
+  "name": "Hello Wasm",
+  "version": "0.1.0",
+  "description": "Пример плагина на Rust: считает слова в открытой заметке и переворачивает выделенный текст",
+  "wasm": "plugin.wasm",
+  "permissions": ["vault.read", "editor"]
+}

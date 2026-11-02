@@ -1,0 +1,7 @@
+runtime/
+data/
+dist/
+target/
+node_modules/
+*.log
+*.bak-claude
