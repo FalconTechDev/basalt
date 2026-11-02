@@ -1341,6 +1341,7 @@
       ".vs-item .vs-s{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vs-item small{display:block;color:var(--text-muted)}.vs-item .vs-cur{color:var(--interactive-accent)}" +
       ".vs-main{flex:1;display:flex;flex-direction:column;min-width:0;padding:14px 20px 16px;gap:10px}.vs-meta{color:var(--text-muted);font-size:var(--font-ui-small)}.vs-meta b{color:var(--text-normal)}" +
       ".vs-bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.vs-bar .vs-tab{padding:4px 12px}.vs-bar .vs-gap{flex:1}" +
+      ".vs-view.vs-live{position:relative;padding:0;overflow:hidden}" +
       ".vs-view{flex:1;overflow:auto;border:1px solid var(--background-modifier-border);padding:16px 22px;background:var(--background-primary-alt, var(--background-secondary))}" +
       ".vs-view h1,.vs-view h2,.vs-view h3,.vs-view h4{margin:.9em 0 .4em}.vs-view h1{font-size:1.6em}.vs-view h2{font-size:1.35em}.vs-view p{margin:.5em 0}.vs-view ul,.vs-view ol{margin:.4em 0 .4em 1.3em}" +
       ".vs-view blockquote{margin:.6em 0;padding:2px 12px;border-left:3px solid var(--interactive-accent);color:var(--text-muted)}.vs-view code{background:var(--background-secondary);padding:1px 5px}.vs-code{background:var(--background-secondary);padding:10px;white-space:pre-wrap;font-size:var(--font-ui-small)}" +
@@ -1682,13 +1683,14 @@
     q(".modal-bg").addEventListener("click", close);
     wrap.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
 
-    let cur = null, mode = (isImg || binary) ? "view" : "changes", token = 0;
+    let pvLive = null, cur = null, mode = (isImg || binary) ? "view" : "changes", token = 0;
     const blob = (v) => histBuf(r, ["show", `${v.full}:${rel}`]);
     const render = async () => {
       if (!cur) return;
       const my = ++token;
       for (const [k, b] of Object.entries(tabBtns)) b.classList.toggle("mod-cta", k === mode);
       meta.innerHTML = `<span class="vs-chip ${cur.st}">${CHIP[cur.st]}</span><b>${esc(cur.subject || "(без описания)")}</b><br>${esc(new Date(cur.date).toLocaleString())} · ${esc(cur.author)} · <code>${esc(cur.short)}</code>`;
+      if (pvLive) { pvLive.destroy(); pvLive = null; }
       view.textContent = "…";
       let html = "";
       try {
@@ -1706,6 +1708,11 @@
           html = mode === "src" ? `<pre class="vs-code">${esc(text)}</pre>` : isMd ? mdToHtml(text) : isCanvas ? canvasToHtml(text) : `<pre class="vs-code">${esc(text)}</pre>`;
         }
       } catch (e) { html = `<p class="vs-muted">Не удалось прочитать версию: ${esc(e.message)}</p>`; }
+      if (my === token && isCanvas && mode === "view" && window.__fpMountPreview && !/vs-muted/.test(html)) {
+        const tf = app.vault.getAbstractFileByPath(rel), text = html && (await blob(cur).then((x) => x.toString("utf8")).catch(() => null));
+        if (tf && text != null && my === token) { view.innerHTML = ""; view.classList.add("vs-live"); const P = await window.__fpMountPreview(tf, view, text); if (P && my === token) { pvLive = P; return; } if (P) P.destroy(); view.innerHTML = html; return; }
+      }
+      view.classList.remove("vs-live");
       if (my === token) view.innerHTML = html;
     };
     const fmtDay = (d) => { const t = new Date(); const dd = new Date(d); const days = Math.round((new Date(t.getFullYear(), t.getMonth(), t.getDate()) - new Date(dd.getFullYear(), dd.getMonth(), dd.getDate())) / 864e5); return days === 0 ? "Сегодня" : days === 1 ? "Вчера" : dd.toLocaleDateString(undefined, { day: "numeric", month: "long", year: dd.getFullYear() === t.getFullYear() ? undefined : "numeric" }); };

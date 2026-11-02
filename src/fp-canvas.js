@@ -29,10 +29,10 @@
   const opts = (canvas) => {
     const o = (canvas.view && canvas.view.plugin && canvas.view.plugin.options) || {};
     return {
-      hybrid: o.fpHybrid !== false,
+      hybrid: canvas.__bsPreview ? false : o.fpHybrid !== false,
       auto: (o.fpDomMode || DEFAULTS.fpDomMode) === "auto",
       budget: num(o.fpDomBudget, DEFAULTS.fpDomBudget),
-      minPx: num(o.fpMinDomPx, DEFAULTS.fpMinDomPx),
+      minPx: canvas.__bsPreview ? 0 : num(o.fpMinDomPx, DEFAULTS.fpMinDomPx),
       edgeScale: num(o.fpEdgeDomScale, DEFAULTS.fpEdgeDomScale),
       hideOnZoom: o.fpHideDomOnZoom !== false,
       settleMs: num(o.fpSettleMs, DEFAULTS.fpSettleMs),
@@ -769,6 +769,28 @@
   // like on its own board (text, notes, pictures, links, colours, the drawing). Nested inside nested, or past a handful of them, falls back to the picture.
   const lives = new Set();
   const MAX_LIVE = 6;
+  // The application's own canvas view as a picture (graph card, version history): a leaf that belongs to no tab, read-only, optionally showing the given JSON text instead of the file's own
+  async function mountPreview(file, host, json) {
+    const ref = app.workspace.getMostRecentLeaf() || app.workspace.activeLeaf; const Leaf = ref.constructor;
+    const leaf = new Leaf(app); leaf.__bsLive = true; const P = { leaf, box: null, ro: null, dead: false };
+    P.destroy = () => { P.dead = true; try { P.ro && P.ro.disconnect(); } catch (e) { /* gone */ } try { leaf.detach(); } catch (e) { /* not attached */ } try { leaf.view && leaf.view.onunload && leaf.view.onunload(); } catch (e) { /* gone */ } try { P.box && P.box.remove(); } catch (e) { /* gone */ } };
+    try {
+      await leaf.openFile(file, { active: false });
+      const v = leaf.view, c2 = v && v.canvas; if (P.dead || !c2 || !host.isConnected) { P.destroy(); return null; }
+      c2.__bsLiveDepth = 1; c2.__bsPreview = true;
+      // nothing a preview does may reach the file
+      const none = () => {}; try { v.requestSave = none; v.save = async () => {}; c2.requestSave = none; } catch (e) { /* ok */ }
+      try { c2.setReadonly && c2.setReadonly(true); } catch (e) { /* ok */ }
+      if (json != null) { try { v.setViewData(json, true); } catch (e) { console.error("[fp] preview data", e); } try { v.requestSave = none; c2.requestSave = none; } catch (e) { /* ok */ } }
+      P.box = document.createElement("div"); P.box.className = "bs-live bs-preview"; host.appendChild(P.box); P.box.appendChild(v.containerEl);
+      const fit = () => { try { if (c2.wrapperEl && c2.wrapperEl.clientWidth > 4) c2.zoomToFit && c2.zoomToFit(); } catch (e) { /* ok */ } };
+      P.ro = new ResizeObserver(() => { clearTimeout(P.t); P.t = setTimeout(fit, 120); }); P.ro.observe(P.box);
+      setTimeout(fit, 150); setTimeout(fit, 700);
+      return P;
+    } catch (e) { console.error("[fp] preview", e); P.destroy(); return null; }
+  }
+  window.__fpMountPreview = mountPreview;
+
   function destroyLive(n) {
     const L = n.__bsLive; if (!L) return; n.__bsLive = null; lives.delete(L);
     try { L.ro && L.ro.disconnect(); clearInterval(L.sigT); } catch (e) { /* gone */ }

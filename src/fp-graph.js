@@ -554,13 +554,14 @@
     }
     // a picture (or the first picture of a note, or the canvas drawn small) at the top of the card
     cardPreview(n, el) {
+      this.pvToken = (this.pvToken || 0) + 1; if (this.pvLive) { this.pvLive.destroy(); this.pvLive = null; }
       const f = n.file; if (!f) return;
       const box = document.createElement("div"); box.className = "pv"; let src = null;
       const IM = /\.(png|jpe?g|gif|webp|bmp|avif|svg)$/i;
       if (n.kind === "img") src = this.app.vault.getResourcePath(f);
       else if (n.kind === "note") { const cache = this.app.metadataCache.getFileCache(f), em = ((cache && cache.embeds) || []).find((e) => IM.test(e.link)); const t = em && this.app.metadataCache.getFirstLinkpathDest(em.link.split("#")[0], f.path); if (t) src = this.app.vault.getResourcePath(t); }
       if (src) { const im = document.createElement("img"); im.src = src; box.appendChild(im); el.appendChild(box); }
-      else if (n.kind === "canvas" && window.__fpRenderNested) { const cv = document.createElement("canvas"); box.appendChild(cv); el.appendChild(box); Promise.resolve(window.__fpRenderNested(f, 512)).then((r) => { if (!r || !r.bmp) { box.remove(); return; } const W = 560, H = 300; cv.width = W; cv.height = H; const g = cv.getContext("2d"), k = Math.min(W / r.bmp.width, H / r.bmp.height); g.drawImage(r.bmp, (W - r.bmp.width * k) / 2, (H - r.bmp.height * k) / 2, r.bmp.width * k, r.bmp.height * k); }).catch(() => box.remove()); }
+      else if (n.kind === "canvas" && window.__fpMountPreview) { el.appendChild(box); const my = this.pvToken = (this.pvToken || 0) + 1; window.__fpMountPreview(f, box).then((P) => { if (!P) return; if (my !== this.pvToken || !box.isConnected) { P.destroy(); return; } this.pvLive = P; }); }
     }
     // groups you make yourself and the notes you hid: both live in the panel and in the right-click menu
     panelGroups(p, heading) {
