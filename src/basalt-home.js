@@ -79,6 +79,7 @@
     el.querySelector("p").textContent = app.vault.getName();
     el.querySelector(".bsh-search").addEventListener("click", () => cmd("basalt:quick-search"));
     const tiles = [
+      ["folder", "Открыть папку", "Без хранилища", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
       ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
       ["canvas", "Новый холст", "", () => cmd("canvas:new-file")],
       ["term", "Терминал", "", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
@@ -89,7 +90,7 @@
       ["gear", "Настройки", "", () => cmd("app:open-settings")],
     ];
     const tl = el.querySelector(".bsh-tiles");
-    const LI = { note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };
+    const LI = { folder: "folder-open", note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };
     for (const [ic, t, sub, fn] of tiles) { const [desc, keys] = sub.split("|"); const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `<span class="bsh-ti"></span><div><b>${esc(t)}</b>${desc ? `<br><small>${esc(desc)}</small>` : ""}${keys ? `<span class="bsh-keys">${keys.split("+").map((k) => `<kbd>${esc(k)}</kbd>`).join("")}</span>` : ""}</div>`; try { window.__bsApi.setIcon(d.firstChild, "lucide-" + LI[ic]); } catch (e) { d.firstChild.innerHTML = svg(ic); } d.addEventListener("click", fn); tl.appendChild(d); }
     const rl = el.querySelector(".bsh-recent");
     if (!recent.length) rl.innerHTML = '<div class="bsh-rec" style="cursor:default"><div><small>Пока ничего не открывали</small></div></div>';

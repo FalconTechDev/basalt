@@ -224,7 +224,7 @@
   async function open(dir) {
     let st = null;
     try { st = await fs.promises.stat(dir); } catch (e) { /* missing */ }
-    if (!st || !st.isDirectory()) { if (api()) new api().Notice("Не удалось открыть папку: " + dir); return false; }
+    if (!st || !st.isDirectory()) { if (api()) new (api().Notice)("Не удалось открыть папку: " + dir); return false; }
     close(false);
     root = path.resolve(dir);
     rootNode = { name: path.basename(root) || root, path: "", isDir: true, abs: root, children: null, parent: null, extension: undefined, stat: null, size: 0, mtime: 0 };
@@ -245,12 +245,12 @@
   }
   function pick() {
     const d = el.remote && el.remote.dialog;
-    if (!d || !d.showOpenDialog) { if (api()) new api().Notice("Диалог выбора папки недоступен"); return; }
+    if (!d || !d.showOpenDialog) { if (api()) new (api().Notice)("Диалог выбора папки недоступен"); return; }
     Promise.resolve(d.showOpenDialog({ title: "Открыть папку", properties: ["openDirectory"] }))
       .then((r) => {
         const dir = r && !r.canceled ? (Array.isArray(r.filePaths) ? r.filePaths[0] : r) : null;
         if (!dir) return;
-        open(dir).then((ok) => { if (ok && api()) new api().Notice("Папка открыта: " + path.basename(dir)); });
+        open(dir).then((ok) => { if (ok && api()) new (api().Notice)("Папка открыта: " + path.basename(dir)); });
       })
       .catch((e) => console.error("[workspace] dialog", e));
   }
