@@ -51,7 +51,8 @@
     .bstf-mini canvas { display: block; }
     .bstf-mini-slider { position: absolute; left: 0; right: 0; background: rgba(128,128,128,.22); pointer-events: none; }
     .bstf-mini:hover .bstf-mini-slider { background: rgba(128,128,128,.34); }
-    .bstf-btn.run { color: #4ec9b0; } .bstf-btn.run:hover { color: #6fe3cb; }
+    .bstf .bstf-btn { background: transparent; box-shadow: none; border: 0; border-radius: 3px; }
+    .bstf .bstf-btn.run { color: #3fb950; width: 28px; padding: 0; } .bstf .bstf-btn.run:hover { background: rgba(128,128,128,.25); color: #56d364; }
     .bstf-term { display: flex; flex-direction: column; border-top: 1px solid var(--vs-border); background: var(--vs-bg); position: relative; flex: none; }
     .bstf-term-grip { position: absolute; left: 0; right: 0; top: -3px; height: 6px; cursor: ns-resize; z-index: 5; }
     .bstf-term-grip:hover { background: #007fd4; opacity: .6; }
@@ -157,9 +158,9 @@
         this.lastText = text;
 
         const bar = el("div", "bstf-bar"); const crumbs = el("span", "bstf-path"); this.shownPath().split(/[\\/]/).forEach((seg, k, arr) => { if (k) crumbs.appendChild(el("i", null, "›")); crumbs.appendChild(el(k === arr.length - 1 ? "b" : "span", null, seg)); }); bar.appendChild(crumbs);
-        this.stateEl = el("span", "bstf-state", "Сохранено"); bar.appendChild(this.stateEl);
+        this.stateEl = el("span", "bstf-state", ""); bar.appendChild(this.stateEl);
         const ext0 = (this.path.split(".").pop() || "").toLowerCase();
-        if (RUNNABLE.has(ext0)) { const rb = document.createElement("button"); rb.className = "bstf-btn run"; rb.textContent = "▶ Запустить"; rb.title = "Запустить файл (F5)"; rb.addEventListener("click", () => this.run()); bar.appendChild(rb); this.runBtn = rb; }
+        if (RUNNABLE.has(ext0)) { const rb = document.createElement("button"); rb.className = "bstf-btn run"; rb.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>'; rb.title = "Запустить файл (F5)"; rb.addEventListener("click", () => this.run()); bar.appendChild(rb); this.runBtn = rb; }
         const mkBtn = (label, title, fn) => { const b = el("button", "bstf-btn", label); b.title = title; b.addEventListener("click", fn); return b; };
         this.btnFind = mkBtn("Найти", "Найти (Ctrl+F)", () => this.openFind(false));
         this.btnWrap = mkBtn("Перенос", "Переносить длинные строки (Alt+Z)", () => this.setWrap(!this.cm.getOption("lineWrapping")));
@@ -423,7 +424,7 @@
 
       // ---- saving ----
       touch() {
-        this.dirty = true; if (this.stateEl) this.stateEl.textContent = "Не сохранено";
+        this.dirty = true; if (this.stateEl) this.stateEl.textContent = "● Не сохранено";
         clearTimeout(this.timer); this.timer = setTimeout(() => this.flush(), 800);
       }
       async flush() {
@@ -431,7 +432,7 @@
         if (!this.dirty || !this.getText) return;
         this.dirty = false;
         const text = this.getText();
-        try { this.lastText = text; await io.write(this.path, text); if (this.stateEl) this.stateEl.textContent = "Сохранено"; }
+        try { this.lastText = text; await io.write(this.path, text); if (this.stateEl) this.stateEl.textContent = ""; }
         catch (e) { this.dirty = true; if (this.stateEl) this.stateEl.textContent = "Ошибка сохранения"; console.error("[basalt-textfile]", e); }
       }
       async external(f) {
@@ -440,7 +441,7 @@
           const text = await io.read(this.path);
           if (text === this.lastText || this.dirty) return;
           this.lastText = text; const cur = this.cm.getCursor(), sc = this.cm.getScrollInfo();
-          this.cm.setValue(text); this.dirty = false; if (this.stateEl) this.stateEl.textContent = "Сохранено";
+          this.cm.setValue(text); this.dirty = false; if (this.stateEl) this.stateEl.textContent = "";
           this.cm.setCursor(cur); this.cm.scrollTo(sc.left, sc.top);
         } catch (e) { /* file gone */ }
       }
