@@ -483,6 +483,10 @@
       } catch (e) { console.error("[basalt-textfile]", e); }
       return orig(path);
     };
+    // the app's own status bar (word count, sync) lies over the editor's status bar: hide it while a code file is in front
+    const st = document.createElement("style"); st.textContent = "body.bs-code-front .status-bar { display: none !important; }"; document.head.appendChild(st);
+    const front = () => { const l = app.workspace.activeLeaf, t = l && l.view && l.view.getViewType && l.view.getViewType(); document.body.classList.toggle("bs-code-front", t === VIEW); };
+    app.workspace.on("active-leaf-change", front); app.workspace.on("layout-change", front); front();
     window.__bsTextFile = { open, openAbs };
     app.commands.addCommand({ id: "basalt:run-file", name: "Запустить текущий файл", checkCallback: (c) => { const l = app.workspace.activeLeaf, v = l && l.view; if (!v || v.getViewType() !== VIEW || !v.runBtn) return false; if (!c) v.run(); return true; } });
     app.commands.addCommand({ id: "basalt:editor-terminal", name: "Терминал под редактором: показать / скрыть", checkCallback: (c) => { const l = app.workspace.activeLeaf, v = l && l.view; if (!v || v.getViewType() !== VIEW) return false; if (!c) v.toggleTerm(); return true; } });
