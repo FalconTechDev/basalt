@@ -46,7 +46,7 @@ Files that carry it: `src/basalt-textfile.js` (editor), `src/basalt-graphs.js` (
 - [ ] Recent files list, back / forward through cursor positions (Alt+Left / Right)
 - [ ] Replace in files with preview (checkboxes per hit)
 - [ ] Search results as a tab you can keep, search history, include / exclude folders
-- [ ] Outline panel (symbols tree of the open file, follows cursor)
+- [x] Outline panel (symbols tree of the open file, follows cursor)
 - [ ] Bookmarks on lines (gutter), list in a panel
 - [ ] TODO / FIXME panel (scan comments in project)
 - [ ] Open file from a path or `file:line` pasted anywhere (terminal output links too)
