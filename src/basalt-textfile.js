@@ -67,14 +67,36 @@
     .bstf .CodeMirror-selected { background: var(--text-selection, rgba(120,120,255,.3)); }
     .bstf .CodeMirror-linebackground { position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: 0; }
     .bstf .CodeMirror-linenumber { padding: 0 8px 0 10px; min-width: 20px; text-align: right; white-space: nowrap; }
-    .bstf .cm-keyword, .bstf .cm-atom, .bstf .cm-builtin { color: var(--code-keyword, #c678dd); }
-    .bstf .cm-number, .bstf .cm-def, .bstf .cm-variable-2, .bstf .cm-variable-3 { color: var(--code-value, #d19a66); }
-    .bstf .cm-string, .bstf .cm-string-2, .bstf .cm-meta { color: var(--code-string, #98c379); }
-    .bstf .cm-comment { color: var(--code-comment, #7f848e); font-style: italic; }
-    .bstf .cm-property, .bstf .cm-attribute, .bstf .cm-qualifier { color: var(--code-property, #61afef); }
-    .bstf .cm-tag, .bstf .cm-header { color: var(--code-tag, #e06c75); }
-    .bstf .cm-operator, .bstf .cm-bracket { color: var(--code-operator, #56b6c2); }
-    .bstf .cm-link { color: var(--text-accent); text-decoration: underline; } .bstf .cm-error { color: var(--text-error); }
+    .bstf { --vs-bg:#1e1e1e; --vs-fg:#d4d4d4; --vs-ln:#858585; --vs-lna:#c6c6c6; --vs-line:#282828; --vs-sel:#264f78; --vs-gut:#1e1e1e; --vs-widget:#252526; --vs-border:#3c3c3c; --vs-input:#3c3c3c; --vs-kw:#569cd6; --vs-ctl:#c586c0; --vs-str:#ce9178; --vs-num:#b5cea8; --vs-com:#6a9955; --vs-fn:#dcdcaa; --vs-var:#9cdcfe; --vs-type:#4ec9b0; --vs-op:#d4d4d4; --vs-status:#007acc; }
+    .theme-light .bstf { --vs-bg:#ffffff; --vs-fg:#000000; --vs-ln:#237893; --vs-lna:#0b216f; --vs-line:#f2f2f2; --vs-sel:#add6ff; --vs-gut:#ffffff; --vs-widget:#f3f3f3; --vs-border:#c8c8c8; --vs-input:#ffffff; --vs-kw:#0000ff; --vs-ctl:#af00db; --vs-str:#a31515; --vs-num:#098658; --vs-com:#008000; --vs-fn:#795e26; --vs-var:#001080; --vs-type:#267f99; --vs-op:#000000; }
+    .bstf { background: var(--vs-bg); color: var(--vs-fg); }
+    .bstf .CodeMirror { color: var(--vs-fg); font-family: Consolas, "Cascadia Code", var(--font-monospace); }
+    .bstf .CodeMirror-gutters { background: var(--vs-gut); border-right: 0; }
+    .bstf .CodeMirror-linenumber { color: var(--vs-ln); }
+    .bstf .CodeMirror-activeline .CodeMirror-linenumber { color: var(--vs-lna); }
+    .bstf .CodeMirror-activeline-background { background: var(--vs-line); box-shadow: inset 0 0 0 1px rgba(128,128,128,.18); }
+    .bstf .CodeMirror-cursor { border-left: 2px solid var(--vs-fg); }
+    .bstf .CodeMirror-selected, .bstf .CodeMirror-focused .CodeMirror-selected { background: var(--vs-sel); }
+    .bstf-bar { background: var(--vs-bg); border-bottom: 0; padding: 3px 12px; color: var(--vs-ln); }
+    .bstf-bar .bstf-path b { font-weight: normal; color: var(--vs-fg); } .bstf-bar .bstf-path i { font-style: normal; opacity: .6; margin: 0 4px; }
+    .bstf-btn { color: var(--vs-ln); } .bstf-btn:hover, .bstf-btn.on { color: var(--vs-fg); background: rgba(128,128,128,.2); border-color: transparent; }
+    .bstf-find { position: absolute; top: 30px; right: 22px; z-index: 20; width: 440px; max-width: calc(100% - 40px); padding: 6px 8px; border: 1px solid var(--vs-border); border-top: 0; border-radius: 0 0 4px 4px; background: var(--vs-widget); box-shadow: 0 2px 8px rgba(0,0,0,.36); }
+    .bstf-find .bstf-in { max-width: none; background: var(--vs-input); color: var(--vs-fg); border: 1px solid transparent; border-radius: 2px; }
+    .bstf-find .bstf-in:focus { outline: 1px solid #007fd4; outline-offset: -1px; }
+    .bstf-row { flex-wrap: wrap; }
+    .bstf-status { background: var(--vs-status); color: #fff; border-top: 0; padding: 0 10px; height: 22px; gap: 0; font-size: 12px; }
+    .bstf-status > span { padding: 0 8px; height: 22px; display: inline-flex; align-items: center; }
+    .bstf-status span[data-act]:hover { background: rgba(255,255,255,.18); color: #fff; }
+    .bstf .cm-keyword, .bstf .cm-atom, .bstf .cm-builtin { color: var(--vs-kw); }
+    .bstf .cm-keyword.cm-ctl { color: var(--vs-ctl); }
+    .bstf .cm-number { color: var(--vs-num); } .bstf .cm-def { color: var(--vs-fn); } .bstf .cm-variable { color: var(--vs-var); } .bstf .cm-variable-2 { color: var(--vs-var); } .bstf .cm-variable-3, .bstf .cm-type { color: var(--vs-type); }
+    .bstf .cm-string, .bstf .cm-string-2 { color: var(--vs-str); } .bstf .cm-meta { color: var(--vs-kw); }
+    .bstf .cm-comment { color: var(--vs-com); font-style: normal; }
+    .bstf .cm-property, .bstf .cm-attribute, .bstf .cm-qualifier { color: var(--vs-var); }
+    .bstf .cm-tag, .bstf .cm-header { color: var(--vs-kw); }
+    .bstf .cm-operator, .bstf .cm-bracket { color: var(--vs-op); }
+    .bstf .cm-link { color: var(--text-accent); text-decoration: underline; } .bstf .cm-error { color: #f48771; }
+    .bstf .CodeMirror-matchingbracket { background: rgba(128,128,128,.3) !important; outline: 1px solid rgba(128,128,128,.6); }
   `;
   document.head.appendChild(css);
 
@@ -111,7 +133,7 @@
         this.eol = /\r\n/.test(text) ? "\r\n" : "\n";
         this.lastText = text;
 
-        const bar = el("div", "bstf-bar"); bar.appendChild(el("span", "bstf-path", this.path));
+        const bar = el("div", "bstf-bar"); const crumbs = el("span", "bstf-path"); this.path.split("/").forEach((seg, k, arr) => { if (k) crumbs.appendChild(el("i", null, "›")); crumbs.appendChild(el(k === arr.length - 1 ? "b" : "span", null, seg)); }); bar.appendChild(crumbs);
         this.stateEl = el("span", "bstf-state", "Сохранено"); bar.appendChild(this.stateEl);
         const mkBtn = (label, title, fn) => { const b = el("button", "bstf-btn", label); b.title = title; b.addEventListener("click", fn); return b; };
         this.btnFind = mkBtn("Найти", "Найти (Ctrl+F)", () => this.openFind(false));
