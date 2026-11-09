@@ -17,6 +17,8 @@
     .bm-i.is-danger, .bm-i.is-danger .bm-ic { color: var(--text-error, #e5675f); }
     .bm-ic { display: inline-flex; width: 16px; height: 16px; flex: none; color: var(--text-muted); } .bm-ic svg { width: 16px; height: 16px; }
     .bm-t { flex: 1; overflow: hidden; text-overflow: ellipsis; } .bm-k { color: var(--text-faint); font-size: 11px; margin-left: 10px; }
+    .menu.bm-sub { clip-path: none !important; border-radius: 10px !important; padding: 6px !important; background: var(--background-primary) !important; border: 1px solid var(--background-modifier-border) !important; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)) !important; font-size: var(--font-ui-small); }
+    .menu.bm-sub .menu-item { border-radius: 6px; padding: 6px 10px; } .menu.bm-sub .menu-item:hover, .menu.bm-sub .menu-item.selected { background: var(--background-modifier-hover); }
     .bm-sep { height: 1px; background: var(--background-modifier-border); margin: 4px 2px; }
     .bm-bar { display: flex; gap: 6px; align-items: center; border-top: 1px solid var(--background-modifier-border); padding-top: 6px; margin-top: 2px; }
     .bm-find { flex: 1; display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: text; }
@@ -46,7 +48,9 @@
   function run(menu, it, ev, row) {
     if (it.submenu && it.submenu.items && it.submenu.items.length) {
       const r = row.getBoundingClientRect(); it.submenu._bmRaw = true;
-      it.submenu.showAtPosition({ x: r.right, y: r.top }); return;
+      const pr = row.closest(".bm-pop").getBoundingClientRect(); it.submenu.showAtPosition({ x: pr.right + 4, y: r.top - 6 });
+      const dm = it.submenu.dom; if (dm) { dm.classList.add("bm-sub"); const h = dm.getBoundingClientRect().height; dm.style.left = (pr.right + 4) + "px"; dm.style.top = Math.max(8, Math.min(innerHeight - h - 8, r.top - 6)) + "px"; }
+      return;
     }
     closeAll();
     setTimeout(() => { try { if (it.callback) it.callback(ev); } catch (err) { console.error("[basalt-menu]", err); } }, 0);

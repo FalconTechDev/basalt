@@ -259,15 +259,15 @@
       toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) this.btnCol.textContent = this.collapsed.size ? "Развернуть всё" : "Свернуть"; }
       labelOf(n) { return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
       drawIcon(ctx, n, S, lw, hov, bg, txt) {
-        const size = 22, px = size * S, mut = this.cssv("--vs-ln") || "#999", dir = n.kind === "dir";
-        if (px < 5) { ctx.fillStyle = dir ? mut : n.extColor; ctx.fillRect(n.x - 3 * lw, n.y - 3 * lw, 6 * lw, 6 * lw); return; }
+        const size = 22, px = size * S, mut = (this.cssv("--text-faint") || this.cssv("--vs-ln")) || "#999", dir = n.kind === "dir";
+        if (px < 5) { ctx.fillStyle = dir ? (this.cssv("--interactive-accent") || mut) : n.extColor; ctx.fillRect(n.x - 3 * lw, n.y - 3 * lw, 6 * lw, 6 * lw); return; }
         const k = size / 24, col = dir && this.collapsed.has(n.id);
         ctx.save(); ctx.translate(n.x - 12 * k, n.y - 12 * k); ctx.scale(k, k);
         // same line icons as the explorer: 24-grid outline, round joins, type colour softened towards the muted text colour
         ctx.lineWidth = 1.8; ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.fillStyle = bg;
-        const path = dir ? P_FOLDER : P_FILE; ctx.fill(path); ctx.strokeStyle = mut; ctx.stroke(path);
+        const path = dir ? P_FOLDER : P_FILE, fc = this.cssv("--interactive-accent") || mut; ctx.fill(path); ctx.strokeStyle = dir ? fc : mut; ctx.stroke(path);
         if (!dir) { const a0 = ctx.globalAlpha; ctx.globalAlpha = a0 * .62; ctx.strokeStyle = n.extColor; ctx.stroke(path); ctx.stroke(P_FOLD); ctx.globalAlpha = a0; ctx.strokeStyle = mut; ctx.globalAlpha = a0 * .4; ctx.stroke(P_FOLD); ctx.globalAlpha = a0; }
-        else if (px > 14 && col && n.nfiles) { ctx.fillStyle = mut; ctx.font = "600 7px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(String(n.nfiles > 999 ? "999+" : n.nfiles), 12, 13); }
+        else if (px > 14 && col && n.nfiles) { ctx.fillStyle = fc; ctx.font = "600 7px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(String(n.nfiles > 999 ? "999+" : n.nfiles), 12, 13); }
         ctx.restore();
         if (n === hov) { ctx.beginPath(); ctx.arc(n.x, n.y, 17, 0, 7); ctx.lineWidth = 1.6 * lw; ctx.strokeStyle = txt; ctx.stroke(); }
       }
