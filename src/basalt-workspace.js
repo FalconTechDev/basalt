@@ -298,6 +298,11 @@
     if (!node || node.isDir || !root) return;
     activeFile = node.path;
     notify();
+    const legacy = () => openReadOnly(node, newTab);
+    if (window.__bsTextFile && window.__bsTextFile.openAbs) { window.__bsTextFile.openAbs(node.abs).then((ok) => { if (!ok) legacy(); }).catch(legacy); return; }
+    legacy();
+  }
+  function openReadOnly(node, newTab) {
     try {
       const ws = app.workspace;
       let leaf = newTab ? null : ws.getMostRecentLeaf(ws.rootSplit);

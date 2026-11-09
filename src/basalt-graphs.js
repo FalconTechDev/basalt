@@ -140,7 +140,7 @@
     const resolve = makeResolver(files), parsed = new Map();
     let n = 0;
     for (const f of files) {
-      try { const st = await fs.promises.stat(f.abs); if (mode === "files") { f.loc = Math.max(1, Math.round(st.size / 40)); parsed.set(f, { imps: [], syms: [], lines: [] }); continue; } if (st.size > MAX_BYTES) { f.loc = Math.round(st.size / 40); parsed.set(f, { imps: [], syms: [], lines: [] }); continue; }
+      try { const st = await fs.promises.stat(f.abs); if (mode === "files") { f.loc = Math.max(1, Math.round(st.size / 40)); f.size = st.size; parsed.set(f, { imps: [], syms: [], lines: [] }); continue; } if (st.size > MAX_BYTES) { f.loc = Math.round(st.size / 40); parsed.set(f, { imps: [], syms: [], lines: [] }); continue; }
         const text = await fs.promises.readFile(f.abs, "utf8"); const p = parse(f, text); f.loc = p.lines.length; parsed.set(f, p); } catch (e) { f.loc = 0; parsed.set(f, { imps: [], syms: [], lines: [] }); }
       if (++n % 40 === 0) { if (prog) prog(files.length, n); await new Promise((r) => setTimeout(r, 0)); }
     }
@@ -150,7 +150,7 @@
     // directories + files
     const dirNode = (d) => { if (idx.has("d:" + d)) return idx.get("d:" + d); const node = addNode({ id: "d:" + d, kind: "dir", label: d === "" ? path.basename(root) : path.posix.basename(d), path: d, dir: d, loc: 0 }); if (d !== "") addLink(dirNode(path.posix.dirname(d) === "." ? "" : path.posix.dirname(d)), node, "contains"); return node; };
     dirNode("");
-    for (const f of files) { const d = path.posix.dirname(f.rel) === "." ? "" : path.posix.dirname(f.rel); const node = addNode({ id: "f:" + f.rel, kind: "file", label: f.name, path: f.rel, abs: f.abs, dir: d, loc: f.loc || 1, ext: f.ext, lang: langOf(f.ext)[0], color: langOf(f.ext)[1], extColor: langOf(f.ext)[1] }); f.node = node; addLink(dirNode(d), node, "contains"); }
+    for (const f of files) { const d = path.posix.dirname(f.rel) === "." ? "" : path.posix.dirname(f.rel); const node = addNode({ id: "f:" + f.rel, kind: "file", label: f.name, path: f.rel, abs: f.abs, dir: d, loc: f.loc || 1, ext: f.ext, size: f.size, lang: langOf(f.ext)[0], color: langOf(f.ext)[1], extColor: langOf(f.ext)[1] }); f.node = node; addLink(dirNode(d), node, "contains"); }
     for (const f of files) for (const spec of parsed.get(f).imps) { const t = resolve(f, spec); if (t && t.node) addLink(f.node, t.node, "import"); }
     let symCount = 0; const defs = new Map();
     if (mode === "code") {
@@ -185,13 +185,13 @@
       getDisplayText() { return this.mode === "code" ? "Граф кода" : "Граф файлов"; }
       getIcon() { return "lucide-git-fork"; }
       getState() { return { mode: this.mode }; }
-      async setState(state, result) { if (state && state.mode && state.mode !== this.mode && this.built) { this.mode = state.mode; this.syncSeg(); await this.load(); } else if (state && state.mode) this.mode = state.mode; try { this.leaf.updateHeader && this.leaf.updateHeader(); } catch (e) { /* ok */ } return super.setState ? super.setState(state, result) : undefined; }
+      async setState(state, result) { this.mode = "files"; try { this.leaf.updateHeader && this.leaf.updateHeader(); } catch (e) { /* ok */ } return super.setState ? super.setState(state, result) : undefined; }
       root() { const W = window.__bsWorkspace; if (W && W.active && W.active() && W.root()) return W.root(); return app.vault.adapter.basePath; }
       async onOpen() {
         const c = this.contentEl; c.textContent = ""; c.style.padding = "0"; c.style.position = "relative"; c.style.overflow = "hidden";
         const wrap = document.createElement("div"); wrap.className = "bsg"; c.appendChild(wrap);
         const bar = document.createElement("div"); bar.className = "bsg-bar"; wrap.appendChild(bar);
-        const seg = document.createElement("div"); seg.className = "bsg-seg"; bar.appendChild(seg); this.segBtns = {};
+        const seg = document.createElement("div"); seg.className = "bsg-seg"; seg.style.display = "none"; bar.appendChild(seg); this.segBtns = {};
         for (const [k, t] of [["files", "Файлы"], ["code", "Код"]]) { const b = document.createElement("button"); b.textContent = t; b.addEventListener("click", () => { if (this.mode !== k) { this.mode = k; this.syncSeg(); this.load(); try { this.leaf.updateHeader(); } catch (e) { /* ok */ } } }); seg.appendChild(b); this.segBtns[k] = b; }
         const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти узел…"; bar.appendChild(q); this.qIn = q;
         q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { if (e.key === "Enter") this.focusMatch(); });
@@ -246,7 +246,7 @@
           if (!e) { e = { a, b, kind: l.kind, w: 0 }; map.set(k, e); links.push(e); } e.w++;
         }
         this.vlinks = links; this.byDeg = null; for (const n of this.vnodes) n.vd = 0; for (const l of links) { const w = l.kind === "call" ? Math.min(l.w, 6) : 1; l.a.vd += w; l.b.vd += w; }
-        for (const n of this.vnodes) n.r = this.mode === "files" ? 9 : n.kind === "dir" ? 5 : n.kind === "file" ? Math.min(14, 2.5 + Math.sqrt(n.loc) / 5 + Math.sqrt(n.vd) * .5) : Math.min(8, 2.2 + Math.sqrt(n.vd));
+        for (const n of this.vnodes) n.r = this.mode === "files" ? 15 : n.kind === "dir" ? 5 : n.kind === "file" ? Math.min(14, 2.5 + Math.sqrt(n.loc) / 5 + Math.sqrt(n.vd) * .5) : Math.min(8, 2.2 + Math.sqrt(n.vd));
         this.byDeg = this.vnodes.slice().sort((a, b) => b.vd * (b.kind === "dir" ? 1.5 : 1) - a.vd * (a.kind === "dir" ? 1.5 : 1));
       }
       defaultCollapse() { this.collapsed.clear(); if (this.mode === "files" && this.g.files > 300) for (const n of this.g.nodes) if (n.kind === "dir" && n.path && n.path.split("/").length >= 2 && n.nfiles) this.collapsed.add(n.id); if (this.btnCol) this.btnCol.textContent = "Развернуть всё"; }
@@ -258,14 +258,14 @@
       toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) this.btnCol.textContent = this.collapsed.size ? "Развернуть всё" : "Свернуть"; }
       labelOf(n) { return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
       drawIcon(ctx, n, S, lw, hov, bg, txt) {
-        const size = 16, px = size * S;
-        if (px < 5) { ctx.fillStyle = n.kind === "dir" ? "#dcb67a" : n.extColor; ctx.fillRect(n.x - 2.5 * lw, n.y - 2.5 * lw, 5 * lw, 5 * lw); return; }
+        const size = 26, px = size * S;
+        if (px < 5) { ctx.fillStyle = n.kind === "dir" ? "#dcb67a" : n.extColor; ctx.fillRect(n.x - 3 * lw, n.y - 3 * lw, 6 * lw, 6 * lw); return; }
         const k = size / 18, col = n.kind === "dir" && this.collapsed.has(n.id);
         ctx.save(); ctx.translate(n.x - 9 * k, n.y - 9 * k); ctx.scale(k, k);
         if (n.kind === "dir") { ctx.fillStyle = col ? "#dcb67a" : "#b8965b"; ctx.fill(P_FOLDER); if (px > 14 && col && n.nfiles) { ctx.fillStyle = "#2b2b2b"; ctx.font = "bold 6px sans-serif"; ctx.textAlign = "center"; ctx.fillText(String(n.nfiles > 999 ? "999+" : n.nfiles), 9, 12.8); } }
-        else { ctx.globalAlpha *= .94; ctx.fillStyle = n.extColor; ctx.fill(P_FILE); ctx.lineWidth = 1; ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.stroke(P_FOLD); if (px > 20) { ctx.fillStyle = "#fff"; ctx.font = "bold 5.2px sans-serif"; ctx.textAlign = "center"; ctx.fillText((n.ext || "·").slice(0, 4), 8.5, 13.5); } }
+        else { ctx.globalAlpha *= .94; ctx.fillStyle = n.extColor; ctx.fill(P_FILE); ctx.lineWidth = 1; ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.stroke(P_FOLD); if (px > 24) { ctx.fillStyle = "#fff"; ctx.font = "bold 5.2px sans-serif"; ctx.textAlign = "center"; ctx.fillText((n.ext || "·").slice(0, 4), 8.5, 13.5); } }
         ctx.restore();
-        if (n === hov) { ctx.beginPath(); ctx.arc(n.x, n.y, 11, 0, 7); ctx.lineWidth = 1.6 * lw; ctx.strokeStyle = txt; ctx.stroke(); }
+        if (n === hov) { ctx.beginPath(); ctx.arc(n.x, n.y, 17, 0, 7); ctx.lineWidth = 1.6 * lw; ctx.strokeStyle = txt; ctx.stroke(); }
       }
       toggleExpand(n) {
         if (this.mode !== "code" || n.kind !== "file") return; const id = n.id;
@@ -283,11 +283,11 @@
         const cmp = (a, b) => (a.kind === "dir" ? 0 : 1) - (b.kind === "dir" ? 0 : 1) || a.label.localeCompare(b.label);
         for (const arr of kids.values()) arr.sort(cmp);
         const L = this.layout;
-        if (L === "ladder") { let row = 0; const walk = (n, d) => { n.tx = d * 24; n.ty = row++ * 22; for (const c of kids.get(n) || []) walk(c, d + 1); }; walk(root, 0); }
+        if (L === "ladder") { let row = 0; const walk = (n, d) => { n.tx = d * 36; n.ty = row++ * 34; for (const c of kids.get(n) || []) walk(c, d + 1); }; walk(root, 0); }
         else {
           const leaves = new Map(); let maxD = 1; const cnt = (n, d) => { maxD = Math.max(maxD, d); const k = kids.get(n); if (!k || !k.length) { leaves.set(n, 1); return 1; } let t = 0; for (const c of k) t += cnt(c, d + 1); leaves.set(n, t); return t; }; const total = cnt(root, 0);
-          if (L === "tree") { let leaf = 0; const place = (n, d) => { const k = kids.get(n); n.ty = d * 120; if (!k || !k.length) { n.tx = leaf++ * 24; return; } k.forEach((c) => place(c, d + 1)); n.tx = (k[0].tx + k[k.length - 1].tx) / 2; }; place(root, 0); }
-          else { const step = Math.max(110, total * 16 / (2 * Math.PI) / maxD); const place = (n, d, a0, a1) => { const am = (a0 + a1) / 2, r = d * step; n.tx = Math.cos(am) * r; n.ty = Math.sin(am) * r; const k = kids.get(n); if (!k) return; let a = a0; for (const c of k) { const span = (a1 - a0) * leaves.get(c) / leaves.get(n); place(c, d + 1, a, a + span); a += span; } }; place(root, 0, 0, Math.PI * 2); }
+          if (L === "tree") { let leaf = 0; const place = (n, d) => { const k = kids.get(n); n.ty = d * 170; if (!k || !k.length) { n.tx = leaf++ * 38; return; } k.forEach((c) => place(c, d + 1)); n.tx = (k[0].tx + k[k.length - 1].tx) / 2; }; place(root, 0); }
+          else { const step = Math.max(150, total * 34 / (2 * Math.PI) / maxD); const place = (n, d, a0, a1) => { const am = (a0 + a1) / 2, r = d * step; n.tx = Math.cos(am) * r; n.ty = Math.sin(am) * r; const k = kids.get(n); if (!k) return; let a = a0; for (const c of k) { const span = (a1 - a0) * leaves.get(c) / leaves.get(n); place(c, d + 1, a, a + span); a += span; } }; place(root, 0, 0, Math.PI * 2); }
         }
         for (const n of nodes) if (n.tx === undefined) { n.tx = n.x; n.ty = n.y; }
       }
@@ -310,8 +310,8 @@
       relayout() { if (!this.g) return; for (const n of this.g.nodes) { n.pinned = false; n.x += (Math.random() - .5) * 40; n.y += (Math.random() - .5) * 40; } this.alpha = 1; this.fitted = false; this.refit = false; this.userView = false; this.loop(); }
       fit() { const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
       // -- search --
-      runSearch(quiet) { const s = this.qIn.value.trim().toLowerCase(); this.match = null; if (s && this.g) { this.match = new Set(); for (const n of this.g.nodes) if (n.label.toLowerCase().includes(s) || (n.kind !== "sym" && n.path.toLowerCase().includes(s))) this.match.add(n); } if (!quiet) this.draw(); }
-      focusMatch() { if (!this.match || !this.match.size) return; let n = [...this.match][0]; if (n.kind === "sym" && !this.expanded.has(n.parent.id)) { this.toggleExpand(n.parent); } this.scale = Math.max(this.scale, 1.4); this.ox = this.w / 2 - n.x * this.scale; this.oy = this.h / 2 - n.y * this.scale; this.draw(); }
+      runSearch(quiet) { const s = this.qIn.value.trim().toLowerCase(); this.match = null; if (s && this.g) { this.match = new Set(); for (const n of this.g.nodes) if (n.label.toLowerCase().includes(s) || (n.kind !== "sym" && n.path.toLowerCase().includes(s))) this.match.add(n); } if (this.mode === "files" && this.match && this.match.size && this.match.size <= 250) { let ch = false; for (const n of this.match) for (let u = n.up; u; u = u.up) if (this.collapsed.delete(u.id)) ch = true; if (ch) { this.rebuildView(); this.userView = true; this.applyLayout(false); return; } } if (!quiet) this.draw(); }
+      focusMatch() { if (!this.match || !this.match.size) return; let n = [...this.match].find((m) => this.vnodes.includes(m)) || [...this.match][0]; if (n.kind === "sym" && !this.expanded.has(n.parent.id)) { this.toggleExpand(n.parent); } this.scale = Math.max(this.scale, 1.1); this.userView = true; this.ox = this.w / 2 - n.x * this.scale; this.oy = this.h / 2 - n.y * this.scale; this.draw(); }
       // -- layout storage --
       layoutFile() { return path.join(this.rootPath, ".basalt", "graph-layout.json"); }
       async loadLayout() { try { const j = JSON.parse(await fs.promises.readFile(this.layoutFile(), "utf8")); return j[this.mode] || null; } catch (e) { return null; } }
@@ -344,7 +344,7 @@
           if (n.pinned) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 2.5 * lw, 0, 7); ctx.lineWidth = lw; ctx.strokeStyle = txt; ctx.stroke(); }
         }
         // labels: biggest first, none over an already placed one; few at a distance, more when zoomed in
-        ctx.globalAlpha = 1; const fs = 11 / S; ctx.font = fs + "px sans-serif"; ctx.textBaseline = "middle"; const placed = [], budget = this.mode === "files" ? 700 : Math.round(14 + S * S * 120);
+        ctx.globalAlpha = 1; const fs = (this.mode === "files" ? 14 : 11) / S; ctx.font = fs + "px sans-serif"; ctx.textBaseline = "middle"; const placed = [], budget = this.mode === "files" ? 700 : Math.round(14 + S * S * 120);
         const inView = (n) => n.x > vx0 && n.x < vx1 && n.y > vy0 && n.y < vy1;
         const strongSet = (hov || this.match) ? this.vnodes.filter((n) => inView(n) && (n === hov || (hov && nb.has(n)) || (this.match && this.match.has(n)))) : [];
         const order = strongSet.concat(this.byDeg || []);
@@ -373,11 +373,16 @@
         });
         cv.addEventListener("pointerup", () => { if (down && !down.moved && down.n) { if (this.dragNode) { this.dragNode = null; } this.openNode(down.n); } if (this.dragNode) { this.dragNode = null; this.saveLayout(); } this.dragging = false; pan = null; down = null; cv.style.cursor = "grab"; if (this.g) this.saveLayout(); });
         cv.addEventListener("pointerleave", () => { if (!down) { this.hover = null; this.tip.style.display = "none"; this.draw(); } });
+        cv.addEventListener("contextmenu", (e) => { e.preventDefault(); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (!n) return; const M = window.__bsApi && window.__bsApi.Menu; if (!M) return; const m = new M(); const item = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));
+          if (n.kind === "file") item("Открыть", "lucide-file", () => this.openNode(n)); else if (n.nfiles) item(this.collapsed.has(n.id) ? "Развернуть папку" : "Свернуть папку", "lucide-folder-tree", () => this.toggleDir(n));
+          item("Показать в проводнике", "lucide-folder-open", () => { try { window.__bsReveal(n.kind === "dir" ? path.join(this.rootPath, n.path) : n.abs); } catch (er) { /* none */ } });
+          item("Копировать путь", "lucide-copy", () => { navigator.clipboard.writeText(n.kind === "dir" ? path.join(this.rootPath, n.path) : n.abs).catch(() => {}); });
+          m.showAtMouseEvent(e); });
         cv.addEventListener("dblclick", (e) => { const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (n && this.mode === "code" && n.kind === "file") { this.toggleExpand(n); return; } if (n) { n.pinned = false; this.alpha = Math.max(this.alpha, .3); this.loop(); this.saveLayout(); } });
         cv.addEventListener("wheel", (e) => { e.preventDefault(); this.userView = true; const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, k = Math.exp(-e.deltaY * .0015), ns = Math.max(.03, Math.min(10, this.scale * k)); this.ox = mx - (mx - this.ox) * (ns / this.scale); this.oy = my - (my - this.oy) * (ns / this.scale); this.scale = ns; this.draw(); }, { passive: false });
       }
       showTip(n, e) { if (!n) { this.tip.style.display = "none"; return; } const t = this.tip; t.textContent = ""; const b = document.createElement("b"); b.textContent = n.label; t.appendChild(b); const add = (s) => { const x = document.createElement("span"); x.textContent = s; t.appendChild(x); };
-        if (n.kind === "dir") add("Каталог · " + n.deg + " связей"); else if (n.kind === "file") { add(n.path); add(n.lang + " · " + n.loc + " строк · связей: " + n.deg); } else { add(n.path + ":" + n.line); add((n.sym === "class" ? "Класс/тип" : n.sym === "method" ? "Метод" : "Функция") + " · связей: " + n.deg); }
+        if (n.kind === "dir") add("Папка · файлов: " + (n.nfiles || 0) + (n.nfiles ? " · клик — " + (this.collapsed.has(n.id) ? "развернуть" : "свернуть") : "")); else if (n.kind === "file") { add(n.path); add(n.lang + (n.size != null ? " · " + (n.size < 1024 ? n.size + " Б" : n.size < 1048576 ? (n.size / 1024).toFixed(1) + " КБ" : (n.size / 1048576).toFixed(1) + " МБ") : " · " + n.loc + " строк")); } else { add(n.path + ":" + n.line); add((n.sym === "class" ? "Класс/тип" : n.sym === "method" ? "Метод" : "Функция") + " · связей: " + n.deg); }
         t.style.display = "block"; this.moveTip(e); }
       moveTip(e) { const r = this.body.getBoundingClientRect(); this.tip.style.left = Math.min(r.width - 200, e.clientX - r.left + 14) + "px"; this.tip.style.top = Math.min(r.height - 60, e.clientY - r.top + 14) + "px"; }
       openNode(n) {
@@ -402,7 +407,6 @@
     const V = makeView(window.__bsApi), creator = (leaf) => new V(leaf);
     try { app.viewRegistry.registerView(VIEW, creator); } catch (e) { app.viewRegistry.viewByType[VIEW] = creator; }
     app.commands.addCommand({ id: "basalt:graph-files", name: "Граф файлов", icon: "lucide-git-fork", callback: () => openGraph("files") });
-    app.commands.addCommand({ id: "basalt:graph-code", name: "Граф кода", icon: "lucide-network", callback: () => openGraph("code") });
-    window.__bsGraphs = { open: openGraph, build: buildGraph, parse };
+        window.__bsGraphs = { open: openGraph, build: buildGraph, parse };
   }, 500);
 })();
