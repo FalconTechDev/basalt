@@ -143,12 +143,11 @@
     .fp-shape-item { display: flex; flex-direction: column; gap: 2px; align-items: center; justify-content: center; padding: 4px 6px; border-radius: var(--radius-s); cursor: pointer; color: var(--text-muted); }
     .fp-shape-name { font-size: 10px; line-height: 1; white-space: nowrap; }
     .fp-shape-item:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
-    .fp-end-picker { position: fixed; z-index: 1000; display: flex; gap: 6px; padding: 8px; background: var(--background-secondary); color: var(--text-normal);
-      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
+    .fp-end-picker { position: fixed; z-index: 1000; display: flex; gap: 6px; padding: 8px; background: var(--background-primary); color: var(--text-normal); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); }
     .fp-end-col { display: flex; flex-direction: column; gap: 1px; min-width: 150px; }
     .fp-end-col + .fp-end-col { border-left: 1px solid var(--background-modifier-border); padding-left: 6px; }
     .fp-end-title { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-faint); padding: 2px 6px 4px; }
-    .fp-end-item { display: flex; align-items: center; gap: 8px; padding: 4px 6px; cursor: pointer; color: var(--text-muted); font-size: var(--font-ui-small); }
+    .fp-end-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 5px; cursor: pointer; color: var(--text-muted); font-size: var(--font-ui-small); }
     .fp-end-item:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .fp-end-item.is-active { color: var(--interactive-accent); background: var(--background-modifier-hover); }
     .fp-export .fp-minimap, .fp-export .canvas-controls, .fp-export .canvas-card-menu, .fp-export .canvas-menu-container, .fp-export .canvas-selection, .fp-export .bsd-tb, .fp-export .bsd-pop, .fp-export .fp-tr-restore, .is-screenshotting .fp-minimap, .is-screenshotting .canvas-controls, .is-screenshotting .canvas-card-menu, .is-screenshotting .bsd-tb, .is-screenshotting .fp-tr-restore { display: none !important; }
@@ -156,8 +155,7 @@
       cursor: crosshair;  }
     .fp-minimap canvas { display: block; }
     .fp-minimap:hover { border-color: var(--interactive-accent); }
-    .fp-types { max-height: 80vh; overflow-y: auto; position: fixed; z-index: 1000; min-width: 240px; padding: 6px; background: var(--background-secondary); color: var(--text-normal);
-      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); filter: none; }
+    .fp-types { max-height: 80vh; overflow-y: auto; position: fixed; z-index: 1000; min-width: 240px; padding: 6px; background: var(--background-primary); color: var(--text-normal); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); filter: none; }
     .fp-type-row { display: flex; align-items: center; gap: 12px; padding: 6px 10px; cursor: pointer; }
     .fp-type-row:hover { background: var(--background-modifier-hover); }
     .fp-type-ico { width: 40px; display: flex; justify-content: center; }
@@ -172,16 +170,21 @@
     .fp-tr-bar { height: 6px; background: var(--background-modifier-border); overflow: hidden; }
     .fp-tr-bar i { display: block; height: 100%; width: 0; background: var(--interactive-accent); transition: width .25s; }
     .fp-tr-label { font-size: var(--font-ui-small); color: var(--text-muted); }
-    .fp-tr-pop { flex-wrap: wrap; }
-    .fp-tr-search { flex: 0 0 100%; margin-bottom: 4px; padding: 5px 8px; font: inherit; font-size: var(--font-ui-small);
-      color: var(--text-normal); background: var(--background-primary); border: 1px solid var(--background-modifier-border);
+    .fp-tr-pop { flex-direction: column; gap: 8px; padding: 10px; width: min(540px, calc(100vw - 32px)); }
+    .fp-tr-head { display: flex; align-items: center; gap: 8px; cursor: move; user-select: none; padding: 0 2px; }
+    .fp-tr-head b { flex: 1; font-weight: 500; font-size: var(--font-ui-medium); }
+    .fp-tr-head .fp-tr-hint { font-size: var(--font-ui-smaller); color: var(--text-faint); }
+    .fp-tr-head .fp-tr-close { display: flex; padding: 5px; border-radius: 5px; cursor: pointer; color: var(--text-muted); }
+    .fp-tr-head .fp-tr-close:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
+    .fp-tr-cols { display: flex; gap: 6px; }
+    .fp-tr-cols .fp-end-col { flex: 1; min-width: 0; }
+    .fp-tr-search { padding: 8px 10px; font: inherit; font-size: var(--font-ui-small); border-radius: 6px;
+      color: var(--text-normal); background: var(--background-secondary); border: 1px solid var(--background-modifier-border);
       outline: none; }
     .fp-tr-search:focus { border-color: var(--interactive-accent); }
     .fp-tr-status { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 1001;
       display: flex; align-items: center; gap: 12px; min-width: 320px; max-width: 82vw; padding: 10px 16px;
-      background: var(--background-secondary); color: var(--text-normal); font-size: var(--font-ui-small);
-      border: 1px solid var(--background-modifier-border-hover); box-shadow: 0 6px 24px rgba(0, 0, 0, .3);
-      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+      font-size: var(--font-ui-small); background: var(--background-primary); color: var(--text-normal); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35));
       transition: opacity .25s, transform .25s; }
     .fp-tr-status.is-done { opacity: 0; transform: translateX(-50%) translateY(-10px); pointer-events: none; }
     .fp-tr-status .fp-end-title { flex: none; }
@@ -190,10 +193,7 @@
     .fp-tr-status .fp-tr-x { flex: none; cursor: pointer; color: var(--text-faint); display: flex; padding: 2px; }
     .fp-tr-status .fp-tr-x:hover { color: var(--text-normal); }
     .fp-tr-restore { position: absolute; top: 14px; right: 88px; z-index: 6; display: flex; align-items: center; gap: 8px;
-      padding: 10px 18px; cursor: pointer; background: var(--background-secondary); color: var(--text-normal);
-      border: 1px solid var(--background-modifier-border-hover); font-size: var(--font-ui-medium);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, .28);
-      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+      padding: 10px 18px; cursor: pointer; font-size: var(--font-ui-medium); background: var(--background-primary); color: var(--text-normal); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35));
       opacity: 0; transform: translateX(130%); pointer-events: none;
       transition: transform .3s cubic-bezier(.2, .9, .3, 1.15), opacity .2s, border-color .15s, color .15s; }
     .fp-tr-restore.is-on { opacity: 1; transform: none; pointer-events: auto; }
@@ -2459,6 +2459,20 @@
       if (saved === "auto" || TR_LANGS.some((l) => l[0] === saved)) src = saved;
     } catch (e) { /* auto */ }
     const mark = (colEl, code) => colEl.querySelectorAll(".fp-end-item").forEach((x) => x.classList.toggle("is-active", x.dataset.code === code));
+    const cols = document.createElement("div"); cols.className = "fp-tr-cols";
+    const close = () => { pop.remove(); document.removeEventListener("pointerdown", away, true); document.removeEventListener("keydown", onEsc, true); };
+    const onEsc = (e) => { if (e.key === "Escape") close(); };
+    const head = document.createElement("div"); head.className = "fp-tr-head";
+    head.innerHTML = '<b>Перевод карточек</b><span class="fp-tr-hint">нажмите язык справа</span><span class="fp-tr-close" title="Закрыть (Esc)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>';
+    head.querySelector(".fp-tr-close").addEventListener("click", close);
+    head.addEventListener("pointerdown", (e) => {
+      if (e.target.closest(".fp-tr-close")) return;
+      const r0 = pop.getBoundingClientRect(), dx = e.clientX - r0.left, dy = e.clientY - r0.top;
+      const mv = (ev) => { pop.style.left = Math.max(0, Math.min(window.innerWidth - 60, ev.clientX - dx)) + "px"; pop.style.top = Math.max(0, Math.min(window.innerHeight - 40, ev.clientY - dy)) + "px"; };
+      const up = () => { window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); };
+      window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); e.preventDefault();
+    });
+    pop.appendChild(head);
     const col = (title, items, active, onPick) => {
       const c = document.createElement("div"); c.className = "fp-end-col";
       const t = document.createElement("div"); t.className = "fp-end-title"; t.textContent = title; c.appendChild(t);
@@ -2472,14 +2486,14 @@
         it.addEventListener("click", () => onPick(code, c));
         c.appendChild(it);
       }
-      pop.appendChild(c);
+      cols.appendChild(c);
       return c;
     };
     const search = document.createElement("input");
     search.className = "fp-tr-search";
     search.placeholder = "Поиск языка…";
     search.spellcheck = false;
-    pop.appendChild(search);
+    pop.appendChild(search); pop.appendChild(cols);
     const applyFilter = () => {
       const q = search.value.trim().toLowerCase();
       pop.querySelectorAll(".fp-end-item").forEach((it) => {
@@ -2488,12 +2502,12 @@
       });
     };
     search.addEventListener("input", applyFilter);
-    search.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Escape") pop.remove(); });
+    search.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Escape") close(); });
     col("С языка", [["auto", "Определить автоматически"], ...TR_LANGS], src, (code, c) => { src = code; mark(c, code); });
     col("На язык", TR_LANGS, current, (code) => start(code));
     function start(tl) {
       const sl = src;
-      pop.remove();
+      close();
       const st = trStatusShow("Перевод: " + (sl === "auto" ? "авто" : trLangName(sl)) + " → " + trLangName(tl));
       const hooks = { onProgress: (d, tot) => trStatusProgress(st, d, tot) };
       Promise.resolve().then(() => run(tl, sl, hooks)).then((r) => {
@@ -2504,15 +2518,11 @@
       });
     }
     document.body.appendChild(pop);
-    const r = anchor === document.body || !anchor || !anchor.getBoundingClientRect
-      ? { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0 }
-      : anchor.getBoundingClientRect();
-    pop.style.left = Math.max(8, Math.min(window.innerWidth - pop.offsetWidth - 8, r.left + r.width / 2 - pop.offsetWidth / 2)) + "px";
-    let py = Number.isFinite(r.bottom) ? r.bottom + 6 : r.top + 20;
-    if (py + pop.offsetHeight > window.innerHeight - 8) py = r.top - pop.offsetHeight - 6;
-    pop.style.top = Math.max(8, py) + "px";
-    const away = (ev) => { if (!pop || pop.contains(ev.target) || (anchor && anchor.contains && anchor.contains(ev.target))) return; pop.remove(); document.removeEventListener("pointerdown", away, true); };
+    pop.style.left = Math.max(8, (window.innerWidth - pop.offsetWidth) / 2) + "px";
+    pop.style.top = Math.max(8, (window.innerHeight - pop.offsetHeight) / 2) + "px";
+    const away = (ev) => { if (pop.contains(ev.target) || (anchor && anchor.contains && anchor.contains(ev.target))) return; close(); };
     document.addEventListener("pointerdown", away, true);
+    document.addEventListener("keydown", onEsc, true);
     setTimeout(() => search.focus(), 30);
   }
   // translate button on the canvas toolbar (next to zoom / undo)
