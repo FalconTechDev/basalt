@@ -57,7 +57,7 @@
     .bstf-mini-slider { position: absolute; left: 0; right: 0; background: rgba(128,128,128,.22); pointer-events: none; }
     .bstf-mini:hover .bstf-mini-slider { background: rgba(128,128,128,.34); }
     .bstf .bstf-btn { background: transparent; box-shadow: none; border: 0; border-radius: 3px; }
-    .bstf .bstf-btn.run { color: #3fb950; width: 28px; padding: 0; } .bstf .bstf-btn.run:hover { background: rgba(128,128,128,.25); color: #56d364; }
+    .bstf-run-action svg { color: #3fb950; } .bstf-run-action:hover svg { color: #56d364; }
     .bstf-term { display: flex; flex-direction: column; border-top: 1px solid var(--vs-border); background: var(--vs-bg); position: relative; flex: none; }
     .bstf-term-grip { position: absolute; left: 0; right: 0; top: -3px; height: 6px; cursor: ns-resize; z-index: 5; }
     .bstf-term-grip:hover { background: #007fd4; opacity: .6; }
@@ -165,7 +165,8 @@
         const bar = el("div", "bstf-bar"); const crumbs = el("span", "bstf-path"); this.shownPath().split(/[\\/]/).forEach((seg, k, arr) => { if (k) crumbs.appendChild(el("i", null, "›")); crumbs.appendChild(el(k === arr.length - 1 ? "b" : "span", null, seg)); }); bar.appendChild(crumbs);
         this.stateEl = el("span", "bstf-state", ""); bar.appendChild(this.stateEl);
         const ext0 = (this.path.split(".").pop() || "").toLowerCase();
-        if (RUNNABLE.has(ext0)) { const rb = document.createElement("button"); rb.className = "bstf-btn run"; rb.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>'; rb.title = "Запустить файл (F5)"; rb.addEventListener("click", () => this.run()); bar.appendChild(rb); this.runBtn = rb; }
+        if (!this.runAction) { try { this.runAction = this.addAction("lucide-play", "Запустить файл (F5)", () => this.run()); this.runAction.classList.add("bstf-run-action"); } catch (e) { this.runAction = null; } }
+        if (this.runAction) { this.runAction.style.display = RUNNABLE.has(ext0) ? "" : "none"; this.runBtn = RUNNABLE.has(ext0) ? this.runAction : null; }
         const mkBtn = (label, title, fn) => { const b = el("button", "bstf-btn", label); b.title = title; b.addEventListener("click", fn); return b; };
         this.btnFind = mkBtn("Найти", "Найти (Ctrl+F)", () => this.openFind(false));
         this.btnWrap = mkBtn("Перенос", "Переносить длинные строки (Alt+Z)", () => this.setWrap(!this.cm.getOption("lineWrapping")));
