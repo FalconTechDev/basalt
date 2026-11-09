@@ -247,7 +247,9 @@
         this.getText = () => { const t = this.cm.getValue().replace(/\r\n/g, "\n"); return this.eol === "\r\n" ? t.replace(/\n/g, "\r\n") : t; };
         this.cm.on("change", () => { this.touch(); this.scheduleMarks(); });
         this.cm.on("renderLine", (cm, line, elt) => {
-          const m = /^[ \t]+/.exec(line.text); if (!m) return; const cols = CM.countColumn(m[0], null, cm.getOption("tabSize")); if (cols < unit) return;
+          const m = /^[ \t]+/.exec(line.text); if (!m) return; const cols = CM.countColumn(m[0], null, cm.getOption("tabSize"));
+          if (cm.getOption("lineWrapping")) { const off = cols * cm.defaultCharWidth(); elt.style.textIndent = "-" + off + "px"; elt.style.paddingLeft = (6 + off) + "px"; }
+          if (cols < unit) return;
           elt.style.backgroundImage = "repeating-linear-gradient(90deg, var(--vs-guide) 0 1px, transparent 1px " + unit + "ch)"; elt.style.backgroundSize = cols + "ch 100%"; elt.style.backgroundRepeat = "no-repeat"; elt.style.backgroundPosition = "6px 0";
         });
         let hm = [], ht = 0; const clearHM = () => { hm.forEach((x) => x.clear()); hm = []; };
