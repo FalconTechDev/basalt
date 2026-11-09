@@ -67,3 +67,16 @@
     app.commands.addCommand({ id: "mini-features:move-images", name: "Мини-функции: перенести картинки открытой заметки в папку картинок", checkCallback: (chk) => { const host = app.workspace.getActiveFile(); if (!host) return false; if (chk) return true; (async () => { const links = Object.keys((app.metadataCache.resolvedLinks || {})[host.path] || {}).map((p) => app.vault.getAbstractFileByPath(p)).filter((f) => f && IMG.test(f.extension || "")); const was = cfg.images.enabled; cfg.images.enabled = true; for (const f of links) await place(f); cfg.images.enabled = was; notice(`Проверено картинок: ${links.length}`); })(); return true; } });
   }, 800);
 })();
+// "Показать в папке": a slash-joined vault path makes Windows Explorer ignore the file, so normalize it first.
+(() => {
+  const t = setInterval(() => {
+    if (!window.app || !app.vault || !app.vault.showInFolder) return;
+    clearInterval(t);
+    app.vault.showInFolder = function (rel) {
+      try {
+        const e = window.electron || window.require("electron"), p = window.require("path");
+        (e.remote && e.remote.shell || e.shell).showItemInFolder(p.normalize(this.adapter.getFullPath(rel)));
+      } catch (err) { console.error("[show-in-folder]", err); }
+    };
+  }, 500);
+})();

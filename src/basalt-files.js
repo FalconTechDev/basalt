@@ -158,7 +158,7 @@
         ws.search(q).then((r) => { if (id === this._wsq && this.ws()) { this.wsResults = r.map((f) => ({ f, depth: 0, flat: true })); this.render(); } }).catch(() => {});
       }
       wsOpen(f, newTab) { const ws = this.ws(); if (!ws) return; ws.openFile(f, newTab); this.reveal(f.path, false); }
-      wsShow(f) { try { window.require("electron").shell.showItemInFolder(f.abs); } catch (e) { /* ok */ } }
+      wsShow(f) { try { (()=>{const e=window.electron||window.require("electron");return (e.remote&&e.remote.shell)||e.shell})().showItemInFolder(window.require("path").normalize(f.abs)); } catch (e) { /* ok */ } }
       wsMenu(f, e) {
         const menu = new api.Menu();
         if (!f.isDir) {

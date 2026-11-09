@@ -357,7 +357,7 @@
         const b = head.createEl("b", { text: this.name || path.basename(this.path) });
         const p = head.createSpan({ cls: "bswf-path", text: rel }); p.title = this.path;
         const btn = (icon, tip, fn) => { const x = document.createElement("button"); x.title = tip; try { A2.setIcon(x, icon); } catch (e) { x.textContent = "•"; } x.addEventListener("click", fn); head.appendChild(x); return x; };
-        btn("lucide-folder-open", "Показать в папке", () => { try { window.require("electron").shell.showItemInFolder(this.path); } catch (e) { /* ok */ } });
+        btn("lucide-folder-open", "Показать в папке", () => { try { (()=>{const e=window.electron||window.require("electron");return (e.remote&&e.remote.shell)||e.shell})().showItemInFolder(window.require("path").normalize(this.path)); } catch (e) { /* ok */ } });
         btn("lucide-copy", "Копировать путь", () => { navigator.clipboard.writeText(this.path).then(() => new A2.Notice("Путь скопирован")); });
         const ext = extOf(this.path);
         let buf;
