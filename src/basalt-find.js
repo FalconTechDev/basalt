@@ -9,15 +9,16 @@
   const css = document.createElement("style");
   css.textContent = `
     .bsf-ov { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.35); display: flex; justify-content: center; align-items: flex-start; padding-top: 8vh; }
-    .bsf-box { width: min(860px, 94vw); max-height: 80vh; display: flex; flex-direction: column; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.45); overflow: hidden; }
+    .bsf-box { --background-primary: var(--vs-bg); --background-secondary: var(--vs-widget); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); --background-modifier-border: var(--vs-border); --background-modifier-hover: rgba(128,128,128,.18); --interactive-accent: #0e639c; --text-on-accent: #fff; --font-monospace: Consolas, 'Cascadia Code', monospace; font-family: 'Segoe UI', system-ui, sans-serif; width: min(860px, 94vw); max-height: 80vh; display: flex; flex-direction: column; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: 4px; box-shadow: 0 8px 32px rgba(0,0,0,.5); overflow: hidden; background: var(--vs-widget); color: var(--vs-fg); }
     .bsf-head { display: flex; align-items: center; gap: 6px; padding: 10px 12px 6px; flex-wrap: wrap; }
-    .bsf-in { flex: 1; min-width: 200px; height: 30px; padding: 0 10px; border-radius: 6px; border: 1px solid var(--background-modifier-border); background: var(--background-primary); color: var(--text-normal); font-size: var(--font-ui-medium); }
+    .bsf-in { flex: 1; min-width: 200px; height: 30px; padding: 0 10px; border-radius: 2px; border: 1px solid transparent; outline-offset: -1px; background: var(--vs-input); color: var(--text-normal); font-size: var(--font-ui-medium); }
     .bsf-in.mask { flex: none; width: 170px; min-width: 120px; font-size: var(--font-ui-small); }
     .bsf-in.bad { border-color: var(--text-error); }
     .bsf-tog { height: 28px; min-width: 30px; padding: 0 8px; border-radius: 6px; border: 1px solid var(--background-modifier-border); background: transparent; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
     .bsf-tog:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .bsf-tog.on { background: var(--interactive-accent); color: var(--text-on-accent); border-color: transparent; }
     .bsf-info { padding: 0 14px 8px; font-size: var(--font-ui-smaller); color: var(--text-faint); }
     .bsf-list { overflow: auto; padding: 0 6px 8px; border-top: 1px solid var(--background-modifier-border); }
+    .bsf-in:focus { outline: 1px solid #007fd4; }
     .bsf-file { display: flex; align-items: baseline; gap: 8px; padding: 6px 8px 2px; font-size: var(--font-ui-small); color: var(--text-normal); font-weight: 600; position: sticky; top: 0; background: var(--background-primary); }
     .bsf-file small { color: var(--text-faint); font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsf-file i { margin-left: auto; font-style: normal; color: var(--text-faint); font-weight: normal; }
     .bsf-hit { display: flex; gap: 10px; padding: 2px 8px 2px 14px; border-radius: 5px; cursor: pointer; font-family: var(--font-monospace); font-size: 12.5px; color: var(--text-muted); white-space: pre; overflow: hidden; }

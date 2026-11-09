@@ -22,14 +22,14 @@
   const KW = new Set(["if", "for", "while", "switch", "catch", "function", "return", "else", "do", "try", "new", "typeof", "sizeof", "super", "this", "await", "async", "def", "fn", "func", "class", "match", "with", "and", "or", "not", "in", "is", "elif", "print", "len", "range", "str", "int", "map", "get", "set", "log", "push", "pop", "join", "then", "constructor", "require", "import", "assert", "println", "format", "Some", "Ok", "Err", "Vec", "String", "Box", "Arc"]);
   const css = document.createElement("style");
   css.textContent = `
-    .bsg { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--background-primary); }
+    .bsg { --background-primary: var(--vs-bg); --background-secondary: var(--vs-widget); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); --background-modifier-border: var(--vs-border); --background-modifier-hover: rgba(128,128,128,.18); --interactive-accent: #0e639c; --text-on-accent: #fff; --font-monospace: Consolas, 'Cascadia Code', monospace; font-family: 'Segoe UI', system-ui, sans-serif; position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--vs-bg); color: var(--vs-fg); }
     .bsg-bar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--background-modifier-border); flex-wrap: wrap; }
     .bsg-seg { display: inline-flex; border: 1px solid var(--background-modifier-border); border-radius: 6px; overflow: hidden; }
     .bsg-seg button { border: 0; border-radius: 0; background: transparent; padding: 3px 12px; height: 26px; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
     .bsg-seg button.on { background: var(--interactive-accent); color: var(--text-on-accent); }
     .bsg-btn { border: 1px solid var(--background-modifier-border); border-radius: 6px; background: transparent; height: 26px; padding: 0 10px; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
     .bsg-btn:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-btn.on { color: var(--text-normal); background: var(--background-modifier-hover); }
-    .bsg-search { height: 26px; width: 150px; padding: 0 8px; border-radius: 6px; border: 1px solid var(--background-modifier-border); background: var(--background-primary); color: var(--text-normal); font-size: var(--font-ui-small); }
+    .bsg-search { height: 26px; width: 150px; padding: 0 8px; border-radius: 2px; border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
     .bsg-info { margin-left: auto; color: var(--text-faint); font-size: var(--font-ui-smaller); white-space: nowrap; }
     .bsg-body { position: relative; flex: 1; min-height: 0; }
     .bsg canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
@@ -308,7 +308,7 @@
         this.alpha *= .985;
       }
       relayout() { if (!this.g) return; for (const n of this.g.nodes) { n.pinned = false; n.x += (Math.random() - .5) * 40; n.y += (Math.random() - .5) * 40; } this.alpha = 1; this.fitted = false; this.refit = false; this.userView = false; this.loop(); }
-      fit() { const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
+      fit() { const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); if (this.static && this.layout === "ladder") { this.scale = Math.max(.7, Math.min(1.1, (this.w - 80) / pw)); this.ox = 40 - x0 * this.scale; this.oy = 30 - y0 * this.scale; this.draw(); return; } this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
       // -- search --
       runSearch(quiet) { const s = this.qIn.value.trim().toLowerCase(); this.match = null; if (s && this.g) { this.match = new Set(); for (const n of this.g.nodes) if (n.label.toLowerCase().includes(s) || (n.kind !== "sym" && n.path.toLowerCase().includes(s))) this.match.add(n); } if (this.mode === "files" && this.match && this.match.size && this.match.size <= 250) { let ch = false; for (const n of this.match) for (let u = n.up; u; u = u.up) if (this.collapsed.delete(u.id)) ch = true; if (ch) { this.rebuildView(); this.userView = true; this.applyLayout(false); return; } } if (!quiet) this.draw(); }
       focusMatch() { if (!this.match || !this.match.size) return; let n = [...this.match].find((m) => this.vnodes.includes(m)) || [...this.match][0]; if (n.kind === "sym" && !this.expanded.has(n.parent.id)) { this.toggleExpand(n.parent); } this.scale = Math.max(this.scale, 1.1); this.userView = true; this.ox = this.w / 2 - n.x * this.scale; this.oy = this.h / 2 - n.y * this.scale; this.draw(); }
@@ -317,11 +317,11 @@
       async loadLayout() { try { const j = JSON.parse(await fs.promises.readFile(this.layoutFile(), "utf8")); return j[this.mode] || null; } catch (e) { return null; } }
       saveLayout() { clearTimeout(this.st); this.st = setTimeout(async () => { if (!this.g || !this.rootPath) return; try { let all = {}; try { all = JSON.parse(await fs.promises.readFile(this.layoutFile(), "utf8")); } catch (e) { /* new */ } const m = {}; for (const n of this.g.nodes) m[n.id] = [Math.round(n.x * 10) / 10, Math.round(n.y * 10) / 10, n.pinned ? 1 : 0]; all[this.mode] = m; await fs.promises.mkdir(path.dirname(this.layoutFile()), { recursive: true }); await fs.promises.writeFile(this.layoutFile(), JSON.stringify(all)); } catch (e) { /* read-only folder */ } }, 400); }
       // -- drawing --
-      cssv(n) { return getComputedStyle(document.body).getPropertyValue(n).trim(); }
+      cssv(n) { return getComputedStyle(this.cv).getPropertyValue(n).trim(); }
       draw() {
         const ctx = this.ctx; if (!ctx || !this.w) return; const d = this.dpr || 1, g = this.g;
         ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, this.w, this.h); if (!g || !this.vnodes) return;
-        const bg = this.cssv("--background-primary") || "#1e1e1e", txt = this.cssv("--text-normal") || "#ddd", mut = this.cssv("--text-muted") || "#999", acc = this.cssv("--interactive-accent") || "#7a6cf0";
+        const bg = this.cssv("--vs-bg") || "#1e1e1e", txt = this.cssv("--vs-fg") || "#ddd", mut = this.cssv("--vs-ln") || "#999", acc = this.cssv("--vs-kw") || "#7a6cf0";
         ctx.translate(this.ox, this.oy); ctx.scale(this.scale, this.scale);
         const hov = this.hover, S = this.scale, lw = 1 / S, nb = new Set(); if (hov) { nb.add(hov); for (const l of this.vlinks) { if (l.a === hov) nb.add(l.b); else if (l.b === hov) nb.add(l.a); } }
         const focus = hov ? nb : this.match, dim = (n) => focus && !focus.has(n) && !(hov && n === hov);

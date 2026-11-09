@@ -52,7 +52,7 @@
   const cssVar = (name, fb) => { const p = document.createElement("div"); p.style.cssText = "display:none;color:var(" + name + "," + fb + ")"; document.body.appendChild(p); const m = /(\d+)\D+(\d+)\D+(\d+)/.exec(getComputedStyle(p).color); p.remove(); return m ? "#" + [m[1], m[2], m[3]].map((v) => (+v).toString(16).padStart(2, "0")).join("") : fb; };
   const theme = () => {
     const dark = document.body.classList.contains("theme-dark");
-    return { background: cssVar("--background-primary", "#17130f"), foreground: cssVar("--text-normal", "#ece4db"), cursor: cssVar("--interactive-accent", "#c98d5b"), cursorAccent: cssVar("--background-primary", "#17130f"), selectionBackground: "rgba(201,141,91,.35)",
+    return { background: cssVar("--vs-bg", cssVar("--background-primary", "#17130f")), foreground: cssVar("--vs-fg", cssVar("--text-normal", "#ece4db")), cursor: cssVar("--interactive-accent", "#c98d5b"), cursorAccent: cssVar("--background-primary", "#17130f"), selectionBackground: "rgba(201,141,91,.35)",
       black: dark ? "#2a221c" : "#2a211a", red: "#e0705c", green: "#8fc98a", yellow: "#e0b565", blue: "#7c9ccf", magenta: "#c690c4", cyan: "#6fc0c0", white: dark ? "#d9cbb8" : "#6e6154",
       brightBlack: "#6e6154", brightRed: "#f2907c", brightGreen: "#a9dfa4", brightYellow: "#f0cc85", brightBlue: "#9bb8e6", brightMagenta: "#dcaadb", brightCyan: "#8fd6d6", brightWhite: dark ? "#f3ebe0" : "#1d1812" };
   };
