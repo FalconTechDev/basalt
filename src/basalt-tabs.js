@@ -62,6 +62,10 @@
         m.addItem((i) => i.setTitle("Переместить в новое окно").setIcon("lucide-external-link").onClick(() => { try { app.workspace.moveLeafToPopout(leaf); } catch (err) { /* no popout */ } }));
         m.addItem((i) => i.setTitle("Открыть в новом окне").setIcon("lucide-app-window").onClick(() => { try { app.workspace.duplicateLeaf(leaf, "window"); } catch (err) { /* no popout */ } }));
         m.addSeparator();
+        try {
+          const vt = leaf.view && leaf.view.getViewType && leaf.view.getViewType(), cmd = vt === "canvas" ? "basalt:translate-canvas" : vt === "markdown" ? "basalt:translate-note" : null;
+          if (cmd) m.addItem((i) => i.setTitle("Перевести…").setIcon("lucide-languages").onClick(() => { app.workspace.setActiveLeaf(leaf, { focus: true }); setTimeout(() => app.commands.executeCommandById(cmd), 60); }));
+        } catch (err) { /* no translator */ }
         try { leaf.view && leaf.view.onPaneMenu && leaf.view.onPaneMenu(m, "tab-header"); } catch (err) { /* view has no menu */ }
         try { app.workspace.trigger("tab-menu", m, leaf.view && leaf.view.file, "tab-header", leaf); } catch (err) { /* plugins */ }
         m.showAtMouseEvent(e);

@@ -158,7 +158,7 @@
         ws.search(q).then((r) => { if (id === this._wsq && this.ws()) { this.wsResults = r.map((f) => ({ f, depth: 0, flat: true })); this.render(); } }).catch(() => {});
       }
       wsOpen(f, newTab) { const ws = this.ws(); if (!ws) return; ws.openFile(f, newTab); this.reveal(f.path, false); }
-      wsShow(f) { try { (()=>{const e=window.electron||window.require("electron");return (e.remote&&e.remote.shell)||e.shell})().showItemInFolder(window.require("path").normalize(f.abs)); } catch (e) { /* ok */ } }
+      wsShow(f) { try { window.__bsReveal(f.abs); } catch (e) { /* ok */ } }
       wsMenu(f, e) {
         const menu = new api.Menu();
         if (!f.isDir) {
@@ -363,6 +363,10 @@
       if (cmds["file-explorer:open"]) cmds["file-explorer:open"].callback = reveal;
       if (cmds["file-explorer:reveal-active-file"]) cmds["file-explorer:reveal-active-file"].checkCallback = (c) => { const f = app.workspace.getActiveFile(); if (!f) return false; if (!c) reveal().then((l) => l.view.reveal && l.view.reveal(f.path)); return true; };
       for (const id of ["file-explorer:new-file", "file-explorer:new-folder"]) { /* kept: they create through the vault, not through the view */ }
+      try {
+        const plug = app.internalPlugins.getEnabledPluginById("file-explorer");
+        if (plug) plug.revealInFolder = (f) => { if (f) reveal().then((l) => l.view.reveal && l.view.reveal(f.path)).catch((e) => console.error("[basalt-files] reveal", e)); };
+      } catch (e) { /* plugin missing */ }
       window.__bsFiles = { reveal };
     }
     return true;

@@ -29,12 +29,12 @@
   document.head.appendChild(css);
 
   const RX = {
-    close: /^закрыть/i, find: /^(найти|заменить)/i, danger: /удалить/i,
+    close: /^закрыть/i, tr: /^перевести/i, find: /^(найти|заменить)/i, danger: /удалить/i,
     view: /разделить|в нов(ом|ое) окн|просмотр|исходного кода|структур|режим/i,
     path: /путь|проводник|менеджер|в папке|приложении по умолчанию|граф|ссылк|истори|верси|свойства файла|открыть свойства/i,
     file: /переименовать|переместить|закладк|объединить|закреп|открепить|свойств|экспорт/i,
   };
-  const bucket = (t) => (RX.close.test(t) ? "close" : RX.find.test(t) ? "find" : RX.view.test(t) ? "view" : RX.path.test(t) ? "path" : RX.danger.test(t) || RX.file.test(t) ? "file" : "other");
+  const bucket = (t) => (RX.close.test(t) ? "close" : RX.tr.test(t) ? "tr" : RX.find.test(t) ? "find" : RX.view.test(t) ? "view" : RX.path.test(t) ? "path" : RX.danger.test(t) || RX.file.test(t) ? "file" : "other");
 
   let cur = null;
   function closeAll() { if (cur) { cur.remove(); cur = null; } document.querySelectorAll(".bm-drop").forEach((x) => x.remove()); document.removeEventListener("mousedown", onDown, true); document.removeEventListener("keydown", onKey, true); window.removeEventListener("blur", closeAll); }
@@ -64,8 +64,8 @@
 
   function layout(menu, ev) {
     const seen = new Set(), items = menu.items.filter((x) => { if (!x.titleEl || !txt(x) || seen.has(txt(x))) return false; seen.add(txt(x)); return true; });
-    const rest = [], find = [], close = [];
-    for (const it of items) { const b = bucket(txt(it)); (b === "close" ? close : b === "find" ? find : rest).push([b, it]); }
+    const rest = [], find = [], close = [], tr = [];
+    for (const it of items) { const b = bucket(txt(it)); (b === "close" ? close : b === "tr" ? tr : b === "find" ? find : rest).push([b, it]); }
     const known = rest.filter(([b]) => b !== "other").length;
     const cols = [];
     if (items.length < COLS_FROM) cols.push({ h: "", items: rest.map((x) => x[1]) });
@@ -79,7 +79,8 @@
       const n = Math.min(3, Math.max(2, Math.ceil(rest.length / 9))), per = Math.ceil(rest.length / n);
       for (let i = 0; i < rest.length; i += per) cols.push({ h: "", items: rest.slice(i, i + per).map((x) => x[1]) });
     }
-    return { cols, find: find.map((x) => x[1]), close: close.map((x) => x[1]) };
+    const live = (a) => a.map((x) => x[1]).filter((i) => i.callback && !i.disabled);
+    return { cols, find: live(find), tr: live(tr), close: close.map((x) => x[1]) };
   }
 
   function show(menu, x, y, ev) {
@@ -95,7 +96,7 @@
       cols.appendChild(col);
     }
     pop.appendChild(cols);
-    if (L.find.length || L.close.length) {
+    if (L.find.length || L.tr.length || L.close.length) {
       const bar = document.createElement("div"); bar.className = "bm-bar";
       if (L.find.length) {
         const f = document.createElement("div"); f.className = "bm-find"; f.innerHTML = '<span class="bm-ic"></span><span class="bm-t">Найти в файле</span>';
@@ -103,6 +104,11 @@
         f.addEventListener("click", (e) => run(menu, L.find[0], e, f)); bar.appendChild(f);
         if (L.find[1]) { const r = document.createElement("div"); r.className = "bm-split"; r.innerHTML = '<div><span class="bm-ic"></span>Заменить</div>'; try { window.__bsApi.setIcon(r.querySelector(".bm-ic"), "lucide-replace"); } catch (e) { /* no icon */ } r.firstChild.addEventListener("click", (e) => run(menu, L.find[1], e, r)); bar.appendChild(r); }
       } else { const sp = document.createElement("div"); sp.style.flex = "1"; bar.appendChild(sp); }
+      if (L.tr.length) {
+        const q = document.createElement("div"); q.className = "bm-split"; q.innerHTML = '<div><span class="bm-ic"></span>Перевести</div>';
+        try { window.__bsApi.setIcon(q.querySelector(".bm-ic"), "lucide-languages"); } catch (e) { /* no icon */ }
+        q.firstChild.addEventListener("click", (e) => run(menu, L.tr[0], e, q)); bar.appendChild(q);
+      }
       if (L.close.length) {
         const main = L.close.find((i) => /^закрыть$/i.test(txt(i))) || L.close[0], more = L.close.filter((i) => i !== main);
         const s = document.createElement("div"); s.className = "bm-split";
@@ -115,7 +121,7 @@
             const d = document.createElement("div"); d.className = "bm-drop";
             more.forEach((it, k) => { const r = row(menu, it, e); if (/все/i.test(txt(it))) r.classList.add("is-danger"); if (k && /все/i.test(txt(it))) { const sep = document.createElement("div"); sep.className = "bm-sep"; d.appendChild(sep); } d.appendChild(r); });
             document.body.appendChild(d); const br = b.getBoundingClientRect(), dr = d.getBoundingClientRect();
-            d.style.left = Math.max(8, Math.min(innerWidth - dr.width - 8, br.right - dr.width)) + "px"; d.style.top = Math.max(8, br.top - dr.height - 6) + "px";
+            d.style.left = Math.max(8, Math.min(innerWidth - dr.width - 8, br.right - dr.width)) + "px"; d.style.top = (br.bottom + 6 + dr.height <= innerHeight - 8 ? br.bottom + 6 : Math.max(8, br.top - dr.height - 6)) + "px";
           });
           s.appendChild(b);
         }

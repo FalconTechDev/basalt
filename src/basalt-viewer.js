@@ -63,7 +63,7 @@
     btn("lucide-rotate-ccw", "Повернуть влево (Shift+R)", () => { st.rot = (st.rot + 270) % 360; fit(); }); btn("lucide-rotate-cw", "Повернуть вправо (R)", () => { st.rot = (st.rot + 90) % 360; fit(); }); btn("lucide-flip-horizontal", "Отразить (F)", () => { st.flip *= -1; place(); });
     sep();
     btn("lucide-copy", "Копировать картинку (Ctrl+C)", async () => { try { const r = await fetch(img.src), b = await r.blob(); const png = b.type === "image/png" ? b : await new Promise((res) => { const c = document.createElement("canvas"); c.width = img.naturalWidth; c.height = img.naturalHeight; c.getContext("2d").drawImage(img, 0, 0); c.toBlob(res, "image/png"); }); await navigator.clipboard.write([new ClipboardItem({ "image/png": png })]); new window.__bsApi.Notice("Картинка скопирована", 1500); } catch (e) { new window.__bsApi.Notice("Не удалось скопировать: " + e.message); } });
-    btn("lucide-folder-open", "Показать в папке", () => (()=>{const e=window.electron||window.require("electron");return (e.remote&&e.remote.shell)||e.shell})().showItemInFolder(window.require("path").normalize(app.vault.adapter.basePath + "/" + file.path)));
+    btn("lucide-folder-open", "Показать в папке", () => window.__bsReveal(app.vault.adapter.basePath + "/" + file.path));
     const infoB = btn("lucide-info", "Сведения (I)", () => { info.classList.toggle("is-on"); infoB.classList.toggle("is-on", info.classList.contains("is-on")); });
     const load = (f) => {
       file = f; title.querySelector("b").textContent = f.name; title.querySelector("small").textContent = "";

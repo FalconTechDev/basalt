@@ -72,12 +72,14 @@
   const t = setInterval(() => {
     if (!window.app || !app.vault || !app.vault.adapter) return;
     clearInterval(t);
-    const show = (rel) => {
-      try {
-        const e = window.electron || window.require("electron"), p = window.require("path");
-        (e.remote && e.remote.shell || e.shell).showItemInFolder(p.normalize(app.vault.adapter.getFullPath(rel)));
-      } catch (err) { console.error("[show-in-folder]", err); }
+    const reveal = (full) => {
+      const e = window.electron || window.require("electron"), p = window.require("path");
+      full = p.normalize(full);
+      if (process.platform === "win32") window.require("child_process").spawn("explorer.exe", ["/select," + full], { detached: true, stdio: "ignore" }).unref();
+      else (e.remote && e.remote.shell || e.shell).showItemInFolder(full);
     };
+    window.__bsReveal = (full) => { try { reveal(full); } catch (err) { console.error("[show-in-folder]", err); } };
+    const show = (rel) => window.__bsReveal(app.vault.adapter.getFullPath(rel || ""));
     for (const o of [app, app.vault]) if (typeof o.showInFolder === "function") o.showInFolder = show;
   }, 500);
 })();
