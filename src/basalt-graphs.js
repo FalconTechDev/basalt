@@ -27,9 +27,10 @@
     .bsg-seg { display: inline-flex; border: 1px solid var(--background-modifier-border); border-radius: 6px; overflow: hidden; }
     .bsg-seg button { border: 0; border-radius: 0; background: transparent; padding: 3px 12px; height: 26px; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
     .bsg-seg button.on { background: var(--interactive-accent); color: var(--text-on-accent); }
-    .bsg-btn { border: 1px solid var(--background-modifier-border); border-radius: 6px; background: transparent; height: 26px; padding: 0 10px; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
-    .bsg-btn:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-btn.on { color: var(--text-normal); background: var(--background-modifier-hover); }
-    .bsg-search { height: 26px; width: 150px; padding: 0 8px; border-radius: 2px; border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
+    .bsg-btn { border: 0; border-radius: 2px; background: transparent; height: 24px; padding: 0 10px; color: var(--vs-ln); cursor: pointer; box-shadow: none; font-size: 12px; }
+    .bsg-btn:hover { color: var(--vs-fg); background: rgba(128,128,128,.2); } .bsg-btn.on { color: var(--vs-fg); background: rgba(128,128,128,.28); }
+    .bsg-search:focus { outline: 1px solid #007fd4; }
+    .bsg-search { height: 24px; font-size: 12px; width: 150px; padding: 0 8px; border-radius: 2px; border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
     .bsg-info { margin-left: auto; color: var(--text-faint); font-size: var(--font-ui-smaller); white-space: nowrap; }
     .bsg-body { position: relative; flex: 1; min-height: 0; }
     .bsg canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
