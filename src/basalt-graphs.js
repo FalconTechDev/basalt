@@ -15,9 +15,9 @@
   };
   const FILECOL = { txt: "#9aa0a6", md: "#519aba", mdx: "#519aba", json: "#cbcb41", yaml: "#e06c75", yml: "#e06c75", toml: "#c9733a", lock: "#7a7a7a", png: "#a074c4", jpg: "#a074c4", jpeg: "#a074c4", gif: "#a074c4", webp: "#a074c4", ico: "#a074c4", svg: "#ffb13b", pdf: "#e44d4d", zip: "#b58900", gz: "#b58900", tar: "#b58900", exe: "#6d8086", dll: "#6d8086", so: "#6d8086", bat: "#89e051", cmd: "#89e051", ps1: "#4d8fd1", log: "#8a8a8a", csv: "#4caf50", xml: "#e37933", ini: "#8a8a8a", env: "#ecd53f", gradle: "#5aa9a9", properties: "#8a8a8a", sql: "#e38c00", ipynb: "#f37626", dockerfile: "#2496ed", mjs: "#f1e05a" };
   const langOf = (ext) => LANG[ext] || [ext ? ext.toUpperCase() : "Файл", FILECOL[ext] || "#8a8a8a"];
-  const P_FOLDER = new Path2D("M0 3 Q0 1.5 1.5 1.5 H6 L8 3.5 H16.5 Q18 3.5 18 5 V14 Q18 15.5 16.5 15.5 H1.5 Q0 15.5 0 14 Z");
-  const P_FILE = new Path2D("M2.5 0 H11 L16 5 V16 Q16 17.5 14.5 17.5 H2.5 Q1 17.5 1 16 V1.5 Q1 0 2.5 0 Z");
-  const P_FOLD = new Path2D("M11 0 V5 H16");
+  const P_FOLDER = new Path2D("M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z");
+  const P_FILE = new Path2D("M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z");
+  const P_FOLD = new Path2D("M14 2v4a2 2 0 0 0 2 2h4");
   const JSLIKE = new Set(["js", "jsx", "mjs", "cjs", "ts", "tsx"]), CLIKE = new Set(["c", "h", "cpp", "hpp", "cc"]), JVM = new Set(["java", "kt", "cs"]);
   const KW = new Set(["if", "for", "while", "switch", "catch", "function", "return", "else", "do", "try", "new", "typeof", "sizeof", "super", "this", "await", "async", "def", "fn", "func", "class", "match", "with", "and", "or", "not", "in", "is", "elif", "print", "len", "range", "str", "int", "map", "get", "set", "log", "push", "pop", "join", "then", "constructor", "require", "import", "assert", "println", "format", "Some", "Ok", "Err", "Vec", "String", "Box", "Arc"]);
   const css = document.createElement("style");
@@ -259,12 +259,15 @@
       toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) this.btnCol.textContent = this.collapsed.size ? "Развернуть всё" : "Свернуть"; }
       labelOf(n) { return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
       drawIcon(ctx, n, S, lw, hov, bg, txt) {
-        const size = 26, px = size * S;
-        if (px < 5) { ctx.fillStyle = n.kind === "dir" ? "#dcb67a" : n.extColor; ctx.fillRect(n.x - 3 * lw, n.y - 3 * lw, 6 * lw, 6 * lw); return; }
-        const k = size / 18, col = n.kind === "dir" && this.collapsed.has(n.id);
-        ctx.save(); ctx.translate(n.x - 9 * k, n.y - 9 * k); ctx.scale(k, k);
-        if (n.kind === "dir") { ctx.fillStyle = col ? "#dcb67a" : "#b8965b"; ctx.fill(P_FOLDER); if (px > 14 && col && n.nfiles) { ctx.fillStyle = "#2b2b2b"; ctx.font = "bold 6px sans-serif"; ctx.textAlign = "center"; ctx.fillText(String(n.nfiles > 999 ? "999+" : n.nfiles), 9, 12.8); } }
-        else { ctx.globalAlpha *= .94; ctx.fillStyle = n.extColor; ctx.fill(P_FILE); ctx.lineWidth = 1; ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.stroke(P_FOLD); if (px > 24) { ctx.fillStyle = "#fff"; ctx.font = "bold 5.2px sans-serif"; ctx.textAlign = "center"; ctx.fillText((n.ext || "·").slice(0, 4), 8.5, 13.5); } }
+        const size = 22, px = size * S, mut = this.cssv("--vs-ln") || "#999", dir = n.kind === "dir";
+        if (px < 5) { ctx.fillStyle = dir ? mut : n.extColor; ctx.fillRect(n.x - 3 * lw, n.y - 3 * lw, 6 * lw, 6 * lw); return; }
+        const k = size / 24, col = dir && this.collapsed.has(n.id);
+        ctx.save(); ctx.translate(n.x - 12 * k, n.y - 12 * k); ctx.scale(k, k);
+        // same line icons as the explorer: 24-grid outline, round joins, type colour softened towards the muted text colour
+        ctx.lineWidth = 1.8; ctx.lineJoin = "round"; ctx.lineCap = "round"; ctx.fillStyle = bg;
+        const path = dir ? P_FOLDER : P_FILE; ctx.fill(path); ctx.strokeStyle = mut; ctx.stroke(path);
+        if (!dir) { const a0 = ctx.globalAlpha; ctx.globalAlpha = a0 * .62; ctx.strokeStyle = n.extColor; ctx.stroke(path); ctx.stroke(P_FOLD); ctx.globalAlpha = a0; ctx.strokeStyle = mut; ctx.globalAlpha = a0 * .4; ctx.stroke(P_FOLD); ctx.globalAlpha = a0; }
+        else if (px > 14 && col && n.nfiles) { ctx.fillStyle = mut; ctx.font = "600 7px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(String(n.nfiles > 999 ? "999+" : n.nfiles), 12, 13); }
         ctx.restore();
         if (n === hov) { ctx.beginPath(); ctx.arc(n.x, n.y, 17, 0, 7); ctx.lineWidth = 1.6 * lw; ctx.strokeStyle = txt; ctx.stroke(); }
       }
