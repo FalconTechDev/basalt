@@ -47,6 +47,11 @@
     .bstf-status .sp { margin-left: auto; }
     .bstf-status span[data-act] { cursor: pointer; } .bstf-status span[data-act]:hover { color: var(--text-normal); }
     .bstf .CodeMirror { min-width: 0; }
+    .bstf-selmatch { background: rgba(128,160,200,.25); border-radius: 2px; }
+    .bstf .CodeMirror-scroll::-webkit-scrollbar { width: 14px; height: 14px; }
+    .bstf .CodeMirror-scroll::-webkit-scrollbar-track, .bstf .CodeMirror-scroll::-webkit-scrollbar-corner { background: transparent; }
+    .bstf .CodeMirror-scroll::-webkit-scrollbar-thumb { background: rgba(121,121,121,.4); border: 0; }
+    .bstf .CodeMirror-scroll::-webkit-scrollbar-thumb:hover { background: rgba(121,121,121,.65); }
     .bstf-mini { position: relative; flex: none; border-left: 1px solid rgba(128,128,128,.15); background: var(--vs-bg); cursor: pointer; overflow: hidden; }
     .bstf-mini canvas { display: block; }
     .bstf-mini-slider { position: absolute; left: 0; right: 0; background: rgba(128,128,128,.22); pointer-events: none; }
@@ -91,7 +96,7 @@
     .bstf .CodeMirror-selected { background: var(--text-selection, rgba(120,120,255,.3)); }
     .bstf .CodeMirror-linebackground { position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: 0; }
     .bstf .CodeMirror-linenumber { padding: 0 8px 0 10px; min-width: 20px; text-align: right; white-space: nowrap; }
-    body { --vs-bg:#1e1e1e; --vs-fg:#d4d4d4; --vs-ln:#858585; --vs-lna:#c6c6c6; --vs-line:#282828; --vs-sel:#264f78; --vs-gut:#1e1e1e; --vs-widget:#252526; --vs-border:#3c3c3c; --vs-input:#3c3c3c; --vs-kw:#569cd6; --vs-ctl:#c586c0; --vs-str:#ce9178; --vs-num:#b5cea8; --vs-com:#6a9955; --vs-fn:#dcdcaa; --vs-var:#9cdcfe; --vs-type:#4ec9b0; --vs-op:#d4d4d4; --vs-status:#007acc; }
+    body { --vs-bg:#1e1e1e; --vs-fg:#d4d4d4; --vs-ln:#858585; --vs-lna:#c6c6c6; --vs-line:#282828; --vs-sel:#264f78; --vs-gut:#1e1e1e; --vs-widget:#252526; --vs-border:#3c3c3c; --vs-input:#3c3c3c; --vs-kw:#569cd6; --vs-ctl:#c586c0; --vs-str:#ce9178; --vs-num:#b5cea8; --vs-com:#6a9955; --vs-fn:#dcdcaa; --vs-var:#9cdcfe; --vs-type:#4ec9b0; --vs-op:#d4d4d4; --vs-status:#007acc; --vs-guide: rgba(128,128,128,.28); }
     body.theme-light { --vs-bg:#ffffff; --vs-fg:#000000; --vs-ln:#237893; --vs-lna:#0b216f; --vs-line:#f2f2f2; --vs-sel:#add6ff; --vs-gut:#ffffff; --vs-widget:#f3f3f3; --vs-border:#c8c8c8; --vs-input:#ffffff; --vs-kw:#0000ff; --vs-ctl:#af00db; --vs-str:#a31515; --vs-num:#098658; --vs-com:#008000; --vs-fn:#795e26; --vs-var:#001080; --vs-type:#267f99; --vs-op:#000000; }
     .bstf { background: var(--vs-bg); color: var(--vs-fg); }
     .bstf .CodeMirror { color: var(--vs-fg); font-family: Consolas, "Cascadia Code", var(--font-monospace); }
@@ -183,7 +188,20 @@
         const unit = useTabs ? 4 : (four > two * 1.5 ? 4 : 2);
         this.indentLabel = useTabs ? "Табуляция" : "Пробелы: " + unit;
         const self = this;
-        const dupLine = (cm) => { const c = cm.getCursor(); if (cm.somethingSelected()) { const s = cm.getSelection(); cm.replaceSelection(s + s, "around"); } else { const l = cm.getLine(c.line); cm.replaceRange(l + "\n", { line: c.line, ch: 0 }); cm.setCursor({ line: c.line + 1, ch: c.ch }); } };
+        const dupLine = (cm, down) => { const c = cm.getCursor("head"); if (cm.somethingSelected()) { const t = cm.getSelection(); cm.replaceSelection(t + t, "around"); return; } const l = cm.getLine(c.line); if (down) { cm.replaceRange("\n" + l, { line: c.line, ch: l.length }); cm.setCursor({ line: c.line + 1, ch: c.ch }); } else cm.replaceRange(l + "\n", { line: c.line, ch: 0 }); };
+        const cmpP = (a, b) => a.line - b.line || a.ch - b.ch;
+        const selNext = (cm) => {
+          const sels = cm.listSelections();
+          if (!cm.somethingSelected()) { cm.setSelections(sels.map((r) => { const w = cm.findWordAt(r.head); return { anchor: w.anchor, head: w.head }; }), sels.length - 1); return; }
+          const last = sels[sels.length - 1], text = cm.getRange(last.from(), last.to()); if (!text || text.includes("\n")) return;
+          let cur = cm.getSearchCursor(text, last.to(), { caseFold: false }), ok = cur.findNext(); if (!ok) { cur = cm.getSearchCursor(text, { line: 0, ch: 0 }, { caseFold: false }); ok = cur.findNext(); } if (!ok) return;
+          if (sels.some((r) => cmpP(r.from(), cur.from()) === 0)) return;
+          cm.setSelections(sels.map((r) => ({ anchor: r.anchor, head: r.head })).concat([{ anchor: cur.from(), head: cur.to() }]), sels.length); cm.scrollIntoView(cur.from(), 80);
+        };
+        const selAllOcc = (cm) => {
+          let text = cm.getSelection(); if (!text) { const w = cm.findWordAt(cm.getCursor()); text = cm.getRange(w.anchor, w.head); } if (!text || text.includes("\n")) return;
+          const cur = cm.getSearchCursor(text, { line: 0, ch: 0 }, { caseFold: false }), out = []; while (cur.findNext() && out.length < 5000) out.push({ anchor: cur.from(), head: cur.to() }); if (out.length) cm.setSelections(out, 0);
+        };
         const delLine = (cm) => { const a = cm.getCursor("from"), b = cm.getCursor("to"); const end = b.line + 1 < cm.lineCount() ? { line: b.line + 1, ch: 0 } : { line: b.line, ch: cm.getLine(b.line).length }; const start = b.line + 1 < cm.lineCount() ? { line: a.line, ch: 0 } : (a.line > 0 ? { line: a.line - 1, ch: cm.getLine(a.line - 1).length } : { line: 0, ch: 0 }); cm.replaceRange("", start, end); };
         const moveLine = (cm, dir) => { const a = cm.getCursor("from"), b = cm.getCursor("to"); const last = b.ch === 0 && b.line > a.line ? b.line - 1 : b.line; if (dir < 0 && a.line === 0) return; if (dir > 0 && last >= cm.lineCount() - 1) return;
           cm.operation(() => { const block = []; for (let i = a.line; i <= last; i++) block.push(cm.getLine(i)); const sa = cm.getCursor("anchor"), sh = cm.getCursor("head");
@@ -208,14 +226,14 @@
         const goLine = (cm) => { const v = prompt("Перейти к строке (1–" + cm.lineCount() + "):", String(cm.getCursor().line + 1)); const n = parseInt(v, 10); if (n >= 1) { cm.setCursor({ line: Math.min(n, cm.lineCount()) - 1, ch: 0 }); cm.scrollIntoView(null, 120); } };
         this.cm = CM(holder, {
           value: text, mode, theme: "obsidian", lineNumbers: true, lineWrapping: store.get("wrap", false), indentUnit: unit, tabSize: unit, indentWithTabs: useTabs,
-          styleActiveLine: true, matchBrackets: true, autoCloseBrackets: true, scrollPastEnd: true, smartIndent: true, electricChars: true,
+          styleActiveLine: true, matchBrackets: true, configureMouse: (cm, repeat, ev) => ({ addNew: ev.altKey }), autoCloseBrackets: true, scrollPastEnd: true, smartIndent: true, electricChars: true,
           lineSeparator: this.eol === "\r\n" ? "\r\n" : null, foldGutter: true, gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
           foldOptions: { rangeFinder: CM.fold && CM.fold.auto ? CM.fold.auto : undefined },
           extraKeys: {
             "Ctrl-S": () => this.flush(), "Cmd-S": () => this.flush(),
             "Ctrl-F": () => this.openFind(false), "Cmd-F": () => this.openFind(false), "Ctrl-H": () => this.openFind(true),
             "F3": () => this.step(1), "Shift-F3": () => this.step(-1), "Ctrl-G": goLine,
-            "Ctrl-/": toggleComment, "Cmd-/": toggleComment, "Ctrl-D": dupLine, "Shift-Ctrl-K": delLine,
+            "Ctrl-/": toggleComment, "Cmd-/": toggleComment, "Ctrl-D": selNext, "Shift-Ctrl-L": selAllOcc, "Shift-Alt-Down": (cm) => dupLine(cm, true), "Shift-Alt-Up": (cm) => dupLine(cm, false), "Shift-Ctrl-K": delLine,
             "Alt-Up": (cm) => moveLine(cm, -1), "Alt-Down": (cm) => moveLine(cm, 1), "Alt-Z": () => this.setWrap(!this.cm.getOption("lineWrapping")),
             "Ctrl-]": (cm) => cm.indentSelection("add"), "Ctrl-[": (cm) => cm.indentSelection("subtract"),
             "Ctrl-=": () => zoom(1), "Ctrl-Minus": () => zoom(-1), "Ctrl-0": () => zoom(0),
@@ -226,6 +244,27 @@
         });
         this.getText = () => this.cm.getValue();
         this.cm.on("change", () => { this.touch(); this.scheduleMarks(); });
+        this.cm.on("renderLine", (cm, line, elt) => {
+          const m = /^[ \t]+/.exec(line.text); if (!m) return; const cols = CM.countColumn(m[0], null, cm.getOption("tabSize")); if (cols < unit) return;
+          elt.style.backgroundImage = "repeating-linear-gradient(90deg, var(--vs-guide) 0 1px, transparent 1px " + unit + "ch)"; elt.style.backgroundSize = cols + "ch 100%"; elt.style.backgroundRepeat = "no-repeat"; elt.style.backgroundPosition = "6px 0";
+        });
+        let hm = [], ht = 0; const clearHM = () => { hm.forEach((x) => x.clear()); hm = []; };
+        this.cm.on("cursorActivity", (cm) => { clearTimeout(ht); ht = setTimeout(() => {
+          clearHM(); if (cm.listSelections().length > 1) return; const sel = cm.getSelection(); if (!sel || sel.length < 2 || sel.length > 80 || /\s/.test(sel)) return;
+          const cur = cm.getSearchCursor(sel, { line: 0, ch: 0 }, { caseFold: false }), at = cm.getCursor("from"); let n = 0;
+          cm.operation(() => { while (cur.findNext() && n < 400) { n++; if (cmpP(cur.from(), at) === 0) continue; hm.push(cm.markText(cur.from(), cur.to(), { className: "bstf-selmatch" })); } });
+        }, 200); });
+        this.cm.getWrapperElement().addEventListener("contextmenu", (e) => {
+          e.preventDefault(); const M = api.Menu; if (!M) return; const cm = this.cm, m = new M(), has = cm.somethingSelected();
+          const it = (t, ic, fn, off) => m.addItem((i) => { i.setTitle(t).setIcon(ic).onClick(fn); if (off) i.setDisabled(true); });
+          it("Вырезать", "lucide-scissors", () => { navigator.clipboard.writeText(cm.getSelection()); cm.replaceSelection(""); }, !has);
+          it("Копировать", "lucide-copy", () => navigator.clipboard.writeText(cm.getSelection()), !has);
+          it("Вставить", "lucide-clipboard-paste", () => navigator.clipboard.readText().then((t) => cm.replaceSelection(t)));
+          it("Выделить всё", "lucide-text-select", () => cm.execCommand("selectAll"));
+          m.addSeparator(); it("Найти…", "lucide-search", () => this.openFind(false)); it("Заменить…", "lucide-replace", () => this.openFind(true)); it("Закомментировать / раскомментировать", "lucide-message-square", () => toggleComment(cm));
+          if (this.runBtn) { m.addSeparator(); it("Запустить файл", "lucide-play", () => this.run()); }
+          m.showAtMouseEvent(e);
+        });
         this.cm.on("cursorActivity", () => this.updateStatus());
         this.cm.getWrapperElement().addEventListener("wheel", (e) => { if (e.ctrlKey) { e.preventDefault(); zoom(e.deltaY < 0 ? 1 : -1); } }, { passive: false });
         this.btnWrap.classList.toggle("on", !!this.cm.getOption("lineWrapping"));
