@@ -27,24 +27,7 @@
     .bm-drop { position: fixed; z-index: 61; min-width: 190px; padding: 5px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: 8px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); }
   `;
   document.head.appendChild(css);
-  // one flat VS Code look for every menu: our column menus, their dropdowns and the app's own menus and submenus
-  const vs = document.createElement("style");
-  vs.textContent = `
-    .bm-pop, .bm-drop, .menu { --background-primary: var(--vs-widget, #252526); --background-secondary: var(--vs-input, #3c3c3c); --text-normal: var(--vs-fg, #ccc); --text-muted: var(--vs-fg, #ccc); --text-faint: var(--vs-ln, #858585); --background-modifier-border: var(--vs-border, #454545); --background-modifier-hover: #04395e; --text-error: #f48771; }
-    .bm-pop, .bm-drop, .menu { background: var(--vs-widget, #252526) !important; border: 1px solid var(--vs-border, #454545) !important; border-radius: 5px !important; box-shadow: 0 2px 8px rgba(0,0,0,.5) !important; color: var(--vs-fg, #ccc); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; }
-    .bm-i { border-radius: 3px; padding: 5px 10px; color: var(--vs-fg, #ccc); } .bm-ic { color: var(--vs-ln, #858585); }
-    .bm-i:hover, .bm-i.is-on { background: #04395e; color: #fff; } .bm-i:hover .bm-ic, .bm-i.is-on .bm-ic { color: #fff; }
-    .bm-i.is-danger, .bm-i.is-danger .bm-ic { color: #f48771; } .bm-i.is-danger:hover { background: rgba(244,135,113,.18); color: #f48771; }
-    .bm-find, .bm-split { background: var(--vs-input, #3c3c3c) !important; border: 1px solid transparent !important; border-radius: 3px !important; color: var(--vs-fg, #ccc); }
-    .bm-split > div:hover { background: rgba(128,128,128,.25); }
-    .bm-h { color: var(--vs-ln, #858585); } .bm-sep, .bm-bar, .bm-col + .bm-col, .bm-split > div + div { border-color: var(--vs-border, #454545) !important; } .bm-sep { background: var(--vs-border, #454545); }
-    .menu .menu-item { border-radius: 3px; padding: 5px 10px; color: var(--vs-fg, #ccc); } .menu .menu-item-icon { color: var(--vs-ln, #858585); }
-    .menu .menu-item:hover:not(.is-disabled), .menu .menu-item.selected:not(.is-disabled) { background: #04395e !important; color: #fff; } .menu .menu-item:hover .menu-item-icon, .menu .menu-item.selected .menu-item-icon { color: #fff; }
-    .menu .menu-item.is-warning, .menu .menu-item.is-warning .menu-item-icon { color: #f48771; }
-    .menu .menu-separator { border-top: 1px solid var(--vs-border, #454545); margin: 4px 0; }
-    body.theme-light .bm-i:hover, body.theme-light .bm-i.is-on, body.theme-light .menu .menu-item:hover:not(.is-disabled), body.theme-light .menu .menu-item.selected:not(.is-disabled) { background: #0060c0 !important; }
-  `;
-  document.head.appendChild(vs);
+
 
   const RX = {
     close: /^закрыть/i, tr: /^перевести/i, find: /^(найти|заменить)/i, danger: /удалить/i,

@@ -6,17 +6,17 @@
   const VIEW = "basalt-git", DIFF = "basalt-diff";
   const css = document.createElement("style");
   css.textContent = `
-    .bsg2 { --background-primary: var(--vs-bg); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); font-family: 'Segoe UI', system-ui, sans-serif; height: 100%; display: flex; flex-direction: column; background: var(--vs-bg); color: var(--vs-fg); font-size: 13px; }
+    .bsg2 { --background-primary: var(--vs-bg); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); font-family: var(--font-interface); height: 100%; display: flex; flex-direction: column; background: var(--vs-bg); color: var(--vs-fg); font-size: 13px; }
     .bsg2-head { display: flex; align-items: center; gap: 4px; padding: 6px 8px 6px 12px; }
     .bsg2-head b { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--vs-ln); font-weight: 600; margin-right: auto; }
-    .bsg2-ib { width: 24px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; color: var(--vs-ln); cursor: pointer; border: 0; background: transparent; box-shadow: none; font-size: 14px; padding: 0; }
+    .bsg2-ib { width: 24px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--bs-r, 4px); color: var(--vs-ln); cursor: pointer; border: 0; background: transparent; box-shadow: none; font-size: 14px; padding: 0; }
     .bsg2-ib:hover { background: rgba(128,128,128,.25); color: var(--vs-fg); }
-    .bsg2-branch { display: flex; align-items: center; gap: 6px; margin: 0 8px 6px; padding: 4px 8px; border-radius: 3px; cursor: pointer; background: var(--vs-input); }
-    .bsg2-branch:hover { outline: 1px solid #007fd4; } .bsg2-branch small { color: var(--vs-ln); margin-left: auto; }
-    .bsg2-msg { margin: 0 8px 6px; min-height: 54px; resize: vertical; padding: 6px 8px; border-radius: 2px; border: 1px solid transparent; background: var(--vs-input); color: var(--vs-fg); font: inherit; outline-offset: -1px; }
-    .bsg2-msg:focus { outline: 1px solid #007fd4; }
-    .bsg2-commit { margin: 0 8px 8px; height: 28px; border: 0; border-radius: 2px; background: #0e639c; color: #fff; cursor: pointer; box-shadow: none; font-size: 13px; }
-    .bsg2-commit:hover { background: #1177bb; } .bsg2-commit:disabled { opacity: .5; cursor: default; }
+    .bsg2-branch { display: flex; align-items: center; gap: 6px; margin: 0 8px 6px; padding: 4px 8px; border-radius: var(--bs-r, 4px); cursor: pointer; background: var(--vs-input); }
+    .bsg2-branch:hover { outline: 1px solid var(--interactive-accent); } .bsg2-branch small { color: var(--vs-ln); margin-left: auto; }
+    .bsg2-msg { margin: 0 8px 6px; min-height: 54px; resize: vertical; padding: 6px 8px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); color: var(--vs-fg); font: inherit; outline-offset: -1px; }
+    .bsg2-msg:focus { outline: 1px solid var(--interactive-accent); }
+    .bsg2-commit { margin: 0 8px 8px; height: 28px; border: 0; border-radius: var(--bs-r, 4px); background: var(--interactive-accent); color: var(--text-on-accent); cursor: pointer; box-shadow: none; font-size: 13px; }
+    .bsg2-commit:hover { background: var(--interactive-accent-hover); } .bsg2-commit:disabled { opacity: .5; cursor: default; }
     .bsg2-list { flex: 1; overflow: auto; }
     .bsg2-sec { display: flex; align-items: center; padding: 3px 8px 3px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--vs-ln); font-weight: 600; background: rgba(128,128,128,.08); }
     .bsg2-sec span { margin-left: auto; background: rgba(128,128,128,.3); border-radius: 9px; padding: 0 6px; color: var(--vs-fg); }

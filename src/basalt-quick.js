@@ -8,16 +8,16 @@
   const css = document.createElement("style");
   css.textContent = `
     .bsq-ov { position: fixed; inset: 0; z-index: 70; display: flex; justify-content: center; align-items: flex-start; padding-top: 10vh; background: rgba(0,0,0,.25); }
-    .bsq-box { --background-primary: var(--vs-bg); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); font-family: 'Segoe UI', system-ui, sans-serif; width: min(640px, 92vw); max-height: 60vh; display: flex; flex-direction: column; background: var(--vs-widget); color: var(--vs-fg); border: 1px solid var(--vs-border); border-radius: 4px; box-shadow: 0 8px 32px rgba(0,0,0,.5); overflow: hidden; }
-    .bsq-in { margin: 8px; height: 30px; padding: 0 10px; border-radius: 2px; border: 1px solid transparent; background: var(--vs-input); color: var(--vs-fg); font-size: 13px; outline-offset: -1px; }
-    .bsq-in:focus { outline: 1px solid #007fd4; }
+    .bsq-box { --background-primary: var(--vs-bg); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); font-family: var(--font-interface); width: min(640px, 92vw); max-height: 60vh; display: flex; flex-direction: column; background: var(--vs-widget); color: var(--vs-fg); border: 1px solid var(--vs-border); border-radius: 0; clip-path: var(--bs-clip); box-shadow: none; overflow: hidden; }
+    .bsq-in { margin: 8px; height: 30px; padding: 0 10px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); color: var(--vs-fg); font-size: 13px; outline-offset: -1px; }
+    .bsq-in:focus { outline: 1px solid var(--interactive-accent); }
     .bsq-list { overflow: auto; padding-bottom: 4px; }
     .bsq-row { display: flex; align-items: center; gap: 8px; padding: 3px 12px; height: 24px; cursor: pointer; font-size: 13px; white-space: nowrap; }
-    .bsq-row.sel { background: #04395e; color: #fff; } .theme-light .bsq-row.sel { background: #0060c0; }
+    .bsq-row.sel { background: var(--vs-selrow); color: var(--text-normal); }
     .bsq-row:hover:not(.sel) { background: rgba(128,128,128,.18); }
-    .bsq-badge { flex: none; width: 16px; height: 16px; border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #fff; }
-    .bsq-name { overflow: hidden; text-overflow: ellipsis; } .bsq-dir { color: var(--vs-ln); font-size: 12px; overflow: hidden; text-overflow: ellipsis; } .bsq-row.sel .bsq-dir { color: rgba(255,255,255,.7); }
-    .bsq-name mark, .bsq-dir mark { background: none; color: #18a3ff; font-weight: 600; }
+    .bsq-badge { flex: none; width: 16px; height: 16px; border-radius: var(--bs-r, 4px); display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #fff; }
+    .bsq-name { overflow: hidden; text-overflow: ellipsis; } .bsq-dir { color: var(--vs-ln); font-size: 12px; overflow: hidden; text-overflow: ellipsis; } .bsq-row.sel .bsq-dir { color: var(--text-muted); }
+    .bsq-name mark, .bsq-dir mark { background: none; color: var(--text-accent); font-weight: 600; }
     .bsq-hint { padding: 14px 16px; color: var(--vs-ln); font-size: 12.5px; }
   `;
   document.head.appendChild(css);

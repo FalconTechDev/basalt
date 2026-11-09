@@ -126,3 +126,6 @@ Files that carry it: `src/basalt-textfile.js` (editor), `src/basalt-graphs.js` (
 - [ ] Snippets (user JSON, per language) with tab stops
 - [ ] Simple extension API: commands, views, status items (reuse the Obsidian plugin API)
 - [ ] Marketplace-less install from a folder or git URL
+
+## Style rule
+Every IDE module takes its colours from the app palette (--background-*, --text-*, --interactive-accent, mapped through the --vs-* variables defined in asalt-textfile.js) and its shape from --bs-r / --bs-clip. No hard-coded greys or blues (only syntax colours are fixed).

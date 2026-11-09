@@ -22,15 +22,15 @@
   const KW = new Set(["if", "for", "while", "switch", "catch", "function", "return", "else", "do", "try", "new", "typeof", "sizeof", "super", "this", "await", "async", "def", "fn", "func", "class", "match", "with", "and", "or", "not", "in", "is", "elif", "print", "len", "range", "str", "int", "map", "get", "set", "log", "push", "pop", "join", "then", "constructor", "require", "import", "assert", "println", "format", "Some", "Ok", "Err", "Vec", "String", "Box", "Arc"]);
   const css = document.createElement("style");
   css.textContent = `
-    .bsg { --background-primary: var(--vs-bg); --background-secondary: var(--vs-widget); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); --background-modifier-border: var(--vs-border); --background-modifier-hover: rgba(128,128,128,.18); --interactive-accent: #0e639c; --text-on-accent: #fff; --font-monospace: Consolas, 'Cascadia Code', monospace; font-family: 'Segoe UI', system-ui, sans-serif; position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--vs-bg); color: var(--vs-fg); }
+    .bsg { --background-primary: var(--vs-bg); --background-secondary: var(--vs-widget); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); --background-modifier-border: var(--vs-border); --background-modifier-hover: rgba(128,128,128,.18); --font-monospace: Consolas, 'Cascadia Code', monospace; font-family: var(--font-interface); position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--vs-bg); color: var(--vs-fg); }
     .bsg-bar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--background-modifier-border); flex-wrap: wrap; }
-    .bsg-seg { display: inline-flex; border: 1px solid var(--background-modifier-border); border-radius: 6px; overflow: hidden; }
+    .bsg-seg { display: inline-flex; border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 4px); overflow: hidden; }
     .bsg-seg button { border: 0; border-radius: 0; background: transparent; padding: 3px 12px; height: 26px; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
     .bsg-seg button.on { background: var(--interactive-accent); color: var(--text-on-accent); }
-    .bsg-btn { border: 0; border-radius: 2px; background: transparent; height: 24px; padding: 0 10px; color: var(--vs-ln); cursor: pointer; box-shadow: none; font-size: 12px; }
+    .bsg-btn { border: 0; border-radius: var(--bs-r, 4px); background: transparent; height: 24px; padding: 0 10px; color: var(--vs-ln); cursor: pointer; box-shadow: none; font-size: 12px; }
     .bsg-btn:hover { color: var(--vs-fg); background: rgba(128,128,128,.2); } .bsg-btn.on { color: var(--vs-fg); background: rgba(128,128,128,.28); }
-    .bsg-search:focus { outline: 1px solid #007fd4; }
-    .bsg-search { height: 24px; font-size: 12px; width: 150px; padding: 0 8px; border-radius: 2px; border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
+    .bsg-search:focus { outline: 1px solid var(--interactive-accent); }
+    .bsg-search { height: 24px; font-size: 12px; width: 150px; padding: 0 8px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
     .bsg-info { margin-left: auto; color: var(--text-faint); font-size: var(--font-ui-smaller); white-space: nowrap; }
     .bsg-body { position: relative; flex: 1; min-height: 0; }
     .bsg canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
