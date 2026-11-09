@@ -107,9 +107,9 @@
     .bstf-find .bstf-in { max-width: none; background: var(--vs-input); color: var(--vs-fg); border: 1px solid transparent; border-radius: 2px; }
     .bstf-find .bstf-in:focus { outline: 1px solid #007fd4; outline-offset: -1px; }
     .bstf-row { flex-wrap: wrap; }
-    .bstf-status { background: var(--vs-status); color: #fff; border-top: 0; padding: 0 10px; height: 22px; gap: 0; font-size: 12px; }
-    .bstf-status > span { padding: 0 8px; height: 22px; display: inline-flex; align-items: center; }
-    .bstf-status span[data-act]:hover { background: rgba(255,255,255,.18); color: #fff; }
+    .bstf-status { background: var(--vs-bg); color: var(--vs-ln); border-top: 1px solid var(--vs-border); padding: 0 10px; height: 24px; gap: 0; font-size: 12px; }
+    .bstf-status > span { padding: 0 8px; height: 24px; display: inline-flex; align-items: center; }
+    .bstf-status span[data-act]:hover { background: rgba(128,128,128,.2); color: var(--vs-fg); }
     .bstf .cm-keyword, .bstf .cm-atom, .bstf .cm-builtin { color: var(--vs-kw); }
     .bstf .cm-keyword.cm-ctl { color: var(--vs-ctl); }
     .bstf .cm-number { color: var(--vs-num); } .bstf .cm-def { color: var(--vs-fn); } .bstf .cm-variable { color: var(--vs-var); } .bstf .cm-variable-2 { color: var(--vs-var); } .bstf .cm-variable-3, .bstf .cm-type { color: var(--vs-type); }
@@ -449,23 +449,30 @@
     };
   }
 
-  async function open(path) {
+  function jump(path, line) {
+    let n = 0; const t = setInterval(() => {
+      const l = app.workspace.getLeavesOfType(VIEW).find((x) => x.view && x.view.path === path && x.view.cm);
+      if (l) { clearInterval(t); const cm = l.view.cm, at = { line: Math.max(0, line - 1), ch: 0 }; cm.setCursor(at); cm.scrollIntoView(at, 200); cm.focus(); } else if (++n > 40) clearInterval(t);
+    }, 100);
+  }
+  async function open(path, line) {
     const ws = app.workspace;
     const same = ws.getLeavesOfType(VIEW).find((l) => l.view && l.view.path === path);
-    if (same) { ws.revealLeaf(same); ws.setActiveLeaf(same, { focus: true }); return true; }
+    if (same) { ws.revealLeaf(same); ws.setActiveLeaf(same, { focus: true }); if (line) jump(path, line); return true; }
     const leaf = ws.getLeaf("tab");
     await leaf.setViewState({ type: VIEW, active: true, state: { file: path } });
     ws.setActiveLeaf(leaf, { focus: true });
+    if (line) jump(path, line);
     return true;
   }
 
-  async function openAbs(abs) {
+  async function openAbs(abs, line) {
     try {
       const st = await nfs.promises.stat(abs); if (!st.isFile() || st.size > MAX) return false;
       const fd = await nfs.promises.open(abs, "r"), b = Buffer.alloc(Math.min(8000, st.size)); await fd.read(b, 0, b.length, 0); await fd.close();
       for (let i = 0; i < b.length; i++) if (b[i] === 0) return false;
     } catch (e) { return false; }
-    return open(abs);
+    return open(abs, line);
   }
   const t = setInterval(() => {
     if (!window.app || !app.workspace || !app.viewRegistry || !app.vault || !app.vault.adapter || !window.__bsApi || !window.__bsApi.ItemView || typeof app.openWithDefaultApp !== "function") return;
