@@ -2255,7 +2255,7 @@
     });
     if (note) note.hide();
     const trMap = new Map(valid.map((ui, k) => [ui, trs[k]]));
-    // phase 3: write the results back (text in place, files as "<name>.<lang>.md" copies)
+    // phase 3: write the results back (text and files in place)
     let ok = 0, fail = 0;
     for (const ui of valid) {
       const u = units[ui], t = trMap.get(ui);
@@ -2269,13 +2269,10 @@
             canvas.markDirty && canvas.markDirty(u.node);
           }
         } else {
-          const cut = u.path.lastIndexOf("/"), dir = cut >= 0 ? u.path.slice(0, cut + 1) : "", base = u.path.slice(cut + 1).replace(/\.md$/i, "");
-          const np = dir + base + "." + tl + ".md";
-          const f = app.vault.getAbstractFileByPath(np);
+          const f = app.vault.getAbstractFileByPath(u.path);
           const ud = u.node.unknownData || (u.node.unknownData = {});
-          if (typeof ud.fpTrOrigFile !== "string") { ud.fpTrOrigFile = u.path; ud.fpTrOrigSub = u.sub; }
-          if (f) await app.vault.modify(f, t); else await app.vault.create(np, t);
-          if (canvas.nodes.has(u.node.id)) u.node.setFilePath(np, u.sub);
+          if (typeof ud.fpTrOrigFile !== "string") { ud.fpTrOrigFile = u.path; ud.fpTrOrigSub = u.sub; ud.fpTrInPlace = true; }
+          if (f) { await trBackup(u.path, await app.vault.read(f)); await app.vault.modify(f, t); }
         }
         ok++;
       } catch (e) { fail++; console.warn("[fp-canvas] apply failed", e); }
@@ -2287,6 +2284,20 @@
   }
   window.__fpTranslate = (canvas, tl, scope, sl, hooks) => translateCanvas(canvas, tl, scope || "all", sl, hooks);
 
+  // the first original of a translated md file is kept in .basalt/tr-backup/<path> so "Вернуть оригинал" can put it back
+  const trBackupPath = (p) => ".basalt/tr-backup/" + p;
+  async function trBackup(p, text) {
+    const a = app.vault.adapter, bp = trBackupPath(p);
+    if (await a.exists(bp)) return;
+    const parts = bp.split("/"); parts.pop(); let d = "";
+    for (const seg of parts) { d = d ? d + "/" + seg : seg; if (!(await a.exists(d))) await a.mkdir(d); }
+    await a.write(bp, text);
+  }
+  async function trRestoreFile(p) {
+    const a = app.vault.adapter, bp = trBackupPath(p);
+    if (!(await a.exists(bp))) return false;
+    await a.write(p, await a.read(bp)); await a.remove(bp); return true;
+  }
   // puts translated cards back to their real originals (text in place, file cards to the source file)
   function restoreOriginals(canvas, nodes) {
     let n = 0;
@@ -2297,8 +2308,9 @@
         if (typeof ud.fpTrOrig === "string" && typeof node.setText === "function") {
           node.setText(ud.fpTrOrig); delete ud.fpTrOrig; n++;
         } else if (typeof ud.fpTrOrigFile === "string" && typeof node.setFilePath === "function") {
-          node.setFilePath(ud.fpTrOrigFile, ud.fpTrOrigSub || "");
-          delete ud.fpTrOrigFile; delete ud.fpTrOrigSub; n++;
+          if (ud.fpTrInPlace) trRestoreFile(ud.fpTrOrigFile).catch((e) => console.warn("[fp-canvas] restore file failed", e));
+          else node.setFilePath(ud.fpTrOrigFile, ud.fpTrOrigSub || "");
+          delete ud.fpTrOrigFile; delete ud.fpTrOrigSub; delete ud.fpTrInPlace; n++;
         } else continue;
         canvas.markDirty && canvas.markDirty(node);
       } catch (e) { console.warn("[fp-canvas] restore failed", e); }
@@ -2310,14 +2322,13 @@
   window.__fpRestore = (canvas, nodes) => restoreOriginals(canvas, nodes);
 
   // ---- vault files: the same translation for md files picked in the file explorer.
-  // Writes "<name>.<lang>.md" copies next to the originals; the sources stay untouched.
+  // Translates the files in place (the first original is kept in .basalt/tr-backup for "Вернуть оригинал").
   async function translateVaultFiles(files, tl, sl, hooks) {
     const say = (msg, ms) => { if (typeof Notice === "function") new Notice(msg, ms); };
     const md = files.filter((f) => f && /^md$/i.test(f.extension || ""));
     if (!md.length) { say("Нет md-файлов для перевода"); return null; }
     const items = [];
     for (const f of md) {
-      if (new RegExp("\\." + tl + "\\.md$", "i").test(f.path)) { continue; } // already a translation
       try { items.push({ f, text: await app.vault.read(f) }); }
       catch (e) { console.warn("[fp-canvas] vault read failed", f.path, e); }
     }
@@ -2329,10 +2340,8 @@
       const it = items[k], t = trs[k];
       if (t == null) { fail++; continue; }
       try {
-        const p = it.f.path, cut = p.lastIndexOf("/"), dir = cut >= 0 ? p.slice(0, cut + 1) : "", base = p.slice(cut + 1).replace(/\.md$/i, "");
-        const np = dir + base + "." + tl + ".md";
-        const ex = app.vault.getAbstractFileByPath(np);
-        if (ex) await app.vault.modify(ex, t); else await app.vault.create(np, t);
+        await trBackup(it.f.path, it.text);
+        await app.vault.modify(it.f, t);
         ok++;
       } catch (e) { fail++; console.warn("[fp-canvas] vault translate failed", it.f.path, e); }
     }
