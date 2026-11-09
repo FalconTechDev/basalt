@@ -32,6 +32,7 @@
     .bsf-pin { width: 12px; height: 12px; color: var(--interactive-accent); flex: none; }
     .bsf-r input.bsf-ren { flex: 1; min-width: 0; height: 22px; padding: 0 4px; }
     .bsf-empty { padding: 18px 12px; color: var(--text-faint); font-size: var(--font-ui-small); }
+    .bsf-wsroot { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-normal); font-weight: 600; font-size: var(--font-ui-small); padding: 0 6px; align-self: center; }
   `;
   document.head.appendChild(css);
 
@@ -70,25 +71,45 @@
         el.innerHTML = '<div class="bsf" tabindex="0"><div class="bsf-bar"></div><div class="bsf-find"><input type="text" placeholder="Фильтр по имени…" spellcheck="false"></div><div class="bsf-tree"></div></div>';
         this.root = el.querySelector(".bsf"); this.treeEl = el.querySelector(".bsf-tree"); this.find = el.querySelector("input");
         this.buildBar();
-        this.find.addEventListener("input", () => { this.filter = this.find.value.trim().toLowerCase(); this.render(); });
+        this.find.addEventListener("input", () => { this.filter = this.find.value.trim().toLowerCase(); if (this.ws()) this.wsSearch(); else this.render(); });
         this.find.addEventListener("keydown", (e) => { if (e.key === "Escape") { this.find.value = ""; this.filter = ""; this.render(); this.root.focus(); } });
         this.root.addEventListener("keydown", (e) => this.onKey(e));
-        this.treeEl.addEventListener("contextmenu", (e) => { if (e.target === this.treeEl) { e.preventDefault(); this.menuFor(app.vault.getRoot(), e); } });
+        this.treeEl.addEventListener("contextmenu", (e) => { if (e.target === this.treeEl) { e.preventDefault(); const ws = this.ws(); if (ws && ws.rootNode()) this.wsMenu(ws.rootNode(), e); else this.menuFor(app.vault.getRoot(), e); } });
         this.treeEl.addEventListener("dragover", (e) => { if (e.target === this.treeEl && this.dragging) { e.preventDefault(); } });
         this.treeEl.addEventListener("drop", (e) => { if (e.target === this.treeEl) this.dropOn(app.vault.getRoot(), e); });
         const again = () => { clearTimeout(this.t); this.t = setTimeout(() => this.render(), 120); };
         for (const ev of ["create", "delete", "rename", "modify"]) this.registerEvent(app.vault.on(ev, again));
         this.registerEvent(app.workspace.on("file-open", (f) => { if (f && !(window.__bsMiniFeatures && window.__bsMiniFeatures.cfg.explorer.keepFolders)) { this.reveal(f.path, false); } this.render(); }));
         pinsApi().onChange(again);
+        this._wsOff = window.__bsWorkspace ? window.__bsWorkspace.onChange(() => this.render()) : null;
         this.render();
       }
-      async onClose() { clearTimeout(this.t); }
+      async onClose() { clearTimeout(this.t); if (this._wsOff) this._wsOff(); }
       save() { try { localStorage.setItem(keyOf(), JSON.stringify({ open: Array.from(this.open), sort: this.sort })); } catch (e) { /* full */ } }
 
       // ---- toolbar
+      ws() { const w = window.__bsWorkspace; return w && w.active() ? w : null; }
       buildBar() {
+        const ws = this.ws(), mode = ws ? "ws" + (ws.showIgnored() ? "1" : "0") : "vault";
+        if (this._barMode === mode) return;
+        this._barMode = mode;
         const bar = this.contentEl.querySelector(".bsf-bar"); bar.textContent = "";
         const btn = (icon, title, fn) => { const b = document.createElement("button"); b.title = title; try { api.setIcon(b, icon); } catch (e) { b.textContent = "•"; } b.addEventListener("click", fn); bar.appendChild(b); return b; };
+        const sortBtn = () => btn("lucide-arrow-up-down", "Сортировка", (e) => {
+          const m = new api.Menu();
+          for (const [k, label] of SORTS) m.addItem((i) => i.setTitle(label[0].toUpperCase() + label.slice(1)).setIcon(this.sort === k ? "lucide-check" : "lucide-blank").onClick(() => { this.sort = k; this.save(); this.render(); }));
+          m.showAtMouseEvent(e);
+        });
+        if (ws) {
+          const label = document.createElement("span"); label.className = "bsf-wsroot"; label.textContent = ws.rootName(); label.title = ws.root();
+          bar.appendChild(label);
+          btn(ws.showIgnored() ? "lucide-eye" : "lucide-eye-off", ws.showIgnored() ? "Скрыть игнорируемые" : "Показывать игнорируемые", () => ws.setShowIgnored(!ws.showIgnored()));
+          btn("lucide-rotate-cw", "Обновить", () => ws.refresh());
+          btn("lucide-folder-open", "Сменить папку", () => ws.pick());
+          btn("lucide-x", "Закрыть папку", () => ws.close());
+          sortBtn();
+          return;
+        }
         // one "new" button with a menu, like before: note, folder, canvas, database
         btn("lucide-plus", "Создать", (e) => {
           const m = new api.Menu();
@@ -98,11 +119,7 @@
           m.addItem((i) => i.setTitle("Создать базу данных").setIcon("lucide-layout-list").onClick(() => this.create("base")));
           m.showAtMouseEvent(e);
         });
-        btn("lucide-arrow-up-down", "Сортировка", (e) => {
-          const m = new api.Menu();
-          for (const [k, label] of SORTS) m.addItem((i) => i.setTitle(label[0].toUpperCase() + label.slice(1)).setIcon(this.sort === k ? "lucide-check" : "lucide-blank").onClick(() => { this.sort = k; this.save(); this.render(); }));
-          m.showAtMouseEvent(e);
-        });
+        sortBtn();
         btn("lucide-chevrons-down-up", "Свернуть все папки", () => { this.open.clear(); this.save(); this.render(); });
       }
 
@@ -120,7 +137,53 @@
         };
         return list.sort(cmp);
       }
+      // ---- workspace mode (an opened folder, listed lazily by basalt-workspace.js)
+      wsKids(node) {
+        const kids = node && node.children;
+        if (kids == null) return null;
+        if (this.sort === "name") return kids;
+        const cmp = (a, b) => {
+          if (a.isDir !== b.isDir) return a.isDir ? -1 : 1;
+          if (this.sort === "mtime") { const am = a.stat ? a.stat.mtime : a.mtime, bm = b.stat ? b.stat.mtime : b.mtime; if (am || bm) return bm - am; }
+          if (this.sort === "type" && !a.isDir) { const d = collator.compare(a.extension || "", b.extension || ""); if (d) return d; }
+          return collator.compare(a.name, b.name);
+        };
+        return kids.slice().sort(cmp);
+      }
+      wsSearch() {
+        const ws = this.ws(), q = this.filter;
+        this.wsResults = [];
+        if (!ws || !q) { this.render(); return; }
+        const id = (this._wsq = (this._wsq || 0) + 1);
+        ws.search(q).then((r) => { if (id === this._wsq && this.ws()) { this.wsResults = r.map((f) => ({ f, depth: 0, flat: true })); this.render(); } }).catch(() => {});
+      }
+      wsOpen(f, newTab) { const ws = this.ws(); if (!ws) return; ws.openFile(f, newTab); this.reveal(f.path, false); }
+      wsShow(f) { try { window.require("electron").shell.showItemInFolder(f.abs); } catch (e) { /* ok */ } }
+      wsMenu(f, e) {
+        const menu = new api.Menu();
+        if (!f.isDir) {
+          menu.addItem((i) => i.setTitle("Открыть").setIcon("lucide-file").onClick(() => this.wsOpen(f, false)));
+          menu.addItem((i) => i.setTitle("Открыть в новой вкладке").setIcon("lucide-copy-plus").onClick(() => this.wsOpen(f, true)));
+          menu.addSeparator();
+        }
+        menu.addItem((i) => i.setTitle("Показать в папке").setIcon("lucide-folder-open").onClick(() => this.wsShow(f)));
+        menu.addItem((i) => i.setTitle("Копировать путь").setIcon("lucide-copy").onClick(() => { navigator.clipboard.writeText(f.abs).then(() => new api.Notice("Путь скопирован")); }));
+        menu.showAtMouseEvent(e);
+      }
+
       rows() {
+        const ws = this.ws();
+        if (ws) {
+          const out = [];
+          if (this.filter) return this.wsResults || [];
+          const walk = (node, depth) => {
+            const kids = this.wsKids(node);
+            if (!kids) { ws.ensure(node); return; }
+            for (const c of kids) { out.push({ f: c, depth }); if (c.isDir && this.open.has(c.path)) walk(c, depth + 1); }
+          };
+          if (ws.rootNode()) walk(ws.rootNode(), 0);
+          return out;
+        }
         const out = [];
         if (this.filter) {
           const hit = app.vault.getAllLoadedFiles().filter((f) => f.path !== "/" && !f.path.split("/").some((s) => HIDDEN.test(s)) && f.name.toLowerCase().includes(this.filter));
@@ -132,6 +195,13 @@
         return out;
       }
       reveal(path, scroll = true) {
+        const ws = this.ws();
+        if (ws) {
+          const parts = path.split("/"); parts.pop(); let p = "";
+          for (const s of parts) { p = p ? p + "/" + s : s; const n = ws.nodeAt(p); if (n && n.isDir) this.open.add(p); }
+          if (scroll) { this.save(); this.render(); const el = this.treeEl.querySelector(`[data-path="${CSS.escape(path)}"]`); el && el.scrollIntoView({ block: "center" }); }
+          return;
+        }
         const parts = path.split("/"); parts.pop(); let p = "";
         for (const s of parts) { p = p ? p + "/" + s : s; this.open.add(p); }
         if (scroll) { this.save(); this.render(); const el = this.treeEl.querySelector(`[data-path="${CSS.escape(path)}"]`); el && el.scrollIntoView({ block: "center" }); }
@@ -140,41 +210,46 @@
       // ---- drawing
       render() {
         if (!this.treeEl || this.renaming) return;
-        const scroll = this.treeEl.scrollTop, act = app.workspace.getActiveFile(), pins = pinsApi();
+        this.buildBar();
+        const scroll = this.treeEl.scrollTop, ws = this.ws(), act = ws ? null : app.workspace.getActiveFile(), pins = pinsApi();
         this.rowList = this.rows();
         const frag = document.createDocumentFragment();
         for (const { f, depth, flat } of this.rowList) {
-          const dir = !!f.children, r = document.createElement("div");
-          r.className = "bsf-r" + (dir ? " is-dir" : "") + (dir && this.open.has(f.path) ? " is-open" : "") + (act && act.path === f.path ? " is-active" : "") + (this.sel.has(f.path) ? " is-sel" : "") + (this.focus === f.path ? " is-focus" : "");
-          r.dataset.path = f.path; r.draggable = true; r.style.paddingLeft = 6 + depth * 14 + "px";
-          const ext = !dir && f.extension !== "md" && f.extension !== "canvas" ? `<span class="bsf-x">${f.extension}</span>` : "";
-          r.innerHTML = (dir ? svg("car", "bsf-car") : '<span class="bsf-sp"></span>') + `<span class="bsf-i">${svg(kindOf(f))}</span><span class="bsf-n"></span>${!dir && pins.has(f.path) ? svg("pin", "bsf-pin") : ""}${ext}`;
+          const dir = ws ? !!f.isDir : !!f.children, r = document.createElement("div");
+          const active = ws ? f.path === ws.activePath() : act && act.path === f.path;
+          r.className = "bsf-r" + (dir ? " is-dir" : "") + (dir && this.open.has(f.path) ? " is-open" : "") + (active ? " is-active" : "") + (this.sel.has(f.path) ? " is-sel" : "") + (this.focus === f.path ? " is-focus" : "");
+          r.dataset.path = f.path; r.draggable = !ws; r.style.paddingLeft = 6 + depth * 14 + "px";
+          const extName = ws ? f.extension || "" : f.extension !== "md" && f.extension !== "canvas" ? f.extension : "";
+          const ext = !dir && extName ? `<span class="bsf-x">${extName}</span>` : "";
+          r.innerHTML = (dir ? svg("car", "bsf-car") : '<span class="bsf-sp"></span>') + `<span class="bsf-i">${svg(dir ? "folder" : kindOf(f))}</span><span class="bsf-n"></span>${!dir && pins.has(f.path) ? svg("pin", "bsf-pin") : ""}${ext}`;
           for (let d = 1; d <= depth; d++) { const gl = document.createElement("i"); gl.className = "bsf-guide"; gl.style.left = 6 + (d - 1) * 14 + 7 + "px"; r.appendChild(gl); }
-          const n = r.querySelector(".bsf-n"); n.textContent = dir ? f.name : f.name.replace(/\.(md|canvas)$/i, "");
-          if (flat && f.parent && f.parent.path !== "/") { const s = document.createElement("small"); s.textContent = f.parent.path; n.appendChild(s); }
+          const n = r.querySelector(".bsf-n"); n.textContent = dir || ws ? f.name : f.name.replace(/\.(md|canvas)$/i, "");
+          if (flat && f.parent && f.parent.path && f.parent.path !== "/") { const s = document.createElement("small"); s.textContent = f.parent.path; n.appendChild(s); }
           this.wire(r, f);
           frag.appendChild(r);
         }
         this.treeEl.textContent = ""; this.treeEl.appendChild(frag);
-        if (!this.rowList.length) this.treeEl.innerHTML = `<div class="bsf-empty">${this.filter ? "Ничего не найдено" : "В хранилище пока нет файлов. Нажмите «Новая заметка» выше."}</div>`;
+        if (!this.rowList.length) this.treeEl.innerHTML = `<div class="bsf-empty">${this.filter ? "Ничего не найдено" : ws ? "Папка пуста" : "В хранилище пока нет файлов. Нажмите «Новая заметка» выше."}</div>`;
         this.treeEl.scrollTop = scroll;
       }
       wire(r, f) {
+        const ws = this.ws(), isDir = ws ? !!f.isDir : !!f.children;
         r.addEventListener("click", (e) => {
           this.focus = f.path;
           if (e.shiftKey && this.anchor) { const paths = this.rowList.map((x) => x.f.path), a = paths.indexOf(this.anchor), b = paths.indexOf(f.path); this.sel = new Set(paths.slice(Math.min(a, b), Math.max(a, b) + 1)); this.render(); return; }
           if (e.ctrlKey || e.metaKey) { this.sel.has(f.path) ? this.sel.delete(f.path) : this.sel.add(f.path); this.anchor = f.path; this.render(); return; }
           this.sel = new Set([f.path]); this.anchor = f.path;
-          if (f.children) { this.open.has(f.path) ? this.open.delete(f.path) : this.open.add(f.path); this.save(); this.render(); } else { this.openFile(f, false); this.render(); }
+          if (isDir) { this.open.has(f.path) ? this.open.delete(f.path) : this.open.add(f.path); this.save(); this.render(); } else if (ws) { this.wsOpen(f, false); this.render(); } else { this.openFile(f, false); this.render(); }
         });
-        r.addEventListener("auxclick", (e) => { if (e.button === 1 && !f.children) { e.preventDefault(); this.openFile(f, true); } });
-        r.addEventListener("contextmenu", (e) => { e.preventDefault(); if (!this.sel.has(f.path)) { this.sel = new Set([f.path]); this.render(); } this.menuFor(f, e); });
+        r.addEventListener("auxclick", (e) => { if (e.button === 1 && !isDir) { e.preventDefault(); ws ? this.wsOpen(f, true) : this.openFile(f, true); } });
+        r.addEventListener("contextmenu", (e) => { e.preventDefault(); if (!this.sel.has(f.path)) { this.sel = new Set([f.path]); this.render(); } ws ? this.wsMenu(f, e) : this.menuFor(f, e); });
         r.addEventListener("dragstart", (e) => {
+          if (ws) return;
           const paths = this.sel.has(f.path) ? Array.from(this.sel) : [f.path]; this.dragging = paths; e.dataTransfer.effectAllowed = "copyMove";
           try { const files = paths.map((p) => app.vault.getAbstractFileByPath(p)).filter((x) => x && !x.children); const d = files.length > 1 ? app.dragManager.dragFiles(e, files) : f.children ? app.dragManager.dragFolder(e, f) : app.dragManager.dragFile(e, f); app.dragManager.onDragStart(e, d); } catch (err) { /* drop into notes unavailable */ }
         });
         r.addEventListener("dragend", () => { this.dragging = null; this.treeEl.querySelectorAll(".is-drop").forEach((x) => x.classList.remove("is-drop")); });
-        if (f.children) {
+        if (isDir && !ws) {
           r.addEventListener("dragover", (e) => { if (this.dragging && !this.dragging.some((p) => p === f.path || f.path.startsWith(p + "/"))) { e.preventDefault(); r.classList.add("is-drop"); } });
           r.addEventListener("dragleave", () => r.classList.remove("is-drop"));
           r.addEventListener("drop", (e) => { r.classList.remove("is-drop"); this.dropOn(f, e); });
@@ -184,6 +259,7 @@
       // ---- actions
       openFile(f, newTab) { if (f.extension === undefined) return; const ws = app.workspace; let leaf = newTab ? null : ws.getMostRecentLeaf(ws.rootSplit); if (!leaf || leaf.getRoot() !== ws.rootSplit) leaf = ws.getLeaf("tab"); leaf.openFile(f).then(() => ws.setActiveLeaf(leaf, { focus: true })).catch((e) => console.error("[files] open", e)); }
       async dropOn(folder, e) {
+        if (this.ws()) return;
         const paths = this.dragging; this.dragging = null; if (!paths) return; e.preventDefault(); e.stopPropagation();
         for (const p of paths) {
           const f = app.vault.getAbstractFileByPath(p); if (!f || (f.parent && f.parent.path === folder.path)) continue;
@@ -196,6 +272,7 @@
       }
       targetFolder() { const p = this.focus && app.vault.getAbstractFileByPath(this.focus); return p ? (p.children ? p : p.parent) : app.vault.getRoot(); }
       async create(ext) {
+        if (this.ws()) return;
         const folder = this.targetFolder() || app.vault.getRoot();
         const base = ext === "md" ? "Без названия" : "Без названия", join = (n) => (folder.path === "/" ? "" : folder.path + "/") + n;
         let n = base, i = 1; while (app.vault.getAbstractFileByPath(join(`${n}.${ext}`))) n = `${base} ${++i}`;
@@ -204,12 +281,14 @@
         this.focus = f.path; this.sel = new Set([f.path]); this.render(); this.openFile(f, false); setTimeout(() => this.rename(f), 150);
       }
       async createFolder() {
+        if (this.ws()) return;
         const folder = this.targetFolder() || app.vault.getRoot(), join = (n) => (folder.path === "/" ? "" : folder.path + "/") + n;
         let n = "Новая папка", i = 1; while (app.vault.getAbstractFileByPath(join(n))) n = `Новая папка ${++i}`;
         await app.vault.createFolder(join(n)); const f = app.vault.getAbstractFileByPath(join(n));
         if (folder.path !== "/") this.open.add(folder.path); this.save(); this.focus = f.path; this.render(); setTimeout(() => this.rename(f), 200);
       }
       rename(f) {
+        if (this.ws()) return;
         const row = this.treeEl.querySelector(`[data-path="${CSS.escape(f.path)}"]`); if (!row) return;
         const n = row.querySelector(".bsf-n"), input = document.createElement("input"); input.className = "bsf-ren"; input.type = "text";
         const stem = f.children ? f.name : f.name.replace(/\.[^.]+$/, ""), ext = f.children ? "" : f.name.slice(stem.length);
@@ -225,6 +304,7 @@
         input.addEventListener("blur", () => finish(true)); input.addEventListener("click", (e) => e.stopPropagation()); input.addEventListener("dblclick", (e) => e.stopPropagation());
       }
       async remove(files) {
+        if (this.ws()) return;
         const names = files.map((f) => f.name).slice(0, 4).join(", ") + (files.length > 4 ? "…" : "");
         if (!(await window.__bsConfirm(`Удалить в корзину: ${names}?`, { title: "Удаление", ok: "Удалить", danger: true }))) return;
         for (const f of files) { try { await app.fileManager.trashFile(f); } catch (err) { new api.Notice("Не удалось удалить: " + err.message); } }
@@ -241,8 +321,20 @@
         if (f.path !== "/") { menu.addSeparator(); menu.addItem((i) => { i.setTitle(many ? `Удалить (${this.sel.size})` : "Удалить").setIcon("lucide-trash-2"); if (i.setWarning) i.setWarning(true); i.onClick(() => this.remove(many ? list() : [f])); }); }
         menu.showAtMouseEvent(e);
       }
+      wsKey(e) {
+        const paths = this.rowList.map((x) => x.f.path), i = paths.indexOf(this.focus);
+        const hit = this.focus ? this.rowList.find((x) => x.f.path === this.focus) : null, cur = hit ? hit.f : null;
+        const go = (k) => { const j = Math.max(0, Math.min(paths.length - 1, k)); this.focus = paths[j]; if (!e.shiftKey) this.sel = new Set([this.focus]); this.render(); const el = this.treeEl.querySelector(`[data-path="${CSS.escape(this.focus)}"]`); el && el.scrollIntoView({ block: "nearest" }); };
+        if (e.key === "ArrowDown") { e.preventDefault(); go(i + 1); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); go(i < 0 ? 0 : i - 1); }
+        else if (e.key === "ArrowRight" && cur && cur.isDir) { e.preventDefault(); this.open.add(cur.path); this.save(); this.render(); }
+        else if (e.key === "ArrowLeft" && cur) { e.preventDefault(); if (cur.isDir && this.open.has(cur.path)) { this.open.delete(cur.path); this.save(); this.render(); } else if (cur.parent && cur.parent.path) { this.focus = cur.parent.path; this.sel = new Set([this.focus]); this.render(); } }
+        else if (e.key === "Enter" && cur) { e.preventDefault(); if (cur.isDir) { this.open.has(cur.path) ? this.open.delete(cur.path) : this.open.add(cur.path); this.save(); this.render(); } else this.wsOpen(cur, e.ctrlKey || e.metaKey); }
+        else if ((e.ctrlKey || e.metaKey) && lk(e) === "f") { e.preventDefault(); this.find.focus(); this.find.select(); }
+      }
       onKey(e) {
         if (e.target.tagName === "INPUT") return;
+        if (this.ws()) { this.wsKey(e); return; }
         const paths = this.rowList.map((x) => x.f.path), i = paths.indexOf(this.focus), cur = this.focus && app.vault.getAbstractFileByPath(this.focus);
         const go = (k) => { const j = Math.max(0, Math.min(paths.length - 1, k)); this.focus = paths[j]; if (!e.shiftKey) this.sel = new Set([this.focus]); this.render(); const el = this.treeEl.querySelector(`[data-path="${CSS.escape(this.focus)}"]`); el && el.scrollIntoView({ block: "nearest" }); };
         if (e.key === "ArrowDown") { e.preventDefault(); go(i + 1); }
