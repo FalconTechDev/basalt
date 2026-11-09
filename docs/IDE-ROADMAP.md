@@ -28,8 +28,8 @@ Files that carry it: `src/basalt-textfile.js` (editor), `src/basalt-graphs.js` (
 - [ ] Auto-complete: words in file, keywords per language
 - [ ] Parameter hints and hover docs (language servers, see group 6)
 - [ ] Rename symbol in file (F2), go to definition (F12), peek definition, find all references
-- [ ] Encoding picker (UTF-8, UTF-16, cp1251) and line ending switch (LF / CRLF) in the status bar
-- [ ] Language picker in the status bar (change highlighting for a file)
+- [~] Encoding picker (UTF-8, UTF-16, cp1251) and line ending switch (LF / CRLF) in the status bar
+- [x] Language picker in the status bar (change highlighting for a file)
 - [ ] Image / SVG / PDF / audio preview tabs instead of "external app"
 - [ ] Markdown preview side by side, JSON tree view, CSV table view
 - [ ] Hex view for binary files
@@ -44,7 +44,7 @@ Files that carry it: `src/basalt-textfile.js` (editor), `src/basalt-graphs.js` (
 - [x] Go to symbol in file (Ctrl+Shift+O, `@`) and go to line (`:`)
 - [ ] Go to symbol in project (`#`)
 - [ ] Recent files list, back / forward through cursor positions (Alt+Left / Right)
-- [ ] Replace in files with preview (checkboxes per hit)
+- [x] Replace in files with preview (checkboxes per hit)
 - [ ] Search results as a tab you can keep, search history, include / exclude folders
 - [x] Outline panel (symbols tree of the open file, follows cursor)
 - [ ] Bookmarks on lines (gutter), list in a panel
@@ -82,13 +82,13 @@ Files that carry it: `src/basalt-textfile.js` (editor), `src/basalt-graphs.js` (
 
 ## 5. Git
 - [ ] Status markers in explorer and gutter (added / modified / removed lines)
-- [ ] Source control panel: changes, staged, commit message, commit / amend
-- [ ] Diff view for a file (inline and side by side), stage / discard hunk
-- [ ] Branch switcher in the status bar, create / delete / merge
-- [ ] Pull / push / fetch with progress, stash
+- [x] Source control panel: changes, staged, commit message, commit / amend
+- [~] Diff view for a file (inline and side by side), stage / discard hunk
+- [~] Branch switcher in the status bar, create / delete / merge
+- [~] Pull / push / fetch with progress, stash
 - [ ] Log view with branch graph, file history, blame in the gutter and on hover
 - [ ] Merge conflict editor (accept current / incoming / both)
-- [ ] Never run a destructive command without a confirmation naming what is lost
+- [x] Never run a destructive command without a confirmation naming what is lost
 
 ## 6. Language intelligence
 - [ ] Language server client (stdio): rust-analyzer, typescript-language-server, pyright, gopls, clangd

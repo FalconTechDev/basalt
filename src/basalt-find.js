@@ -25,6 +25,8 @@
     .bsf-hit:hover, .bsf-hit.sel { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bsf-hit b { color: var(--text-faint); font-weight: normal; min-width: 38px; text-align: right; flex: none; }
     .bsf-hit mark { background: rgba(255,170,0,.35); color: inherit; border-radius: 2px; padding: 0; }
+    .bsf-hit input { flex: none; margin: 0 2px 0 0; accent-color: #0e639c; }
+    .bsf-rep { display: none; padding-top: 0; } .bsf-rep.open { display: flex; }
     .bsf-empty { padding: 24px; color: var(--text-muted); text-align: center; }
   `;
   document.head.appendChild(css);
@@ -53,15 +55,18 @@
     const opt = { c: false, r: false, w: false };
     const tog = (t, ti, k) => { const x = el("button", "bsf-tog", t); x.title = ti; x.addEventListener("click", () => { opt[k] = !opt[k]; x.classList.toggle("on", opt[k]); start(); }); return x; };
     const x = el("button", "bsf-tog", "✕"); x.title = "Закрыть (Esc)"; x.addEventListener("click", close);
-    head.append(q, tog("Аа", "Учитывать регистр", "c"), tog(".*", "Регулярное выражение", "r"), tog("«слово»", "Слово целиком", "w"), mask, x);
+    const rt0 = el("button", "bsf-tog", "↔"); rt0.title = "Заменить во всех найденных"; rt0.addEventListener("click", () => { rrow.classList.toggle("open"); rt0.classList.toggle("on", rrow.classList.contains("open")); if (rrow.classList.contains("open")) repIn.focus(); });
+    head.append(q, tog("Аа", "Учитывать регистр", "c"), tog(".*", "Регулярное выражение", "r"), tog("«слово»", "Слово целиком", "w"), rt0, mask, x);
+    const rrow = el("div", "bsf-head bsf-rep"), repIn = el("input", "bsf-in"), repBtn = el("button", "bsf-tog", "Заменить отмеченные"); repIn.placeholder = "Заменить на…"; repBtn.title = "Записать замену в файлы (спросит подтверждение)"; rrow.append(repIn, repBtn);
+    let hitsList = [], lastRe = null;
     const info = el("div", "bsf-info", "Введите текст. Ищу в " + path.basename(root()) + " (без node_modules, target, dist и бинарных файлов)"), list = el("div", "bsf-list");
-    b.append(head, info, list); document.body.appendChild(ov);
+    b.append(head, rrow, info, list); document.body.appendChild(ov);
     let timer = 0; box = { ov, q, run: 0 };
     const start = () => { clearTimeout(timer); timer = setTimeout(search, 220); }; box.start = start;
     async function search() {
-      const my = ++box.run, s = q.value; list.textContent = ""; if (!s) { info.textContent = "Введите текст"; return; }
+      const my = ++box.run, s = q.value; list.textContent = ""; hitsList = []; if (!s) { info.textContent = "Введите текст"; return; }
       let src = opt.r ? s : s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); if (opt.w) src = "\\b(?:" + src + ")\\b";
-      let re; try { re = new RegExp(src, "g" + (opt.c ? "" : "i")); q.classList.remove("bad"); } catch (e) { q.classList.add("bad"); info.textContent = "Ошибка в выражении"; return; }
+      let re; try { re = new RegExp(src, "g" + (opt.c ? "" : "i")); lastRe = re; q.classList.remove("bad"); } catch (e) { q.classList.add("bad"); info.textContent = "Ошибка в выражении"; return; }
       const gl = globRe(mask.value), rt = root(); let files = 0, hits = 0, matched = 0, shown = 0; info.textContent = "Ищу…";
       for await (const p of walk(rt)) {
         if (my !== box.run) return;
@@ -72,7 +77,7 @@
         for (let i = 0; i < lines.length && found.length < PER_FILE; i++) { re.lastIndex = 0; const m = re.exec(lines[i]); if (m) { found.push({ i, m }); } }
         if (found.length) {
           matched++; hits += found.length; const fh = el("div", "bsf-file"); fh.append(el("span", null, path.basename(p)), el("small", null, path.dirname(rel) === "." ? "" : path.dirname(rel)), el("i", null, String(found.length))); list.appendChild(fh);
-          for (const { i, m } of found) { const ln = lines[i].replace(/\r$/, ""), a = Math.max(0, m.index - 40); const row = el("div", "bsf-hit"); row.appendChild(el("b", null, String(i + 1)));
+          for (const { i, m } of found) { const ln = lines[i].replace(/\r$/, ""), a = Math.max(0, m.index - 40); const row = el("div", "bsf-hit"); const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = true; cb.addEventListener("click", (ev) => ev.stopPropagation()); row.appendChild(cb); hitsList.push({ p, i, cb }); row.appendChild(el("b", null, String(i + 1)));
             const sp = el("span"); sp.append(document.createTextNode((a ? "…" : "") + ln.slice(a, m.index)), (() => { const mk = el("mark", null, m[0]); return mk; })(), document.createTextNode(ln.slice(m.index + m[0].length, m.index + m[0].length + 160))); row.appendChild(sp);
             row.addEventListener("click", () => { close(); openAt(p, i + 1); }); list.appendChild(row); shown++; }
         }
@@ -83,6 +88,22 @@
       info.textContent = hits ? "Совпадений: " + hits + " в файлах: " + matched + " (просмотрено файлов: " + files + ")" : "Ничего не найдено (просмотрено файлов: " + files + ")";
       if (!hits) list.appendChild(el("div", "bsf-empty", "Ничего не найдено"));
     }
+    async function applyReplace() {
+      const rep = repIn.value, sel = hitsList.filter((h) => h.cb.checked); if (!sel.length || !lastRe) return;
+      const byFile = new Map(); for (const h of sel) { let a = byFile.get(h.p); if (!a) byFile.set(h.p, a = []); a.push(h.i); }
+      if (!confirm("Заменить на «" + rep + "» в " + sel.length + " строках, файлов: " + byFile.size + "?\n\nИзменения сразу записываются в файлы.")) return;
+      let done = 0;
+      for (const [p, idxs] of byFile) {
+        try {
+          const lines = (await fs.promises.readFile(p, "utf8")).split("\n"), rx = new RegExp(lastRe.source, lastRe.flags);
+          for (const i of idxs) { const cr = lines[i].endsWith("\r"), ln = cr ? lines[i].slice(0, -1) : lines[i]; lines[i] = (opt.r ? ln.replace(rx, rep) : ln.replace(rx, () => rep)) + (cr ? "\r" : ""); done++; }
+          await fs.promises.writeFile(p, lines.join("\n"), "utf8");
+          for (const l of app.workspace.getLeavesOfType("basalt-textfile")) { const v = l.view; if (!v || !v.reload) continue; const abs = /^[A-Za-z]:[\\/]|^\//.test(v.path) ? v.path : path.join(app.vault.adapter.basePath, v.path); if (path.resolve(abs).toLowerCase() === path.resolve(p).toLowerCase()) v.reload(); }
+        } catch (e) { console.error("[basalt-find]", e); }
+      }
+      info.textContent = "Заменено строк: " + done; search();
+    }
+    repBtn.addEventListener("click", applyReplace);
     q.addEventListener("input", start); mask.addEventListener("input", start);
     q.addEventListener("keydown", (e) => { if (e.key === "Enter") { clearTimeout(timer); search(); const f = list.querySelector(".bsf-hit"); if (e.shiftKey === false && f && !timer) { /* results appear as they stream */ } } });
     box.onKey = (e) => { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(); } };

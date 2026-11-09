@@ -187,7 +187,7 @@
         const useTabs = tabs > spaces;
         const two = (text.match(/^ {2}\S/gm) || []).length, four = (text.match(/^ {4}\S/gm) || []).length;
         const unit = useTabs ? 4 : (four > two * 1.5 ? 4 : 2);
-        this.indentLabel = useTabs ? "Табуляция" : "Пробелы: " + unit;
+        this.indentLabel = useTabs ? "Табуляция" : "Пробелы: " + unit; this.useTabs = useTabs; this.unit = unit;
         const self = this;
         const dupLine = (cm, down) => { const c = cm.getCursor("head"); if (cm.somethingSelected()) { const t = cm.getSelection(); cm.replaceSelection(t + t, "around"); return; } const l = cm.getLine(c.line); if (down) { cm.replaceRange("\n" + l, { line: c.line, ch: l.length }); cm.setCursor({ line: c.line + 1, ch: c.ch }); } else cm.replaceRange(l + "\n", { line: c.line, ch: 0 }); };
         const cmpP = (a, b) => a.line - b.line || a.ch - b.ch;
@@ -224,7 +224,7 @@
           });
         };
         const zoom = (d) => { const s = d === 0 ? 14 : Math.max(9, Math.min(32, store.get("size", 14) + d)); store.set("size", s); wrap.style.setProperty("--bstf-size", s + "px"); this.cm.refresh(); };
-        const goLine = (cm) => { const v = prompt("Перейти к строке (1–" + cm.lineCount() + "):", String(cm.getCursor().line + 1)); const n = parseInt(v, 10); if (n >= 1) { cm.setCursor({ line: Math.min(n, cm.lineCount()) - 1, ch: 0 }); cm.scrollIntoView(null, 120); } };
+        const goLine = () => { if (window.__bsQuick) window.__bsQuick.open(":"); };
         this.cm = CM(holder, {
           value: text, mode, theme: "obsidian", lineNumbers: true, lineWrapping: store.get("wrap", false), indentUnit: unit, tabSize: unit, indentWithTabs: useTabs,
           styleActiveLine: true, matchBrackets: true, configureMouse: (cm, repeat, ev) => ({ addNew: ev.altKey }), autoCloseBrackets: true, scrollPastEnd: true, smartIndent: true, electricChars: true,
@@ -243,7 +243,7 @@
             "Shift-Tab": (cm) => cm.indentSelection("subtract"),
           },
         });
-        this.getText = () => this.cm.getValue();
+        this.getText = () => { const t = this.cm.getValue().replace(/\r\n/g, "\n"); return this.eol === "\r\n" ? t.replace(/\n/g, "\r\n") : t; };
         this.cm.on("change", () => { this.touch(); this.scheduleMarks(); });
         this.cm.on("renderLine", (cm, line, elt) => {
           const m = /^[ \t]+/.exec(line.text); if (!m) return; const cols = CM.countColumn(m[0], null, cm.getOption("tabSize")); if (cols < unit) return;
@@ -377,9 +377,28 @@
         const sp = el("span", "sp"); const mk = (t) => el("span", null, t);
         this.stWrap = mk(""); this.stWrap.dataset.act = "wrap"; this.stWrap.title = "Перенос длинных строк (Alt+Z)"; this.stWrap.addEventListener("click", () => this.setWrap(!this.cm.getOption("lineWrapping")));
         this.stTerm = mk("Терминал"); this.stTerm.dataset.act = "term"; this.stTerm.title = "Терминал под редактором (Ctrl+`)"; this.stTerm.addEventListener("click", () => this.toggleTerm());
-        s.append(this.stPos, this.stSel, sp, this.stTerm, this.stWrap, mk(this.indentLabel), mk(this.eol === "\r\n" ? "CRLF" : "LF"), mk("UTF-8"), mk(this.lang));
+        this.stIndent = mk(this.indentLabel); this.stIndent.dataset.act = "indent"; this.stIndent.title = "Отступы"; this.stIndent.addEventListener("click", (e) => this.indentMenu(e));
+        this.stEol = mk(this.eol === "\r\n" ? "CRLF" : "LF"); this.stEol.dataset.act = "eol"; this.stEol.title = "Окончания строк: нажмите, чтобы переключить LF / CRLF"; this.stEol.addEventListener("click", () => { this.eol = this.eol === "\r\n" ? "\n" : "\r\n"; this.stEol.textContent = this.eol === "\r\n" ? "CRLF" : "LF"; this.touch(); });
+        this.stLang = mk(this.lang); this.stLang.dataset.act = "lang"; this.stLang.title = "Язык подсветки"; this.stLang.addEventListener("click", (e) => this.langMenu(e));
+        s.append(this.stPos, this.stSel, sp, this.stTerm, this.stWrap, this.stIndent, this.stEol, mk("UTF-8"), this.stLang);
         const lines = el("span"); this.stLines = lines; s.insertBefore(lines, sp);
-        const goto = this.stPos; goto.dataset.act = "goto"; goto.title = "Перейти к строке (Ctrl+G)"; goto.addEventListener("click", () => this.cm.execCommand ? this.cm.options.extraKeys["Ctrl-G"](this.cm) : 0);
+        const goto = this.stPos; goto.dataset.act = "goto"; goto.title = "Перейти к строке (Ctrl+G)"; goto.addEventListener("click", () => { if (window.__bsQuick) window.__bsQuick.open(":"); });
+      }
+      langMenu(e) {
+        const M = api.Menu; if (!M) return; const m = new M(), CM = window.CodeMirror;
+        const L = [["Простой текст", "text/plain"], ["JavaScript", "text/javascript"], ["TypeScript", "text/typescript"], ["Python", "text/x-python"], ["Rust", "text/x-rustsrc"], ["Go", "text/x-go"], ["Java", "text/x-java"], ["C", "text/x-csrc"], ["C++", "text/x-c++src"], ["C#", "text/x-csharp"], ["Kotlin", "text/x-kotlin"], ["Swift", "text/x-swift"], ["Dart", "application/dart"], ["HTML", "text/html"], ["CSS", "text/css"], ["JSON", "application/json"], ["YAML", "text/x-yaml"], ["XML", "application/xml"], ["Markdown", "text/x-markdown"], ["Shell", "text/x-sh"], ["SQL", "text/x-sql"], ["Ruby", "text/x-ruby"], ["PHP", "application/x-httpd-php"], ["Lua", "text/x-lua"]];
+        for (const [name, mime] of L) m.addItem((i) => { i.setTitle(name).onClick(() => { this.cm.setOption("mode", mime); this.lang = name; this.stLang.textContent = name; if (i.setChecked) i.setChecked(false); this.drawMini(); }); if (name === this.lang) i.setChecked(true); });
+        m.showAtMouseEvent(e);
+      }
+      indentMenu(e) {
+        const M = api.Menu; if (!M) return; const m = new M(), cm = this.cm;
+        const set = (tabs, n) => { this.useTabs = tabs; this.unit = n; cm.setOption("indentUnit", n); cm.setOption("tabSize", n); cm.setOption("indentWithTabs", tabs); this.indentLabel = tabs ? "Табуляция" : "Пробелы: " + n; this.stIndent.textContent = this.indentLabel; cm.refresh(); };
+        for (const n of [2, 4, 8]) m.addItem((i) => { i.setTitle("Пробелы: " + n).onClick(() => set(false, n)); if (!this.useTabs && this.unit === n) i.setChecked(true); });
+        m.addItem((i) => { i.setTitle("Табуляция").onClick(() => set(true, cm.getOption("tabSize") || 4)); if (this.useTabs) i.setChecked(true); });
+        m.addSeparator();
+        m.addItem((i) => i.setTitle("Преобразовать отступы в пробелы").onClick(() => { cm.operation(() => { for (let l = 0; l < cm.lineCount(); l++) { const t = cm.getLine(l), mm = /^\t+/.exec(t); if (mm) cm.replaceRange(" ".repeat(mm[0].length * this.unit), { line: l, ch: 0 }, { line: l, ch: mm[0].length }); } }); }));
+        m.addItem((i) => i.setTitle("Преобразовать отступы в табуляцию").onClick(() => { cm.operation(() => { for (let l = 0; l < cm.lineCount(); l++) { const t = cm.getLine(l), mm = /^ +/.exec(t); if (mm) { const n = Math.floor(mm[0].length / this.unit); if (n) cm.replaceRange("\t".repeat(n) + " ".repeat(mm[0].length - n * this.unit), { line: l, ch: 0 }, { line: l, ch: mm[0].length }); } } }); }));
+        m.showAtMouseEvent(e);
       }
       updateStatus() {
         if (!this.cm || !this.stPos) return;
@@ -474,6 +493,10 @@
         const text = this.getText();
         try { this.lastText = text; await io.write(this.path, text); if (this.stateEl) this.stateEl.textContent = ""; }
         catch (e) { this.dirty = true; if (this.stateEl) this.stateEl.textContent = "Ошибка сохранения"; console.error("[basalt-textfile]", e); }
+      }
+      async reload() {
+        if (this.dirty || !this.cm) return;
+        try { const text = await io.read(this.path); if (text === this.lastText || this.dirty) return; this.lastText = text; const cur = this.cm.getCursor(), sc = this.cm.getScrollInfo(); this.cm.setValue(text); this.dirty = false; if (this.stateEl) this.stateEl.textContent = ""; this.cm.setCursor(cur); this.cm.scrollTo(sc.left, sc.top); } catch (e) { /* gone */ }
       }
       async external(f) {
         if (!f || isAbs(this.path) || f.path !== this.path || this.dirty || !this.cm) return;
