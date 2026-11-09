@@ -2400,21 +2400,6 @@
         }
       } catch (e) { console.warn("[fp-canvas] translate ribbon failed", e); }
     }
-    app.workspace.on("file-menu", (menu, file) => {
-      if (!file) return;
-      const isMd = /^md$/i.test(file.extension || ""), isDir = !!file.children;
-      if (!isMd && !isDir) return;
-      menu.addItem((item) => item.setSection("action").setTitle(isDir ? "Перевести md-файлы папки…" : "Перевести в другой язык…").setIcon("lucide-languages").onClick(() => {
-        const files = vaultMdFiles(file);
-        if (!files.length) return typeof Notice === "function" && new Notice("В папке нет md-файлов");
-        launch(files);
-      }));
-    });
-    app.workspace.on("files-menu", (menu, files) => {
-      const md = (files || []).filter((f) => /^md$/i.test(f.extension || ""));
-      if (!md.length) return;
-      menu.addItem((item) => item.setSection("action").setTitle("Перевести md-файлы (" + md.length + ")…").setIcon("lucide-languages").onClick(() => launch(md)));
-    });
     // right-click inside the note editor: translate the selection or the whole file
     app.workspace.on("editor-menu", (menu, editor, view) => {
       if (!view || !view.file) return;
