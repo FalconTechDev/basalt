@@ -131,9 +131,9 @@ Files that carry it: `src/basalt-textfile.js` (editor), `src/basalt-graphs.js` (
 Every IDE module takes its colours from the app palette (--background-*, --text-*, --interactive-accent, mapped through the --vs-* variables defined in asalt-textfile.js) and its shape from --bs-r / --bs-clip. No hard-coded greys or blues (only syntax colours are fixed).
 
 ## Gap list from the side-by-side with VS Code (same file, `analysis_options.yaml`, 2026-11-09)
-- [ ] Explorer shows dotfiles and dot folders (`.github`, `.idea`, `.vscode`, `.gitignore`, `.ci.yaml`), toggle in the explorer menu
-- [ ] Explorer shows full file names with extension (`CHANGELOG.md`, not `CHANGELOG` + a tag on the right)
-- [ ] Explorer file icons per type (yaml, md, bat, license, json, images...) and folder icons per name
+- [~] Explorer shows dotfiles and dot folders (`.github`, `.idea`, `.vscode`, `.gitignore`, `.ci.yaml`), toggle in the explorer menu
+- [x] Explorer shows full file names with extension (`CHANGELOG.md`, not `CHANGELOG` + a tag on the right)
+- [~] Explorer file icons per type (yaml, md, bat, license, json, images...) and folder icons per name
 - [ ] Explorer root header (folder name, collapse all) and the sections under it: Open Editors, Outline, Timeline
 - [ ] Git colours and letters on files and folders in the explorer (M, U, A, D, ignored dimmed)
 - [ ] Activity bar like VS Code: Explorer, Search, Source control, Run, Extensions, Account, Settings (now the Obsidian ribbon with unrelated icons)

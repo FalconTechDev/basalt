@@ -28,6 +28,7 @@
     .bsf-i { color: var(--text-faint); display: inline-flex; } .bsf-r.is-dir .bsf-i { color: var(--interactive-accent); }
     .bsf-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bsf-n small { color: var(--text-faint); font-weight: 400; margin-left: 8px; }
+    .bsf-ext { display: inline-flex; align-items: center; justify-content: center; width: 22px; flex: none; height: 14px; padding: 0; margin: 1px -3px 1px -3px; border-radius: 3px; font-size: 8px; font-weight: 700; color: #fff; letter-spacing: .2px; text-transform: uppercase; box-sizing: border-box; line-height: 1; }
     .bsf-x { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
     .bsf-pin { width: 12px; height: 12px; color: var(--interactive-accent); flex: none; }
     .bsf-r input.bsf-ren { flex: 1; min-width: 0; height: 22px; padding: 0 4px; }
@@ -54,6 +55,9 @@
   const IMG = /^(png|jpe?g|gif|webp|bmp|svg|avif|ico)$/i;
   const kindOf = (f) => (f.children ? "folder" : f.extension === "md" ? "note" : f.extension === "canvas" ? "canvas" : IMG.test(f.extension) ? "image" : "file");
   const HIDDEN = /^\.(basalt|obsidian|git|trash)$/;
+  // one coloured badge per file type, the same idea as the icon themes of VS Code
+  const FILECOL = { md: "#519aba", mdx: "#519aba", txt: "#8f98a0", json: "#cbcb41", yaml: "#e06c75", yml: "#e06c75", toml: "#c9733a", lock: "#7a7a7a", js: "#d4b800", mjs: "#d4b800", cjs: "#d4b800", jsx: "#2fa8c6", ts: "#3178c6", tsx: "#3178c6", py: "#3572A5", rs: "#c97d4f", go: "#00ADD8", java: "#b07219", kt: "#A97BFF", cs: "#178600", c: "#8a8f94", h: "#8a8f94", cpp: "#f34b7d", hpp: "#f34b7d", swift: "#F05138", rb: "#cc342d", php: "#8892bf", dart: "#00B4AB", lua: "#5a5aff", sh: "#7fbf4d", bat: "#7fbf4d", cmd: "#7fbf4d", ps1: "#4d8fd1", css: "#7a5cc7", scss: "#c6538c", html: "#e34c26", xml: "#e37933", svg: "#ffb13b", png: "#a074c4", jpg: "#a074c4", jpeg: "#a074c4", gif: "#a074c4", webp: "#a074c4", ico: "#a074c4", pdf: "#e44d4d", zip: "#b58900", gz: "#b58900", exe: "#6d8086", dll: "#6d8086", sql: "#e38c00", csv: "#4caf50", log: "#7a7a7a", ini: "#7a7a7a", iml: "#e0705c", gradle: "#5aa9a9", env: "#c9b400", gitignore: "#d9593d", dockerfile: "#2496ed" };
+  const badge = (f) => { const raw = (f.extension || "").toLowerCase() || (/^\.?[\w-]+$/.test(f.name) && f.name[0] === "." ? f.name.slice(1).toLowerCase() : ""); const col = FILECOL[raw] || "#7d7d7d"; const label = (raw || "·").slice(0, 3); return `<span class="bsf-ext" style="background:${col}">${label}</span>`; };
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
   const SORTS = [["name", "по имени"], ["mtime", "по дате изменения"], ["type", "по типу"]];
   const pinsApi = () => window.__bsPinsApi || { has: () => false, toggle: () => {}, onChange: () => {} };
@@ -125,7 +129,7 @@
 
       // ---- model
       children(folder) {
-        const list = (folder.children || []).filter((c) => !(c.children && HIDDEN.test(c.name)) && !(c.name[0] === "." && !c.children));
+        const wsMode = !!this.ws(), list = (folder.children || []).filter((c) => !(c.children && HIDDEN.test(c.name)) && !(c.name[0] === "." && !c.children && !wsMode));
         const pins = pinsApi();
         const cmp = (a, b) => {
           if (!!a.children !== !!b.children) return a.children ? -1 : 1;
@@ -220,10 +224,10 @@
           r.className = "bsf-r" + (dir ? " is-dir" : "") + (dir && this.open.has(f.path) ? " is-open" : "") + (active ? " is-active" : "") + (this.sel.has(f.path) ? " is-sel" : "") + (this.focus === f.path ? " is-focus" : "");
           r.dataset.path = f.path; r.draggable = !ws; r.style.paddingLeft = 6 + depth * 14 + "px";
           const extName = ws ? f.extension || "" : f.extension !== "md" && f.extension !== "canvas" ? f.extension : "";
-          const ext = !dir && extName ? `<span class="bsf-x">${extName}</span>` : "";
-          r.innerHTML = (dir ? svg("car", "bsf-car") : '<span class="bsf-sp"></span>') + `<span class="bsf-i">${svg(dir ? "folder" : kindOf(f))}</span><span class="bsf-n"></span>${!dir && pins.has(f.path) ? svg("pin", "bsf-pin") : ""}${ext}`;
+          const ext = "";
+          r.innerHTML = (dir ? svg("car", "bsf-car") : '<span class="bsf-sp"></span>') + `<span class="bsf-i">${dir ? svg("folder") : kindOf(f) === "canvas" ? svg("canvas") : badge(f)}</span><span class="bsf-n"></span>${!dir && pins.has(f.path) ? svg("pin", "bsf-pin") : ""}${ext}`;
           for (let d = 1; d <= depth; d++) { const gl = document.createElement("i"); gl.className = "bsf-guide"; gl.style.left = 6 + (d - 1) * 14 + 7 + "px"; r.appendChild(gl); }
-          const n = r.querySelector(".bsf-n"); n.textContent = dir || ws ? f.name : f.name.replace(/\.(md|canvas)$/i, "");
+          const n = r.querySelector(".bsf-n"); n.textContent = f.name;
           if (flat && f.parent && f.parent.path && f.parent.path !== "/") { const s = document.createElement("small"); s.textContent = f.parent.path; n.appendChild(s); }
           this.wire(r, f);
           frag.appendChild(r);
