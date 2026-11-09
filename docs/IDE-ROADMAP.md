@@ -129,3 +129,19 @@ Files that carry it: `src/basalt-textfile.js` (editor), `src/basalt-graphs.js` (
 
 ## Style rule
 Every IDE module takes its colours from the app palette (--background-*, --text-*, --interactive-accent, mapped through the --vs-* variables defined in asalt-textfile.js) and its shape from --bs-r / --bs-clip. No hard-coded greys or blues (only syntax colours are fixed).
+
+## Gap list from the side-by-side with VS Code (same file, `analysis_options.yaml`, 2026-11-09)
+- [ ] Explorer shows dotfiles and dot folders (`.github`, `.idea`, `.vscode`, `.gitignore`, `.ci.yaml`), toggle in the explorer menu
+- [ ] Explorer shows full file names with extension (`CHANGELOG.md`, not `CHANGELOG` + a tag on the right)
+- [ ] Explorer file icons per type (yaml, md, bat, license, json, images...) and folder icons per name
+- [ ] Explorer root header (folder name, collapse all) and the sections under it: Open Editors, Outline, Timeline
+- [ ] Git colours and letters on files and folders in the explorer (M, U, A, D, ignored dimmed)
+- [ ] Activity bar like VS Code: Explorer, Search, Source control, Run, Extensions, Account, Settings (now the Obsidian ribbon with unrelated icons)
+- [ ] Title bar menu: File, Edit, Selection, View, Go, Run, Terminal, Help + command centre box with the folder name
+- [ ] One global status bar at the bottom: branch, sync, problems count, line / column, spaces, encoding, EOL, language (now per editor)
+- [ ] Bottom panel with tabs Problems / Output / Terminal shared by the whole window
+- [ ] Editor tab: file-type icon, preview tab in italics, dirty dot instead of close button, split editor and "..." actions on the right
+- [ ] Breadcrumb: file-type icon, folder / symbol path clickable
+- [ ] Links in comments and strings: underline, Ctrl+click opens
+- [ ] Comment italics (as in Dark+), active indent guide highlighted, horizontal scrollbar, overview ruler (marks for search hits and changes)
+- [ ] Editor font size and line height setting, ligatures option
