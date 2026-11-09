@@ -95,6 +95,6 @@
     if (!window.app || !app.commands || !app.commands.addCommand || !app.vault || !app.vault.adapter) return;
     clearInterval(t);
     app.commands.addCommand({ id: "basalt:find-in-files", name: "Поиск по файлам", icon: "lucide-search", hotkeys: [{ modifiers: ["Ctrl", "Shift"], key: "F" }], callback: () => { const l = app.workspace.activeLeaf, v = l && l.view; const sel = v && v.cm && v.cm.getSelection && v.cm.getSelection(); openFind(sel && !sel.includes("\n") ? sel : ""); } });
-    window.__bsFind = { open: openFind };
+    window.__bsFind = { open: openFind, openAt };
   }, 500);
 })();
