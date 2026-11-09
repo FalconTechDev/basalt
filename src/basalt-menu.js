@@ -121,8 +121,8 @@
             e.stopPropagation(); document.querySelectorAll(".bm-drop").forEach((z) => z.remove());
             const d = document.createElement("div"); d.className = "bm-drop";
             more.forEach((it, k) => { const r = row(menu, it, e); if (/все/i.test(txt(it))) r.classList.add("is-danger"); if (k && /все/i.test(txt(it))) { const sep = document.createElement("div"); sep.className = "bm-sep"; d.appendChild(sep); } d.appendChild(r); });
-            document.body.appendChild(d); const br = b.getBoundingClientRect(), dr = d.getBoundingClientRect();
-            d.style.left = Math.max(8, Math.min(innerWidth - dr.width - 8, br.right - dr.width)) + "px"; d.style.top = (br.bottom + 6 + dr.height <= innerHeight - 8 ? br.bottom + 6 : Math.max(8, br.top - dr.height - 6)) + "px";
+            const pr = b.closest(".bm-pop").getBoundingClientRect(); d.style.width = pr.width + "px"; d.style.boxSizing = "border-box"; document.body.appendChild(d); const dr = d.getBoundingClientRect();
+            d.style.left = pr.left + "px"; d.style.top = (pr.bottom + 4 + dr.height <= innerHeight - 8 ? pr.bottom + 4 : Math.max(8, pr.top - dr.height - 4)) + "px";
           });
           s.appendChild(b);
         }
