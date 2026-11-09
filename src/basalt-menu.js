@@ -5,8 +5,9 @@
   const MIN_ITEMS = 4, COLS_FROM = 10;
   const css = document.createElement("style");
   css.textContent = `
+    body { --bm-bg: color-mix(in srgb, var(--background-primary) 90%, var(--text-normal)); --bm-bg2: color-mix(in srgb, var(--background-primary) 82%, var(--text-normal)); }
     .bm-pop { position: fixed; z-index: 60; display: flex; flex-direction: column; gap: 4px; padding: 6px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto;
-      background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); color: var(--text-normal); user-select: none; }
+      background: var(--bm-bg); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); color: var(--text-normal); user-select: none; }
     .bm-cols { display: flex; gap: 6px; align-items: stretch; }
     .bm-col { display: flex; flex-direction: column; min-width: 168px; }
     .bm-col + .bm-col { border-left: 1px solid var(--background-modifier-border); padding-left: 6px; }
@@ -19,12 +20,12 @@
     .bm-t { flex: 1; overflow: hidden; text-overflow: ellipsis; } .bm-k { color: var(--text-faint); font-size: 11px; margin-left: 10px; }
     .bm-sep { height: 1px; background: var(--background-modifier-border); margin: 4px 2px; }
     .bm-bar { display: flex; gap: 6px; align-items: center; border-top: 1px solid var(--background-modifier-border); padding-top: 6px; margin-top: 2px; }
-    .bm-find { flex: 1; display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: text; }
+    .bm-find { flex: 1; display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; background: var(--bm-bg2); border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: text; }
     .bm-find:hover { border-color: var(--background-modifier-border-hover); }
-    .bm-split { display: flex; border-radius: 6px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); }
+    .bm-split { display: flex; border-radius: 6px; background: var(--bm-bg2); border: 1px solid var(--background-modifier-border); }
     .bm-split > div { display: flex; align-items: center; gap: 6px; padding: 7px 10px; cursor: pointer; }
     .bm-split > div:hover { background: var(--background-modifier-hover); } .bm-split > div + div { border-left: 1px solid var(--background-modifier-border); padding: 7px 8px; }
-    .bm-drop { position: fixed; z-index: 61; min-width: 190px; padding: 5px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: 8px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); }
+    .bm-drop { position: fixed; z-index: 61; min-width: 190px; padding: 5px; background: var(--bm-bg); border: 1px solid var(--background-modifier-border); border-radius: 8px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); }
   `;
   document.head.appendChild(css);
 
