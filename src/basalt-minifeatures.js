@@ -70,13 +70,14 @@
 // "Показать в папке": a slash-joined vault path makes Windows Explorer ignore the file, so normalize it first.
 (() => {
   const t = setInterval(() => {
-    if (!window.app || !app.vault || !app.vault.showInFolder) return;
+    if (!window.app || !app.vault || !app.vault.adapter) return;
     clearInterval(t);
-    app.vault.showInFolder = function (rel) {
+    const show = (rel) => {
       try {
         const e = window.electron || window.require("electron"), p = window.require("path");
-        (e.remote && e.remote.shell || e.shell).showItemInFolder(p.normalize(this.adapter.getFullPath(rel)));
+        (e.remote && e.remote.shell || e.shell).showItemInFolder(p.normalize(app.vault.adapter.getFullPath(rel)));
       } catch (err) { console.error("[show-in-folder]", err); }
     };
+    for (const o of [app, app.vault]) if (typeof o.showInFolder === "function") o.showInFolder = show;
   }, 500);
 })();

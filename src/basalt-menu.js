@@ -5,9 +5,9 @@
   const MIN_ITEMS = 4, COLS_FROM = 10;
   const css = document.createElement("style");
   css.textContent = `
-    .bm-pop { position: fixed; z-index: 10000; display: flex; flex-direction: column; gap: 4px; padding: 6px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto;
+    .bm-pop { position: fixed; z-index: 60; display: flex; flex-direction: column; gap: 4px; padding: 6px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto;
       background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); color: var(--text-normal); user-select: none; }
-    .bm-cols { display: flex; gap: 6px; align-items: flex-start; }
+    .bm-cols { display: flex; gap: 6px; align-items: stretch; }
     .bm-col { display: flex; flex-direction: column; min-width: 168px; }
     .bm-col + .bm-col { border-left: 1px solid var(--background-modifier-border); padding-left: 6px; }
     .bm-h { padding: 5px 8px 3px; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-faint); }
@@ -24,7 +24,7 @@
     .bm-split { display: flex; border-radius: 6px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); }
     .bm-split > div { display: flex; align-items: center; gap: 6px; padding: 7px 10px; cursor: pointer; }
     .bm-split > div:hover { background: var(--background-modifier-hover); } .bm-split > div + div { border-left: 1px solid var(--background-modifier-border); padding: 7px 8px; }
-    .bm-drop { position: fixed; z-index: 10001; min-width: 190px; padding: 5px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: 8px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); }
+    .bm-drop { position: fixed; z-index: 61; min-width: 190px; padding: 5px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: 8px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); }
   `;
   document.head.appendChild(css);
 
