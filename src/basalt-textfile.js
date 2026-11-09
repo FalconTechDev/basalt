@@ -36,6 +36,11 @@
     .bstf-status { display: flex; align-items: center; gap: 14px; padding: 2px 12px; font-size: var(--font-ui-smaller); color: var(--text-faint); border-top: 1px solid var(--background-modifier-border); user-select: none; }
     .bstf-status .sp { margin-left: auto; }
     .bstf-status span[data-act] { cursor: pointer; } .bstf-status span[data-act]:hover { color: var(--text-normal); }
+    .bstf .CodeMirror { min-width: 0; }
+    .bstf-mini { position: relative; flex: none; border-left: 1px solid rgba(128,128,128,.15); background: var(--vs-bg); cursor: pointer; overflow: hidden; }
+    .bstf-mini canvas { display: block; }
+    .bstf-mini-slider { position: absolute; left: 0; right: 0; background: rgba(128,128,128,.22); pointer-events: none; }
+    .bstf-mini:hover .bstf-mini-slider { background: rgba(128,128,128,.34); }
     .bstf-msg { padding: 24px; color: var(--text-muted); }
     .bstf-match { background: rgba(255,200,0,.28); border-radius: 2px; }
     .bstf-cur { background: rgba(255,150,0,.55); border-radius: 2px; outline: 1px solid rgba(255,150,0,.9); }
@@ -141,7 +146,7 @@
                 wrap.appendChild(bar);
 
         const find = this.buildFind(); wrap.appendChild(find);
-        const holder = el("div"); holder.style.cssText = "flex:1;min-height:0;display:flex;flex-direction:column;position:relative"; wrap.appendChild(holder);
+        const holder = el("div"); holder.style.cssText = "flex:1;min-height:0;display:flex;flex-direction:row;position:relative"; wrap.appendChild(holder);
         const status = el("div", "bstf-status"); this.status = status; wrap.appendChild(status);
         wrap.style.setProperty("--bstf-size", store.get("size", 14) + "px");
 
@@ -203,12 +208,45 @@
         this.cm.on("cursorActivity", () => this.updateStatus());
         this.cm.getWrapperElement().addEventListener("wheel", (e) => { if (e.ctrlKey) { e.preventDefault(); zoom(e.deltaY < 0 ? 1 : -1); } }, { passive: false });
         this.btnWrap.classList.toggle("on", !!this.cm.getOption("lineWrapping"));
-        this.buildStatus(); this.setWrap(!!this.cm.getOption("lineWrapping"));
+        this.buildMinimap(holder); this.buildStatus(); this.setWrap(!!this.cm.getOption("lineWrapping"));
         this.updateStatus();
         this.registerEvent(app.vault.on("modify", (f) => this.external(f)));
         setTimeout(() => this.cm && this.cm.refresh(), 50);
       }
 
+      // ---- minimap (code overview on the right, as in VS Code) ----
+      buildMinimap(holder) {
+        const W = 92, box = el("div", "bstf-mini"), cv = document.createElement("canvas"), slider = el("div", "bstf-mini-slider"); box.style.width = W + "px"; box.append(cv, slider); holder.appendChild(box);
+        this.mini = { box, cv, slider, W }; let drag = false;
+        const scrollTo = (clientY) => { const m = this.miniMetrics(), r = box.getBoundingClientRect(), frac = (clientY - r.top + m.off) / Math.max(1, m.docH); this.cm.scrollTo(null, frac * m.info.height - m.info.clientHeight / 2); };
+        box.addEventListener("pointerdown", (e) => { drag = true; box.setPointerCapture(e.pointerId); scrollTo(e.clientY); });
+        box.addEventListener("pointermove", (e) => { if (drag) scrollTo(e.clientY); });
+        box.addEventListener("pointerup", () => { drag = false; }); box.addEventListener("pointercancel", () => { drag = false; });
+        this.cm.on("scroll", () => this.drawMini()); this.cm.on("change", () => this.drawMini());
+        this.miniRO = new ResizeObserver(() => this.drawMini()); this.miniRO.observe(box);
+        setTimeout(() => this.drawMini(), 80);
+      }
+      miniMetrics() {
+        const cm = this.cm, lines = cm.lineCount(), rowH = 2, H = this.mini.box.clientHeight, docH = lines * rowH, info = cm.getScrollInfo();
+        const frac = info.height > info.clientHeight ? info.top / (info.height - info.clientHeight) : 0;
+        return { lines, rowH, H, docH, info, off: docH > H ? frac * (docH - H) : 0 };
+      }
+      drawMini() {
+        if (this.miniRaf) return;
+        this.miniRaf = requestAnimationFrame(() => {
+          this.miniRaf = 0; const mi = this.mini; if (!mi || !this.cm || !this.wrap || !this.wrap.isConnected) return;
+          const m = this.miniMetrics(); if (m.H < 10) return; const d = window.devicePixelRatio || 1, cv = mi.cv, W = mi.W;
+          if (cv.width !== Math.round(W * d) || cv.height !== Math.round(m.H * d)) { cv.width = Math.round(W * d); cv.height = Math.round(m.H * d); cv.style.width = W + "px"; cv.style.height = m.H + "px"; }
+          const ctx = cv.getContext("2d"); ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, W, m.H);
+          const cs = getComputedStyle(this.wrap), c = (n) => cs.getPropertyValue(n).trim(), pal = { kw: c("--vs-kw"), str: c("--vs-str"), com: c("--vs-com"), num: c("--vs-num"), fn: c("--vs-fn"), vr: c("--vs-var"), fg: c("--vs-fg"), ty: c("--vs-type") };
+          const colour = (t) => !t ? pal.fg : t.includes("comment") ? pal.com : t.includes("string") ? pal.str : t.includes("number") ? pal.num : t.includes("keyword") || t.includes("atom") || t.includes("builtin") || t.includes("tag") || t.includes("header") ? pal.kw : t.includes("def") ? pal.fn : t.includes("variable-3") || t.includes("type") ? pal.ty : t.includes("variable") || t.includes("property") || t.includes("attribute") ? pal.vr : pal.fg;
+          const first = Math.max(0, Math.floor(m.off / m.rowH)), last = Math.min(m.lines - 1, Math.ceil((m.off + m.H) / m.rowH));
+          ctx.globalAlpha = .75;
+          for (let i = first; i <= last; i++) { const y = i * m.rowH - m.off; for (const t of this.cm.getLineTokens(i)) { if (!t.string.trim()) continue; const w = Math.min(W - 4 - t.start, t.end - t.start); if (w <= 0) continue; ctx.fillStyle = colour(t.type); ctx.fillRect(2 + t.start, y, w, 1.4); } }
+          ctx.globalAlpha = 1;
+          const top = (m.info.top / m.info.height) * m.docH - m.off, h = Math.max(10, (m.info.clientHeight / m.info.height) * m.docH); mi.slider.style.top = Math.max(0, top) + "px"; mi.slider.style.height = Math.min(m.H, h) + "px";
+        });
+      }
       buildStatus() {
         const s = this.status; s.textContent = "";
         this.stPos = el("span"); this.stSel = el("span");
@@ -322,8 +360,8 @@
           this.cm.setCursor(cur); this.cm.scrollTo(sc.left, sc.top);
         } catch (e) { /* file gone */ }
       }
-      onResize() { try { this.cm && this.cm.refresh(); } catch (e) { /* hidden */ } }
-      async onClose() { await this.flush(); }
+      onResize() { try { this.cm && this.cm.refresh(); this.drawMini && this.drawMini(); } catch (e) { /* hidden */ } }
+      async onClose() { if (this.miniRO) this.miniRO.disconnect(); await this.flush(); }
     };
   }
 

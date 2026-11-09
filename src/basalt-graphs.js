@@ -13,6 +13,11 @@
     c: ["C", "#aaaaaa"], h: ["C", "#aaaaaa"], cpp: ["C++", "#f34b7d"], hpp: ["C++", "#f34b7d"], cc: ["C++", "#f34b7d"], swift: ["Swift", "#F05138"], rb: ["Ruby", "#cc342d"],
     php: ["PHP", "#8892bf"], dart: ["Dart", "#00B4AB"], lua: ["Lua", "#5a5aff"], sh: ["Shell", "#89e051"], css: ["CSS", "#7a5cc7"], html: ["HTML", "#e34c26"],
   };
+  const FILECOL = { txt: "#9aa0a6", md: "#519aba", mdx: "#519aba", json: "#cbcb41", yaml: "#e06c75", yml: "#e06c75", toml: "#c9733a", lock: "#7a7a7a", png: "#a074c4", jpg: "#a074c4", jpeg: "#a074c4", gif: "#a074c4", webp: "#a074c4", ico: "#a074c4", svg: "#ffb13b", pdf: "#e44d4d", zip: "#b58900", gz: "#b58900", tar: "#b58900", exe: "#6d8086", dll: "#6d8086", so: "#6d8086", bat: "#89e051", cmd: "#89e051", ps1: "#4d8fd1", log: "#8a8a8a", csv: "#4caf50", xml: "#e37933", ini: "#8a8a8a", env: "#ecd53f", gradle: "#5aa9a9", properties: "#8a8a8a", sql: "#e38c00", ipynb: "#f37626", dockerfile: "#2496ed", mjs: "#f1e05a" };
+  const langOf = (ext) => LANG[ext] || [ext ? ext.toUpperCase() : "Файл", FILECOL[ext] || "#8a8a8a"];
+  const P_FOLDER = new Path2D("M0 3 Q0 1.5 1.5 1.5 H6 L8 3.5 H16.5 Q18 3.5 18 5 V14 Q18 15.5 16.5 15.5 H1.5 Q0 15.5 0 14 Z");
+  const P_FILE = new Path2D("M2.5 0 H11 L16 5 V16 Q16 17.5 14.5 17.5 H2.5 Q1 17.5 1 16 V1.5 Q1 0 2.5 0 Z");
+  const P_FOLD = new Path2D("M11 0 V5 H16");
   const JSLIKE = new Set(["js", "jsx", "mjs", "cjs", "ts", "tsx"]), CLIKE = new Set(["c", "h", "cpp", "hpp", "cc"]), JVM = new Set(["java", "kt", "cs"]);
   const KW = new Set(["if", "for", "while", "switch", "catch", "function", "return", "else", "do", "try", "new", "typeof", "sizeof", "super", "this", "await", "async", "def", "fn", "func", "class", "match", "with", "and", "or", "not", "in", "is", "elif", "print", "len", "range", "str", "int", "map", "get", "set", "log", "push", "pop", "join", "then", "constructor", "require", "import", "assert", "println", "format", "Some", "Ok", "Err", "Vec", "String", "Box", "Arc"]);
   const css = document.createElement("style");
@@ -37,13 +42,13 @@
   document.head.appendChild(css);
 
   // ---------- scanning ----------
-  async function scan(root, prog) {
+  async function scan(root, prog, all) {
     const files = [];
     async function walk(dir, rel) {
       let ents; try { ents = await fs.promises.readdir(dir, { withFileTypes: true }); } catch (e) { return; }
       for (const e of ents) {
         if (e.isDirectory()) { if (e.name[0] === "." || SKIP.has(e.name)) continue; await walk(path.join(dir, e.name), rel ? rel + "/" + e.name : e.name); }
-        else if (files.length < LIMIT_FILES) { const ext = e.name.split(".").pop().toLowerCase(); if (e.name.includes(".") && LANG[ext]) files.push({ rel: (rel ? rel + "/" : "") + e.name, abs: path.join(dir, e.name), ext, name: e.name }); }
+        else if (files.length < LIMIT_FILES) { const ext = e.name.includes(".") ? e.name.split(".").pop().toLowerCase() : ""; if (all || (ext && LANG[ext])) files.push({ rel: (rel ? rel + "/" : "") + e.name, abs: path.join(dir, e.name), ext, name: e.name }); }
       }
       if (prog) prog(files.length);
     }
@@ -131,7 +136,7 @@
   // ---------- graph ----------
   const hue = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h) % 360; };
   async function buildGraph(root, mode, prog) {
-    const files = await scan(root, prog);
+    const files = await scan(root, prog, mode === "files");
     const resolve = makeResolver(files), parsed = new Map();
     let n = 0;
     for (const f of files) {
@@ -141,15 +146,15 @@
     }
     const nodes = [], links = [], idx = new Map(), seen = new Set();
     const addNode = (o) => { o.deg = 0; idx.set(o.id, o); nodes.push(o); return o; };
-    const addLink = (a, b, kind) => { const k = a.id + ">" + b.id + kind; if (seen.has(k) || a === b) return; seen.add(k); links.push({ a, b, kind }); a.deg++; b.deg++; };
+    const addLink = (a, b, kind) => { const k = a.id + ">" + b.id + kind; if (seen.has(k) || a === b) return; seen.add(k); links.push({ a, b, kind }); a.deg++; b.deg++; if (kind === "contains") b.up = a; };
     // directories + files
     const dirNode = (d) => { if (idx.has("d:" + d)) return idx.get("d:" + d); const node = addNode({ id: "d:" + d, kind: "dir", label: d === "" ? path.basename(root) : path.posix.basename(d), path: d, dir: d, loc: 0 }); if (d !== "") addLink(dirNode(path.posix.dirname(d) === "." ? "" : path.posix.dirname(d)), node, "contains"); return node; };
     dirNode("");
-    for (const f of files) { const d = path.posix.dirname(f.rel) === "." ? "" : path.posix.dirname(f.rel); const node = addNode({ id: "f:" + f.rel, kind: "file", label: f.name, path: f.rel, abs: f.abs, dir: d, loc: f.loc || 1, lang: LANG[f.ext][0], color: LANG[f.ext][1] }); f.node = node; addLink(dirNode(d), node, "contains"); }
+    for (const f of files) { const d = path.posix.dirname(f.rel) === "." ? "" : path.posix.dirname(f.rel); const node = addNode({ id: "f:" + f.rel, kind: "file", label: f.name, path: f.rel, abs: f.abs, dir: d, loc: f.loc || 1, ext: f.ext, lang: langOf(f.ext)[0], color: langOf(f.ext)[1], extColor: langOf(f.ext)[1] }); f.node = node; addLink(dirNode(d), node, "contains"); }
     for (const f of files) for (const spec of parsed.get(f).imps) { const t = resolve(f, spec); if (t && t.node) addLink(f.node, t.node, "import"); }
     let symCount = 0; const defs = new Map();
     if (mode === "code") {
-      for (const f of files) { const p = parsed.get(f); f.symNodes = []; for (const s of p.syms) { if (symCount >= MAX_SYMS) break; symCount++; const node = addNode({ id: "s:" + f.rel + ":" + s.line + ":" + s.name, kind: "sym", sym: s.kind, label: s.name, path: f.rel, abs: f.abs, line: s.line + 1, dir: f.node.dir, parent: f.node, loc: 0, lang: LANG[f.ext][0], color: f.node.color }); f.symNodes.push(node); addLink(f.node, node, "contains"); (defs.get(s.name) || defs.set(s.name, []).get(s.name)).push(node); } }
+      for (const f of files) { const p = parsed.get(f); f.symNodes = []; for (const s of p.syms) { if (symCount >= MAX_SYMS) break; symCount++; const node = addNode({ id: "s:" + f.rel + ":" + s.line + ":" + s.name, kind: "sym", sym: s.kind, label: s.name, path: f.rel, abs: f.abs, line: s.line + 1, dir: f.node.dir, parent: f.node, loc: 0, lang: langOf(f.ext)[0], color: f.node.color }); f.symNodes.push(node); addLink(f.node, node, "contains"); (defs.get(s.name) || defs.set(s.name, []).get(s.name)).push(node); } }
       for (const f of files) {
         const p = parsed.get(f), sn = f.symNodes; if (!sn.length && !p.lines.length) continue; let cur = -1; const rx = /\b([A-Za-z_$][\w$]*)\s*\(/g;
         for (let i = 0; i < p.lines.length; i++) {
@@ -167,14 +172,15 @@
     const groups = ranked.slice(0, 14).map(([k, c]) => ({ name: k, n: c, color: gcol.get(k) }));
     for (const f of files) { f.node.color = gcol.get(f.group); f.node.group = f.group; if (f.symNodes) for (const sy of f.symNodes) { sy.color = f.node.color; sy.group = f.group; } }
     // dir sizes
-    for (const nd of nodes) if (nd.kind === "file") { let d = idx.get("d:" + nd.dir); while (d) { d.loc += nd.loc; const up = d.path === "" ? null : (path.posix.dirname(d.path) === "." ? "" : path.posix.dirname(d.path)); d = up === null ? null : idx.get("d:" + up); } }
+    for (const nd of nodes) if (nd.kind === "file") { let d = idx.get("d:" + nd.dir); while (d) { d.loc += nd.loc; d.nfiles = (d.nfiles || 0) + 1; const up = d.path === "" ? null : (path.posix.dirname(d.path) === "." ? "" : path.posix.dirname(d.path)); d = up === null ? null : idx.get("d:" + up); } }
+    for (const l of links) if (l.kind !== "contains") for (const x of [l.a, l.b]) (x.kind === "sym" ? x.parent : x).hasLinks = true;
     return { nodes, links, idx, files: files.length, syms: symCount, groups };
   }
 
   // ---------- view ----------
   function makeView(api) {
     return class CodeGraphView extends api.ItemView {
-      constructor(leaf) { super(leaf); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "tree"; } catch (e) { this.layout = "tree"; } }
+      constructor(leaf) { super(leaf); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.collapsed = new Set(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "ladder"; } catch (e) { this.layout = "ladder"; } }
       getViewType() { return VIEW; }
       getDisplayText() { return this.mode === "code" ? "Граф кода" : "Граф файлов"; }
       getIcon() { return "lucide-git-fork"; }
@@ -195,6 +201,7 @@
         bar.appendChild(ls); this.layoutSel = ls;
         const btn = (t, title, fn, on) => { const b = document.createElement("button"); b.className = "bsg-btn" + (on ? " on" : ""); b.textContent = t; b.title = title; b.addEventListener("click", () => fn(b)); bar.appendChild(b); return b; };
         this.btnImps = btn("Импорты", "Показывать импорты между файлами", (b) => { this.showImports = !this.showImports; b.classList.toggle("on", this.showImports); this.draw(); }, true);
+        this.btnCol = btn("Развернуть всё", "Свернуть / развернуть все папки", () => this.toggleAllDirs());
         btn("По центру", "Вписать граф в окно", () => this.fit());
         btn("Заново", "Сбросить закреплённые позиции и пересчитать", () => this.relayout());
         btn("↻", "Пересканировать папку", () => this.load());
@@ -208,7 +215,7 @@
         this.ro = new ResizeObserver(() => { this.resize(); this.draw(); }); this.ro.observe(body);
         this.built = true; await this.load();
       }
-      syncSeg() { for (const k in this.segBtns) this.segBtns[k].classList.toggle("on", k === this.mode); if (this.layoutSel) this.layoutSel.style.display = this.mode === "files" ? "" : "none"; if (this.btnImps) this.btnImps.style.display = this.mode === "code" ? "" : "none"; }
+      syncSeg() { for (const k in this.segBtns) this.segBtns[k].classList.toggle("on", k === this.mode); if (this.layoutSel) this.layoutSel.style.display = this.mode === "files" ? "" : "none"; if (this.btnImps) this.btnImps.style.display = this.mode === "code" ? "" : "none"; if (this.btnCol) this.btnCol.style.display = this.mode === "files" ? "" : "none"; if (this.legend) this.legend.style.display = this.mode === "code" ? "" : "none"; }
       resize() { const r = this.body.getBoundingClientRect(), d = window.devicePixelRatio || 1; this.w = r.width; this.h = r.height; this.cv.width = Math.max(1, Math.round(r.width * d)); this.cv.height = Math.max(1, Math.round(r.height * d)); this.dpr = d; }
       async load() {
         const myRun = this.run = (this.run || 0) + 1; this.resize(); this.g = null; this.msg.textContent = "Читаю файлы…"; this.draw();
@@ -219,17 +226,19 @@
         this.g = g; this.rootPath = root;
         if (!g.nodes.length) { this.msg.textContent = "В этой папке нет файлов с кодом"; return; }
         this.msg.textContent = "";
+        this.syncSeg();
         const saved = (this.mode === "code" || this.layout === "force") ? await this.loadLayout() : null; let placed = 0;
         const cx = 0, cy = 0, dirs = [...new Set(g.nodes.map((n) => n.dir))]; const ang = new Map(dirs.map((d, i) => [d, (i / dirs.length) * Math.PI * 2]));
         g.nodes.forEach((n, i) => { const s = saved && saved[n.id]; if (s) { n.x = s[0]; n.y = s[1]; n.pinned = !!s[2]; placed++; } else { const a = ang.get(n.dir) + (Math.random() - .5) * .6, r = 60 + Math.sqrt(g.nodes.length) * 14 * (.4 + Math.random() * .6); n.x = cx + Math.cos(a) * r; n.y = cy + Math.sin(a) * r; n.pinned = false; } if (n.kind === "sym" && !(saved && saved[n.id])) { n.x = n.parent.x + (Math.random() - .5) * 30; n.y = n.parent.y + (Math.random() - .5) * 30; } n.vx = n.vy = 0; n.r = n.kind === "dir" ? 6 : n.kind === "file" ? Math.min(15, 3 + Math.sqrt(n.loc) / 4) : Math.min(9, 2.5 + n.deg * .35); });
-        this.expanded = new Set(); this.rebuildView(); this.alpha = placed > g.nodes.length * .8 ? .05 : 1; this.applyLayout(true); this.fitted = false; this.refit = false; this.userView = false;
+        this.expanded = new Set(); this.collapsed = new Set(); this.defaultCollapse(); this.rebuildView(); this.alpha = placed > g.nodes.length * .8 ? .05 : 1; this.applyLayout(true); this.fitted = false; this.refit = false; this.userView = false;
         this.fillLegend(); this.updateInfo(); this.runSearch(true); this.loop();
       }
       fillLegend() { this.legend.textContent = ""; for (const gr of this.g.groups) { const sp = document.createElement("span"); const ic = document.createElement("i"); ic.style.background = gr.color; sp.append(ic, gr.name); this.legend.appendChild(sp); } }
       updateInfo() { const g = this.g; this.info.textContent = this.mode === "files" ? g.files + " файлов · " + g.nodes.filter((n) => n.kind === "dir").length + " каталогов" : g.files + " файлов · " + g.links.filter((l) => l.kind === "import").length + " импортов" + (this.mode === "code" ? " · " + g.syms + " символов · " + g.links.filter((l) => l.kind === "call").length + " вызовов · двойной клик по файлу раскрывает символы" : ""); }
       // -- visible graph: in "Код" mode symbols are hidden inside their file until it is expanded (double click); calls are summed per file pair --
       rebuildView() {
-        const g = this.g, exp = this.expanded, vis = (n) => (n.kind === "dir" ? this.mode === "files" : n.kind !== "sym" || exp.has(n.parent.id)), rep = (n) => (vis(n) ? n : n.parent), map = new Map(), links = [];
+        const g = this.g, exp = this.expanded, files = this.mode === "files", col = this.collapsed, hid = (n) => { for (let u = n.up; u; u = u.up) if (col.has(u.id)) return true; return false; },
+          vis = (n) => (n.kind === "dir" ? files && !hid(n) : n.kind === "sym" ? exp.has(n.parent.id) : files ? !hid(n) : !!n.hasLinks || exp.has(n.id)), rep = (n) => (vis(n) ? n : n.parent), map = new Map(), links = [];
         this.vnodes = g.nodes.filter(vis);
         for (const l of g.links) {
           if (l.kind === "contains") { if (vis(l.a) && vis(l.b)) links.push(l); continue; }
@@ -237,8 +246,26 @@
           if (!e) { e = { a, b, kind: l.kind, w: 0 }; map.set(k, e); links.push(e); } e.w++;
         }
         this.vlinks = links; this.byDeg = null; for (const n of this.vnodes) n.vd = 0; for (const l of links) { const w = l.kind === "call" ? Math.min(l.w, 6) : 1; l.a.vd += w; l.b.vd += w; }
-        for (const n of this.vnodes) n.r = n.kind === "dir" ? 5 : n.kind === "file" ? Math.min(14, 2.5 + Math.sqrt(n.loc) / 5 + Math.sqrt(n.vd) * .5) : Math.min(8, 2.2 + Math.sqrt(n.vd));
+        for (const n of this.vnodes) n.r = this.mode === "files" ? 9 : n.kind === "dir" ? 5 : n.kind === "file" ? Math.min(14, 2.5 + Math.sqrt(n.loc) / 5 + Math.sqrt(n.vd) * .5) : Math.min(8, 2.2 + Math.sqrt(n.vd));
         this.byDeg = this.vnodes.slice().sort((a, b) => b.vd * (b.kind === "dir" ? 1.5 : 1) - a.vd * (a.kind === "dir" ? 1.5 : 1));
+      }
+      defaultCollapse() { this.collapsed.clear(); if (this.mode === "files" && this.g.files > 300) for (const n of this.g.nodes) if (n.kind === "dir" && n.path && n.path.split("/").length >= 2 && n.nfiles) this.collapsed.add(n.id); if (this.btnCol) this.btnCol.textContent = "Развернуть всё"; }
+      toggleDir(n) {
+        if (this.mode !== "files" || n.kind !== "dir" || !n.nfiles) return;
+        if (this.collapsed.has(n.id)) { this.collapsed.delete(n.id); for (const m of this.g.nodes) for (let u = m.up; u; u = u.up) if (u === n) { m.x = n.x; m.y = n.y; break; } } else this.collapsed.add(n.id);
+        this.rebuildView(); this.userView = true; this.applyLayout(false); if (this.btnCol) this.btnCol.textContent = this.collapsed.size ? "Развернуть всё" : "Свернуть";
+      }
+      toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) this.btnCol.textContent = this.collapsed.size ? "Развернуть всё" : "Свернуть"; }
+      labelOf(n) { return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
+      drawIcon(ctx, n, S, lw, hov, bg, txt) {
+        const size = 16, px = size * S;
+        if (px < 5) { ctx.fillStyle = n.kind === "dir" ? "#dcb67a" : n.extColor; ctx.fillRect(n.x - 2.5 * lw, n.y - 2.5 * lw, 5 * lw, 5 * lw); return; }
+        const k = size / 18, col = n.kind === "dir" && this.collapsed.has(n.id);
+        ctx.save(); ctx.translate(n.x - 9 * k, n.y - 9 * k); ctx.scale(k, k);
+        if (n.kind === "dir") { ctx.fillStyle = col ? "#dcb67a" : "#b8965b"; ctx.fill(P_FOLDER); if (px > 14 && col && n.nfiles) { ctx.fillStyle = "#2b2b2b"; ctx.font = "bold 6px sans-serif"; ctx.textAlign = "center"; ctx.fillText(String(n.nfiles > 999 ? "999+" : n.nfiles), 9, 12.8); } }
+        else { ctx.globalAlpha *= .94; ctx.fillStyle = n.extColor; ctx.fill(P_FILE); ctx.lineWidth = 1; ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.stroke(P_FOLD); if (px > 20) { ctx.fillStyle = "#fff"; ctx.font = "bold 5.2px sans-serif"; ctx.textAlign = "center"; ctx.fillText((n.ext || "·").slice(0, 4), 8.5, 13.5); } }
+        ctx.restore();
+        if (n === hov) { ctx.beginPath(); ctx.arc(n.x, n.y, 11, 0, 7); ctx.lineWidth = 1.6 * lw; ctx.strokeStyle = txt; ctx.stroke(); }
       }
       toggleExpand(n) {
         if (this.mode !== "code" || n.kind !== "file") return; const id = n.id;
@@ -256,10 +283,10 @@
         const cmp = (a, b) => (a.kind === "dir" ? 0 : 1) - (b.kind === "dir" ? 0 : 1) || a.label.localeCompare(b.label);
         for (const arr of kids.values()) arr.sort(cmp);
         const L = this.layout;
-        if (L === "ladder") { let row = 0; const walk = (n, d) => { n.tx = d * 24; n.ty = row++ * 20; for (const c of kids.get(n) || []) walk(c, d + 1); }; walk(root, 0); }
+        if (L === "ladder") { let row = 0; const walk = (n, d) => { n.tx = d * 24; n.ty = row++ * 22; for (const c of kids.get(n) || []) walk(c, d + 1); }; walk(root, 0); }
         else {
           const leaves = new Map(); let maxD = 1; const cnt = (n, d) => { maxD = Math.max(maxD, d); const k = kids.get(n); if (!k || !k.length) { leaves.set(n, 1); return 1; } let t = 0; for (const c of k) t += cnt(c, d + 1); leaves.set(n, t); return t; }; const total = cnt(root, 0);
-          if (L === "tree") { let leaf = 0; const place = (n, d) => { const k = kids.get(n); n.ty = d * 120; if (!k || !k.length) { n.tx = leaf++ * 18; return; } k.forEach((c) => place(c, d + 1)); n.tx = (k[0].tx + k[k.length - 1].tx) / 2; }; place(root, 0); }
+          if (L === "tree") { let leaf = 0; const place = (n, d) => { const k = kids.get(n); n.ty = d * 120; if (!k || !k.length) { n.tx = leaf++ * 24; return; } k.forEach((c) => place(c, d + 1)); n.tx = (k[0].tx + k[k.length - 1].tx) / 2; }; place(root, 0); }
           else { const step = Math.max(110, total * 16 / (2 * Math.PI) / maxD); const place = (n, d, a0, a1) => { const am = (a0 + a1) / 2, r = d * step; n.tx = Math.cos(am) * r; n.ty = Math.sin(am) * r; const k = kids.get(n); if (!k) return; let a = a0; for (const c of k) { const span = (a1 - a0) * leaves.get(c) / leaves.get(n); place(c, d + 1, a, a + span); a += span; } }; place(root, 0, 0, Math.PI * 2); }
         }
         for (const n of nodes) if (n.tx === undefined) { n.tx = n.x; n.ty = n.y; }
@@ -310,13 +337,14 @@
         for (const n of this.vnodes) {
           if (n.x < vx0 || n.x > vx1 || n.y < vy0 || n.y > vy1) continue;
           ctx.globalAlpha = dim(n) ? .12 : 1; ctx.beginPath();
-          if (n.kind === "dir") { ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = bg; ctx.fill(); ctx.lineWidth = 1.4 * lw; ctx.strokeStyle = mut; ctx.stroke(); }
+          if (this.mode === "files") { this.drawIcon(ctx, n, S, lw, hov, bg, txt); }
+          else if (n.kind === "dir") { ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = bg; ctx.fill(); ctx.lineWidth = 1.4 * lw; ctx.strokeStyle = mut; ctx.stroke(); }
           else if (n.kind === "sym") { const sq = n.sym === "class" || n.sym === "type"; if (sq) ctx.rect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2); else ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = n.color; ctx.fill(); ctx.lineWidth = lw; ctx.strokeStyle = bg; ctx.stroke(); }
           else { ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = n.color; ctx.fill(); if (n.r * S > 3) { ctx.lineWidth = 1.2 * lw; ctx.strokeStyle = bg; ctx.stroke(); } if (n === hov || (this.match && this.match.has(n))) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 2 * lw, 0, 7); ctx.lineWidth = 2 * lw; ctx.strokeStyle = txt; ctx.stroke(); } if (this.expanded.has(n.id)) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 3 * lw, 0, 7); ctx.setLineDash([3 * lw, 3 * lw]); ctx.lineWidth = lw; ctx.strokeStyle = n.color; ctx.stroke(); ctx.setLineDash([]); } }
           if (n.pinned) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 2.5 * lw, 0, 7); ctx.lineWidth = lw; ctx.strokeStyle = txt; ctx.stroke(); }
         }
         // labels: biggest first, none over an already placed one; few at a distance, more when zoomed in
-        ctx.globalAlpha = 1; const fs = 11 / S; ctx.font = fs + "px sans-serif"; ctx.textBaseline = "middle"; const placed = [], budget = Math.round(14 + S * S * 120);
+        ctx.globalAlpha = 1; const fs = 11 / S; ctx.font = fs + "px sans-serif"; ctx.textBaseline = "middle"; const placed = [], budget = this.mode === "files" ? 700 : Math.round(14 + S * S * 120);
         const inView = (n) => n.x > vx0 && n.x < vx1 && n.y > vy0 && n.y < vy1;
         const strongSet = (hov || this.match) ? this.vnodes.filter((n) => inView(n) && (n === hov || (hov && nb.has(n)) || (this.match && this.match.has(n)))) : [];
         const order = strongSet.concat(this.byDeg || []);
@@ -324,9 +352,9 @@
         for (const n of order) {
           if (!inView(n)) continue; if (++scanned > 4000 && shown >= budget) break;
           const strong = n === hov || (hov && nb.has(n)) || (this.match && this.match.has(n)); if (!strong && (shown >= budget || dim(n) || (n.kind === "sym" && S < 1.3))) { if (shown >= budget) break; continue; }
-          const w = ctx.measureText(n.label).width, x = n.x + n.r + 3 / S, y = n.y, box = [x, y - fs / 2, x + w, y + fs / 2];
+          const lab = this.labelOf(n), w = ctx.measureText(lab).width, x = n.x + n.r + 3 / S, y = n.y, box = [x, y - fs / 2, x + w, y + fs / 2];
           if (placed.some((p) => box[0] < p[2] && box[2] > p[0] && box[1] < p[3] && box[3] > p[1])) continue; placed.push(box); shown++;
-          ctx.lineWidth = 3 / S; ctx.strokeStyle = bg; ctx.strokeText(n.label, x, y); ctx.fillStyle = n.kind === "dir" ? mut : txt; ctx.fillText(n.label, x, y);
+          ctx.lineWidth = 3 / S; ctx.strokeStyle = bg; ctx.strokeText(lab, x, y); ctx.fillStyle = n.kind === "dir" ? mut : txt; ctx.fillText(lab, x, y);
         }
         ctx.globalAlpha = 1;
       }
@@ -353,7 +381,7 @@
         t.style.display = "block"; this.moveTip(e); }
       moveTip(e) { const r = this.body.getBoundingClientRect(); this.tip.style.left = Math.min(r.width - 200, e.clientX - r.left + 14) + "px"; this.tip.style.top = Math.min(r.height - 60, e.clientY - r.top + 14) + "px"; }
       openNode(n) {
-        if (n.kind === "dir") return; const W = window.__bsWorkspace;
+        if (n.kind === "dir") { this.toggleDir(n); return; } const W = window.__bsWorkspace;
         if (W && W.active && W.active() && W.root() === this.rootPath) { W.openFile({ path: n.path, abs: n.abs, name: path.basename(n.path), isDir: false }, true); return; }
         const f = app.vault.getAbstractFileByPath(n.path); const go = async () => { const leaf = app.workspace.getLeaf("tab"); if (f) await leaf.openFile(f); else if (window.__bsTextFile) await window.__bsTextFile.open(n.path);
           if (n.line) setTimeout(() => { const l = app.workspace.getLeavesOfType("basalt-textfile").find((x) => x.view && x.view.path === n.path); const cm = l && l.view.cm; if (cm) { cm.setCursor({ line: n.line - 1, ch: 0 }); cm.scrollIntoView({ line: n.line - 1, ch: 0 }, 160); cm.focus(); } }, 500); }; go();
