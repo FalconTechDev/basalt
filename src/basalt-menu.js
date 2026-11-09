@@ -7,7 +7,6 @@
   css.textContent = `
     body { --bm-bg: color-mix(in srgb, var(--background-primary) 90%, var(--text-normal)); --bm-bg2: color-mix(in srgb, var(--background-primary) 82%, var(--text-normal)); }
     .bm-pop { position: fixed; z-index: 60; display: flex; flex-direction: column; gap: 4px; padding: 6px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto;
-    .menu { background: color-mix(in srgb, var(--background-primary) 90%, var(--text-normal)) !important; }
       background: var(--bm-bg); border: 1px solid var(--background-modifier-border); border-radius: 10px; box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); color: var(--text-normal); user-select: none; }
     .bm-cols { display: flex; gap: 6px; align-items: stretch; }
     .bm-col { display: flex; flex-direction: column; min-width: 168px; }
