@@ -24,6 +24,8 @@
     fpMinimap: true,        // overview of the whole canvas in a corner
     fpMinimapSize: 220,     // its width, px
     fpShape: 1,             // card outline: 0 rounded, 1 Грань, 2 Базальт, 3 Скол, 4 Кристалл
+    fpTrLang: "en",         // default target language of the card translation
+    fpTrSrc: "auto",        // source language of the card translation (auto = detect)
   };
   const num = (v, d) => (Number.isFinite(v) ? v : d);
   const opts = (canvas) => {
@@ -149,7 +151,7 @@
     .fp-end-item { display: flex; align-items: center; gap: 8px; padding: 4px 6px; cursor: pointer; color: var(--text-muted); font-size: var(--font-ui-small); }
     .fp-end-item:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .fp-end-item.is-active { color: var(--interactive-accent); background: var(--background-modifier-hover); }
-    .fp-export .fp-minimap, .fp-export .canvas-controls, .fp-export .canvas-card-menu, .fp-export .canvas-menu-container, .fp-export .canvas-selection, .fp-export .bsd-tb, .fp-export .bsd-pop, .is-screenshotting .fp-minimap, .is-screenshotting .canvas-controls, .is-screenshotting .canvas-card-menu, .is-screenshotting .bsd-tb { display: none !important; }
+    .fp-export .fp-minimap, .fp-export .canvas-controls, .fp-export .canvas-card-menu, .fp-export .canvas-menu-container, .fp-export .canvas-selection, .fp-export .bsd-tb, .fp-export .bsd-pop, .fp-export .fp-tr-restore, .is-screenshotting .fp-minimap, .is-screenshotting .canvas-controls, .is-screenshotting .canvas-card-menu, .is-screenshotting .bsd-tb, .is-screenshotting .fp-tr-restore { display: none !important; }
     .fp-minimap { position: absolute; right: 14px; bottom: 38px; z-index: 5; padding: 0; background: var(--background-primary); border: 1px solid var(--background-modifier-border-hover); border-radius: 0; clip-path: var(--bs-clip);  overflow: hidden;
       cursor: crosshair;  }
     .fp-minimap canvas { display: block; }
@@ -163,6 +165,40 @@
       clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
     .fp-type-name { flex: 1; }
     .fp-type-row small { color: var(--text-faint); }
+    .fp-type-row.is-active .fp-type-name { color: var(--interactive-accent); }
+    .fp-tr-pop .fp-end-col { max-height: 52vh; overflow-y: auto; }
+    .fp-tr-pop .fp-end-item small { margin-left: auto; color: var(--text-faint); font-size: 10px; }
+    .fp-tr-progress { flex-direction: column; min-width: 260px; gap: 8px; }
+    .fp-tr-bar { height: 6px; background: var(--background-modifier-border); overflow: hidden; }
+    .fp-tr-bar i { display: block; height: 100%; width: 0; background: var(--interactive-accent); transition: width .25s; }
+    .fp-tr-label { font-size: var(--font-ui-small); color: var(--text-muted); }
+    .fp-tr-pop { flex-wrap: wrap; }
+    .fp-tr-search { flex: 0 0 100%; margin-bottom: 4px; padding: 5px 8px; font: inherit; font-size: var(--font-ui-small);
+      color: var(--text-normal); background: var(--background-primary); border: 1px solid var(--background-modifier-border);
+      outline: none; }
+    .fp-tr-search:focus { border-color: var(--interactive-accent); }
+    .fp-tr-status { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 1001;
+      display: flex; align-items: center; gap: 12px; min-width: 320px; max-width: 82vw; padding: 10px 16px;
+      background: var(--background-secondary); color: var(--text-normal); font-size: var(--font-ui-small);
+      border: 1px solid var(--background-modifier-border-hover); box-shadow: 0 6px 24px rgba(0, 0, 0, .3);
+      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+      transition: opacity .25s, transform .25s; }
+    .fp-tr-status.is-done { opacity: 0; transform: translateX(-50%) translateY(-10px); pointer-events: none; }
+    .fp-tr-status .fp-end-title { flex: none; }
+    .fp-tr-status .fp-tr-bar { flex: 1; max-width: 180px; }
+    .fp-tr-status .fp-tr-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .fp-tr-status .fp-tr-x { flex: none; cursor: pointer; color: var(--text-faint); display: flex; padding: 2px; }
+    .fp-tr-status .fp-tr-x:hover { color: var(--text-normal); }
+    .fp-tr-restore { position: absolute; top: 14px; right: 88px; z-index: 6; display: flex; align-items: center; gap: 8px;
+      padding: 10px 18px; cursor: pointer; background: var(--background-secondary); color: var(--text-normal);
+      border: 1px solid var(--background-modifier-border-hover); font-size: var(--font-ui-medium);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, .28);
+      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+      opacity: 0; transform: translateX(130%); pointer-events: none;
+      transition: transform .3s cubic-bezier(.2, .9, .3, 1.15), opacity .2s, border-color .15s, color .15s; }
+    .fp-tr-restore.is-on { opacity: 1; transform: none; pointer-events: auto; }
+    .fp-tr-restore:hover { border-color: var(--interactive-accent); color: var(--interactive-accent); }
+    .fp-tr-restore svg { color: var(--interactive-accent); flex: none; }
     .fp-preview { position: fixed; z-index: 1001; pointer-events: none; background: var(--background-secondary); color: var(--text-normal); padding: 6px; box-shadow: none;
       clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
     .fp-nested { position: absolute; inset: 0; background: var(--background-primary); pointer-events: none; z-index: 2; display: flex; align-items: center; justify-content: center; }
@@ -279,6 +315,10 @@
     el.className = "fp-canvas";
     wrap.insertBefore(el, wrap.firstChild);
     wrap.classList.add("fp-on");
+    injectTranslateButton(canvas, wrap);
+    injectRestoreChip(canvas, wrap);
+    bindQuitFlush();
+    bindVaultMenus();
     bindFarInteraction(canvas);
     st = { el, ctx: el.getContext("2d"), on: true, domSet: new Set(), dirty: true, nodes: [], idx: new Map(), view: null, accent: 0x7852ee, sig: new Map() };
     states.set(canvas, st);
@@ -1146,6 +1186,22 @@
       return;
     }
     if (!canvas || canvas.readonly || node.nodeEl.classList.contains("canvas-node-group")) return;
+    menu.addItem((item) => {
+      item.setSection("canvas").setTitle("Перевести карточки…").setIcon("lucide-languages").onClick(() => {
+        const targets = canvas.selection.has(node) && canvas.selection.size > 1
+          ? Array.from(canvas.selection).filter((x) => x.nodeEl && !x.nodeEl.classList.contains("canvas-node-group"))
+          : [node];
+        trPickLang(document.body, (tl, sl, hooks) => translateCanvas(canvas, tl, targets, sl, hooks), trDefaultLang());
+      });
+    });
+    if (node.unknownData && (typeof node.unknownData.fpTrOrig === "string" || typeof node.unknownData.fpTrOrigFile === "string")) {
+      menu.addItem((item) => item.setSection("canvas").setTitle("Вернуть оригинал").setIcon("lucide-undo-2").onClick(() => {
+        const targets = canvas.selection.has(node) && canvas.selection.size > 1
+          ? Array.from(canvas.selection).filter((x) => x.nodeEl && !x.nodeEl.classList.contains("canvas-node-group"))
+          : [node];
+        restoreOriginals(canvas, targets);
+      }));
+    }
     const targets = () => (canvas.selection.has(node) ? Array.from(canvas.selection) : [node]).filter((x) => x.unknownData && x.nodeEl && !x.nodeEl.classList.contains("canvas-node-group"));
     const set = (v) => {
       for (const x of targets()) {
@@ -1708,6 +1764,19 @@
         it.addEventListener("click", () => choose(v));
       });
     });
+    const tbtn = (label, icon, fn) => {
+      const b = menuEl.createEl("button", "clickable-icon");
+      b.setAttribute("aria-label", label);
+      b.innerHTML = icon;
+      b.addEventListener("click", (e) => { e.stopPropagation(); fn(b); });
+      return b;
+    };
+    const LANG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>';
+    const UNDO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>';
+    tbtn("Перевести карточки", LANG_SVG, (b) => trPickLang(b, (tl, sl, hooks) => translateCanvas(canvas, tl, sel, sl, hooks), trDefaultLang()));
+    if (sel.some((n) => n.unknownData && (typeof n.unknownData.fpTrOrig === "string" || typeof n.unknownData.fpTrOrigFile === "string"))) {
+      tbtn("Вернуть оригинал", UNDO_SVG, () => restoreOriginals(canvas, sel));
+    }
   };
 
   window.__fpEdgeMenu = (menu, edge) => {
@@ -1924,6 +1993,610 @@
   }
   window.__fpRunLayout = (canvas, id) => { const l = LAYOUTS.find((x) => x.id === id); if (l) runLayout(canvas, l); };
 
+  // ---- card translation: the free Google endpoint (client=gtx, no key). Text cards are
+  // translated in place; a .md file card gets a "<name>.<lang>.md" copy and is pointed at it.
+  const TR_LANGS = [
+    ["en", "English"], ["ru", "Русский"], ["uk", "Українська"], ["be", "Беларуская"],
+    ["de", "Deutsch"], ["fr", "Français"], ["es", "Español"], ["it", "Italiano"],
+    ["pt", "Português"], ["pt-BR", "Português (Brasil)"], ["pl", "Polski"], ["nl", "Nederlands"],
+    ["cs", "Čeština"], ["sk", "Slovenčina"], ["hu", "Magyar"], ["ro", "Română"],
+    ["bg", "Български"], ["sr", "Srpski"], ["hr", "Hrvatski"], ["tr", "Türkçe"],
+    ["el", "Ελληνικά"], ["sv", "Svenska"], ["no", "Norsk"], ["da", "Dansk"],
+    ["fi", "Suomi"], ["lv", "Latviešu"], ["lt", "Lietuvių"], ["et", "Eesti"],
+    ["zh-CN", "中文（简体）"], ["zh-TW", "中文（繁體）"], ["ja", "日本語"], ["ko", "한국어"],
+    ["ar", "العربية"], ["he", "עברית"], ["hi", "हिन्दी"], ["id", "Indonesia"],
+    ["vi", "Tiếng Việt"], ["th", "ไทย"], ["fa", "فارسی"],
+  ];
+  const trLangName = (c) => { const l = TR_LANGS.find((x) => x[0] === c); return l ? l[1] : c; };
+  const trDefaultLang = () => {
+    const c = activeCanvas(), o = c && c.view && c.view.plugin && c.view.plugin.options;
+    if (o && TR_LANGS.some((l) => l[0] === o.fpTrLang)) return o.fpTrLang;
+    try {
+      const last = (localStorage.getItem("fp-tr-last") || "|").split("|")[0];
+      if (TR_LANGS.some((l) => l[0] === last)) return last;
+    } catch (e) { /* optional */ }
+    return DEFAULTS.fpTrLang;
+  };
+  // code spans, fenced blocks, link targets and bare URLs survive the trip through the translator
+  const TR_TOK = /ZXFP(\d+)QXZ/g;
+  function trProtect(text) {
+    const saved = [];
+    const keep = (m) => { saved.push(m); return "ZXFP" + (saved.length - 1) + "QXZ"; };
+    let t = String(text);
+    t = t.replace(/^---[ \t]*\r?\n[\s\S]*?\r?\n---[ \t]*(?:\r?\n|$)/, keep);
+    t = t.replace(/```[\s\S]*?(?:```|$)/g, keep);
+    t = t.replace(/`[^`\n]+`/g, keep);
+    t = t.replace(/!\[[^\]]*\]\([^)\s]*\)/g, keep);
+    t = t.replace(/\[([^\]]*)\]\(([^)\s]+)\)/g, (m, txt, url) => "[" + txt + "](" + keep(url) + ")");
+    t = t.replace(/https?:\/\/[^\s<>"'`)\]]+/g, keep);
+    return { text: t, saved };
+  }
+  function trUnprotect(text, saved) {
+    return String(text).replace(TR_TOK, (m, i) => (saved[+i] !== undefined ? saved[+i] : m));
+  }
+  // local translation cache: the first pass goes through Google, afterwards everything is served
+  // from this map (app localStorage, kept under ~3 MB by dropping the oldest entries)
+  const TR_CACHE_KEY = "fp-translate-cache";
+  let trCacheData = null, trCacheTimer = 0;
+  const trHash = (s) => {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h.toString(16) + ":" + s.length;
+  };
+  function trCache() {
+    if (trCacheData) return trCacheData;
+    trCacheData = { map: {} };
+    try {
+      const raw = app.loadLocalStorage ? app.loadLocalStorage(TR_CACHE_KEY) : JSON.parse(localStorage.getItem(TR_CACHE_KEY) || "null");
+      if (raw && typeof raw === "object") trCacheData.map = raw;
+    } catch (e) { /* fresh cache */ }
+    return trCacheData;
+  }
+  function trCacheSave() {
+    clearTimeout(trCacheTimer);
+    trCacheTimer = setTimeout(() => {
+      try {
+        const c = trCache(), keys = Object.keys(c.map);
+        if (keys.length > 6000 || JSON.stringify(c.map).length > 3000000) {
+          const keep = {};
+          for (const k of keys.slice(-Math.floor(keys.length / 2))) keep[k] = c.map[k];
+          c.map = keep;
+        }
+        if (app.saveLocalStorage) app.saveLocalStorage(TR_CACHE_KEY, c.map);
+        else localStorage.setItem(TR_CACHE_KEY, JSON.stringify(c.map));
+      } catch (e) { /* storage full: keep the in-memory copy */ }
+    }, 800);
+  }
+  function trChunks(text) {
+    const out = []; let cur = "";
+    for (const line of String(text).split("\n")) {
+      if (cur && (cur + "\n" + line).length > 3500) { out.push(cur); cur = line; }
+      else cur = cur ? cur + "\n" + line : line;
+    }
+    if (cur) out.push(cur);
+    return out;
+  }
+  // requestUrl (Obsidian's net stack) is preferred inside the app: no CORS, works off file:// too
+  async function trGet(url) {
+    if (typeof requestUrl === "function") {
+      const r = await requestUrl({ url });
+      if (r.status >= 400) throw new Error("HTTP " + r.status);
+      return r.json;
+    }
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }
+  const trSleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  // the free endpoint throttles bursts (HTTP 429): back off and retry instead of failing the card
+  async function trChunk(chunk, tl, sl) {
+    const url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + encodeURIComponent(sl || "auto") +
+      "&tl=" + encodeURIComponent(tl) + "&dt=t&q=" + encodeURIComponent(chunk);
+    let last;
+    for (let a = 0; a < 5; a++) {
+      try { return await trGet(url); }
+      catch (e) {
+        last = e;
+        const m = /HTTP (\d+)/.exec(e && e.message || ""), code = m ? +m[1] : 0;
+        if (code !== 429 && code < 500) throw e;
+        await trSleep(700 * (a + 1) * (a + 1));
+      }
+    }
+    throw last;
+  }
+  // one HTTP request for a chunk of already-protected text; returns the still-protected translation
+  async function trRaw(protText, tl, sl) {
+    const parts = [];
+    for (const chunk of trChunks(protText)) {
+      const data = await trChunk(chunk, tl, sl);
+      let out = "";
+      for (const seg of data && data[0] ? data[0] : []) if (Array.isArray(seg) && seg[0]) out += seg[0];
+      parts.push(out);
+    }
+    return parts.join("\n");
+  }
+  // translates many strings with as few requests as possible: small texts ride together in one
+  // request separated by ⟦saltN⟧ marker lines (newlines survive the translator), big ones go solo.
+  // Returns translations aligned with `list` (null where a piece could not be translated).
+  async function trStrings(list, tl, sl, onDone) {
+    const uniq = [...new Set(list.filter((t) => typeof t === "string" && t.trim()))];
+    const prot = new Map();
+    for (const t of uniq) prot.set(t, trProtect(t));
+    const out = new Map();
+    const solo = []; // thunks, run two at a time below
+    let batch = [], batchLen = 0;
+    const sendBatch = async () => {
+      if (!batch.length) return;
+      const items = batch; batch = []; batchLen = 0;
+      const salt = "Z" + Math.random().toString(36).slice(2, 8) + "Z";
+      const payload = items.map((t, k) => "⟦" + salt + k + "⟧\n" + prot.get(t).text).join("\n");
+      let tr = null;
+      try { tr = await trRaw(payload, tl, sl); } catch (e) { console.warn("[fp-canvas] translate batch failed", e); }
+      const got = new Map();
+      if (tr != null) {
+        const seg = tr.split(new RegExp("⟦" + salt + "(\\d+)⟧"));
+        for (let k = 1; k + 1 < seg.length; k += 2) got.set(+seg[k], seg[k + 1]);
+      }
+      for (let k = 0; k < items.length; k++) {
+        const t = items[k], g = got.get(k);
+        out.set(t, g == null ? null : trUnprotect(g.replace(/^\n+/, "").replace(/\n+$/, ""), prot.get(t).saved));
+      }
+      onDone && onDone(items.length);
+    };
+    for (const t of uniq) {
+      const len = prot.get(t).text.length;
+      if (len > 3400) {
+        solo.push(async () => {
+          try { out.set(t, trUnprotect(await trRaw(prot.get(t).text, tl, sl), prot.get(t).saved)); }
+          catch (e) { out.set(t, null); console.warn("[fp-canvas] translate failed", e); }
+          onDone && onDone(1);
+        });
+        continue;
+      }
+      const add = len + 24;
+      if (batch.length && batchLen + add > 3000) await sendBatch();
+      batch.push(t); batchLen += add;
+    }
+    await sendBatch();
+    // big texts: two at a time, batches were already sequential
+    let si = 0;
+    await Promise.all(Array.from({ length: Math.min(2, solo.length) }, async () => {
+      while (si < solo.length) await solo[si++]();
+    }));
+    // whatever a marker shuffle or a failed request dropped goes one by one
+    const left = uniq.filter((t) => out.get(t) == null);
+    let i = 0;
+    await Promise.all(Array.from({ length: Math.min(2, left.length) }, async () => {
+      while (i < left.length) {
+        const t = left[i++];
+        try { out.set(t, trUnprotect(await trRaw(prot.get(t).text, tl, sl), prot.get(t).saved)); }
+        catch (e) { out.set(t, null); console.warn("[fp-canvas] translate failed", e); }
+        onDone && onDone(1);
+      }
+    }));
+    const byText = new Map(uniq.map((t, k) => [t, out.get(t)]));
+    return list.map((t) => byText.get(t));
+  }
+  // cache-first batch translation of raw strings; resolves to an array aligned with `texts`
+  // (null where a piece could not be translated). onProgress(done, total) fires per unique miss.
+  async function trResolve(texts, tl, sl, onProgress) {
+    const cache = trCache(), ckey = (t) => tl + "|" + sl + "|" + trHash(t);
+    const uniq = [...new Set(texts.filter((t) => typeof t === "string" && t.trim()))];
+    const res = new Map(), miss = [];
+    for (const t of uniq) {
+      const hit = cache.map[ckey(t)];
+      if (typeof hit === "string") res.set(t, hit); else miss.push(t);
+    }
+    if (miss.length) {
+      const total = miss.length;
+      let done = 0;
+      const trs = await trStrings(miss, tl, sl, () => { const d = Math.min(++done, total); onProgress && onProgress(d, total); });
+      miss.forEach((t, k) => {
+        const v = trs[k];
+        res.set(t, v);
+        if (typeof v === "string") cache.map[ckey(t)] = v;
+      });
+      trCacheSave();
+    }
+    return texts.map((t) => (typeof t === "string" && t.trim() ? (res.get(t) ?? null) : null));
+  }
+  async function translateCanvas(canvas, tl, scope, sl, hooks) {
+    const say = (msg, ms) => { if (typeof Notice === "function") new Notice(msg, ms); };
+    if (canvas.readonly) { say("Холст только для чтения"); return null; }
+    sl = sl || "auto";
+    // remember the last used pair as the new default for the picker and the settings tab
+    try {
+      const o = canvas.view && canvas.view.plugin && canvas.view.plugin.options;
+      if (o) { o.fpTrLang = tl; o.fpTrSrc = sl; if (canvas.view.plugin.saveData) canvas.view.plugin.saveData(o); }
+      localStorage.setItem("fp-tr-last", tl + "|" + sl);
+    } catch (e) { /* storage optional */ }
+    const cards = Array.from(canvas.nodes.values()).filter((n) => n.nodeEl && !n.nodeEl.classList.contains("canvas-node-group"));
+    const nodes = Array.isArray(scope) ? scope.filter((n) => cards.includes(n))
+      : scope === "sel" ? cards.filter((n) => canvas.selection.has(n)) : cards;
+    if (!nodes.length) { say("Нет карточек для перевода"); return null; }
+    console.info("[fp-canvas] translate ->", tl, nodes.length, "cards");
+    // phase 1: collect what to translate (file cards are read first, several cards may share one file)
+    const units = []; let skipped = 0;
+    const reads = new Map();
+    const readMd = (path) => {
+      if (!reads.has(path)) reads.set(path, (async () => {
+        const f = app.vault.getAbstractFileByPath(path);
+        if (!f) throw new Error("файл не найден: " + path);
+        return await app.vault.read(f);
+      })());
+      return reads.get(path);
+    };
+    for (const n of nodes) {
+      // node instances carry no .type (it lives only in getData/unknownData): duck-type instead
+      if (typeof n.setText === "function" && typeof n.text === "string" && n.text.trim()) {
+        units.push({ kind: "text", node: n });
+      } else if (typeof n.setFilePath === "function") {
+        const path = n.filePath || (n.file && n.file.path) || "";
+        if (/\.md$/i.test(path)) units.push({ kind: "file", node: n, path, sub: n.subpath || "" });
+        else skipped++;
+      } else skipped++;
+    }
+    if (!units.length) { say("Нечего переводить: ссылки и нетекстовые файлы пропускаются"); return null; }
+    const texts = new Array(units.length).fill(null);
+    await Promise.all(units.map(async (u, i) => {
+      if (u.kind === "file") { try { texts[i] = await readMd(u.path); } catch (e) { console.warn("[fp-canvas] read failed", u.path, e); } }
+      else texts[i] = u.node.text;
+    }));
+    const valid = units.map((u, i) => (texts[i] != null ? i : -1)).filter((i) => i >= 0);
+    // phase 2: cached hits are free; only the misses go through the batched requests
+    const withPopup = !!(hooks && hooks.onProgress);
+    const note = !withPopup && typeof Notice === "function" ? new Notice("Перевод на " + trLangName(tl) + "…", 0) : null;
+    const trs = await trResolve(valid.map((ui) => texts[ui]), tl, sl, (d, tot) => {
+      if (withPopup) hooks.onProgress(d, tot);
+      else if (note && note.noticeEl) {
+        const el = note.noticeEl.querySelector(".notice-message") || note.noticeEl.firstChild || note.noticeEl;
+        el.textContent = "Перевод на " + trLangName(tl) + ": " + d + "/" + tot;
+      }
+    });
+    if (note) note.hide();
+    const trMap = new Map(valid.map((ui, k) => [ui, trs[k]]));
+    // phase 3: write the results back (text in place, files as "<name>.<lang>.md" copies)
+    let ok = 0, fail = 0;
+    for (const ui of valid) {
+      const u = units[ui], t = trMap.get(ui);
+      if (t == null) { fail++; continue; }
+      try {
+        if (u.kind === "text") {
+          if (typeof u.node.setText === "function" && t !== u.node.text) {
+            const ud = u.node.unknownData || (u.node.unknownData = {});
+            if (typeof ud.fpTrOrig !== "string") ud.fpTrOrig = u.node.text; // keep the very first original
+            u.node.setText(t);
+            canvas.markDirty && canvas.markDirty(u.node);
+          }
+        } else {
+          const cut = u.path.lastIndexOf("/"), dir = cut >= 0 ? u.path.slice(0, cut + 1) : "", base = u.path.slice(cut + 1).replace(/\.md$/i, "");
+          const np = dir + base + "." + tl + ".md";
+          const f = app.vault.getAbstractFileByPath(np);
+          const ud = u.node.unknownData || (u.node.unknownData = {});
+          if (typeof ud.fpTrOrigFile !== "string") { ud.fpTrOrigFile = u.path; ud.fpTrOrigSub = u.sub; }
+          if (f) await app.vault.modify(f, t); else await app.vault.create(np, t);
+          if (canvas.nodes.has(u.node.id)) u.node.setFilePath(np, u.sub);
+        }
+        ok++;
+      } catch (e) { fail++; console.warn("[fp-canvas] apply failed", e); }
+    }
+    flushCanvasSave(canvas);
+    const msg = "Переведено карточек: " + ok + (fail ? ", ошибок: " + fail : "") + (skipped ? ", пропущено: " + skipped : "");
+    if (!hooks) say(msg, fail ? 8000 : 4000);
+    return { ok, fail, skipped, msg };
+  }
+  window.__fpTranslate = (canvas, tl, scope, sl, hooks) => translateCanvas(canvas, tl, scope || "all", sl, hooks);
+
+  // puts translated cards back to their real originals (text in place, file cards to the source file)
+  function restoreOriginals(canvas, nodes) {
+    let n = 0;
+    for (const node of nodes) {
+      const ud = node && node.unknownData;
+      if (!ud) continue;
+      try {
+        if (typeof ud.fpTrOrig === "string" && typeof node.setText === "function") {
+          node.setText(ud.fpTrOrig); delete ud.fpTrOrig; n++;
+        } else if (typeof ud.fpTrOrigFile === "string" && typeof node.setFilePath === "function") {
+          node.setFilePath(ud.fpTrOrigFile, ud.fpTrOrigSub || "");
+          delete ud.fpTrOrigFile; delete ud.fpTrOrigSub; n++;
+        } else continue;
+        canvas.markDirty && canvas.markDirty(node);
+      } catch (e) { console.warn("[fp-canvas] restore failed", e); }
+    }
+    if (n) flushCanvasSave(canvas);
+    if (typeof Notice === "function") new Notice(n ? "Оригиналы возвращены: " + n : "Нет переведённых карточек", 4000);
+    return n;
+  }
+  window.__fpRestore = (canvas, nodes) => restoreOriginals(canvas, nodes);
+
+  // ---- vault files: the same translation for md files picked in the file explorer.
+  // Writes "<name>.<lang>.md" copies next to the originals; the sources stay untouched.
+  async function translateVaultFiles(files, tl, sl, hooks) {
+    const say = (msg, ms) => { if (typeof Notice === "function") new Notice(msg, ms); };
+    const md = files.filter((f) => f && /^md$/i.test(f.extension || ""));
+    if (!md.length) { say("Нет md-файлов для перевода"); return null; }
+    const items = [];
+    for (const f of md) {
+      if (new RegExp("\\." + tl + "\\.md$", "i").test(f.path)) { continue; } // already a translation
+      try { items.push({ f, text: await app.vault.read(f) }); }
+      catch (e) { console.warn("[fp-canvas] vault read failed", f.path, e); }
+    }
+    if (!items.length) { say("Нечего переводить"); return null; }
+    try { localStorage.setItem("fp-tr-last", tl + "|" + sl); } catch (e) { /* optional */ }
+    const trs = await trResolve(items.map((i) => i.text), tl, sl, hooks && hooks.onProgress);
+    let ok = 0, fail = 0;
+    for (let k = 0; k < items.length; k++) {
+      const it = items[k], t = trs[k];
+      if (t == null) { fail++; continue; }
+      try {
+        const p = it.f.path, cut = p.lastIndexOf("/"), dir = cut >= 0 ? p.slice(0, cut + 1) : "", base = p.slice(cut + 1).replace(/\.md$/i, "");
+        const np = dir + base + "." + tl + ".md";
+        const ex = app.vault.getAbstractFileByPath(np);
+        if (ex) await app.vault.modify(ex, t); else await app.vault.create(np, t);
+        ok++;
+      } catch (e) { fail++; console.warn("[fp-canvas] vault translate failed", it.f.path, e); }
+    }
+    const msg = "Переведено файлов: " + ok + (fail ? ", ошибок: " + fail : "");
+    if (!hooks) say(msg, fail ? 8000 : 4000);
+    return { ok, fail, skipped: 0, msg };
+  }
+  // every md file inside a folder (recursive) or the file itself
+  function vaultMdFiles(file) {
+    const out = [];
+    const walk = (node) => {
+      if (!node) return;
+      if (node.children) { for (const ch of node.children) walk(ch); return; }
+      if (/^md$/i.test(node.extension || "")) out.push(node);
+    };
+    walk(file);
+    return out;
+  }
+  // the markdown view currently being edited (note editor, not canvas)
+  const activeMarkdown = () => {
+    const v = app.workspace.activeLeaf && app.workspace.activeLeaf.view;
+    return v && v.getViewType && v.getViewType() === "markdown" && v.file ? v : null;
+  };
+  // translates the current editor selection in place (links/code/frontmatter survive via trProtect)
+  async function translateEditorSelection(view, tl, sl, hooks) {
+    const ed = view && view.editor;
+    const sel = ed && ed.getSelection ? ed.getSelection() : "";
+    if (!sel || !sel.trim()) { if (typeof Notice === "function") new Notice("Нет выделенного текста"); return null; }
+    const trs = await trResolve([sel], tl, sl, hooks && hooks.onProgress);
+    const t = trs[0];
+    if (t == null) return { ok: 0, fail: 1, skipped: 0, msg: "Не удалось перевести выделенное" };
+    ed.replaceSelection(t);
+    return { ok: 1, fail: 0, skipped: 0, msg: "Выделенное переведено" };
+  }
+  let vaultMenusBound = false, vaultBindTries = 0, noteCmdsBound = false, ribbonBound = false;
+  function bindVaultMenus() {
+    if (vaultMenusBound) return;
+    // app/workspace may still be booting when this script runs: retry for a while
+    if (typeof app === "undefined" || !app.workspace || typeof app.workspace.on !== "function") {
+      if (vaultBindTries++ < 60) setTimeout(bindVaultMenus, 1500);
+      return;
+    }
+    vaultMenusBound = true;
+    console.info("[fp-canvas] translate menus bound");
+    const launch = (files) => trPickLang(document.body, (tl, sl, hooks) => translateVaultFiles(files, tl, sl, hooks), trDefaultLang());
+    const launchSel = (view) => trPickLang(document.body, (tl, sl, hooks) => translateEditorSelection(view, tl, sl, hooks), trDefaultLang());
+    if (!noteCmdsBound && app.commands && app.commands.addCommand) {
+      noteCmdsBound = true;
+      try {
+        app.commands.addCommand({ id: "basalt:translate-note", name: "Заметка: перевести файл…", checkCallback: (c) => { const v = activeMarkdown(); if (!v) return false; if (!c) launch([v.file]); return true; } });
+        app.commands.addCommand({ id: "basalt:translate-selection", name: "Заметка: перевести выделенное…", checkCallback: (c) => { const v = activeMarkdown(); if (!v || !v.editor || !v.editor.getSelection || !v.editor.getSelection().trim()) return false; if (!c) launchSel(v); return true; } });
+      } catch (e) { console.warn("[fp-canvas] translate commands failed", e); }
+    }
+    // a visible entry point: ribbon icon translates the open md file
+    if (!ribbonBound) {
+      ribbonBound = true;
+      try {
+        const ribbon = app.workspace.leftRibbon || app.workspace.rightRibbon;
+        if (ribbon && ribbon.addRibbonIcon) {
+          ribbon.addRibbonIcon("lucide-languages", "Перевести текущий файл…", () => {
+            const v = activeMarkdown();
+            if (v) launch([v.file]);
+            else if (typeof Notice === "function") new Notice("Открой md-файл для перевода");
+          });
+        }
+      } catch (e) { console.warn("[fp-canvas] translate ribbon failed", e); }
+    }
+    app.workspace.on("file-menu", (menu, file) => {
+      if (!file) return;
+      const isMd = /^md$/i.test(file.extension || ""), isDir = !!file.children;
+      if (!isMd && !isDir) return;
+      menu.addItem((item) => item.setSection("action").setTitle(isDir ? "Перевести md-файлы папки…" : "Перевести в другой язык…").setIcon("lucide-languages").onClick(() => {
+        const files = vaultMdFiles(file);
+        if (!files.length) return typeof Notice === "function" && new Notice("В папке нет md-файлов");
+        launch(files);
+      }));
+    });
+    app.workspace.on("files-menu", (menu, files) => {
+      const md = (files || []).filter((f) => /^md$/i.test(f.extension || ""));
+      if (!md.length) return;
+      menu.addItem((item) => item.setSection("action").setTitle("Перевести md-файлы (" + md.length + ")…").setIcon("lucide-languages").onClick(() => launch(md)));
+    });
+    // right-click inside the note editor: translate the selection or the whole file
+    app.workspace.on("editor-menu", (menu, editor, view) => {
+      if (!view || !view.file) return;
+      const hasSel = editor && editor.getSelection && editor.getSelection().trim();
+      if (hasSel) menu.addItem((item) => item.setSection("action").setTitle("Перевести выделенное…").setIcon("lucide-languages").onClick(() => launchSel(view)));
+      menu.addItem((item) => item.setSection("action").setTitle("Перевести файл в другой язык…").setIcon("lucide-languages").onClick(() => launch([view.file])));
+    });
+  }
+
+  // floating status plaque pinned to the top-center of the window: progress of any translation
+  // (canvas cards or vault files). It ignores outside clicks — only the ✕ or the end of the job closes it.
+  let trStatusEl = null, trStatusTimer = 0;
+  function trStatusShow(title) {
+    trStatusHide(0);
+    const el = document.createElement("div");
+    el.className = "fp-tr-status";
+    el.innerHTML = '<div class="fp-end-title"></div><div class="fp-tr-bar"><i></i></div><div class="fp-tr-label">Подготовка…</div>' +
+      '<div class="fp-tr-x" title="Скрыть (перевод продолжится)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>';
+    el.querySelector(".fp-end-title").textContent = title;
+    el.querySelector(".fp-tr-x").addEventListener("click", () => trStatusHide());
+    document.body.appendChild(el);
+    trStatusEl = el;
+    return el;
+  }
+  function trStatusProgress(el, d, tot) {
+    if (!el || !el.isConnected || !tot) return;
+    el.querySelector(".fp-tr-bar i").style.width = Math.round((100 * d) / tot) + "%";
+    el.querySelector(".fp-tr-label").textContent = d + "/" + tot;
+  }
+  function trStatusDone(msg, isErr) {
+    const el = trStatusEl;
+    if (!el) return;
+    el.querySelector(".fp-tr-bar i").style.width = "100%";
+    const lab = el.querySelector(".fp-tr-label");
+    lab.textContent = msg || "Готово";
+    if (isErr) lab.style.color = "var(--text-error)";
+    clearTimeout(trStatusTimer);
+    trStatusTimer = setTimeout(() => trStatusHide(), 3400);
+  }
+  function trStatusHide() {
+    clearTimeout(trStatusTimer);
+    const el = trStatusEl;
+    trStatusEl = null;
+    if (el) { el.classList.add("is-done"); setTimeout(() => el.remove(), 300); }
+  }
+  // translate picker: two columns (from -> to) in the same fp-end-picker style as the edge-end
+  // menu with a language search on top; picking the target hands off to the top status plaque
+  function trPickLang(anchor, run, current) {
+    document.querySelectorAll(".fp-tr-pop").forEach((p) => p.remove());
+    const pop = document.createElement("div");
+    pop.className = "fp-end-picker fp-tr-pop";
+    let src = "auto";
+    try {
+      const c = activeCanvas(), o = c && c.view && c.view.plugin && c.view.plugin.options;
+      const last = (localStorage.getItem("fp-tr-last") || "|").split("|");
+      const saved = (o && o.fpTrSrc) || localStorage.getItem("fp-tr-src") || last[1] || "auto";
+      if (saved === "auto" || TR_LANGS.some((l) => l[0] === saved)) src = saved;
+    } catch (e) { /* auto */ }
+    const mark = (colEl, code) => colEl.querySelectorAll(".fp-end-item").forEach((x) => x.classList.toggle("is-active", x.dataset.code === code));
+    const col = (title, items, active, onPick) => {
+      const c = document.createElement("div"); c.className = "fp-end-col";
+      const t = document.createElement("div"); t.className = "fp-end-title"; t.textContent = title; c.appendChild(t);
+      for (const [code, name] of items) {
+        const it = document.createElement("div");
+        it.className = "fp-end-item" + (code === active ? " is-active" : "");
+        it.dataset.code = code;
+        const l = document.createElement("span"); l.textContent = name;
+        const s = document.createElement("small"); s.textContent = code;
+        it.append(l, s);
+        it.addEventListener("click", () => onPick(code, c));
+        c.appendChild(it);
+      }
+      pop.appendChild(c);
+      return c;
+    };
+    const search = document.createElement("input");
+    search.className = "fp-tr-search";
+    search.placeholder = "Поиск языка…";
+    search.spellcheck = false;
+    pop.appendChild(search);
+    const applyFilter = () => {
+      const q = search.value.trim().toLowerCase();
+      pop.querySelectorAll(".fp-end-item").forEach((it) => {
+        const hay = (it.textContent + " " + (it.dataset.code || "")).toLowerCase();
+        it.style.display = !q || hay.includes(q) ? "" : "none";
+      });
+    };
+    search.addEventListener("input", applyFilter);
+    search.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Escape") pop.remove(); });
+    col("С языка", [["auto", "Определить автоматически"], ...TR_LANGS], src, (code, c) => { src = code; mark(c, code); });
+    col("На язык", TR_LANGS, current, (code) => start(code));
+    function start(tl) {
+      const sl = src;
+      pop.remove();
+      const st = trStatusShow("Перевод: " + (sl === "auto" ? "авто" : trLangName(sl)) + " → " + trLangName(tl));
+      const hooks = { onProgress: (d, tot) => trStatusProgress(st, d, tot) };
+      Promise.resolve().then(() => run(tl, sl, hooks)).then((r) => {
+        trStatusDone(r && r.msg ? r.msg : (r ? "Готово" : "Нечего переводить"));
+      }).catch((e) => {
+        console.warn("[fp-canvas] translate failed", e);
+        trStatusDone("Ошибка перевода", true);
+      });
+    }
+    document.body.appendChild(pop);
+    const r = anchor === document.body || !anchor || !anchor.getBoundingClientRect
+      ? { left: window.innerWidth / 2, top: window.innerHeight / 2, width: 0 }
+      : anchor.getBoundingClientRect();
+    pop.style.left = Math.max(8, Math.min(window.innerWidth - pop.offsetWidth - 8, r.left + r.width / 2 - pop.offsetWidth / 2)) + "px";
+    let py = Number.isFinite(r.bottom) ? r.bottom + 6 : r.top + 20;
+    if (py + pop.offsetHeight > window.innerHeight - 8) py = r.top - pop.offsetHeight - 6;
+    pop.style.top = Math.max(8, py) + "px";
+    const away = (ev) => { if (!pop || pop.contains(ev.target) || (anchor && anchor.contains && anchor.contains(ev.target))) return; pop.remove(); document.removeEventListener("pointerdown", away, true); };
+    document.addEventListener("pointerdown", away, true);
+    setTimeout(() => search.focus(), 30);
+  }
+  // translate button on the canvas toolbar (next to zoom / undo)
+  function injectTranslateButton(canvas, wrap) {
+    if (wrap.querySelector(".fp-tr-grp")) return;
+    const controls = wrap.querySelector(".canvas-controls");
+    if (!controls) { setTimeout(() => { if (wrap.isConnected) injectTranslateButton(canvas, wrap); }, 400); return; }
+    const grp = document.createElement("div");
+    grp.className = "canvas-control-group mod-raised fp-tr-grp";
+    const item = document.createElement("div");
+    item.className = "canvas-control-item fp-tr-btn";
+    item.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>';
+    item.setAttribute("aria-label", "Перевести карточки холста");
+    item.title = "Перевести весь холст";
+    item.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (canvas.readonly) return typeof Notice === "function" && new Notice("Холст только для чтения");
+      trPickLang(item, (tl, sl, hooks) => translateCanvas(canvas, tl, "all", sl, hooks), trDefaultLang());
+    });
+    grp.appendChild(item);
+    controls.appendChild(grp);
+  }
+  // canvas.requestSave() only marks dirty and schedules the write (~2 s debounce);
+  // this forces the pending save through the view's debounced requestSave.run()
+  function flushCanvasSave(canvas) {
+    try {
+      canvas.requestSave && canvas.requestSave();
+      const v = canvas.view;
+      if (v && v.requestSave) { if (typeof v.requestSave.run === "function") v.requestSave.run(); else v.requestSave(); }
+    } catch (e) { /* canvas gone */ }
+  }
+  let quitFlushBound = false;
+  function bindQuitFlush() {
+    if (quitFlushBound) return;
+    quitFlushBound = true;
+    const flush = () => { for (const c of liveCanvases) flushCanvasSave(c); };
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("beforeunload", flush);
+  }
+  // slide-out chip, top-right: appears only while the canvas holds translated cards
+  function injectRestoreChip(canvas, wrap) {
+    if (wrap.querySelector(".fp-tr-restore")) return;
+    const chip = document.createElement("div");
+    chip.className = "fp-tr-restore";
+    chip.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span class="fp-tr-restore-label"></span>';
+    wrap.appendChild(chip);
+    const countOrig = () => {
+      let n = 0;
+      for (const x of canvas.nodes.values()) {
+        const u = x.unknownData;
+        if (u && (typeof u.fpTrOrig === "string" || typeof u.fpTrOrigFile === "string")) n++;
+      }
+      return n;
+    };
+    const refresh = () => {
+      const n = countOrig();
+      chip.classList.toggle("is-on", n > 0);
+      chip.querySelector(".fp-tr-restore-label").textContent = n > 1 ? "Оригиналы (" + n + ")" : "Оригинал";
+    };
+    chip.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (canvas.readonly) return typeof Notice === "function" && new Notice("Холст только для чтения");
+      restoreOriginals(canvas, Array.from(canvas.nodes.values()));
+      setTimeout(refresh, 60);
+    });
+    const timer = setInterval(() => { if (!wrap.isConnected) { clearInterval(timer); return; } refresh(); }, 700);
+    refresh();
+  }
+
   // ---- nested canvases: hovering a card that points at another canvas shows that canvas as a small picture
   let hoverTimer = 0, hoverEl = null;
   const hideCanvasPreview = () => { clearTimeout(hoverTimer); hoverTimer = 0; if (hoverEl) { hoverEl.remove(); hoverEl = null; } };
@@ -2005,6 +2678,7 @@
     document.body.addEventListener("pointerdown", hideCanvasPreview, true);
   };
   if (document.body) watchNestedCanvas(); else document.addEventListener("DOMContentLoaded", watchNestedCanvas);
+  if (document.body) bindVaultMenus(); else document.addEventListener("DOMContentLoaded", bindVaultMenus);
 
   // links typed without a scheme get https://
   window.__fpUrl = (u) => { if (typeof u !== "string") return u; const t = u.trim(); if (!t) return u; if (/^[a-z][a-z0-9+.-]*:/i.test(t)) return t; if (t.startsWith("//")) return "https:" + t; return "https://" + t; };
@@ -2073,6 +2747,7 @@
     if (!typeCmds && window.app && app.commands) {
       typeCmds = true;
       app.commands.addCommand({ id: "basalt:present", name: "Холст: презентация по карточкам", checkCallback: (c) => { const cv = activeCanvas(); if (!cv) return false; if (!c) startPresentation(cv); return true; } });
+      app.commands.addCommand({ id: "basalt:translate-canvas", name: "Холст: перевести карточки", checkCallback: (c) => { const cv = activeCanvas(); if (!cv) return false; if (!c) { const el = cv.wrapperEl && cv.wrapperEl.querySelector(".fp-tr-btn"); trPickLang(el || document.body, (tl, sl, hooks) => translateCanvas(cv, tl, "all", sl, hooks), trDefaultLang()); } return true; } });
       for (const [id, name] of ALIGNS) app.commands.addCommand({ id: "basalt:align-" + id, name: "Холст: " + name.charAt(0).toLowerCase() + name.slice(1), checkCallback: (c) => { const cv = activeCanvas(); if (!cv || cv.readonly) return false; if (!c) alignCards(cv, id); return true; } });
       for (const l of LAYOUTS) app.commands.addCommand({ id: "basalt:layout-" + l.id, name: "Холст: раскладка — " + l.name, checkCallback: (c) => { const cv = activeCanvas(); if (!cv || cv.readonly) return false; if (!c) runLayout(cv, l); return true; } });
       for (const t of CARD_TYPES) app.commands.addCommand({ id: "basalt:card-" + t.id, name: "Холст: добавить карточку «" + t.name + "»", checkCallback: (c) => { const cv = activeCanvas(); if (!cv || cv.readonly) return false; if (!c) addCardOfType(cv, t); return true; } });
@@ -2095,6 +2770,9 @@
         { const row = document.createElement("div"); row.className = "fp-type-row"; row.innerHTML = '<span class="fp-type-name">Презентация по карточкам</span>'; row.addEventListener("click", () => { closeLp(); startPresentation(canvas); }); lp.appendChild(row); }
         head("Выравнивание выделенных");
         for (const [id, name] of ALIGNS) { const row = document.createElement("div"); row.className = "fp-type-row"; row.innerHTML = '<span class="fp-type-name"></span>'; row.firstChild.textContent = name; row.addEventListener("click", () => { closeLp(); alignCards(canvas, id); }); lp.appendChild(row); }
+        head("Перевод");
+        { const row = document.createElement("div"); row.className = "fp-type-row"; row.innerHTML = '<span class="fp-type-name">Перевести карточки…</span>'; row.addEventListener("click", () => { const cur = trDefaultLang(); closeLp(); trPickLang(lb, (tl, sl, hooks) => translateCanvas(canvas, tl, canvas.selection.size ? "sel" : "all", sl, hooks), cur); }); lp.appendChild(row); }
+        { const row = document.createElement("div"); row.className = "fp-type-row"; row.innerHTML = '<span class="fp-type-name">Вернуть оригиналы</span>'; row.addEventListener("click", () => { closeLp(); const list = canvas.selection.size ? Array.from(canvas.selection) : Array.from(canvas.nodes.values()); restoreOriginals(canvas, list.filter((n) => n.nodeEl && !n.nodeEl.classList.contains("canvas-node-group"))); }); lp.appendChild(row); }
         document.body.appendChild(lp);
         const r = lb.getBoundingClientRect();
         lp.style.left = Math.max(8, Math.min(window.innerWidth - lp.offsetWidth - 8, r.left + r.width / 2 - lp.offsetWidth / 2)) + "px";
@@ -2128,6 +2806,13 @@
       pop.style.top = Math.max(8, r.top - pop.offsetHeight - 10) + "px";
       const away = (ev) => { if (!pop || pop.contains(ev.target) || btn.contains(ev.target)) return; closePop(); document.removeEventListener("pointerdown", away, true); };
       document.addEventListener("pointerdown", away, true);
+    });
+    const trb = menu.createDiv({ cls: "canvas-card-menu-button fp-tr-btn2" });
+    trb.setAttribute("aria-label", "Перевести карточки");
+    trb.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>';
+    trb.addEventListener("click", (e) => {
+      e.stopPropagation();
+      trPickLang(trb, (tl, sl, hooks) => translateCanvas(canvas, tl, canvas.selection.size ? "sel" : "all", sl, hooks), trDefaultLang());
     });
   };
 
@@ -2253,6 +2938,18 @@
       .setDesc("Карточки, которые рисует движок, показывают заголовок и первую строку вместо серых полосок. Стоит ~1–2 мс на кадр и не больше 200 карточек за раз.")
       .addToggle((t) => t.setValue(options.fpFarText !== false).onChange((v) => { options.fpFarText = v; apply(); }));
     slider(manualOnly(new Setting(containerEl).setName("Минимальная ширина для текста, px").setDesc("Уже этого размера на экране остаются полоски: текст всё равно не прочитать.")), "fpFarTextPx", 30, 200, 2);
+    new Setting(containerEl)
+      .setName("Язык перевода карточек")
+      .setDesc("Куда переводить текст карточек и Markdown-файлов по кнопке перевода на холсте (иконка «Языки» справа внизу, меню раскладки карточки или команда «Холст: перевести карточки»). Для файлов создаётся копия «имя.язык.md», оригинал не трогается.")
+      .addDropdown((d) => { for (const [code, name] of TR_LANGS) d.addOption(code, name); d.setValue(options.fpTrLang || DEFAULTS.fpTrLang).onChange((v) => { options.fpTrLang = v; apply(); }); });
+    new Setting(containerEl)
+      .setName("Язык оригинала карточек")
+      .setDesc("С какого языка переводить. «Авто» — Google определяет сам; точный язык переводит быстрее и стабильнее. Выбор в попапе перевода запоминается и меняет это значение.")
+      .addDropdown((d) => {
+        d.addOption("auto", "Определить автоматически");
+        for (const [code, name] of TR_LANGS) d.addOption(code, name);
+        d.setValue(options.fpTrSrc || DEFAULTS.fpTrSrc).onChange((v) => { options.fpTrSrc = v; apply(); });
+      });
     refresh();
   };
 
