@@ -2,7 +2,7 @@
 // "Найти" + "Закрыть ▾" instead of twenty-five rows. Items, callbacks and submenus are the original ones; only the drawing changes.
 (() => {
   "use strict";
-  const MIN_ITEMS = 10;
+  const MIN_ITEMS = 4, COLS_FROM = 10;
   const css = document.createElement("style");
   css.textContent = `
     .bm-pop { position: fixed; z-index: 10000; display: flex; flex-direction: column; gap: 4px; padding: 6px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto;
@@ -68,7 +68,8 @@
     for (const it of items) { const b = bucket(txt(it)); (b === "close" ? close : b === "find" ? find : rest).push([b, it]); }
     const known = rest.filter(([b]) => b !== "other").length;
     const cols = [];
-    if (known >= Math.ceil(rest.length * 0.6)) {
+    if (items.length < COLS_FROM) cols.push({ h: "", items: rest.map((x) => x[1]) });
+    else if (known >= Math.ceil(rest.length * 0.6)) {
       const defs = { view: "Вид", file: "Файл", path: "Путь и связи" };
       const m = { view: [], file: [], path: [] };
       for (const [b, it] of rest) if (b !== "other") m[b === "view" || b === "path" ? b : "file"].push(it);
