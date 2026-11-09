@@ -6,7 +6,7 @@
   const VIEW = "basalt-codegraph";
   const fs = window.require("fs"), path = window.require("path");
   const SKIP = new Set(["node_modules", "target", "dist", "build", "out", "__pycache__", "venv", ".venv", "vendor", "coverage", "bin", "obj", "Pods", "site-packages", "third_party"]);
-  const LIMIT_FILES = 4000, MAX_BYTES = 400 * 1024, MAX_SYMS = 12000;
+  const LIMIT_FILES = 6000, MAX_BYTES = 400 * 1024, MAX_SYMS = 12000;
   const LANG = {
     js: ["JavaScript", "#f1e05a"], jsx: ["JavaScript", "#f1e05a"], mjs: ["JavaScript", "#f1e05a"], cjs: ["JavaScript", "#f1e05a"], ts: ["TypeScript", "#3178c6"], tsx: ["TypeScript", "#3178c6"],
     py: ["Python", "#3572A5"], rs: ["Rust", "#dea584"], go: ["Go", "#00ADD8"], java: ["Java", "#b07219"], kt: ["Kotlin", "#A97BFF"], cs: ["C#", "#178600"],
@@ -85,6 +85,9 @@
       all(/^\s*#\s*include\s*"([^"]+)"/gm, (m) => imps.push(m[1]));
       lines.forEach((l, i) => { let m; if ((m = /^(?:class|struct)\s+(\w+)/.exec(l))) add(m[1], "class", i);
         else if (/^[A-Za-z_]/.test(l) && !/^(?:if|for|while|switch|return|else|typedef|using|namespace|#)/.test(l) && (m = /^[\w\s\*&:<>,~]*?\b(\w+)\s*\([^;{]*\)?\s*(?:const\s*)?\{?\s*$/.exec(l)) && /[)\{]\s*$/.test(l)) add(m[1], "fn", i); });
+    } else if (ext === "dart") {
+      all(/^\s*(?:import|export|part)\s+['"]([^'"]+)['"]/gm, (m) => imps.push(m[1]));
+      lines.forEach((l, i) => { let m; if ((m = /^\s*(?:abstract\s+|base\s+|final\s+|sealed\s+|mixin\s+)*(?:class|mixin|enum|extension)\s+(\w+)/.exec(l))) add(m[1], "class", i); else if ((m = /^(?:[\w<>?,\s]+?\s)?(\w+)\s*\([^;]*\)\s*(?:async\*?\s*)?(?:\{|=>)/.exec(l)) && !/^\s/.test(l) && !/^(?:if|for|while|switch|return|else)\b/.test(l)) add(m[1], "fn", i); else if ((m = /^ {2}(?:static\s+|Future<[^>]*>\s+|[\w<>?]+\s+)(\w+)\s*\([^;]*\)\s*(?:async\*?\s*)?(?:\{|=>)/.exec(l))) add(m[1], "method", i); });
     } else {
       all(/^\s*(?:require_relative|require|include|include_once|require_once|source)\s*\(?\s*['"]([^'"]+)['"]/gm, (m) => imps.push(m[1])); all(/@import\s+(?:url\()?['"]([^'"]+)['"]/g, (m) => imps.push(m[1])); all(/<(?:script[^>]+src|link[^>]+href)=["']([^"']+)["']/g, (m) => imps.push(m[1]));
       lines.forEach((l, i) => { let m; if ((m = /^\s*(?:def|function|fn|func|fun|sub|local\s+function)\s+(\w+)/.exec(l))) add(m[1], "fn", i); else if ((m = /^\s*class\s+(\w+)/.exec(l))) add(m[1], "class", i); });
@@ -102,7 +105,8 @@
     return (f, spec) => {
       const dir = path.posix.dirname(f.rel), norm = (p) => path.posix.normalize(p).replace(/^\.\//, "");
       if (JSLIKE.has(f.ext) || ["css", "html", "rb", "php", "sh", "lua", "dart"].includes(f.ext)) {
-        if (spec[0] === ".") { const b = norm(dir + "/" + spec); return tryJs(b) || (f.ext === "rb" || f.ext === "php" ? pick([b + ".rb", b + ".php"]) : null); }
+        if (spec[0] === ".") { const b = norm(dir + "/" + spec); return (f.ext === "dart" ? byRel.get(b) : null) || tryJs(b) || (f.ext === "rb" || f.ext === "php" ? pick([b + ".rb", b + ".php"]) : null); }
+        if (f.ext === "dart" && spec.startsWith("package:")) { const rest = spec.slice(8), slash = rest.indexOf("/"), pkg = rest.slice(0, slash), tail = "/lib/" + rest.slice(slash + 1); const list = byBase.get(path.posix.basename(rest)) || []; const hit = list.find((x) => x.rel.endsWith(tail) && x.rel.includes("/" + pkg + "/") ) || list.find((x) => x.rel.endsWith(tail)); return hit || null; }
         if (/^[@~]\//.test(spec)) { const s = spec.slice(2); return tryJs("src/" + s) || tryJs(s); }
         return f.ext === "rb" || f.ext === "php" ? tryJs(norm(dir + "/" + spec)) : null;
       }
@@ -131,7 +135,7 @@
     const resolve = makeResolver(files), parsed = new Map();
     let n = 0;
     for (const f of files) {
-      try { const st = await fs.promises.stat(f.abs); if (st.size > MAX_BYTES) { f.loc = Math.round(st.size / 40); parsed.set(f, { imps: [], syms: [], lines: [] }); continue; }
+      try { const st = await fs.promises.stat(f.abs); if (mode === "files") { f.loc = Math.max(1, Math.round(st.size / 40)); parsed.set(f, { imps: [], syms: [], lines: [] }); continue; } if (st.size > MAX_BYTES) { f.loc = Math.round(st.size / 40); parsed.set(f, { imps: [], syms: [], lines: [] }); continue; }
         const text = await fs.promises.readFile(f.abs, "utf8"); const p = parse(f, text); f.loc = p.lines.length; parsed.set(f, p); } catch (e) { f.loc = 0; parsed.set(f, { imps: [], syms: [], lines: [] }); }
       if (++n % 40 === 0) { if (prog) prog(files.length, n); await new Promise((r) => setTimeout(r, 0)); }
     }
@@ -145,7 +149,7 @@
     for (const f of files) for (const spec of parsed.get(f).imps) { const t = resolve(f, spec); if (t && t.node) addLink(f.node, t.node, "import"); }
     let symCount = 0; const defs = new Map();
     if (mode === "code") {
-      for (const f of files) { const p = parsed.get(f); f.symNodes = []; for (const s of p.syms) { if (symCount >= MAX_SYMS) break; symCount++; const node = addNode({ id: "s:" + f.rel + ":" + s.line + ":" + s.name, kind: "sym", sym: s.kind, label: s.name, path: f.rel, abs: f.abs, line: s.line + 1, dir: f.node.dir, loc: 0, lang: LANG[f.ext][0], color: f.node.color }); f.symNodes.push(node); addLink(f.node, node, "contains"); (defs.get(s.name) || defs.set(s.name, []).get(s.name)).push(node); } }
+      for (const f of files) { const p = parsed.get(f); f.symNodes = []; for (const s of p.syms) { if (symCount >= MAX_SYMS) break; symCount++; const node = addNode({ id: "s:" + f.rel + ":" + s.line + ":" + s.name, kind: "sym", sym: s.kind, label: s.name, path: f.rel, abs: f.abs, line: s.line + 1, dir: f.node.dir, parent: f.node, loc: 0, lang: LANG[f.ext][0], color: f.node.color }); f.symNodes.push(node); addLink(f.node, node, "contains"); (defs.get(s.name) || defs.set(s.name, []).get(s.name)).push(node); } }
       for (const f of files) {
         const p = parsed.get(f), sn = f.symNodes; if (!sn.length && !p.lines.length) continue; let cur = -1; const rx = /\b([A-Za-z_$][\w$]*)\s*\(/g;
         for (let i = 0; i < p.lines.length; i++) {
@@ -157,15 +161,20 @@
       }
       // import edges between files stay (fainter); symbols without any call/contain beyond the file are fine
     }
+    // colour groups: the first two path segments, the biggest groups get distinct hues
+    const gc = new Map(); for (const f of files) { const k = f.rel.split("/").slice(0, 2).join("/"); f.group = k.includes("/") ? k : "(корень)"; gc.set(f.group, (gc.get(f.group) || 0) + 1); }
+    const ranked = [...gc.entries()].sort((a, b) => b[1] - a[1]), gcol = new Map(); ranked.forEach(([k], i) => gcol.set(k, i < 14 ? "hsl(" + Math.round((i * 137.5) % 360) + ",62%,60%)" : "#8a8a8a"));
+    const groups = ranked.slice(0, 14).map(([k, c]) => ({ name: k, n: c, color: gcol.get(k) }));
+    for (const f of files) { f.node.color = gcol.get(f.group); f.node.group = f.group; if (f.symNodes) for (const sy of f.symNodes) { sy.color = f.node.color; sy.group = f.group; } }
     // dir sizes
     for (const nd of nodes) if (nd.kind === "file") { let d = idx.get("d:" + nd.dir); while (d) { d.loc += nd.loc; const up = d.path === "" ? null : (path.posix.dirname(d.path) === "." ? "" : path.posix.dirname(d.path)); d = up === null ? null : idx.get("d:" + up); } }
-    return { nodes, links, idx, files: files.length, syms: symCount };
+    return { nodes, links, idx, files: files.length, syms: symCount, groups };
   }
 
   // ---------- view ----------
   function makeView(api) {
     return class CodeGraphView extends api.ItemView {
-      constructor(leaf) { super(leaf); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; }
+      constructor(leaf) { super(leaf); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "tree"; } catch (e) { this.layout = "tree"; } }
       getViewType() { return VIEW; }
       getDisplayText() { return this.mode === "code" ? "Граф кода" : "Граф файлов"; }
       getIcon() { return "lucide-git-fork"; }
@@ -180,9 +189,12 @@
         for (const [k, t] of [["files", "Файлы"], ["code", "Код"]]) { const b = document.createElement("button"); b.textContent = t; b.addEventListener("click", () => { if (this.mode !== k) { this.mode = k; this.syncSeg(); this.load(); try { this.leaf.updateHeader(); } catch (e) { /* ok */ } } }); seg.appendChild(b); this.segBtns[k] = b; }
         const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти узел…"; bar.appendChild(q); this.qIn = q;
         q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { if (e.key === "Enter") this.focusMatch(); });
+        const ls = document.createElement("select"); ls.className = "bsg-search"; ls.style.width = "auto"; ls.title = "Вид графа файлов";
+        for (const [k, t] of [["tree", "Дерево"], ["ladder", "Лесенка"], ["radial", "Радиальный"], ["force", "Свободный"]]) { const o = document.createElement("option"); o.value = k; o.textContent = t; ls.appendChild(o); }
+        ls.value = this.layout; ls.addEventListener("change", () => { this.layout = ls.value; try { localStorage.setItem("bsg.layout", this.layout); } catch (e) { /* ok */ } this.userView = false; this.refit = false; this.applyLayout(false); });
+        bar.appendChild(ls); this.layoutSel = ls;
         const btn = (t, title, fn, on) => { const b = document.createElement("button"); b.className = "bsg-btn" + (on ? " on" : ""); b.textContent = t; b.title = title; b.addEventListener("click", () => fn(b)); bar.appendChild(b); return b; };
-        btn("Каталоги", "Показывать связи «каталог → файл»", (b) => { this.showDirs = !this.showDirs; b.classList.toggle("on", this.showDirs); this.draw(); }, true);
-        btn("Импорты", "Показывать импорты между файлами", (b) => { this.showImports = !this.showImports; b.classList.toggle("on", this.showImports); this.draw(); }, true);
+        this.btnImps = btn("Импорты", "Показывать импорты между файлами", (b) => { this.showImports = !this.showImports; b.classList.toggle("on", this.showImports); this.draw(); }, true);
         btn("По центру", "Вписать граф в окно", () => this.fit());
         btn("Заново", "Сбросить закреплённые позиции и пересчитать", () => this.relayout());
         btn("↻", "Пересканировать папку", () => this.load());
@@ -196,7 +208,7 @@
         this.ro = new ResizeObserver(() => { this.resize(); this.draw(); }); this.ro.observe(body);
         this.built = true; await this.load();
       }
-      syncSeg() { for (const k in this.segBtns) this.segBtns[k].classList.toggle("on", k === this.mode); }
+      syncSeg() { for (const k in this.segBtns) this.segBtns[k].classList.toggle("on", k === this.mode); if (this.layoutSel) this.layoutSel.style.display = this.mode === "files" ? "" : "none"; if (this.btnImps) this.btnImps.style.display = this.mode === "code" ? "" : "none"; }
       resize() { const r = this.body.getBoundingClientRect(), d = window.devicePixelRatio || 1; this.w = r.width; this.h = r.height; this.cv.width = Math.max(1, Math.round(r.width * d)); this.cv.height = Math.max(1, Math.round(r.height * d)); this.dpr = d; }
       async load() {
         const myRun = this.run = (this.run || 0) + 1; this.resize(); this.g = null; this.msg.textContent = "Читаю файлы…"; this.draw();
@@ -207,30 +219,72 @@
         this.g = g; this.rootPath = root;
         if (!g.nodes.length) { this.msg.textContent = "В этой папке нет файлов с кодом"; return; }
         this.msg.textContent = "";
-        const saved = await this.loadLayout(); let placed = 0;
+        const saved = (this.mode === "code" || this.layout === "force") ? await this.loadLayout() : null; let placed = 0;
         const cx = 0, cy = 0, dirs = [...new Set(g.nodes.map((n) => n.dir))]; const ang = new Map(dirs.map((d, i) => [d, (i / dirs.length) * Math.PI * 2]));
-        g.nodes.forEach((n, i) => { const s = saved && saved[n.id]; if (s) { n.x = s[0]; n.y = s[1]; n.pinned = !!s[2]; placed++; } else { const a = ang.get(n.dir) + (Math.random() - .5) * .6, r = 60 + Math.sqrt(g.nodes.length) * 14 * (.4 + Math.random() * .6); n.x = cx + Math.cos(a) * r; n.y = cy + Math.sin(a) * r; n.pinned = false; } n.vx = n.vy = 0; n.r = n.kind === "dir" ? 6 : n.kind === "file" ? Math.min(15, 3 + Math.sqrt(n.loc) / 4) : Math.min(9, 2.5 + n.deg * .35); });
-        this.alpha = placed > g.nodes.length * .8 ? .05 : 1; this.fitted = false;
+        g.nodes.forEach((n, i) => { const s = saved && saved[n.id]; if (s) { n.x = s[0]; n.y = s[1]; n.pinned = !!s[2]; placed++; } else { const a = ang.get(n.dir) + (Math.random() - .5) * .6, r = 60 + Math.sqrt(g.nodes.length) * 14 * (.4 + Math.random() * .6); n.x = cx + Math.cos(a) * r; n.y = cy + Math.sin(a) * r; n.pinned = false; } if (n.kind === "sym" && !(saved && saved[n.id])) { n.x = n.parent.x + (Math.random() - .5) * 30; n.y = n.parent.y + (Math.random() - .5) * 30; } n.vx = n.vy = 0; n.r = n.kind === "dir" ? 6 : n.kind === "file" ? Math.min(15, 3 + Math.sqrt(n.loc) / 4) : Math.min(9, 2.5 + n.deg * .35); });
+        this.expanded = new Set(); this.rebuildView(); this.alpha = placed > g.nodes.length * .8 ? .05 : 1; this.applyLayout(true); this.fitted = false; this.refit = false; this.userView = false;
         this.fillLegend(); this.updateInfo(); this.runSearch(true); this.loop();
       }
-      fillLegend() { const m = new Map(); for (const n of this.g.nodes) if (n.lang) m.set(n.lang, n.color); this.legend.textContent = ""; for (const [l, c] of m) { const s = document.createElement("span"); const i = document.createElement("i"); i.style.background = c; s.append(i, l); this.legend.appendChild(s); } }
-      updateInfo() { const g = this.g; this.info.textContent = g.files + " файлов · " + g.links.filter((l) => l.kind === "import").length + " импортов" + (this.mode === "code" ? " · " + g.syms + " символов · " + g.links.filter((l) => l.kind === "call").length + " вызовов" : ""); }
+      fillLegend() { this.legend.textContent = ""; for (const gr of this.g.groups) { const sp = document.createElement("span"); const ic = document.createElement("i"); ic.style.background = gr.color; sp.append(ic, gr.name); this.legend.appendChild(sp); } }
+      updateInfo() { const g = this.g; this.info.textContent = this.mode === "files" ? g.files + " файлов · " + g.nodes.filter((n) => n.kind === "dir").length + " каталогов" : g.files + " файлов · " + g.links.filter((l) => l.kind === "import").length + " импортов" + (this.mode === "code" ? " · " + g.syms + " символов · " + g.links.filter((l) => l.kind === "call").length + " вызовов · двойной клик по файлу раскрывает символы" : ""); }
+      // -- visible graph: in "Код" mode symbols are hidden inside their file until it is expanded (double click); calls are summed per file pair --
+      rebuildView() {
+        const g = this.g, exp = this.expanded, vis = (n) => (n.kind === "dir" ? this.mode === "files" : n.kind !== "sym" || exp.has(n.parent.id)), rep = (n) => (vis(n) ? n : n.parent), map = new Map(), links = [];
+        this.vnodes = g.nodes.filter(vis);
+        for (const l of g.links) {
+          if (l.kind === "contains") { if (vis(l.a) && vis(l.b)) links.push(l); continue; }
+          const a = rep(l.a), b = rep(l.b); if (a === b) continue; const k = a.id + ">" + b.id + l.kind; let e = map.get(k);
+          if (!e) { e = { a, b, kind: l.kind, w: 0 }; map.set(k, e); links.push(e); } e.w++;
+        }
+        this.vlinks = links; this.byDeg = null; for (const n of this.vnodes) n.vd = 0; for (const l of links) { const w = l.kind === "call" ? Math.min(l.w, 6) : 1; l.a.vd += w; l.b.vd += w; }
+        for (const n of this.vnodes) n.r = n.kind === "dir" ? 5 : n.kind === "file" ? Math.min(14, 2.5 + Math.sqrt(n.loc) / 5 + Math.sqrt(n.vd) * .5) : Math.min(8, 2.2 + Math.sqrt(n.vd));
+        this.byDeg = this.vnodes.slice().sort((a, b) => b.vd * (b.kind === "dir" ? 1.5 : 1) - a.vd * (a.kind === "dir" ? 1.5 : 1));
+      }
+      toggleExpand(n) {
+        if (this.mode !== "code" || n.kind !== "file") return; const id = n.id;
+        if (this.expanded.has(id)) this.expanded.delete(id); else { this.expanded.add(id); for (const s of this.g.nodes) if (s.parent === n) { s.x = n.x + (Math.random() - .5) * 40; s.y = n.y + (Math.random() - .5) * 40; s.vx = s.vy = 0; } }
+        this.rebuildView(); this.alpha = Math.max(this.alpha, .5); this.loop();
+      }
+      applyLayout(initial) {
+        if (this.mode !== "files" || this.layout === "force") { this.static = false; if (!initial) { this.alpha = 1; this.fitted = false; this.loop(); } return; }
+        this.static = true; this.computeTree(); this.loop();
+      }
+      computeTree() {
+        const nodes = this.vnodes, kids = new Map(), root = nodes.find((n) => n.id === "d:"); if (!root) return;
+        for (const n of nodes) n.tx = undefined;
+        for (const l of this.vlinks) if (l.kind === "contains") { let a = kids.get(l.a); if (!a) kids.set(l.a, a = []); a.push(l.b); }
+        const cmp = (a, b) => (a.kind === "dir" ? 0 : 1) - (b.kind === "dir" ? 0 : 1) || a.label.localeCompare(b.label);
+        for (const arr of kids.values()) arr.sort(cmp);
+        const L = this.layout;
+        if (L === "ladder") { let row = 0; const walk = (n, d) => { n.tx = d * 24; n.ty = row++ * 20; for (const c of kids.get(n) || []) walk(c, d + 1); }; walk(root, 0); }
+        else {
+          const leaves = new Map(); let maxD = 1; const cnt = (n, d) => { maxD = Math.max(maxD, d); const k = kids.get(n); if (!k || !k.length) { leaves.set(n, 1); return 1; } let t = 0; for (const c of k) t += cnt(c, d + 1); leaves.set(n, t); return t; }; const total = cnt(root, 0);
+          if (L === "tree") { let leaf = 0; const place = (n, d) => { const k = kids.get(n); n.ty = d * 120; if (!k || !k.length) { n.tx = leaf++ * 18; return; } k.forEach((c) => place(c, d + 1)); n.tx = (k[0].tx + k[k.length - 1].tx) / 2; }; place(root, 0); }
+          else { const step = Math.max(110, total * 16 / (2 * Math.PI) / maxD); const place = (n, d, a0, a1) => { const am = (a0 + a1) / 2, r = d * step; n.tx = Math.cos(am) * r; n.ty = Math.sin(am) * r; const k = kids.get(n); if (!k) return; let a = a0; for (const c of k) { const span = (a1 - a0) * leaves.get(c) / leaves.get(n); place(c, d + 1, a, a + span); a += span; } }; place(root, 0, 0, Math.PI * 2); }
+        }
+        for (const n of nodes) if (n.tx === undefined) { n.tx = n.x; n.ty = n.y; }
+      }
+      tween() { let mv = false; for (const n of this.vnodes) { if (n.tx === undefined) continue; const dx = n.tx - n.x, dy = n.ty - n.y; if (Math.abs(dx) + Math.abs(dy) > 1.5) { n.x += dx * .3; n.y += dy * .3; mv = true; } else { n.x = n.tx; n.y = n.ty; } } return mv; }
       // -- physics --
-      loop() { if (this.raf) return; const step = () => { this.raf = 0; if (!this.g) return; if (this.alpha > .012 || this.dragging) { this.tick(); this.draw(); this.raf = requestAnimationFrame(step); } else { this.draw(); this.saveLayout(); } if (!this.fitted && this.alpha < .5 && this.w) { this.fitted = true; this.fit(); } }; this.raf = requestAnimationFrame(step); }
+      loop() { if (this.raf) return; const step = () => { this.raf = 0; if (!this.g) return; if (this.static) { const mv = this.tween(); this.draw(); if (mv || this.dragging) this.raf = requestAnimationFrame(step); else if (!this.userView) this.fit(); return; } if (this.alpha > .012 || this.dragging) { this.tick(); this.draw(); this.raf = requestAnimationFrame(step); } else { this.draw(); this.saveLayout(); } if (!this.fitted && this.alpha < .5 && this.w) { this.fitted = true; this.fit(); } if (!this.userView && this.alpha < .03 && !this.refit) { this.refit = true; this.fit(); } }; this.raf = requestAnimationFrame(step); }
       tick() {
-        const g = this.g, nodes = g.nodes, a = this.alpha, cell = 70, grid = new Map(), key = (x, y) => x * 73856093 ^ y * 19349663;
+        const nodes = this.vnodes, a = this.alpha, cell = 64, grid = new Map(), key = (x, y) => x * 73856093 ^ y * 19349663;
         for (const n of nodes) { const k = key(Math.floor(n.x / cell), Math.floor(n.y / cell)); let arr = grid.get(k); if (!arr) grid.set(k, arr = []); arr.push(n); n.fx = 0; n.fy = 0; }
         for (const n of nodes) { const cx = Math.floor(n.x / cell), cy = Math.floor(n.y / cell);
-          for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const arr = grid.get(key(cx + dx, cy + dy)); if (!arr) continue; for (const m of arr) { if (m === n) continue; let ex = n.x - m.x, ey = n.y - m.y, d2 = ex * ex + ey * ey; if (d2 > cell * cell * 2.2) continue; if (d2 < .01) { ex = Math.random() - .5; ey = Math.random() - .5; d2 = .25; } const f = (260 + (n.r + m.r) * 12) / d2; n.fx += ex * f; n.fy += ey * f; } } }
-        for (const l of g.links) { const A = l.a, B = l.b; let ex = B.x - A.x, ey = B.y - A.y; const d = Math.sqrt(ex * ex + ey * ey) || 1; const len = l.kind === "contains" ? (A.kind === "dir" ? 55 : 28) : l.kind === "import" ? 120 : 70, k = l.kind === "contains" ? .06 : .02; const f = (d - len) * k; ex /= d; ey /= d; A.fx += ex * f; A.fy += ey * f; B.fx -= ex * f; B.fy -= ey * f; }
-        for (const n of nodes) { n.fx -= n.x * .004; n.fy -= n.y * .004; if (n.pinned || n === this.dragNode) { n.vx = n.vy = 0; continue; } n.vx = (n.vx + n.fx * a) * .8; n.vy = (n.vy + n.fy * a) * .8; const sp = Math.hypot(n.vx, n.vy); if (sp > 30) { n.vx *= 30 / sp; n.vy *= 30 / sp; } n.x += n.vx; n.y += n.vy; }
-        this.alpha *= .987;
+          for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) { const arr = grid.get(key(cx + dx, cy + dy)); if (!arr) continue; for (let q = 0, qn = Math.min(arr.length, 28); q < qn; q++) { const m = arr[q]; if (m === n) continue; let ex = n.x - m.x, ey = n.y - m.y, d2 = ex * ex + ey * ey; if (d2 > cell * cell * 2.4) continue; if (d2 < .01) { ex = Math.random() - .5; ey = Math.random() - .5; d2 = .25; } const f = (240 + (n.r + m.r) * 14) / d2; n.fx += ex * f; n.fy += ey * f; } } }
+        const BIG = 320, cg = new Map(), ck = (x, y) => x * 83492791 ^ y * 28411;
+        for (const n of nodes) { const k = ck(Math.floor(n.x / BIG), Math.floor(n.y / BIG)); let c = cg.get(k); if (!c) cg.set(k, c = { x: 0, y: 0, n: 0, cx: Math.floor(n.x / BIG), cy: Math.floor(n.y / BIG) }); c.x += n.x; c.y += n.y; c.n++; }
+        for (const c of cg.values()) { c.x /= c.n; c.y /= c.n; }
+        if (cg.size > 1) for (const n of nodes) { const bx = Math.floor(n.x / BIG), by = Math.floor(n.y / BIG); for (let dx = -3; dx <= 3; dx++) for (let dy = -3; dy <= 3; dy++) { if (!dx && !dy) continue; const c = cg.get(ck(bx + dx, by + dy)); if (!c) continue; const ex = n.x - c.x, ey = n.y - c.y, d2 = ex * ex + ey * ey + 400, inv = 140 * c.n / (d2 * Math.sqrt(d2)); n.fx += ex * inv; n.fy += ey * inv; } }
+        for (const l of this.vlinks) { const A = l.a, B = l.b; let ex = B.x - A.x, ey = B.y - A.y; const d = Math.sqrt(ex * ex + ey * ey) || 1; const len = l.kind === "contains" ? (A.kind === "dir" ? 50 : 26) : l.kind === "import" ? 110 : 80 / (1 + Math.log2(l.w || 1) * .3), k = l.kind === "contains" ? .07 : .018; const f = (d - len) * k; ex /= d; ey /= d; A.fx += ex * f; A.fy += ey * f; B.fx -= ex * f; B.fy -= ey * f; }
+        for (const n of nodes) { n.fx -= n.x * .0035; n.fy -= n.y * .0035; if (n.pinned || n === this.dragNode) { n.vx = n.vy = 0; continue; } n.vx = (n.vx + n.fx * a) * .8; n.vy = (n.vy + n.fy * a) * .8; const sp = Math.hypot(n.vx, n.vy); if (sp > 30) { n.vx *= 30 / sp; n.vy *= 30 / sp; } n.x += n.vx; n.y += n.vy; }
+        this.alpha *= .985;
       }
-      relayout() { if (!this.g) return; for (const n of this.g.nodes) { n.pinned = false; n.x += (Math.random() - .5) * 40; n.y += (Math.random() - .5) * 40; } this.alpha = 1; this.fitted = false; this.loop(); }
-      fit() { const ns = this.g && this.g.nodes; if (!ns || !ns.length || !this.w) return; let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const n of ns) { x0 = Math.min(x0, n.x); y0 = Math.min(y0, n.y); x1 = Math.max(x1, n.x); y1 = Math.max(y1, n.y); } const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
+      relayout() { if (!this.g) return; for (const n of this.g.nodes) { n.pinned = false; n.x += (Math.random() - .5) * 40; n.y += (Math.random() - .5) * 40; } this.alpha = 1; this.fitted = false; this.refit = false; this.userView = false; this.loop(); }
+      fit() { const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
       // -- search --
       runSearch(quiet) { const s = this.qIn.value.trim().toLowerCase(); this.match = null; if (s && this.g) { this.match = new Set(); for (const n of this.g.nodes) if (n.label.toLowerCase().includes(s) || (n.kind !== "sym" && n.path.toLowerCase().includes(s))) this.match.add(n); } if (!quiet) this.draw(); }
-      focusMatch() { if (!this.match || !this.match.size) return; const n = [...this.match][0]; this.scale = Math.max(this.scale, 1.4); this.ox = this.w / 2 - n.x * this.scale; this.oy = this.h / 2 - n.y * this.scale; this.draw(); }
+      focusMatch() { if (!this.match || !this.match.size) return; let n = [...this.match][0]; if (n.kind === "sym" && !this.expanded.has(n.parent.id)) { this.toggleExpand(n.parent); } this.scale = Math.max(this.scale, 1.4); this.ox = this.w / 2 - n.x * this.scale; this.oy = this.h / 2 - n.y * this.scale; this.draw(); }
       // -- layout storage --
       layoutFile() { return path.join(this.rootPath, ".basalt", "graph-layout.json"); }
       async loadLayout() { try { const j = JSON.parse(await fs.promises.readFile(this.layoutFile(), "utf8")); return j[this.mode] || null; } catch (e) { return null; } }
@@ -239,57 +293,60 @@
       cssv(n) { return getComputedStyle(document.body).getPropertyValue(n).trim(); }
       draw() {
         const ctx = this.ctx; if (!ctx || !this.w) return; const d = this.dpr || 1, g = this.g;
-        ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, this.w, this.h); if (!g) return;
+        ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, this.w, this.h); if (!g || !this.vnodes) return;
         const bg = this.cssv("--background-primary") || "#1e1e1e", txt = this.cssv("--text-normal") || "#ddd", mut = this.cssv("--text-muted") || "#999", acc = this.cssv("--interactive-accent") || "#7a6cf0";
         ctx.translate(this.ox, this.oy); ctx.scale(this.scale, this.scale);
-        const hov = this.hover, nb = new Set(); if (hov) { nb.add(hov); for (const l of g.links) { if (l.a === hov) nb.add(l.b); else if (l.b === hov) nb.add(l.a); } }
-        const dim = (n) => (hov && !nb.has(n)) || (this.match && !this.match.has(n));
-        const vx0 = -this.ox / this.scale, vy0 = -this.oy / this.scale, vx1 = vx0 + this.w / this.scale, vy1 = vy0 + this.h / this.scale;
-        const lw = 1 / this.scale;
-        for (const l of g.links) {
-          if (l.kind === "contains" && !this.showDirs && l.a.kind === "dir") continue; if (l.kind === "import" && !this.showImports && this.mode === "code") continue;
-          const A = l.a, B = l.b; if ((A.x < vx0 && B.x < vx0) || (A.x > vx1 && B.x > vx1) || (A.y < vy0 && B.y < vy0) || (A.y > vy1 && B.y > vy1)) continue;
-          const hl = hov && (A === hov || B === hov), faded = (hov && !hl) || (this.match && !(this.match.has(A) || this.match.has(B)));
-          ctx.globalAlpha = faded ? .04 : hl ? .95 : l.kind === "contains" ? .16 : l.kind === "call" ? .2 : .5; ctx.lineWidth = (hl ? 1.6 : l.kind === "contains" ? .8 : 1) * lw;
-          ctx.strokeStyle = l.kind === "call" ? "#e0a030" : l.kind === "import" ? acc : mut; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
-          if (l.kind !== "contains" && this.scale > .5 && !faded) { const dx = B.x - A.x, dy = B.y - A.y, dl = Math.hypot(dx, dy) || 1, ux = dx / dl, uy = dy / dl, px = B.x - ux * (B.r + 2), py = B.y - uy * (B.r + 2), s = 5 * lw * 1.4; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px - ux * s - uy * s * .5, py - uy * s + ux * s * .5); ctx.lineTo(px - ux * s + uy * s * .5, py - uy * s - ux * s * .5); ctx.closePath(); ctx.fillStyle = ctx.strokeStyle; ctx.fill(); }
-        }
-        for (const n of g.nodes) {
-          if (n.x < vx0 - 20 || n.x > vx1 + 20 || n.y < vy0 - 20 || n.y > vy1 + 20) continue;
+        const hov = this.hover, S = this.scale, lw = 1 / S, nb = new Set(); if (hov) { nb.add(hov); for (const l of this.vlinks) { if (l.a === hov) nb.add(l.b); else if (l.b === hov) nb.add(l.a); } }
+        const focus = hov ? nb : this.match, dim = (n) => focus && !focus.has(n) && !(hov && n === hov);
+        const vx0 = -this.ox / S - 30, vy0 = -this.oy / S - 30, vx1 = vx0 + this.w / S + 60, vy1 = vy0 + this.h / S + 60;
+        const seen = (l) => { const A = l.a, B = l.b; return !((A.x < vx0 && B.x < vx0) || (A.x > vx1 && B.x > vx1) || (A.y < vy0 && B.y < vy0) || (A.y > vy1 && B.y > vy1)); };
+        const curve = (l) => { const A = l.a, B = l.b; if (l.kind === "contains" && this.static && this.layout === "ladder") { ctx.moveTo(A.x, A.y); ctx.lineTo(A.x, B.y); ctx.lineTo(B.x, B.y); return; } if (l.kind === "contains") { ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); return; } const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2, dx = B.x - A.x, dy = B.y - A.y; ctx.moveTo(A.x, A.y); ctx.quadraticCurveTo(mx - dy * .12, my + dx * .12, B.x, B.y); };
+        const showC = (l) => l.kind !== "contains" || this.showDirs || l.a.kind !== "dir", showI = (l) => l.kind !== "import" || this.showImports || this.mode !== "code";
+        const f = focus ? .22 : 1, B = [[], [], [], [], []];
+        for (const l of this.vlinks) { if (!seen(l)) continue; if (l.kind === "contains") { if (showC(l)) B[0].push(l); } else if (l.kind === "import") { if (showI(l)) B[1].push(l); } else B[l.w < 3 ? 2 : l.w < 10 ? 3 : 4].push(l); }
+        const sty = [[mut, .16 * f, .8], [acc, .4 * f, 1], ["#e0a030", .2 * f, .8], ["#e0a030", .38 * f, 1.3], ["#f0b040", .6 * f, 2]];
+        B.forEach((arr, k) => { if (!arr.length) return; ctx.beginPath(); for (const l of arr) curve(l); ctx.globalAlpha = sty[k][1]; ctx.strokeStyle = sty[k][0]; ctx.lineWidth = sty[k][2] * lw; ctx.stroke(); });
+        if (focus) { const hl = (l) => (hov ? (l.a === hov || l.b === hov) : (this.match.has(l.a) || this.match.has(l.b))) && showC(l) && showI(l); for (const l of this.vlinks) { if (!hl(l) || !seen(l)) continue; ctx.beginPath(); curve(l); ctx.globalAlpha = .9; ctx.lineWidth = (l.kind === "call" ? 1.2 + Math.min(2, Math.log2(l.w || 1) * .5) : 1.4) * lw; ctx.strokeStyle = l.kind === "call" ? "#f0b040" : l.kind === "import" ? acc : mut; ctx.stroke(); } }
+        for (const n of this.vnodes) {
+          if (n.x < vx0 || n.x > vx1 || n.y < vy0 || n.y > vy1) continue;
           ctx.globalAlpha = dim(n) ? .12 : 1; ctx.beginPath();
-          if (n.kind === "dir") { ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = bg; ctx.fill(); ctx.lineWidth = 1.6 * lw; ctx.strokeStyle = mut; ctx.stroke(); }
-          else if (n.kind === "sym") { const c = n.sym === "class" || n.sym === "type" ? "#c586c0" : n.sym === "method" ? "#4ec9b0" : n.color; if (n.sym === "class" || n.sym === "type") { ctx.rect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2); } else ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = c; ctx.fill(); }
-          else { ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = n.color; ctx.fill(); if (n === hov || (this.match && this.match.has(n))) { ctx.lineWidth = 2 * lw; ctx.strokeStyle = txt; ctx.stroke(); } }
+          if (n.kind === "dir") { ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = bg; ctx.fill(); ctx.lineWidth = 1.4 * lw; ctx.strokeStyle = mut; ctx.stroke(); }
+          else if (n.kind === "sym") { const sq = n.sym === "class" || n.sym === "type"; if (sq) ctx.rect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2); else ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = n.color; ctx.fill(); ctx.lineWidth = lw; ctx.strokeStyle = bg; ctx.stroke(); }
+          else { ctx.arc(n.x, n.y, n.r, 0, 7); ctx.fillStyle = n.color; ctx.fill(); if (n.r * S > 3) { ctx.lineWidth = 1.2 * lw; ctx.strokeStyle = bg; ctx.stroke(); } if (n === hov || (this.match && this.match.has(n))) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 2 * lw, 0, 7); ctx.lineWidth = 2 * lw; ctx.strokeStyle = txt; ctx.stroke(); } if (this.expanded.has(n.id)) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 3 * lw, 0, 7); ctx.setLineDash([3 * lw, 3 * lw]); ctx.lineWidth = lw; ctx.strokeStyle = n.color; ctx.stroke(); ctx.setLineDash([]); } }
           if (n.pinned) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r + 2.5 * lw, 0, 7); ctx.lineWidth = lw; ctx.strokeStyle = txt; ctx.stroke(); }
         }
-        // labels without overlap
-        ctx.globalAlpha = 1; const fs = 11 / this.scale; ctx.font = fs + "px sans-serif"; ctx.textBaseline = "middle"; const placed = [];
-        const order = g.nodes.filter((n) => n.x > vx0 && n.x < vx1 && n.y > vy0 && n.y < vy1).sort((a, b) => ((b === hov) - (a === hov)) || ((this.match && this.match.has(b)) - (this.match && this.match.has(a))) || (b.deg - a.deg));
+        // labels: biggest first, none over an already placed one; few at a distance, more when zoomed in
+        ctx.globalAlpha = 1; const fs = 11 / S; ctx.font = fs + "px sans-serif"; ctx.textBaseline = "middle"; const placed = [], budget = Math.round(14 + S * S * 120);
+        const inView = (n) => n.x > vx0 && n.x < vx1 && n.y > vy0 && n.y < vy1;
+        const strongSet = (hov || this.match) ? this.vnodes.filter((n) => inView(n) && (n === hov || (hov && nb.has(n)) || (this.match && this.match.has(n)))) : [];
+        const order = strongSet.concat(this.byDeg || []);
+        let shown = 0, scanned = 0;
         for (const n of order) {
-          const strong = n === hov || nb.has(n) && hov || (this.match && this.match.has(n)); const show = strong || (n.kind === "dir" ? this.scale > .25 : n.kind === "file" ? (this.scale > .9 || n.deg >= 8) : this.scale > 1.5);
-          if (!show || (dim(n) && !strong)) continue; const w = ctx.measureText(n.label).width, x = n.x + n.r + 3 / this.scale, y = n.y, box = [x, y - fs / 2, x + w, y + fs / 2];
-          if (!strong && placed.some((p) => box[0] < p[2] && box[2] > p[0] && box[1] < p[3] && box[3] > p[1])) continue; placed.push(box);
-          ctx.lineWidth = 3 / this.scale; ctx.strokeStyle = bg; ctx.strokeText(n.label, x, y); ctx.fillStyle = n.kind === "dir" ? mut : txt; ctx.fillText(n.label, x, y);
+          if (!inView(n)) continue; if (++scanned > 4000 && shown >= budget) break;
+          const strong = n === hov || (hov && nb.has(n)) || (this.match && this.match.has(n)); if (!strong && (shown >= budget || dim(n) || (n.kind === "sym" && S < 1.3))) { if (shown >= budget) break; continue; }
+          const w = ctx.measureText(n.label).width, x = n.x + n.r + 3 / S, y = n.y, box = [x, y - fs / 2, x + w, y + fs / 2];
+          if (placed.some((p) => box[0] < p[2] && box[2] > p[0] && box[1] < p[3] && box[3] > p[1])) continue; placed.push(box); shown++;
+          ctx.lineWidth = 3 / S; ctx.strokeStyle = bg; ctx.strokeText(n.label, x, y); ctx.fillStyle = n.kind === "dir" ? mut : txt; ctx.fillText(n.label, x, y);
         }
         ctx.globalAlpha = 1;
       }
       // -- interaction --
       toWorld(e) { const r = this.cv.getBoundingClientRect(); return [(e.clientX - r.left - this.ox) / this.scale, (e.clientY - r.top - this.oy) / this.scale]; }
-      hit(wx, wy) { const g = this.g; if (!g) return null; let best = null, bd = 1e9; for (const n of g.nodes) { const d = Math.hypot(n.x - wx, n.y - wy); if (d < n.r + 4 / this.scale && d < bd) { best = n; bd = d; } } return best; }
+      hit(wx, wy) { const g = this.g; if (!g) return null; let best = null, bd = 1e9; for (const n of this.vnodes) { const d = Math.hypot(n.x - wx, n.y - wy); if (d < n.r + 4 / this.scale && d < bd) { best = n; bd = d; } } return best; }
       bind() {
         const cv = this.cv; let pan = null, down = null;
         cv.addEventListener("pointerdown", (e) => { cv.setPointerCapture(e.pointerId); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); down = { x: e.clientX, y: e.clientY, moved: false, n }; if (n) { this.dragNode = n; this.dragging = true; this.alpha = Math.max(this.alpha, .3); this.loop(); } else pan = { x: e.clientX, y: e.clientY, ox: this.ox, oy: this.oy }; cv.style.cursor = "grabbing"; });
         cv.addEventListener("pointermove", (e) => {
           if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) down.moved = true;
           if (this.dragNode && down && down.moved) { const [wx, wy] = this.toWorld(e); this.dragNode.x = wx; this.dragNode.y = wy; this.dragNode.pinned = true; this.alpha = Math.max(this.alpha, .25); this.tip.style.display = "none"; return; }
-          if (pan) { this.ox = pan.ox + e.clientX - pan.x; this.oy = pan.oy + e.clientY - pan.y; this.draw(); return; }
+          if (pan) { this.userView = true; this.ox = pan.ox + e.clientX - pan.x; this.oy = pan.oy + e.clientY - pan.y; this.draw(); return; }
           const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (n !== this.hover) { this.hover = n; this.draw(); this.showTip(n, e); } else if (n) this.moveTip(e);
           cv.style.cursor = n ? "pointer" : "grab";
         });
         cv.addEventListener("pointerup", () => { if (down && !down.moved && down.n) { if (this.dragNode) { this.dragNode = null; } this.openNode(down.n); } if (this.dragNode) { this.dragNode = null; this.saveLayout(); } this.dragging = false; pan = null; down = null; cv.style.cursor = "grab"; if (this.g) this.saveLayout(); });
         cv.addEventListener("pointerleave", () => { if (!down) { this.hover = null; this.tip.style.display = "none"; this.draw(); } });
-        cv.addEventListener("dblclick", (e) => { const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (n) { n.pinned = false; this.alpha = Math.max(this.alpha, .3); this.loop(); this.saveLayout(); } });
-        cv.addEventListener("wheel", (e) => { e.preventDefault(); const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, k = Math.exp(-e.deltaY * .0015), ns = Math.max(.03, Math.min(10, this.scale * k)); this.ox = mx - (mx - this.ox) * (ns / this.scale); this.oy = my - (my - this.oy) * (ns / this.scale); this.scale = ns; this.draw(); }, { passive: false });
+        cv.addEventListener("dblclick", (e) => { const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (n && this.mode === "code" && n.kind === "file") { this.toggleExpand(n); return; } if (n) { n.pinned = false; this.alpha = Math.max(this.alpha, .3); this.loop(); this.saveLayout(); } });
+        cv.addEventListener("wheel", (e) => { e.preventDefault(); this.userView = true; const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, k = Math.exp(-e.deltaY * .0015), ns = Math.max(.03, Math.min(10, this.scale * k)); this.ox = mx - (mx - this.ox) * (ns / this.scale); this.oy = my - (my - this.oy) * (ns / this.scale); this.scale = ns; this.draw(); }, { passive: false });
       }
       showTip(n, e) { if (!n) { this.tip.style.display = "none"; return; } const t = this.tip; t.textContent = ""; const b = document.createElement("b"); b.textContent = n.label; t.appendChild(b); const add = (s) => { const x = document.createElement("span"); x.textContent = s; t.appendChild(x); };
         if (n.kind === "dir") add("Каталог · " + n.deg + " связей"); else if (n.kind === "file") { add(n.path); add(n.lang + " · " + n.loc + " строк · связей: " + n.deg); } else { add(n.path + ":" + n.line); add((n.sym === "class" ? "Класс/тип" : n.sym === "method" ? "Метод" : "Функция") + " · связей: " + n.deg); }

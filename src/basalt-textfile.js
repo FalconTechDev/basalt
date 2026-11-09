@@ -138,8 +138,7 @@
         const mkBtn = (label, title, fn) => { const b = el("button", "bstf-btn", label); b.title = title; b.addEventListener("click", fn); return b; };
         this.btnFind = mkBtn("Найти", "Найти (Ctrl+F)", () => this.openFind(false));
         this.btnWrap = mkBtn("Перенос", "Переносить длинные строки (Alt+Z)", () => this.setWrap(!this.cm.getOption("lineWrapping")));
-        bar.appendChild(this.btnFind); bar.appendChild(this.btnWrap);
-        wrap.appendChild(bar);
+                wrap.appendChild(bar);
 
         const find = this.buildFind(); wrap.appendChild(find);
         const holder = el("div"); holder.style.cssText = "flex:1;min-height:0;display:flex;flex-direction:column;position:relative"; wrap.appendChild(holder);
@@ -204,7 +203,7 @@
         this.cm.on("cursorActivity", () => this.updateStatus());
         this.cm.getWrapperElement().addEventListener("wheel", (e) => { if (e.ctrlKey) { e.preventDefault(); zoom(e.deltaY < 0 ? 1 : -1); } }, { passive: false });
         this.btnWrap.classList.toggle("on", !!this.cm.getOption("lineWrapping"));
-        this.buildStatus();
+        this.buildStatus(); this.setWrap(!!this.cm.getOption("lineWrapping"));
         this.updateStatus();
         this.registerEvent(app.vault.on("modify", (f) => this.external(f)));
         setTimeout(() => this.cm && this.cm.refresh(), 50);
@@ -214,7 +213,8 @@
         const s = this.status; s.textContent = "";
         this.stPos = el("span"); this.stSel = el("span");
         const sp = el("span", "sp"); const mk = (t) => el("span", null, t);
-        s.append(this.stPos, this.stSel, sp, mk(this.indentLabel), mk(this.eol === "\r\n" ? "CRLF" : "LF"), mk("UTF-8"), mk(this.lang));
+        this.stWrap = mk(""); this.stWrap.dataset.act = "wrap"; this.stWrap.title = "Перенос длинных строк (Alt+Z)"; this.stWrap.addEventListener("click", () => this.setWrap(!this.cm.getOption("lineWrapping")));
+        s.append(this.stPos, this.stSel, sp, this.stWrap, mk(this.indentLabel), mk(this.eol === "\r\n" ? "CRLF" : "LF"), mk("UTF-8"), mk(this.lang));
         const lines = el("span"); this.stLines = lines; s.insertBefore(lines, sp);
         const goto = this.stPos; goto.dataset.act = "goto"; goto.title = "Перейти к строке (Ctrl+G)"; goto.addEventListener("click", () => this.cm.execCommand ? this.cm.options.extraKeys["Ctrl-G"](this.cm) : 0);
       }
@@ -225,7 +225,7 @@
         const sel = this.cm.getSelection(); this.stSel.textContent = sel ? "Выделено: " + sel.length : "";
         this.stLines.textContent = this.cm.lineCount() + " стр.";
       }
-      setWrap(on) { store.set("wrap", on); this.cm.setOption("lineWrapping", on); this.btnWrap.classList.toggle("on", on); this.cm.refresh(); }
+      setWrap(on) { store.set("wrap", on); this.cm.setOption("lineWrapping", on); this.btnWrap.classList.toggle("on", on); if (this.stWrap) this.stWrap.textContent = on ? "Перенос: вкл" : "Перенос: выкл"; this.cm.refresh(); }
 
       // ---- find / replace ----
       buildFind() {
