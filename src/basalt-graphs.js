@@ -197,7 +197,7 @@
         const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти узел…"; bar.appendChild(q); this.qIn = q;
         q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { if (e.key === "Enter") this.focusMatch(); });
         const ls = document.createElement("select"); ls.className = "bsg-search"; ls.style.width = "auto"; ls.title = "Вид графа файлов";
-        for (const [k, t] of [["tree", "Дерево"], ["ladder", "Лесенка"], ["radial", "Радиальный"], ["force", "Свободный"]]) { const o = document.createElement("option"); o.value = k; o.textContent = t; ls.appendChild(o); }
+        for (const [k, t] of [["tree", "Дерево"], ["ladder", "Лесенка"], ["radial", "Радиальный"], ["3d", "3D"], ["force", "Свободный"]]) { const o = document.createElement("option"); o.value = k; o.textContent = t; ls.appendChild(o); }
         ls.value = this.layout; ls.addEventListener("change", () => { this.layout = ls.value; try { localStorage.setItem("bsg.layout", this.layout); } catch (e) { /* ok */ } this.userView = false; this.refit = false; this.applyLayout(false); });
         bar.appendChild(ls); this.layoutSel = ls;
         const btn = (t, title, fn, on) => { const b = document.createElement("button"); b.className = "bsg-btn" + (on ? " on" : ""); b.textContent = t; b.title = title; b.addEventListener("click", () => fn(b)); bar.appendChild(b); return b; };
@@ -274,8 +274,47 @@
         this.rebuildView(); this.alpha = Math.max(this.alpha, .5); this.loop();
       }
       applyLayout(initial) {
+        if (this.mode === "files" && this.layout === "3d") { this.static = true; this.compute3D(); this.loop(); return; }
         if (this.mode !== "files" || this.layout === "force") { this.static = false; if (!initial) { this.alpha = 1; this.fitted = false; this.loop(); } return; }
         this.static = true; this.computeTree(); this.loop();
+      }
+      // ---- 3D: the folder tree on spheres around its parents; drag rotates, wheel zooms, click opens / folds ----
+      compute3D() {
+        const nodes = this.vnodes, kids = new Map(), root = nodes.find((n) => n.id === "d:"); if (!root) return;
+        for (const l of this.vlinks) if (l.kind === "contains") { let a = kids.get(l.a); if (!a) kids.set(l.a, a = []); a.push(l.b); }
+        const cmp = (a, b) => (a.kind === "dir" ? 0 : 1) - (b.kind === "dir" ? 0 : 1) || a.label.localeCompare(b.label); for (const arr of kids.values()) arr.sort(cmp);
+        if (this.yaw === undefined) { this.yaw = .6; this.pitch = .3; this.zoom3 = 1; }
+        const norm = (v) => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
+        const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+        const place = (n, dir, depth) => {
+          const k = kids.get(n); if (!k) return; const cnt = k.length, up = Math.abs(dir[1]) < .9 ? [0, 1, 0] : [1, 0, 0], u = norm(cross(dir, up)), w = cross(dir, u), cone = depth === 0 ? Math.PI : Math.min(1.9, .9 + cnt * .05);
+          k.forEach((c, i) => {
+            const t = (i + .5) / cnt, polar = Math.acos(1 - t * (1 - Math.cos(cone))), phi = i * 2.399963, sp = Math.sin(polar), cp = Math.cos(polar), cf = Math.cos(phi), sf = Math.sin(phi);
+            const v = [dir[0] * cp + (u[0] * cf + w[0] * sf) * sp, dir[1] * cp + (u[1] * cf + w[1] * sf) * sp, dir[2] * cp + (u[2] * cf + w[2] * sf) * sp], len = c.kind === "dir" ? 210 * Math.pow(.8, depth) + 50 : 80 + Math.min(80, cnt * 1.6);
+            c.x3 = n.x3 + v[0] * len; c.y3 = n.y3 + v[1] * len; c.z3 = n.z3 + v[2] * len; place(c, v, depth + 1);
+          });
+        };
+        root.x3 = root.y3 = root.z3 = 0; place(root, [0, 0, 1], 0); for (const n of nodes) if (n.x3 === undefined) n.x3 = n.y3 = n.z3 = 0;
+        let mx = 0, my = 0, mz = 0; for (const n of nodes) { mx += n.x3; my += n.y3; mz += n.z3; } mx /= nodes.length; my /= nodes.length; mz /= nodes.length;
+        let R = 1; for (const n of nodes) { n.x3 -= mx; n.y3 -= my; n.z3 -= mz; R = Math.max(R, Math.hypot(n.x3, n.y3, n.z3)); }
+        this.zoom3 = Math.max(.15, Math.min(3, Math.min(this.w || 800, this.h || 600) * .4 / R));
+      }
+      project3D() {
+        const cx = this.w / 2, cy = this.h / 2, co = Math.cos(this.yaw), si = Math.sin(this.yaw), cp = Math.cos(this.pitch), sp = Math.sin(this.pitch), D = 900, zm = this.zoom3 || 1;
+        for (const n of this.vnodes) { const x1 = n.x3 * co + n.z3 * si, z1 = -n.x3 * si + n.z3 * co, y1 = n.y3 * cp - z1 * sp, z2 = n.y3 * sp + z1 * cp, s = D / Math.max(80, D + z2); n.sx = cx + x1 * s * zm; n.sy = cy + y1 * s * zm; n.ss = s * zm; n.sz = z2; }
+      }
+      hit3d() { let best = null, bd = 1e9; for (const n of this.vnodes) { if (n.sx === undefined) continue; const d = Math.hypot(n.sx - this.lsx, n.sy - this.lsy), r = Math.max(10, 15 * n.ss * .8); if (d < r) { const sc = d + (n.sz + 600) * .01; if (sc < bd) { best = n; bd = sc; } } } return best; }
+      draw3d(ctx) {
+        this.project3D();
+        const bg = this.cssv("--vs-bg"), txt = this.cssv("--vs-fg"), mut = this.cssv("--vs-ln"), hov = this.hover, nb = new Set(); if (hov) { nb.add(hov); for (const l of this.vlinks) { if (l.a === hov) nb.add(l.b); else if (l.b === hov) nb.add(l.a); } }
+        ctx.lineWidth = 1; ctx.strokeStyle = mut;
+        for (const pass of [0, 1]) { ctx.beginPath(); for (const l of this.vlinks) { if (l.kind !== "contains" || (((l.a.sz + l.b.sz) / 2 > 0) ? 0 : 1) !== pass) continue; ctx.moveTo(l.a.sx, l.a.sy); ctx.lineTo(l.b.sx, l.b.sy); } ctx.globalAlpha = (pass ? .34 : .14) * (hov ? .5 : 1); ctx.stroke(); }
+        if (hov) { ctx.beginPath(); for (const l of this.vlinks) if (l.a === hov || l.b === hov) { ctx.moveTo(l.a.sx, l.a.sy); ctx.lineTo(l.b.sx, l.b.sy); } ctx.globalAlpha = .9; ctx.lineWidth = 1.6; ctx.strokeStyle = txt; ctx.stroke(); ctx.lineWidth = 1; }
+        const order = this.vnodes.slice().sort((a, b) => b.sz - a.sz);
+        for (const n of order) { ctx.globalAlpha = (hov && !nb.has(n) ? .3 : 1) * Math.max(.45, Math.min(1, 1.2 - (n.sz + 450) / 1500)); this.drawIcon(ctx, { x: n.sx, y: n.sy, kind: n.kind, ext: n.ext, extColor: n.extColor, id: n.id, nfiles: n.nfiles }, n.ss * .8, 1 / Math.max(.2, n.ss * .8), null, bg, txt); }
+        ctx.globalAlpha = 1; if (hov) { ctx.beginPath(); ctx.arc(hov.sx, hov.sy, Math.max(12, 16 * hov.ss * .8), 0, 7); ctx.lineWidth = 1.6; ctx.strokeStyle = txt; ctx.stroke(); }
+        ctx.font = "12px sans-serif"; ctx.textBaseline = "middle"; const placed = [], near = this.vnodes.slice().sort((a, b) => a.sz - b.sz); let shown = 0;
+        for (const n of (hov ? [hov].concat(near) : near)) { if (shown > 70 || (n !== hov && !nb.has(n) && n.ss < .5)) continue; const lab = this.labelOf(n), w = ctx.measureText(lab).width, x = n.sx + Math.max(10, 14 * n.ss * .8), y = n.sy, box = [x, y - 7, x + w, y + 7]; if (n !== hov && placed.some((p) => box[0] < p[2] && box[2] > p[0] && box[1] < p[3] && box[3] > p[1])) continue; placed.push(box); shown++; ctx.lineWidth = 3; ctx.strokeStyle = bg; ctx.strokeText(lab, x, y); ctx.fillStyle = n.kind === "dir" ? mut : txt; ctx.fillText(lab, x, y); }
       }
       computeTree() {
         const nodes = this.vnodes, kids = new Map(), root = nodes.find((n) => n.id === "d:"); if (!root) return;
@@ -309,7 +348,7 @@
         this.alpha *= .985;
       }
       relayout() { if (!this.g) return; for (const n of this.g.nodes) { n.pinned = false; n.x += (Math.random() - .5) * 40; n.y += (Math.random() - .5) * 40; } this.alpha = 1; this.fitted = false; this.refit = false; this.userView = false; this.loop(); }
-      fit() { const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); if (this.static && this.layout === "ladder") { this.scale = Math.max(.7, Math.min(1.1, (this.w - 80) / pw)); this.ox = 40 - x0 * this.scale; this.oy = 30 - y0 * this.scale; this.draw(); return; } this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
+      fit() { if (this.layout === "3d" && this.mode === "files") { this.draw(); return; } const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); if (this.static && this.layout === "ladder") { this.scale = Math.max(.7, Math.min(1.1, (this.w - 80) / pw)); this.ox = 40 - x0 * this.scale; this.oy = 30 - y0 * this.scale; this.draw(); return; } this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
       // -- search --
       runSearch(quiet) { const s = this.qIn.value.trim().toLowerCase(); this.match = null; if (s && this.g) { this.match = new Set(); for (const n of this.g.nodes) if (n.label.toLowerCase().includes(s) || (n.kind !== "sym" && n.path.toLowerCase().includes(s))) this.match.add(n); } if (this.mode === "files" && this.match && this.match.size && this.match.size <= 250) { let ch = false; for (const n of this.match) for (let u = n.up; u; u = u.up) if (this.collapsed.delete(u.id)) ch = true; if (ch) { this.rebuildView(); this.userView = true; this.applyLayout(false); return; } } if (!quiet) this.draw(); }
       focusMatch() { if (!this.match || !this.match.size) return; let n = [...this.match].find((m) => this.vnodes.includes(m)) || [...this.match][0]; if (n.kind === "sym" && !this.expanded.has(n.parent.id)) { this.toggleExpand(n.parent); } this.scale = Math.max(this.scale, 1.1); this.userView = true; this.ox = this.w / 2 - n.x * this.scale; this.oy = this.h / 2 - n.y * this.scale; this.draw(); }
@@ -322,6 +361,7 @@
       draw() {
         const ctx = this.ctx; if (!ctx || !this.w) return; const d = this.dpr || 1, g = this.g;
         ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, this.w, this.h); if (!g || !this.vnodes) return;
+        if (this.layout === "3d" && this.mode === "files") { this.draw3d(ctx); return; }
         const bg = this.cssv("--vs-bg") || "#1e1e1e", txt = this.cssv("--vs-fg") || "#ddd", mut = this.cssv("--vs-ln") || "#999", acc = this.cssv("--vs-kw") || "#7a6cf0";
         ctx.translate(this.ox, this.oy); ctx.scale(this.scale, this.scale);
         const hov = this.hover, S = this.scale, lw = 1 / S, nb = new Set(); if (hov) { nb.add(hov); for (const l of this.vlinks) { if (l.a === hov) nb.add(l.b); else if (l.b === hov) nb.add(l.a); } }
@@ -360,15 +400,15 @@
         ctx.globalAlpha = 1;
       }
       // -- interaction --
-      toWorld(e) { const r = this.cv.getBoundingClientRect(); return [(e.clientX - r.left - this.ox) / this.scale, (e.clientY - r.top - this.oy) / this.scale]; }
-      hit(wx, wy) { const g = this.g; if (!g) return null; let best = null, bd = 1e9; for (const n of this.vnodes) { const d = Math.hypot(n.x - wx, n.y - wy); if (d < n.r + 4 / this.scale && d < bd) { best = n; bd = d; } } return best; }
+      toWorld(e) { const r = this.cv.getBoundingClientRect(); this.lsx = e.clientX - r.left; this.lsy = e.clientY - r.top; return [(e.clientX - r.left - this.ox) / this.scale, (e.clientY - r.top - this.oy) / this.scale]; }
+      hit(wx, wy) { const g = this.g; if (!g) return null; if (this.layout === "3d" && this.mode === "files") return this.hit3d(); let best = null, bd = 1e9; for (const n of this.vnodes) { const d = Math.hypot(n.x - wx, n.y - wy); if (d < n.r + 4 / this.scale && d < bd) { best = n; bd = d; } } return best; }
       bind() {
         const cv = this.cv; let pan = null, down = null;
-        cv.addEventListener("pointerdown", (e) => { cv.setPointerCapture(e.pointerId); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); down = { x: e.clientX, y: e.clientY, moved: false, n }; if (n) { this.dragNode = n; this.dragging = true; this.alpha = Math.max(this.alpha, .3); this.loop(); } else pan = { x: e.clientX, y: e.clientY, ox: this.ox, oy: this.oy }; cv.style.cursor = "grabbing"; });
+        cv.addEventListener("pointerdown", (e) => { cv.setPointerCapture(e.pointerId); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); down = { x: e.clientX, y: e.clientY, moved: false, n }; if (n && !(this.layout === "3d" && this.mode === "files")) { this.dragNode = n; this.dragging = true; this.alpha = Math.max(this.alpha, .3); this.loop(); } else pan = { x: e.clientX, y: e.clientY, ox: this.ox, oy: this.oy, yaw: this.yaw, pitch: this.pitch }; cv.style.cursor = "grabbing"; });
         cv.addEventListener("pointermove", (e) => {
           if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) down.moved = true;
           if (this.dragNode && down && down.moved) { const [wx, wy] = this.toWorld(e); this.dragNode.x = wx; this.dragNode.y = wy; this.dragNode.pinned = true; this.alpha = Math.max(this.alpha, .25); this.tip.style.display = "none"; return; }
-          if (pan) { this.userView = true; this.ox = pan.ox + e.clientX - pan.x; this.oy = pan.oy + e.clientY - pan.y; this.draw(); return; }
+          if (pan) { this.userView = true; if (this.layout === "3d" && this.mode === "files") { this.yaw = pan.yaw + (e.clientX - pan.x) * .008; this.pitch = Math.max(-1.45, Math.min(1.45, pan.pitch + (e.clientY - pan.y) * .008)); this.draw(); return; } this.ox = pan.ox + e.clientX - pan.x; this.oy = pan.oy + e.clientY - pan.y; this.draw(); return; }
           const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (n !== this.hover) { this.hover = n; this.draw(); this.showTip(n, e); } else if (n) this.moveTip(e);
           cv.style.cursor = n ? "pointer" : "grab";
         });
@@ -380,7 +420,7 @@
           item("Копировать путь", "lucide-copy", () => { navigator.clipboard.writeText(n.kind === "dir" ? path.join(this.rootPath, n.path) : n.abs).catch(() => {}); });
           m.showAtMouseEvent(e); });
         cv.addEventListener("dblclick", (e) => { const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (n && this.mode === "code" && n.kind === "file") { this.toggleExpand(n); return; } if (n) { n.pinned = false; this.alpha = Math.max(this.alpha, .3); this.loop(); this.saveLayout(); } });
-        cv.addEventListener("wheel", (e) => { e.preventDefault(); this.userView = true; const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, k = Math.exp(-e.deltaY * .0015), ns = Math.max(.03, Math.min(10, this.scale * k)); this.ox = mx - (mx - this.ox) * (ns / this.scale); this.oy = my - (my - this.oy) * (ns / this.scale); this.scale = ns; this.draw(); }, { passive: false });
+        cv.addEventListener("wheel", (e) => { e.preventDefault(); this.userView = true; if (this.layout === "3d" && this.mode === "files") { this.zoom3 = Math.max(.2, Math.min(6, (this.zoom3 || 1) * Math.exp(-e.deltaY * .0015))); this.draw(); return; } const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, k = Math.exp(-e.deltaY * .0015), ns = Math.max(.03, Math.min(10, this.scale * k)); this.ox = mx - (mx - this.ox) * (ns / this.scale); this.oy = my - (my - this.oy) * (ns / this.scale); this.scale = ns; this.draw(); }, { passive: false });
       }
       showTip(n, e) { if (!n) { this.tip.style.display = "none"; return; } const t = this.tip; t.textContent = ""; const b = document.createElement("b"); b.textContent = n.label; t.appendChild(b); const add = (s) => { const x = document.createElement("span"); x.textContent = s; t.appendChild(x); };
         if (n.kind === "dir") add("Папка · файлов: " + (n.nfiles || 0) + (n.nfiles ? " · клик — " + (this.collapsed.has(n.id) ? "развернуть" : "свернуть") : "")); else if (n.kind === "file") { add(n.path); add(n.lang + (n.size != null ? " · " + (n.size < 1024 ? n.size + " Б" : n.size < 1048576 ? (n.size / 1024).toFixed(1) + " КБ" : (n.size / 1048576).toFixed(1) + " МБ") : " · " + n.loc + " строк")); } else { add(n.path + ":" + n.line); add((n.sym === "class" ? "Класс/тип" : n.sym === "method" ? "Метод" : "Функция") + " · связей: " + n.deg); }

@@ -57,6 +57,8 @@
   const HIDDEN = /^\.(basalt|obsidian|git|trash)$/;
   // one coloured badge per file type, the same idea as the icon themes of VS Code
   const FILECOL = { md: "#519aba", mdx: "#519aba", txt: "#8f98a0", json: "#cbcb41", yaml: "#e06c75", yml: "#e06c75", toml: "#c9733a", lock: "#7a7a7a", js: "#d4b800", mjs: "#d4b800", cjs: "#d4b800", jsx: "#2fa8c6", ts: "#3178c6", tsx: "#3178c6", py: "#3572A5", rs: "#c97d4f", go: "#00ADD8", java: "#b07219", kt: "#A97BFF", cs: "#178600", c: "#8a8f94", h: "#8a8f94", cpp: "#f34b7d", hpp: "#f34b7d", swift: "#F05138", rb: "#cc342d", php: "#8892bf", dart: "#00B4AB", lua: "#5a5aff", sh: "#7fbf4d", bat: "#7fbf4d", cmd: "#7fbf4d", ps1: "#4d8fd1", css: "#7a5cc7", scss: "#c6538c", html: "#e34c26", xml: "#e37933", svg: "#ffb13b", png: "#a074c4", jpg: "#a074c4", jpeg: "#a074c4", gif: "#a074c4", webp: "#a074c4", ico: "#a074c4", pdf: "#e44d4d", zip: "#b58900", gz: "#b58900", exe: "#6d8086", dll: "#6d8086", sql: "#e38c00", csv: "#4caf50", log: "#7a7a7a", ini: "#7a7a7a", iml: "#e0705c", gradle: "#5aa9a9", env: "#c9b400", gitignore: "#d9593d", dockerfile: "#2496ed" };
+  // the same 16px line icon as everywhere, only tinted by type and softened towards the text colour
+  const tint = (f) => { const raw = (f.extension || "").toLowerCase() || (f.name[0] === "." ? f.name.slice(1).toLowerCase() : ""), c = FILECOL[raw]; return c ? `color-mix(in srgb, ${c} 62%, var(--text-muted))` : ""; };
   const badge = (f) => { const raw = (f.extension || "").toLowerCase() || (/^\.?[\w-]+$/.test(f.name) && f.name[0] === "." ? f.name.slice(1).toLowerCase() : ""); const col = FILECOL[raw] || "#7d7d7d"; const label = (raw || "·").slice(0, 3); return `<span class="bsf-ext" style="background:${col}">${label}</span>`; };
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
   const SORTS = [["name", "по имени"], ["mtime", "по дате изменения"], ["type", "по типу"]];
@@ -225,7 +227,8 @@
           r.dataset.path = f.path; r.draggable = !ws; r.style.paddingLeft = 6 + depth * 14 + "px";
           const extName = ws ? f.extension || "" : f.extension !== "md" && f.extension !== "canvas" ? f.extension : "";
           const ext = "";
-          r.innerHTML = (dir ? svg("car", "bsf-car") : '<span class="bsf-sp"></span>') + `<span class="bsf-i">${dir ? svg("folder") : kindOf(f) === "canvas" ? svg("canvas") : badge(f)}</span><span class="bsf-n"></span>${!dir && pins.has(f.path) ? svg("pin", "bsf-pin") : ""}${ext}`;
+          r.innerHTML = (dir ? svg("car", "bsf-car") : '<span class="bsf-sp"></span>') + `<span class="bsf-i">${svg(dir ? "folder" : kindOf(f))}</span><span class="bsf-n"></span>${!dir && pins.has(f.path) ? svg("pin", "bsf-pin") : ""}${ext}`;
+          if (!dir) { const t = tint(f); if (t) r.querySelector(".bsf-i").style.color = t; }
           for (let d = 1; d <= depth; d++) { const gl = document.createElement("i"); gl.className = "bsf-guide"; gl.style.left = 6 + (d - 1) * 14 + 7 + "px"; r.appendChild(gl); }
           const n = r.querySelector(".bsf-n"); n.textContent = f.name;
           if (flat && f.parent && f.parent.path && f.parent.path !== "/") { const s = document.createElement("small"); s.textContent = f.parent.path; n.appendChild(s); }
