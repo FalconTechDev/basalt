@@ -222,7 +222,7 @@
         const pb = (t, fn) => { const b = document.createElement("button"); b.textContent = t; b.addEventListener("click", () => fn(b)); return b; };
         this.btnCol = pb("Развернуть", () => { this.toggleAllDirs(); this.btnCol.textContent = this.collapsed.size ? "Развернуть" : "Свернуть"; }); prow("Все папки", this.btnCol);
         prow("Позиции узлов", pb("Сбросить", () => this.relayout()));
-        prow("Папка", pb("Пересканировать", () => this.load()));
+        prow("Папка", pb("Пересканировать", () => this.load(true)));
         this.btnImps = document.createElement("button"); this.btnImps.style.display = "none";
         this.info = document.createElement("div"); this.info.className = "bscg-info";
         // controls column on the right: settings | zoom | help, stock canvas-control classes
@@ -244,13 +244,16 @@
       }
       syncSeg() { for (const k in this.segBtns) this.segBtns[k].classList.toggle("on", k === this.mode); if (this.layoutSel) this.layoutSel.style.display = this.mode === "files" ? "" : "none"; if (this.btnImps) this.btnImps.style.display = this.mode === "code" ? "" : "none"; if (this.btnCol) this.btnCol.style.display = this.mode === "files" ? "" : "none"; if (this.legend) this.legend.style.display = this.mode === "code" ? "" : "none"; }
       resize() { const r = this.body.getBoundingClientRect(), d = window.devicePixelRatio || 1; this.w = r.width; this.h = r.height; this.cv.width = Math.max(1, Math.round(r.width * d)); this.cv.height = Math.max(1, Math.round(r.height * d)); this.dpr = d; }
-      async load() {
+      async load(force) {
         const myRun = this.run = (this.run || 0) + 1; this.resize(); this.g = null; this.msg.textContent = "Читаю файлы…"; this.draw();
         const root = this.root();
         if (!root) { this.msg.textContent = "Откройте папку или хранилище"; return; }
-        let g; try { g = await buildGraph(root, this.mode, (n, k) => { if (myRun === this.run) this.msg.textContent = "Читаю файлы… " + (k || n) + (k ? " / " + n : ""); }); } catch (e) { console.error("[basalt-graphs]", e); this.msg.textContent = "Ошибка: " + e.message; return; }
+        // the scan is kept per folder: reopening the graph is instant, ↻ (or a file change in the vault) reads it again
+        const GC = window.__bsgCache || (window.__bsgCache = new Map()), ck = root + "|" + this.mode;
+        let g; try { g = !force && GC.get(ck) ? GC.get(ck) : await buildGraph(root, this.mode, (n, k) => { if (myRun === this.run) this.msg.textContent = "Читаю файлы… " + (k || n) + (k ? " / " + n : ""); }); } catch (e) { console.error("[basalt-graphs]", e); this.msg.textContent = "Ошибка: " + e.message; return; }
         if (myRun !== this.run) return;
-        this.g = g; this.rootPath = root;
+        this.g = g; this.rootPath = root; GC.set(ck, g);
+        if (!window.__bsgCacheHook) { window.__bsgCacheHook = 1; const drop = () => GC.clear(); for (const ev of ["create", "delete", "rename"]) app.vault.on(ev, drop); }
         if (!g.nodes.length) { this.msg.textContent = "В этой папке нет файлов с кодом"; return; }
         this.msg.textContent = "";
         this.syncSeg();
