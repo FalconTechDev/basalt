@@ -468,7 +468,7 @@
     // Alt+D is handled here directly: it works wherever the focus is
     window.addEventListener("keydown", (e) => { if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === "KeyD") { e.preventDefault(); e.stopPropagation(); toggle(); } }, true);
     new MutationObserver(scan).observe(document.body, { childList: true, subtree: true }); scan();
-    const addBtn = () => document.querySelectorAll(".canvas-controls:not(.bsg-controls)").forEach((box) => {
+    const addBtn = () => document.querySelectorAll(".canvas-controls:not(.bsg-controls):not(.bscg-controls)").forEach((box) => {
       if (box.querySelector(".bsd-pen")) return;
       const g = document.createElement("div"); g.className = "canvas-control-group bsd-pen"; const item = document.createElement("div"); item.className = "canvas-control-item"; item.setAttribute("aria-label", "Рисование (Alt+D)"); item.title = "Рисование (Alt+D)";
       try { window.__bsApi.setIcon(item, "lucide-pencil"); } catch (e) { item.textContent = "✎"; }

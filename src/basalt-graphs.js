@@ -229,7 +229,7 @@
   // ---------- view ----------
   function makeView(api) {
     return class CodeGraphView extends api.ItemView {
-      constructor(leaf) { super(leaf); this.opt = Object.assign({ maxFiles: 15, onlyDirs: false }, (() => { try { return JSON.parse(localStorage.getItem("bsg.opt") || "{}"); } catch (e) { return {}; } })()); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.collapsed = new Set(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "ladder"; } catch (e) { this.layout = "ladder"; } }
+      constructor(leaf) { super(leaf); this.opt = Object.assign({ maxFiles: 15, onlyDirs: false }, (() => { try { return JSON.parse(localStorage.getItem("bsg.opt") || "{}"); } catch (e) { return {}; } })()); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.collapsed = new Set(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "tree"; } catch (e) { this.layout = "ladder"; } }
       getViewType() { return VIEW; }
       getDisplayText() { return this.mode === "code" ? "Граф кода" : "Граф файлов"; }
       getIcon() { return "lucide-git-fork"; }
@@ -251,7 +251,7 @@
         const S = window.__bsApi.Setting, saveOpt = () => { try { localStorage.setItem("bsg.opt", JSON.stringify(this.opt)); } catch (e) { /* ok */ } }, re = () => { this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); };
         const L = (st, ic) => { const i = document.createElement("span"); i.className = "bsg-si"; try { window.__bsApi.setIcon(i, ic); } catch (e) { /* ok */ } st.nameEl.prepend(i); return st; }, N = (name, ic) => L(new S(panel).setName(name), ic);
         L(new S(panel).setName("Вид").setHeading(), "lucide-palette");
-        N("Раскладка", "lucide-network").addDropdown((d) => { for (const [k, t] of [["ladder", "Лесенка"], ["tree", "Дерево"], ["radial", "Радиальный"], ["3d", "3D"], ["force", "Свободный"]]) d.addOption(k, t); d.setValue(this.layout).onChange((v) => { this.layout = v; try { localStorage.setItem("bsg.layout", v); } catch (e) { /* ok */ } this.userView = false; this.refit = false; this.applyLayout(false); }); this.layoutSel = d.selectEl; });
+        N("Раскладка", "lucide-network").addDropdown((d) => { for (const [k, t] of [["tree", "Дерево"], ["ladder", "Лесенка"], ["radial", "Радиальный"], ["3d", "3D"], ["force", "Свободный"]]) d.addOption(k, t); d.setValue(this.layout).onChange((v) => { this.layout = v; try { localStorage.setItem("bsg.layout", v); } catch (e) { /* ok */ } this.userView = false; this.refit = false; this.applyLayout(false); }); this.layoutSel = d.selectEl; });
         N("Только папки", "lucide-folder").addToggle((t) => t.setValue(!!this.opt.onlyDirs).onChange((v) => { this.opt.onlyDirs = v; saveOpt(); re(); }));
         N("Файлов в папке", "lucide-files").addSlider((sl) => sl.setLimits(3, 60, 1).setValue(this.opt.maxFiles).setDynamicTooltip().onChange((v) => { this.opt.maxFiles = v; saveOpt(); re(); }));
         L(new S(panel).setName("Папки").setHeading(), "lucide-folder-tree");
@@ -397,7 +397,14 @@
         if (L === "ladder") { let row = 0; const walk = (n, d) => { n.tx = d * 36; n.ty = row++ * 34; for (const c of kids.get(n) || []) walk(c, d + 1); }; walk(root, 0); }
         else {
           const leaves = new Map(); let maxD = 1; const cnt = (n, d) => { maxD = Math.max(maxD, d); const k = kids.get(n); if (!k || !k.length) { leaves.set(n, 1); return 1; } let t = 0; for (const c of k) t += cnt(c, d + 1); leaves.set(n, t); return t; }; const total = cnt(root, 0);
-          if (L === "tree") { let leaf = 0; const place = (n, d) => { const k = kids.get(n); n.ty = d * 170; if (!k || !k.length) { n.tx = leaf++ * 38; return; } k.forEach((c) => place(c, d + 1)); n.tx = (k[0].tx + k[k.length - 1].tx) / 2; }; place(root, 0); }
+          // compact tree: each folder's files (and folded folders) are a list under it, its open subfolders go to the right of that list
+          if (L === "tree") {
+            const isBranch = (c) => (kids.get(c) || []).length > 0, RH = 30, W = new Map(), colW = (n) => { let m = this.labelOf(n).length; for (const c of kids.get(n) || []) if (!isBranch(c)) m = Math.max(m, this.labelOf(c).length + 3); return Math.max(150, Math.min(420, m * 7.6 + 60)); };
+            const width = (n) => { const k = kids.get(n) || [], br = k.filter(isBranch), lv = k.length - br.length; let w = lv || !br.length ? colW(n) : 0; for (const c of br) w += width(c); W.set(n, w); return w; };
+            const place = (n, x0, y) => { n.tx = x0; n.ty = y; const k = kids.get(n) || [], br = k.filter(isBranch), lv = k.filter((c) => !isBranch(c));
+              lv.forEach((c, i) => { c.tx = x0 + 26; c.ty = y + 44 + i * RH; }); let x = x0 + (lv.length ? colW(n) : 0); for (const c of br) { place(c, x, y + 110); x += W.get(c); } };
+            width(root); place(root, 0, 0);
+          }
           else { const step = Math.max(150, total * 34 / (2 * Math.PI) / maxD); const place = (n, d, a0, a1) => { const am = (a0 + a1) / 2, r = d * step; n.tx = Math.cos(am) * r; n.ty = Math.sin(am) * r; const k = kids.get(n); if (!k) return; let a = a0; for (const c of k) { const span = (a1 - a0) * leaves.get(c) / leaves.get(n); place(c, d + 1, a, a + span); a += span; } }; place(root, 0, 0, Math.PI * 2); }
         }
         for (const n of nodes) if (n.tx === undefined) { n.tx = n.x; n.ty = n.y; }
@@ -419,7 +426,7 @@
         this.alpha *= .985;
       }
       relayout() { if (!this.g) return; for (const n of this.g.nodes) { n.pinned = false; n.x += (Math.random() - .5) * 40; n.y += (Math.random() - .5) * 40; } this.alpha = 1; this.fitted = false; this.refit = false; this.userView = false; this.loop(); }
-      fit() { if (this.layout === "3d" && this.mode === "files") { this.draw(); return; } const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); if (this.static && this.layout === "ladder") { this.scale = Math.max(.7, Math.min(1.1, (this.w - 80) / pw)); this.ox = 40 - x0 * this.scale; this.oy = 30 - y0 * this.scale; this.draw(); return; } this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
+      fit() { if (this.layout === "3d" && this.mode === "files") { this.draw(); return; } const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); if (this.static && (this.layout === "ladder" || this.layout === "tree")) { this.scale = Math.max(.7, Math.min(1.1, (this.w - 80) / pw)); this.ox = 40 - x0 * this.scale; this.oy = 70 - y0 * this.scale; this.draw(); return; } this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
       // -- search --
       // search like the note graph: names first, then the text inside files; Enter / Shift+Enter walk the hits with "N из M"
       runSearch(quiet) {
@@ -461,7 +468,7 @@
         const focus = hov ? nb : this.match, dim = (n) => focus && !focus.has(n) && !(hov && n === hov);
         const vx0 = -this.ox / S - 30, vy0 = -this.oy / S - 30, vx1 = vx0 + this.w / S + 60, vy1 = vy0 + this.h / S + 60;
         const seen = (l) => { const A = l.a, B = l.b; return !((A.x < vx0 && B.x < vx0) || (A.x > vx1 && B.x > vx1) || (A.y < vy0 && B.y < vy0) || (A.y > vy1 && B.y > vy1)); };
-        const curve = (l) => { const A = l.a, B = l.b; if (l.kind === "contains" && this.static && this.layout === "ladder") { ctx.moveTo(A.x, A.y); ctx.lineTo(A.x, B.y); ctx.lineTo(B.x, B.y); return; } if (l.kind === "contains") { ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); return; } const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2, dx = B.x - A.x, dy = B.y - A.y; ctx.moveTo(A.x, A.y); ctx.quadraticCurveTo(mx - dy * .12, my + dx * .12, B.x, B.y); };
+        const curve = (l) => { const A = l.a, B = l.b; if (l.kind === "contains" && this.static && this.layout === "ladder") { ctx.moveTo(A.x, A.y); ctx.lineTo(A.x, B.y); ctx.lineTo(B.x, B.y); return; } if (l.kind === "contains" && this.static && this.layout === "tree") { if (B.x - A.x < 40) { ctx.moveTo(A.x, A.y); ctx.lineTo(A.x, B.y); ctx.lineTo(B.x, B.y); } else { ctx.moveTo(A.x, A.y); ctx.lineTo(A.x, A.y + 22); ctx.lineTo(B.x, A.y + 22); ctx.lineTo(B.x, B.y); } return; } if (l.kind === "contains") { ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); return; } const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2, dx = B.x - A.x, dy = B.y - A.y; ctx.moveTo(A.x, A.y); ctx.quadraticCurveTo(mx - dy * .12, my + dx * .12, B.x, B.y); };
         const showC = (l) => l.kind !== "contains" || this.showDirs || l.a.kind !== "dir", showI = (l) => l.kind !== "import" || this.showImports || this.mode !== "code";
         const f = focus ? .22 : 1, B = [[], [], [], [], []];
         for (const l of this.vlinks) { if (!seen(l)) continue; if (l.kind === "contains") { if (showC(l)) B[0].push(l); } else if (l.kind === "import") { if (showI(l)) B[1].push(l); } else B[l.w < 3 ? 2 : l.w < 10 ? 3 : 4].push(l); }
