@@ -28,6 +28,7 @@
     .bsg-seg button { border: 0; border-radius: 0; background: transparent; padding: 3px 12px; height: 26px; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
     .bsg-seg button.on { background: var(--interactive-accent); color: var(--text-on-accent); }
     .bsg-btn { border: 0; border-radius: var(--bs-r, 4px); background: transparent; height: 24px; padding: 0 10px; color: var(--vs-ln); cursor: pointer; box-shadow: none; font-size: 12px; }
+    .bsg-ib { width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex: none; } .bsg-ib svg { width: 16px; height: 16px; }
     .bsg-btn:hover { color: var(--vs-fg); background: rgba(128,128,128,.2); } .bsg-btn.on { color: var(--vs-fg); background: rgba(128,128,128,.28); }
     .bsg-search:focus { outline: 1px solid var(--interactive-accent); }
     .bsg-search { height: 24px; font-size: 12px; width: 150px; padding: 0 8px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
@@ -192,21 +193,22 @@
         const c = this.contentEl; c.textContent = ""; c.style.padding = "0"; c.style.position = "relative"; c.style.overflow = "hidden";
         const wrap = document.createElement("div"); wrap.className = "bsg"; c.appendChild(wrap);
         const bar = document.createElement("div"); bar.className = "bsg-bar"; wrap.appendChild(bar);
-        const seg = document.createElement("div"); seg.className = "bsg-seg"; seg.style.display = "none"; bar.appendChild(seg); this.segBtns = {};
-        for (const [k, t] of [["files", "Файлы"], ["code", "Код"]]) { const b = document.createElement("button"); b.textContent = t; b.addEventListener("click", () => { if (this.mode !== k) { this.mode = k; this.syncSeg(); this.load(); try { this.leaf.updateHeader(); } catch (e) { /* ok */ } } }); seg.appendChild(b); this.segBtns[k] = b; }
+        const seg = document.createElement("div"); seg.className = "bsg-seg"; bar.appendChild(seg); this.segBtns = {};
+        for (const [k, t] of [["2d", "2D"], ["3d", "3D"], ["files", "Файлы"]]) { const b = document.createElement("button"); b.textContent = t; b.title = k === "files" ? "Граф файлов и папок" : "Граф заметок"; b.addEventListener("click", () => { if (k !== "files") this.leaf.setViewState({ type: "graph", state: { view: k }, active: true }); }); seg.appendChild(b); this.segBtns[k] = b; }
         const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти узел…"; bar.appendChild(q); this.qIn = q;
         q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { if (e.key === "Enter") this.focusMatch(); });
         const ls = document.createElement("select"); ls.className = "bsg-search"; ls.style.width = "auto"; ls.title = "Вид графа файлов";
         for (const [k, t] of [["tree", "Дерево"], ["ladder", "Лесенка"], ["radial", "Радиальный"], ["3d", "3D"], ["force", "Свободный"]]) { const o = document.createElement("option"); o.value = k; o.textContent = t; ls.appendChild(o); }
         ls.value = this.layout; ls.addEventListener("change", () => { this.layout = ls.value; try { localStorage.setItem("bsg.layout", this.layout); } catch (e) { /* ok */ } this.userView = false; this.refit = false; this.applyLayout(false); });
         bar.appendChild(ls); this.layoutSel = ls;
-        const btn = (t, title, fn, on) => { const b = document.createElement("button"); b.className = "bsg-btn" + (on ? " on" : ""); b.textContent = t; b.title = title; b.addEventListener("click", () => fn(b)); bar.appendChild(b); return b; };
+        this.info = document.createElement("span"); this.info.className = "bsg-info"; bar.appendChild(this.info);
+        const ICON = { "Импорты": "lucide-link", "Развернуть всё": "lucide-chevrons-up-down", "По центру": "lucide-scan", "Заново": "lucide-rotate-ccw", "↻": "lucide-refresh-cw" };
+        const btn = (t, title, fn, on) => { const b = document.createElement("button"); b.className = "bsg-btn bsg-ib" + (on ? " on" : ""); b.title = title; try { window.__bsApi.setIcon(b, ICON[t]); } catch (e) { b.textContent = t; } b.addEventListener("click", () => fn(b)); bar.appendChild(b); return b; };
         this.btnImps = btn("Импорты", "Показывать импорты между файлами", (b) => { this.showImports = !this.showImports; b.classList.toggle("on", this.showImports); this.draw(); }, true);
         this.btnCol = btn("Развернуть всё", "Свернуть / развернуть все папки", () => this.toggleAllDirs());
         btn("По центру", "Вписать граф в окно", () => this.fit());
         btn("Заново", "Сбросить закреплённые позиции и пересчитать", () => this.relayout());
         btn("↻", "Пересканировать папку", () => this.load());
-        this.info = document.createElement("span"); this.info.className = "bsg-info"; bar.appendChild(this.info);
         const body = document.createElement("div"); body.className = "bsg-body"; wrap.appendChild(body); this.body = body;
         const cv = document.createElement("canvas"); body.appendChild(cv); this.cv = cv; this.ctx = cv.getContext("2d");
         this.tip = document.createElement("div"); this.tip.className = "bsg-tip"; body.appendChild(this.tip);
@@ -250,13 +252,13 @@
         for (const n of this.vnodes) n.r = this.mode === "files" ? 15 : n.kind === "dir" ? 5 : n.kind === "file" ? Math.min(14, 2.5 + Math.sqrt(n.loc) / 5 + Math.sqrt(n.vd) * .5) : Math.min(8, 2.2 + Math.sqrt(n.vd));
         this.byDeg = this.vnodes.slice().sort((a, b) => b.vd * (b.kind === "dir" ? 1.5 : 1) - a.vd * (a.kind === "dir" ? 1.5 : 1));
       }
-      defaultCollapse() { this.collapsed.clear(); if (this.mode === "files" && this.g.files > 300) for (const n of this.g.nodes) if (n.kind === "dir" && n.path && n.path.split("/").length >= 2 && n.nfiles) this.collapsed.add(n.id); if (this.btnCol) this.btnCol.textContent = "Развернуть всё"; }
+      defaultCollapse() { this.collapsed.clear(); if (this.mode === "files" && this.g.files > 300) for (const n of this.g.nodes) if (n.kind === "dir" && n.path && n.path.split("/").length >= 2 && n.nfiles) this.collapsed.add(n.id); if (this.btnCol) this.btnCol.title = "Развернуть все папки"; }
       toggleDir(n) {
         if (this.mode !== "files" || n.kind !== "dir" || !n.nfiles) return;
         if (this.collapsed.has(n.id)) { this.collapsed.delete(n.id); for (const m of this.g.nodes) for (let u = m.up; u; u = u.up) if (u === n) { m.x = n.x; m.y = n.y; break; } } else this.collapsed.add(n.id);
-        this.rebuildView(); this.userView = true; this.applyLayout(false); if (this.btnCol) this.btnCol.textContent = this.collapsed.size ? "Развернуть всё" : "Свернуть";
+        this.rebuildView(); this.userView = true; this.applyLayout(false); if (this.btnCol) this.btnCol.title = this.collapsed.size ? "Развернуть все папки" : "Свернуть папки";
       }
-      toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) this.btnCol.textContent = this.collapsed.size ? "Развернуть всё" : "Свернуть"; }
+      toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) this.btnCol.title = this.collapsed.size ? "Развернуть все папки" : "Свернуть папки"; }
       labelOf(n) { return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
       drawIcon(ctx, n, S, lw, hov, bg, txt) {
         const size = 22, px = size * S, mut = (this.cssv("--text-faint") || this.cssv("--vs-ln")) || "#999", dir = n.kind === "dir";
