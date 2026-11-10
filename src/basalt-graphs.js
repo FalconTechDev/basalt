@@ -36,6 +36,7 @@
     .bsg-search { height: 24px; font-size: 12px; width: 150px; padding: 0 8px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
     .bsg-info { margin-left: auto; color: var(--text-faint); font-size: var(--font-ui-smaller); white-space: nowrap; }
     .bsg-body { position: relative; flex: 1; min-height: 0; }
+    .bsg-sbox { position: relative; display: flex; align-items: center; } .bsg-sbox .bsg-search { width: 260px; padding-right: 64px; } .bsg-count { position: absolute; right: 10px; font-size: 11px; color: var(--text-faint); pointer-events: none; }
     .bsg-panel .setting-item-info { flex: 1 1 auto; min-width: 0; } .bsg-panel .setting-item-control { flex: 0 0 auto; } .bsg-panel .setting-item-control input[type=range] { width: 140px; }
     .bsg-panel .setting-item-heading { background: none; border: 0; border-top: 1px solid var(--background-modifier-border); border-radius: 0; margin-top: 12px; padding: 14px 4px 6px; } .bsg-panel .setting-item-heading:first-child { border-top: 0; margin-top: 0; }
     .bsg-panel { overflow-x: hidden; box-sizing: border-box; position: absolute; right: 60px; top: 12px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
@@ -242,8 +243,8 @@
         const seg = document.createElement("div"); seg.className = "bsg-seg"; bar.appendChild(seg); this.segBtns = {};
         const SEGI = { "2d": ["lucide-square", "2D"], "3d": ["lucide-box", "3D"], files: ["lucide-folder-tree", "Файлы"] }; const segFill = (b, k) => { b.textContent = ""; const i = document.createElement("span"); i.className = "bsg-sic"; try { window.__bsApi.setIcon(i, SEGI[k][0]); } catch (e) { /* ok */ } const t = document.createElement("span"); t.textContent = SEGI[k][1]; b.append(i, t); };
         for (const [k, t] of [["2d", "2D"], ["3d", "3D"], ["files", "Файлы"]]) { const b = document.createElement("button"); b.className = "bsg-si"; segFill(b, k); b.title = k === "files" ? "Граф файлов и папок" : "Граф заметок"; b.addEventListener("click", () => { if (k !== "files") this.leaf.setViewState({ type: "graph", state: { view: k }, active: true }); }); seg.appendChild(b); this.segBtns[k] = b; }
-        const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти узел…"; bar.appendChild(q); this.qIn = q;
-        q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { if (e.key === "Enter") this.focusMatch(); });
+        const sbox = document.createElement("div"); sbox.className = "bsg-sbox"; const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти по имени и тексту…"; this.qIn = q; this.qCount = document.createElement("span"); this.qCount.className = "bsg-count"; sbox.append(q, this.qCount); bar.appendChild(sbox);
+        q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); this.stepMatch(e.shiftKey ? -1 : 1); } else if (e.key === "Escape") { q.value = ""; this.runSearch(); q.blur(); } });
         // settings panel (gear), the same place and look as in the note graph
         // settings panel (gear): the note graph's panel, the same Setting rows, headings and toggles
         const panel = document.createElement("div"); panel.className = "bsg-panel"; this.panelEl = panel;
@@ -323,7 +324,7 @@
       toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) 0; }
       // files beyond the per-folder limit (or all of them in "only folders") are left out; the folder shows "+N"
       capFiles() { const out = new Set(), per = new Map(), lim = this.opt.onlyDirs ? 0 : this.opt.maxFiles; this.more = new Map(); if (!this.g || this.mode !== "files") return out;
-        for (const n of this.g.nodes) if (n.kind !== "dir" && n.up) { const k = per.get(n.up) || 0; per.set(n.up, k + 1); if (k >= lim) { out.add(n); this.more.set(n.up, (this.more.get(n.up) || 0) + 1); } } return out; }
+        for (const n of this.g.nodes) if (n.kind !== "dir" && n.up && !(this.match && this.match.has(n))) { const k = per.get(n.up) || 0; per.set(n.up, k + 1); if (k >= lim) { out.add(n); this.more.set(n.up, (this.more.get(n.up) || 0) + 1); } } return out; }
       labelOf(n) { const extra = this.more && n.kind === "dir" && !this.collapsed.has(n.id) && this.more.get(n); if (extra) return n.label + "  +" + extra + (this.opt.onlyDirs ? " файл." : " ещё");  return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
       drawIcon(ctx, n, S, lw, hov, bg, txt) {
         const size = 22, px = size * S, mut = (this.cssv("--text-faint") || this.cssv("--vs-ln")) || "#999", dir = n.kind === "dir";
@@ -420,8 +421,30 @@
       relayout() { if (!this.g) return; for (const n of this.g.nodes) { n.pinned = false; n.x += (Math.random() - .5) * 40; n.y += (Math.random() - .5) * 40; } this.alpha = 1; this.fitted = false; this.refit = false; this.userView = false; this.loop(); }
       fit() { if (this.layout === "3d" && this.mode === "files") { this.draw(); return; } const ns = this.vnodes; if (!ns || !ns.length || !this.w) return; const xs = ns.map((n) => n.x).sort((a, b) => a - b), ys = ns.map((n) => n.y).sort((a, b) => a - b), q = (arr, p) => arr[Math.min(arr.length - 1, Math.max(0, Math.floor(arr.length * p)))]; const lo = this.static ? 0 : .01, hi = this.static ? .9999 : .99; const x0 = q(xs, lo), x1 = q(xs, hi), y0 = q(ys, lo), y1 = q(ys, hi); const pw = Math.max(1, x1 - x0), ph = Math.max(1, y1 - y0); this.scale = Math.min(4, Math.max(.03, Math.min((this.w - 80) / pw, (this.h - 80) / ph))); if (this.static && this.layout === "ladder") { this.scale = Math.max(.7, Math.min(1.1, (this.w - 80) / pw)); this.ox = 40 - x0 * this.scale; this.oy = 30 - y0 * this.scale; this.draw(); return; } this.ox = this.w / 2 - ((x0 + x1) / 2) * this.scale; this.oy = this.h / 2 - ((y0 + y1) / 2) * this.scale; this.draw(); }
       // -- search --
-      runSearch(quiet) { const s = this.qIn.value.trim().toLowerCase(); this.match = null; if (s && this.g) { this.match = new Set(); for (const n of this.g.nodes) if (n.label.toLowerCase().includes(s) || (n.kind !== "sym" && n.path.toLowerCase().includes(s))) this.match.add(n); } if (this.mode === "files" && this.match && this.match.size && this.match.size <= 250) { let ch = false; for (const n of this.match) for (let u = n.up; u; u = u.up) if (this.collapsed.delete(u.id)) ch = true; if (ch) { this.rebuildView(); this.userView = true; this.applyLayout(false); return; } } if (!quiet) this.draw(); }
-      focusMatch() { if (!this.match || !this.match.size) return; let n = [...this.match].find((m) => this.vnodes.includes(m)) || [...this.match][0]; if (n.kind === "sym" && !this.expanded.has(n.parent.id)) { this.toggleExpand(n.parent); } this.scale = Math.max(this.scale, 1.1); this.userView = true; this.ox = this.w / 2 - n.x * this.scale; this.oy = this.h / 2 - n.y * this.scale; this.draw(); }
+      // search like the note graph: names first, then the text inside files; Enter / Shift+Enter walk the hits with "N из M"
+      runSearch(quiet) {
+        const s = this.qIn.value.trim().toLowerCase(), tok = this.sTok = (this.sTok || 0) + 1; this.match = null; this.mlist = []; this.mAt = 0;
+        if (!s || !this.g) { this.qCount.textContent = ""; if (!quiet) { this.rebuildView(); this.draw(); } return; }
+        for (const n of this.g.nodes) if (n.label.toLowerCase().includes(s)) this.mlist.push(n);
+        this.mlist.sort((a, b) => (a.label.toLowerCase().startsWith(s) ? 0 : 1) - (b.label.toLowerCase().startsWith(s) ? 0 : 1) || (a.kind === "dir" ? 0 : 1) - (b.kind === "dir" ? 0 : 1));
+        this.applyMatches(quiet);
+        clearTimeout(this.sT); this.sT = setTimeout(async () => {
+          const have = new Set(this.mlist), extra = [], TX = window.__bsgFText || (window.__bsgFText = new Map()), root = this.rootPath;
+          for (const n of this.g.nodes) { if (n.kind === "dir" || have.has(n) || !n.path || (n.size || 0) > 400000 || !/^(md|txt|json|ya?ml|toml|ini|xml|html?|css|s[ac]ss|[cm]?js|jsx|tsx?|py|rs|go|java|kts?|c|h|cpp|hpp|cs|swift|rb|php|lua|sh|bat|cmd|ps1|dart|sql|gradle|csv|cfg|conf|properties|vue|svelte)$/i.test(n.ext || "")) continue;
+            let t = TX.get(n.path); if (t === undefined) { try { t = (await fs.promises.readFile(n.abs || path.join(root, n.path), "utf8")).toLowerCase(); } catch (e) { t = ""; } TX.set(n.path, t); }
+            if (tok !== this.sTok) return; if (t.includes(s)) extra.push(n); }
+          if (tok !== this.sTok) return; if (extra.length) { this.mlist = this.mlist.concat(extra); this.applyMatches(true, true); } else if (!this.mlist.length) this.qCount.textContent = "ничего";
+        }, 220);
+      }
+      applyMatches(quiet, keep) {
+        this.match = new Set(this.mlist); const first = this.mlist[0];
+        this.qCount.textContent = this.mlist.length ? (this.mAt + 1) + " из " + this.mlist.length : "ищу…";
+        let ch = false; if (this.mode === "files") for (const n of this.mlist.slice(0, 250)) for (let u = n.up; u; u = u.up) if (this.collapsed.delete(u.id)) ch = true;
+        this.rebuildView(); if (ch) { this.userView = true; this.applyLayout(false); }
+        if (first && !keep) setTimeout(() => this.focusMatch(), ch ? 450 : 0); else if (!quiet) this.draw(); else this.draw();
+      }
+      stepMatch(d) { if (!this.mlist || !this.mlist.length) return; this.mAt = (this.mAt + d + this.mlist.length) % this.mlist.length; this.qCount.textContent = (this.mAt + 1) + " из " + this.mlist.length; this.focusMatch(); }
+      focusMatch() { if (!this.mlist || !this.mlist.length) return; const n = this.mlist[this.mAt] || this.mlist[0]; this.hover = n; if (this.layout === "3d") { this.draw(); return; } if (n.kind === "sym" && !this.expanded.has(n.parent.id)) { this.toggleExpand(n.parent); } this.scale = Math.max(this.scale, 1.1); this.userView = true; const x = n.tx !== undefined ? n.tx : n.x, y = n.ty !== undefined ? n.ty : n.y; this.ox = this.w / 2 - x * this.scale; this.oy = this.h / 2 - y * this.scale; this.draw(); }
       // -- layout storage --
       layoutFile() { return path.join(this.rootPath, ".basalt", "graph-layout.json"); }
       async loadLayout() { try { const j = JSON.parse(await fs.promises.readFile(this.layoutFile(), "utf8")); return j[this.mode] || null; } catch (e) { return null; } }
