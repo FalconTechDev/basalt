@@ -267,11 +267,11 @@
     }
     updHist() { if (this.undoB) { this.undoB.toggleClass("is-disabled", HIST.i <= 0); this.redoB.toggleClass("is-disabled", HIST.i >= HIST.st.length - 1); } }
     buildTop() {
-      const SEGI = { "2d": ["lucide-square", "2D"], "3d": ["lucide-box", "3D"], files: ["lucide-folder-tree", "Файлы"] }; const segFill = (b, k) => { b.textContent = ""; const i = document.createElement("span"); i.className = "bsg-sic"; try { window.__bsApi.setIcon(i, SEGI[k][0]); } catch (e) { /* ok */ } const t = document.createElement("span"); t.textContent = SEGI[k][1]; b.append(i, t); };
+      const SEGI = { "2d": ["lucide-square", "2D"], "3d": ["lucide-box", "3D"], files: ["lucide-folder-tree", "Файлы"], code: ["lucide-code-xml", "Код"] }; const segFill = (b, k) => { b.textContent = ""; const i = document.createElement("span"); i.className = "bsg-sic"; try { window.__bsApi.setIcon(i, SEGI[k][0]); } catch (e) { /* ok */ } const t = document.createElement("span"); t.textContent = SEGI[k][1]; b.append(i, t); };
       const t = this.top; t.textContent = "";
       const seg = document.createElement("div"); seg.className = "bsg-seg";
       this.segBtns = {}; for (const [k, label] of [["2d", "2D"], ["3d", "3D"]]) { const b = document.createElement("button"); b.className = "bsg-si"; segFill(b, k); b.title = k === "2d" ? "Плоский граф" : "Объёмный граф"; b.addEventListener("click", () => this.setMode(k)); seg.appendChild(b); this.segBtns[k] = b; }
-      { const b = document.createElement("button"); b.className = "bsg-si"; segFill(b, "files"); b.title = "Граф файлов и папок"; b.addEventListener("click", () => this.leaf.setViewState({ type: "basalt-codegraph", state: { mode: "files" }, active: true })); seg.appendChild(b); }
+      for (const k of ["files", "code"]) { const b = document.createElement("button"); b.className = "bsg-si"; segFill(b, k); b.title = k === "files" ? "Граф файлов и папок" : "Граф кода: функции, классы, импорты и вызовы"; b.addEventListener("click", () => this.leaf.setViewState({ type: "basalt-codegraph", state: { mode: k }, active: true })); seg.appendChild(b); }
       t.appendChild(seg);
       // search: type to find, Enter / Shift+Enter to go through the matches, Esc to clear
       const box = document.createElement("div"); box.className = "bsg-sbox";

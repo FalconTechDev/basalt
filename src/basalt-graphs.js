@@ -84,7 +84,7 @@
     .bsg canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
     .bsg-tip { position: absolute; z-index: 5; pointer-events: none; display: none; max-width: 360px; padding: 6px 10px; border-radius: 8px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); box-shadow: 0 4px 16px rgba(0,0,0,.3); font-size: var(--font-ui-smaller); color: var(--text-normal); }
     .bsg-tip b { display: block; margin-bottom: 2px; } .bsg-tip span { color: var(--text-muted); display: block; }
-    .bsg-legend { position: absolute; left: 10px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: 60%; padding: 6px 10px; border-radius: 8px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); font-size: var(--font-ui-smaller); color: var(--text-muted); }
+    .bsg-legend { position: absolute; left: 10px; bottom: 36px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: 60%; padding: 6px 10px; border-radius: 8px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); font-size: var(--font-ui-smaller); color: var(--text-muted); }
     .bsg-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
     .bsg-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); pointer-events: none; text-align: center; padding: 24px; }
   `;
@@ -234,15 +234,16 @@
       getDisplayText() { return this.mode === "code" ? "Граф кода" : "Граф файлов"; }
       getIcon() { return "lucide-git-fork"; }
       getState() { return { mode: this.mode }; }
-      async setState(state, result) { this.mode = "files"; try { this.leaf.updateHeader && this.leaf.updateHeader(); } catch (e) { /* ok */ } return super.setState ? super.setState(state, result) : undefined; }
+      switchMode(k) { if (this.mode === k) return; this.mode = k; this.expanded.clear(); this.userView = false; this.fitted = false; this.refit = false; this.syncSeg(); try { this.leaf.updateHeader && this.leaf.updateHeader(); } catch (e) { /* ok */ } this.load(); }
+      async setState(state, result) { const m = state && state.mode === "code" ? "code" : "files"; if (this.built && m !== this.mode) { this.switchMode(m); } else this.mode = m; try { this.leaf.updateHeader && this.leaf.updateHeader(); } catch (e) { /* ok */ } return super.setState ? super.setState(state, result) : undefined; }
       root() { const W = window.__bsWorkspace; if (W && W.active && W.active() && W.root()) return W.root(); return app.vault.adapter.basePath; }
       async onOpen() {
         const c = this.contentEl; c.textContent = ""; c.style.padding = "0"; c.style.position = "relative"; c.style.overflow = "hidden";
         const wrap = document.createElement("div"); wrap.className = "bsg"; c.appendChild(wrap);
         const bar = document.createElement("div"); bar.className = "bsg-bar bscg-top"; wrap.appendChild(bar);
         const seg = document.createElement("div"); seg.className = "bsg-seg"; bar.appendChild(seg); this.segBtns = {};
-        const SEGI = { "2d": ["lucide-square", "2D"], "3d": ["lucide-box", "3D"], files: ["lucide-folder-tree", "Файлы"] }; const segFill = (b, k) => { b.textContent = ""; const i = document.createElement("span"); i.className = "bsg-sic"; try { window.__bsApi.setIcon(i, SEGI[k][0]); } catch (e) { /* ok */ } const t = document.createElement("span"); t.textContent = SEGI[k][1]; b.append(i, t); };
-        for (const [k, t] of [["2d", "2D"], ["3d", "3D"], ["files", "Файлы"]]) { const b = document.createElement("button"); b.className = "bsg-si"; segFill(b, k); b.title = k === "files" ? "Граф файлов и папок" : "Граф заметок"; b.addEventListener("click", () => { if (k !== "files") this.leaf.setViewState({ type: "graph", state: { view: k }, active: true }); }); seg.appendChild(b); this.segBtns[k] = b; }
+        const SEGI = { "2d": ["lucide-square", "2D"], "3d": ["lucide-box", "3D"], files: ["lucide-folder-tree", "Файлы"], code: ["lucide-code-xml", "Код"] }; const segFill = (b, k) => { b.textContent = ""; const i = document.createElement("span"); i.className = "bsg-sic"; try { window.__bsApi.setIcon(i, SEGI[k][0]); } catch (e) { /* ok */ } const t = document.createElement("span"); t.textContent = SEGI[k][1]; b.append(i, t); };
+        for (const k of ["2d", "3d", "files", "code"]) { const b = document.createElement("button"); b.className = "bsg-si"; segFill(b, k); b.title = k === "files" ? "Граф файлов и папок" : k === "code" ? "Граф кода: функции, классы, импорты и вызовы" : "Граф заметок"; b.addEventListener("click", () => { if (k === "files" || k === "code") this.switchMode(k); else this.leaf.setViewState({ type: "graph", state: { view: k }, active: true }); }); seg.appendChild(b); this.segBtns[k] = b; }
         const sbox = document.createElement("div"); sbox.className = "bsg-sbox"; const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти по имени и тексту…"; this.qIn = q; this.qCount = document.createElement("span"); this.qCount.className = "bsg-count"; sbox.append(q, this.qCount); bar.appendChild(sbox);
         q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") { e.preventDefault(); this.stepMatch(e.shiftKey ? -1 : 1); } else if (e.key === "Escape") { q.value = ""; this.runSearch(); q.blur(); } });
         // settings panel (gear), the same place and look as in the note graph
@@ -296,7 +297,7 @@
         const saved = (this.mode === "code" || this.layout === "force") ? await this.loadLayout() : null; let placed = 0;
         const cx = 0, cy = 0, dirs = [...new Set(g.nodes.map((n) => n.dir))]; const ang = new Map(dirs.map((d, i) => [d, (i / dirs.length) * Math.PI * 2]));
         g.nodes.forEach((n, i) => { const s = saved && saved[n.id]; if (s) { n.x = s[0]; n.y = s[1]; n.pinned = !!s[2]; placed++; } else { const a = ang.get(n.dir) + (Math.random() - .5) * .6, r = 60 + Math.sqrt(g.nodes.length) * 14 * (.4 + Math.random() * .6); n.x = cx + Math.cos(a) * r; n.y = cy + Math.sin(a) * r; n.pinned = false; } if (n.kind === "sym" && !(saved && saved[n.id])) { n.x = n.parent.x + (Math.random() - .5) * 30; n.y = n.parent.y + (Math.random() - .5) * 30; } n.vx = n.vy = 0; n.r = n.kind === "dir" ? 6 : n.kind === "file" ? Math.min(15, 3 + Math.sqrt(n.loc) / 4) : Math.min(9, 2.5 + n.deg * .35); });
-        this.expanded = new Set(); this.collapsed = new Set(); this.defaultCollapse(); this.rebuildView(); this.alpha = placed > g.nodes.length * .8 ? .05 : 1; this.applyLayout(true); this.fitted = false; this.refit = false; this.userView = false;
+        this.expanded = new Set(); this.collapsed = new Set(); this.defaultCollapse(); this.rebuildView(); this.alpha = placed > g.nodes.length * .8 ? .05 : 1; this.applyLayout(true); this.fitted = false; this.refit = false; this.userView = false; if (!this.static) { this.resize(); this.fit(); this.loop(); }
         this.fillLegend(); this.updateInfo(); this.runSearch(true); this.loop();
       }
       fillLegend() { this.legend.textContent = ""; for (const gr of this.g.groups) { const sp = document.createElement("span"); const ic = document.createElement("i"); ic.style.background = gr.color; sp.append(ic, gr.name); this.legend.appendChild(sp); } }
