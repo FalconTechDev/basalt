@@ -267,19 +267,31 @@
     }
     updHist() { if (this.undoB) { this.undoB.toggleClass("is-disabled", HIST.i <= 0); this.redoB.toggleClass("is-disabled", HIST.i >= HIST.st.length - 1); } }
     buildTop() {
+      const SEGI = { "2d": '<svg viewBox="0 0 28 22" width="28" height="22" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="2" width="22" height="18" rx="2"/><text x="14" y="15" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" stroke="none" font-family="sans-serif">2D</text></svg>', "3d": '<svg viewBox="0 0 28 22" width="28" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 6 L8 2 H25 V16 L20 20 H3 Z M3 6 H20 V20 M20 6 L25 2"/><text x="11.5" y="16.5" text-anchor="middle" font-size="8" font-weight="700" fill="currentColor" stroke="none" font-family="sans-serif">3D</text></svg>', files: '<svg viewBox="0 0 28 22" width="28" height="22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 4 H11 L13 6.5 H25 V20 H3 Z"/></svg>' };
       const t = this.top; t.textContent = "";
       const seg = document.createElement("div"); seg.className = "bsg-seg";
-      this.segBtns = {}; for (const [k, label] of [["2d", "2D"], ["3d", "3D"]]) { const b = document.createElement("button"); b.textContent = label; b.title = k === "2d" ? "Плоский граф" : "Объёмный граф"; b.addEventListener("click", () => this.setMode(k)); seg.appendChild(b); this.segBtns[k] = b; }
+      this.segBtns = {}; for (const [k, label] of [["2d", "2D"], ["3d", "3D"]]) { const b = document.createElement("button"); b.className = "bsg-si"; b.innerHTML = SEGI[k]; b.title = k === "2d" ? "Плоский граф" : "Объёмный граф"; b.addEventListener("click", () => this.setMode(k)); seg.appendChild(b); this.segBtns[k] = b; }
+      { const b = document.createElement("button"); b.className = "bsg-si"; b.innerHTML = SEGI.files; b.title = "Граф файлов и папок"; b.addEventListener("click", () => this.leaf.setViewState({ type: "basalt-codegraph", state: { mode: "files" }, active: true })); seg.appendChild(b); }
       t.appendChild(seg);
       // search: type to find, Enter / Shift+Enter to go through the matches, Esc to clear
       const box = document.createElement("div"); box.className = "bsg-sbox";
-      const search = document.createElement("input"); search.type = "text"; search.className = "bsg-search"; search.placeholder = "Найти заметку…"; this.searchEl = search;
+      const search = document.createElement("input"); search.type = "text"; search.className = "bsg-search"; search.placeholder = "Найти по имени и тексту…"; this.searchEl = search;
       const count = document.createElement("span"); count.className = "bsg-count"; this.countEl = count;
       const find = () => {
         this.fadeNow(); const q = search.value.trim().toLowerCase();
         this.match = q ? this.g.nodes.map((x, i) => (x.name.toLowerCase().includes(q) ? i : -1)).filter((i) => i >= 0) : null; this.matchAt = 0;
         count.textContent = q ? (this.match.length ? "1 из " + this.match.length : "ничего") : "";
         if (this.match && this.match.length) this.setSel(this.match[0], true); else if (!q) this.setSel(-1); this.dirty = true;
+        // then the text of the notes: read once, kept lower-cased, matches added after the name hits
+        if (!q) return; const tok = this.findTok = (this.findTok || 0) + 1, TX = window.__bsgText || (window.__bsgText = new Map()), nodes = this.g.nodes;
+        clearTimeout(this.findT); this.findT = setTimeout(async () => {
+          const extra = [], have = new Set(this.match || []);
+          for (let i = 0; i < nodes.length; i++) { const f = nodes[i].file; if (!f || have.has(i) || !/^(md|canvas|txt)$/.test(f.extension)) continue;
+            let s = TX.get(f.path); if (!s || s.m !== f.stat.mtime) { try { s = { t: (await this.app.vault.cachedRead(f)).toLowerCase(), m: f.stat.mtime }; TX.set(f.path, s); } catch (e) { continue; } }
+            if (tok !== this.findTok) return; if (s.t.includes(q)) extra.push(i); }
+          if (tok !== this.findTok || !extra.length) { if (!(this.match && this.match.length)) count.textContent = "ничего"; return; }
+          const first = !(this.match && this.match.length); this.match = (this.match || []).concat(extra); count.textContent = (this.matchAt + 1) + " из " + this.match.length; if (first) this.setSel(this.match[0], true); this.dirty = true;
+        }, 200);
       };
       search.addEventListener("input", find);
       search.addEventListener("keydown", (e) => {
