@@ -36,6 +36,17 @@
     .bsg-search { height: 24px; font-size: 12px; width: 150px; padding: 0 8px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
     .bsg-info { margin-left: auto; color: var(--text-faint); font-size: var(--font-ui-smaller); white-space: nowrap; }
     .bsg-body { position: relative; flex: 1; min-height: 0; }
+    .bscg-top { position: absolute; left: 14px; right: 60px; top: 12px; z-index: 6; padding: 0; border: 0; flex-wrap: nowrap; }
+    .bsg-body { position: absolute !important; inset: 0; }
+    .bscg-controls { position: absolute; right: 12px; top: 12px; z-index: 6; }
+    .bscg-controls .canvas-control-group { background: var(--background-secondary); border-radius: 0; box-shadow: none; clip-path: var(--bs-clip); }
+    .bscg-controls .canvas-control-item { background: transparent; } .bscg-controls .canvas-control-item:hover { background: var(--background-modifier-hover); }
+    .bscg-panel { position: absolute; right: 60px; top: 12px; z-index: 7; width: 300px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); clip-path: var(--bs-clip); display: none; font-size: 12.5px; box-sizing: border-box; }
+    .bscg-panel.is-open { display: block; }
+    .bscg-hd { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
+    .bscg-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; color: var(--text-muted); }
+    .bscg-row button { height: 26px; padding: 0 10px; font-size: 12px; }
+    .bscg-info { position: absolute; left: 14px; bottom: 10px; z-index: 5; color: var(--text-faint); font-size: var(--font-ui-smaller); pointer-events: none; }
     .bsg canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
     .bsg-tip { position: absolute; z-index: 5; pointer-events: none; display: none; max-width: 360px; padding: 6px 10px; border-radius: 8px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); box-shadow: 0 4px 16px rgba(0,0,0,.3); font-size: var(--font-ui-smaller); color: var(--text-normal); }
     .bsg-tip b { display: block; margin-bottom: 2px; } .bsg-tip span { color: var(--text-muted); display: block; }
@@ -194,25 +205,35 @@
       async onOpen() {
         const c = this.contentEl; c.textContent = ""; c.style.padding = "0"; c.style.position = "relative"; c.style.overflow = "hidden";
         const wrap = document.createElement("div"); wrap.className = "bsg"; c.appendChild(wrap);
-        const bar = document.createElement("div"); bar.className = "bsg-bar"; wrap.appendChild(bar);
+        const bar = document.createElement("div"); bar.className = "bsg-bar bscg-top"; wrap.appendChild(bar);
         const seg = document.createElement("div"); seg.className = "bsg-seg"; bar.appendChild(seg); this.segBtns = {};
         const SEGI = { "2d": ["lucide-square", "2D"], "3d": ["lucide-box", "3D"], files: ["lucide-folder-tree", "Файлы"] }; const segFill = (b, k) => { b.textContent = ""; const i = document.createElement("span"); i.className = "bsg-sic"; try { window.__bsApi.setIcon(i, SEGI[k][0]); } catch (e) { /* ok */ } const t = document.createElement("span"); t.textContent = SEGI[k][1]; b.append(i, t); };
         for (const [k, t] of [["2d", "2D"], ["3d", "3D"], ["files", "Файлы"]]) { const b = document.createElement("button"); b.className = "bsg-si"; segFill(b, k); b.title = k === "files" ? "Граф файлов и папок" : "Граф заметок"; b.addEventListener("click", () => { if (k !== "files") this.leaf.setViewState({ type: "graph", state: { view: k }, active: true }); }); seg.appendChild(b); this.segBtns[k] = b; }
         const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти узел…"; bar.appendChild(q); this.qIn = q;
         q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { if (e.key === "Enter") this.focusMatch(); });
-        const ls = document.createElement("select"); ls.className = "bsg-search"; ls.style.width = "auto"; ls.title = "Вид графа файлов";
+        // settings panel (gear), the same place and look as in the note graph
+        const panel = document.createElement("div"); panel.className = "bscg-panel"; this.panelEl = panel;
+        const prow = (label, ctl) => { const r = document.createElement("div"); r.className = "bscg-row"; const n = document.createElement("span"); n.textContent = label; r.append(n, ctl); panel.appendChild(r); return r; };
+        const hd = document.createElement("div"); hd.className = "bscg-hd"; hd.textContent = "Граф файлов"; panel.appendChild(hd);
+        const ls = document.createElement("select"); ls.className = "dropdown"; ls.title = "Вид графа файлов";
         for (const [k, t] of [["tree", "Дерево"], ["ladder", "Лесенка"], ["radial", "Радиальный"], ["3d", "3D"], ["force", "Свободный"]]) { const o = document.createElement("option"); o.value = k; o.textContent = t; ls.appendChild(o); }
         ls.value = this.layout; ls.addEventListener("change", () => { this.layout = ls.value; try { localStorage.setItem("bsg.layout", this.layout); } catch (e) { /* ok */ } this.userView = false; this.refit = false; this.applyLayout(false); });
-        bar.appendChild(ls); this.layoutSel = ls;
-        this.info = document.createElement("span"); this.info.className = "bsg-info"; bar.appendChild(this.info);
-        const ICON = { "Импорты": "lucide-link", "Развернуть всё": "lucide-chevrons-up-down", "По центру": "lucide-scan", "Заново": "lucide-rotate-ccw", "↻": "lucide-refresh-cw" };
-        const btn = (t, title, fn, on) => { const b = document.createElement("button"); b.className = "bsg-btn bsg-ib" + (on ? " on" : ""); b.title = title; try { window.__bsApi.setIcon(b, ICON[t]); } catch (e) { b.textContent = t; } b.addEventListener("click", () => fn(b)); bar.appendChild(b); return b; };
-        this.btnImps = btn("Импорты", "Показывать импорты между файлами", (b) => { this.showImports = !this.showImports; b.classList.toggle("on", this.showImports); this.draw(); }, true);
-        this.btnCol = btn("Развернуть всё", "Свернуть / развернуть все папки", () => this.toggleAllDirs());
-        btn("По центру", "Вписать граф в окно", () => this.fit());
-        btn("Заново", "Сбросить закреплённые позиции и пересчитать", () => this.relayout());
-        btn("↻", "Пересканировать папку", () => this.load());
-        const body = document.createElement("div"); body.className = "bsg-body"; wrap.appendChild(body); this.body = body;
+        prow("Раскладка", ls); this.layoutSel = ls;
+        const pb = (t, fn) => { const b = document.createElement("button"); b.textContent = t; b.addEventListener("click", () => fn(b)); return b; };
+        this.btnCol = pb("Развернуть", () => { this.toggleAllDirs(); this.btnCol.textContent = this.collapsed.size ? "Развернуть" : "Свернуть"; }); prow("Все папки", this.btnCol);
+        prow("Позиции узлов", pb("Сбросить", () => this.relayout()));
+        prow("Папка", pb("Пересканировать", () => this.load()));
+        this.btnImps = document.createElement("button"); this.btnImps.style.display = "none";
+        this.info = document.createElement("div"); this.info.className = "bscg-info";
+        // controls column on the right: settings | zoom | help, stock canvas-control classes
+        const colm = document.createElement("div"); colm.className = "canvas-controls bscg-controls";
+        const grp = () => { const g = document.createElement("div"); g.className = "canvas-control-group"; colm.appendChild(g); return g; };
+        const mk = (g, icon, title, fn) => { const b = document.createElement("div"); b.className = "canvas-control-item"; b.setAttribute("aria-label", title); try { window.__bsApi.setIcon(b, icon); } catch (e) { /* ok */ } b.addEventListener("click", fn); g.appendChild(b); return b; };
+        const zoom = (k) => { if (this.layout === "3d") { this.zoom3 = Math.max(.2, Math.min(6, (this.zoom3 || 1) * k)); } else { const cx = this.w / 2, cy = this.h / 2; this.ox = cx - (cx - this.ox) * k; this.oy = cy - (cy - this.oy) * k; this.scale *= k; } this.userView = true; this.draw(); };
+        mk(grp(), "lucide-settings", "Настройки графа", () => panel.classList.toggle("is-open"));
+        const zg = grp(); mk(zg, "lucide-plus", "Приблизить", () => zoom(1.25)); mk(zg, "lucide-maximize", "Вписать весь граф в окно", () => { this.userView = false; this.fit(); }); mk(zg, "lucide-minus", "Отдалить", () => zoom(.8));
+        mk(grp(), "lucide-folder-tree", "Свернуть / развернуть все папки", () => this.btnCol.click());
+        const body = document.createElement("div"); body.className = "bsg-body"; wrap.appendChild(body); this.body = body; body.append(panel, colm, this.info);
         const cv = document.createElement("canvas"); body.appendChild(cv); this.cv = cv; this.ctx = cv.getContext("2d");
         this.tip = document.createElement("div"); this.tip.className = "bsg-tip"; body.appendChild(this.tip);
         this.legend = document.createElement("div"); this.legend.className = "bsg-legend"; body.appendChild(this.legend);
