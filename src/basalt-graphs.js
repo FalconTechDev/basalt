@@ -36,11 +36,44 @@
     .bsg-search { height: 24px; font-size: 12px; width: 150px; padding: 0 8px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); outline-offset: -1px; color: var(--text-normal); font-size: var(--font-ui-small); }
     .bsg-info { margin-left: auto; color: var(--text-faint); font-size: var(--font-ui-smaller); white-space: nowrap; }
     .bsg-body { position: relative; flex: 1; min-height: 0; }
+    .bsg-panel .setting-item-info { flex: 1 1 auto; min-width: 0; } .bsg-panel .setting-item-control { flex: 0 0 auto; } .bsg-panel .setting-item-control input[type=range] { width: 140px; }
+    .bsg-panel .setting-item-heading { background: none; border: 0; border-top: 1px solid var(--background-modifier-border); border-radius: 0; margin-top: 12px; padding: 14px 4px 6px; } .bsg-panel .setting-item-heading:first-child { border-top: 0; margin-top: 0; }
+    .bsg-panel { overflow-x: hidden; box-sizing: border-box; position: absolute; right: 60px; top: 12px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
+    .bsg-panel.is-open { display: block; }
+    .bsg-panel .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; color: var(--text-muted); }
+    .bsg-panel input[type=range] { width: 120px; }
+    .bsg-panel .hd { margin: 14px 0 6px; padding-top: 10px; border-top: 1px solid var(--background-modifier-border); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); }
+    .bsg-panel .grp { gap: 6px; } .bsg-panel .grp input[type=color] { width: 22px; height: 22px; padding: 0; border: 0; background: none; flex: none; }
+    .bsg-panel .grp .nm { flex: 1; min-width: 0; height: 24px; padding: 0 6px; font-size: 12px; } .bsg-panel .grp .n { color: var(--text-faint); font-size: 11px; min-width: 16px; text-align: right; }
+    .bsg-panel .grp.is-off .nm, .bsg-panel .grp.is-off .n { opacity: .45; } .bsg-panel .grp.is-solo { background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); }
+    .bsg-panel .grp .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-faint); cursor: pointer; border-radius: var(--bs-r); flex: none; }
+    .bsg-panel .grp .ic svg { width: 15px; height: 15px; } .bsg-panel .grp .ic:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-panel .grp .ic.on { color: var(--interactive-accent); }
+    .bsg-panel .focusbox { margin: 8px 0; padding: 8px 10px; border: 1px solid var(--background-modifier-border); } .bsg-panel .focusbox .row b { min-width: 28px; text-align: right; color: var(--text-muted); font-weight: 500; }
+    .bsg-panel .grp .x, .bsg-panel .wide { background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); }
+    .bsg-panel .grp .x { width: 22px; height: 22px; padding: 0; } .bsg-panel .wide { width: 100%; height: 28px; margin: 4px 0; font-size: 12px; } .bsg-panel .wide:hover, .bsg-panel .grp .x:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
+    .bsg-panel .mute { font-size: 11.5px; color: var(--text-faint); }
+    .bsg-panel { max-height: calc(100% - 66px); overflow-y: auto; }
     .bscg-top { position: absolute; left: 14px; right: 60px; top: 12px; z-index: 6; padding: 0; border: 0; flex-wrap: nowrap; }
     .bsg-body { position: absolute !important; inset: 0; }
     .bscg-controls { position: absolute; right: 12px; top: 12px; z-index: 6; }
     .bscg-controls .canvas-control-group { background: var(--background-secondary); border-radius: 0; box-shadow: none; clip-path: var(--bs-clip); }
     .bscg-controls .canvas-control-item { background: transparent; } .bscg-controls .canvas-control-item:hover { background: var(--background-modifier-hover); }
+    .bsg-body > .bsg-panel { z-index: 7; }
+    .bsg-panel .hd.first { margin-top: 2px; padding-top: 0; border-top: 0; }
+    .bsg-panel .btns { display: flex; gap: 6px; margin: 6px 0 2px; } .bsg-panel .btns button { flex: 1; height: 26px; font-size: 12px; background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); border-radius: var(--bs-r); cursor: pointer; } .bsg-panel .btns button:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
+    .bsg-panel .li { display: inline-flex; width: 15px; height: 15px; margin-right: 7px; color: var(--text-faint); vertical-align: -3px; flex: none; } .bsg-panel .li svg { width: 15px; height: 15px; }
+    .bsg-panel .hd { display: flex; align-items: center; } .bsg-panel .hd .li { color: var(--interactive-accent); }
+    .bsg-panel .row .lb { display: flex; align-items: center; flex: 1; min-width: 0; }
+    .bsg-panel .cbs { display: flex; gap: 10px; } .bsg-panel .cb2:checked { background-color: #6e96be !important; border-color: #6e96be !important; --interactive-accent: #6e96be; }
+    .bsg-panel .cap { display: flex; justify-content: flex-end; gap: 4px; margin: -2px 0 2px; font-size: 10.5px; color: var(--text-faint); } .bsg-panel .cap span { width: 40px; text-align: center; }
+    .bsg-panel .row.focus .nm { color: var(--text-normal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsg-panel .row.focus .n { color: var(--text-muted); min-width: 36px; text-align: center; font-size: 12px; }
+    .bsg-panel .row.focus .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); flex: none; } .bsg-panel .row.focus .ic:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-panel .row.focus .ic svg { width: 15px; height: 15px; }
+    .bsg-panel .wide .li, .bsg-panel .btns button .li { margin-right: 6px; } .bsg-panel .wide, .bsg-panel .btns button { display: inline-flex; align-items: center; justify-content: center; }
+    .bsg-panel .setting-item { padding: 8px 0; } .bsg-panel .setting-item-heading { padding-top: 14px; } .bsg-panel .setting-item-name { display: flex; align-items: center; }
+    .bsg-panel .bsg-si { display: inline-flex; width: 16px; height: 16px; margin-right: 8px; color: var(--interactive-accent); flex: none; } .bsg-panel .bsg-si svg { width: 16px; height: 16px; }
+    .bsg-panel .bsg-t2.is-enabled { background-color: #6e96be; }
+    .bsg-panel .bsg-off .setting-item-name, .bsg-panel .bsg-off .setting-item-description { opacity: .45; } .bsg-panel .bsg-solo { background: color-mix(in srgb, var(--interactive-accent) 12%, transparent); }
+      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = { classList: { add() {}, remove() {}, contains() { return false; }, toggle() {} } }; this.empty = this.root.querySelector(".bsg-empty");
     .bscg-panel { position: absolute; right: 60px; top: 12px; z-index: 7; width: 300px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); clip-path: var(--bs-clip); display: none; font-size: 12.5px; box-sizing: border-box; }
     .bscg-panel.is-open { display: block; }
     .bscg-hd { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
@@ -195,7 +228,7 @@
   // ---------- view ----------
   function makeView(api) {
     return class CodeGraphView extends api.ItemView {
-      constructor(leaf) { super(leaf); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.collapsed = new Set(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "ladder"; } catch (e) { this.layout = "ladder"; } }
+      constructor(leaf) { super(leaf); this.opt = Object.assign({ maxFiles: 15, onlyDirs: false }, (() => { try { return JSON.parse(localStorage.getItem("bsg.opt") || "{}"); } catch (e) { return {}; } })()); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.collapsed = new Set(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "ladder"; } catch (e) { this.layout = "ladder"; } }
       getViewType() { return VIEW; }
       getDisplayText() { return this.mode === "code" ? "Граф кода" : "Граф файлов"; }
       getIcon() { return "lucide-git-fork"; }
@@ -212,27 +245,29 @@
         const q = document.createElement("input"); q.className = "bsg-search"; q.placeholder = "Найти узел…"; bar.appendChild(q); this.qIn = q;
         q.addEventListener("input", () => this.runSearch()); q.addEventListener("keydown", (e) => { if (e.key === "Enter") this.focusMatch(); });
         // settings panel (gear), the same place and look as in the note graph
-        const panel = document.createElement("div"); panel.className = "bscg-panel"; this.panelEl = panel;
-        const prow = (label, ctl) => { const r = document.createElement("div"); r.className = "bscg-row"; const n = document.createElement("span"); n.textContent = label; r.append(n, ctl); panel.appendChild(r); return r; };
-        const hd = document.createElement("div"); hd.className = "bscg-hd"; hd.textContent = "Граф файлов"; panel.appendChild(hd);
-        const ls = document.createElement("select"); ls.className = "dropdown"; ls.title = "Вид графа файлов";
-        for (const [k, t] of [["tree", "Дерево"], ["ladder", "Лесенка"], ["radial", "Радиальный"], ["3d", "3D"], ["force", "Свободный"]]) { const o = document.createElement("option"); o.value = k; o.textContent = t; ls.appendChild(o); }
-        ls.value = this.layout; ls.addEventListener("change", () => { this.layout = ls.value; try { localStorage.setItem("bsg.layout", this.layout); } catch (e) { /* ok */ } this.userView = false; this.refit = false; this.applyLayout(false); });
-        prow("Раскладка", ls); this.layoutSel = ls;
-        const pb = (t, fn) => { const b = document.createElement("button"); b.textContent = t; b.addEventListener("click", () => fn(b)); return b; };
-        this.btnCol = pb("Развернуть", () => { this.toggleAllDirs(); this.btnCol.textContent = this.collapsed.size ? "Развернуть" : "Свернуть"; }); prow("Все папки", this.btnCol);
-        prow("Позиции узлов", pb("Сбросить", () => this.relayout()));
-        prow("Папка", pb("Пересканировать", () => this.load(true)));
+        // settings panel (gear): the note graph's panel, the same Setting rows, headings and toggles
+        const panel = document.createElement("div"); panel.className = "bsg-panel"; this.panelEl = panel;
+        const S = window.__bsApi.Setting, saveOpt = () => { try { localStorage.setItem("bsg.opt", JSON.stringify(this.opt)); } catch (e) { /* ok */ } }, re = () => { this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); };
+        const L = (st, ic) => { const i = document.createElement("span"); i.className = "bsg-si"; try { window.__bsApi.setIcon(i, ic); } catch (e) { /* ok */ } st.nameEl.prepend(i); return st; }, N = (name, ic) => L(new S(panel).setName(name), ic);
+        L(new S(panel).setName("Вид").setHeading(), "lucide-palette");
+        N("Раскладка", "lucide-network").addDropdown((d) => { for (const [k, t] of [["ladder", "Лесенка"], ["tree", "Дерево"], ["radial", "Радиальный"], ["3d", "3D"], ["force", "Свободный"]]) d.addOption(k, t); d.setValue(this.layout).onChange((v) => { this.layout = v; try { localStorage.setItem("bsg.layout", v); } catch (e) { /* ok */ } this.userView = false; this.refit = false; this.applyLayout(false); }); this.layoutSel = d.selectEl; });
+        N("Только папки", "lucide-folder").addToggle((t) => t.setValue(!!this.opt.onlyDirs).onChange((v) => { this.opt.onlyDirs = v; saveOpt(); re(); }));
+        N("Файлов в папке", "lucide-files").addSlider((sl) => sl.setLimits(3, 60, 1).setValue(this.opt.maxFiles).setDynamicTooltip().onChange((v) => { this.opt.maxFiles = v; saveOpt(); re(); }));
+        L(new S(panel).setName("Папки").setHeading(), "lucide-folder-tree");
+        N("Свернуть / развернуть всё", "lucide-chevrons-up-down").addExtraButton((b) => b.setIcon("lucide-chevrons-up-down").setTooltip("Свернуть или развернуть все папки").onClick(() => this.toggleAllDirs()));
+        N("Сбросить позиции", "lucide-rotate-ccw").addExtraButton((b) => b.setIcon("lucide-rotate-ccw").setTooltip("Забыть перетащенные узлы и разложить заново").onClick(() => this.relayout()));
+        N("Пересканировать папку", "lucide-refresh-cw").addExtraButton((b) => b.setIcon("lucide-refresh-cw").setTooltip("Прочитать файлы с диска заново").onClick(() => this.load(true)));
         this.btnImps = document.createElement("button"); this.btnImps.style.display = "none";
         this.info = document.createElement("div"); this.info.className = "bscg-info";
         // controls column on the right: settings | zoom | help, stock canvas-control classes
         const colm = document.createElement("div"); colm.className = "canvas-controls bscg-controls";
         const grp = () => { const g = document.createElement("div"); g.className = "canvas-control-group"; colm.appendChild(g); return g; };
         const mk = (g, icon, title, fn) => { const b = document.createElement("div"); b.className = "canvas-control-item"; b.setAttribute("aria-label", title); try { window.__bsApi.setIcon(b, icon); } catch (e) { /* ok */ } b.addEventListener("click", fn); g.appendChild(b); return b; };
+        void 0;
         const zoom = (k) => { if (this.layout === "3d") { this.zoom3 = Math.max(.2, Math.min(6, (this.zoom3 || 1) * k)); } else { const cx = this.w / 2, cy = this.h / 2; this.ox = cx - (cx - this.ox) * k; this.oy = cy - (cy - this.oy) * k; this.scale *= k; } this.userView = true; this.draw(); };
         mk(grp(), "lucide-settings", "Настройки графа", () => panel.classList.toggle("is-open"));
         const zg = grp(); mk(zg, "lucide-plus", "Приблизить", () => zoom(1.25)); mk(zg, "lucide-maximize", "Вписать весь граф в окно", () => { this.userView = false; this.fit(); }); mk(zg, "lucide-minus", "Отдалить", () => zoom(.8));
-        mk(grp(), "lucide-folder-tree", "Свернуть / развернуть все папки", () => this.btnCol.click());
+        mk(grp(), "lucide-folder-tree", "Свернуть / развернуть все папки", () => this.toggleAllDirs());
         const body = document.createElement("div"); body.className = "bsg-body"; wrap.appendChild(body); this.body = body; body.append(panel, colm, this.info);
         const cv = document.createElement("canvas"); body.appendChild(cv); this.cv = cv; this.ctx = cv.getContext("2d");
         this.tip = document.createElement("div"); this.tip.className = "bsg-tip"; body.appendChild(this.tip);
@@ -268,7 +303,7 @@
       // -- visible graph: in "Код" mode symbols are hidden inside their file until it is expanded (double click); calls are summed per file pair --
       rebuildView() {
         const g = this.g, exp = this.expanded, files = this.mode === "files", col = this.collapsed, hid = (n) => { for (let u = n.up; u; u = u.up) if (col.has(u.id)) return true; return false; },
-          vis = (n) => (n.kind === "dir" ? files && !hid(n) : n.kind === "sym" ? exp.has(n.parent.id) : files ? !hid(n) : !!n.hasLinks || exp.has(n.id)), rep = (n) => (vis(n) ? n : n.parent), map = new Map(), links = [];
+          cap = this.capFiles(), vis = (n) => (n.kind === "dir" ? files && !hid(n) : n.kind === "sym" ? exp.has(n.parent.id) : files ? !hid(n) && !cap.has(n) : !!n.hasLinks || exp.has(n.id)), rep = (n) => (vis(n) ? n : n.parent), map = new Map(), links = [];
         this.vnodes = g.nodes.filter(vis);
         for (const l of g.links) {
           if (l.kind === "contains") { if (vis(l.a) && vis(l.b)) links.push(l); continue; }
@@ -279,14 +314,17 @@
         for (const n of this.vnodes) n.r = this.mode === "files" ? 15 : n.kind === "dir" ? 5 : n.kind === "file" ? Math.min(14, 2.5 + Math.sqrt(n.loc) / 5 + Math.sqrt(n.vd) * .5) : Math.min(8, 2.2 + Math.sqrt(n.vd));
         this.byDeg = this.vnodes.slice().sort((a, b) => b.vd * (b.kind === "dir" ? 1.5 : 1) - a.vd * (a.kind === "dir" ? 1.5 : 1));
       }
-      defaultCollapse() { this.collapsed.clear(); if (this.mode === "files" && this.g.files > 300) for (const n of this.g.nodes) if (n.kind === "dir" && n.path && n.path.split("/").length >= 2 && n.nfiles) this.collapsed.add(n.id); if (this.btnCol) this.btnCol.title = "Развернуть все папки"; }
+      defaultCollapse() { this.collapsed.clear(); if (this.mode === "files" && this.g.files > 300) for (const n of this.g.nodes) if (n.kind === "dir" && n.path && n.path.split("/").length >= 2 && n.nfiles) this.collapsed.add(n.id);  }
       toggleDir(n) {
         if (this.mode !== "files" || n.kind !== "dir" || !n.nfiles) return;
         if (this.collapsed.has(n.id)) { this.collapsed.delete(n.id); for (const m of this.g.nodes) for (let u = m.up; u; u = u.up) if (u === n) { m.x = n.x; m.y = n.y; break; } } else this.collapsed.add(n.id);
-        this.rebuildView(); this.userView = true; this.applyLayout(false); if (this.btnCol) this.btnCol.title = this.collapsed.size ? "Развернуть все папки" : "Свернуть папки";
+        this.rebuildView(); this.userView = true; this.applyLayout(false); if (this.btnCol) 0;
       }
-      toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) this.btnCol.title = this.collapsed.size ? "Развернуть все папки" : "Свернуть папки"; }
-      labelOf(n) { return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
+      toggleAllDirs() { if (this.collapsed.size) { this.collapsed.clear(); } else this.defaultCollapse(); for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); if (this.btnCol) 0; }
+      // files beyond the per-folder limit (or all of them in "only folders") are left out; the folder shows "+N"
+      capFiles() { const out = new Set(), per = new Map(), lim = this.opt.onlyDirs ? 0 : this.opt.maxFiles; this.more = new Map(); if (!this.g || this.mode !== "files") return out;
+        for (const n of this.g.nodes) if (n.kind !== "dir" && n.up) { const k = per.get(n.up) || 0; per.set(n.up, k + 1); if (k >= lim) { out.add(n); this.more.set(n.up, (this.more.get(n.up) || 0) + 1); } } return out; }
+      labelOf(n) { const extra = this.more && n.kind === "dir" && !this.collapsed.has(n.id) && this.more.get(n); if (extra) return n.label + "  +" + extra + (this.opt.onlyDirs ? " файл." : " ещё");  return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
       drawIcon(ctx, n, S, lw, hov, bg, txt) {
         const size = 22, px = size * S, mut = (this.cssv("--text-faint") || this.cssv("--vs-ln")) || "#999", dir = n.kind === "dir";
         if (px < 5) { ctx.fillStyle = dir ? (this.cssv("--interactive-accent") || mut) : n.extColor; ctx.fillRect(n.x - 3 * lw, n.y - 3 * lw, 6 * lw, 6 * lw); return; }
