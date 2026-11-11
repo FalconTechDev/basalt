@@ -25,6 +25,65 @@ const short = (s, n) => (s.length <= n ? s : s.slice(0, n - 1).trim() + '…');
 const attempt = (fn, fallback) => { try { return fn(); } catch (e) { console.log('Ignored:', String(e)); return fallback; } };
 const randomId = (n, hex) => { let out = ''; const chars = hex ? '0123456789abcdef' : 'abcdefghijklmnopqrstuvwxyz0123456789'; const bytes = crypto.randomBytes(n); for (let i = 0; i < n; i++) out += chars[bytes[i] % chars.length]; return out; };
 
+
+// ---------- request filter: EasyList style network rules (the web viewer's ad blocking) ----------
+const TYPE_NAMES = { mainFrame: 'document', subFrame: 'subdocument', stylesheet: 'stylesheet', script: 'script', image: 'image', font: 'font', object: 'object', xhr: 'xmlhttprequest', ping: 'ping', media: 'media', webSocket: 'websocket', cspReport: 'other', other: 'other' };
+const hostOf = (u) => { try { return new URL(u).hostname.toLowerCase(); } catch (e) { return ''; } };
+const baseDomain = (h) => h.split('.').slice(-2).join('.');
+class Blocker {
+	constructor() { this.byHost = new Map(); this.byToken = new Map(); this.loose = []; this.allowByHost = new Map(); this.allowByToken = new Map(); this.allowLoose = []; this.count = 0; }
+	addList(text) { for (const line of text.split('\n')) this.addRule(line.trim()); }
+	addRule(line) {
+		if (!line || line.length <= 3 || line[0] === '!' || line[0] === '[' || line.includes('##') || line.includes('#@#') || line.includes('#?#') || line.includes('#$#')) return;
+		let allow = false;
+		if (line.startsWith('@@')) { allow = true; line = line.slice(2); }
+		const rule = { types: null, notTypes: null, third: null, domains: null, notDomains: null, re: null };
+		const dollar = line.lastIndexOf('$');
+		if (dollar > 0 && !line.slice(dollar).includes('/')) {
+			for (const opt of line.slice(dollar + 1).split(',')) {
+				const o = opt.trim().toLowerCase(), neg = o.startsWith('~'), name = neg ? o.slice(1) : o;
+				if (name === 'third-party') rule.third = !neg;
+				else if (name.startsWith('domain=')) { rule.domains = []; rule.notDomains = []; for (const d of name.slice(7).split('|')) (d.startsWith('~') ? rule.notDomains : rule.domains).push(d.replace(/^~/, '')); }
+				else if (Object.values(TYPE_NAMES).includes(name)) (neg ? (rule.notTypes = rule.notTypes || []) : (rule.types = rule.types || [])).push(name);
+				else if (['match-case', 'important', 'popup', 'badfilter', 'csp', 'redirect', 'removeparam', 'redirect-rule', 'rewrite', 'genericblock', 'generichide', 'elemhide', 'specifichide'].some((x) => name.startsWith(x))) { if (!name.startsWith('important') && !name.startsWith('match-case')) return; }
+			}
+			line = line.slice(0, dollar);
+		}
+		if (line.length < 2) return;
+		let pattern = line, hostKey = null;
+		if (pattern.startsWith('||')) { pattern = pattern.slice(2); const m = pattern.match(/^[a-z0-9.-]+/i); if (m) hostKey = m[0].toLowerCase().replace(/^\.|\.$/g, ''); }
+		const rx = pattern.replace(/[.+?${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\^/g, '(?:[^\\w%.-]|$)');
+		const src = line.startsWith('||') ? '^[a-z-]+:\\/\\/(?:[^/]+\\.)?' + rx : (line.startsWith('|') ? '^' + rx.slice(rx.startsWith('\\|') ? 2 : 1) : rx);
+		try { rule.re = new RegExp(line.endsWith('|') && !line.endsWith('\\|') ? src.replace(/\\\|$|\|$/, '') + '$' : src, 'i'); } catch (e) { return; }
+		this.count++;
+		const hosts = allow ? this.allowByHost : this.byHost, tokens = allow ? this.allowByToken : this.byToken, loose = allow ? this.allowLoose : this.loose;
+		if (hostKey && hostKey.includes('.')) { const k = baseDomain(hostKey); (hosts.get(k) || hosts.set(k, []).get(k)).push(rule); return; }
+		const tok = (pattern.toLowerCase().match(/[a-z0-9%]{3,}/g) || []).sort((a, b) => b.length - a.length)[0];
+		if (tok) (tokens.get(tok) || tokens.set(tok, []).get(tok)).push(rule); else loose.push(rule);
+	}
+	static ruleHits(rule, url, type, pageHost, reqHost) {
+		if (rule.types && !rule.types.includes(type)) return false;
+		if (rule.notTypes && rule.notTypes.includes(type)) return false;
+		if (rule.third !== null && pageHost) { const third = baseDomain(reqHost) !== baseDomain(pageHost); if (third !== rule.third) return false; }
+		if (rule.domains && rule.domains.length && !rule.domains.some((d) => pageHost === d || pageHost.endsWith('.' + d))) return false;
+		if (rule.notDomains && rule.notDomains.some((d) => pageHost === d || pageHost.endsWith('.' + d))) return false;
+		return rule.re.test(url);
+	}
+	match(hosts, tokens, loose, url, type, pageHost, reqHost) {
+		for (let h = reqHost; h; ) { const list = hosts.get(baseDomain(h)); if (list) { for (const r of list) if (Blocker.ruleHits(r, url, type, pageHost, reqHost)) return true; break; } const i = h.indexOf('.'); if (i < 0) break; h = h.slice(i + 1); }
+		const seen = new Set();
+		for (const t of url.toLowerCase().match(/[a-z0-9%]{3,}/g) || []) { if (seen.has(t)) continue; seen.add(t); const list = tokens.get(t); if (list) for (const r of list) if (Blocker.ruleHits(r, url, type, pageHost, reqHost)) return true; }
+		for (const r of loose) if (Blocker.ruleHits(r, url, type, pageHost, reqHost)) return true;
+		return false;
+	}
+	blocks(details) {
+		const url = details.url, reqHost = hostOf(url), type = TYPE_NAMES[details.resourceType] || 'other';
+		const page = details.referrer || (details.webContents && attempt(() => details.webContents.getURL(), '')) || '', pageHost = hostOf(page);
+		if (!this.match(this.byHost, this.byToken, this.loose, url, type, pageHost, reqHost)) return false;
+		return !this.match(this.allowByHost, this.allowByToken, this.allowLoose, url, type, pageHost, reqHost);
+	}
+}
+
 module.exports = function start(resources, events) {
 	if (parseInt(process.versions.electron.split('.')[0], 10) < 18) {
 		dialog.showErrorBox('Unsupported runtime', 'This version of Basalt needs a newer Electron runtime.');
@@ -37,7 +96,26 @@ module.exports = function start(resources, events) {
 	app.commandLine.appendSwitch('enable-features', features.join(','));
 
 	// ---------- one instance; a second start hands its arguments over ----------
-	if (!app.requestSingleInstanceLock()) { app.quit(); return; }
+	const cliArgs = (argv) => { const a = argv.slice(); const exe = a.shift(); const keep = a.filter((x) => !x.startsWith('--') || ['--copy', '--help', '--json', '--md', '--tsv', '--csv'].includes(x)); if (path.basename(exe || '').toLowerCase().includes('electron')) keep.shift(); return keep; };
+	const pipeName = WIN ? `\\\\.\\pipe\\basalt-cli-${os.userInfo().username}` : path.join((!MAC && process.env.XDG_RUNTIME_DIR) || os.homedir(), '.basalt-cli.sock');
+	if (!app.requestSingleInstanceLock()) {
+		const args = cliArgs(process.argv);
+		if (WIN && args[0] && args[0].startsWith('session=')) { process.exit(0); return; } // the running Basalt serves this one
+		if (MAC) app.dock.hide();
+		events.emit('disable', true); events.emit('silence', true);
+		process.removeAllListeners('uncaughtException');
+		process.on('uncaughtException', (e) => { console.error('Uncaught Exception', e); process.exit(1); });
+		const tty = !!process.stdin.isTTY && !!process.stdout.isTTY;
+		if (!args.length && tty) { // no command: the interactive shell of basalt-cli
+			const cli = path.join(resources, 'bin', WIN ? 'basalt-cli.exe' : 'basalt-cli');
+			if (fs.existsSync(cli)) { require('child_process').spawn(cli, [], { stdio: 'inherit' }).on('exit', (c) => process.exit(c || 0)); return; }
+		}
+		const conn = net.createConnection(pipeName);
+		conn.setNoDelay(true);
+		conn.once('error', () => { console.error('Unable to connect to the running Basalt'); process.exit(1); });
+		conn.once('connect', () => { conn.write(JSON.stringify({ argv: args, tty, cwd: process.cwd() }) + '\n'); conn.pipe(process.stdout); conn.on('end', () => process.exit(0)); });
+		return;
+	}
 
 	// ---------- folders and settings ----------
 	const data = app.getPath('userData');
@@ -369,7 +447,46 @@ module.exports = function start(resources, events) {
 	}
 
 	// ---------- command line over a local pipe ----------
-	const pipeName = WIN ? `\\\\.\\pipe\\basalt-cli-${os.userInfo().username}` : path.join((!MAC && process.env.XDG_RUNTIME_DIR) || os.homedir(), '.basalt-cli.sock');
+	// The console shim (basalt.com) starts Basalt with session=<pipe>: its console is that pipe, so commands print there
+	function serveSession(args, cwd) {
+		const name = args.shift().slice(8);
+		let tty = false;
+		if (args[0] === 'tty') { tty = true; args.shift(); }
+		const deadline = Date.now() + 2000;
+		const connect = () => {
+			const sock = net.createConnection(`\\\\.\\pipe\\${name}`);
+			sock.setNoDelay(true);
+			sock.once('connect', () => answerConsole(sock, args, tty, cwd));
+			sock.once('error', () => { sock.destroy(); if (Date.now() < deadline) setTimeout(connect, 10); });
+		};
+		connect();
+	}
+	async function answerConsole(sock, args, tty, cwd) {
+		const id = (cwd && vaultByPath(cwd)) || lastFocusedVault() || Object.keys(vaults)[0];
+		const uri = args[args.length - 1];
+		if (uri && URI_PREFIXES.some((p) => uri.startsWith(p))) { handleUri(uri); sock.end('Processed URI ' + uri + '\n'); return; }
+		if (args.length) { sock.end(String((await runCli(id, args)) ?? '') + '\n'); return; }
+		if (!tty) { sock.end('Give a command, for example: basalt help\n'); return; }
+		// no command in a console: a small prompt; the full shell is basalt-cli
+		let line = '';
+		const prompt = () => sock.write('\x1b[38;2;176;122;82mbasalt\x1b[0m> ');
+		sock.write('Basalt command line. Type a command, "exit" to leave. For completion and history run basalt-cli.\r\n');
+		prompt();
+		sock.on('data', async (chunk) => {
+			for (const ch of chunk.toString()) {
+				if (ch === '\r' || ch === '\n') {
+					const cmd = line.trim(); line = ''; sock.write('\r\n');
+					if (cmd === 'exit' || cmd === 'quit') { sock.end(); return; }
+					if (cmd) { const out = String((await runCli(id, cmd.match(/"[^"]*"|\S+/g).map((x) => x.replace(/^"|"$/g, '')))) ?? ''); sock.write(out.replace(/\r?\n/g, '\r\n') + '\r\n'); }
+					prompt();
+				} else if (ch === '\x7f' || ch === '\b') { if (line) { line = line.slice(0, -1); sock.write('\b \b'); } }
+				else if (ch === '\x03' || ch === '\x04') { sock.end(); return; }
+				else if (ch >= ' ') { line += ch; sock.write(ch); }
+			}
+		});
+		sock.on('error', () => {});
+	}
+
 	async function runCli(id, argv) {
 		if (!config.cli) return 'Command line interface is not enabled. Please turn it on in Settings > General > Advanced.';
 		if (!id || !vaults[id]) return 'Vault not found.';
@@ -405,6 +522,27 @@ module.exports = function start(resources, events) {
 	server.on('error', (e) => console.error('CLI pipe:', e.message));
 	if (!WIN) attempt(() => fs.unlinkSync(pipeName));
 	server.listen(pipeName);
+
+	// ---------- ad filter lists ----------
+	let blocker = null, blockerTimer = null;
+	async function loadBlocker() {
+		const dir = path.join(data, 'adblock');
+		fs.mkdirSync(dir, { recursive: true });
+		const days = Object.prototype.hasOwnProperty.call(config, 'adblockFrequency') ? config.adblockFrequency : 4;
+		const fresh = new Blocker();
+		for (const url of config.adblock || DEFAULT_ADBLOCK) {
+			const file = path.join(dir, path.basename(url));
+			let download = true;
+			try { const st = await fs.promises.stat(file); download = days === 0 ? false : (Date.now() - st.mtime.getTime()) / 864e5 >= days; } catch (e) { /* never downloaded */ }
+			if (!download) { fresh.addList(await fs.promises.readFile(file, 'utf8')); continue; }
+			console.log('Retrieving newer version of ' + url);
+			try { const text = await (await electron.net.fetch(url)).text(); await fs.promises.writeFile(file, text); fresh.addList(text); }
+			catch (e) { console.log('Failed to retrieve filter list: ' + e); try { fresh.addList(await fs.promises.readFile(file, 'utf8')); } catch (e2) { /* none yet */ } }
+		}
+		blocker = fresh;
+		if (blockerTimer) clearTimeout(blockerTimer);
+		if (days !== 0) blockerTimer = setTimeout(loadBlocker, Math.min(days, 24) * 864e5);
+	}
 
 	// ---------- the app:// protocol ----------
 	function resolveAppUrl(raw) {
@@ -464,9 +602,8 @@ module.exports = function start(resources, events) {
 		sync('insider-build', (e, v) => { if (v === true && !config.insider) { config.insider = true; events.emit('insider', true); save(); } else if (v === false && config.insider) { delete config.insider; events.emit('insider', false); save(); } return !!config.insider; });
 		sync('cli', (e, v) => { if (v === true && !config.cli) { config.cli = true; events.emit('cli', true); save(); } else if (v === false && config.cli) { delete config.cli; events.emit('cli', false); save(); } return !!config.cli; });
 		sync('frame', (e, v) => { if (typeof v === 'string') { config.frame = v; if (!v) delete config.frame; save(); } return config.frame; });
-		// the lists are only stored: Basalt does not filter requests itself
-		sync('adblock-lists', (e, v) => { if (Array.isArray(v)) { config.adblock = v; save(); } return config.adblock || DEFAULT_ADBLOCK; });
-		sync('adblock-frequency', (e, v) => { if (typeof v === 'number') { config.adblockFrequency = v; save(); } return config.adblockFrequency || 4; });
+		sync('adblock-lists', (e, v) => { if (Array.isArray(v)) { config.adblock = v; save(); loadBlocker().catch(console.error); } return config.adblock || DEFAULT_ADBLOCK; });
+		sync('adblock-frequency', (e, v) => { if (typeof v === 'number') { config.adblockFrequency = v; save(); loadBlocker().catch(console.error); } return config.adblockFrequency || 4; });
 		ipcMain.on('print-to-pdf', async (e, opts) => {
 			console.log('Saving PDF...');
 			const wc = e.sender;
@@ -534,16 +671,38 @@ module.exports = function start(resources, events) {
 		});
 		sync('get-icon', () => config.icon);
 		const browserSessions = {};
-		ipcMain.on('create-browser-session', (e, partition) => {
+		ipcMain.on('create-browser-session', (e, partition, filter) => {
 			let entry = browserSessions[partition];
 			if (!entry) {
-				entry = browserSessions[partition] = { session: session.fromPartition(partition) };
+				if (filter === true && !blocker) loadBlocker().catch(console.error);
+				entry = browserSessions[partition] = { session: session.fromPartition(partition), filter: !!filter };
+				entry.session.webRequest.onBeforeRequest({ urls: ['https://*/*', 'http://*/*'] }, (details, cb) => cb({ cancel: entry.filter && !!blocker && blocker.blocks(details) }));
 				entry.session.setUserAgent(entry.session.getUserAgent().split(' ').filter((t) => !/^(basalt|obsidian|electron)/i.test(t)).join(' '));
 				entry.session.setPermissionRequestHandler((wc, permission, cb) => cb(ALLOWED_PERMISSIONS.includes(permission)));
 			}
 			e.returnValue = null;
 		});
-		ipcMain.handle('register-cli', async () => ({ success: false, message: 'Use the basalt-cli program that comes with Basalt; it talks to the app by itself.' }));
+		ipcMain.handle('register-cli', async () => {
+			const exeName = path.basename(process.argv0);
+			if (!exeName.toLowerCase().includes('basalt')) return { success: false, message: `Unable to add to the command line because the executable is "${exeName}" instead of "basalt".` };
+			try {
+				const run = require('util').promisify(require('child_process').exec), dir = path.dirname(process.execPath);
+				if (WIN) {
+					const { stdout } = await run(`powershell -NoProfile -Command "[Environment]::GetEnvironmentVariable('Path', 'User')"`);
+					const parts = stdout.trim().split(';').filter(Boolean);
+					if (parts.some((p) => path.resolve(p).toLowerCase() === path.resolve(dir).toLowerCase())) return { success: true, message: 'Already registered to PATH.' };
+					const next = parts.concat(dir).join(';').replace(/'/g, "''");
+					await run(`powershell -NoProfile -Command "[Environment]::SetEnvironmentVariable('Path', '${next}', 'User')"`);
+					return { success: true, message: 'Successfully registered to PATH. Please restart your terminal.' };
+				}
+				const bin = path.join(os.homedir(), '.local', 'bin'), link = path.join(bin, 'basalt');
+				fs.mkdirSync(bin, { recursive: true });
+				const target = fs.existsSync(path.join(dir, 'basalt')) ? path.join(dir, 'basalt') : process.execPath;
+				attempt(() => fs.unlinkSync(link));
+				fs.symlinkSync(target, link);
+				return { success: true, message: `Registered ${link}. Make sure ${bin} is in your PATH.` };
+			} catch (e) { return { success: false, message: 'Could not register: ' + e.message }; }
+		});
 	}
 
 	// ---------- application events ----------
@@ -560,7 +719,9 @@ module.exports = function start(resources, events) {
 	app.on('before-quit', () => { quitting = true; });
 	app.on('will-quit', () => { attempt(() => server.close()); if (!WIN) attempt(() => fs.unlinkSync(pipeName)); });
 	app.on('activate', () => { quitting = false; if (BrowserWindow.getAllWindows().length === 0) reopenWindows(); });
-	app.on('second-instance', (e, argv) => {
+	app.on('second-instance', (e, argv, cwd) => {
+		const args = cliArgs(argv);
+		if (WIN && args[0] && args[0].startsWith('session=')) { serveSession(args, cwd); return; }
 		for (const a of argv) {
 			if (URI_PREFIXES.some((p) => a.startsWith(p))) handleUri(a);
 			else if (!a.startsWith('-') && path.isAbsolute(a)) { const id = vaultByPath(a); if (id) openVault(id); }
