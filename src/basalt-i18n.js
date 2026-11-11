@@ -56,9 +56,10 @@
     if (!root) return;
     if (root.nodeType === 3) { node(root); return; }
     if (root.nodeType !== 1) return;
+    if (/^(INPUT|TEXTAREA)$/.test(root.tagName)) { attrs(root); return; }
     if (root.closest && root.closest(SKIP) && !root.matches(".suggestion-item")) return;
     attrs(root);
-    const w = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.nodeType === 1 && n.matches(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: (n) => { if (n.nodeType === 1 && n.matches(SKIP)) { if (/^(INPUT|TEXTAREA)$/.test(n.tagName)) attrs(n); return NodeFilter.FILTER_REJECT; } return NodeFilter.FILTER_ACCEPT; } });
     let n; while ((n = w.nextNode())) { if (n.nodeType === 3) node(n); else attrs(n); }
   }
   const start = () => {
