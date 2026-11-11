@@ -101,7 +101,7 @@
   }
 
   const scan = () => {
-    document.querySelectorAll('.workspace-leaf-content[data-type="empty"] .view-header-title').forEach((t) => { if (t.textContent === "New tab" && /^ru/i.test(navigator.language)) t.textContent = "Новая вкладка"; }); if (!window.app || !app.workspace || !app.vault) return; document.querySelectorAll(".empty-state").forEach((s) => { try { build(s); } catch (e) { console.error("[basalt-home]", e); } }); };
+    document.querySelectorAll('.workspace-leaf-content[data-type="empty"] .view-header-title').forEach((t) => { if (t.textContent === "New tab" && window.__bsLang === "ru") t.textContent = "Новая вкладка"; }); if (!window.app || !app.workspace || !app.vault) return; document.querySelectorAll(".empty-state").forEach((s) => { try { build(s); } catch (e) { console.error("[basalt-home]", e); } }); };
   new MutationObserver(() => scan()).observe(document.body, { childList: true, subtree: true });
   setTimeout(scan, 1500);
   // the app opens on the start tab

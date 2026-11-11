@@ -1,0 +1,420 @@
+0|
+1|
+2|### Accounts / services found
+3|### Unclear / errors
+4|### Checked, no account
+5|(excluding node_modules, target, dist and binary files)
+6|(no description)
+7|(in the commit)
+8|(total
+9|(no output)
+10|(has text)
+11|(root)
+12|(no result / block)
+13|(previous state at
+14|(files viewed:
+15|(the same already
+16|(you have
+17|) — backup branch
+18|) — fix it and press "I fixed it"
+19|) — open the sync settings
+20|, errors:
+21|, skipped:
+22|, matches:
+23|, column
+24|- none
+25|.⏎The conflict has been unresolved all this time.⏎Files:
+26|.⏎Only install what you trust.
+27|. Frame while moving:
+28|. Click to allow.
+29|. Connect it to the repository below — your files are not changed.
+30|... more
+31|.basalt inside the vault: themes, plugins, hotkeys.
+32|1 day
+33|1 of
+34|1 hour
+35|2 hours
+36|: CONFLICT in
+37|: ERROR —
+38|: backup
+39|: backup branch
+40|: took the history
+41|: finished
+42|: starting
+43|: conflict in
+44|: markers in
+45|: could not create a backup branch:
+46|: left
+47|: reverted "
+48|: aborted the running
+49|: held back
+50|: "download only" mode
+51|: "download only" mode — nothing is published from here
+52|: created a git repository
+53|: deleted
+54|: hook
+55|: backup cleanup:
+56|>>>>>> and press "I fixed it" again, or take one side entirely
+57|>>>>>> — then press "I fixed it"
+58|?⏎⏎Changes are written to the files immediately.
+59|? The current state will be saved in a new backup branch.
+60|@@ new file @@
+61|API: show the address and copy the token
+62|CSS snippets
+63|Ctrl+Enter in a new tab
+64|DuckDuckGo (right here)
+65|Enter to open
+66|Esc to close
+67|Fetch done
+68|Default Git identity
+69|Git: changes panel
+70|GitHub did not answer in 20 s (network or VPN?)
+71|GitHub answered
+72|HTTP 200, but the page looks like "not found"
+73|N of M
+74|OSINT panel
+75|OSINT: panel (accounts and dorks)
+76|Python was not found in PATH. Install Python and restart Basalt.
+77|Roblox (by username)
+78|Telegram: bot token
+79|Wasm plugin (isolated, gets only what is allowed)
+80|Wasm plugin "
+81|[exit code
+82|[text](file.md) instead of [[file]].
+83|
+84|
+85|after-pull (after fetching)
+86|after-push (after pushing)
+87|email, username, domain or phrase
+88|email@example.com or usernames separated by comma/space
+89|git was not found. Install git and restart the app.
+90|on-conflict (on conflict)
+91|vault-sync started for "
+92|workspace.json and the cache change constantly and always conflict. They are excluded locally through .git/info/exclude; the repository is not changed.
+93|"word"
+94|· takes
+95|· indexing
+96|· click —
+97|· process in a separate folder, 15 s limit
+98|· section
+99|· links:
+100|" (WebAssembly) asks for permission:
+101|" in
+102|" is not a git repository — connect the vault to a repository in the sync settings
+103|" did not start:
+104|" is not configured
+105|" has no hooks
+106|" was not made by sync — revert it manually
+107|" is at
+108|" is now only at "
+109|" is already in "
+110|" installed
+111|" — waited
+112|", but pinned to "
+113|Aa
+114|Auto
+115|Auto layout (selected cards or all)
+116|Auto: the budget adjusts itself to the frame rate. Manual: you set all the values.
+117|Auto-close brackets and quotes
+118|Automation
+119|Automatic sync
+120|Automatically for this vault
+121|Link address
+122|Remote repository address
+123|GitHub account
+124|Accounts
+125|Accent color
+126|B
+127|Basalt
+128|No marker
+129|Untitled
+130|No vault
+131|Without these permissions it cannot do anything. Allow?
+132|Беларуская
+133|More surroundings
+134|Български
+135|Quick search
+136|Quick search: rebuild the index
+137|Backup branch:
+138|Backup branches (
+139|Backup branches before overwriting
+140|The graph has no notes yet
+141|Into the note
+142|Nothing was added to the commit. Add all changes (
+143|To the system trash
+144|In the vault root
+145|Into one vault folder, or a subfolder next to the note or canvas where the image was added.
+146|In the folder of the open file
+147|To the .trash folder
+148|To the vault folder
+149|In a subfolder next to the note / canvas
+150|Into a bundle (shared point)
+151|The repository has no versions yet.
+152|In the specified folder
+153|In the file
+154|There are no code files in this folder
+155|No symbols found in this file
+156|Enter a line number (1–
+157|Enter text
+158|Enter text. Searching in
+159|Restore original
+160|Restore originals
+161|Reset to default
+162|Version 0.1.0
+163|Weight
+164|Branch
+165|Branch:
+166|Take remote
+167|View
+168|Turn built-in modules on and off
+169|Enable
+170|Enable the falconplot engine
+171|Nested canvas
+172|Sign in
+173|Restore the branch from
+174|Restored
+175|Fit to window
+176|Fit the whole graph to the window
+177|Fit the graph to the window
+178|Manual
+179|All
+180|All entries, undo of a single action and rollback to a moment.
+181|Always at maximum resolution
+182|Paste
+183|Pasted and dragged images are moved to the right folder automatically, links are updated.
+184|Built-in modules
+185|Everything together
+186|Signed in as
+187|Choose an image
+188|Choose a file
+189|Choose a canvas
+190|The selection was translated
+191|Selected:
+192|Select at least two cards
+193|Select all
+194|Select, highlight linked
+195|Sign out
+196|Off or not running.
+197|Turn off if you work in the repository yourself: sync will fetch and push only your own commits, without cluttering the history.
+198|Turn off to exclude it from automatic sync (manual sync always works).
+199|Turn off
+200|Callout:
+201|Align the selection
+202|Cut
+203|Align to the top edge
+204|Align to the left edge
+205|Align to the bottom edge
+206|Align to the right edge
+207|Align to the center (vertical axis)
+208|Align to the center (horizontal axis)
+209|Exit
+210|Auto mode will not raise the budget above this.
+211|Where to create new notes
+212|Hybrid renderer (falconplot)
+213|Depth
+214|Light blue
+215|Hotkeys
+216|Done
+217|Done:
+218|Facet
+219|Graph
+220|Notes graph
+221|Code graph
+222|The graph did not open:
+223|File graph
+224|Graph of files and folders
+225|Graph: open 2D graph
+226|Graph: open 3D graph
+227|Graph: open local 3D graph
+228|Graph: reset the camera
+229|No groups
+230|Group
+231|Groups
+232|Data
+233|The engine keeps the frame time near this value. 16 — smooth (60 fps), 33 — acceptable (30 fps). Lower means fewer cards with content.
+234|Binary file: preview unavailable, but this version can be restored.
+235|Double click
+236|Tree
+237|Tree, top to bottom
+238|Tree, left to right
+239|The folder picker is unavailable
+240|Link length
+241|For the "in the specified folder" option.
+242|A Cargo.toml is needed in the project folder to run Rust
+243|For the copy that runs the code: if the new version did not start, the old one stays. Does not roll back when there are unsaved changes and never rolls back after-push.
+244|Running is not set up for this file type
+245|Add
+246|Add to commit
+247|Add a source
+248|Add by card type
+249|Add a shortcut
+250|Add a point
+251|Add a point to the path
+252|Add a hook
+253|Documents
+254|Dorks
+255|Reachable by several paths
+256|Version available
+257|Another token can be entered in the field below.
+258|Duplicate
+259|If fewer cards are on screen, everyone shows its content. The engine draws the rest.
+260|Log
+261|Log enabled
+262|Action log
+263|Action log is off
+264|Action log: open
+265|Action log: undo the last action
+266|Action log: take a snapshot now
+267|The log will stop after a restart
+268|Yellow
+269|Fetches everything that changed while you were away.
+270|Forget dragged nodes and lay out again
+271|Load more
+272|Comment / uncomment
+273|Pin
+274|Pin in place
+275|Close
+276|Close (Esc)
+277|Close tabs to the right
+278|Close all tabs
+279|Close other tabs
+280|Close folder
+281|Close terminal
+282|Close ▾
+283|Lines replaced:
+284|Replaced:
+285|Replace
+286|Replace in all found
+287|Replace all
+288|Replace all matches
+289|Replace with
+290|Replace with "
+291|Replace with…
+292|Replace checked
+293|Replace current
+294|Replace…
+295|Note
+296|Note: translate the selection…
+297|Note: translate the file…
+298|Notes
+299|Notes without links
+300|Write the replacement to the files (asks for confirmation)
+301|Entries:
+302|Record actions
+303|Run
+304|Run the code block under the cursor
+305|Run the current file
+306|Run the file
+307|Run the file (F5)
+308|Green
+309|Sync in progress
+310|From sources
+311|No changes. The working folder is clean.
+312|Changes
+313|Changes in the commit
+314|Changes stay in the files, only the sync commit is rolled back.
+315|Changed:
+316|Modified
+317|Images
+318|Name
+319|New branch name:
+320|Subfolder name
+321|File name…  @ symbol in file   : line
+322|The index is still being built…
+323|Initialize repository
+324|Interval, minutes
+325|Search notes and canvases…
+326|Search by name and text
+327|Used only if user.name and user.email are not set in git.
+328|Fix the files by hand and press "I fixed it" in the sync settings.
+329|Version history
+330|Version history comes from the vault's git repository. Connect sync in the settings.
+331|Sources
+332|Searching…
+333|Searching… files:
+334|KB
+335|How close (on screen) a card must get to another to "snap" by edge or center. Turned on with the "Snap to objects" button on the right.
+336|As in settings
+337|As in settings
+338|As in the system
+339|How notes are opened.
+340|How to take others' commits: put yours on top (rebase) or merge (merge).
+341|Picture
+342|Image moved:
+343|Image copied
+344|Images
+345|Images in a separate folder
+346|Images/video
+347|Cards with content
+348|Cards with content:
+349|Cards of this size on screen get no content. Below the Basalt zoom threshold ("Zoom at which content is hidden") it is not shown at all.
+350|Cards drawn by the engine show a title and the first line instead of gray bars. Costs about 1–2 ms per frame and no more than 200 cards at a time.
+351|Plugin catalog
+352|Square
+353|Class/type
+354|Click
+355|Click on a folder
+356|When you touch an image or file on the canvas, the explorer does not expand the folder it lies in. Folders open only by hand.
+357|Code
+358|Code (run)
+359|Wheel
+360|The basalt-cli command in the terminal: a shell with a list of commands. basalt-cli daemon start launches Basalt without a window.
+361|Command line
+362|Commands
+363|No commands found
+364|Commit created
+365|Commits, publishes and delays closing the app until it finishes.
+366|Commit my changes automatically
+367|End
+368|Card outline from the Basalt design: cut corners, like basalt columns. Also changes card colors to a warm palette.
+369|Configs
+370|Conflict
+371|A conflict reminds you once a day until it is resolved.
+372|Conflict:
+373|Copy
+374|Copy image (Ctrl+C)
+375|Copy path
+376|A short thought.
+377|Red
+378|Shortest
+379|Curve
+380|Crystal
+381|Circle
+382|Where to
+383|Where pasted images and files go. "/" is the root.
+384|Version timeline
+385|Ladder
+386|Local API
+387|Local graph
+388|Polyline
+389|MB
+390|MB of
+391|Maximum cards with content
+392|End marker
+393|Start marker
+394|Mask: *.py, src/*
+395|Interface scale
+396|Zoom from which links are real (DOM)
+397|Machine:
+398|Less surroundings
+399|Graph menu: fit, show all, settings
+400|Node menu: open, hide, color, path
+401|Menu: group, hide, open
+402|Method
+403|Mini note
+404|Minimap
+405|Mini features
+406|Mini features: move the open note's images to the images folder
+407|Minimum width for text, px
+408|Minimum card width, px
+409|Minimum cards with content
+410|Modules
+411|The module is not loaded.
+412|Monospace font
+413|While zooming the engine draws everything and the content returns after you stop. Turn off so cards do not flicker, but zooming gets heavier.
+414|There are no cards to show on the canvas
+415|To language
+416|Click to set up git sync
+417|Note title above the text
+418|Name of a font installed on the system. Empty: default.
+419|Find

@@ -40,7 +40,7 @@
     g.children.forEach((leaf, idx) => {
       const t = document.createElement("div"); t.className = "bt-t" + (g.currentTab === idx ? " is-cur" : "") + (leaf === act ? " is-act" : ""); t.draggable = true;
       let title = ""; try { title = leaf.getDisplayText(); } catch (e) { /* loading */ }
-      if (title === "New tab" && /^ru/i.test(navigator.language)) title = "Новая вкладка";
+      if (title === "New tab" && window.__bsLang === "ru") title = "Новая вкладка";
       t.title = title;
       t.innerHTML = '<span class="bt-i"></span><span class="bt-n"></span>' + (leaf.pinned ? '<svg class="bt-p" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/></svg>' : '') + '<span class="bt-x" title="Закрыть"></span>';
       t.querySelector(".bt-n").textContent = title || "Без названия";

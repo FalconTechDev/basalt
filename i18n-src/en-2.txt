@@ -1,0 +1,420 @@
+420|Find (Ctrl+F)
+421|Find in file
+422|Find in all files…
+423|Find a note
+424|Find a command…
+425|Search by name and text…
+426|Find a file…
+427|Find…
+428|Write a commit message
+429|For example: Images or Project/Pictures.
+430|Real content (text, embeds) is heavy: only cards within the budget get it. The engine draws the rest.
+431|Real text on distant cards
+432|Graph settings
+433|Start
+434|Start, end and link line
+435|Start typing a name…
+436|Start typing. Finds with typos and by the start of a word.
+437|Do not commit files
+438|Do not expand the file's folder
+439|Do not sync window state
+440|Could not load the list:
+441|Could not open the folder:
+442|Could not translate the selection
+443|Could not rename:
+444|Could not move:
+445|Could not show the page:
+446|Could not check for updates:
+447|Could not read the history:
+448|Could not read the file
+449|Could not read the file:
+450|Could not copy:
+451|Could not save:
+452|Could not delete:
+453|Could not install:
+454|Recent
+455|Recent colors
+456|Optional. The token is from @BotFather.
+457|No
+458|No md files to translate
+459|No text selected
+460|No cards to translate
+461|No translated cards
+462|No linked cards that can be merged
+463|No matches
+464|Nothing to commit
+465|Nothing to undo
+466|Nothing to translate
+467|Nothing to translate: links and non-text files are skipped
+468|Auto mode will not lower the budget below this.
+469|Nothing found
+470|Nothing found (files viewed:
+471|Nothing found in the loaded versions.
+472|New tab
+473|New group
+474|New group…
+475|New note
+476|New note here
+477|New folder
+478|New folder here
+479|New session
+480|New canvas
+481|New canvas here
+482|Line numbers
+483|Needed for private GitHub repositories. Not required for other people's public ones.
+484|A https link or owner/repo is required
+485|owner/repo or a GitHub link is required
+486|At least two cards are required
+487|About
+488|Overview of the whole canvas in the corner: cards as blocks, the visible area as a frame. Click or drag in it to move the view.
+489|Update
+490|Update now
+491|Basalt update
+492|Updates
+493|Update links on rename
+494|General
+495|3D graph
+496|Normal
+497|Normal (rounded)
+498|Limit line width
+499|Same height
+500|Same width
+501|Same size
+502|A single line break in the text is shown as a break.
+503|Line endings: click to switch LF / CRLF
+504|Detect automatically
+505|Orange
+506|Original
+507|Originals (
+508|Originals restored:
+509|Keep mine
+510|Zoom out
+511|Reverted "
+512|Roll back the fetch if the hook fails
+513|Turn off all shortcuts
+514|Unpin
+515|Unpin the node
+516|Open an md file to translate
+517|Open a note.
+518|Open a folder or a vault
+519|Open a code file
+520|Open a code file — its functions and classes will appear here.
+521|Open a canvas or a note to draw
+522|Open a canvas to see it.
+523|Open arrow
+524|Open
+525|Show in Explorer
+526|Open in a new tab
+527|Open in a new window
+528|Open the note
+529|Open the catalog
+530|Open the command palette
+531|Open folder
+532|Open folder…
+533|Open the page
+534|Open file
+535|Cancel
+536|Undone:
+537|Undo
+538|Undo (Ctrl+Z)
+539|Discard changes
+540|Discard the changes in the file and return it to the last commit? The edits will be lost.
+541|Undo the last action?
+542|Undo the last auto-commit
+543|Abort the merge
+544|Relative
+545|Sent a test
+546|Push
+547|Sent
+548|Flip (F)
+549|Indentation
+550|Appearance
+551|Clear search
+552|Error in the expression
+553|Translation error
+554|Save error
+555|Error:
+556|Folder · files:
+557|Attachments folder
+558|Folder for new notes
+559|Vault settings folder
+560|Folder opened:
+561|Vault folder
+562|Folders
+563|Pause
+564|Pause before writing, seconds
+565|Pause after zoom, ms
+566|Cards translated:
+567|Files translated:
+568|Translate
+569|Translate the whole canvas
+570|Translate the selection…
+571|Translate cards
+572|Translate the canvas cards
+573|Translate cards…
+574|Translate the current file…
+575|Translate the file into another language…
+576|Translate…
+577|Translation
+578|Card translation
+579|Translation into
+580|Translation:
+581|Before any rebase/merge/reset a syn/backup/… branch is made so nothing can be lost.
+582|Before the rollback
+583|Reload the window to apply the language?
+584|Renamed:
+585|Rename
+586|Go to a symbol in the file
+587|Go to line
+588|Go to line (Ctrl+G)
+589|Go to file
+590|Go to file (quick open)
+591|Move to a new window
+592|Move the node (2D)
+593|Move the node and pin it
+594|Wrap
+595|Wrap long lines (Alt+Z)
+596|Wrap: on
+597|Wrap: off
+598|Wrap long lines (Alt+Z)
+599|Rescan the folder
+600|Recalculate
+601|Recalculate the layout
+602|Drag
+603|Drag an empty spot
+604|Plugin
+605|Plugin "
+606|No plugins
+607|Plugins
+608|Plugins: catalog and installing from GitHub
+609|Flat graph
+610|One pattern per line (*.env, private/**). The files stay on disk but are not included in automatic commits.
+611|Fit to window size (0)
+612|On a timer
+613|300 by default.
+614|Behavior
+615|Rotate left (Shift+R)
+616|Rotate right (R)
+617|Redo
+618|Redo (Ctrl+Y)
+619|Preparing…
+620|Keeps the vault up to date while you work.
+621|Connecting does not change your files: if the remote repository already has history, it is accepted, and the differences in your files become local edits.
+622|Connected:
+623|Connect
+624|Labels
+625|Confirm deletion
+626|Confirm file deletion
+627|Confirmation
+628|Later
+629|Search in files
+630|Search for a language…
+631|Nothing opened yet
+632|Nothing installed yet. Paste owner/repo above.
+633|Empty for now.
+634|Display
+635|Showing the first
+636|Show
+637|Show in the graph
+638|Show in folder
+639|Show in Explorer
+640|Show the whole graph
+641|Show the group
+642|Show more (
+643|Show replace (Ctrl+H)
+644|Show only it and its surroundings
+645|Show only them and their surroundings
+646|Show only this and its surroundings
+647|Show only this group (Shift: add more)
+648|Show in the graph
+649|Show ignored
+650|Show the ribbon on the left
+651|Show only found
+652|Show files of unsupported types
+653|Search field
+654|Full
+655|Full path
+656|Put .css files into the .basalt/snippets folder of the vault.
+657|Received
+658|Pull changes (pull --ff-only)
+659|Mark several nodes
+660|Last sync:
+661|Email
+662|Email in texts
+663|They will appear before the first history rewrite.
+664|Consecutive edits are merged into one entry.
+665|Right click
+666|Right click on an empty spot
+667|Previous (Shift+F3)
+668|Presentation from cards
+669|Convert indentation to spaces
+670|Convert indentation to tabs
+671|On close
+672|On open
+673|Zoom in
+674|Zoom in / out
+675|Snap to grid
+676|Applied after the window is reloaded.
+677|Attraction
+678|Reason:
+679|Space
+680|Spaces:
+681|Images checked:
+682|Checked the remote repository
+683|Check
+684|Check (fetch)
+685|Check for Basalt updates
+686|Check now
+687|Check the hook now
+688|Check
+689|Checking for a new version on GitHub.
+690|Spell check
+691|Drawing the content of cards (DOM)
+692|Preview
+693|Preview of the open image
+694|Preview…
+695|Plain text
+696|Profiles
+697|Read the files from disk again
+698|Straight
+699|Straight line
+700|Hide the DOM while zooming
+701|Empty tab
+702|Empty — sync the one you are on now. If set, sync refuses to work on another branch.
+703|Path
+704|Path in links
+705|Path and links
+706|Path from the folder root
+707|Path copied
+708|Path: polyline
+709|Path: smooth
+710|Equal spacing vertically
+711|Equal spacing horizontally
+712|Radial
+713|Expand all folders
+714|Expand everything inside
+715|Expand the group
+716|Expand the folder
+717|No differences
+718|Differences
+719|Size
+720|The size of all text and elements. Reduce it if everything seems large, or increase it for better readability.
+721|Minimap size, px
+722|Tab size
+723|Text size in notes
+724|Node size
+725|Module permissions
+726|Split the bundle
+727|Layout
+728|The layout failed:
+729|Distance between the grid points at normal zoom. "Snap to grid" in the right panel works by it too.
+730|Snap distance to cards, px
+731|Real checks: public APIs and pages with an honest 404. "Found" = the account definitely exists, "No" = the site answered that there is none, "?" = the site gave no clear answer (captcha/redirect), "error" = the request failed.
+732|Actual size (1)
+733|Actual size 100% (1)
+734|Regular expression
+735|Editing
+736|Editor
+737|Mode
+738|Vim mode
+739|"Receiver" mode: changes come in, nothing goes out. For a copy that is only read.
+740|Default mode
+741|DuckDuckGo results:
+742|No releases on GitHub yet
+743|Repository
+744|Repository created
+745|Drawing (Alt+D)
+746|Drawing: on/off (Alt+D)
+747|Draw with an icon (off: a plain dot)
+748|Diamond
+749|Русский
+750|From language
+751|Reset
+752|Reset positions
+753|Reset the path
+754|Reset forces
+755|Info (I)
+756|Collapse / expand all folders
+757|Collapse / expand all
+758|Collapse / expand the folder
+759|Collapse all folders
+760|Collapse everything inside
+761|Collapse the group
+762|Collapse or expand all folders
+763|Collapse the folder
+764|Light
+765|Free
+766|Heading folding
+767|Links
+768|Generate
+769|Smooth
+770|Group connected parts
+771|Pan the graph
+772|Now
+773|Grid
+774|The grid, links and distant cards are drawn by the WASM engine. If turned off, the canvas works as a regular one.
+775|Force layout
+776|Symbols are available in an open code file
+777|Sync: off
+778|Sync: not set up
+779|Sync
+780|Sync (git)
+781|Sync is not set up
+782|Sync is paused
+783|Sync is paused until you decide: edits will not be committed and pushed.
+784|Sync of this vault is turned off
+785|Sync:
+786|Sync: "
+787|Sync: file version history
+788|Sync: conflict
+789|Sync: conflict⏎⏎Vault:
+790|Sync: open settings
+791|Sync: show the status
+792|Sync: test notification
+793|Sync: test notification — delivery works.
+794|Sync
+795|Version control system
+796|Downloading
+797|Downloading the update…
+798|Snapshot
+799|How many steps from the open note
+800|Copied
+801|Copy the token
+802|Rounded polyline
+803|Hidden
+804|Hide
+805|Hide the selected
+806|Hide the selection
+807|Hide the group
+808|Hide ignored
+809|Next (F3 / Enter)
+810|Next / previous match
+811|Next found
+812|Whole word
+813|Change the address
+814|Switch branch
+815|Change folder
+816|Manual snapshot
+817|Snapshot saved
+818|Snapshot now
+819|Vault snapshot
+820|No snippets
+821|Clear selection
+822|Clear the selection, close the window
+823|Build a query and run it: "Search" goes through DuckDuckGo right here, the buttons open the results in Google / Bing / Yandex.
+824|Arrange in a column
+825|Arrange in a row
+826|Matches:
+827|Created
+828|Branch created
+829|Created:
+830|Creates a new repository under your account and connects this vault to it.
+831|Create
+832|Create a database
+833|Create a database here
+834|Create a branch…
+835|Create a group
+836|Create a repository on GitHub
+837|Created next to the note or canvas. For example: assets.
+838|Commit message (Ctrl+Enter)
+839|Community
