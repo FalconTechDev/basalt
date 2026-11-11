@@ -229,7 +229,7 @@
   // ---------- view ----------
   function makeView(api) {
     return class CodeGraphView extends api.ItemView {
-      constructor(leaf) { super(leaf); this.opt = Object.assign({ maxFiles: 15, onlyDirs: false }, (() => { try { return JSON.parse(localStorage.getItem("bsg.opt") || "{}"); } catch (e) { return {}; } })()); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.collapsed = new Set(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "tree"; } catch (e) { this.layout = "ladder"; } }
+      constructor(leaf) { super(leaf); this.opt = Object.assign({ maxFiles: 15, onlyDirs: false }, (() => { try { return JSON.parse(localStorage.getItem("bsg.opt") || "{}"); } catch (e) { return {}; } })()); this.mode = "files"; this.g = null; this.scale = 1; this.ox = 0; this.oy = 0; this.alpha = 1; this.hover = null; this.match = null; this.showDirs = true; this.showImports = true; this.expanded = new Set(); this.collapsed = new Set(); this.hidden = new Set(); this.focusSet = null; this.tags = new Map(); this.vnodes = []; this.vlinks = []; this.static = false; try { this.layout = localStorage.getItem("bsg.layout") || "tree"; } catch (e) { this.layout = "ladder"; } }
       getViewType() { return VIEW; }
       getDisplayText() { return this.mode === "code" ? "Граф кода" : "Граф файлов"; }
       getIcon() { return "lucide-git-fork"; }
@@ -269,6 +269,7 @@
         mk(grp(), "lucide-settings", "Настройки графа", () => panel.classList.toggle("is-open"));
         const zg = grp(); mk(zg, "lucide-plus", "Приблизить", () => zoom(1.25)); mk(zg, "lucide-maximize", "Вписать весь граф в окно", () => { if (this.layout === "3d") { this.compute3D(); this.draw(); return; } this.userView = true; this.fitAll = true; this.fit(); this.fitAll = false; }); mk(zg, "lucide-minus", "Отдалить", () => zoom(.8));
         mk(grp(), "lucide-folder-tree", "Свернуть / развернуть все папки", () => this.toggleAllDirs());
+        mk(grp(), "lucide-circle-help", "Справка", () => { panel.classList.remove("is-open"); this.openHelp(); });
         const body = document.createElement("div"); body.className = "bsg-body"; wrap.appendChild(body); this.body = body; body.append(panel, colm, this.info);
         const cv = document.createElement("canvas"); body.appendChild(cv); this.cv = cv; this.ctx = cv.getContext("2d");
         this.tip = document.createElement("div"); this.tip.className = "bsg-tip"; body.appendChild(this.tip);
@@ -288,7 +289,7 @@
         const GC = window.__bsgCache || (window.__bsgCache = new Map()), ck = root + "|" + this.mode;
         let g; try { g = !force && GC.get(ck) ? GC.get(ck) : await buildGraph(root, this.mode, (n, k) => { if (myRun === this.run) this.msg.textContent = "Читаю файлы… " + (k || n) + (k ? " / " + n : ""); }); } catch (e) { console.error("[basalt-graphs]", e); this.msg.textContent = "Ошибка: " + e.message; return; }
         if (myRun !== this.run) return;
-        this.g = g; this.rootPath = root; GC.set(ck, g);
+        this.g = g; this.rootPath = root; GC.set(ck, g); this.hidden.clear(); this.focusSet = null; this.loadTags();
         if (!window.__bsgCacheHook) { window.__bsgCacheHook = 1; const drop = () => GC.clear(); for (const ev of ["create", "delete", "rename"]) app.vault.on(ev, drop); }
         if (!g.nodes.length) { this.msg.textContent = "В этой папке нет файлов с кодом"; return; }
         this.msg.textContent = "";
@@ -304,11 +305,11 @@
       // -- visible graph: in "Код" mode symbols are hidden inside their file until it is expanded (double click); calls are summed per file pair --
       rebuildView() {
         const g = this.g, exp = this.expanded, files = this.mode === "files", col = this.collapsed, hid = (n) => { for (let u = n.up; u; u = u.up) if (col.has(u.id)) return true; return false; },
-          cap = this.capFiles(), vis = (n) => (n.kind === "dir" ? files && !hid(n) : n.kind === "sym" ? exp.has(n.parent.id) : files ? !hid(n) && !cap.has(n) : !!n.hasLinks || exp.has(n.id)), rep = (n) => (vis(n) ? n : n.parent), map = new Map(), links = [];
+          cap = this.capFiles(), vis0 = (n) => (n.kind === "dir" ? files && !hid(n) : n.kind === "sym" ? exp.has(n.parent.id) : files ? !hid(n) && !cap.has(n) : !!n.hasLinks || exp.has(n.id)), vis = (n) => vis0(n) && !this.isHidden(n) && (!this.focusSet || this.focusSet.has(n)), rep = (n) => (vis(n) ? n : n.parent), map = new Map(), links = [];
         this.vnodes = g.nodes.filter(vis);
         for (const l of g.links) {
           if (l.kind === "contains") { if (vis(l.a) && vis(l.b)) links.push(l); continue; }
-          const a = rep(l.a), b = rep(l.b); if (a === b) continue; const k = a.id + ">" + b.id + l.kind; let e = map.get(k);
+          const a = rep(l.a), b = rep(l.b); if (!a || !b || a === b) continue; const k = a.id + ">" + b.id + l.kind; let e = map.get(k);
           if (!e) { e = { a, b, kind: l.kind, w: 0 }; map.set(k, e); links.push(e); } e.w++;
         }
         this.vlinks = links; this.byDeg = null; for (const n of this.vnodes) n.vd = 0; for (const l of links) { const w = l.kind === "call" ? Math.min(l.w, 6) : 1; l.a.vd += w; l.b.vd += w; }
@@ -316,6 +317,31 @@
         this.byDeg = this.vnodes.slice().sort((a, b) => b.vd * (b.kind === "dir" ? 1.5 : 1) - a.vd * (a.kind === "dir" ? 1.5 : 1));
       }
       defaultCollapse() { this.collapsed.clear(); if (this.mode === "files" && this.g.files > 300) for (const n of this.g.nodes) if (n.kind === "dir" && n.path && n.path.split("/").length >= 2 && n.nfiles) this.collapsed.add(n.id);  }
+      // ---- right-click menu helpers: hide, focus, colour marks (kept per folder in localStorage) ----
+      isHidden(n) { if (!this.hidden.size) return false; for (let u = n; u; u = u.up || u.parent) if (this.hidden.has(u.id)) return true; return false; }
+      tagKey() { return "bsg.tags|" + this.rootPath; }
+      loadTags() { this.tags = new Map(); try { for (const [k, v] of Object.entries(JSON.parse(localStorage.getItem(this.tagKey()) || "{}"))) this.tags.set(k, v); } catch (e) { /* none */ } }
+      saveTags() { try { localStorage.setItem(this.tagKey(), JSON.stringify(Object.fromEntries(this.tags))); } catch (e) { /* ok */ } }
+      setTag(n, c) { const all = n.kind === "dir" ? this.g.nodes.filter((m) => { for (let u = m; u; u = u.up) if (u === n) return true; return false; }) : [n]; for (const m of all) { if (c) this.tags.set(m.id, c); else this.tags.delete(m.id); } this.saveTags(); this.draw(); }
+      hideNode(n) { this.hidden.add(n.id); this.rebuildView(); this.userView = true; this.applyLayout(false); }
+      showAllNodes() { this.hidden.clear(); this.focusSet = null; this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); }
+      focusNode(n) {
+        const set = new Set(); for (let u = n; u; u = u.up) set.add(u);
+        if (n.kind === "dir") { for (const m of this.g.nodes) for (let u = m; u; u = u.up) if (u === n) { set.add(m); break; } } else if (n.up) for (const m of this.g.nodes) if (m.up === n.up && m.kind !== "dir") set.add(m);
+        for (const l of this.g.links) if (l.kind !== "contains" && (l.a === n || l.b === n)) { set.add(l.a); set.add(l.b); for (let u = l.a.up; u; u = u.up) set.add(u); for (let u = l.b.up; u; u = u.up) set.add(u); }
+        this.focusSet = set; this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false);
+      }
+      setDirTree(n, open) { for (const m of this.g.nodes) { if (m.kind !== "dir" || !m.nfiles) continue; let inside = false; for (let u = m; u; u = u.up) if (u === n) { inside = true; break; } if (!inside) continue; if (open) this.collapsed.delete(m.id); else this.collapsed.add(m.id); } for (const m of this.g.nodes) if (m.up && !m.pinned) { m.x = m.up.x; m.y = m.up.y; } this.rebuildView(); this.userView = true; this.applyLayout(false); }
+      openHelp() {
+        const M = window.__bsApi.Modal, m = new M(app); m.modalEl.classList.add("mod-canvas-help"); m.setTitle("Справка: граф файлов");
+        const box = m.contentEl.createDiv("canvas-help");
+        const row = (label, combos) => { const rw = box.createDiv({ cls: "canvas-instruction" }); rw.createDiv({ cls: "canvas-instruction-label", text: label }); const d = rw.createDiv({ cls: "canvas-instruction-desc" }); for (const k of combos) d.createSpan({ cls: "setting-hotkey", text: k.join(" + ") }); };
+        row("Приблизить / отдалить", [["Колесо"]]); row("Сдвинуть граф", [["Перетащить пустое место"]]); row("Переместить узел и закрепить его", [["Перетащить"]]);
+        row("Открыть файл", [["Клик"]]); row("Свернуть / развернуть папку", [["Клик по папке"]]); row("Открепить узел", [["Двойной клик"]]);
+        row("Меню узла: открыть, скрыть, цвет, путь", [["Правый клик"]]); row("Меню графа: вписать, показать всё, настройки", [["Правый клик по пустому месту"]]);
+        row("Искать по имени и тексту", [["Поле поиска"]]); row("Следующее / предыдущее совпадение", [["Enter"], ["Shift", "Enter"]]); row("Очистить поиск", [["Esc"]]);
+        m.open();
+      }
       toggleDir(n) {
         if (this.mode !== "files" || n.kind !== "dir" || !n.nfiles) return;
         if (this.collapsed.has(n.id)) { this.collapsed.delete(n.id); for (const m of this.g.nodes) for (let u = m.up; u; u = u.up) if (u === n) { m.x = n.x; m.y = n.y; break; } } else this.collapsed.add(n.id);
@@ -337,6 +363,7 @@
         if (!dir) { const a0 = ctx.globalAlpha; ctx.globalAlpha = a0 * .62; ctx.strokeStyle = n.extColor; ctx.stroke(path); ctx.stroke(P_FOLD); ctx.globalAlpha = a0; ctx.strokeStyle = mut; ctx.globalAlpha = a0 * .4; ctx.stroke(P_FOLD); ctx.globalAlpha = a0; }
         else if (px > 14 && col && n.nfiles) { ctx.fillStyle = fc; ctx.font = "600 7px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(String(n.nfiles > 999 ? "999+" : n.nfiles), 12, 13); }
         ctx.restore();
+        const tg = this.tags.get(n.id); if (tg) { ctx.beginPath(); ctx.arc(n.x, n.y, 17, 0, 7); ctx.lineWidth = 2.4 * lw; ctx.strokeStyle = tg; ctx.stroke(); }
         if (n === hov) { ctx.beginPath(); ctx.arc(n.x, n.y, 17, 0, 7); ctx.lineWidth = 1.6 * lw; ctx.strokeStyle = txt; ctx.stroke(); }
       }
       toggleExpand(n) {
@@ -514,11 +541,33 @@
         });
         cv.addEventListener("pointerup", () => { if (down && !down.moved && down.n) { if (this.dragNode) { this.dragNode = null; } this.openNode(down.n); } if (this.dragNode) { this.dragNode = null; this.saveLayout(); } this.dragging = false; pan = null; down = null; cv.style.cursor = "grab"; if (this.g) this.saveLayout(); });
         cv.addEventListener("pointerleave", () => { if (!down) { this.hover = null; this.tip.style.display = "none"; this.draw(); } });
-        cv.addEventListener("contextmenu", (e) => { e.preventDefault(); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (!n) return; const M = window.__bsApi && window.__bsApi.Menu; if (!M) return; const m = new M(); const item = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));
-          if (n.kind === "file") item("Открыть", "lucide-file", () => this.openNode(n)); else if (n.nfiles) item(this.collapsed.has(n.id) ? "Развернуть папку" : "Свернуть папку", "lucide-folder-tree", () => this.toggleDir(n));
-          item("Показать в проводнике", "lucide-folder-open", () => { try { window.__bsReveal(n.kind === "dir" ? path.join(this.rootPath, n.path) : n.abs); } catch (er) { /* none */ } });
-          item("Копировать путь", "lucide-copy", () => { navigator.clipboard.writeText(n.kind === "dir" ? path.join(this.rootPath, n.path) : n.abs).catch(() => {}); });
-          m.showAtMouseEvent(e); });
+        cv.addEventListener("contextmenu", (e) => {
+          e.preventDefault(); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy), M = window.__bsApi && window.__bsApi.Menu; if (!M) return;
+          const m = new M(), item = (t, ic, fn, chk) => m.addItem((i) => { i.setTitle(t).setIcon(ic).onClick(fn); if (chk) i.setChecked(true); });
+          const abs = (x) => (x.kind === "dir" ? path.join(this.rootPath, x.path) : x.abs), copy = (t) => navigator.clipboard.writeText(t).catch(() => {});
+          if (n) {
+            if (n.kind === "file") item("Открыть", "lucide-file", () => this.openNode(n));
+            if (n.kind === "dir" && n.nfiles) { item(this.collapsed.has(n.id) ? "Развернуть папку" : "Свернуть папку", "lucide-folder-tree", () => this.toggleDir(n)); item("Развернуть всё внутри", "lucide-chevrons-down", () => this.setDirTree(n, true)); item("Свернуть всё внутри", "lucide-chevrons-up", () => this.setDirTree(n, false)); }
+            m.addSeparator();
+            item(n.pinned ? "Открепить" : "Закрепить на месте", n.pinned ? "lucide-pin-off" : "lucide-pin", () => { n.pinned = !n.pinned; this.saveLayout(); this.draw(); });
+            item("Скрыть" + (n.kind === "dir" ? " папку" : ""), "lucide-eye-off", () => this.hideNode(n));
+            item("Показать только это и окружение", "lucide-focus", () => this.focusNode(n));
+            m.addItem((it) => { it.setTitle("Цветная метка").setIcon("lucide-palette"); const sub = it.setSubmenu(); for (const [t, c] of [["Красная", "#e5484d"], ["Оранжевая", "#f59f3b"], ["Жёлтая", "#d6b43c"], ["Зелёная", "#46a758"], ["Голубая", "#3fa7d6"], ["Фиолетовая", "#8e6bd8"]]) sub.addItem((x) => x.setTitle(t).setIcon("lucide-circle").setChecked(this.tags.get(n.id) === c).onClick(() => this.setTag(n, c))); if (this.tags.has(n.id)) { sub.addSeparator(); sub.addItem((x) => x.setTitle("Убрать метку").setIcon("lucide-x").onClick(() => this.setTag(n, null))); } });
+            m.addSeparator();
+            item("Показать в проводнике", "lucide-folder-open", () => { try { window.__bsReveal(abs(n)); } catch (er) { /* none */ } });
+            m.addItem((it) => { it.setTitle("Копировать").setIcon("lucide-copy"); const sub = it.setSubmenu(); sub.addItem((x) => x.setTitle("Полный путь").setIcon("lucide-copy").onClick(() => copy(abs(n)))); sub.addItem((x) => x.setTitle("Путь от корня папки").setIcon("lucide-copy").onClick(() => copy(n.path))); sub.addItem((x) => x.setTitle("Имя").setIcon("lucide-copy").onClick(() => copy(n.label))); });
+          } else {
+            item("Вписать в окно", "lucide-maximize", () => { this.userView = true; this.fitAll = true; this.fit(); this.fitAll = false; });
+            if (this.hidden.size || this.focusSet) item("Показать весь граф", "lucide-eye", () => this.showAllNodes());
+            if (this.mode === "files") item(this.collapsed.size ? "Развернуть все папки" : "Свернуть все папки", "lucide-folder-tree", () => this.toggleAllDirs());
+            if (this.tags.size) item("Убрать все цветные метки", "lucide-eraser", () => { this.tags.clear(); this.saveTags(); this.draw(); });
+            m.addSeparator();
+            item("Пересканировать папку", "lucide-refresh-cw", () => this.load(true));
+            item("Настройки графа", "lucide-settings", () => this.panelEl && this.panelEl.classList.add("is-open"));
+            item("Справка", "lucide-circle-help", () => this.openHelp());
+          }
+          m.showAtMouseEvent(e);
+        });
         cv.addEventListener("dblclick", (e) => { const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); if (n && this.mode === "code" && n.kind === "file") { this.toggleExpand(n); return; } if (n) { n.pinned = false; this.alpha = Math.max(this.alpha, .3); this.loop(); this.saveLayout(); } });
         cv.addEventListener("wheel", (e) => { e.preventDefault(); this.userView = true; if (this.layout === "3d" && this.mode === "files") { this.zoom3 = Math.max(.01, Math.min(8, (this.zoom3 || 1) * Math.exp(-e.deltaY * .0015))); this.draw(); return; } const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, k = Math.exp(-e.deltaY * .0015), ns = Math.max(.003, Math.min(10, this.scale * k)); this.ox = mx - (mx - this.ox) * (ns / this.scale); this.oy = my - (my - this.oy) * (ns / this.scale); this.scale = ns; this.draw(); }, { passive: false });
       }
