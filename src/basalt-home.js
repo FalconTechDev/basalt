@@ -7,7 +7,7 @@
   const css = document.createElement("style");
   css.textContent = `
     .empty-state { position: relative; display: block !important; } .bsh { position: absolute; inset: 0; overflow: auto; display: flex; justify-content: center; padding: 5vh 24px 32px; box-sizing: border-box; }
-    .bsh-in { width: min(1040px, 100%); display: flex; flex-direction: column; gap: 26px; }
+    .bsh-in { width: min(760px, 100%); display: flex; flex-direction: column; gap: 26px; }
     .bsh-brand { display: flex; align-items: center; gap: 18px; }
     .bsh-brand img { height: 64px; width: auto; flex: none; }
     .bsh-brand h1 { margin: 0; font-size: 34px; letter-spacing: .04em; font-weight: 700; line-height: 1; }
@@ -17,7 +17,7 @@
     .bsh-search svg { width: 18px; height: 18px; flex: none; }
     .bsh-search span { flex: 1; font-size: 15px; }
     .bsh kbd { font-family: var(--font-monospace); font-size: 11px; padding: 2px 7px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); color: var(--text-faint); }
-    .bsh-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .bsh-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .bsh-tile { position: relative; display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 12px 14px; min-height: 60px; cursor: pointer; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  transition: transform .12s, border-color .12s, background .12s; }
     .bsh-tile:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); }
     .bsh-keys { display: flex; gap: 4px; }
@@ -27,8 +27,10 @@
     .bsh-tile svg { padding: 7px; box-sizing: content-box; width: 22px; height: 22px; border-radius: var(--bs-r); background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); }
     .bsh-tile svg { color: var(--interactive-accent); }
     .bsh-tile b { font-weight: 600; } .bsh-tile small { color: var(--text-faint); font-size: var(--font-ui-smaller); }
-    .bsh-cols { display: grid; grid-template-columns: 1fr 230px; gap: 32px; }
-    .bsh-recent { display: grid; grid-template-columns: 1fr 1fr; column-gap: 14px; }
+    .bsh-cols { display: grid; grid-template-columns: 1fr; gap: 32px; }
+    .bsh-hint { color: var(--text-faint); font-size: var(--font-ui-smaller); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .bsh-hint kbd { font-family: var(--font-monospace); font-size: 11.5px; padding: 1px 6px; border-radius: var(--bs-r); background: var(--background-modifier-hover); color: var(--text-muted); }
+    .bsh-recent { display: grid; grid-template-columns: 1fr; column-gap: 14px; }
     @media (max-width: 720px) { .bsh-cols { grid-template-columns: 1fr; } }
     .bsh h3 { margin: 0 0 8px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-faint); font-weight: 600; }
     .bsh-rec { display: flex; align-items: center; gap: 12px; padding: 8px 10px; cursor: pointer; border-left: 2px solid transparent; }
@@ -68,26 +70,22 @@
     const leafEl = state.closest(".workspace-leaf-content");
     const leaf = (() => { let f = null; app.workspace.iterateAllLeaves((l) => { if (l.view && l.view.containerEl && leafEl && l.view.containerEl === leafEl) f = l; }); return f; })();
     const files = app.vault.getFiles(), notes = files.filter((f) => f.extension === "md"), canv = files.filter((f) => f.extension === "canvas");
-    const recent = (app.workspace.getLastOpenFiles ? app.workspace.getLastOpenFiles() : []).map((p) => app.vault.getAbstractFileByPath(p)).filter((f) => f && f.extension).slice(0, 16);
+    const recent = (app.workspace.getLastOpenFiles ? app.workspace.getLastOpenFiles() : []).map((p) => app.vault.getAbstractFileByPath(p)).filter((f) => f && f.extension).slice(0, 6);
     const links = Object.values(app.metadataCache.resolvedLinks || {}).reduce((n, o) => n + Object.keys(o).length, 0);
     const el = document.createElement("div"); el.className = "bsh";
     el.innerHTML = `<div class="bsh-in">
       <div class="bsh-brand"><img src="basalt-logo.png" alt=""><div><h1>Basalt</h1><p></p></div></div>
       <div class="bsh-search">${svg("search")}<span>Искать по заметкам и холстам…</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></div>
       <div class="bsh-tiles"></div>
-      <div class="bsh-cols"><div><h3>Недавние</h3><div class="bsh-recent"></div></div><div><h3>Хранилище</h3><div class="bsh-stat"></div></div></div></div>`;
+      <div class="bsh-cols"><div><h3>Недавние</h3><div class="bsh-recent"></div></div></div>
+      <div class="bsh-hint"><kbd>Ctrl</kbd><kbd>P</kbd> все команды · <kbd>Ctrl</kbd><kbd>O</kbd> перейти к файлу · <kbd>Ctrl</kbd><kbd>G</kbd> граф</div></div>`;
     el.querySelector("p").textContent = app.vault.getName();
     el.querySelector(".bsh-search").addEventListener("click", () => cmd("basalt:quick-search"));
     const tiles = [
-      ["folder", "Открыть папку", "Без хранилища", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
-      ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
-      ["canvas", "Новый холст", "", () => cmd("canvas:new-file")],
-      ["term", "Терминал", "", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
-      ["graph", "Граф", "", () => leaf && leaf.setViewState({ type: "graph", active: true, state: {} })],
-      ["file", "Перейти к файлу", "|Ctrl+O", () => cmd("switcher:open")],
-      ["history", "Журнал действий", "", () => window.__vaultSyncFeed && window.__vaultSyncFeed()],
-      ["plug", "Плагины", "", () => window.__bsCatalog && window.__bsCatalog.open()],
-      ["gear", "Настройки", "", () => cmd("app:open-settings")],
+      ["folder", "Открыть папку", "Любая папка с кодом, без хранилища", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
+      ["note", "Новая заметка", "Markdown-файл в этой папке|Ctrl+N", () => cmd("file-explorer:new-file")],
+      ["canvas", "Новый холст", "Бесконечная доска с карточками и связями", () => cmd("canvas:new-file")],
+      ["term", "Терминал", "Оболочка внутри приложения", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
     ];
     const tl = el.querySelector(".bsh-tiles");
     const LI = { folder: "folder-open", note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };
@@ -100,8 +98,6 @@
       d.addEventListener("click", () => { (leaf || mainLeaf(false)).openFile(f); });
       rl.appendChild(d);
     }
-    const stat = el.querySelector(".bsh-stat");
-    for (const [n, v] of [["Заметок", notes.length], ["Холстов", canv.length], ["Файлов", files.length], ["Связей", links]]) { const d = document.createElement("div"); d.innerHTML = `<span>${n}</span><b>${v}</b>`; stat.appendChild(d); }
     state.appendChild(el);
   }
 
