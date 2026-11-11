@@ -351,7 +351,7 @@
       // files beyond the per-folder limit (or all of them in "only folders") are left out; the folder shows "+N"
       capFiles() { const out = new Set(), per = new Map(), lim = this.opt.onlyDirs ? 0 : this.opt.maxFiles; this.more = new Map(); if (!this.g || this.mode !== "files") return out;
         for (const n of this.g.nodes) if (n.kind !== "dir" && n.up && !(this.match && this.match.has(n))) { const k = per.get(n.up) || 0; per.set(n.up, k + 1); if (k >= lim) { out.add(n); this.more.set(n.up, (this.more.get(n.up) || 0) + 1); } } return out; }
-      labelOf(n) { const extra = this.more && n.kind === "dir" && !this.collapsed.has(n.id) && this.more.get(n); if (extra) return n.label + "  +" + extra + (this.opt.onlyDirs ? " файл." : " ещё");  return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
+      labelOf(n) { const extra = this.more && n.kind === "dir" && !this.collapsed.has(n.id) && this.more.get(n); if (extra) return n.label + "  +" + extra + ((window.__bsT || String)(this.opt.onlyDirs ? " файл." : " ещё"));  return n.kind === "dir" && this.collapsed.has(n.id) && n.nfiles ? n.label + " (" + n.nfiles + ")" : n.label; }
       drawIcon(ctx, n, S, lw, hov, bg, txt) {
         const size = 22, px = size * S, mut = (this.cssv("--text-faint") || this.cssv("--vs-ln")) || "#999", dir = n.kind === "dir";
         if (px < 5) { ctx.fillStyle = dir ? (this.cssv("--interactive-accent") || mut) : n.extColor; ctx.fillRect(n.x - 3 * lw, n.y - 3 * lw, 6 * lw, 6 * lw); return; }

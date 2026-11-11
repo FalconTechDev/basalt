@@ -74,8 +74,8 @@
     let exited = false;
     proc.stdout.on("data", (d) => term.write(new Uint8Array(d)));
     proc.stderr.on("data", (d) => term.write("\r\n\x1b[31m" + String(d).replace(/\n/g, "\r\n") + "\x1b[0m"));
-    proc.on("error", (e) => term.write("\r\n\x1b[31mне удалось запустить оболочку: " + e.message + "\x1b[0m\r\n"));
-    proc.on("exit", (code) => { exited = true; term.write("\r\n\x1b[2m[процесс завершён, код " + code + "]\x1b[0m\r\n"); if (opts.onExit) opts.onExit(code); });
+    proc.on("error", (e) => term.write("\r\n\x1b[31m" + (window.__bsT || String)("не удалось запустить оболочку:") + " " + e.message + "\x1b[0m\r\n"));
+    proc.on("exit", (code) => { exited = true; term.write("\r\n\x1b[2m[" + (window.__bsT || String)("процесс завершён, код") + " " + code + "]\x1b[0m\r\n"); if (opts.onExit) opts.onExit(code); });
     term.onData((s) => send(0, Buffer.from(s, "utf8")));
     term.onBinary((s) => send(0, Buffer.from(s, "binary")));
     term.onResize(({ cols, rows }) => { const b = Buffer.alloc(4); b.writeUInt16LE(cols, 0); b.writeUInt16LE(rows, 2); send(1, b); });

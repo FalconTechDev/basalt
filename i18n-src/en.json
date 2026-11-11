@@ -1251,5 +1251,7 @@
 "связей": "link",
 "связь": "link",
 "строки": "lines",
-"удалена": "deleted"
+"удалена": "deleted",
+"процесс завершён, код": "process exited, code",
+"не удалось запустить оболочку:": "could not start the shell:"
 }
