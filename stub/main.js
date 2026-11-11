@@ -1,507 +1,123 @@
-﻿let path = require('path');
-let util = require('util');
-let os = require('os');
-let crypto = require('crypto');
-let fs = require('fs');
-let zlib = require('zlib');
-let EventEmitter = require('events');
-let electron = require('electron');
-electron.remote = require('@electron/remote/main');
-let {app, protocol, net, remote} = electron;
+﻿'use strict';
+// Basalt launcher: the first file Electron runs. It prepares the process (data folder, command line, headless mode, window
+// recovery, the app:// scheme) and hands over to the app in resources/app-src/main.js.
 
-// Basalt keeps its own data folder, so it never shares one with an installed Basalt
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const util = require('util');
+const EventEmitter = require('events');
+const electron = require('electron');
+const remote = require('@electron/remote/main');
+electron.remote = remote;
+const { app, protocol, BrowserWindow } = electron;
+
+// Basalt keeps its own data folder; a test run can point elsewhere with --user-data-dir
 if (!process.argv.some((a) => a.startsWith('--user-data-dir'))) {
 	app.setPath('userData', path.join(app.getPath('appData'), 'Basalt'));
 }
+const dataPath = app.getPath('userData');
 
-// Chromium keeps compiled copies of our scripts (Code Cache / Cache); after an update they would run the old version
-for (const d of ['Code Cache', 'Cache', 'GPUCache']) { try { fs.rmSync(path.join(app.getPath('userData'), d), {recursive: true, force: true}); } catch (e) { /* in use */ } }
+// Chromium keeps compiled copies of our scripts; after an update they would run the old version
+for (const d of ['Code Cache', 'Cache', 'GPUCache']) {
+	try { fs.rmSync(path.join(dataPath, d), { recursive: true, force: true }); } catch (e) { /* in use */ }
+}
 
 // The command line (`basalt ...`) is on by default: it is how scripts and the daemon talk to the app
 try {
-	const cfgFile = path.join(app.getPath('userData'), 'obsidian.json');
+	const cfgFile = path.join(dataPath, 'obsidian.json');
 	const cfg = fs.existsSync(cfgFile) ? JSON.parse(fs.readFileSync(cfgFile, 'utf8')) : {};
-	if (cfg.cli === undefined && !cfg.cliOff) { cfg.cli = true; fs.mkdirSync(path.dirname(cfgFile), {recursive: true}); fs.writeFileSync(cfgFile, JSON.stringify(cfg)); }
+	if (cfg.cli === undefined && !cfg.cliOff) {
+		cfg.cli = true;
+		fs.mkdirSync(path.dirname(cfgFile), { recursive: true });
+		fs.writeFileSync(cfgFile, JSON.stringify(cfg));
+	}
 } catch (e) { /* settings unreadable: leave them */ }
 
-// Headless mode (BASALT_HEADLESS=1, started by `basalt daemon start`): the window exists (the app needs a live page) but is
-// invisible: far off screen, no taskbar entry.
-if (process.env.BASALT_HEADLESS) {
+// Headless mode (BASALT_HEADLESS=1, started by `basalt daemon start`): the window exists because the app needs a live page,
+// but it is far off screen and has no taskbar entry.
+let stealthOn = !!process.env.BASALT_HEADLESS;
+if (stealthOn) {
 	for (const sw of ['disable-renderer-backgrounding', 'disable-background-timer-throttling', 'disable-backgrounding-occluded-windows']) app.commandLine.appendSwitch(sw);
 	app.commandLine.appendSwitch('disable-features', 'CalculateNativeWinOcclusion');
-	const stealth = (win) => { if (!stealthOn) return; try { win.setPosition(-32000, -32000); win.setSkipTaskbar(true); } catch (err) { /* window not ready */ } };
-	app.on('browser-window-created', (e, win) => { stealth(win); for (const ev of ['show', 'ready-to-show', 'move', 'restore', 'focus']) win.on(ev, () => stealth(win)); });
+	const hide = (win) => {
+		if (!stealthOn) return;
+		try { win.setPosition(-32000, -32000); win.setSkipTaskbar(true); } catch (e) { /* window not ready */ }
+	};
+	app.on('browser-window-created', (e, win) => {
+		hide(win);
+		for (const ev of ['show', 'ready-to-show', 'move', 'restore', 'focus']) win.on(ev, () => hide(win));
+	});
 }
 
-// Starting Basalt again while it is already running (the daemon, a window that lost its page): show the windows
-let stealthOn = !!process.env.BASALT_HEADLESS;
+// Starting Basalt again while it is running (the daemon, a window that lost its page) shows the windows
 app.on('second-instance', () => {
 	stealthOn = false;
-	for (const win of electron.BrowserWindow.getAllWindows()) {
-		try { win.setSkipTaskbar(false); win.setFocusable(true); win.setIgnoreMouseEvents(false); win.setOpacity(1); if (win.getBounds().x < -10000) win.center(); if (win.isMinimized()) win.restore(); win.show(); win.focus(); } catch (e) { /* closing */ }
+	for (const win of BrowserWindow.getAllWindows()) {
+		try {
+			win.setSkipTaskbar(false);
+			win.setFocusable(true);
+			win.setIgnoreMouseEvents(false);
+			win.setOpacity(1);
+			if (win.getBounds().x < -10000) win.center();
+			if (win.isMinimized()) win.restore();
+			win.show();
+			win.focus();
+		} catch (e) { /* window closed */ }
 	}
 });
-// a renderer that died leaves an empty window behind: load the page again (once a minute at most)
+
+// A renderer that died leaves an empty window: load the page again (once a minute at most)
 app.on('browser-window-created', (e, win) => {
 	let last = 0;
-	win.webContents.on('render-process-gone', () => { if (Date.now() - last > 60000) { last = Date.now(); try { win.webContents.reload(); } catch (err) { /* gone */ } } });
+	win.webContents.on('render-process-gone', () => {
+		if (Date.now() - last < 60000) return;
+		last = Date.now();
+		try { win.webContents.reload(); } catch (err) { /* gone */ }
+	});
 });
 
 remote.initialize();
-
 protocol.registerSchemesAsPrivileged([
-	{scheme: 'app', privileges: {standard: true, secure: true, supportFetchAPI: true, stream: true, codeCache: true}}
+	{ scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true, codeCache: true } },
 ]);
 
-let updateEvents = new EventEmitter();
-
-let insider = false;
-let disable = false;
+// The app tells us about its state through this emitter ('silence' keeps the log off stdout, so CLI output stays clean)
+const appEvents = new EventEmitter();
 let silence = false;
-updateEvents.on('insider', (arg) => {
-	insider = arg;
-});
-updateEvents.on('disable', (arg) => {
-	disable = arg;
-});
-updateEvents.on('silence', (arg) => {
-	silence = arg;
-});
+appEvents.on('silence', (v) => { silence = v; });
 
-let APP_PATH = require('path').dirname(process.execPath); let _unused = (() => {
-	let path = app.getAppPath();
-	let asar_index = path.indexOf('app.asar');
-	if (asar_index >= 0) {
-		return path.slice(0, asar_index);
-	}
-	return path;
-})();
-
-let currentBaseVersion = app.getVersion();
-let currentPackageVersion = currentBaseVersion;
-let dataPath = app.getPath('userData');
-
-function pad(number) {
-	if (number < 10) {
-		return '0' + number;
-	}
-	return number;
-}
-
-function stamp() {
-	let d = new Date();
-	return d.getUTCFullYear() +
-		'-' + pad(d.getUTCMonth() + 1) +
-		'-' + pad(d.getUTCDate()) +
-		' ' + pad(d.getUTCHours()) +
-		':' + pad(d.getUTCMinutes()) +
-		':' + pad(d.getUTCSeconds());
-}
-
-function logger(logfile) {
-	let fileout = fs.openSync(logfile, 'a');
-	let stdout = process.stdout;
-
-	stdout.on('error', function(e) {
-		// `write` failed. Do nothing...
-	});
-
-	let fn = function () {
-		let data = stamp() + ' ' + util.format.apply(null, arguments) + os.EOL;
-
-		try {
-			fs.writeSync(fileout, data);
-			// Don't output to stdout if the app requests silence mode (to avoid polluting CLI outputs)
-			if (!silence) stdout.write(data);
-		}
-		catch (e) {
-			// Failed to write to log
-		}
-	};
-
-	fn.end = function () {
-		fs.closeSync(fileout);
-	};
-
-	return fn;
-}
-
-let log = logger(path.join(dataPath, 'obsidian.log'));
-
-let idFile = path.join(dataPath, 'id');
-let id;
-try {
-	if (fs.existsSync(idFile)) {
-		id = fs.readFileSync(idFile, 'utf8');
-	}
-} catch (e) {
-}
-try {
-	if (!id || id.length < 16) {
-		id = crypto.randomBytes(16).toString('hex');
-		fs.writeFileSync(idFile, id, 'utf8');
-	}
-} catch (e) {
-}
-
-// Only start the updater when electron is ready, because the net module requires that.
-let updatePromise = app.whenReady();
-let queueUpdate = (manual) => { return;
-	let fn = () => update(manual);
-	updatePromise = updatePromise.then(fn, fn);
-};
-
-// Used for verifying signatures of downloaded asar files
-const SIGNATURE_CERT = '-----BEGIN CERTIFICATE-----\n' +
-	'MIIDjzCCAnegAwIBAgIJAOFHLJ2gTCBzMA0GCSqGSIb3DQEBCwUAMF4xCzAJBgNV\n' +
-	'BAYTAlVTMRMwEQYDVQQIDApTb21lLVN0YXRlMREwDwYDVQQKDAhEeW5hbGlzdDER\n' +
-	'MA8GA1UECwwIRHluYWxpc3QxFDASBgNVBAMMC2R5bmFsaXN0LmlvMB4XDTE2MDUx\n' +
-	'NjAyMTA1NFoXDTQwMDUxMDAyMTA1NFowXjELMAkGA1UEBhMCVVMxEzARBgNVBAgM\n' +
-	'ClNvbWUtU3RhdGUxETAPBgNVBAoMCER5bmFsaXN0MREwDwYDVQQLDAhEeW5hbGlz\n' +
-	'dDEUMBIGA1UEAwwLZHluYWxpc3QuaW8wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw\n' +
-	'ggEKAoIBAQDcodSNp30B0oE+2vRUdr//SGfbDow+67OtGuRYQSjn86bn55fQXhMJ\n' +
-	'b5xgZ0natiCriCyllLWgPf+4PnxGRSJZGbm38QSArb0MWR8/yXA+q+7nZisIsN2d\n' +
-	'Xih8B3APImxJ4A50nsK/C+fl7nYdo04iz3oerP0UhLDrsLbL+9rdmshjB1boLPf6\n' +
-	'QpAAC57OTPQpFBd2hFoS6xAnIb708SHOndsrWDIFEFVCPDYcme3WF5jznuT05OFG\n' +
-	'MIX8SZe2jXpg2Vco/1oKRPC7mYFN5B0JTZ7mOH48vB/zPNIsVz8KHh3P9Ru2fC2r\n' +
-	'3nPDXFGKzcUZneJmXh4LIUVqwdEPw7hvAgMBAAGjUDBOMB0GA1UdDgQWBBTF2xMx\n' +
-	'8xVDZ2wteJPsHUe0OCu18TAfBgNVHSMEGDAWgBTF2xMx8xVDZ2wteJPsHUe0OCu1\n' +
-	'8TAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQB6rgBF+DvDHifP+U6Z\n' +
-	'FqJ4mX1nalEXEPI1jvRZaOheKpkOEBbhkCAosbBEmYxfj8xay1GGgB9nkJk2dodR\n' +
-	'sGVhrZz+CwGR+hSEfYDQwMBvmzm3OcETfEtvwEAU1P93prbxul2oSWP48AVDDYKe\n' +
-	'pxTZvW/yZcnoHI9XzhLNMYIEvOs+wKWAOF0+BjsIukQouaXs6gklul2J99IqpdPh\n' +
-	'w2l4l7mkPx8htCbTE47GTraHt2i2mwyBZSKbfqzi73Fj5SFRtZlWJDNPKoWxcFg2\n' +
-	'91B7IHumd5jwAUdVJit3K5Tgt/q4OzwokcDZcrh5lJg0+Kstsz4RDWDbfzTNJuKn\n' +
-	'oueR\n' +
-	'-----END CERTIFICATE-----';
-
-async function update(manual) {
-	if (!manual && disable) {
-		return;
-	}
-	updateEvents.emit('check-start');
+// Log file in the data folder, mirrored to stdout
+const logFile = fs.openSync(path.join(dataPath, 'basalt.log'), 'a');
+process.stdout.on('error', () => { /* a closed pipe is not our problem */ });
+function log(...args) {
+	const d = new Date(), p2 = (n) => String(n).padStart(2, '0');
+	const stamp = `${d.getUTCFullYear()}-${p2(d.getUTCMonth() + 1)}-${p2(d.getUTCDate())} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}:${p2(d.getUTCSeconds())}`;
+	const line = stamp + ' ' + util.format(...args) + os.EOL;
 	try {
-		// Hopefully this can help us catch any updater failures
-		// Or any old buggy versions that may still be operating in the wild.
-		// Don't wait on the async result
-		httpGetBinary('https://releases.obsidian.md/desktop?id=' + id + '&v=' + currentPackageVersion + '&p=' + process.platform).then(() => null, () => null);
-	} catch (e) {
-	}
-
-	try {
-		await runUpdate();
-	} catch (e) {
-		log('Failed to perform update');
-		console.error(e);
-	}
-	updateEvents.emit('check-end');
+		fs.writeSync(logFile, line);
+		if (!silence) process.stdout.write(line);
+	} catch (e) { /* log unavailable */ }
 }
 
-async function runUpdate() {
-	let updateJson = null;
-
-	try {
-		log('Checking for update using Github');
-		updateJson = JSON.parse(await httpGet('https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/desktop-releases.json'));
-		log('Success.');
-	} catch (e) {
-		log(`Failed to check for update using Github (${e.message})`);
-		console.error(e);
-	}
-
-	if (updateJson) {
-		try {
-			await downloadUpdate(updateJson);
-			return;
-		} catch (e) {
-			if (e.code !== 'ETIMEDOUT') {
-				throw e;
-			}
-			log('Failed to download update from Github');
-		}
-	}
-
-	try {
-		log('Checking for update using obsidian.md');
-		updateJson = JSON.parse(await httpGet('https://releases.obsidian.md/desktop-releases.json'));
-		log('Success.');
-	} catch (e) {
-		log(`Failed to check for update using obsidian.md (${e.message})`);
-		console.error(e);
-	}
-
-	if (updateJson) {
-		await downloadUpdate(updateJson);
-	}
-}
-
-async function downloadUpdate(updateJson) {
-	let usingInsider = false;
-	if (insider && updateJson.beta) {
-		updateJson = updateJson.beta;
-		usingInsider = true;
-	}
-	let {minimumVersion, latestVersion, downloadUrl, hash, signature} = updateJson;
-
-	if (!minimumVersion || !latestVersion || !downloadUrl || !hash || !signature) {
-		log('Update failed: info incomplete', updateJson);
-		return;
-	}
-
-	log('Latest version is ' + latestVersion + (usingInsider ? ' (insider)' : ''));
-
-	// If minimum version is higher than current electron version, we will require a manual full reinstall
-	if (isV2MoreRecent(app.getVersion(), minimumVersion)) {
-		updateEvents.emit('update-manual-required');
-		log('Update failed: minimum version mismatch. App must be manually updated');
-		return;
-	}
-
-	// A new version is posted, go get it!
-	if (isV2MoreRecent(currentPackageVersion, latestVersion)) {
-		// Download file only if it's not already here
-		let downloadPath = path.join(dataPath, 'obsidian-' + latestVersion + '.asar');
-		if (!fs.existsSync(downloadPath)) {
-			log('Downloading update from', downloadUrl);
-			// Download to a buffer so we can check its signature
-			let compressedBuffer = await httpGetBinary(downloadUrl);
-
-			log('Verifying hash & signature. Size=', compressedBuffer.byteLength);
-			let newHash = crypto.createHash('SHA256')
-				.update(compressedBuffer)
-				.digest('base64')
-			let verifiedHash = hash === newHash;
-			let verifiedSignature =
-				crypto.createVerify('RSA-SHA256')
-					.update(compressedBuffer)
-					.verify(SIGNATURE_CERT, signature, 'base64');
-
-			if (verifiedHash && verifiedSignature) {
-				log('Saving file');
-				let tempDownloadPath = path.join(dataPath, 'obsidian.asar.tmp');
-				let decompressedBuffer = await new Promise((resolve, reject) => {
-					zlib.gunzip(compressedBuffer, {}, (err, data) => {
-						if (err) {
-							return reject(err);
-						}
-						resolve(data);
-					});
-				});
-
-				await fs.promises.writeFile(tempDownloadPath, decompressedBuffer);
-				await fs.promises.rename(tempDownloadPath, downloadPath);
-				log('Update complete.');
-				updateEvents.emit('update-downloaded');
-			}
-			else {
-				if (!verifiedHash) {
-					log('Hash check failed!', newHash);
-				}
-				if (!verifiedSignature) {
-					log('Signature check failed!');
-				}
-			}
-		}
-		else {
-			log('An update is already downloaded.');
-		}
-	}
-	else {
-		log('App is up to date.');
-	}
-
-	// Clean up old updates now that we have the latest version
-	let files = fs.readdirSync(dataPath, {withFileTypes: true});
-	for (let file of files) {
-		let filename = file.name;
-
-		// Delete temporary file
-		if (filename === 'obsidian.asar.tmp') {
-			await fs.promises.unlink(path.join(dataPath, filename));
-		}
-
-		// Delete all versions that aren't the latest version.
-		if (file.isFile() && filename.startsWith('obsidian-') && filename.endsWith('.asar')) {
-			let newVersion = extractVersion(filename);
-			// Make an exception for the current running version.
-			if (newVersion !== currentPackageVersion &&
-				newVersion !== latestVersion) {
-				await fs.promises.unlink(path.join(dataPath, filename));
-			}
-		}
-	}
-}
-
-function loadApp(asarPath) {
-	// Execute asar content
-	let main = path.join(asarPath, 'main.js');
-
-	let fn;
-	try {
-		fn = require(main);
-	} catch (e) {
-		return false;
-	}
-
-	if (fn) {
-		fn(asarPath, updateEvents);
-		return true;
-	}
-	return false;
-}
-
-function extractVersion(filename) {
-	if (filename.startsWith('obsidian-') && filename.endsWith('.asar')) {
-		return filename.substring('obsidian-'.length, filename.length - '.asar'.length);
-	}
-	return null;
-}
-
-function parseVersion(string) {
-	if (!string) {
-		return null;
-	}
-	let valid = true;
-	let parts = string.split('.').map((part) => {
-		part = parseInt(part);
-		if (isNaN(part)) {
-			valid = false;
-		}
-		return part;
-	});
-	if (valid) {
-		return parts;
-	}
-	return null;
-}
-
-function isMoreRecent(version1, version2) {
-	let length = Math.min(version1.length, version2.length);
-	for (let i = 0; i < length; i++) {
-		if (version1[i] < version2[i]) {
-			return true;
-		}
-		if (version1[i] > version2[i]) {
-			return false;
-		}
-	}
-	if (version1.length < version2.length) {
-		return true;
-	}
-	if (version1.length > version2.length) {
-		return false;
-	}
-	return false;
-}
-
-function isV2MoreRecent(v1, v2) {
-	let version1 = parseVersion(v1);
-	let version2 = parseVersion(v2);
-	if (!version2) {
-		return false;
-	}
-	if (!version1) {
-		return true;
-	}
-	return isMoreRecent(version1, version2);
-}
-
-function httpGet(url) {
-	return httpGetBinary(url).then(buffer => buffer.toString('utf8'));
-}
-
-function httpGetBinary(url) {
-	return new Promise((resolve, reject) => {
-		let request = net.request({
-			method: 'GET',
-			url: url,
-			redirect: 'follow',
-		});
-		request.setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36');
-		request.on('login', (authInfo, callback) => callback());
-		request.on('error', reject);
-		request.on('response', (res) => {
-			let data = [];
-			res.on('data', (chunk) => data.push(chunk));
-			res.on('end', () => resolve(Buffer.concat(data)));
-		})
-		request.end();
-	});
-}
-
-// Source: https://github.com/electron/electron/blob/19954126e08c67022b89a886cadb10471ac853ae/lib/browser/init.ts#L20
-process.on('uncaughtException', function (error) {
-	// Don't emit errors for updater
-	if (error.message && error.message.indexOf('net::ERR') !== -1) {
-		return;
-	}
-
+process.on('uncaughtException', (error) => {
+	if (error.message && error.message.includes('net::ERR')) return; // a failed network request, not a bug
 	console.error('Uncaught Exception', error);
-
-	// Show error in GUI.
-	// We can't import { dialog } at the top of this file as this file is
-	// responsible for setting up the require hook for the "electron" module
-	// so we import it inside the handler down here
-	import('electron')
-		.then(({dialog}) => {
-			const stack = error.stack ? error.stack : `${error.name}: ${error.message}`;
-			const message = 'Uncaught Exception:\n' + stack;
-			dialog.showErrorBox('A JavaScript error occurred in the main process', message);
-		});
+	import('electron').then(({ dialog }) => {
+		dialog.showErrorBox('A JavaScript error occurred in the main process', 'Uncaught Exception:\n' + (error.stack || `${error.name}: ${error.message}`));
+	});
 });
 
-// Actual startup routine
-/* updates disabled */
-
-let asarPath = path.join(APP_PATH, 'resources', 'app-src');
-let updatedAsarPath = '';
-let updatedAsarVersion = '';
-
-// Check if we have an updated asar to replace the built-in one
+// Hand over to the app
+const appPath = path.join(path.dirname(process.execPath), 'resources', 'app-src');
+let started = false;
 try {
-	let candidateFile = '';
-	let version = '';
-	let stat = fs.statSync(dataPath);
-	if (stat.isDirectory()) {
-		let files = fs.readdirSync(dataPath, {withFileTypes: true});
-		for (let file of files) {
-			let filename = file.name;
-			if (file.isFile() && filename.startsWith('obsidian-') && filename.endsWith('.asar')) {
-				let newVersion = extractVersion(filename);
-				if (isV2MoreRecent(version, newVersion)) {
-					candidateFile = filename;
-					version = newVersion;
-				}
-			}
-		}
-	}
-
-	// We found an updated asar
-	if (isV2MoreRecent(app.getVersion(), version)) {
-		updatedAsarPath = path.join(dataPath, candidateFile);
-		updatedAsarVersion = version;
+	const start = require(path.join(appPath, 'main.js'));
+	if (typeof start === 'function') {
+		start(appPath, appEvents);
+		started = true;
 	}
 } catch (e) {
-	if (e.code !== 'ENOENT') {
-		console.error(e);
-	}
+	log('Could not load the app:', e && e.stack ? e.stack : e);
 }
-
-let success = false;
-if (updatedAsarPath) {
-	success = loadApp(updatedAsarPath);
-	currentPackageVersion = updatedAsarVersion;
-	log('Loaded updated app package', updatedAsarPath);
-}
-
-if (!success) {
-	success = loadApp(asarPath);
-	log('Loaded main app package', asarPath);
-}
-
-if (!success) {
-	log('Failed to load both app packages.');
-}
-
-queueUpdate();
-updateEvents.on('check', () => queueUpdate(true));
+log(started ? 'Loaded app from ' + appPath : 'The app did not start.');

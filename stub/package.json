@@ -1,10 +1,9 @@
 {
-	"name": "obsidian",
+	"name": "basalt",
 	"description": "Basalt",
 	"version": "1.12.7",
-	"homepage": "https://obsidian.md",
 	"license": "UNLICENSED",
-	"author": "Obsidian",
+	"author": "Basalt",
 	"private": true,
 	"main": "main.js",
 	"dependencies": {
