@@ -21,7 +21,8 @@
     .bsh-tile { position: relative; display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 12px 14px; min-height: 60px; cursor: pointer; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  transition: transform .12s, border-color .12s, background .12s; }
     .bsh-tile:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); }
     .bsh-keys { display: flex; gap: 4px; }
-    .bsh-tile > div { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+    .bsh-tile > div { display: flex; flex-direction: row; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .bsh-tile .bsh-keys { margin-left: auto; }
     .bsh-tile .bsh-ti { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--bs-r); background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); color: var(--interactive-accent); flex: none; }
     .bsh-tile .bsh-ti svg { width: 20px; height: 20px; padding: 0; box-sizing: border-box; background: none; border-radius: 0; }
     .bsh-tile svg { padding: 7px; box-sizing: content-box; width: 22px; height: 22px; border-radius: var(--bs-r); background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); }
@@ -81,7 +82,7 @@
     el.querySelector("p").textContent = app.vault.getName();
     el.querySelector(".bsh-search").addEventListener("click", () => cmd("basalt:quick-search"));
     const tiles = [
-      ["folder", "Открыть папку", "Без хранилища", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
+      ["folder", "Открыть папку", "", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
       ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
       ["canvas", "Новый холст", "", () => cmd("canvas:new-file")],
       ["term", "Терминал", "", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
