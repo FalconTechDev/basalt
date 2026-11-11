@@ -269,7 +269,7 @@
         const zoom = (k) => { if (this.layout === "3d") { this.zoom3 = Math.max(.01, Math.min(8, (this.zoom3 || 1) * k)); } else { const cx = this.w / 2, cy = this.h / 2; this.ox = cx - (cx - this.ox) * k; this.oy = cy - (cy - this.oy) * k; this.scale *= k; } this.userView = true; this.draw(); };
         mk(grp(), "lucide-settings", "Настройки графа", () => panel.classList.toggle("is-open"));
         const zg = grp(); mk(zg, "lucide-plus", "Приблизить", () => zoom(1.25)); mk(zg, "lucide-maximize", "Вписать весь граф в окно", () => { if (this.layout === "3d") { this.compute3D(); this.draw(); return; } this.userView = true; this.fitAll = true; this.fit(); this.fitAll = false; }); mk(zg, "lucide-minus", "Отдалить", () => zoom(.8));
-        mk(grp(), "lucide-folder-tree", "Свернуть / развернуть все папки", () => this.toggleAllDirs()); mk(grp(), "lucide-activity", "Выполнение: смотреть, какой файл и функция работают сейчас", () => window.__bsTrace && window.__bsTrace.open());
+        mk(grp(), "lucide-folder-tree", "Свернуть / развернуть все папки", () => this.toggleAllDirs());
         const body = document.createElement("div"); body.className = "bsg-body"; wrap.appendChild(body); this.body = body; body.append(panel, colm, this.info);
         const cv = document.createElement("canvas"); body.appendChild(cv); this.cv = cv; this.ctx = cv.getContext("2d");
         this.tip = document.createElement("div"); this.tip.className = "bsg-tip"; body.appendChild(this.tip);
