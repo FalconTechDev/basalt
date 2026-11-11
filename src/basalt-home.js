@@ -77,15 +77,14 @@
       <div class="bsh-brand"><img src="basalt-logo.png" alt=""><div><h1>Basalt</h1><p></p></div></div>
       <div class="bsh-search">${svg("search")}<span>Искать по заметкам и холстам…</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></div>
       <div class="bsh-tiles"></div>
-      <div class="bsh-cols"><div><h3>Недавние</h3><div class="bsh-recent"></div></div></div>
-      <div class="bsh-hint"><kbd>Ctrl</kbd><kbd>P</kbd> все команды · <kbd>Ctrl</kbd><kbd>O</kbd> перейти к файлу · <kbd>Ctrl</kbd><kbd>G</kbd> граф</div></div>`;
+      <div class="bsh-cols"><div><h3>Недавние</h3><div class="bsh-recent"></div></div></div></div>`;
     el.querySelector("p").textContent = app.vault.getName();
     el.querySelector(".bsh-search").addEventListener("click", () => cmd("basalt:quick-search"));
     const tiles = [
-      ["folder", "Открыть папку", "Любая папка с кодом, без хранилища", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
-      ["note", "Новая заметка", "Markdown-файл в этой папке|Ctrl+N", () => cmd("file-explorer:new-file")],
-      ["canvas", "Новый холст", "Бесконечная доска с карточками и связями", () => cmd("canvas:new-file")],
-      ["term", "Терминал", "Оболочка внутри приложения", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
+      ["folder", "Открыть папку", "Без хранилища", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
+      ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
+      ["canvas", "Новый холст", "", () => cmd("canvas:new-file")],
+      ["term", "Терминал", "", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
     ];
     const tl = el.querySelector(".bsh-tiles");
     const LI = { folder: "folder-open", note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };
