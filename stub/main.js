@@ -25,7 +25,7 @@ for (const d of ['Code Cache', 'Cache', 'GPUCache']) {
 
 // The command line (`basalt ...`) is on by default: it is how scripts and the daemon talk to the app
 try {
-	const cfgFile = path.join(dataPath, 'obsidian.json');
+	const cfgFile = ['basalt.json', 'obsidian.json'].map((n) => path.join(dataPath, n)).find((f) => fs.existsSync(f)) || path.join(dataPath, 'basalt.json');
 	const cfg = fs.existsSync(cfgFile) ? JSON.parse(fs.readFileSync(cfgFile, 'utf8')) : {};
 	if (cfg.cli === undefined && !cfg.cliOff) {
 		cfg.cli = true;
