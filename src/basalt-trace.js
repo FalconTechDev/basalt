@@ -22,7 +22,7 @@
         let j; try { j = JSON.parse(body); } catch (e) { continue; } this.onMsg(j);
       }
     }
-    onMsg(j) {
+    onMsg(j) { (window.__bstLog || (window.__bstLog = [])).push("<- " + JSON.stringify(j).slice(0, 200)); if (window.__bstLog.length > 400) window.__bstLog.shift();
       if (j.type === "response") { const p = this.pend.get(j.request_seq); if (p) { this.pend.delete(j.request_seq); j.success ? p.res(j.body || {}) : p.rej(new Error(j.message || "error")); } }
       else if (j.type === "event") this.emit(j.event, j.body || {});
       else if (j.type === "request") this.send({ type: "response", request_seq: j.seq, command: j.command, success: true, body: {} });
@@ -30,7 +30,7 @@
     emit(n, b) { for (const f of (this.ev[n] || []).slice()) { try { f(b); } catch (e) { console.error("[dap]", e); } } }
     on(n, f) { (this.ev[n] || (this.ev[n] = [])).push(f); }
     off(n, f) { const a = this.ev[n]; if (a) { const i = a.indexOf(f); if (i >= 0) a.splice(i, 1); } }
-    send(o) { if (this.dead) return; o.seq = o.seq || ++this.seq; const t = JSON.stringify(o); try { this.child.stdin.write("Content-Length: " + Buffer.byteLength(t) + "\r\n\r\n" + t); } catch (e) { /* closed */ } }
+    send(o) { if (this.dead) return; o.seq = o.seq || ++this.seq; (window.__bstLog || (window.__bstLog = [])).push("-> " + JSON.stringify(o).slice(0, 200)); const t = JSON.stringify(o); try { this.child.stdin.write("Content-Length: " + Buffer.byteLength(t) + "\r\n\r\n" + t); } catch (e) { /* closed */ } }
     req(command, args) { return new Promise((res, rej) => { if (this.dead) return rej(new Error("adapter exited")); const seq = ++this.seq; this.pend.set(seq, { res, rej }); this.send({ seq, type: "request", command, arguments: args || {} }); }); }
   }
 
@@ -44,7 +44,7 @@
     return { err: "Нужен debugpy: pip install debugpy" };
   }
   const LANGS = {
-    py: { name: "Python", prep(o) { const d = findDebugpy(); if (d.err) throw new Error(d.err); return { cmd: d.py, args: ["-m", "debugpy.adapter"], env: { PYTHONPATH: d.libs + (process.env.PYTHONPATH ? path.delimiter + process.env.PYTHONPATH : "") }, launch: { type: "python", program: o.target, args: o.args, cwd: o.cwd, python: d.py, justMyCode: true, console: "internalConsole" } }; } },
+    py: { name: "Python", prep(o) { const d = findDebugpy(); if (d.err) throw new Error(d.err); return { cmd: d.py, args: ["-m", "debugpy.adapter"], env: { PYTHONPATH: d.libs + (process.env.PYTHONPATH ? path.delimiter + process.env.PYTHONPATH : "") }, launch: { type: "python", program: o.target, args: o.args, cwd: o.cwd, python: d.py, justMyCode: false, console: "internalConsole" } }; } },
     dart: { name: "Dart", prep(o) { const d = which("dart"); if (!d) throw new Error("Не найден dart в PATH."); return { cmd: d, args: ["debug_adapter"], shell: WIN, launch: { program: o.target, args: o.args, cwd: o.cwd, debugSdkLibraries: false, debugExternalPackageLibraries: false } }; } },
     native: { name: "Rust / C / C++", prep(o) { let d = which("lldb-dap") || which("lldb-vscode"); if (!d) for (const c of ["C:\\Program Files\\LLVM\\bin\\lldb-dap.exe", "/usr/bin/lldb-dap", "/usr/local/bin/lldb-dap"]) if (fs.existsSync(c)) { d = c; break; } if (!d) throw new Error("Нужен lldb-dap (LLVM)."); return { cmd: d, args: [], launch: { program: o.target, args: o.args, cwd: o.cwd } }; } },
     go: { name: "Go", prep(o) { const d = which("dlv"); if (!d) throw new Error("Для Go нужен Delve: go install github.com/go-delve/delve/cmd/dlv@latest"); return { cmd: d, args: ["dap"], launch: { mode: "debug", program: o.target, args: o.args, cwd: o.cwd } }; } },
@@ -149,17 +149,19 @@
         const step = this.speed.value !== "live", delay = +this.speed.value || 0;
         await dap.req("initialize", { clientID: "basalt", clientName: "Basalt", adapterID: lk, linesStartAt1: true, columnsStartAt1: true, pathFormat: "path" });
         const inited = this.waitEvent(dap, "initialized", 15000);
-        const launchP = dap.req("launch", Object.assign({ stopOnEntry: step, noDebug: false }, plan.launch)); launchP.catch(() => {});
+        const launchP = dap.req("launch", Object.assign({ stopOnEntry: step && lk !== "py", noDebug: false }, plan.launch)); launchP.catch(() => {});
         await Promise.race([inited, launchP]);
         const stopP = step ? this.waitEvent(dap, "stopped", 20000) : null;
-        try { await dap.req("setBreakpoints", { source: { path: plan.launch.program }, breakpoints: [] }); } catch (e) { /* ok */ }
+        let bps = []; if (step && lk === "py") { try { const L = fs.readFileSync(plan.launch.program, "utf8").split(/\r?\n/); const i = L.findIndex((x) => x.trim() && !/^\s*(#|"""|''')/.test(x)); bps = [{ line: Math.max(1, i + 1) }]; } catch (e) { bps = [{ line: 1 }]; } }
+        try { await dap.req("setBreakpoints", { source: { path: plan.launch.program }, breakpoints: bps }); } catch (e) { /* ok */ }
         try { await dap.req("configurationDone", {}); } catch (e) { /* some adapters skip it */ }
         await launchP;
         if (step) await this.stepLoop(dap, stopP, delay); else await this.liveLoop(dap);
       }
       inRoot(f) { if (!f) return false; const a = path.resolve(f).toLowerCase(), r = path.resolve(this.root).toLowerCase(); return a.startsWith(r + path.sep) && !/[\\/](node_modules|\.dart_tool|site-packages|\.pub-cache|\.cargo|\.rustup)[\\/]/i.test(a); }
       async snapshot(dap, tid) {
-        const r = await dap.req("stackTrace", { threadId: tid, levels: 40 }), fr = (r.stackFrames || []).filter((f) => f.source && this.inRoot(f.source.path));
+        const r = await dap.req("stackTrace", { threadId: tid, levels: 40 }), all = r.stackFrames || [], fr = all.filter((f) => f.source && this.inRoot(f.source.path));
+        this.topIn = !!(all[0] && all[0].source && this.inRoot(all[0].source.path));
         return fr.reverse().map((f) => [path.resolve(f.source.path), String(f.name).replace(/\s*\(.*$/, "").replace(/^.*::/, "").replace(/^.*\./, "") || String(f.name), f.line]);
       }
       account(stack, dtMs) {
@@ -172,7 +174,7 @@
         let ev = await stopP, last = Date.now(), n = 0;
         while (ev && this.child && n++ < 200000) {
           const tid = ev.threadId || 1; let stack; try { stack = await this.snapshot(dap, tid); } catch (e) { break; }
-          if (!stack.length) { const w = this.waitEvent(dap, "stopped", 20000); try { await dap.req("stepOut", { threadId: tid }); } catch (e) { break; } ev = await w; continue; }
+          if (!this.topIn) { const w = this.waitEvent(dap, "stopped", 20000); try { await dap.req("stepOut", { threadId: tid }); } catch (e) { break; } ev = await w; continue; }
           const now = Date.now(); this.account(stack, now - last); last = now; this.push(stack);
           if (delay) await this.sleep(delay); else if (n % 20 === 0) await this.sleep(1);
           if (!this.child) break; const w = this.waitEvent(dap, "stopped", 20000); try { await dap.req("stepIn", { threadId: tid }); } catch (e) { break; } ev = await w;
