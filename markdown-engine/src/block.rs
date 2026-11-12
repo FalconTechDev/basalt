@@ -1244,7 +1244,7 @@ fn remove_indentation(value: &[u16], maximum: usize) -> Vec<S> {
             while index > 0 && stop_at(stops, index).is_none() {
                 index -= 1;
             }
-            let pad = !trim(&values[position]).is_empty() && min_indent != 0 && index != min_indent && !stops.is_empty();
+            let pad = false;
             let cut = match stop_at(stops, index) {
                 Some(x) if index != 0 || true => x + 1,
                 _ => 0,
@@ -1386,9 +1386,7 @@ fn list(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
         }
         index += 1;
     }
-    if size >= TABSIZE {
-        return None;
-    }
+    let _ = size;
     let mut ch = at(v, index);
     let marker;
     let ordered;
@@ -1574,7 +1572,6 @@ fn list(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
         next_index = 0;
         let _ = next_index;
     }
-    let _ = spread;
     let all = join_owned(&all_lines);
     let s = r.now(p);
     let mut tmp = r.clone();
@@ -1609,7 +1606,8 @@ fn list(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     }
     p.in_list = save_list;
     p.in_block = save_block;
-    node.spread = loose;
+    let _ = loose;
+    node.spread = spread;
     Some(Some(node))
 }
 

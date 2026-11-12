@@ -194,8 +194,60 @@ impl EventReceiver for B {
     }
 }
 
+/// The YAML library this replaces refuses a flow collection (`[...]` / `{...}`) whose later lines are not indented deeper than the
+/// line that opened it; the parser used here does not, so that rule is checked first.
+fn flow_indent_error(src: &str) -> bool {
+    let mut depth = 0i32;
+    let mut open_indent = 0usize;
+    let mut quote: Option<char> = None;
+    for line in src.split('\n') {
+        let indent = line.len() - line.trim_start_matches(' ').len();
+        if depth > 0 && quote.is_none() && !line.trim().is_empty() && indent <= open_indent {
+            return true;
+        }
+        let mut prev = ' ';
+        let mut chars = line.chars();
+        while let Some(ch) = chars.next() {
+            match quote {
+                Some('"') => {
+                    if ch == '\\' {
+                        chars.next();
+                    } else if ch == '"' {
+                        quote = None;
+                    }
+                }
+                Some(_) => {
+                    if ch == '\'' {
+                        quote = None;
+                    }
+                }
+                None => {
+                    if ch == '#' && (prev == ' ' || prev == '\t') {
+                        break;
+                    }
+                    if (ch == '"' || ch == '\'') && (depth > 0 || prev == ' ' || prev == ':' || prev == '-') {
+                        quote = Some(ch);
+                    } else if ch == '[' || ch == '{' {
+                        if depth == 0 {
+                            open_indent = indent;
+                        }
+                        depth += 1;
+                    } else if ch == ']' || ch == '}' {
+                        depth = (depth - 1).max(0);
+                    }
+                }
+            }
+            prev = ch;
+        }
+    }
+    false
+}
+
 /// Parses the front matter. Ok(None) when it is empty or not a mapping, Err when it is invalid.
 pub fn parse_result(src: &str) -> Result<Option<Y>, ()> {
+    if flow_indent_error(src) {
+        return Err(());
+    }
     let mut b = B { stack: Vec::new(), docs: 0, root: None, anchors: Default::default(), err: false };
     let mut p = Parser::new_from_str(src);
     if p.load(&mut b, true).is_err() || b.err || b.docs > 1 {

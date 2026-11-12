@@ -194,6 +194,20 @@ fn apply_size(s: &[u16], n: &mut Node) -> bool {
 }
 
 pub fn transform(root: &mut Node, orig: &[u16]) {
+    // task list items get their checkbox: inside the first paragraph when there is one, else as the first child
+    walk_mut(root, &mut |n| {
+        if n.ty == Ty::ListItem && n.checked.is_some() {
+            let mut cb = Node::new(Ty::Checklist);
+            cb.s = n.s;
+            cb.e = n.e;
+            cb.checked = n.checked;
+            cb.checklist = n.checklist.clone();
+            match n.ch.first_mut() {
+                Some(f) if f.ty == Ty::Paragraph => f.ch.insert(0, cb),
+                _ => n.ch.insert(0, cb),
+            }
+        }
+    });
     // links and images to internal links / embeds
     walk_mut(root, &mut |n| match n.ty {
         Ty::Link => {
