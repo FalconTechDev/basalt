@@ -14,7 +14,6 @@ const KINDS = [
   ["CSS class / selector", /\.obsidian-[\w-]+|obsidian-app|obsidian-search-match-highlight/g],
 ];
 const files = ["app.js", "main.js", "app.css", "index.html", "starter.html", "help.html", "starter.js", "help.js", "i18n.js", "package.json"].map((f) => path.join(src, f)).filter(fs.existsSync);
-for (const f of fs.readdirSync(path.join(src, "i18n"))) if (f.endsWith(".txt")) files.push(path.join(src, "i18n", f));
 const total = {}; let all = 0; const perFile = {};
 for (const f of files) {
   const t = fs.readFileSync(f, "utf8"); const n = (t.match(/obsidian/gi) || []).length; if (!n) continue;
