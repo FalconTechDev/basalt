@@ -225,7 +225,9 @@ fn one(cx: &Ctx, n: &Node, parent: &Node) -> Vec<H> {
                 // the first run without blanks, when it is followed by a blank or the end
                 let first: String = lang.chars().take_while(|c| *c != ' ' && *c != '\t').collect();
                 if !first.is_empty() {
-                    code = code.p("class", &format!("language-{}", first));
+                    // a class list is joined and trimmed (JavaScript whitespace) when written
+                    let joined: S = format!("language-{}", first).encode_utf16().collect();
+                    code = code.p("class", &st(trim(&joined)));
                 }
             }
             code = code.p("data-line", &(n.s.line as i64 - cx.base).to_string());

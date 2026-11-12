@@ -108,7 +108,7 @@ function diff(a, b, p, out) {
 const short = (v) => { const s = typeof v === "string" ? JSON.stringify(v) : JSON.stringify(v) ?? "undefined"; return s.length > 160 ? s.slice(0, 160) + "..." : s; };
 const cls = (p) => p.replace(/\[\d+\]/g, "[]").replace(/^\./, "");
 
-const normHtml = (h) => String(h).replace(/\s+/g, " ").replace(/> </g, "><").replace(/^ | $/g, "");
+const normHtml = (h) => (flag("--exact") ? String(h) : String(h).replace(/\s+/g, " ").replace(/> </g, "><").replace(/^ | $/g, ""));
 
 function compareMeta(text) {
   let a, b;
