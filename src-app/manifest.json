@@ -1,0 +1,577 @@
+{
+ "base": "ca5acac",
+ "entries": [
+  {
+   "orig": "nu",
+   "use": "lastSegment"
+  },
+  {
+   "orig": "iu",
+   "use": "parentPath"
+  },
+  {
+   "orig": "ru",
+   "use": "isHiddenPath"
+  },
+  {
+   "orig": "ou",
+   "use": "baseName"
+  },
+  {
+   "orig": "au",
+   "use": "withoutExtension"
+  },
+  {
+   "orig": "su",
+   "use": "extensionOf"
+  },
+  {
+   "orig": "lu",
+   "use": "joinNameExt"
+  },
+  {
+   "orig": "uu",
+   "use": "collapseSlashes"
+  },
+  {
+   "orig": "tu",
+   "use": "plainSpaces"
+  },
+  {
+   "orig": "cu",
+   "use": "normalizePath"
+  },
+  {
+   "orig": "hu",
+   "use": "displayName"
+  },
+  {
+   "orig": "pu",
+   "use": "withoutMd"
+  },
+  {
+   "orig": "BL",
+   "use": "dropMdSuffix"
+  },
+  {
+   "orig": "q2",
+   "use": "fileLinkPath"
+  },
+  {
+   "orig": "j2",
+   "use": "targetText"
+  },
+  {
+   "orig": "cee",
+   "use": "isPluginFileName"
+  },
+  {
+   "orig": "D5",
+   "use": "pathWith"
+  },
+  {
+   "orig": "ET",
+   "use": "linkPath"
+  },
+  {
+   "orig": "MT",
+   "use": "parseLinktext"
+  },
+  {
+   "orig": "RT",
+   "use": "subpathKind"
+  },
+  {
+   "orig": "YC",
+   "use": "isLocalLink"
+  },
+  {
+   "orig": "XC",
+   "use": "linkDestination"
+  },
+  {
+   "orig": "ZC",
+   "use": "safeDecodeUri"
+  },
+  {
+   "orig": "eE",
+   "use": "escapeLinkChars"
+  },
+  {
+   "orig": "tE",
+   "use": "firstHeadingText"
+  },
+  {
+   "orig": "nE",
+   "use": "headingTrail"
+  },
+  {
+   "orig": "JC",
+   "use": "tidyLinkTarget"
+  },
+  {
+   "orig": "Pf",
+   "use": "formatBytes"
+  },
+  {
+   "orig": "rm",
+   "use": "toKebab"
+  },
+  {
+   "orig": "gc",
+   "use": "ellipsize"
+  },
+  {
+   "orig": "u7",
+   "use": "endWithBlankLine"
+  },
+  {
+   "orig": "pP",
+   "use": "squeezeNewlines"
+  },
+  {
+   "orig": "yA",
+   "use": "escapeTablePipes"
+  },
+  {
+   "orig": "xW",
+   "use": "withHash"
+  },
+  {
+   "orig": "zL",
+   "use": "isShortLine"
+  },
+  {
+   "orig": "ZI",
+   "use": "toStringList"
+  },
+  {
+   "orig": "YA",
+   "use": "emptyToNull"
+  },
+  {
+   "orig": "Ree",
+   "use": "parseCommaList"
+  },
+  {
+   "orig": "Bee",
+   "use": "formatCommaList"
+  },
+  {
+   "orig": "kq",
+   "use": "countQuoteMarks"
+  },
+  {
+   "orig": "Cq",
+   "use": "quoteIndentDepth"
+  },
+  {
+   "orig": "Vj",
+   "use": "dropWordsContaining"
+  },
+  {
+   "orig": "FQ",
+   "use": "formDecode"
+  },
+  {
+   "orig": "NQ",
+   "use": "formEncode"
+  },
+  {
+   "orig": "RQ",
+   "use": "formEncodePath"
+  },
+  {
+   "orig": "NX",
+   "use": "linesOf"
+  },
+  {
+   "orig": "Ej",
+   "use": "hasLatinLetter"
+  },
+  {
+   "orig": "zx",
+   "use": "parseImageSize"
+  },
+  {
+   "orig": "WZ",
+   "use": "intOrNull"
+  },
+  {
+   "orig": "Vl",
+   "use": "floatOr"
+  },
+  {
+   "orig": "f_",
+   "use": "joinClasses"
+  },
+  {
+   "orig": "Js",
+   "use": "ninesAtLeast"
+  },
+  {
+   "orig": "uc",
+   "use": "newlinesBefore"
+  },
+  {
+   "orig": "Dv",
+   "use": "lineBounds"
+  },
+  {
+   "orig": "Nb",
+   "use": "keyLabel"
+  },
+  {
+   "orig": "Fb",
+   "use": "makeHotkey"
+  },
+  {
+   "orig": "my",
+   "use": "valueIgnoringCase"
+  },
+  {
+   "orig": "qV",
+   "use": "keyIgnoringCase"
+  },
+  {
+   "orig": "vy",
+   "use": "parseVersion"
+  },
+  {
+   "orig": "gy",
+   "use": "isOlderVersion"
+  },
+  {
+   "orig": "P1",
+   "use": "severityRank"
+  },
+  {
+   "orig": "L1",
+   "use": "worstSeverity"
+  },
+  {
+   "orig": "rD",
+   "use": "chromeVersion"
+  },
+  {
+   "orig": "tY",
+   "use": "parsePropertyId"
+  },
+  {
+   "orig": "nY",
+   "use": "propertyId"
+  },
+  {
+   "orig": "SY",
+   "use": "shortPropertyId"
+  },
+  {
+   "orig": "xY",
+   "use": "longPropertyId"
+  },
+  {
+   "orig": "PY",
+   "use": "uniqueName"
+  },
+  {
+   "orig": "LT",
+   "use": "plainHeading"
+  },
+  {
+   "orig": "IT",
+   "use": "linkSafeHeading"
+  },
+  {
+   "orig": "kA",
+   "use": "describeCliOptions"
+  },
+  {
+   "orig": "cA",
+   "use": "smaller"
+  },
+  {
+   "orig": "uA",
+   "use": "larger"
+  },
+  {
+   "orig": "MJ",
+   "use": "sliderCurve"
+  },
+  {
+   "orig": "SJ",
+   "use": "sliderCurveInverse"
+  },
+  {
+   "orig": "l4",
+   "use": "unitSteps"
+  },
+  {
+   "orig": "cc",
+   "use": "randomHex"
+  },
+  {
+   "orig": "zs",
+   "use": "asArray"
+  },
+  {
+   "orig": "ac",
+   "use": "distinct"
+  },
+  {
+   "orig": "lc",
+   "use": "moveItem"
+  },
+  {
+   "orig": "N6",
+   "use": "takeFirst"
+  },
+  {
+   "orig": "mc",
+   "use": "binaryFind"
+  },
+  {
+   "orig": "vc",
+   "use": "isStringArray"
+  },
+  {
+   "orig": "hF",
+   "use": "joinLists"
+  },
+  {
+   "orig": "uF",
+   "use": "pushHistory"
+  },
+  {
+   "orig": "ve",
+   "use": "sameItems"
+  },
+  {
+   "orig": "ye",
+   "use": "sameItemsBy"
+  },
+  {
+   "orig": "c8",
+   "use": "sortByOrder"
+  },
+  {
+   "orig": "HI",
+   "use": "matchPenalty"
+  },
+  {
+   "orig": "HV",
+   "use": "localDate"
+  },
+  {
+   "orig": "zV",
+   "use": "localTime"
+  },
+  {
+   "orig": "VV",
+   "use": "twoDigits"
+  },
+  {
+   "orig": "Ok",
+   "use": "hexByte"
+  },
+  {
+   "orig": "Fk",
+   "use": "rgbToHex"
+  },
+  {
+   "orig": "Rk",
+   "use": "rgbToInt"
+  },
+  {
+   "orig": "Hk",
+   "use": "isLightColor"
+  },
+  {
+   "orig": "Lk",
+   "use": "hslToRgb"
+  },
+  {
+   "orig": "Ik",
+   "use": "rgbToHsl"
+  },
+  {
+   "orig": "Nk",
+   "use": "parseHexColor"
+  },
+  {
+   "orig": "H3",
+   "use": "rgbTripleToHex"
+  },
+  {
+   "orig": "Df",
+   "use": "hexToBuffer"
+  },
+  {
+   "orig": "Af",
+   "use": "bufferToHex"
+  },
+  {
+   "orig": "Gee",
+   "use": "stringFromCodes"
+  },
+  {
+   "orig": "Kee",
+   "use": "readInt32BE"
+  },
+  {
+   "orig": "Yee",
+   "use": "readInt32LE"
+  },
+  {
+   "orig": "mu",
+   "use": "ownBuffer"
+  },
+  {
+   "orig": "bf",
+   "use": "ownBuffer"
+  },
+  {
+   "orig": "jb",
+   "use": "zeroFill"
+  },
+  {
+   "orig": "Ub",
+   "use": "xorInto"
+  },
+  {
+   "orig": "Jb",
+   "use": "clearTopBits"
+  },
+  {
+   "orig": "gu",
+   "use": "statFromNode"
+  },
+  {
+   "orig": "dk",
+   "use": "statFromCapacitor"
+  },
+  {
+   "orig": "Ol",
+   "use": "point"
+  },
+  {
+   "orig": "Nl",
+   "use": "rect"
+  },
+  {
+   "orig": "Bl",
+   "use": "distance"
+  },
+  {
+   "orig": "Rl",
+   "use": "rectAt"
+  },
+  {
+   "orig": "Fl",
+   "use": "pointOfEvent"
+  },
+  {
+   "orig": "d3",
+   "use": "box"
+  },
+  {
+   "orig": "f3",
+   "use": "boxOfPoints"
+  },
+  {
+   "orig": "m3",
+   "use": "boxOfRect"
+  },
+  {
+   "orig": "v3",
+   "use": "rectOfBox"
+  },
+  {
+   "orig": "g3",
+   "use": "boxUnion"
+  },
+  {
+   "orig": "y3",
+   "use": "boxGrow"
+  },
+  {
+   "orig": "b3",
+   "use": "boxContains"
+  },
+  {
+   "orig": "w3",
+   "use": "boxCenter"
+  },
+  {
+   "orig": "k3",
+   "use": "centeredOrigin"
+  },
+  {
+   "orig": "P3",
+   "use": "boxPoints"
+  },
+  {
+   "orig": "L3",
+   "use": "sortedBoxPoints"
+  },
+  {
+   "orig": "I3",
+   "use": "sortByKey"
+  },
+  {
+   "orig": "F3",
+   "use": "boxX"
+  },
+  {
+   "orig": "N3",
+   "use": "boxY"
+  },
+  {
+   "orig": "q5",
+   "use": "pushOut"
+  },
+  {
+   "orig": "H5",
+   "use": "sideMidpoint"
+  },
+  {
+   "orig": "j5",
+   "use": "bezierEdge"
+  },
+  {
+   "orig": "Ay",
+   "use": "sortHitsByScore"
+  },
+  {
+   "orig": "Py",
+   "use": "shiftRanges"
+  },
+  {
+   "orig": "eT",
+   "use": "frontmatterEntry"
+  },
+  {
+   "orig": "tT",
+   "use": "frontmatterStrings"
+  },
+  {
+   "orig": "iT",
+   "use": "frontmatterTags"
+  },
+  {
+   "orig": "nT",
+   "use": "frontmatterAliases"
+  },
+  {
+   "orig": "My",
+   "use": "prepareQuery"
+  },
+  {
+   "orig": "Dy",
+   "use": "fuzzyMatchJs"
+  },
+  {
+   "orig": "xy",
+   "use": "matchScore"
+  }
+ ]
+}
