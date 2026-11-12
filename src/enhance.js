@@ -186,7 +186,7 @@ window.globalEnhance = function globalEnhance() {
 		let cancelled = false, observer = null;
 		const fire = () => { if (cancelled) return; listener(); if (once) cancel(); };
 		const cancel = () => { cancelled = true; if (observer) observer.disconnect(); };
-		if (el.isConnected) { fire(); if (once) return cancel; }
+		if (el.isConnected) { Promise.resolve().then(fire); if (once) return cancel; }
 		observer = new MutationObserver(() => { if (el.isConnected && !el.__wasConnected) { el.__wasConnected = true; fire(); } else if (!el.isConnected) el.__wasConnected = false; });
 		el.__wasConnected = el.isConnected;
 		observer.observe(el.ownerDocument.documentElement, { childList: true, subtree: true });
