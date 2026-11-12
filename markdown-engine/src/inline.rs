@@ -163,8 +163,22 @@ fn locate(name: &str, v: &[u16], from: usize) -> Option<usize> {
 fn text(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     let mut min = v.len();
     if !p.only_text {
-        for &m in METHODS_LOC {
-            if let Some(k) = locate(m, v, 1) {
+        // Every locator answers "where is the next place my tokenizer could start, from here on". That answer stays true until
+        // it is passed, so it is remembered (in absolute positions) instead of scanning the rest of the text again each time.
+        let from_abs = r.idx + 1;
+        for (mi, &m) in METHODS_LOC.iter().enumerate() {
+            let cached = r.loc[mi];
+            let hit: Option<usize> = if m != "break" && cached != LOC_UNKNOWN && (cached == LOC_NONE || cached >= from_abs) {
+                if cached == LOC_NONE { None } else { Some(cached - r.idx) }
+            } else {
+                let h = locate(m, v, 1);
+                r.loc[mi] = match h {
+                    Some(k) => r.idx + k,
+                    None => LOC_NONE,
+                };
+                h
+            };
+            if let Some(k) = hit {
                 if k < min {
                     min = k;
                 }
@@ -571,34 +585,17 @@ fn link(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
         return None;
     }
     sub.push(ch);
-    let mut queue: S = Vec::new();
     index += 1;
     let mut now = r.now(p);
     now.col += index;
+    let content_start = index;
     let mut depth: i32 = 0;
-    let mut opening = 0;
     let mut closed = false;
-    let mut subqueue: S = Vec::new();
+    // brackets count even inside code (GFM); a backslash protects the next character
     while index < length {
-        let mut ch = v[index];
-        subqueue = vec![ch];
-        if ch == c('`') {
-            let mut count = 1;
-            while at(v, index + 1) == c('`') && index + 1 < length {
-                subqueue.push(ch);
-                index += 1;
-                count += 1;
-            }
-            if opening == 0 {
-                opening = count;
-            } else if count >= opening {
-                opening = 0;
-            }
-        } else if ch == c('\\') {
+        let ch = v[index];
+        if ch == c('\\') {
             index += 1;
-            if index < length {
-                subqueue.push(v[index]);
-            }
         } else if ch == c('[') {
             depth += 1;
         } else if ch == c(']') {
@@ -608,22 +605,19 @@ fn link(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
                 if at(v, index + 1) != c('(') || index + 1 >= length {
                     return None;
                 }
-                subqueue.push(c('('));
                 closed = true;
-                index += 1;
                 break;
             }
         }
-        queue.append(&mut subqueue);
         index += 1;
     }
     if !closed {
         return None;
     }
-    let content = queue.clone();
-    sub.extend_from_slice(&queue);
-    sub.extend_from_slice(&subqueue);
-    index += 1;
+    let content: S = v[content_start..index].to_vec();
+    sub.extend_from_slice(&content);
+    sub.extend_from_slice(&[c(']'), c('(')]);
+    index += 2;
     while index < length {
         let ch = v[index];
         if !is_ws(ch) {
@@ -907,7 +901,7 @@ fn reference(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     }
     index += 1;
     intro.push(ch);
-    let mut queue: S = Vec::new();
+    let start = index;
     let mut depth = 0;
     let mut bracketed = false;
     while index < length {
@@ -922,18 +916,12 @@ fn reference(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
             depth -= 1;
         }
         if ch == c('\\') {
-            queue.push(ch);
-            index += 1;
-            if index >= length {
-                break;
-            }
-            ch = v[index];
+            index += 1; // the next character is taken as it is
         }
-        queue.push(ch);
         index += 1;
     }
-    let mut sub: S = queue.clone();
-    let content = queue.clone();
+    let content: S = v[start..index.min(length)].to_vec();
+    let mut sub: S = content.clone();
     if at(v, index) != c(']') || index >= length {
         return None;
     }
@@ -1021,14 +1009,12 @@ fn strong(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     }
     let marker = ch;
     let mut index = 2;
-    let mut queue: S = Vec::new();
     while index < length {
-        let mut ch = v[index];
-        if ch == marker && at(v, index + 1) == marker && index + 1 < length {
-            ch = at(v, index + 2);
-            let ex = index + 2 < length;
-            if !(ex && ch == marker) {
-                if trim(&queue).is_empty() {
+        let ch = v[index];
+        if ch == marker && index + 1 < length && v[index + 1] == marker {
+            let ch2 = at(v, index + 2);
+            if !(index + 2 < length && ch2 == marker) {
+                if trim(&v[2..index]).is_empty() {
                     return None;
                 }
                 if silent {
@@ -1036,25 +1022,15 @@ fn strong(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
                 }
                 let mut now = r.now(p);
                 now.col += 2;
-                let kids = p.tokenize_inline(&queue, now.line, now.col);
-                let mut sub = vec![marker, marker];
-                sub.extend_from_slice(&queue);
-                sub.push(marker);
-                sub.push(marker);
-                let mut n = done(p, r, &sub, Ty::Strong);
+                let kids = p.tokenize_inline(&v[2..index], now.line, now.col);
+                let mut n = done(p, r, &v[..index + 2], Ty::Strong);
                 n.ch = kids;
                 return Some(Some(n));
             }
         }
         if ch == c('\\') {
-            queue.push(ch);
             index += 1;
-            if index >= length {
-                break;
-            }
-            ch = v[index];
         }
-        queue.push(ch);
         index += 1;
     }
     None
@@ -1068,21 +1044,20 @@ fn emphasis(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     }
     let marker = ch;
     let mut index = 1;
-    let mut queue: S = Vec::new();
     let mut character: u16 = 0;
     while index < length {
         let prev = character;
         character = v[index];
         if character == marker {
             index += 1;
-            character = at(v, index);
             let ex = index < length;
+            character = at(v, index);
             if !(ex && character == marker) {
-                if trim(&queue).is_empty() || prev == marker {
+                // closing marker: the content is everything between the two markers
+                if trim(&v[1..index - 1]).is_empty() || prev == marker {
                     return None;
                 }
                 if marker == c('_') && ex && is_word(character) {
-                    queue.push(marker);
                     continue;
                 }
                 if silent {
@@ -1090,65 +1065,44 @@ fn emphasis(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
                 }
                 let mut now = r.now(p);
                 now.col += 1;
-                let kids = p.tokenize_inline(&queue, now.line, now.col);
-                let mut sub = vec![marker];
-                sub.extend_from_slice(&queue);
-                sub.push(marker);
-                let mut n = done(p, r, &sub, Ty::Emphasis);
+                let kids = p.tokenize_inline(&v[1..index - 1], now.line, now.col);
+                let mut n = done(p, r, &v[..index], Ty::Emphasis);
                 n.ch = kids;
                 return Some(Some(n));
             }
-            queue.push(marker);
         }
         if character == c('\\') {
-            queue.push(character);
             index += 1;
             character = at(v, index);
-            if index >= length {
-                break;
-            }
         }
-        queue.push(character);
         index += 1;
     }
     None
 }
 
 fn deletion(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
-    if !(at(v, 0) == c('~') && at(v, 1) == c('~') && v.len() >= 2) || is_ws(at(v, 2)) && v.len() > 2 {
+    let length = v.len();
+    if !(at(v, 0) == c('~') && at(v, 1) == c('~') && length >= 2) || is_ws(at(v, 2)) && length > 2 {
         return None;
     }
-    let length = v.len();
-    let mut index = 1;
     let mut now = r.now(p);
     now.col += 2;
-    let mut character: u16;
-    let mut previous: u16 = 0;
-    let mut preceding: u16 = 0;
-    let mut subvalue: S = Vec::new();
-    loop {
-        index += 1;
-        if index >= length {
-            break;
-        }
-        character = v[index];
-        if character == c('~') && previous == c('~') && (preceding == 0 || !is_ws(preceding)) {
+    let mut index = 2;
+    while index < length {
+        // `previous` is the character before this one, `preceding` the one before that (both only inside the content)
+        let previous: u16 = if index >= 3 { v[index - 1] } else { 0 };
+        let preceding: u16 = if index >= 4 { v[index - 2] } else { 0 };
+        if v[index] == c('~') && previous == c('~') && (preceding == 0 || !is_ws(preceding)) {
             if silent {
                 return Some(None);
             }
-            let kids = p.tokenize_inline(&subvalue, now.line, now.col);
-            let mut sub = u("~~");
-            sub.extend_from_slice(&subvalue);
-            sub.extend_from_slice(&u("~~"));
-            let mut n = done(p, r, &sub, Ty::Delete);
+            let inner = &v[2..index - 1];
+            let kids = p.tokenize_inline(inner, now.line, now.col);
+            let mut n = done(p, r, &v[..index + 1], Ty::Delete);
             n.ch = kids;
             return Some(Some(n));
         }
-        if previous != 0 {
-            subvalue.push(previous);
-        }
-        preceding = previous;
-        previous = character;
+        index += 1;
     }
     None
 }
@@ -1253,40 +1207,28 @@ fn brk(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
 }
 
 fn mark(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
-    if !(starts_with(v, "==") && !starts_with(v, "====")) || is_ws(at(v, 2)) && v.len() > 2 {
+    let length = v.len();
+    if !(starts_with(v, "==") && !starts_with(v, "====")) || is_ws(at(v, 2)) && length > 2 {
         return None;
     }
-    let u_len = v.len();
     let mut now = r.now(p);
     now.col += 2;
-    let mut o: u16;
-    let mut s: u16 = 0;
-    let mut a: u16 = 0;
-    let mut l: S = Vec::new();
-    let mut cc = 1;
-    loop {
-        cc += 1;
-        if cc >= u_len {
-            break;
-        }
-        o = v[cc];
-        if o == c('=') && s == c('=') && !(a != 0 && is_ws(a)) {
+    let mut cc = 2;
+    while cc < length {
+        // `s` is the character before this one, `a` the one before that (both only inside the content)
+        let s: u16 = if cc >= 3 { v[cc - 1] } else { 0 };
+        let a: u16 = if cc >= 4 { v[cc - 2] } else { 0 };
+        if v[cc] == c('=') && s == c('=') && !(a != 0 && is_ws(a)) {
             if silent {
                 return Some(None);
             }
-            let kids = p.tokenize_inline(&l, now.line, now.col);
-            let mut sub = u("==");
-            sub.extend_from_slice(&l);
-            sub.extend_from_slice(&u("=="));
-            let mut n = done(p, r, &sub, Ty::Mark);
+            let inner = &v[2..cc - 1];
+            let kids = p.tokenize_inline(inner, now.line, now.col);
+            let mut n = done(p, r, &v[..cc + 1], Ty::Mark);
             n.ch = kids;
             return Some(Some(n));
         }
-        if s != 0 {
-            l.push(s);
-        }
-        a = s;
-        s = o;
+        cc += 1;
     }
     None
 }

@@ -17,16 +17,21 @@ pub struct P {
     pub breaks: bool,
 }
 
+pub const LOC_UNKNOWN: usize = usize::MAX;
+pub const LOC_NONE: usize = usize::MAX - 1;
+
 #[derive(Clone)]
 pub struct Run {
     pub line: usize,
     pub col: usize,
     pub idx: usize,
+    /// inline locators: the next position found for each (absolute), see `inline::text`
+    pub loc: [usize; 20],
 }
 
 impl Run {
     pub fn new(line: usize, col: usize) -> Run {
-        Run { line, col, idx: 0 }
+        Run { line, col, idx: 0, loc: [LOC_UNKNOWN; 20] }
     }
     pub fn now(&self, p: &P) -> Pt {
         Pt { line: self.line, col: self.col, off: p.to_offset(self.line, self.col) }

@@ -2019,7 +2019,7 @@ fn table(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
                 }
             } else {
                 cell.push(ch);
-                if ch == c('\\') && idx != len - 1 {
+                if ch == c('\\') && idx != len - 2 {
                     cell.push(at(&line, idx + 1));
                     idx += 1;
                 }
