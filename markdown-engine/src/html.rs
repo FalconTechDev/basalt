@@ -532,6 +532,7 @@ fn esc_attr(t: &str, out: &mut String) {
             '&' => out.push_str("&#x26;"),
             '"' => out.push_str("&#x22;"),
             '`' => out.push_str("&#x60;"),
+            '\'' => out.push_str("&#x27;"),
             '\0' => out.push_str("&#x0;"),
             c => out.push(c),
         }
