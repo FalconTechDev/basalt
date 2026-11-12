@@ -42,6 +42,7 @@ function loadWorker(src, name) {
     return posted[0] === undefined ? undefined : structuredClone(posted[0]); // what postMessage would deliver
   };
   return {
+    ask,
     meta: (text) => ask({ metadataCache: new TextEncoder().encode(text).buffer }),
     sections: (text) => ask({ parseSections: text, options: { ...OPTIONS } }),
   };
@@ -166,6 +167,33 @@ function showOne(name, text) {
   }
 }
 
+if (flag("--contract")) {
+  // odd messages: both workers must answer the same (nothing, {}, null ...)
+  const enc = (s) => new TextEncoder().encode(s).buffer;
+  const cases = {
+    "empty object": {}, "metadataCache undefined": { metadataCache: undefined }, "metadataCache null": { metadataCache: null },
+    "empty buffer": { metadataCache: new ArrayBuffer(0) }, "buffer with text": { metadataCache: enc("# a\n[[b]]") },
+    "bom buffer": { metadataCache: enc("﻿# a\n[[b]]") }, "invalid utf-8": { metadataCache: new Uint8Array([0x23, 0x20, 0xff, 0xfe, 0x0a, 0x5b, 0x5b, 0x61, 0x5d, 0x5d]).buffer },
+    "metadataCache string": { metadataCache: "# a" }, "parseSections empty": { parseSections: "" }, "parseSections text": { parseSections: "# a\n\ntext", options: { breaks: true, commonmark: true } },
+    "parseSections no options": { parseSections: "a\nb", options: undefined }, "parseSections breaks off": { parseSections: "a\nb\n\nc  \nd", options: { breaks: false, commonmark: true } },
+    "parseSections number": { parseSections: 5 }, "parseSections null": { parseSections: null }, "parseSections undefined": { parseSections: undefined },
+    "parseSections array": { parseSections: ["a", "b"] }, "parseSections object": { parseSections: { a: 1 } }, "parseSections true": { parseSections: true },
+    "metadataCache typed array": { metadataCache: new TextEncoder().encode("# a") }, "metadataCache number": { metadataCache: 7 }, "metadataCache object": { metadataCache: {} }, "parseSections bom": { parseSections: "﻿---\na: 1\n---\n# x" },
+    "unknown": { hello: 1 }, "both keys": { metadataCache: enc("# a"), parseSections: "b" },
+  };
+  const quiet = console.error; console.error = () => {};
+  let bad = 0;
+  for (const [name, msg] of Object.entries(cases)) {
+    let a, b;
+    try { a = oldW.ask(msg); } catch (e) { a = "threw " + e.message; }
+    try { b = newW.ask(msg); } catch (e) { b = "threw " + e.message; }
+    const same = isDeepStrictEqual(a, b) || (a?.sections && b?.sections && isDeepStrictEqual(a.frontmatter, b.frontmatter) && isDeepStrictEqual(a.sections.map((s) => [s.pos, s.level, normHtml(s.html)]), b.sections.map((s) => [s.pos, s.level, normHtml(s.html)])));
+    if (!same) bad++;
+    console.log(`${same ? "same " : "DIFF "} ${name}: ${short(a)}${same ? "" : "\n        new: " + short(b)}`);
+  }
+  console.error = quiet;
+  process.exit(bad ? 1 : 0);
+}
 if (flag("--text")) {
   showOne("snippet", opt("--text").replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\r/g, "\r").replace(/\\u([0-9a-f]{4})/gi, (m, h) => String.fromCharCode(parseInt(h, 16))));
   process.exit(0);

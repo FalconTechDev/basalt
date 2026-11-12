@@ -34,6 +34,21 @@
     return dec.decode(new Uint8Array(w.memory.buffer, w.out_ptr(), n)).replace(/([^]*)/g, (m, s) => s.normalize("NFC"));
   }
 
+  // the bytes of an ArrayBuffer or a typed array; anything else is an error (the reply is null)
+  function bytesOf(b) {
+    const tag = Object.prototype.toString.call(b);
+    if (tag === "[object ArrayBuffer]" || tag === "[object SharedArrayBuffer]") return new Uint8Array(b);
+    if (ArrayBuffer.isView(b)) return new Uint8Array(b.buffer, b.byteOffset, b.byteLength);
+    throw new TypeError("metadataCache must be an ArrayBuffer");
+  }
+
+  // a string is the note; nothing (or an object, as a file description would be) is an empty note; other values are an error
+  function textOf(v) {
+    if (typeof v === "string") return v;
+    if (v === null || v === undefined || typeof v === "object") return "";
+    throw new TypeError("parseSections must be a string");
+  }
+
   function post(m) {
     self.postMessage(m);
   }
@@ -44,12 +59,12 @@
       if (Object.prototype.hasOwnProperty.call(t, "metadataCache")) {
         const buf = t.metadataCache;
         if (!buf) return post({});
-        const json = call("metadata", new Uint8Array(buf));
+        const json = call("metadata", bytesOf(buf));
         return post(json === null ? null : JSON.parse(json));
       }
       if (Object.prototype.hasOwnProperty.call(t, "parseSections")) {
         opts = t.options || {};
-        const json = call("sections", enc.encode(String(t.parseSections)));
+        const json = call("sections", enc.encode(textOf(t.parseSections)));
         if (json === null) return post(null);
         const r = JSON.parse(json);
         return post({ sections: r.sections, frontmatter: r.frontmatter });
