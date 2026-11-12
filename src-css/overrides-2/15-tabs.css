@@ -1,0 +1,95 @@
+/* tabs (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* status-bar */
+.status-bar-item-segment:last-child {
+  margin-inline-end: 0;
+}
+
+/* workspace-tabs */
+.workspace-tabs .workspace-leaf {
+  height: 100%;
+  background-color: var(--background-secondary);
+}
+
+/* workspace-tab */
+.workspace-tab-header-tab-list .clickable-icon,
+.workspace-tab-header-new-tab .clickable-icon {
+  --icon-size: var(--icon-m);
+  --icon-stroke: var(--icon-m-stroke-width);
+  align-items: center;
+  padding: var(--size-2-2);
+  color: var(--icon-color);
+}
+
+/* mod-root */
+.mod-root .workspace-tab-header-status-icon {
+  color: var(--text-accent);
+}
+
+.mod-root .workspace-tab-header-status-icon,
+.mod-root .workspace-tab-header-inner-icon {
+  --icon-size: var(--icon-xs);
+  --icon-stroke: var(--icon-xs-stroke-width);
+}
+
+/* view-actions */
+.view-actions {
+  --icon-size: var(--icon-s);
+  gap: 0;
+  align-items: center;
+}
+
+/* clickable-icon */
+.clickable-icon.side-dock-ribbon-action:active,
+.mod-left-split .workspace-tab-header-inner-icon:active,
+.mod-right-split .workspace-tab-header-inner-icon:active {
+  color: var(--icon-color-focused);
+}
+
+.clickable-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--size-2-2) var(--size-2-3);
+  border-radius: var(--clickable-icon-radius);
+  height: auto;
+  color: var(--icon-color);
+  background-color: transparent;
+  cursor: var(--cursor);
+  -webkit-app-region: no-drag;
+  corner-shape: var(--corner-shape);
+}
+
+@media (hover: hover) {
+  .clickable-icon:hover svg {
+    opacity: var(--icon-opacity-hover);
+  }
+
+  .clickable-icon.has-active-menu svg,
+  .clickable-icon:active svg {
+    opacity: var(--icon-opacity-hover);
+  }
+}
+
+.clickable-icon.is-active svg {
+  opacity: var(--icon-opacity-hover);
+}
+
+@media (hover: hover) {
+  .clickable-icon.is-active:hover {
+    background-color: var(--background-modifier-active-hover);
+  }
+
+  .clickable-icon[aria-disabled='true']:hover {
+    background-color: unset;
+  }
+}
+
+/* workspace-drawer */
+.workspace-drawer-tab-options .workspace-tab-header-inner-title {
+  overflow: hidden;
+  flex-grow: 1;
+  font-size: var(--font-ui-medium);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

@@ -1,0 +1,16 @@
+/* tokens (late): rules of this component that have to stay after rules of components further down the build order. */
+
+@media screen and (forced-colors: active) {
+  :root {
+    --focus-ring-color: CanvasText;
+
+    --page-border: 1px solid CanvasText;
+    --page-margin: 8px auto -1px;
+
+    --pdfViewer-padding-bottom: 9px;
+
+    --spreadHorizontalWrapped-margin-LR: 3.5px;
+
+    --xfa-focus-outline: 2px solid CanvasText;
+  }
+}

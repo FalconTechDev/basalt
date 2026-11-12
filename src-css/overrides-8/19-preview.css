@@ -1,0 +1,19 @@
+/* preview (late): rules of this component that have to stay after rules of components further down the build order. */
+
+@container (width < 250px) {
+  /* metadata-property */
+  .metadata-property .metadata-property-value {
+    margin-top: -2px;
+    padding-inline-start: calc(var(--icon-size) + var(--size-4-1));
+  }
+}
+
+/* reveal */
+.reveal .task-list-item {
+  margin-inline-start: -1.5em;
+}
+
+/* footnotes-view */
+.footnotes-view .inline-title {
+  display: none;
+}

@@ -1,0 +1,47 @@
+/* graph (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* graph-controls */
+.graph-controls {
+  position: absolute;
+  inset-inline-end: var(--size-4-3);
+  top: var(--size-4-3);
+  overflow: auto;
+  border-radius: var(--menu-radius);
+  padding: 0;
+  width: var(--graph-controls-width);
+  background-color: var(--menu-background);
+  corner-shape: var(--menu-corner-shape);
+}
+
+/* graph-color */
+.graph-color-group {
+  --swatch-height: 18px;
+  --swatch-width: 18px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 0 6px 0;
+  transition: top 200ms ease-in-out;
+}
+
+.graph-color-group input[type="color"] {
+  margin: 0 2px 0 6px;
+}
+
+/* graph-controls */
+.graph-controls-button {
+  display: none;
+  z-index: 1;
+}
+
+/* graph-control */
+.graph-control-section-header {
+  font-weight: var(--font-medium);
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+}
+
+.graph-control-section {
+  padding: var(--size-2-3) var(--size-4-3);
+  border-bottom: 1px solid var(--background-modifier-border);
+}

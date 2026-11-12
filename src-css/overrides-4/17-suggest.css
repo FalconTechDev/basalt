@@ -1,0 +1,16 @@
+/* suggest (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* suggestion-item */
+.suggestion-item.is-selected,
+.suggestion-item.mobile-tap {
+  background-color: var(--background-modifier-hover);
+}
+
+.suggestion-item.is-being-dragged {
+  pointer-events: auto;
+  background-color: var(--background-modifier-hover);
+}
+
+.suggestion-item.mod-downranked {
+  color: var(--text-muted);
+}

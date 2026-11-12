@@ -1,0 +1,38 @@
+/* base (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* search-suggest */
+.search-suggest-item.mod-group {
+  align-items: center;
+  margin: 0;
+  padding: 0 0 0 var(--size-4-2);
+  border-radius: 0;
+  color: var(--text-muted);
+  font-weight: var(--font-semibold);
+  font-size: var(--font-ui-smaller);
+  cursor: default;
+}
+
+/* search-info */
+.search-info-container:empty {
+  display: none;
+}
+
+/* pull-down */
+.pull-down-action {
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0 auto 0 auto;
+  padding: calc(var(--safe-area-inset-top) + var(--size-4-3)) var(--size-4-6) var(--size-4-16);
+  text-align: center;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--background-primary) 90%, transparent) 40%, transparent 100%);
+}
+
+/* pull-out */
+.pull-out-action {
+  top: 50%;
+  padding: var(--size-4-3) var(--size-4-4);
+  border-radius: 40px;
+  margin: 0 var(--size-4-4);
+}

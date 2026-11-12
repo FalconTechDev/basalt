@@ -1,0 +1,26 @@
+/* code: Syntax highlight tokens for fenced code. */
+
+code[class*="language-"] {
+  color: var(--code-normal);
+  word-wrap: break-word;
+  word-break: normal;
+  word-spacing: normal;
+  white-space: pre-wrap;
+  direction: ltr;
+  font-family: var(--font-monospace);
+  line-height: var(--line-height-normal);
+  text-align: left;
+  -webkit-hyphens: none;
+  hyphens: none;
+  background: none;
+}
+
+/* token */
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}

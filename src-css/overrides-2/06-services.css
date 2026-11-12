@@ -1,0 +1,61 @@
+/* services (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* diff-line */
+.diff-line.mod-left .diff-changed {
+  background-color: rgba(var(--background-modifier-error-rgb), 0.4);
+}
+
+.diff-line.mod-right .diff-changed {
+  background-color: rgba(var(--background-modifier-success-rgb), 0.4);
+}
+
+/* file-recovery */
+.file-recovery-list-item-container {
+  overflow: auto;
+  flex: 1 1 0;
+}
+
+/* publish-changes */
+.publish-changes-switch-site {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  position: relative;
+  gap: var(--size-2-1);
+  top: 2px;
+  margin-inline-start: var(--size-4-2);
+  font-size: var(--font-ui-small);
+}
+
+/* sync-history */
+.sync-history-list-item-container {
+  overflow: auto;
+  flex: 1 1 0;
+}
+
+.sync-history-content-container.mod-empty .sync-history-content-empty {
+  display: block;
+  padding: 24px;
+  text-align: center;
+}
+
+.sync-history-content .setting-item-control .checkbox-container {
+  margin-inline-end: var(--size-4-3);
+}
+
+/* sync-exclude */
+.sync-exclude-folder-name {
+  flex-grow: 1;
+}
+
+/* sync-vault */
+.sync-vault-share-container {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* open-vault */
+.open-vault-options.mod-login input[type='text'] {
+  width: 250px;
+}

@@ -1,0 +1,129 @@
+/* editor (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* cm-inline */
+.cm-inline-code,
+.cm-math {
+  color: var(--code-normal);
+}
+
+/* cm-comment */
+.cm-comment,
+.cm-meta {
+  color: var(--code-comment);
+}
+
+/* cm-tag */
+.cm-tag {
+  color: var(--code-tag);
+}
+
+/* cm-punctuation */
+.cm-punctuation,
+.cm-bracket,
+.cm-hr {
+  color: var(--code-punctuation);
+}
+
+/* cm-number */
+.cm-number {
+  color: var(--code-value);
+}
+
+/* cm-qualifier */
+.cm-qualifier,
+.cm-string,
+.cm-string-2 {
+  color: var(--code-string);
+}
+
+/* cm-operator */
+.cm-operator {
+  color: var(--code-operator);
+}
+
+/* cm-link */
+.cm-link,
+.cm-variable,
+.cm-variable-2,
+.cm-variable-3 {
+  color: var(--code-property);
+}
+
+/* cm-builtin */
+.cm-builtin,
+.cm-property,
+.cm-attribute,
+.cm-type {
+  color: var(--code-function);
+}
+
+/* cm-keyword */
+.cm-keyword {
+  color: var(--code-keyword);
+}
+
+/* cm-editor */
+.cm-editor.cm-focused .cm-matchingBracket {
+  box-shadow: inset 0 0 0 1px var(--background-modifier-hover);
+  background-color: var(--code-bracket-background);
+}
+
+/* cm-hmd */
+.cm-hmd-frontmatter {
+  font-size: var(--font-smaller);
+  color: var(--text-muted);
+}
+
+/* cm-formatting */
+.cm-formatting-header {
+  color: var(--text-faint);
+}
+
+.cm-formatting-list-ul,
+.cm-formatting-list-ol {
+  padding-inline-start: var(--list-padding-inline-start);
+  font-variant-numeric: tabular-nums;
+}
+
+/* cm-s */
+.cm-s-basalt div.HyperMD-hover > .HyperMD-hover-content {
+  border: 1px solid #000;
+  padding: 0.5em;
+  color: #000;
+  background-color: #fff;
+}
+
+/* markdown-source */
+.markdown-source-view.mod-cm6 .math-block > mjx-container {
+  overflow-x: auto;
+  margin: 0;
+  padding: 1em 0;
+}
+
+/* cm-hashtag */
+.cm-hashtag {
+  border: var(--tag-border-width) solid var(--tag-border-color);
+  border-inline-start: none;
+  border-inline-end: none;
+  padding-top: var(--tag-padding-y);
+  padding-bottom: var(--tag-padding-y);
+  color: var(--tag-color);
+  font-size: var(--tag-size);
+  font-weight: var(--tag-weight);
+  vertical-align: baseline;
+  background-color: var(--tag-background);
+}
+
+/* cm-strong */
+.cm-strong {
+  --link-weight: calc(var(--font-weight) + var(--bold-modifier));
+  font-weight: calc(var(--font-weight) + var(--bold-modifier));
+  color: var(--bold-color);
+}
+
+/* cm-em */
+.cm-em {
+  font-style: italic;
+  font-weight: var(--italic-weight);
+  color: var(--italic-color);
+}

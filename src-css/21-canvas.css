@@ -1,0 +1,400 @@
+/* canvas: Canvas view: board, nodes, edges, toolbar and popups. */
+
+/* mod-rtl */
+.mod-rtl .canvas-card-menu {
+  flex-direction: row-reverse;
+}
+
+/* canvas-wrapper */
+.canvas-wrapper.is-dragging iframe:not(.is-controlled),
+.canvas-wrapper.is-dragging webview {
+  pointer-events: none;
+}
+
+.canvas-wrapper.is-screenshotting {
+  z-index: 999999;
+}
+
+.canvas-wrapper.is-screenshotting .canvas-card-menu,
+.canvas-wrapper.is-screenshotting .canvas-controls {
+  display: none !important;
+}
+
+.canvas-wrapper.is-screenshotting * {
+  pointer-events: none !important;
+}
+
+/* canvas-background */
+.canvas-background circle {
+  fill: var(--canvas-dot-pattern);
+}
+
+/* canvas-wrapper */
+.canvas-wrapper:not(.mod-readonly) .canvas-selection.mod-group-selection {
+  cursor: grab;
+}
+
+.canvas-wrapper:not(.mod-readonly) .canvas-selection.mod-group-selection:active {
+  cursor: grabbing;
+}
+
+/* canvas-controls */
+.canvas-controls,
+.canvas-card-menu {
+  display: flex;
+  position: absolute;
+  z-index: var(--layer-cover);
+  font-size: var(--font-ui-medium);
+}
+
+/* canvas-card */
+.canvas-card-menu .canvas-card-menu-button svg {
+  fill: var(--background-primary);
+}
+
+/* theme-dark */
+.theme-dark .canvas-card-menu .canvas-card-menu-button svg {
+  fill: var(--background-secondary);
+}
+
+/* canvas-card */
+.canvas-card-menu .canvas-card-menu-button.mod-draggable:active {
+  cursor: grabbing;
+}
+
+.canvas-card-menu .canvas-card-menu-button.mod-draggable svg {
+  transition: 90ms transform ease-out;
+}
+
+@media (hover: hover) {
+  .canvas-card-menu .canvas-card-menu-button.mod-draggable:hover svg {
+    filter: drop-shadow(0px 6px 2px rgba(0, 0, 0, 0.1));
+    transform: translateY(-6px) scale(var(--direction), 1);
+  }
+}
+
+/* canvas-control */
+.canvas-control-item.is-disabled svg {
+  color: var(--text-faint);
+}
+
+.canvas-control-item svg {
+  pointer-events: none;
+}
+
+/* canvas-wrapper */
+.canvas-wrapper:not(.mod-readonly) .canvas-node:not(.is-editing) .canvas-node-container {
+  cursor: grab;
+}
+
+.canvas-wrapper:not(.mod-readonly) .canvas-node:not(.is-editing) .canvas-node-container:active {
+  cursor: grabbing;
+}
+
+/* is-ios */
+body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* canvas-node */
+.canvas-node-label svg {
+  position: relative;
+  top: 2px;
+  margin-right: var(--size-4-1);
+}
+
+@media (hover: hover) {
+  .canvas-node:hover .canvas-node-label.mod-hover-label {
+    opacity: 1;
+  }
+}
+
+@media (hover: none) {
+  .canvas-node.is-focused .canvas-node-label.mod-hover-label {
+    opacity: 1;
+  }
+}
+
+/* canvas-wrapper */
+.canvas-wrapper.mod-zoomed-out .canvas-node-label {
+  display: none;
+}
+
+/* canvas-node */
+.canvas-node-placeholder::after {
+  display: block;
+  position: absolute;
+  top: var(--size-4-4);
+  right: var(--size-4-4);
+  bottom: var(--size-4-4);
+  left: var(--size-4-4);
+  border-radius: var(--radius-s);
+  content: ' ';
+  background-color: rgba(var(--canvas-color), 0.1);
+}
+
+/* canvas-icon */
+.canvas-icon-placeholder svg {
+  width: 100%;
+  height: 100%;
+  color: rgb(var(--canvas-color));
+  opacity: 0.3;
+}
+
+/* canvas-node */
+.canvas-node.is-dragging .canvas-node-container {
+  box-shadow: var(--shadow-drag);
+}
+
+.canvas-node.is-selected,
+.canvas-node.is-focused {
+  touch-action: initial;
+}
+
+.canvas-node.is-selected .canvas-node-container,
+.canvas-node.is-focused .canvas-node-container {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-stationary), var(--shadow-border-accent);
+}
+
+.canvas-node.is-selected.is-dragging .canvas-node-container,
+.canvas-node.is-focused.is-dragging .canvas-node-container {
+  box-shadow: var(--shadow-drag), var(--shadow-border-accent);
+}
+
+.canvas-node.is-themed .canvas-node-container {
+  border-color: rgba(var(--canvas-color), 0.7);
+  box-shadow: inset 0 0 0 1px rgba(var(--canvas-color), 0.7), var(--shadow-stationary);
+}
+
+.canvas-node.is-selected.is-themed .canvas-node-container,
+.canvas-node.is-focused.is-themed .canvas-node-container {
+  border-color: rgb(var(--canvas-color));
+  box-shadow: var(--shadow-border-themed-inset), var(--shadow-border-themed);
+}
+
+.canvas-node.is-selected.is-themed.is-dragging .canvas-node-container,
+.canvas-node.is-focused.is-themed.is-dragging .canvas-node-container {
+  box-shadow: var(--shadow-border-themed-inset), var(--shadow-border-themed);
+}
+
+.canvas-node.is-focused:not(.is-dragging) .canvas-node-content-blocker {
+  display: none;
+}
+
+.canvas-node-group:not(.is-focused):not(.is-selected) {
+  pointer-events: none;
+}
+
+/* is-ios */
+body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* canvas-wrapper */
+.canvas-wrapper:not(.mod-readonly) .canvas-group-label:active {
+  cursor: grabbing;
+}
+
+/* canvas-node */
+.canvas-node-group.is-themed .canvas-group-label:not([contenteditable="true"]) {
+  background-color: rgb(var(--canvas-color));
+}
+
+.canvas-node-group.is-themed .canvas-group-label:not([contenteditable="true"]).mod-foreground-light {
+  color: var(--text-on-accent);
+}
+
+.canvas-node-group.is-themed .canvas-group-label:not([contenteditable="true"]).mod-foreground-dark {
+  color: var(--text-on-accent-inverted);
+}
+
+.canvas-node-content.markdown-embed > .markdown-embed-link {
+  display: none;
+}
+
+.canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view {
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--size-4-4);
+}
+
+/* canvas-wrapper */
+.canvas-wrapper:not(.mod-readonly) .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* canvas-node */
+.canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view::before,
+.canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view::after {
+  display: block;
+  flex: 1 1 0;
+  min-height: min(calc(var(--canvas-node-height) * 0.1 - 3px), var(--size-4-4));
+  max-height: var(--size-4-4);
+  content: " ";
+}
+
+.canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view > .markdown-preview-sizer {
+  flex: 1 0 0;
+}
+
+.canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view .callout {
+  mix-blend-mode: normal;
+}
+
+/* is-focused */
+.is-focused .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view {
+  transform: translateZ(0);
+}
+
+/* canvas-node */
+.canvas-node-content.media-embed img,
+.canvas-node-content.media-embed video,
+.canvas-node-content.media-embed audio {
+  flex-shrink: 0;
+  flex-grow: 1;
+}
+
+/* canvas-wrapper */
+.canvas-wrapper.mod-readonly .canvas-node-resizer {
+  display: none;
+}
+
+/* canvas-node */
+.canvas-node-connection-point[data-side='top'] {
+  top: 1px;
+  left: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
+}
+
+.canvas-node-connection-point[data-side='right'] {
+  right: 1px;
+  top: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
+}
+
+.canvas-node-connection-point[data-side='bottom'] {
+  bottom: 1px;
+  left: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
+}
+
+.canvas-node-connection-point[data-side='left'] {
+  left: 1px;
+  top: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
+}
+
+.canvas-node-connection-point::after {
+  display: block;
+  position: relative;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  border: 3px solid var(--background-modifier-border);
+  box-sizing: border-box;
+  height: calc(var(--resizer-size) * var(--zoom-multiplier));
+  width: calc(var(--resizer-size) * var(--zoom-multiplier));
+  content: ' ';
+  background-color: var(--color-accent);
+  opacity: 0;
+}
+
+/* canvas-snaps */
+.canvas-snaps line {
+  stroke-width: 1px;
+  stroke: var(--color-accent);
+}
+
+.canvas-snaps circle {
+  fill: var(--color-accent);
+}
+
+/* canvas-edges */
+.canvas-edges path.canvas-display-path {
+  pointer-events: none;
+  stroke-width: calc(2px * var(--zoom-multiplier));
+  stroke: rgb(var(--canvas-color));
+  fill: none;
+  transition: stroke-width 100ms ease-out;
+}
+
+.canvas-edges path.canvas-interaction-path {
+  pointer-events: stroke;
+  stroke-width: calc(24px * var(--zoom-multiplier));
+  stroke-linecap: round;
+  stroke: transparent;
+  fill: none;
+  transition: stroke 100ms ease-out;
+}
+
+/* canvas-wrapper */
+.canvas-wrapper:not(.mod-readonly) .canvas-edges path.canvas-interaction-path {
+  cursor: grab;
+}
+
+.canvas-wrapper:not(.mod-readonly) .canvas-edges path.canvas-interaction-path:active {
+  cursor: grabbing;
+}
+
+/* canvas-edges */
+.canvas-edges polygon.canvas-path-end {
+  pointer-events: none;
+  stroke: rgb(var(--canvas-color));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1px;
+  fill: rgb(var(--canvas-color));
+  transform-box: fill-box;
+  transform: scale(var(--zoom-multiplier));
+  transform-origin: center top;
+}
+
+.canvas-edges g.is-focused path.canvas-display-path,
+.canvas:not(.is-connecting) .canvas-edges g:hover path.canvas-display-path {
+  stroke-width: calc(5.5px * var(--zoom-multiplier));
+}
+
+.canvas-edges g.is-focused path.canvas-interaction-path,
+.canvas:not(.is-connecting) .canvas-edges g:hover path.canvas-interaction-path {
+  stroke: rgba(var(--canvas-color), 0.1);
+}
+
+@media (hover: hover) {
+  /* canvas-color */
+  .canvas-color-picker-item.canvas-color-picker-custom:not(.is-active):hover {
+    box-shadow: 0 0 0 2px var(--background-modifier-border-hover);
+  }
+}
+
+/* canvas-empty */
+.canvas-empty-embed-action-list button {
+  padding: var(--size-4-5) var(--size-4-9);
+  font-size: var(--font-text-size);
+}
+
+/* canvas-instruction */
+.canvas-instruction-desc {
+  display: flex;
+  gap: var(--size-4-1);
+}
+
+/* canvas-minimap */
+.canvas-minimap rect {
+  stroke-width: 5px;
+  stroke: var(--background-modifier-border);
+  fill: var(--background-modifier-border);
+  fill-opacity: 0.65;
+}
+
+.canvas-minimap rect.is-themed {
+  stroke: rgb(var(--canvas-color));
+  fill: rgb(var(--canvas-color));
+  fill-opacity: 0.5;
+}
+
+.canvas-minimap path {
+  stroke: #c0c0c0;
+  fill: none;
+}
+
+.canvas-minimap path.is-themed {
+  stroke: rgb(var(--canvas-color));
+}

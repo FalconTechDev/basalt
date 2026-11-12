@@ -1,0 +1,108 @@
+/* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* clickable-icon */
+.clickable-icon.mobile-tap svg {
+  opacity: var(--icon-opacity-hover);
+}
+
+/* text-icon */
+.text-icon-button.mobile-tap .text-button-icon {
+  color: var(--icon-color-hover);
+}
+
+/* is-phone */
+body:not(.is-phone) .vertical-tab-nav-item.is-active {
+  background-color: var(--background-modifier-hover);
+}
+
+/* mobile-onboarding */
+.mobile-onboarding-radio-option {
+  display: flex;
+  gap: var(--size-4-2);
+  padding: var(--size-4-3);
+  border-radius: var(--radius-m);
+  border: 2px solid var(--background-modifier-border);
+}
+
+.mobile-onboarding-radio-option-desc {
+  margin-top: var(--size-4-5);
+  padding-inline-start: 0;
+  font-size: var(--font-ui-small);
+}
+
+/* is-phone */
+.is-phone .community-modal-button-container {
+  flex-direction: column;
+}
+
+/* mobile-option */
+.mobile-option-setting-item-name {
+  flex: 1 0 0;
+  color: var(--text-normal);
+}
+
+.mobile-option-setting-item-remove-icon {
+  display: flex;
+  color: var(--text-error);
+}
+
+.mobile-option-setting-item-add-icon {
+  display: flex;
+  color: var(--text-success);
+}
+
+/* is-mobile */
+.is-mobile .tree-item .tree-item-self {
+  padding-inline-end: var(--size-4-2);
+}
+
+.is-mobile .modal-button-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* mobile-toolbar */
+.mobile-toolbar-options-list-container {
+  overflow: hidden;
+  border-radius: var(--touch-size-m);
+}
+
+/* mobile-tab */
+.mobile-tab-title {
+  overflow: hidden;
+  font-size: var(--font-ui-smaller);
+  font-weight: var(--font-medium);
+  color: var(--text-normal);
+  text-overflow: ellipsis;
+  text-align: center;
+  white-space: pre;
+  unicode-bidi: plaintext;
+}
+
+/* is-phone */
+.is-phone .publish-changes-info {
+  flex-wrap: wrap;
+}
+
+.is-phone .sync-history-content .setting-item-name {
+  font-weight: var(--font-semibold);
+  font-size: var(--font-ui-large);
+  white-space: normal;
+}
+
+/* mobile-vault */
+.mobile-vault-chooser-version {
+  font-size: var(--font-ui-small);
+  color: var(--text-faint);
+}
+
+.mobile-vault-chooser-actions {
+  padding-bottom: 40px;
+}
+
+.mobile-vault-chooser-action-icon {
+  display: flex;
+  padding: 10px;
+  margin: -10px 0;
+  color: var(--text-muted);
+}

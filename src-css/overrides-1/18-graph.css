@@ -1,0 +1,15 @@
+/* graph (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* graph-color */
+.graph-color-group.drag-ghost input[type='text'] {
+  width: 100%;
+}
+
+.graph-color-group.drag-ghost input[type='color'] {
+  margin-inline-start: 6px;
+}
+
+/* graph-control */
+.graph-control-section:last-child .tree-item-children {
+  padding-bottom: var(--size-4-4);
+}

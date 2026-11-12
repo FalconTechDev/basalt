@@ -1,0 +1,35 @@
+/* base (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* side-dock */
+.side-dock-settings .side-dock-ribbon-action,
+.side-dock-actions .side-dock-ribbon-action {
+  margin: 0 auto;
+}
+
+/* card-container */
+.card-container.mod-horizontal .card {
+  margin: 10px 0;
+}
+
+@media (hover: hover) {
+  /* card */
+  .card.u-clickable:hover {
+    border: var(--border-width) solid var(--interactive-accent);
+    background-color: hsla(var(--interactive-accent-hsl), 0.1);
+  }
+
+  /* list-item */
+  .list-item.mod-selectable:hover {
+    background-color: var(--background-modifier-hover);
+  }
+}
+
+/* document-search */
+.document-search-container.mod-replace-mode .document-replace {
+  display: flex;
+}
+
+/* list-container */
+.list-container.mod-manage-workspaces:empty {
+  display: none;
+}

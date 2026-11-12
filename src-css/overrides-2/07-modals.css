@@ -1,0 +1,119 @@
+/* modals (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* setting-item */
+.setting-item > *:first-child {
+  margin-inline-end: var(--size-4-4);
+}
+
+.setting-item > *:last-child {
+  margin-inline-end: 0;
+}
+
+.setting-item-heading .setting-item-info {
+  flex-grow: 0;
+  margin-inline-end: 0;
+}
+
+/* modal */
+.modal.mod-image-lightbox .modal-content {
+  padding: var(--size-4-12) var(--size-4-3) var(--size-4-2) var(--size-4-3);
+  text-align: center;
+}
+
+.modal.mod-secret .suggestion-filter-toolbar {
+  display: flex;
+  gap: var(--size-4-2);
+  padding: var(--size-4-4) var(--size-4-4) 0 var(--size-4-4);
+}
+
+/* mod-community */
+.mod-community-modal .modal-sidebar .setting-item-name {
+  padding-inline-start: var(--size-4-1);
+  font-size: var(--font-ui-small);
+}
+
+/* community-item */
+.community-item:last-child {
+  margin-bottom: 0;
+}
+
+.community-item .flair {
+  --flair-background: var(--background-modifier-active-hover);
+  --flair-color: var(--text-accent);
+  top: -1px;
+  margin-inline-start: var(--size-4-1);
+  vertical-align: middle;
+}
+
+/* modal-confirmation */
+.modal-confirmation-state {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  text-align: center;
+}
+
+/* modal */
+.modal.mod-scrollable-content .modal-title {
+  padding: var(--size-4-4) var(--size-4-4) 0 var(--size-4-4);
+}
+
+.modal.mod-scrollable-content .modal-content {
+  overflow: auto;
+  padding: 0 var(--size-4-4) var(--size-4-4) var(--size-4-4);
+}
+
+.modal.mod-scrollable-content .modal-button-container {
+  margin-top: 0;
+  border-top: var(--border-width) solid var(--background-modifier-border);
+  padding: var(--size-4-4);
+}
+
+/* modal-content */
+.modal-content {
+  flex: 1 1 auto;
+  font-size: var(--font-ui-medium);
+}
+
+/* modal */
+.modal.mod-scrollable .modal-title {
+  padding: 0 var(--size-4-4);
+}
+
+.modal.mod-scrollable .modal-content {
+  overflow: auto;
+  padding: 0 var(--size-4-4) var(--size-4-4);
+  margin-bottom: calc(var(--input-height) + var(--size-4-8));
+  border-top: var(--border-width) solid var(--background-modifier-border);
+}
+
+/* vertical-tab */
+.vertical-tab-nav-item-title {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vertical-tab-header-group-items {
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
+  display: flex;
+  flex-direction: column;
+}
+
+.vertical-tab-content-container {
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+/* modal */
+.modal.mod-publish .modal-button-container {
+  gap: var(--size-4-2);
+  position: absolute;
+  bottom: 0;
+  margin: 0 0 0 calc(var(--size-4-4) * -1);
+  width: 100%;
+}

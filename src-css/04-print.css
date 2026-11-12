@@ -1,0 +1,87 @@
+/* print: Print layout. */
+
+@media print {
+  /* theme-dark */
+  .theme-dark {
+    --highlight-mix-blend-mode: darken;
+  }
+
+  html,
+  body {
+    overflow: auto !important;
+    contain: initial !important;
+    padding-top: 0 !important;
+    height: auto !important;
+  }
+
+  iframe,
+  .titlebar,
+  .app-container,
+  .progress-bar,
+  .popover,
+  .markdown-embed-link,
+  .suggestion-container,
+  .cm-tooltip.cm-tooltip-autocomplete {
+    display: none !important;
+  }
+
+  /* print */
+  body > :not(.print) {
+    display: none !important;
+  }
+
+  .print .markdown-preview-view {
+    height: unset !important;
+    color: initial;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .print .markdown-preview-view mark {
+    color: initial;
+  }
+
+  .print .markdown-preview-view .metadata-container {
+    display: none;
+  }
+
+  .print .markdown-preview-view .markdown-embed-content {
+    overflow: visible;
+    max-height: none;
+  }
+
+  .print .markdown-preview-view .callout-content {
+    display: inherit !important;
+  }
+
+  .print .bases-toolbar svg.lucide-chevrons-up-down {
+    display: none;
+  }
+
+  .print .bases-toolbar .bases-toolbar-item.bases-toolbar-sort-menu,
+  .print .bases-toolbar .bases-toolbar-item.bases-toolbar-filter-menu,
+  .print .bases-toolbar .bases-toolbar-item.bases-toolbar-properties-menu,
+  .print .bases-toolbar .bases-toolbar-item.bases-toolbar-new-item-menu {
+    display: none;
+  }
+
+  .print .external-link {
+    padding-right: 0;
+    background: none;
+  }
+
+  * {
+    text-shadow: none !important;
+  }
+
+  webview {
+    display: none;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  body {
+    --font-text: var(--font-print) !important;
+  }
+}
