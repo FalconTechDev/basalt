@@ -56,6 +56,9 @@ if (!process.argv.includes("--no-cargo")) {
 const gwasm = fs.readFileSync(path.join(gtarget, "wasm32-unknown-unknown/release/graph_engine.wasm"));
 fs.writeFileSync(path.join(src, "fp-graph.js"), fs.readFileSync(path.join(geng, "fp-graph.src.js"), "utf8").replace("__WASM_B64__", gwasm.toString("base64")));
 
+// the Markdown worker (src/worker.js): markdown-engine (Rust -> WASM) plus its small JS shim, see build-markdown.mjs
+execSync(`node build-markdown.mjs${process.argv.includes("--no-cargo") ? " --no-cargo" : ""}`, { cwd: root, stdio: "inherit" });
+
 const appPath = path.join(src, "app.js");
 const orig = path.join(src, "app.js.orig");
 if (!fs.existsSync(orig)) fs.copyFileSync(appPath, orig);
