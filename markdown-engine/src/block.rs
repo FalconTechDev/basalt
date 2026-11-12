@@ -1233,13 +1233,8 @@ fn remove_indentation(value: &[u16], maximum: usize) -> Vec<S> {
         if trim(&values[position]).is_empty() {
             continue;
         }
-        if ind != 0 {
-            if ind < min_indent {
-                min_indent = ind;
-            }
-        } else {
-            min_indent = usize::MAX;
-            break;
+        if ind != 0 && ind < min_indent {
+            min_indent = ind;
         }
     }
     if min_indent != usize::MAX {
@@ -1716,13 +1711,13 @@ fn footnote_definition(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     let ce = recs[last_idx].ce;
     let mut content: S = Vec::new();
     let sline = l.line;
+    let sp = r.eat(p, &v[..ce]);
+    let ep = r.now(p);
     for k in 0..n_rec {
         let b = &recs[k];
         p.add_off(sline + k, (b.cs - b.start) as i64);
         content.extend_from_slice(sl(v, b.cs, b.end));
     }
-    let sp = r.eat(p, &v[..ce]);
-    let ep = r.now(p);
     let save = p.in_block;
     p.in_block = true;
     let kids = p.tokenize_block(&content, l.line, l.col);

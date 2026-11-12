@@ -491,14 +491,6 @@ fn link(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
             if depth > 0 {
                 depth -= 1;
             } else {
-                while index < length {
-                    ch = at(v, index + 1);
-                    if !(index + 1 < length) || !is_ws(ch) {
-                        break;
-                    }
-                    subqueue.push(ch);
-                    index += 1;
-                }
                 if at(v, index + 1) != c('(') || index + 1 >= length {
                     return None;
                 }
