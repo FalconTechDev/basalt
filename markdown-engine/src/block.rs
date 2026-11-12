@@ -1198,11 +1198,15 @@ fn indent_of(s: &[u16]) -> (usize, Vec<(usize, usize)>) {
     let mut stops = Vec::new();
     while index < s.len() && (s[index] == TAB || s[index] == SP) {
         let size = if s[index] == TAB { 4 } else { 1 };
+        let before = indent;
         indent += size;
         if size > 1 {
             indent = (indent / size) * size;
         }
-        stops.push((indent, index));
+        // every column the character spans maps to it
+        for k in before + 1..=indent {
+            stops.push((k, index));
+        }
         index += 1;
     }
     (indent, stops)
@@ -1246,7 +1250,7 @@ fn remove_indentation(value: &[u16], maximum: usize) -> Vec<S> {
             while index > 0 && stop_at(stops, index).is_none() {
                 index -= 1;
             }
-            let pad = !trim(&values[position]).is_empty() && min_indent != 0 && index != min_indent;
+            let pad = !trim(&values[position]).is_empty() && min_indent != 0 && index != min_indent && !stops.is_empty();
             let cut = match stop_at(stops, index) {
                 Some(x) if index != 0 || true => x + 1,
                 _ => 0,
@@ -1920,6 +1924,10 @@ fn table(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     }
     let sub_all = join_owned(&lines);
     let alignments: S = if lines.len() > 1 { lines.remove(1) } else { S::new() };
+    // the header and the delimiter row must agree on a pipe in the very first column
+    if (at(&lines[0], 0) == c('|') && !lines[0].is_empty()) != (at(&alignments, 0) == c('|') && !alignments.is_empty()) {
+        return None;
+    }
     line_count -= 1;
     let mut align: Vec<u8> = Vec::new();
     let mut alignment: Option<Option<u8>> = None; // None = false, Some(None) = null, Some(Some(a))

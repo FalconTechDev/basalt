@@ -9,7 +9,7 @@ pub struct P {
     pub in_list: bool,
     pub in_block: bool,
     pub in_link: bool,
-    pub at_start: bool,
+    pub at_start: std::cell::Cell<bool>,
     pub only_text: bool,
     pub fail: bool,
     pub depth: usize,
@@ -37,6 +37,9 @@ impl Run {
     /// Consume `sub` (which must be the next text) and return the position before it.
     pub fn eat(&mut self, p: &P, sub: &[u16]) -> Pt {
         let s = self.now(p);
+        if !sub.is_empty() {
+            p.at_start.set(false);
+        }
         self.idx += sub.len();
         self.update(p, sub);
         s
@@ -90,7 +93,7 @@ impl P {
             }
             i += 1;
         }
-        P { starts, off_map: HashMap::new(), in_list: false, in_block: false, in_link: false, at_start: true, only_text: false, fail: false, depth: 0, extra: Vec::new(), breaks: true }
+        P { starts, off_map: HashMap::new(), in_list: false, in_block: false, in_link: false, at_start: std::cell::Cell::new(true), only_text: false, fail: false, depth: 0, extra: Vec::new(), breaks: true }
     }
 
     pub fn add_off(&mut self, line: usize, n: i64) {
@@ -115,7 +118,7 @@ impl P {
     fn allowed(&self, name: &str, block: bool) -> bool {
         if block {
             match name {
-                "frontmatter" => self.at_start,
+                "frontmatter" => self.at_start.get(),
                 _ => true,
             }
         } else {
@@ -182,13 +185,11 @@ impl P {
                 if prev.ty == Ty::Text && mergeable(prev) && mergeable(&node) {
                     prev.val.extend_from_slice(&node.val);
                     prev.e = node.e;
-                    self.at_start = false;
                     return;
                 }
             }
         }
         out.push(node);
-        self.at_start = false;
     }
 }
 

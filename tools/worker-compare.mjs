@@ -170,6 +170,21 @@ if (flag("--text")) {
   showOne("snippet", opt("--text").replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\r/g, "\r"));
   process.exit(0);
 }
+if (flag("--min")) {
+  // shrink a file to a few lines that still differ (metadata, or HTML with --html)
+  let lines = fs.readFileSync(opt("--min"), "utf8").split("\n");
+  const differs = (ls) => (doHtml && !doMeta ? compareHtml(ls.join("\n")) : compareMeta(ls.join("\n"))).length > 0;
+  if (!differs(lines)) { console.log("no difference"); process.exit(0); }
+  for (let chunk = Math.ceil(lines.length / 2); chunk >= 1; chunk = chunk === 1 ? 0 : Math.ceil(chunk / 2)) {
+    for (let i = 0; i < lines.length; ) {
+      const t = lines.slice(0, i).concat(lines.slice(i + chunk));
+      if (t.length && differs(t)) lines = t; else i += chunk;
+    }
+    if (chunk === 0) break;
+  }
+  console.log(JSON.stringify(lines.join("\n")));
+  process.exit(0);
+}
 if (flag("--file")) {
   const f = opt("--file");
   showOne(f, fs.readFileSync(f, "utf8"));
@@ -194,14 +209,55 @@ if (flag("--bench")) {
   process.exit(0);
 }
 
+// the hand-written notes and the sandbox notes are also run in other dress: line ends, BOM, tabs, very long lines
+const variants = (text) => [
+  ["crlf", text.replace(/\r?\n/g, "\r\n")],
+  ["cr", text.replace(/\r?\n/g, "\r")],
+  ["bom", "﻿" + text],
+  ["tabs", text.replace(/^( {4})+/gm, (m) => "\t".repeat(m.length / 4))],
+  ["notrail", text.replace(/\s+$/, "")],
+  ["blanklead", "\n\n" + text],
+  ["longline", text.replace(/\n\n/g, " " + "word ".repeat(3000) + "\n\n")],
+  ["unicode", text.replace(/\b(\w)/g, "é$1").replace(/ /g, "  ")],
+  ["astral", text.replace(/^(\S)/gm, "\u{1F600}$1")],
+];
+const handwritten = (f) => f.includes(`${path.sep}worker-corpus${path.sep}`) || f.startsWith(path.join(repo, "src", "sandbox"));
+
 const files = corpus();
+const fuzzN = +opt("--fuzz", 0);
 console.log(`corpus: ${files.length} files`);
 const classes = new Map(); // "meta:path" -> { count, examples }
 let metaBad = 0, htmlBad = 0, bytes = 0;
 const t0 = performance.now();
+const jobs = [];
 for (const f of files) {
   let text;
   try { text = fs.readFileSync(f, "utf8"); } catch { continue; }
+  jobs.push([f, text]);
+  if (handwritten(f)) for (const [n, t] of variants(text)) jobs.push([`${f}#${n}`, t]);
+}
+// fuzzing: random damage to real notes (cut, repeat, swap lines, insert markdown fragments)
+if (fuzzN) {
+  let seed = +opt("--seed", 1);
+  const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
+  const bits = ["[[", "]]", "![[", "#", "^id", "\n", "\n\n", "  ", "\t", "- ", "1. ", "> ", "```", "~~~", "$$", "%%", "==", "**", "*", "_", "`", "[", "](", ")", "<", ">", "|", "---", "***", "[ ] ", "[x] ", "\\", "&amp;", "[^1]", "^[", "<div>", "<!--", "-->", "http://a.b/c", "\r\n", "é", "\u{1F600}"];
+  const pool = jobs.filter(([f, t]) => t.length > 200 && t.length < 30000);
+  for (let n = 0; n < fuzzN; n++) {
+    const [f, t] = pool[Math.floor(rnd() * pool.length)];
+    const lines = t.split("\n");
+    const a = Math.floor(rnd() * lines.length), len = 3 + Math.floor(rnd() * 25);
+    let chunk = lines.slice(a, a + len).join("\n");
+    for (let k = 0, m = 1 + Math.floor(rnd() * 6); k < m; k++) {
+      const pos = Math.floor(rnd() * (chunk.length + 1));
+      const r = rnd();
+      if (r < 0.6) chunk = chunk.slice(0, pos) + bits[Math.floor(rnd() * bits.length)] + chunk.slice(pos);
+      else if (r < 0.8) chunk = chunk.slice(0, pos) + chunk.slice(pos + 1 + Math.floor(rnd() * 5));
+      else chunk = chunk.slice(0, pos) + chunk.slice(Math.floor(rnd() * chunk.length));
+    }
+    jobs.push([`fuzz#${n} (${path.basename(f)})`, chunk]);
+  }
+}
+for (const [f, text] of jobs) {
   bytes += text.length;
   const add = (kind, d) => {
     const key = `${kind}:${cls(d.path)}`;
@@ -213,9 +269,9 @@ for (const f of files) {
   if (doMeta) { const d = compareMeta(text); if (d.length) { metaBad++; for (const x of d) add("meta", x); } }
   if (doHtml) { const d = compareHtml(text); if (d.length) { htmlBad++; for (const x of d) add("html", x); } }
 }
-console.log(`compared ${(bytes / 1e6).toFixed(1)} M chars in ${((performance.now() - t0) / 1000).toFixed(1)} s`);
-if (doMeta) console.log(`metadata: ${files.length - metaBad} identical, ${metaBad} differ`);
-if (doHtml) console.log(`html:     ${files.length - htmlBad} identical, ${htmlBad} differ`);
+console.log(`compared ${jobs.length} texts, ${(bytes / 1e6).toFixed(1)} M chars in ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+if (doMeta) console.log(`metadata: ${jobs.length - metaBad} identical, ${metaBad} differ`);
+if (doHtml) console.log(`html:     ${jobs.length - htmlBad} identical, ${htmlBad} differ`);
 const sorted = [...classes.entries()].sort((a, b) => b[1].files.size - a[1].files.size);
 for (const [key, c] of sorted) {
   console.log(`\n[${key}]  ${c.files.size} file(s), ${c.count} difference(s)`);

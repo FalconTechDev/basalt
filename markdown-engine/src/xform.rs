@@ -203,7 +203,7 @@ pub fn transform(root: &mut Node, orig: &[u16]) {
                     n.orig_url = n.url.clone();
                     n.ty = Ty::ILink;
                     n.converted = true;
-                    n.alt = n.title.take(); // the link's own title attribute
+                    n.meta = n.title.take(); // the link's own title attribute
                     n.title = Some(S::new());
                     n.url = href;
                 }
