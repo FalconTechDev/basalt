@@ -3,7 +3,7 @@ use crate::node::*;
 use crate::parse::*;
 use crate::util::*;
 
-const INT_PARAGRAPH: &[&str] = &["thematicBreak", "list", "atxHeading", "fencedCode", "comment", "math", "blockquote", "html", "setextHeading"];
+const INT_PARAGRAPH: &[&str] = &["thematicBreak", "list", "atxHeading", "fencedCode", "comment", "math", "blockquote", "html"];
 const INT_LIST: &[&str] = &["atxHeading", "fencedCode", "comment", "math", "thematicBreak"];
 const INT_BLOCKQUOTE: &[&str] = &["indentedCode", "fencedCode", "comment", "math", "atxHeading", "setextHeading", "thematicBreak", "html", "list"];
 const INT_FOOTNOTE: &[&str] =
@@ -76,27 +76,25 @@ fn frontmatter(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
 }
 
 fn newline(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
-    if at(v, 0) != LF {
+    // blank lines: any run of lines holding only spaces and tabs (the last one may end the input)
+    let mut s = 0;
+    while s < v.len() {
+        let mut k = s;
+        while k < v.len() && (v[k] == SP || v[k] == TAB) {
+            k += 1;
+        }
+        if k < v.len() && v[k] != LF {
+            break;
+        }
+        s = if k < v.len() { k + 1 } else { k };
+    }
+    if s == 0 {
         return None;
     }
     if silent {
         return Some(None);
     }
-    let mut sub = vec![LF];
-    let mut queue: S = Vec::new();
-    let mut i = 1;
-    while i < v.len() {
-        let ch = v[i];
-        if !is_ws(ch) {
-            break;
-        }
-        queue.push(ch);
-        if ch == LF {
-            sub.append(&mut queue);
-        }
-        i += 1;
-    }
-    r.eat(p, &sub);
+    r.eat(p, &v[..s]);
     Some(None)
 }
 
@@ -902,10 +900,6 @@ fn paragraph(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
         }
     }
     let sub = &v[..idx];
-    if is_blank(sub) {
-        r.eat(p, sub);
-        return Some(None);
-    }
     if silent {
         return Some(None);
     }
@@ -1321,7 +1315,7 @@ fn normal_list_item(p: &mut P, value: &[u16], line0: usize) -> S {
         let t = s.trim_end_matches('.');
         !s.ends_with(')') && !t.is_empty() && t.chars().all(|c| c.is_ascii_digit()) && t.parse::<u64>().map(|n| n < 10).unwrap_or(false)
     };
-    if numeric_small && m3.len() == 1 {
+    if numeric_small && bullet.len() % 2 == 1 {
         m2x.insert(0, SP);
     }
     let mut max: S = m1.to_vec();
@@ -1903,14 +1897,19 @@ fn table(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     let mut line_count: isize = 0;
     let length = v.len() + 1;
     let mut lines: Vec<S> = Vec::new();
+    let mut first_lead = false;
     while index < length {
         let mut line_index = find(v, LF, index).unwrap_or(v.len());
         let pipe_index = find(v, c('|'), index + 1);
         if line_index > v.len() {
             line_index = v.len();
         }
+        let lead = index < v.len() && v[index] == c('|');
+        if lines.is_empty() {
+            first_lead = lead;
+        }
         match pipe_index {
-            Some(pi) if pi <= line_index => {}
+            Some(pi) if pi <= line_index && lead == first_lead => {}
             _ => {
                 if line_count < 2 {
                     return None;
@@ -1924,10 +1923,7 @@ fn table(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     }
     let sub_all = join_owned(&lines);
     let alignments: S = if lines.len() > 1 { lines.remove(1) } else { S::new() };
-    // the header and the delimiter row must agree on a pipe in the very first column
-    if (at(&lines[0], 0) == c('|') && !lines[0].is_empty()) != (at(&alignments, 0) == c('|') && !alignments.is_empty()) {
-        return None;
-    }
+
     line_count -= 1;
     let mut align: Vec<u8> = Vec::new();
     let mut alignment: Option<Option<u8>> = None; // None = false, Some(None) = null, Some(Some(a))

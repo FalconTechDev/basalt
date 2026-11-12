@@ -161,7 +161,7 @@ impl EventReceiver for B {
                     while let (Some(k), Some(v)) = (it.next(), it.next()) {
                         let key = match k {
                             Y::Str(s) => s,
-                            Y::Null => "null".into(),
+                            Y::Null => String::new(),
                             Y::Bool(b) => b.to_string(),
                             Y::Num(t, f) => {
                                 if t == "null" {

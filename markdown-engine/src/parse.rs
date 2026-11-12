@@ -73,7 +73,7 @@ const BLOCK: &[&str] = &[
     "setextHeading", "html", "footnoteDefinition", "definition", "table", "blockid", "paragraph",
 ];
 const INLINE: &[&str] = &[
-    "escape", "autoLink", "url", "html", "ilink", "link", "inlineNote", "footnoteCall", "reference", "strong", "emphasis", "deletion",
+    "escape", "autoLink", "url", "email", "html", "ilink", "link", "inlineNote", "footnoteCall", "reference", "strong", "emphasis", "deletion",
     "code", "break", "mark", "tag", "math", "blockid", "comment", "text",
 ];
 
@@ -123,7 +123,7 @@ impl P {
             }
         } else {
             match name {
-                "autoLink" | "url" => !self.in_link,
+                "autoLink" | "url" | "email" => !self.in_link,
                 _ => true,
             }
         }

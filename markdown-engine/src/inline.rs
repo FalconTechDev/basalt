@@ -5,7 +5,7 @@ use crate::parse::*;
 use crate::util::*;
 
 const METHODS_LOC: &[&str] = &[
-    "escape", "autoLink", "url", "html", "ilink", "link", "inlineNote", "footnoteCall", "reference", "strong", "emphasis", "deletion", "code", "break",
+    "escape", "autoLink", "url", "email", "html", "ilink", "link", "inlineNote", "footnoteCall", "reference", "strong", "emphasis", "deletion", "code", "break",
     "mark", "tag", "math", "blockid", "comment",
 ];
 
@@ -14,6 +14,7 @@ pub fn run(p: &mut P, name: &str, r: &mut Run, v: &[u16], silent: bool) -> Out {
         "escape" => escape(p, r, v, silent),
         "autoLink" => auto_link(p, r, v, silent),
         "url" => url(p, r, v, silent),
+        "email" => email(p, r, v, silent),
         "html" => inline_html(p, r, v, silent),
         "ilink" => ilink(p, r, v, silent),
         "link" => link(p, r, v, silent),
@@ -45,9 +46,25 @@ fn locate(name: &str, v: &[u16], from: usize) -> Option<usize> {
     match name {
         "escape" => find(v, c('\\'), from),
         "autoLink" | "html" => find(v, c('<'), from),
+        "email" => {
+            let mut from = from;
+            loop {
+                let rr = find(v, c('@'), from)?;
+                let ok = |x: u16| is_digit(x) || is_alpha(x) || x == c('+') || x == c('-') || x == c('.') || x == c('_');
+                if rr == from || !ok(v[rr - 1]) {
+                    from = rr + 1;
+                    continue;
+                }
+                let mut i = rr;
+                while i > from && ok(v[i - 1]) {
+                    i -= 1;
+                }
+                return Some(i);
+            }
+        }
         "url" => {
             let mut min: Option<usize> = None;
-            for pr in ["http://", "https://", "mailto:"] {
+            for pr in ["www.", "http://", "https://"] {
                 if let Some(k) = find_str(v, &u(pr), from) {
                     if min.map_or(true, |m| k < m) {
                         min = Some(k);
@@ -301,75 +318,172 @@ fn url(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     if p.in_link {
         return None;
     }
-    let mut protocol = "";
-    for pr in ["http://", "https://", "mailto:"] {
-        if starts_with_ci(v, pr) {
-            protocol = pr;
-            break;
-        }
-    }
-    if protocol.is_empty() {
+    let u_len = v.len();
+    let www;
+    let mut c0;
+    if starts_with(v, "www.") {
+        www = true;
+        c0 = 4;
+    } else if starts_with_ci(v, "http://") {
+        www = false;
+        c0 = 7;
+    } else if starts_with_ci(v, "https://") {
+        www = false;
+        c0 = 8;
+    } else {
         return None;
     }
-    let mut sub: S = v[..protocol.len()].to_vec();
-    let mut index = sub.len();
-    let length = v.len();
-    let mut queue: S = Vec::new();
-    let mut paren: i32 = 0;
-    while index < length {
-        let ch = v[index];
-        if is_ws(ch) || ch == c('<') {
-            break;
-        }
-        if matches!(ch as u8 as char, '.' | ',' | ':' | ';' | '"' | '\'' | ')' | ']') && ch < 128 {
-            let nx = at(v, index + 1);
-            if index + 1 >= length || is_ws(nx) {
+    // the domain: letters, digits, `-`, `_`, separated by single dots
+    let mut prev_dot = c0 as isize - 1;
+    let e0 = c0;
+    let mut dots: Vec<usize> = Vec::new();
+    let mut t: u16 = 0;
+    while c0 < u_len {
+        t = v[c0];
+        if t != c('.') {
+            if !(is_digit(t) || is_alpha(t)) && t != c('-') && t != c('_') {
                 break;
             }
-        }
-        if ch == c('(') || ch == c('[') {
-            paren += 1;
-        }
-        if ch == c(')') || ch == c(']') {
-            paren -= 1;
-            if paren < 0 {
+            c0 += 1;
+        } else {
+            if prev_dot == c0 as isize - 1 {
                 break;
             }
+            dots.push(c0);
+            prev_dot = c0 as isize;
+            c0 += 1;
         }
-        queue.push(ch);
-        index += 1;
     }
-    if queue.is_empty() {
+    if t == c('.') {
+        dots.pop();
+        c0 -= 1;
+    }
+    if dots.is_empty() {
         return None;
     }
-    sub.extend_from_slice(&queue);
-    let mut content = sub.clone();
-    let now0 = r.now(p);
-    let mut now = now0;
-    if protocol == "mailto:" {
-        let pos = find(&queue, c('@'), 0);
-        match pos {
-            None => return None,
-            Some(k) if k == length - 1 => return None,
-            _ => {}
-        }
-        content = content[7..].to_vec();
-        now.col += 7;
+    let s0 = if dots.len() < 2 { e0 } else { dots[dots.len() - 2] + 1 };
+    if sl(v, s0, c0).contains(&c('_')) {
+        return None;
     }
     if silent {
         return Some(None);
     }
+    // the path, minus trailing punctuation
+    let o0 = c0;
+    let mut l0 = c0;
+    while c0 < u_len {
+        let t = v[c0];
+        if is_ws(t) || t == c('<') {
+            break;
+        }
+        c0 += 1;
+        if !matches!(t, 33 | 42 | 44 | 46 | 58 | 63 | 95 | 126) {
+            l0 = c0;
+        }
+    }
+    c0 = l0;
+    if c0 > 0 && v[c0 - 1] == c(')') {
+        let mut n = sl(v, o0, c0).to_vec();
+        let opens = n.iter().filter(|&&x| x == c('(')).count();
+        let mut closes = n.iter().filter(|&&x| x == c(')')).count();
+        while closes > opens {
+            match n.iter().rposition(|&x| x == c(')')) {
+                Some(k) => {
+                    c0 = o0 + k;
+                    n = sl(v, o0, c0).to_vec();
+                }
+                None => break,
+            }
+            closes -= 1;
+        }
+    }
+    if c0 > 0 && v[c0 - 1] == c(';') {
+        c0 -= 1;
+        if c0 > 0 && is_alpha(v[c0 - 1]) {
+            let mut l = c0 as isize - 2;
+            while l >= 0 && is_alpha(v[l as usize]) {
+                l -= 1;
+            }
+            if l >= 0 && v[l as usize] == c('&') {
+                c0 = l as usize;
+            }
+        }
+    }
+    let sub = &v[..c0];
+    let mut url = decode_raw(sub);
+    if www {
+        let mut h = u("http://");
+        h.extend(url);
+        url = h;
+    }
+    let now = r.now(p);
     let save_only = p.only_text;
     let save_link = p.in_link;
     p.only_text = true;
     p.in_link = true;
-    let kids = p.tokenize_inline(&content, now.line, now.col);
+    let kids = p.tokenize_inline(sub, now.line, now.col);
     p.only_text = save_only;
     p.in_link = save_link;
-    let mut n = done(p, r, &sub, Ty::Link);
-    n.url = decode_raw(&sub);
+    let mut n = done(p, r, sub, Ty::Link);
+    n.url = url;
     n.ch = kids;
     Some(Some(n))
+}
+
+fn email(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
+    if p.in_link {
+        return None;
+    }
+    let b = v.len();
+    let mut i = 0;
+    let ok = |x: u16| is_digit(x) || is_alpha(x) || x == c('+') || x == c('-') || x == c('.') || x == c('_');
+    let mut s = at(v, 0);
+    while i < b && ok(s) {
+        i += 1;
+        s = at(v, i);
+        if i >= b {
+            s = 0;
+        }
+    }
+    if i == 0 || s != c('@') || i >= b {
+        return None;
+    }
+    i += 1;
+    let mut k: isize = -1;
+    while i < b {
+        s = v[i];
+        if !(is_digit(s) || is_alpha(s) || s == c('-') || s == c('.') || s == c('_')) {
+            break;
+        }
+        i += 1;
+        if k == -1 && s == c('.') {
+            k = i as isize;
+        }
+    }
+    if k != -1 && k != i as isize && s != c('-') && s != c('_') {
+        if s == c('.') {
+            i -= 1;
+        }
+        if silent {
+            return Some(None);
+        }
+        let h = &v[..i];
+        let now = r.now(p);
+        let save_only = p.only_text;
+        let save_link = p.in_link;
+        p.only_text = true;
+        p.in_link = true;
+        let kids = p.tokenize_inline(h, now.line, now.col);
+        p.only_text = save_only;
+        p.in_link = save_link;
+        let mut n = done(p, r, h, Ty::Link);
+        let mut url = u("mailto:");
+        url.extend(decode_raw(h));
+        n.url = url;
+        n.ch = kids;
+        return Some(Some(n));
+    }
+    None
 }
 
 fn inline_html(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {

@@ -170,6 +170,27 @@ if (flag("--text")) {
   showOne("snippet", opt("--text").replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\r/g, "\r"));
   process.exit(0);
 }
+// delete lines (then characters) while the difference stays
+function shrink(text, kind) {
+  const differs = (t) => (kind === "html" ? compareHtml(t) : compareMeta(t)).length > 0;
+  let lines = text.split("\n");
+  for (let chunk = Math.ceil(lines.length / 2); chunk >= 1; chunk = chunk === 1 ? 0 : Math.ceil(chunk / 2)) {
+    for (let i = 0; i < lines.length; ) {
+      const t = lines.slice(0, i).concat(lines.slice(i + chunk));
+      if (t.length && differs(t.join("\n"))) lines = t; else i += chunk;
+    }
+    if (chunk === 0) break;
+  }
+  let t = lines.join("\n");
+  for (let chunk = Math.ceil(t.length / 4); chunk >= 1; chunk = chunk === 1 ? 0 : Math.ceil(chunk / 2)) {
+    for (let i = 0; i < t.length; ) {
+      const u = t.slice(0, i) + t.slice(i + chunk);
+      if (u.length && differs(u)) t = u; else i += chunk;
+    }
+    if (chunk === 0) break;
+  }
+  return t;
+}
 if (flag("--min")) {
   // shrink a file to a few lines that still differ (metadata, or HTML with --html)
   let lines = fs.readFileSync(opt("--min"), "utf8").split("\n");
@@ -264,7 +285,7 @@ for (const [f, text] of jobs) {
     let c = classes.get(key);
     if (!c) classes.set(key, (c = { count: 0, files: new Set(), examples: [] }));
     c.count++;
-    if (!c.files.has(f)) { c.files.add(f); if (c.examples.length < limit) c.examples.push({ f, d }); }
+    if (!c.files.has(f)) { c.files.add(f); if (c.examples.length < limit) c.examples.push({ f, d, text, kind }); }
   };
   if (doMeta) { const d = compareMeta(text); if (d.length) { metaBad++; for (const x of d) add("meta", x); } }
   if (doHtml) { const d = compareHtml(text); if (d.length) { htmlBad++; for (const x of d) add("html", x); } }
@@ -275,6 +296,9 @@ if (doHtml) console.log(`html:     ${jobs.length - htmlBad} identical, ${htmlBad
 const sorted = [...classes.entries()].sort((a, b) => b[1].files.size - a[1].files.size);
 for (const [key, c] of sorted) {
   console.log(`\n[${key}]  ${c.files.size} file(s), ${c.count} difference(s)`);
-  for (const e of c.examples) console.log(`  ${e.f}\n    at ${e.d.path}\n    old: ${short(e.d.a)}\n    new: ${short(e.d.b)}`);
+  for (const e of c.examples) {
+    console.log(`  ${e.f}\n    at ${e.d.path}\n    old: ${short(e.d.a)}\n    new: ${short(e.d.b)}`);
+    if (e.f.startsWith("fuzz#") || flag("--min-all")) console.log(`    smallest: ${JSON.stringify(shrink(e.text, e.kind))}`);
+  }
 }
 process.exit(metaBad || htmlBad ? 1 : 0);
