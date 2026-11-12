@@ -6,12 +6,20 @@
 //   node tools/worker-compare.mjs --file a.md        one file, with the full diff
 //   node tools/worker-compare.mjs --text "# a\n- b"  one snippet (\n is a line break), with the full diff
 //   node tools/worker-compare.mjs --bench            speed on a ~1 MB note
+//   node tools/worker-compare.mjs --contract         odd messages (no buffer, wrong types, BOM, bad UTF-8 ...): same reply?
+//   node tools/worker-compare.mjs --fuzz 10000       also run 10000 damaged copies of corpus notes (--seed N); differences are
+//                                                    shrunk to the smallest text that still differs
+//   node tools/worker-compare.mjs --min a.md         shrink one file to the few lines that still differ
 //   options: --old FILE   the old worker (default: src/worker.js of commit OLD_REV, read with git)
 //            --new FILE   the new worker (default: src/worker.js)
 //            --root DIR   extra corpus folder (repeatable); --no-default-root skips the machine-wide scan
 //            --limit N    examples shown per difference class (default 3)
 //            --breaks 0   run with the "strict line breaks" option
+//            --exact      compare the HTML byte for byte (default: whitespace normalised, see below)
 //
+// The corpus: tools/worker-corpus/*.md (hand-written tricky cases), src/sandbox, and every *.md under the GithubRepos folder of this
+// machine. The hand-written and sandbox notes are also run as CRLF, CR, with a BOM, tabs for indents, no trailing newline, blank
+// lines first, very long lines, non-ASCII text and astral characters.
 // Metadata must match exactly (deep equality). HTML is compared per section after whitespace is normalised:
 // all whitespace runs become one space and spaces between tags are dropped.
 import fs from "node:fs";

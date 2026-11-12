@@ -143,7 +143,7 @@ impl P {
             return out;
         }
         self.depth += 1;
-        if self.depth > 150 {
+        if self.depth > 1000 {
             self.fail = true;
             self.depth -= 1;
             return out;

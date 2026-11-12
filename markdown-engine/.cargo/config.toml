@@ -1,0 +1,3 @@
+# deeply nested quotes and lists recurse deeply: give the wasm stack 4 MB (the default is 1 MB)
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "link-arg=-zstack-size=4194304"]

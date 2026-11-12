@@ -76,6 +76,7 @@
       }
     } catch (err) {
       console.error("AppWorker exception", err);
+      ex = null; // a trap leaves the engine in an unknown state: the next message starts a fresh instance
     }
     post(null);
   };
