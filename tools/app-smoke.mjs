@@ -58,9 +58,8 @@ const open = (p) => run(`(async () => {
   const f = app.vault.getAbstractFileByPath(${JSON.stringify(p)});
   const leaf = app.workspace.getLeaf("tab");
   await leaf.openFile(f);
+  await new Promise((r) => setTimeout(r, 2500));
   const v = leaf.view;
-  for (let i = 0; i < 40; i++) { await new Promise((r) => setTimeout(r, 400)); const e = v.containerEl; if (e.querySelector('.canvas-node, .cm-content, .cm-line')) break; }
-  await new Promise((r) => setTimeout(r, 800));
   return { type: v.getViewType(), text: (v.containerEl.innerText || "").slice(0, 120), canvasNodes: v.containerEl.querySelectorAll(".canvas-node").length, cm: v.containerEl.querySelectorAll(".cm-editor, .cm-content").length, file: v.file && v.file.path };
 })()`);
 
@@ -72,14 +71,10 @@ const py = await open("script.py");
 check("text file opens", /def main/.test(py.text), py);
 
 const ex = await run(`(async () => {
-  const text = () => { const e = document.querySelector('[data-type="basalt-files"]'); return e ? e.innerText : ""; };
-  if (!text()) {
-    app.workspace.leftSplit.expand();
-    const l = app.workspace.getLeftLeaf(false);
-    await l.setViewState({ type: "basalt-files", active: true });
-    for (let i = 0; i < 30 && !text(); i++) await new Promise((r) => setTimeout(r, 400));
-  }
-  return text().split(String.fromCharCode(10)).filter(Boolean);
+  let leaf = app.workspace.getLeavesOfType("basalt-files")[0];
+  if (!leaf) { leaf = app.workspace.getLeftLeaf(false); await leaf.setViewState({ type: "basalt-files", active: true }); }
+  await new Promise((r) => setTimeout(r, 2500));
+  return leaf.view.containerEl.innerText.split(String.fromCharCode(10)).filter(Boolean);
 })()`);
 check("file explorer lists the vault", ["Note.md", "Other note.md", "Board.canvas", "script.py", "folder"].every((n) => ex.some((x) => x.includes(n))), ex);
 
