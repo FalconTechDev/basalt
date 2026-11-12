@@ -697,7 +697,7 @@ module.exports = function start(resources, events) {
 				if (filter === true && !blocker) loadBlocker().catch(console.error);
 				entry = browserSessions[partition] = { session: session.fromPartition(partition), filter: !!filter };
 				entry.session.webRequest.onBeforeRequest({ urls: ['https://*/*', 'http://*/*'] }, (details, cb) => cb({ cancel: entry.filter && !!blocker && blocker.blocks(details) }));
-				entry.session.setUserAgent(entry.session.getUserAgent().split(' ').filter((t) => !/^(basalt|obsidian|electron)/i.test(t)).join(' '));
+				entry.session.setUserAgent(entry.session.getUserAgent().split(' ').filter((t) => !/^(basalt|electron)/i.test(t)).join(' '));
 				entry.session.setPermissionRequestHandler((wc, permission, cb) => cb(ALLOWED_PERMISSIONS.includes(permission)));
 			}
 			e.returnValue = null;

@@ -227,7 +227,7 @@
         const zoom = (d) => { const s = d === 0 ? 14 : Math.max(9, Math.min(32, store.get("size", 14) + d)); store.set("size", s); wrap.style.setProperty("--bstf-size", s + "px"); this.cm.refresh(); };
         const goLine = () => { if (window.__bsQuick) window.__bsQuick.open(":"); };
         this.cm = CM(holder, {
-          value: text, mode, theme: "obsidian", lineNumbers: true, lineWrapping: store.get("wrap", false), indentUnit: unit, tabSize: unit, indentWithTabs: useTabs,
+          value: text, mode, theme: "basalt", lineNumbers: true, lineWrapping: store.get("wrap", false), indentUnit: unit, tabSize: unit, indentWithTabs: useTabs,
           styleActiveLine: true, matchBrackets: true, configureMouse: (cm, repeat, ev) => ({ addNew: ev.altKey }), autoCloseBrackets: true, scrollPastEnd: true, smartIndent: true, electricChars: true,
           lineSeparator: this.eol === "\r\n" ? "\r\n" : null, foldGutter: true, gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
           foldOptions: { rangeFinder: CM.fold && CM.fold.auto ? CM.fold.auto : undefined },
