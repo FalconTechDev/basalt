@@ -8,7 +8,7 @@ use yaml_rust2::scanner::TScalarStyle;
 pub enum Y {
     Null,
     Bool(bool),
-    Num(String, f64),
+    Num(String, u8), // JSON text; the second field marks +inf (1), -inf (2) and NaN (3), which JSON cannot hold
     Str(String),
     Seq(Vec<Y>),
     Map(Vec<(String, Y)>),
@@ -18,7 +18,7 @@ struct B {
     stack: Vec<(Vec<Y>, usize, bool)>, // items, anchor, is_map
     docs: usize,
     root: Option<Y>,
-    anchors: std::collections::HashMap<usize, Y>,
+    anchors: VM<usize, Y>,
     err: bool,
 }
 
@@ -35,92 +35,91 @@ fn resolve(s: &str, style: TScalarStyle, tag: &Option<yaml_rust2::parser::Tag>) 
         "" | "~" | "null" | "Null" | "NULL" => return Y::Null,
         "true" | "True" | "TRUE" => return Y::Bool(true),
         "false" | "False" | "FALSE" => return Y::Bool(false),
-        ".inf" | ".Inf" | ".INF" | "+.inf" | "+.Inf" | "+.INF" => return Y::Num("null".into(), f64::INFINITY),
-        "-.inf" | "-.Inf" | "-.INF" => return Y::Num("null".into(), f64::NEG_INFINITY),
-        ".nan" | ".NaN" | ".NAN" => return Y::Num("null".into(), f64::NAN),
+        // JSON has no Infinity or NaN: 1e999 reads back as Infinity, and U+E003 is turned into NaN by the worker shim
+        ".inf" | ".Inf" | ".INF" | "+.inf" | "+.Inf" | "+.INF" => return Y::Num("1e999".into(), 1),
+        "-.inf" | "-.Inf" | "-.INF" => return Y::Num("-1e999".into(), 2),
+        ".nan" | ".NaN" | ".NAN" => return Y::Num("\"\u{E003}\"".into(), 3),
         _ => {}
     }
-    let b = s.as_bytes();
-    // integers
-    let (sign, body) = match b.first() {
-        Some(b'-') => (-1.0, &s[1..]),
-        Some(b'+') => (1.0, &s[1..]),
-        _ => (1.0, s),
+    // integers: [-+]?[0-9]+
+    let (neg, body) = match s.as_bytes().first() {
+        Some(b'-') => (true, &s[1..]),
+        Some(b'+') => (false, &s[1..]),
+        _ => (false, s),
     };
     if !body.is_empty() && body.bytes().all(|x| x.is_ascii_digit()) {
-        let v: f64 = body.parse().unwrap_or(0.0) * sign;
-        return Y::Num(num_text(v), v);
+        return Y::Num(json_num(neg, body, "", ""), 0);
     }
-    if b.first().map_or(false, |x| *x != b'-' && *x != b'+') {
+    if !neg && !s.starts_with('+') {
         if let Some(h) = s.strip_prefix("0x") {
             if !h.is_empty() && h.bytes().all(|x| x.is_ascii_hexdigit()) {
-                let v = u128::from_str_radix(h, 16).map(|x| x as f64).unwrap_or(0.0);
-                return Y::Num(num_text(v), v);
+                return Y::Num(u128::from_str_radix(h, 16).unwrap_or(0).to_string(), 0);
             }
         }
         if let Some(o) = s.strip_prefix("0o") {
             if !o.is_empty() && o.bytes().all(|x| (b'0'..=b'7').contains(&x)) {
-                let v = u128::from_str_radix(o, 8).map(|x| x as f64).unwrap_or(0.0);
-                return Y::Num(num_text(v), v);
+                return Y::Num(u128::from_str_radix(o, 8).unwrap_or(0).to_string(), 0);
             }
         }
     }
     // floats: [-+]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)([eE][-+]?[0-9]+)?
-    {
-        let t = body;
-        let tb = t.as_bytes();
-        let mut i = 0;
-        let mut digits = 0;
+    let tb = body.as_bytes();
+    let mut i = 0;
+    while i < tb.len() && tb[i].is_ascii_digit() {
+        i += 1;
+    }
+    let int_end = i;
+    let mut frac = "";
+    let mut ok = int_end > 0;
+    if i < tb.len() && tb[i] == b'.' {
+        let f0 = i + 1;
+        i = f0;
         while i < tb.len() && tb[i].is_ascii_digit() {
             i += 1;
-            digits += 1;
         }
-        let mut ok = false;
-        if i < tb.len() && tb[i] == b'.' {
-            i += 1;
-            let mut frac = 0;
-            while i < tb.len() && tb[i].is_ascii_digit() {
-                i += 1;
-                frac += 1;
-            }
-            ok = digits > 0 || frac > 0;
-        } else if digits > 0 {
-            ok = true;
+        frac = &body[f0..i];
+        ok = int_end > 0 || !frac.is_empty();
+    }
+    let mut exp = "";
+    if ok && i < tb.len() && (tb[i] == b'e' || tb[i] == b'E') {
+        let mut j = i + 1;
+        if j < tb.len() && (tb[j] == b'-' || tb[j] == b'+') {
+            j += 1;
         }
-        if ok && i < tb.len() && (tb[i] == b'e' || tb[i] == b'E') {
-            let mut j = i + 1;
-            if j < tb.len() && (tb[j] == b'-' || tb[j] == b'+') {
-                j += 1;
-            }
-            let e0 = j;
-            while j < tb.len() && tb[j].is_ascii_digit() {
-                j += 1;
-            }
-            if j > e0 {
-                i = j;
-            } else {
-                ok = false;
-            }
+        let e0 = j;
+        while j < tb.len() && tb[j].is_ascii_digit() {
+            j += 1;
         }
-        if ok && i == tb.len() {
-            let v: f64 = t.parse().unwrap_or(f64::NAN) * sign;
-            return Y::Num(num_text(v), v);
+        if j > e0 {
+            exp = &body[i + 1..j];
+            i = j;
+        } else {
+            ok = false;
         }
+    }
+    if ok && i == tb.len() {
+        return Y::Num(json_num(neg, &body[..int_end], frac, exp), 0);
     }
     Y::Str(s.to_string())
 }
 
-fn num_text(v: f64) -> String {
-    if !v.is_finite() {
-        return "null".into();
+/// A JSON number from the parts of a YAML one (JSON allows no leading zeros, no bare `.5` or `5.`).
+fn json_num(neg: bool, int: &str, frac: &str, exp: &str) -> String {
+    let int = int.trim_start_matches('0');
+    let mut o = String::new();
+    if neg {
+        o.push('-');
     }
-    if v == 0.0 {
-        return if v.is_sign_negative() { "-0".into() } else { "0".into() };
+    o.push_str(if int.is_empty() { "0" } else { int });
+    if !frac.is_empty() {
+        o.push('.');
+        o.push_str(frac);
     }
-    if v.fract() == 0.0 && v.abs() < 1e21 {
-        return format!("{:.0}", v);
+    if !exp.is_empty() {
+        o.push('e');
+        o.push_str(exp);
     }
-    format!("{}", v)
+    o
 }
 
 impl B {
@@ -163,13 +162,12 @@ impl EventReceiver for B {
                             Y::Str(s) => s,
                             Y::Null => String::new(),
                             Y::Bool(b) => b.to_string(),
-                            Y::Num(t, f) => {
-                                if t == "null" {
-                                    if f.is_nan() { "NaN".into() } else if f > 0.0 { "Infinity".into() } else { "-Infinity".into() }
-                                } else {
-                                    t
-                                }
-                            }
+                            Y::Num(t, kind) => match kind {
+                                1 => "Infinity".into(),
+                                2 => "-Infinity".into(),
+                                3 => "NaN".into(),
+                                _ => t,
+                            },
                             _ => {
                                 self.err = true;
                                 continue;
@@ -194,15 +192,27 @@ impl EventReceiver for B {
     }
 }
 
-/// The YAML library this replaces refuses a flow collection (`[...]` / `{...}`) whose later lines are not indented deeper than the
-/// line that opened it; the parser used here does not, so that rule is checked first.
+/// The YAML library this replaces is stricter than the parser used here in a few places; those rules are checked first: a flow
+/// collection (`[...]` / `{...}`) whose later lines are not indented deeper than the line that opened it, a plain value that starts
+/// with `>` or `|` inside one, and tabs used for indentation.
 fn flow_indent_error(src: &str) -> bool {
     let mut depth = 0i32;
     let mut open_indent = 0usize;
     let mut quote: Option<char> = None;
+    let mut sig = ' ';
+    let mut block_indent: Option<usize> = None;
     for line in src.split('\n') {
         let indent = line.len() - line.trim_start_matches(' ').len();
-        if depth > 0 && quote.is_none() && !line.trim().is_empty() && indent <= open_indent {
+        if let Some(bi) = block_indent {
+            if line.trim().is_empty() || indent > bi {
+                continue;
+            }
+            block_indent = None;
+        }
+        if depth > 0 && quote.is_none() && !line.trim().is_empty() && indent <= open_indent && !line[indent..].starts_with([']', '}']) {
+            return true;
+        }
+        if depth == 0 && quote.is_none() && line[indent..].starts_with('\t') {
             return true;
         }
         let mut prev = ' ';
@@ -225,6 +235,9 @@ fn flow_indent_error(src: &str) -> bool {
                     if ch == '#' && (prev == ' ' || prev == '\t') {
                         break;
                     }
+                    if (ch == '>' || ch == '|') && depth > 0 && matches!(sig, '[' | ',' | '{' | ':') {
+                        return true; // a plain value cannot start with a block scalar indicator
+                    }
                     if (ch == '"' || ch == '\'') && (depth > 0 || prev == ' ' || prev == ':' || prev == '-') {
                         quote = Some(ch);
                     } else if ch == '[' || ch == '{' {
@@ -238,6 +251,15 @@ fn flow_indent_error(src: &str) -> bool {
                 }
             }
             prev = ch;
+            if ch != ' ' && ch != '\t' {
+                sig = ch;
+            }
+        }
+        // a block scalar (`key: |`, `key: >-`) holds the following more deeply indented lines
+        let t = line.trim_end();
+        let header = quote.is_none() && depth == 0 && (t.ends_with('|') || t.ends_with('>') || t.ends_with("|-") || t.ends_with(">-") || t.ends_with("|+") || t.ends_with(">+"));
+        if header {
+            block_indent = Some(indent);
         }
     }
     false
@@ -248,7 +270,7 @@ pub fn parse_result(src: &str) -> Result<Option<Y>, ()> {
     if flow_indent_error(src) {
         return Err(());
     }
-    let mut b = B { stack: Vec::new(), docs: 0, root: None, anchors: Default::default(), err: false };
+    let mut b = B { stack: Vec::new(), docs: 0, root: None, anchors: VM::new(), err: false };
     let mut p = Parser::new_from_str(src);
     if p.load(&mut b, true).is_err() || b.err || b.docs > 1 {
         return Err(());

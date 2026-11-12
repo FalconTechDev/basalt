@@ -1,7 +1,6 @@
 // Tree transforms that run after parsing (wikilink conversion, footnotes, block ids, callouts ...).
 use crate::node::*;
 use crate::util::*;
-use std::collections::HashMap;
 
 pub const NFC_OPEN: char = '\u{E000}';
 pub const NFC_CLOSE: char = '\u{E001}';
@@ -295,9 +294,9 @@ fn footnotes(root: &mut Node) {
         count: usize,
         key: S, // identifier key or inline index
     }
-    let mut defs: HashMap<S, (Vec<Node>, Pt, Pt)> = HashMap::new(); // key -> children, pos
-    let mut state: HashMap<S, i64> = HashMap::new();
-    fn collect(n: &Node, defs: &mut HashMap<S, (Vec<Node>, Pt, Pt)>, state: &mut HashMap<S, i64>, bodies: bool) {
+    let mut defs: VM<S, (Vec<Node>, Pt, Pt)> = VM::new(); // key -> children, pos
+    let mut state: VM<S, i64> = VM::new();
+    fn collect(n: &Node, defs: &mut VM<S, (Vec<Node>, Pt, Pt)>, state: &mut VM<S, i64>, bodies: bool) {
         if n.ty == Ty::FootnoteDefinition {
             if bodies {
                 defs.insert(n.ident.clone(), (n.ch.clone(), n.s, n.e));
@@ -311,7 +310,7 @@ fn footnotes(root: &mut Node) {
     }
     collect(root, &mut defs, &mut state, false);
     let mut order: Vec<Entry> = Vec::new();
-    let mut inline_defs: HashMap<usize, (Vec<Node>, Pt, Pt, bool)> = HashMap::new();
+    let mut inline_defs: VM<usize, (Vec<Node>, Pt, Pt, bool)> = VM::new();
 
     fn mk_ref(e: &mut Node, t: usize, n: usize) {
         let a = u(&(t + 1).to_string());
@@ -332,10 +331,10 @@ fn footnotes(root: &mut Node) {
     }
     fn visit(
         n: &mut Node,
-        defs: &mut HashMap<S, (Vec<Node>, Pt, Pt)>,
-        state: &mut HashMap<S, i64>,
+        defs: &mut VM<S, (Vec<Node>, Pt, Pt)>,
+        state: &mut VM<S, i64>,
         order: &mut Vec<Entry>,
-        inline_defs: &mut HashMap<usize, (Vec<Node>, Pt, Pt, bool)>,
+        inline_defs: &mut VM<usize, (Vec<Node>, Pt, Pt, bool)>,
     ) {
         if n.ty == Ty::Footnote {
             let o = order.len();
@@ -350,7 +349,7 @@ fn footnotes(root: &mut Node) {
                 n.val = n.ident.clone();
                 return;
             }
-            let mut o = state[&n.ident];
+            let mut o = *state.get(&n.ident).unwrap();
             if o == -1 {
                 o = order.len() as i64;
                 state.insert(n.ident.clone(), o);
@@ -373,7 +372,7 @@ fn footnotes(root: &mut Node) {
     let mut items: Vec<Node> = Vec::new();
     for (s, ent) in order.iter().enumerate() {
         let (mut children, sp, ep, is_inline) = if ent.key.iter().all(|&x| is_digit(x)) && inline_defs.contains_key(&s) {
-            inline_defs[&s].clone()
+            inline_defs.get(&s).unwrap().clone()
         } else if let Some((ch, a, b)) = defs.get(&ent.key) {
             (ch.clone(), *a, *b, false)
         } else {

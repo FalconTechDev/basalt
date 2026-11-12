@@ -31,21 +31,8 @@ fn write(j: &J, out: &mut String) {
     match j {
         J::Null => out.push_str("null"),
         J::Bool(b) => out.push_str(if *b { "true" } else { "false" }),
-        J::Num(n) => {
-            if n.is_finite() {
-                if n.fract() == 0.0 && n.abs() < 1e15 {
-                    if *n == 0.0 && n.is_sign_negative() {
-                        out.push_str("-0");
-                    } else {
-                        out.push_str(&format!("{}", *n as i64));
-                    }
-                } else {
-                    out.push_str(&format!("{}", n));
-                }
-            } else {
-                out.push_str("null");
-            }
-        }
+        // only whole numbers (positions, levels) are written this way; YAML numbers travel as `Raw` text
+        J::Num(n) => out.push_str(&(*n as i64).to_string()),
         J::Raw(s) => out.push_str(s),
         J::Str(s) => esc(s, out),
         J::Arr(a) => {

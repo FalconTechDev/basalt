@@ -34,6 +34,11 @@
     return dec.decode(new Uint8Array(w.memory.buffer, w.out_ptr(), n)).replace(/([^]*)/g, (m, s) => s.normalize("NFC"));
   }
 
+  // JSON cannot say NaN: the engine writes U+E003 for it
+  function parse(json) {
+    return json.includes("") ? JSON.parse(json, (k, v) => (v === "" ? NaN : v)) : JSON.parse(json);
+  }
+
   // the bytes of an ArrayBuffer or a typed array; anything else is an error (the reply is null)
   function bytesOf(b) {
     const tag = Object.prototype.toString.call(b);
@@ -60,13 +65,13 @@
         const buf = t.metadataCache;
         if (!buf) return post({});
         const json = call("metadata", bytesOf(buf));
-        return post(json === null ? null : JSON.parse(json));
+        return post(json === null ? null : parse(json));
       }
       if (Object.prototype.hasOwnProperty.call(t, "parseSections")) {
         opts = t.options || {};
         const json = call("sections", enc.encode(textOf(t.parseSections)));
         if (json === null) return post(null);
-        const r = JSON.parse(json);
+        const r = parse(json);
         return post({ sections: r.sections, frontmatter: r.frontmatter });
       }
     } catch (err) {

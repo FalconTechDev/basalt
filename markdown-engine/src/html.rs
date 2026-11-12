@@ -2,7 +2,6 @@
 use crate::json::*;
 use crate::node::*;
 use crate::util::*;
-use std::collections::HashMap;
 
 enum H {
     T(String),
@@ -47,8 +46,8 @@ impl El {
     }
 }
 
-struct Ctx {
-    defs: HashMap<String, (String, Option<String>)>,
+struct Ctx<'a> {
+    defs: &'a VM<String, (String, Option<String>)>,
     base: i64,
 }
 
@@ -56,10 +55,10 @@ fn s(v: &[u16]) -> String {
     st(v)
 }
 
-fn collect_defs(n: &Node, defs: &mut HashMap<String, (String, Option<String>)>) {
+fn collect_defs(n: &Node, defs: &mut VM<String, (String, Option<String>)>) {
     if n.ty == Ty::Definition {
         let id = st(&n.ident).to_uppercase();
-        defs.entry(id).or_insert_with(|| (st(&n.url), n.title.as_ref().map(|t| st(t))));
+        defs.insert_first(id, || (st(&n.url), n.title.as_ref().map(|t| st(t))));
     }
     for c in &n.ch {
         collect_defs(c, defs);
@@ -160,7 +159,7 @@ fn trim_start_len(v: &[u16]) -> usize {
     trim_start(v).len()
 }
 
-fn all(cx: &Ctx, n: &Node) -> Vec<H> {
+fn all(cx: &Ctx<'_>, n: &Node) -> Vec<H> {
     let mut out: Vec<H> = Vec::new();
     for (i, ch) in n.ch.iter().enumerate() {
         let mut r = one(cx, ch, n);
@@ -205,7 +204,7 @@ fn item_loose(n: &Node) -> bool {
     n.spread
 }
 
-fn one(cx: &Ctx, n: &Node, parent: &Node) -> Vec<H> {
+fn one(cx: &Ctx<'_>, n: &Node, parent: &Node) -> Vec<H> {
     match n.ty {
         Ty::Paragraph => vec![H::E(el("p", all(cx, n)))],
         Ty::Heading => {
@@ -422,7 +421,7 @@ impl Node {
     }
 }
 
-fn revert(cx: &Ctx, n: &Node) -> Vec<H> {
+fn revert(cx: &Ctx<'_>, n: &Node) -> Vec<H> {
     let mut close = "]".to_string();
     if n.reftype == 1 {
         close.push_str("[]");
@@ -446,7 +445,7 @@ fn revert(cx: &Ctx, n: &Node) -> Vec<H> {
     kids
 }
 
-fn list_item(cx: &Ctx, n: &Node, parent: &Node) -> El {
+fn list_item(cx: &Ctx<'_>, n: &Node, parent: &Node) -> El {
     let c = all(cx, n);
     let loose = if parent.ty == Ty::List {
         parent.spread || parent.ch.iter().any(item_loose)
@@ -491,7 +490,7 @@ fn list_item(cx: &Ctx, n: &Node, parent: &Node) -> El {
     e
 }
 
-fn table(cx: &Ctx, n: &Node) -> El {
+fn table(cx: &Ctx<'_>, n: &Node) -> El {
     let aligns = &n.align;
     let p = aligns.len();
     let mut rows: Vec<El> = Vec::new();
@@ -632,12 +631,12 @@ fn pos_json(s: Pt, e: Pt) -> J {
 }
 
 pub fn sections(root: &Node, _orig: &[u16], fm: Result<Option<crate::yaml::Y>, ()>) -> String {
-    let mut defs = HashMap::new();
+    let mut defs = VM::new();
     collect_defs(root, &mut defs);
     let mut list: Vec<J> = Vec::new();
     for top in &root.ch {
         let level = if top.ty == Ty::Heading { top.depth.max(1) } else { 7 };
-        let cx = Ctx { defs: defs.clone(), base: top.s.line as i64 };
+        let cx = Ctx { defs: &defs, base: top.s.line as i64 };
         let mut wrapper = Node::new(Ty::Root);
         wrapper.ch = vec![top.clone()];
         let mut hs = all(&cx, &wrapper);

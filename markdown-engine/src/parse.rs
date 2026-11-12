@@ -1,11 +1,11 @@
 // The tokenizer engine: positions, the offset map for nested containers, and the block / inline loops.
 use crate::node::*;
 use crate::util::*;
-use std::collections::HashMap;
+
 
 pub struct P {
     pub starts: Vec<usize>, // offset of every line start in the original text
-    pub off_map: HashMap<usize, i64>,
+    pub off_map: Vec<Option<i64>>,
     pub in_list: bool,
     pub in_block: bool,
     pub in_link: bool,
@@ -56,7 +56,7 @@ impl Run {
             None => self.col += sub.len(),
             Some(l) => self.col = sub.len() - l,
         }
-        if let Some(&o) = p.off_map.get(&self.line) {
+        if let Some(Some(o)) = p.off_map.get(self.line).copied() {
             if last.is_some() {
                 self.col = (self.col as i64 + o) as usize;
             } else if (self.col as i64) <= o {
@@ -93,11 +93,14 @@ impl P {
             }
             i += 1;
         }
-        P { starts, off_map: HashMap::new(), in_list: false, in_block: false, in_link: false, at_start: std::cell::Cell::new(true), only_text: false, fail: false, depth: 0, extra: Vec::new(), breaks: true }
+        P { starts, off_map: Vec::new(), in_list: false, in_block: false, in_link: false, at_start: std::cell::Cell::new(true), only_text: false, fail: false, depth: 0, extra: Vec::new(), breaks: true }
     }
 
     pub fn add_off(&mut self, line: usize, n: i64) {
-        *self.off_map.entry(line).or_insert(0) += n;
+        if self.off_map.len() <= line {
+            self.off_map.resize(line + 1, None);
+        }
+        *self.off_map[line].get_or_insert(0) += n;
     }
 
     pub fn to_offset(&self, line: usize, col: usize) -> i64 {
@@ -216,7 +219,8 @@ pub fn unescape(v: &[u16]) -> S {
         if prev >= v.len() || !is_escapable(ch) {
             out.push(c('\\'));
         }
-        idx = find(v, c('\\'), i + 1);
+        // the search resumes after the escaped character, which is never taken for a backslash itself
+        idx = find(v, c('\\'), prev + 1);
     }
     out.extend_from_slice(&v[prev.min(v.len())..]);
     out

@@ -238,7 +238,7 @@ fn visit_item(list: &Node, item: &Node, orig: &[u16], a: &mut Acc) {
 }
 
 thread_local! {
-    static LIST_PARENT: std::cell::RefCell<std::collections::HashMap<usize, Pt>> = std::cell::RefCell::new(std::collections::HashMap::new());
+    static LIST_PARENT: std::cell::RefCell<VM<usize, Pt>> = std::cell::RefCell::new(VM::new());
 }
 
 pub fn metadata(root: &Node, orig: &[u16], fm: Option<&crate::yaml::Y>) -> Option<String> {

@@ -199,6 +199,36 @@ pub fn to_lower_str(v: &[u16]) -> S {
     st(v).to_lowercase().encode_utf16().collect()
 }
 
+/// A small map for the few places that need one: a list searched in order (no hashing code in the module).
+pub struct VM<K, V>(Vec<(K, V)>);
+
+impl<K: PartialEq, V> VM<K, V> {
+    pub fn new() -> Self {
+        VM(Vec::new())
+    }
+    pub fn get(&self, k: &K) -> Option<&V> {
+        self.0.iter().find(|(a, _)| a == k).map(|(_, v)| v)
+    }
+    pub fn contains_key(&self, k: &K) -> bool {
+        self.get(k).is_some()
+    }
+    pub fn insert(&mut self, k: K, v: V) {
+        match self.0.iter_mut().find(|(a, _)| *a == k) {
+            Some(e) => e.1 = v,
+            None => self.0.push((k, v)),
+        }
+    }
+    /// Keeps the first value stored under a key.
+    pub fn insert_first(&mut self, k: K, v: impl FnOnce() -> V) {
+        if !self.contains_key(&k) {
+            self.0.push((k, v()));
+        }
+    }
+    pub fn clear(&mut self) {
+        self.0.clear();
+    }
+}
+
 pub fn to_upper_str(v: &[u16]) -> S {
     st(v).to_uppercase().encode_utf16().collect()
 }
