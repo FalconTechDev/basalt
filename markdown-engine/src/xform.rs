@@ -42,13 +42,17 @@ pub fn hash_path(e: &[u16]) -> S {
 /// no-break spaces to spaces, trim; the NFC step is marked and finished by the JS shim.
 pub fn norm_href(e: &[u16]) -> S {
     let r: S = e.iter().map(|&x| if x == 0xa0 { SP } else { x }).collect();
-    let t = trim(&r).to_vec();
+    mark_nfc(trim(&r))
+}
+
+/// Wraps non-ASCII text in the markers the JS shim turns into `String.prototype.normalize("NFC")`.
+pub fn mark_nfc(t: &[u16]) -> S {
     if t.iter().all(|&x| x < 128) {
-        return t;
+        return t.to_vec();
     }
     let mut o = S::new();
     o.push(NFC_OPEN as u16);
-    o.extend_from_slice(&t);
+    o.extend_from_slice(t);
     o.push(NFC_CLOSE as u16);
     o
 }

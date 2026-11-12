@@ -350,7 +350,9 @@ fn one(cx: &Ctx, n: &Node, parent: &Node) -> Vec<H> {
             } else {
                 let mut e = el("a", vec![text_h(&s(&n.title.clone().unwrap_or_default()))]).p("class", "internal-link").p("href", &href).p("data-href", &href);
                 if n.reftype == 1 {
-                    e = e.p("aria-label", &s(&crate::xform::hash_path(&n.url))).p("data-tooltip-position", "top");
+                    // the label is made from the plain target (the markers only tell the host to normalise)
+                    let plain: S = n.url.iter().copied().filter(|&x| x != crate::xform::NFC_OPEN as u16 && x != crate::xform::NFC_CLOSE as u16).collect();
+                    e = e.p("aria-label", &s(&crate::xform::mark_nfc(&crate::xform::hash_path(&plain)))).p("data-tooltip-position", "top");
                 }
                 vec![H::E(e)]
             }
