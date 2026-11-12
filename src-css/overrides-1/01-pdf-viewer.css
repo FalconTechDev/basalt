@@ -1,0 +1,77 @@
+/* pdf-viewer (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* progress-bar */
+.progress-bar .progress-bar-subline {
+  transition: transform 150ms ease-in-out;
+}
+
+/* pdf-content */
+.pdf-content-container .pdf-sidebar-container,
+.pdf-content-container .pdf-viewer-container {
+  transition-duration: 275ms;
+  transition-timing-function: var(--anim-motion-swing);
+}
+
+/* pdf-sidebar */
+.pdf-sidebar-container .pdf-thumbnail-view a {
+  display: block;
+  cursor: var(--cursor);
+}
+
+.pdf-sidebar-container img.thumbnailImage {
+  border: 1px solid transparent;
+  max-width: unset;
+  width: var(--thumbnail-width);
+  height: var(--thumbnail-height);
+}
+
+/* pdf-findbar */
+.pdf-findbar input[type="checkbox"] {
+  display: none;
+  pointer-events: none;
+}
+
+.pdf-findbar label {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* is-phone */
+.is-phone .pdf-findbar .pdf-toolbar-divider,
+.is-phone .pdf-findbar .pdf-findbar-settings-btn,
+.is-phone .pdf-findbar .pdf-findbar-message {
+  display: none;
+}
+
+/* pdf-findbar */
+.pdf-findbar-settings .setting-item-name {
+  font-size: var(--font-ui-small);
+}
+
+/* pdf-container */
+.pdf-container .textLayer ::selection,
+.markdown-source-view.mod-cm6 .pdf-container .textLayer ::selection {
+  background-color: hsl(var(--color-accent-hsl));
+}
+
+.pdf-container .annotationLayer :is(.linkAnnotation, .buttonWidgetAnnotation.pushButton):not(.hasBorder) > a:hover {
+  box-shadow: none;
+  opacity: 1;
+  background-color: hsla(var(--color-accent-hsl), 0.1);
+}
+
+/* markdown-source */
+.markdown-source-view.mod-cm6 .pdf-embed .edit-block-button {
+  top: 6px;
+  z-index: 1;
+  background-color: var(--background-primary);
+  opacity: 1;
+}
+
+@media print {
+  /* pdf-embed */
+  .pdf-embed:not(.canvas-node-content) .pdf-container,
+  .pdf-embed:not(.canvas-node-content) .pdf-toolbar {
+    display: none;
+  }
+}

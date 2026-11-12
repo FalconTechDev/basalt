@@ -1,0 +1,77 @@
+/* preview (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* markdown-preview */
+.markdown-preview-view .collapse-indicator {
+  display: inline-flex;
+  position: absolute;
+  user-select: none;
+  cursor: var(--cursor);
+}
+
+.markdown-preview-view .heading-collapse-indicator {
+  margin-inline-start: -22px;
+  padding: 0 6px;
+}
+
+/* callout */
+.callout.is-collapsible .callout-title {
+  cursor: var(--cursor);
+}
+
+/* internal-embed */
+.internal-embed:not(.image-embed) {
+  display: block;
+}
+
+/* image-embed */
+div.image-embed .image-wrapper {
+  display: flex;
+  position: relative;
+}
+
+div.image-embed .image-resize-corner {
+  display: block;
+  position: absolute;
+  z-index: 1;
+  bottom: -3px;
+  inset-inline-end: -3px;
+  width: 30px;
+  height: 30px;
+  cursor: nwse-resize;
+}
+
+/* metadata-property */
+.metadata-property-value .multi-select-container {
+  --background-modifier-form-field: transparent;
+  --background-modifier-border: transparent;
+  align-items: center;
+  overflow: hidden;
+}
+
+.metadata-property-value[data-property-type="tags"] .multi-select-pill {
+  --pill-color: var(--tag-color);
+  --pill-color-hover: var(--tag-color-hover);
+  --pill-color-remove: var(--tag-color);
+  --pill-color-remove-hover: var(--tag-color-hover);
+  --pill-decoration: var(--tag-decoration);
+  --pill-decoration-hover: var(--tag-decoration-hover);
+  --pill-background: var(--tag-background);
+  --pill-background-hover: var(--tag-background-hover);
+  --pill-border-color: var(--tag-border-color);
+  --pill-border-color-hover: var(--tag-border-color-hover);
+  --pill-border-width: var(--tag-border-width);
+  --pill-padding-x: var(--tag-padding-x);
+  --pill-padding-y: var(--tag-padding-y);
+  --pill-radius: var(--tag-radius);
+  --pill-corner-shape: var(--tag-corner-shape);
+  --pill-weight: var(--tag-weight);
+  --pill-focus-width: 100%;
+  --pill-focus-left-adjust: 0;
+  line-height: 1;
+  cursor: var(--cursor-link);
+}
+
+/* footnotes-view */
+.footnotes-view .footnote-list-item {
+  border-bottom: var(--footnote-divider-width) solid var(--footnote-divider-color);
+}

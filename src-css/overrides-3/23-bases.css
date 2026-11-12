@@ -1,0 +1,170 @@
+/* bases (late): rules of this component that have to stay after rules of components further down the build order. */
+
+@media (hover: hover) {
+  /* formula-editor */
+  .formula-editor:hover {
+    border-color: var(--background-modifier-border-hover);
+    transition: box-shadow var(--anim-duration-fast) ease-in-out, border var(--anim-duration-fast) ease-in-out;
+  }
+}
+
+.formula-editor:active,
+.formula-editor:focus,
+.formula-editor:focus-within {
+  border-color: var(--background-modifier-border-focus);
+  transition: box-shadow 0.15s ease-in-out, border 0.15s ease-in-out;
+}
+
+/* bases-rendered */
+.bases-rendered-value input[disabled=true] {
+  min-height: 0;
+  pointer-events: none;
+}
+
+/* bases-toolbar */
+.bases-toolbar-menu-container .search-input-container input[type=search] {
+  border: 0;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.bases-toolbar-items:empty {
+  display: none;
+}
+
+.bases-toolbar-items .suggestion-group[data-group="views"],
+.bases-toolbar-items .suggestion-group[data-group="properties"] {
+  flex-shrink: 1;
+  overflow-y: auto;
+  padding-bottom: var(--size-2-3);
+}
+
+.bases-toolbar-items .suggestion-group[data-group="actions"] {
+  border-top: var(--border-width) solid var(--background-modifier-border);
+  padding: var(--size-4-1);
+}
+
+.bases-toolbar-menu .modal-header {
+  display: none;
+}
+
+.bases-toolbar-menu-form .input-group-header {
+  align-items: center;
+  display: flex;
+  gap: var(--size-4-2);
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-semibold);
+}
+
+.bases-toolbar-menu-item.is-selected input[type=checkbox] {
+  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+}
+
+.bases-toolbar-menu-item .bases-toolbar-menu-item-info {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+  flex-grow: 1;
+  overflow: hidden;
+  font-size: var(--font-ui-small);
+}
+
+.bases-toolbar-menu-item .bases-toolbar-menu-item-info-icon {
+  display: flex;
+  align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: var(--cursor);
+}
+
+/* bases-search */
+.bases-search-row .search-input-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1);
+}
+
+.bases-search-row .search-input-container input {
+  flex: 1;
+  min-width: 0;
+}
+
+.bases-search-row .search-input-container input:not(:placeholder-shown) {
+  padding-inline-end: 0;
+}
+
+.bases-search-row .search-input-container .search-input-clear-button {
+  position: static;
+  flex-shrink: 0;
+}
+
+/* bases-query */
+.bases-query-container .filter-group .filter-group-statements {
+  gap: var(--size-2-3);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.bases-query-container .filter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+}
+
+.bases-query-container .filter-row .filter-statement {
+  display: flex;
+  row-gap: var(--size-4-1);
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+.bases-query-container .filter-rhs-container {
+  display: flex;
+  align-items: center;
+}
+
+/* bases-table */
+.bases-table-container input[type='text']:hover,
+.bases-table-container input[type='date']:hover,
+.bases-table-container input[type='datetime-local']:hover,
+.bases-table-container input[type='number']:hover,
+.bases-table-container .multi-select-container:hover,
+.bases-table-container input[type='text']:active,
+.bases-table-container input[type='date']:active,
+.bases-table-container input[type='datetime-local']:active,
+.bases-table-container input[type='number']:active,
+.bases-table-container .multi-select-container:active,
+.bases-table-container input[type='text']:focus,
+.bases-table-container input[type='date']:focus,
+.bases-table-container input[type='datetime-local']:focus,
+.bases-table-container input[type='number']:focus,
+.bases-table-container .multi-select-container:focus {
+  box-shadow: none;
+  border: none;
+}
+
+/* bases-thead */
+.bases-thead .bases-td {
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* mod-rtl */
+body.mod-rtl .bases-table-header-resizer {
+  right: unset;
+  left: -1px;
+}
+
+/* bases-table */
+.bases-table-cell[data-property-type="checkbox"] {
+  justify-content: center;
+}
+
+.bases-table-cell .metadata-input-number,
+.bases-table-cell[data-property-type="number"] {
+  justify-content: flex-end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

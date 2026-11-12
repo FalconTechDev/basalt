@@ -1,0 +1,20 @@
+/* menus (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* menu-item */
+.menu-item.is-label {
+  overflow-wrap: anywhere;
+  font-size: var(--font-ui-medium);
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+  cursor: default;
+}
+
+.menu-item.is-disabled {
+  color: var(--text-faint);
+  cursor: default;
+}
+
+.menu-item-icon .mod-submenu {
+  color: var(--text-faint);
+}

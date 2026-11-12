@@ -1,0 +1,37 @@
+/* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* search-input */
+.search-input-container.mod-hotkey .clickable-icon {
+  padding: var(--size-2-1);
+}
+
+/* workspace-leaf */
+.workspace-leaf-content[data-type='markdown'] .view-content {
+  overflow: hidden;
+  padding: 0;
+}
+
+.workspace-leaf-content[data-type='backlink'] .view-content,
+.workspace-leaf-content[data-type='outgoing-link'] .view-content {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* tree-item */
+.tree-item-self .tree-item-icon .svg-icon:not(.right-triangle) {
+  --icon-size: var(--icon-xs);
+  --icon-stroke: var(--icon-s-stroke-width);
+}
+
+/* search-results */
+.search-results-info .dropdown option {
+  color: initial;
+  text-align: start;
+}
+
+/* workspace-drawer */
+.workspace-drawer-active-tab-container .workspace-drawer-active-tab-content .nav-files-container {
+  padding-top: var(--size-4-3);
+}

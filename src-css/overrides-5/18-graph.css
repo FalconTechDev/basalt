@@ -1,0 +1,8 @@
+/* graph (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* graph-controls */
+.graph-controls:not(.is-close) {
+  max-height: calc(100% - var(--size-4-4));
+  border: var(--menu-border-width) solid var(--menu-border-color);
+  box-shadow: var(--shadow-s);
+}

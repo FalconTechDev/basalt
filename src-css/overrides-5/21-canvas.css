@@ -1,0 +1,114 @@
+/* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* canvas-selection */
+.canvas-selection.mod-group-selection {
+  border-width: 3px;
+  border-radius: 3px;
+  border-color: hsla(var(--color-accent-hsl), 0.3);
+  background-color: hsla(var(--color-accent-hsl), 0.03);
+  pointer-events: initial;
+}
+
+/* canvas-card */
+.canvas-card-menu .canvas-card-menu-divider {
+  width: 1px;
+  background-color: var(--background-modifier-border);
+}
+
+/* canvas-control */
+.canvas-control-item:last-child {
+  border-bottom: none;
+}
+
+@media (hover: hover) {
+  .canvas-control-item:hover {
+    color: var(--text-normal);
+    background-color: var(--interactive-hover);
+  }
+}
+
+.canvas-control-item.is-active {
+  color: var(--color-accent);
+}
+
+@media (hover: hover) {
+  /* canvas-node */
+  .canvas-node-label:hover {
+    color: var(--text-muted);
+  }
+}
+
+.canvas-node-group .canvas-node-resizer {
+  pointer-events: initial;
+}
+
+/* canvas-group */
+.canvas-group-label[contenteditable="true"] {
+  box-shadow: 0 0 0 2px rgb(var(--canvas-color));
+  color: var(--text-normal);
+  text-overflow: initial;
+  cursor: text;
+  background-color: var(--background-primary);
+}
+
+/* canvas-node */
+.canvas-node-resizer[data-resize='top'] {
+  left: 0;
+  right: 0;
+  top: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  width: auto;
+  cursor: ns-resize;
+}
+
+.canvas-node-resizer[data-resize='bottom'] {
+  left: 0;
+  right: 0;
+  bottom: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  width: auto;
+  cursor: ns-resize;
+}
+
+.canvas-node-resizer[data-resize='left'] {
+  top: 0;
+  bottom: 0;
+  left: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  height: auto;
+  cursor: ew-resize;
+}
+
+.canvas-node-resizer[data-resize='right'] {
+  top: 0;
+  bottom: 0;
+  right: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  height: auto;
+  cursor: ew-resize;
+}
+
+.canvas-node-resizer[data-resize='topright'] {
+  right: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  top: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  cursor: nesw-resize;
+}
+
+.canvas-node-resizer[data-resize='bottomright'] {
+  right: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  bottom: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  cursor: nwse-resize;
+}
+
+.canvas-node-resizer[data-resize='topleft'] {
+  left: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  top: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  cursor: nwse-resize;
+}
+
+.canvas-node-resizer[data-resize='bottomleft'] {
+  left: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  bottom: calc(var(--resizer-size) * var(--zoom-multiplier) * -0.5);
+  cursor: nesw-resize;
+}
+
+/* inline-embed */
+.inline-embed > .canvas-minimap {
+  max-height: var(--embed-canvas-max-height);
+}

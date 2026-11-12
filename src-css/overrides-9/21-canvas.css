@@ -1,0 +1,37 @@
+/* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* canvas-card */
+.canvas-card-menu .canvas-card-menu-button {
+  --icon-size: var(--icon-xl);
+  --icon-stroke: var(--icon-xl-stroke-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  padding: var(--size-4-2);
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+@media (hover: hover) {
+  .canvas-card-menu .canvas-card-menu-button:hover {
+    color: var(--color-accent);
+  }
+}
+
+/* canvas-node */
+.canvas-node.is-selected .canvas-node-label,
+.canvas-node.is-focused .canvas-node-label {
+  color: var(--text-muted);
+}
+
+.canvas-node-content.markdown-embed {
+  border: none;
+  padding: 0;
+}
+
+.canvas-node-content.media-embed {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}

@@ -1,0 +1,52 @@
+/* services (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* release-notes */
+.release-notes-view .is-readable-line-width {
+  max-width: var(--file-line-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* publish-changes */
+.publish-changes-info button {
+  margin-inline-end: 0;
+  margin-inline-start: var(--size-4-2);
+}
+
+/* sync-history */
+.sync-history-content .setting-item-info .setting-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sync-history-preview img {
+  max-width: 100%;
+}
+
+.sync-history-content-container.mod-empty .sync-history-content,
+.sync-history-content-container.mod-empty .sync-history-content-buttons {
+  display: none;
+}
+
+button.sync-history-button {
+  box-shadow: none;
+  margin: var(--size-4-1) 0 var(--size-4-2);
+  min-height: var(--input-height);
+  background-color: var(--background-secondary);
+}
+
+/* webviewer-content */
+.webviewer-content webview {
+  flex-grow: 1;
+  width: 100%;
+}
+
+/* starter */
+.starter.is-hidden-frameless .titlebar {
+  display: block;
+}
+
+.starter .titlebar-inner .titlebar-text {
+  display: none;
+}

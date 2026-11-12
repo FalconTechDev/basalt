@@ -1,0 +1,14 @@
+/* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* workspace-drawer */
+.workspace-drawer.is-collapsed .workspace-drawer-inner {
+  padding: 0;
+  width: 0;
+}
+
+.workspace-drawer-tab-options.is-collapsed .workspace-drawer-tab-options-list {
+  max-height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: max-height 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.1), opacity 0.15s ease;
+}

@@ -1,0 +1,15 @@
+/* menus: Context and drop-down menus. */
+
+/* menu */
+.menu.mod-no-icon .menu-item-icon:first-child {
+  display: none;
+}
+
+/* menu-item */
+.menu-item.is-warning:not(.is-disabled).selected {
+  color: var(--text-error);
+}
+
+.menu-item-title {
+  flex: 1 0 0;
+}

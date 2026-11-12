@@ -1,0 +1,79 @@
+/* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* mod-root */
+.mod-root .mod-pinned,
+.mod-root .workspace-tab-header-inner-close-button {
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
+}
+
+/* popover */
+.popover.hover-popover > .mod-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-size: var(--popover-font-size);
+  color: var(--text-muted);
+}
+
+/* workspace-drawer */
+.workspace-drawer-inner {
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+  display: flex;
+  position: relative;
+  contain: layout style paint;
+  padding-top: max(var(--size-4-2), var(--safe-area-inset-top));
+  padding-bottom: calc(max(var(--safe-area-inset-bottom), var(--size-4-4)) - var(--keyboard-height));
+  background-color: var(--mobile-sidebar-background);
+  transition: width ease-out 150ms;
+}
+
+.workspace-drawer-header-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--font-ui-large);
+  font-weight: var(--font-semibold);
+  color: var(--text-normal);
+}
+
+.workspace-drawer-header-info {
+  margin: var(--size-4-1) 0 0 0;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.workspace-drawer-actions {
+  display: flex;
+  margin: var(--size-4-4) 0 var(--size-4-3) 0;
+  color: var(--text-muted);
+}
+
+.workspace-drawer-action-icon {
+  color: var(--text-faint);
+}
+
+.workspace-drawer-tab-options {
+  --no-tooltip: true;
+  --icon-color: var(--text-muted);
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  margin: 0 var(--size-4-3);
+  color: var(--text-muted);
+}
+
+.workspace-drawer-active-tab-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--mobile-sidebar-background);
+}
+
+.workspace-drawer-active-tab-content {
+  flex: 1 0 0;
+  overflow: auto;
+  display: flex;
+  padding: 0;
+}

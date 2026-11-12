@@ -1,0 +1,240 @@
+/* pdf-viewer (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* progress-bar */
+.progress-bar-container {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  height: 100vh;
+  width: 100vw;
+  padding-left: var(--safe-area-inset-left);
+  padding-right: var(--safe-area-inset-right);
+  background-color: var(--background-primary);
+}
+
+.progress-bar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--size-4-2);
+  width: 100%;
+}
+
+.progress-bar-context {
+  position: absolute;
+  top: 100%;
+  border-radius: 50px;
+  padding: var(--size-4-2) var(--size-4-6);
+  font-size: var(--font-ui-small);
+}
+
+.progress-bar-message {
+  margin-bottom: var(--size-4-8);
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+.progress-bar-indicator {
+  position: relative;
+  overflow-x: hidden;
+  height: 8px;
+  width: 90vw;
+  margin: 0 10vw;
+  border-radius: 3px;
+}
+
+.progress-bar-line {
+  position: absolute;
+  width: 150%;
+  height: 8px;
+  opacity: 0.4;
+  background-color: var(--interactive-accent);
+}
+
+.progress-bar-subline {
+  position: absolute;
+  height: 8px;
+  width: 100%;
+  background-color: var(--interactive-accent);
+  transform-origin: left center;
+}
+
+/* pdf-container */
+.pdf-container {
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+  min-width: 350px;
+  background-color: var(--pdf-background);
+}
+
+/* findbarOpen */
+.findbarOpen .pdf-viewer-container {
+  margin-top: var(--findbar-height);
+}
+
+/* pdf-content */
+.pdf-content-container {
+  --sidebar-width: 140px;
+  position: absolute;
+  bottom: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  top: 0;
+  min-width: 350px;
+}
+
+/* pdf-sidebar */
+.pdf-sidebar-container {
+  bottom: 0;
+  inset-inline-start: calc(-1 * var(--sidebar-width));
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  visibility: hidden;
+  z-index: 100;
+  border-inline-end: var(--divider-width) solid var(--divider-color);
+  width: var(--sidebar-width);
+  background-color: var(--pdf-sidebar-background);
+  transition-property: inset-inline-start;
+}
+
+/* pdf-outline */
+.pdf-outline-view .tree-item-self.mod-active {
+  color: var(--nav-item-color-active);
+  font-weight: var(--nav-item-weight-active);
+  background-color: var(--nav-item-background-active);
+}
+
+/* pdf-sidebar */
+.pdf-sidebar-content {
+  bottom: 0;
+  inset-inline-start: 0;
+  top: 0;
+  overflow: auto;
+  position: absolute;
+  width: 100%;
+}
+
+.pdf-sidebar-resizer {
+  bottom: 0;
+  inset-inline-end: calc(var(--divider-width-hover) * -1);
+  top: 0;
+  position: absolute;
+  z-index: var(--layer-cover);
+  width: var(--divider-width-hover);
+  background-color: transparent;
+  cursor: col-resize;
+  transition: background-color 200ms ease-in-out;
+}
+
+@media (hover: hover) {
+  /* is-translucent */
+  .is-translucent .pdf-sidebar-resizer:hover {
+    background-color: var(--divider-color-hover);
+  }
+}
+
+/* pdf-toolbar */
+.pdf-toolbar {
+  align-items: stretch;
+  justify-content: space-between;
+  display: flex;
+  overflow: auto;
+  position: relative;
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding: var(--size-4-1) var(--size-4-3);
+  background-color: var(--background-primary);
+}
+
+.pdf-toolbar-left,
+.pdf-toolbar-center,
+.pdf-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1);
+}
+
+.pdf-toolbar-center {
+  position: absolute;
+  top: var(--size-4-1);
+  inset-inline-start: 50%;
+  height: calc(100% - var(--size-4-2));
+  transform: translateX(calc(var(--direction) * -50%));
+}
+
+.pdf-toolbar-spacer {
+  width: var(--size-4-3);
+}
+
+.pdf-toolbar-divider {
+  width: var(--border-width);
+  height: var(--icon-size);
+  background-color: var(--background-modifier-border);
+}
+
+/* pdf-page */
+.pdf-page-input {
+  width: 7ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* pdf-findbar */
+.pdf-findbar {
+  flex-direction: row-reverse;
+  gap: var(--size-4-1);
+  position: absolute;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+  top: 0;
+  z-index: 101;
+  padding: var(--size-2-3);
+  font-size: var(--font-ui-small);
+  line-height: 1;
+  background-color: var(--background-primary);
+}
+
+/* pdf-find */
+.pdf-find-results-count {
+  margin: 0 var(--size-4-2);
+  color: var(--text-muted);
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* pdf-findbar */
+.pdf-findbar-settings {
+  position: absolute;
+  z-index: 200;
+  border-radius: var(--radius-m);
+  border: 1px solid var(--background-modifier-border);
+  box-shadow: var(--shadow-s);
+  padding: var(--size-4-1) var(--size-4-2);
+  width: 200px;
+  background-color: var(--background-primary);
+  transform: translateX(-100%);
+}
+
+/* is-phone */
+.is-phone .pdf-annotation-modal .modal-content {
+  overflow: hidden;
+  padding: 0;
+}
+
+.is-phone .pdf-annotation-modal .popupContent:empty + .popupMeta,
+.is-phone .pdf-annotation-modal .popupMeta {
+  --icon-size: var(--font-ui-medium);
+  --icon-stroke: var(--icon-m-stroke-width);
+  padding: var(--size-4-2) var(--size-4-4);
+  border-top: none;
+  background-color: transparent;
+}

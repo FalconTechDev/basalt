@@ -1,0 +1,40 @@
+/* utilities (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* view-content */
+.view-content .list-collapse-indicator svg.svg-icon,
+.view-content .collapse-indicator svg.svg-icon {
+  color: var(--collapse-icon-color);
+}
+
+.view-content .is-collapsed .list-collapse-indicator svg.svg-icon,
+.view-content .is-collapsed .collapse-indicator svg.svg-icon {
+  color: var(--collapse-icon-color-collapsed);
+}
+
+/* mod-success */
+.mod-success {
+  color: var(--text-success);
+}
+
+/* inline-block */
+.inline-block {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* hidden-token */
+.hidden-token {
+  display: inline;
+  font-size: 1px !important;
+  font-family: monospace;
+  letter-spacing: -1ch;
+  color: transparent;
+}
+
+/* block-language */
+.block-language-base,
+.bases-embed {
+  overflow: hidden;
+  height: var(--bases-embed-height, auto);
+  cursor: var(--cursor);
+}

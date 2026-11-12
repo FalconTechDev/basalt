@@ -1,0 +1,81 @@
+/* graph: Graph view and its settings panel. */
+
+/* graph-controls */
+.graph-controls.is-close > .graph-control-section {
+  display: none;
+}
+
+/* workspace-split */
+.workspace-split:not(.mod-root) .graph-controls.is-close {
+  background-color: var(--background-secondary);
+}
+
+/* graph-controls */
+.graph-controls .setting-item .setting-item-info {
+  display: flex;
+  align-items: center;
+}
+
+.graph-controls .setting-item:first-of-type {
+  border-top: none;
+}
+
+.graph-controls .setting-item.mod-slider .setting-item-info {
+  margin-inline-end: 0;
+}
+
+.graph-controls .setting-item.mod-slider .setting-item-control {
+  padding-top: var(--size-4-3);
+}
+
+.graph-controls .setting-item.mod-toggle .setting-item-control {
+  padding-top: 0;
+}
+
+.graph-controls .setting-item.mod-search-setting .setting-item-info {
+  margin-inline-end: 0;
+}
+
+.graph-controls .setting-item-name {
+  font-size: var(--font-ui-small);
+}
+
+.graph-controls::-webkit-scrollbar,
+.graph-controls::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+/* graph-color */
+.graph-color-button-container {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.graph-color-button-container button {
+  margin: 0;
+  width: 100%;
+}
+
+/* graph-control */
+.graph-control-section.mod-color-groups .tree-item-children.is-grabbing .graph-color-groups-container {
+  padding-bottom: 40px;
+}
+
+/* graph-controls */
+.graph-controls:not(.is-close) .graph-controls-button.mod-close,
+.graph-controls:not(.is-close) .graph-controls-button.mod-reset {
+  display: flex;
+}
+
+.graph-controls.is-close .graph-controls-button.mod-open {
+  display: flex;
+}
+
+.graph-controls.is-close .graph-controls-button.mod-animate {
+  display: flex;
+}
+
+/* graph-control */
+.graph-control-section.mod-display .setting-item:not(.mod-slider):last-child .setting-item-info {
+  display: none;
+}

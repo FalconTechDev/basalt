@@ -1,0 +1,13 @@
+/* suggest (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* suggestion-container */
+.suggestion-container {
+  align-self: stretch;
+  overflow: hidden;
+  flex-direction: column;
+  z-index: var(--layer-notice);
+  max-width: 500px;
+  max-height: 300px;
+  background-color: var(--suggestion-background);
+  backdrop-filter: var(--suggestion-backdrop-filter);
+}

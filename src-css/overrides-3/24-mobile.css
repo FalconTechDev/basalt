@@ -1,0 +1,59 @@
+/* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* is-mobile */
+.is-mobile .combobox-clear-button {
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
+}
+
+.is-mobile .canvas-control-group {
+  border: none;
+}
+
+/* is-phone */
+.is-phone .bases-toolbar-menu-container input[type=search] {
+  border: 0;
+  border-radius: var(--radius-xl);
+  box-shadow: none;
+  background-color: var(--background-modifier-form-field);
+}
+
+/* is-mobile */
+.is-mobile .document-search input,
+.is-mobile .document-replace input {
+  flex-grow: 1;
+}
+
+/* mobile-onboarding */
+.mobile-onboarding-radio-option:focus {
+  border-color: var(--background-modifier-border-focus);
+}
+
+.mobile-onboarding-radio-option.is-selected {
+  border-color: var(--interactive-accent);
+}
+
+/* is-phone */
+.is-phone .modal .setting-item-control button {
+  padding: 10px;
+}
+
+/* mobile-option */
+.mobile-option-setting-item-option-icon.mobile-option-setting-drag-icon {
+  cursor: grab;
+}
+
+/* is-tablet */
+body.is-tablet .sidebar-toggle-button.mod-left {
+  padding-left: var(--size-4-2);
+}
+
+/* is-mobile */
+.is-mobile .modal {
+  border: none;
+}
+
+/* is-phone */
+.is-phone .sync-vault-share-container .setting-item-control {
+  flex-direction: column;
+}

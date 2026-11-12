@@ -1,0 +1,271 @@
+/* modals (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* modal-container */
+.modal-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  inset-inline-start: 0;
+  z-index: var(--layer-modal);
+  width: 100%;
+}
+
+/* modal-bg */
+.modal-bg {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--background-modifier-cover);
+}
+
+/* modal */
+.modal {
+  --checkbox-size: var(--font-ui-medium);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  border-radius: var(--modal-radius);
+  border: var(--modal-border-width) solid var(--modal-border-color);
+  padding: var(--size-4-4);
+  min-height: 100px;
+  width: var(--dialog-width);
+  max-width: var(--dialog-max-width);
+  max-height: var(--dialog-max-height);
+  background-color: var(--modal-background);
+  corner-shape: var(--corner-shape);
+}
+
+.modal.mod-narrow {
+  max-width: var(--modal-max-width-narrow);
+}
+
+/* modal-sidebar */
+.modal-sidebar {
+  --background-modifier-form-field: var(--background-primary);
+  flex: 1 1 var(--modal-community-sidebar-width);
+  flex-direction: column;
+  display: flex;
+  min-width: var(--modal-community-sidebar-width);
+  padding: var(--size-4-3) 0 0 0;
+}
+
+/* modal-close */
+.modal-close-button {
+  position: absolute;
+  top: var(--size-2-3);
+  inset-inline-end: var(--size-2-3);
+  padding: var(--size-2-2);
+}
+
+/* modal-header */
+.modal-header {
+  margin-bottom: 0.75em;
+  height: var(--modal-header-height);
+}
+
+/* modal-button */
+.modal-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--size-4-2);
+  flex-wrap: wrap;
+  margin-top: 1.5em;
+  font-size: var(--font-ui-medium);
+}
+
+/* modal-setting */
+.modal-setting-nav-bar {
+  display: flex;
+  flex: 0 1 auto;
+  padding: var(--size-4-3);
+  border-bottom: var(--border-width) solid var(--background-modifier-border);
+}
+
+/* modal */
+.modal .modal-nav-action.mod-cta {
+  inset-inline-end: 0;
+  color: var(--color-accent);
+  font-weight: var(--font-semibold);
+}
+
+.modal.mod-scrollable .modal-button-container {
+  gap: var(--size-4-2);
+  position: absolute;
+  bottom: 0;
+  margin: 0 0 0 calc(var(--size-4-4) * -1);
+  padding: var(--size-4-4);
+  border-top: var(--border-width) solid var(--background-modifier-border);
+  width: 100%;
+  background-color: var(--background-primary);
+}
+
+/* prompt */
+.prompt {
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  position: absolute;
+  top: 80px;
+  overflow: hidden;
+  border-radius: var(--radius-l);
+  border: var(--prompt-border-width) solid var(--prompt-border-color);
+  box-shadow: var(--shadow-l);
+  width: var(--prompt-width);
+  max-width: var(--prompt-max-width);
+  max-height: var(--prompt-max-height);
+  background-color: var(--prompt-background);
+  backdrop-filter: var(--prompt-backdrop-filter);
+  corner-shape: var(--corner-shape);
+}
+
+/* prompt-input */
+input.prompt-input {
+  width: 100%;
+  height: var(--prompt-input-height);
+  padding: var(--size-4-6);
+  padding-inline-end: var(--size-4-12);
+  border: none;
+  border-radius: 0;
+  border-bottom: var(--border-width) solid var(--background-secondary);
+  font-size: var(--font-ui-medium);
+  background-color: transparent;
+}
+
+/* prompt-results */
+.prompt-results {
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--size-4-3);
+  list-style: none;
+}
+
+/* prompt-instructions */
+.prompt-instructions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--size-4-3);
+  border-top: var(--border-width) solid var(--background-secondary);
+  padding: var(--size-4-2);
+  user-select: none;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* prompt-instruction */
+.prompt-instruction {
+  display: inline-block;
+}
+
+/* vertical-tab */
+.vertical-tab-nav-item {
+  display: flex;
+  padding: var(--size-4-1) var(--size-4-2);
+  margin-bottom: 0;
+  border-radius: var(--radius-s);
+  user-select: none;
+  font-size: calc(var(--font-ui-small) + 1px);
+  cursor: var(--cursor);
+  corner-shape: var(--corner-shape);
+}
+
+.vertical-tab-nav-item:hover .vertical-tab-nav-item-icon,
+.vertical-tab-nav-item.is-active .vertical-tab-nav-item-icon {
+  color: var(--text-normal);
+}
+
+.vertical-tab-nav-item-chevron {
+  display: none;
+}
+
+.vertical-tab-nav-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-s);
+  margin-inline-end: var(--size-4-2);
+  color: var(--text-muted);
+}
+
+.vertical-tab-content {
+  container-type: inline-size;
+  overflow-y: auto;
+  padding-inline-start: var(--size-4-12);
+  padding-inline-end: var(--size-4-12);
+  padding-top: var(--size-4-8);
+  padding-bottom: var(--size-4-16);
+  height: 100%;
+  background-color: var(--background-primary);
+}
+
+.vertical-tab-header {
+  padding: var(--size-4-3);
+  background-color: var(--modal-sidebar-background);
+}
+
+.vertical-tab-header-group-title {
+  padding: var(--size-4-2);
+  font-size: var(--font-ui-smaller);
+  font-weight: var(--font-semibold);
+  color: var(--text-faint);
+  user-select: none;
+}
+
+.vertical-tab-header-group {
+  padding: var(--size-4-3) 0;
+}
+
+/* checkbox-container */
+.checkbox-container {
+  display: inline-block;
+  flex-shrink: 0;
+  position: relative;
+  border-radius: var(--toggle-radius);
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.07), inset 0 0 1px rgba(0, 0, 0, 0.21);
+  outline: 0 solid var(--background-modifier-border-focus);
+  width: var(--toggle-s-width);
+  height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2);
+  user-select: none;
+  cursor: var(--cursor);
+  background-color: var(--background-modifier-border-hover);
+  transition: box-shadow 0.15s ease-in-out, outline 0.15s ease-in-out, border 0.15s ease-in-out, opacity 0.15s ease-in-out;
+  -webkit-app-region: no-drag;
+}
+
+.checkbox-container input[type='checkbox'] {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+}
+
+@media (forced-colors: active) {
+  .checkbox-container {
+    outline: 1px ButtonBorder solid;
+  }
+}
+
+/* modal-setting */
+.modal-setting-titlebar {
+  display: flex;
+  align-items: center;
+  padding: var(--size-4-2) var(--size-4-4);
+  padding-inline-end: var(--size-4-10);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.modal-setting-titlebar .modal-setting-title {
+  flex-grow: 1;
+  overflow: hidden;
+  font-size: var(--font-ui-medium);
+  font-weight: var(--file-header-font-weight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

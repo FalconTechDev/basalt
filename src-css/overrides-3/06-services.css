@@ -1,0 +1,211 @@
+/* services (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* file-recovery */
+.file-recovery-list {
+  overflow: auto;
+  flex-grow: 1;
+  flex-direction: column;
+  display: flex;
+  padding: var(--size-4-3) var(--size-4-2);
+}
+
+.file-recovery-list-container {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 250px;
+  flex-shrink: 0;
+  border-inline-end: 1px solid var(--background-modifier-border);
+}
+
+.file-recovery-list-item-header {
+  display: flex;
+  padding: var(--size-4-2);
+  border-radius: var(--radius-s);
+  transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+}
+
+.file-recovery-list-item-header .file-recovery-list-item-details {
+  flex-grow: 1;
+  font-size: var(--font-ui-small);
+  cursor: var(--cursor);
+}
+
+.file-recovery-text {
+  flex: 1 0 0;
+  padding: var(--size-4-6);
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-medium);
+  tab-size: 4;
+  background-color: var(--background-primary);
+  resize: none;
+}
+
+/* publish-change */
+.publish-change-list {
+  padding: var(--size-4-2) 0 var(--size-4-2) 0;
+}
+
+/* publish-section */
+.publish-section-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding: var(--size-4-2) 0;
+  font-size: var(--font-ui-small);
+  line-height: 1.1;
+  color: var(--text-muted);
+}
+
+.publish-section-header-text {
+  flex-grow: 1;
+  font-size: var(--font-ui-medium);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-medium);
+  color: var(--text-normal);
+}
+
+/* publish-changes */
+.publish-changes-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* publish-section */
+.publish-section-header-toggle-collapsed-button {
+  margin-inline-end: var(--size-4-1);
+  width: 9px;
+  height: 9px;
+  color: var(--text-faint);
+}
+
+.publish-section-header-action {
+  margin-inline-start: var(--size-4-3);
+  color: var(--text-faint);
+}
+
+/* publish-changes */
+.publish-changes-buttons {
+  padding-bottom: var(--size-4-4);
+  text-align: right;
+}
+
+/* publish-upload */
+.publish-upload-item {
+  position: relative;
+  padding: var(--size-4-1) var(--size-4-2);
+}
+
+/* sync-status */
+.sync-status-icon {
+  display: flex;
+  align-items: center;
+  cursor: var(--cursor);
+}
+
+/* sync-history */
+.sync-history-list-container {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 250px;
+  flex-shrink: 0;
+  border-inline-end: 1px solid var(--background-modifier-border);
+  background-color: var(--background-secondary);
+}
+
+.sync-history-list {
+  overflow: auto;
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  padding: var(--size-4-2) var(--size-4-2) 0;
+}
+
+.sync-history-list-item-header {
+  display: flex;
+  align-items: center;
+  padding: var(--size-4-2);
+  margin-bottom: var(--size-4-1);
+  border-radius: var(--radius-s);
+}
+
+.sync-history-list-item-header .sync-history-list-item-details {
+  flex-grow: 1;
+  font-size: var(--font-ui-small);
+  cursor: var(--cursor);
+}
+
+.sync-history-content-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: 0;
+  height: auto;
+  width: 0;
+  background-color: var(--background-primary);
+}
+
+.sync-history-content-empty {
+  display: none;
+}
+
+.sync-history-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+.sync-history-content .setting-item-info {
+  flex-grow: 1;
+  overflow: hidden;
+  font-weight: var(--bold-weight);
+}
+
+.sync-history-preview,
+.file-recovery-diff,
+.sync-history-diff {
+  flex: 1 0 0;
+  overflow: auto;
+  padding: var(--size-4-6);
+  font-size: var(--font-ui-medium);
+  user-select: text;
+  background-color: var(--background-primary);
+}
+
+.sync-history-preview {
+  --cursor-link: default;
+  font-family: var(--font-text);
+  font-size: var(--font-text-size);
+}
+
+.sync-history-desc {
+  flex-grow: 1;
+  overflow-wrap: break-word;
+  padding: var(--size-4-6);
+  text-align: center;
+}
+
+.sync-history-content-buttons {
+  border-top: 1px solid var(--background-modifier-border);
+  margin: 0;
+  padding: var(--size-4-3);
+}
+
+/* sync-file */
+.sync-file-tree-container {
+  overflow: auto;
+  max-height: calc(min(90vh, var(--modal-max-height)) - 250px);
+}
+
+/* webviewer-address */
+.webviewer-address-container {
+  padding: 0 var(--size-4-2);
+}
+
+/* splash-brand */
+.splash-brand {
+  flex: 0 0 content;
+  padding: 20px 0;
+}

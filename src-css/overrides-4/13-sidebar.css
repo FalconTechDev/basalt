@@ -1,0 +1,33 @@
+/* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* nav-file */
+.nav-file-icon .svg-icon,
+.suggestion-flair .svg-icon,
+.menu-item-icon .svg-icon,
+.status-bar-item .svg-icon {
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
+}
+
+/* nav-header */
+.nav-header .search-input-container {
+  margin: 4px auto;
+  padding: 0;
+}
+
+/* nav-buttons */
+.nav-buttons-container.has-separator {
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding-bottom: var(--size-2-3);
+  margin-bottom: var(--size-4-2);
+}
+
+/* tree-item */
+.tree-item-self.mod-collapsible {
+  padding: var(--nav-item-parent-padding);
+}
+
+/* search-result */
+.search-result-file-match:last-child {
+  border-bottom: none;
+}

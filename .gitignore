@@ -5,3 +5,4 @@ target/
 node_modules/
 *.log
 *.bak-claude
+tools/css-compare-out/

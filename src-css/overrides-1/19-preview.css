@@ -1,0 +1,83 @@
+/* preview (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* markdown-rendered */
+.markdown-rendered .search-highlight > div {
+  position: absolute;
+  box-shadow: 0 0 0px 2px var(--text-normal);
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0.3;
+  mix-blend-mode: var(--highlight-mix-blend-mode);
+}
+
+.markdown-rendered blockquote > :first-child {
+  margin-top: 0;
+}
+
+.markdown-rendered blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-rendered button.copy-code-button {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  margin: 6px;
+  padding: 6px 8px;
+  height: auto;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-family: var(--font-interface);
+  background-color: transparent;
+}
+
+/* markdown-preview */
+.markdown-preview-view .markdown-embed .markdown-preview-view {
+  --file-folding-offset: 0px;
+  height: 100%;
+  padding: 0;
+}
+
+/* internal-embed */
+.internal-embed img:not([width]),
+.internal-embed audio,
+.internal-embed video {
+  max-width: 100%;
+}
+
+/* metadata-properties */
+.metadata-properties {
+  display: flex;
+  flex-direction: column;
+  gap: var(--metadata-gap);
+}
+
+/* metadata-input */
+input[type=checkbox].metadata-input-checkbox {
+  margin: var(--input-padding);
+}
+
+@media (hover: hover) {
+  /* metadata-link */
+  .metadata-link:hover .metadata-link-flair {
+    opacity: var(--icon-opacity);
+    transition: 0.1s opacity 0.25s ease-in-out;
+  }
+
+  .metadata-link-inner:hover ~ .metadata-link-flair {
+    opacity: 0;
+  }
+}
+
+@container (width < 250px) {
+  /* metadata-property */
+  .metadata-property {
+    flex-wrap: wrap;
+  }
+}
+
+/* slides-container */
+.slides-container li .collapse-indicator {
+  display: none;
+}

@@ -1,0 +1,41 @@
+/* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* workspace */
+.workspace > .workspace-leaf,
+.workspace > .workspace-split {
+  height: 100%;
+  width: 100%;
+}
+
+/* workspace-split */
+.workspace-split.mod-root > .workspace-leaf-resize-handle {
+  display: none;
+}
+
+@media (hover: hover) {
+  /* is-translucent */
+  .is-translucent .workspace-leaf-resize-handle:hover {
+    border-color: var(--divider-color-hover);
+    background-color: var(--divider-color-hover);
+  }
+}
+
+/* workspace-fake */
+.workspace-fake-target-overlay > * {
+  width: 100%;
+  height: 100%;
+}
+
+/* popover */
+.popover.hover-popover > .image-embed img,
+.popover.hover-popover > .video-embed img,
+.popover.hover-popover > .image-embed video,
+.popover.hover-popover > .video-embed video {
+  width: 100%;
+  max-width: inherit;
+  max-height: inherit;
+}
+
+.popover.hover-popover > .audio-embed {
+  display: flex;
+}

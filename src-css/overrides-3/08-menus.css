@@ -1,0 +1,77 @@
+/* menus (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* menu */
+.menu {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: fixed;
+  z-index: var(--layer-menu);
+  border: var(--menu-border-width) solid var(--menu-border-color);
+  border-radius: var(--menu-radius);
+  padding: 0;
+  box-shadow: var(--menu-shadow);
+  max-height: 100%;
+  user-select: none;
+  background-color: var(--menu-background);
+  backdrop-filter: var(--menu-backdrop-filter);
+  -webkit-app-region: no-drag;
+  corner-shape: var(--menu-corner-shape);
+}
+
+/* menu-scroll */
+.menu-scroll {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: var(--menu-padding);
+}
+
+/* menu-grabber */
+.menu-grabber {
+  display: none;
+}
+
+/* menu-separator */
+.menu-separator {
+  height: 0;
+  margin: var(--size-2-3) calc(var(--size-2-3) * -1);
+  border-bottom: var(--border-width) solid var(--background-modifier-border);
+}
+
+/* menu-item */
+.menu-item-desc {
+  padding-top: var(--size-4-1);
+  color: var(--text-faint);
+  font-size: 0.8em;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+  padding: var(--size-4-1) var(--size-4-2);
+  border-radius: var(--radius-s);
+  font-size: var(--font-ui-small);
+  white-space: nowrap;
+  cursor: var(--cursor);
+  corner-shape: var(--corner-shape);
+}
+
+.menu-item.is-warning:not(.is-disabled) {
+  color: var(--text-error);
+}
+
+.menu-item-icon {
+  flex: 0 1 auto;
+  display: flex;
+  color: var(--text-muted);
+}
+
+.menu-item.is-warning .menu-item-icon {
+  color: var(--text-error);
+}
+
+.menu-item.is-disabled .menu-item-icon {
+  color: var(--text-faint);
+}

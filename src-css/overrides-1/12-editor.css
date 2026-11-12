@@ -1,0 +1,42 @@
+/* editor (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* cm-fold */
+.cm-fold-indicator .collapse-indicator,
+.cm-gutterElement .collapse-indicator,
+.collapse-indicator,
+.fold-gutter {
+  opacity: 0;
+}
+
+/* markdown-source */
+.markdown-source-view.mod-cm6 .callout {
+  margin: 0;
+}
+
+.markdown-source-view.mod-cm6 .cm-preview-code-block pre {
+  margin: 0;
+}
+
+/* cm-line */
+.cm-line div.image-embed .image-wrapper {
+  display: inline-flex;
+}
+
+/* markdown-source */
+.markdown-source-view.mod-inside-iframe > .cm-editor > .cm-scroller > .cm-sizer {
+  flex: 1 0 0;
+  min-height: unset;
+}
+
+@media (hover: hover) {
+  .markdown-source-view.mod-cm6 .is-unresolved:hover {
+    color: var(--link-color-hover);
+    text-decoration-color: var(--link-color-hover);
+    opacity: 1;
+  }
+}
+
+.markdown-source-view.mod-cm6 .cm-table-widget table {
+  margin-top: 0;
+  margin-bottom: 0;
+}

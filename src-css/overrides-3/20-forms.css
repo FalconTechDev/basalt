@@ -1,0 +1,44 @@
+/* forms (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* combobox-button */
+.combobox-button .combobox-button-icon {
+  --icon-size: var(--icon-s);
+  --icon-stroke: var(--icon-s-stroke-width);
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.combobox-button .combobox-clear-button {
+  --icon-size: var(--icon-xs);
+  --icon-stroke: var(--icon-xs-stroke-width);
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.combobox-button .combobox-button-chevron {
+  --icon-size: var(--icon-xs);
+  --icon-stroke: var(--icon-xs-stroke-width);
+  align-items: center;
+  display: flex;
+}
+
+.combobox-button:last-child {
+  border-inline-end-width: 0;
+}
+
+@media (hover: hover) {
+  input[type="radio"]:checked:hover,
+  input[type=checkbox]:checked:hover {
+    border-color: var(--checkbox-color-hover);
+    background-color: var(--checkbox-color-hover);
+  }
+}
+
+/* base-toolbar */
+.base-toolbar-sort-item .combobox-button,
+.base-toolbar-groupby-item .combobox-button {
+  box-shadow: none;
+  border-radius: 0;
+}

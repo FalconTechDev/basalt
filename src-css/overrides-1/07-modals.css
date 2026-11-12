@@ -1,0 +1,200 @@
+/* modals (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* is-frameless */
+body.is-frameless .modal-container,
+body.is-frameless .suggestion-bg {
+  -webkit-app-region: initial;
+}
+
+/* modal */
+.modal.mod-plugin-debug .startup-stat-list,
+.modal.mod-plugin-debug .startup-timing-list {
+  display: flex;
+  flex-direction: column;
+  margin: var(--size-4-4) 0;
+}
+
+.modal.mod-plugin-debug .startup-stat {
+  display: flex;
+  flex-direction: row;
+  gap: var(--size-4-2);
+  padding: var(--size-4-1) 0;
+  font-size: var(--font-ui-medium);
+}
+
+.modal.mod-plugin-debug .startup-value {
+  overflow: hidden;
+  width: 50%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+/* setting-group */
+.setting-group + .setting-group {
+  margin-top: var(--size-4-6);
+}
+
+.setting-group .setting-items:empty {
+  display: none;
+}
+
+.setting-group .setting-item {
+  border: none;
+  border-top: var(--border-width) solid var(--background-modifier-border);
+  border-radius: 0;
+  padding: var(--size-4-4) 0;
+  margin-bottom: 0;
+  background-color: transparent;
+}
+
+.setting-group .setting-item-heading {
+  flex-wrap: wrap;
+  padding: 0 var(--size-4-4);
+  margin-bottom: var(--size-4-4);
+  background-color: transparent;
+}
+
+/* setting-item */
+.setting-item + div > .setting-item-heading,
+.setting-item + .setting-item-heading {
+  margin-top: 0.75em;
+}
+
+.setting-item.mod-cta {
+  justify-content: center;
+}
+
+.setting-item-heading .setting-item-description {
+  flex-basis: 100%;
+  padding-top: 0;
+  font-weight: var(--font-normal);
+  font-size: var(--font-ui-small);
+}
+
+/* vertical-tab */
+.vertical-tab-content h1,
+.vertical-tab-content h2,
+.vertical-tab-content h3,
+.vertical-tab-content h4 {
+  padding: 0 var(--size-4-4);
+  margin: 0 0 var(--size-4-4);
+  color: var(--setting-group-heading-color);
+  font-size: var(--setting-group-heading-size);
+  font-weight: var(--setting-group-heading-weight);
+}
+
+.vertical-tab-content .setting-item ~ :is(h1, h2, h3, h4, .setting-item-heading) {
+  margin-top: var(--size-4-6);
+}
+
+/* setting-item */
+.setting-item-control.mod-vertical {
+  flex-direction: column;
+}
+
+.setting-item-control.mod-vertical > *:not(:last-child) {
+  margin-bottom: 10px;
+  margin-inline-end: 0;
+}
+
+/* setting-hotkey */
+.setting-hotkey-icon .svg-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2px;
+  opacity: 0.6;
+}
+
+@media (hover: hover) {
+  .setting-hotkey-icon:hover .svg-icon {
+    opacity: 1;
+  }
+}
+
+/* modal */
+.modal.mod-image-lightbox {
+  max-width: 90vw;
+  max-height: 90vh;
+  padding: 0;
+}
+
+/* mod-community */
+.mod-community-modal .modal-sidebar .setting-item-info {
+  flex-grow: 0;
+  margin: 0;
+}
+
+.mod-community-modal .modal-sidebar button.clickable-icon {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  color: var(--text-normal);
+}
+
+/* community-item */
+.community-item-screenshot .placeholder-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.community-item-screenshot .placeholder-icon .svg-icon {
+  width: var(--size-4-8);
+  height: var(--size-4-8);
+  color: var(--text-faint);
+}
+
+/* modal-container */
+.modal-container.is-being-dragged .prompt,
+.modal-container.is-being-dragged .modal {
+  pointer-events: none;
+  opacity: 0.25;
+}
+
+/* modal */
+.modal.mod-sidebar-layout .modal-content {
+  display: flex;
+}
+
+/* vertical-tab */
+.vertical-tab-header-group-items[data-section="community-plugins"] .vertical-tab-nav-item-icon {
+  display: none;
+}
+
+.vertical-tab-content h2 {
+  font-size: var(--font-ui-medium);
+  font-weight: var(--font-semibold);
+}
+
+/* modal */
+.modal.mod-bookmark .setting-item-control input {
+  width: 100%;
+}
+
+/* setting-item */
+.setting-item.mod-search-setting .setting-item-info {
+  display: none;
+}
+
+/* modal */
+.modal.mod-publish .modal-content {
+  margin-bottom: calc(var(--input-height) + var(--size-4-8));
+  border-top: var(--border-width) solid var(--background-modifier-border);
+}
+
+/* search-params */
+.search-params .setting-item .setting-item-info {
+  display: flex;
+  align-items: center;
+}
+
+.search-params .setting-item.mod-slider .setting-item-control {
+  padding-top: var(--size-4-3);
+}
+
+.search-params .setting-item.mod-toggle .setting-item-control {
+  padding-top: 0;
+}

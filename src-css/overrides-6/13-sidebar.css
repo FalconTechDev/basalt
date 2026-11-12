@@ -1,0 +1,54 @@
+/* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* search-input */
+.search-input-clear-button:hover,
+.search-input-clear-button:active {
+  color: var(--text-normal);
+  transition: color var(--anim-duration-fast) ease-in-out;
+}
+
+@media (hover: hover) {
+  .search-input-suggest-button:hover {
+    color: var(--text-muted);
+  }
+
+  /* search-result */
+  .search-result-file-match:hover {
+    color: var(--text-normal);
+    background-color: var(--text-selection);
+  }
+
+  .search-result-file-match-replace-button:hover {
+    color: var(--text-normal);
+  }
+}
+
+/* search-results */
+.search-results-info .dropdown {
+  height: 24px;
+  max-width: 60%;
+  box-shadow: none;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  text-align-last: end;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-color: transparent;
+}
+
+/* recent-changes */
+.recent-changes-container .nav-folder-title {
+  font-weight: var(--nav-heading-weight);
+  color: var(--nav-heading-color);
+}
+
+/* tag-pane */
+.tag-pane-tag.is-active {
+  color: var(--text-on-accent);
+  background-color: var(--interactive-accent);
+}
+
+/* workspace-drawer */
+.workspace-drawer .search-input-container input {
+  border-width: 0 0 var(--border-width) 0;
+}

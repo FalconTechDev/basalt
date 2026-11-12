@@ -1,0 +1,41 @@
+/* modals (late): rules of this component that have to stay after rules of components further down the build order. */
+
+/* modal */
+.modal .modal-nav-action {
+  position: absolute;
+  top: 0;
+  margin-top: var(--size-4-1);
+  width: unset;
+  background-color: unset;
+}
+
+/* prompt-input */
+input.prompt-input:hover,
+input.prompt-input:focus,
+input.prompt-input:focus-visible {
+  border-bottom: var(--border-width) solid var(--background-secondary);
+  box-shadow: none;
+  background-color: transparent;
+}
+
+@media (hover: hover) {
+  /* vertical-tab */
+  .vertical-tab-nav-item:hover {
+    background-color: var(--background-modifier-hover);
+  }
+
+  /* checkbox-container */
+  .checkbox-container:hover {
+    box-shadow: inset 0 6px 20px rgba(0, 0, 0, 0.14), inset 0 0 1px rgba(0, 0, 0, 0.28);
+  }
+}
+
+.checkbox-container.is-enabled {
+  background-color: var(--interactive-accent);
+}
+
+@media (forced-colors: active) {
+  .checkbox-container.is-enabled {
+    background-color: SelectedItem;
+  }
+}
