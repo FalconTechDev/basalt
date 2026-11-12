@@ -1,0 +1,13 @@
+{
+	"nodes": [
+		{ "id": "a1", "type": "text", "x": -320, "y": -120, "width": 260, "height": 120, "text": "# Idea\nWrite it down before it is gone." },
+		{ "id": "b2", "type": "text", "x": 40, "y": -200, "width": 260, "height": 120, "text": "## Plan\n1. Sketch\n2. Try\n3. Share" },
+		{ "id": "c3", "type": "file", "x": 40, "y": 0, "width": 260, "height": 140, "file": "Start here.md" },
+		{ "id": "d4", "type": "text", "x": -320, "y": 100, "width": 260, "height": 100, "text": "Drag cards, resize them, join them with links." }
+	],
+	"edges": [
+		{ "id": "e1", "fromNode": "a1", "fromSide": "right", "toNode": "b2", "toSide": "left", "label": "grows into" },
+		{ "id": "e2", "fromNode": "a1", "fromSide": "bottom", "toNode": "d4", "toSide": "top" },
+		{ "id": "e3", "fromNode": "b2", "fromSide": "bottom", "toNode": "c3", "toSide": "top" }
+	]
+}

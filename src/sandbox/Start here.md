@@ -1,32 +1,26 @@
-Hi, welcome to Obsidian!
-
+---
+tags: [basalt, guide]
 ---
 
-## I’m interested in Obsidian
+# Start here
 
-First of all, tell me a little bit about what's your experience with note-taking apps like?
+This vault is a playground. Everything in it is a plain file in a folder, so you can break it and nothing is lost.
 
-- [[No prior experience|I have no prior experience]]
-- [[From standard note-taking|I’ve used note-taking apps like Evernote and OneNote]]
-- [[From plain-text note-taking|I have used plain-text based apps]]
+## Try these
 
----
+- Press `Ctrl+O` and type a few letters to jump to a note.
+- Press `Ctrl+Shift+O` to search inside notes.
+- Open [[Links and the graph]] to see how notes connect.
+- Open [[Canvas]] to see a board of cards.
+- Open [[Code and the terminal]] to run a snippet.
+- Read [[Sync with git]] when you want your vault on several computers.
 
-## Official Help Site
-Check out the complete [Obsidian documentation](https://help.obsidian.md/) online, available in multiple languages.
+## Writing
 
----
+Write in Markdown: **bold**, *italic*, `code`, lists, tasks and tables.
 
-## What is this place?
+- [x] Open the sandbox
+- [ ] Make your own note with `Ctrl+N`
+- [ ] Link it to this one with `[[Start here]]`
 
-This is a sandbox vault in which you can test various functionalities of Obsidian. 
-
-> [!Warning]
-> Your changes will not be saved, so please don't take actual notes in this vault.
-
-> [!Note] Beta vault - contributions are welcome!
-> This sandbox vault is in beta!
-> 
-> If you spot a typo or a mistake, feel free to submit a pull request [here](https://github.com/obsidianmd/obsidian-docs/tree/master/Sandbox).
-
-
+> Your notes belong to you. They are text files that any editor can open.

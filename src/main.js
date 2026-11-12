@@ -21,8 +21,22 @@ const DEFAULT_ADBLOCK = ['https://easylist.to/easylist/easylist.txt', 'https://e
 const ALLOWED_PERMISSIONS = ['clipboard-read', 'clipboard-sanitized-write'];
 const EXECUTABLE_EXT = WIN ? ['.exe', '.bat', '.cmd', '.ps1', '.com', '.msi', '.vbs', '.js', '.jse', '.wsf', '.wsh'] : ['.sh', '.command', '.csh', '.ksh', '.bash', '.zsh', '.fish', '.desktop', '.action', '.workflow'];
 
+// plain recursive copy (fs.cpSync is avoided: it has crashed on some non-Latin paths)
+const copyTree = (from, to) => {
+	fs.mkdirSync(to, { recursive: true });
+	for (const e of fs.readdirSync(from, { withFileTypes: true })) {
+		if (e.isDirectory()) copyTree(path.join(from, e.name), path.join(to, e.name));
+		else fs.copyFileSync(path.join(from, e.name), path.join(to, e.name));
+	}
+};
 const short = (s, n) => (s.length <= n ? s : s.slice(0, n - 1).trim() + '…');
-const attempt = (fn, fallback) => { try { return fn(); } catch (e) { console.log('Ignored:', String(e)); return fallback; } };
+const attempt = (fn, fallback) => {
+	try { return fn(); } catch (e) {
+		console.log('Ignored:', String(e));
+			try { fs.appendFileSync(path.join(app.getPath('userData'), 'basalt.log'), new Date().toISOString() + ' ignored: ' + String(e && e.stack || e).split(/\r?\n/).slice(0, 3).join(' | ') + os.EOL); } catch (e2) { /* no log */ }
+		return fallback;
+	}
+};
 const randomId = (n, hex) => { let out = ''; const chars = hex ? '0123456789abcdef' : 'abcdefghijklmnopqrstuvwxyz0123456789'; const bytes = crypto.randomBytes(n); for (let i = 0; i < n; i++) out += chars[bytes[i] % chars.length]; return out; };
 
 
@@ -637,7 +651,13 @@ module.exports = function start(resources, events) {
 		sync('vault-message', (e, p, action) => { const id = vaultByPath(path.resolve(p)); if (id) sendAction(id, action); return ''; });
 		sync('starter', () => { showStarter(); return null; });
 		sync('help', () => { showHelp(); return null; });
-		sync('sandbox', () => { attempt(() => fs.mkdirSync(sandboxVaultPath, { recursive: true })); addVault(sandboxVaultPath); return null; });
+		sync('sandbox', () => {
+			attempt(() => fs.mkdirSync(sandboxVaultPath, { recursive: true }));
+			// the example notes are copied once, into an empty folder
+			attempt(() => { if (!fs.readdirSync(sandboxVaultPath).length) copyTree(path.join(resources, 'sandbox'), sandboxVaultPath); });
+			addVault(sandboxVaultPath);
+			return null;
+		});
 		sync('get-sandbox-vault-path', () => sandboxVaultPath);
 		sync('get-default-vault-path', () => defaultVaultPath);
 		ipcMain.on('context-menu', (e) => { contextMenuSender = e.sender.id; });
@@ -681,6 +701,11 @@ module.exports = function start(resources, events) {
 				entry.session.setPermissionRequestHandler((wc, permission, cb) => cb(ALLOWED_PERMISSIONS.includes(permission)));
 			}
 			e.returnValue = null;
+		});
+		ipcMain.handle('pick-folder', async (e, start) => {
+			const win = BrowserWindow.fromWebContents(e.sender);
+			const r = await dialog.showOpenDialog(win, { properties: ['openDirectory', 'createDirectory'], defaultPath: start && fs.existsSync(start) ? start : documentsDir });
+			return r.canceled || !r.filePaths.length ? null : r.filePaths[0];
 		});
 		ipcMain.handle('register-cli', async () => {
 			const exeName = path.basename(process.argv0);
