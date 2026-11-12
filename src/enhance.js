@@ -1,1 +1,205 @@
-(()=>{"use strict";function t(){Object.hasOwn||(Object.hasOwn=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)});var t=Object.hasOwn;function e(t,e,n){t[e]||Object.defineProperty(t,e,{value:n,enumerable:!1,configurable:!0,writable:!0})}function n(t,e,n){Object.defineProperty(t,e,{get:n,enumerable:!1,configurable:!0})}for(var r=window,o=0,i=["TouchEvent"];o<i.length;o++){var s=i[o];void 0===r[s]&&(r[s]=function(){})}try{var a=window.matchMedia;a&&!a("(prefers-color-scheme: dark)").addEventListener&&(window.matchMedia=function(t){var e=a(t);return e.addEventListener||(e.addEventListener=function(t,e){this.addListener(e)}),e.removeEventListener||(e.removeEventListener=function(t,e){this.removeListener(e)}),e})}catch(t){console.error(t)}window.ResizeObserver||(window.ResizeObserver=function(){function t(){}return t.prototype.observe=function(){},t.prototype.unobserve=function(){},t.prototype.disconnect=function(){},t}()),Object.isEmpty||e(Object,"isEmpty",(function(e){for(var n in e)if(t(e,n))return!1;return!0})),Object.each||(Object.each=function(e,n,r){for(var o in e)if(t(e,o)&&!1===n.call(r,e[o],o))return!1;return!0}),Array.combine||(Array.combine=function(t){for(var e=0,n=0,r=t;n<r.length;n++){e+=r[n].length}for(var o=new Array(e),i=0,s=0,a=t;s<a.length;s++)for(var c=0,u=a[s];c<u.length;c++){var p=u[c];o[i]=p,i++}return o}),e(Array.prototype,"first",(function(){if(0!==this.length)return this[0]})),e(Array.prototype,"last",(function(){if(0!==this.length)return this[this.length-1]})),e(Array.prototype,"contains",Array.prototype.includes||function(t){return-1!==this.indexOf(t)}),e(Array.prototype,"remove",(function(t){for(var e=this.length-1;e>=0;e--)this[e]===t&&this.splice(e,1)})),e(Array.prototype,"shuffle",(function(){for(var t,e,n=this.length;0!==n;)e=Math.floor(Math.random()*n),t=this[n-=1],this[n]=this[e],this[e]=t;return this})),e(Array.prototype,"findLastIndex",(function(t){for(var e=this.length-1;e<=0;e--)if(t(this[e],e))return e;return-1})),e(Array.prototype,"unique",(function(){return Array.from(new Set(this).values())})),e(Math,"clamp",(function(t,e,n){return Math.min(Math.max(t,e),n)})),e(Math,"square",(function(t){return t*t})),e(String,"isString",(function(t){return"string"==typeof t||t instanceof String})),e(String.prototype,"contains",String.prototype.includes||function(t){return-1!==this.indexOf(t)}),e(String.prototype,"startsWith",(function(t,e){return this.substr(!e||e<0?0:+e,t.length)===t})),e(String.prototype,"endsWith",(function(t,e){var n=void 0===e||e>this.length?this.length:e;return this.substring(n-t.length,n)===t})),e(String.prototype,"format",(function(){for(var t=[],e=0;e<arguments.length;e++)t[e]=arguments[e];return this.replace(/{(\d+)}/g,(function(e,n){return void 0!==t[n]?t[n]:e}))})),e(Number,"isNumber",(function(t){return"number"==typeof t})),e(window,"isBoolean",(function(t){return"boolean"==typeof t}));var c=function(t){var e=t.nodeType;if(1===e||9===e||11===e){if("string"==typeof t.textContent)return t.textContent;for(var n=[],r=t.firstChild;r;r=r.nextSibling)n.push(c(r));return n.join("")}return(3===e||4===e)&&t.nodeValue||""};function u(t){var e=this.style;for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n])}function p(t){var e=this.style;for(var n in t)t.hasOwnProperty(n)&&e.setProperty(n,t[n])}Element.prototype.getText=function(){return c(this)},Element.prototype.setText=function(t){!function(t,e){if(e instanceof DocumentFragment||e instanceof Node)return t.empty(),void t.appendChild(e);String.isString(e)||(e=String(e));var n=t.nodeType;1!==n&&9!==n&&11!==n||(t.textContent=e)}(this,t)},Element.prototype.addClass=function(){for(var t=[],e=0;e<arguments.length;e++)t[e]=arguments[e];this.addClasses(t)},Element.prototype.addClasses=function(t){if(t)for(var e=0;e<t.length;e++)this.classList.add(t[e])},Element.prototype.removeClass=function(){for(var t=[],e=0;e<arguments.length;e++)t[e]=arguments[e];this.removeClasses(t)},Element.prototype.removeClasses=function(t){for(var e=0;e<t.length;e++)this.classList.remove(t[e])},Element.prototype.toggleClass=function(t,e){t instanceof Array||(t=[t]),e?this.addClasses(t):this.removeClasses(t)},Element.prototype.hasClass=function(t){return this.classList.contains(t)},[Element.prototype,Document.prototype,DocumentFragment.prototype].forEach((function(t){e(t,"prepend",(function(){for(var t=[],e=0;e<arguments.length;e++)t[e]=arguments[e];for(var n=document.createDocumentFragment(),r=0,o=t;r<o.length;r++){var i=o[r];n.appendChild(String.isString(i)?document.createTextNode(String(i)):i)}this.insertBefore(n,this.firstChild)}))})),Node.prototype.detach=function(){this.parentNode&&this.parentNode.removeChild(this)},Node.prototype.empty=function(){for(;this.lastChild;)this.removeChild(this.lastChild)},Node.prototype.insertAfter=function(t,e){return e?this.insertBefore(t,e.nextSibling):this.insertBefore(t,this.firstChild),t},Node.prototype.indexOf=function(t){return Array.prototype.indexOf.call(this.childNodes,t)},Node.prototype.setChildrenInPlace=function(t){for(var e=this.firstChild,n=new Set(t),r=0,o=t;r<o.length;r++){for(var i=o[r];e&&!n.has(e);){var s=e;e=e.nextSibling,this.removeChild(s)}i!==e?this.insertBefore(i,e):e=e.nextSibling}for(;e;){s=e;e=e.nextSibling,this.removeChild(s)}},Node.prototype.appendText=function(t){this.appendChild(document.createTextNode(t))},Node.prototype.instanceOf=function(t){if(this instanceof t)return!0;var e=this.win[t.name];return!!(e&&this instanceof e)||!!((e=this.constructorWin[t.name])&&this instanceof e)},n(Node.prototype,"doc",(function(){return this.ownerDocument||document})),n(Node.prototype,"win",(function(){return this.doc.defaultView||window})),Node.prototype.constructorWin=window,Element.prototype.setAttr=function(t,e){null===e?this.removeAttribute(t):this.setAttribute(t,String(e))},Element.prototype.setAttrs=function(t){for(var e in t)if(t.hasOwnProperty(e)){var n=t[e];this.setAttr(e,n)}},Element.prototype.getAttr=Element.prototype.getAttribute,e(Element.prototype,"matchParent",(function(t,e){if(this.matches(t))return this;if(this===e)return null;var n=this.parentElement;return n?n.matchParent(t,e):null})),Element.prototype.getCssPropertyValue=function(t,e){return getComputedStyle(this,e).getPropertyValue(t).trim()},e(Element.prototype,"isActiveElement",(function(){for(var t=this;t;){if(t.doc.activeElement!==t)return!1;var e=t.win.frameElement;if(!e)return t.win===activeWindow;t=e}return!1})),HTMLElement.prototype.show||(HTMLElement.prototype.show=function(){"none"===this.style.display&&(this.style.display=this.getAttribute("data-display")||"",this.removeAttribute("data-display"))}),HTMLElement.prototype.hide||(HTMLElement.prototype.hide=function(){var t=this.style.display;"none"!==t&&(this.style.display="none",t?this.setAttribute("data-display",t):this.removeAttribute("data-display"))}),HTMLElement.prototype.toggle||(HTMLElement.prototype.toggle=function(t){t?this.show():this.hide()}),HTMLElement.prototype.toggleVisibility||(HTMLElement.prototype.toggleVisibility=function(t){this.style.visibility=t?"":"hidden"}),e(HTMLElement.prototype,"isShown",(function(){return!!this.offsetParent})),n(HTMLElement.prototype,"innerWidth",(function(){var t=getComputedStyle(this),e=parseFloat(t.paddingLeft),n=parseFloat(t.paddingRight);return isNaN(e)&&(e=0),isNaN(n)&&(n=0),this.scrollWidth-e-n})),n(HTMLElement.prototype,"innerHeight",(function(){var t=getComputedStyle(this),e=parseFloat(t.paddingTop),n=parseFloat(t.paddingBottom);return isNaN(e)&&(e=0),isNaN(n)&&(n=0),this.scrollHeight-e-n})),e(HTMLElement.prototype,"setCssStyles",u),e(SVGElement.prototype,"setCssStyles",u),e(HTMLElement.prototype,"setCssProps",p),e(SVGElement.prototype,"setCssProps",p),e(HTMLElement.prototype,"addEventListeners",(function(t){for(var e in t)if(t.hasOwnProperty(e)){var n=e,r=t[n];"function"==typeof r&&this.addEventListener(n,r)}})),window.fish=function(t){return document.querySelector(t)},window.fishAll=function(t){return Array.prototype.slice.call(document.querySelectorAll(t))},Element.prototype.find=function(t){return this.querySelector(t)},Element.prototype.findAll=function(t){return Array.prototype.slice.call(this.querySelectorAll(t))},Element.prototype.findAllSelf=function(t){var e=Array.prototype.slice.call(this.querySelectorAll(t));return this.matches(t)&&e.unshift(this),e},DocumentFragment.prototype.find=function(t){return this.querySelector(t)},DocumentFragment.prototype.findAll=function(t){return Array.prototype.slice.call(this.querySelectorAll(t))},Node.prototype.createEl=function(t,e,n){return"string"==typeof e&&(e={cls:e}),(e=e||{}).parent=this,createEl(t,e,n)},Node.prototype.createDiv=function(t,e){return this.createEl("div",t,e)},Node.prototype.createSpan=function(t,e){return this.createEl("span",t,e)},Node.prototype.createSvg=function(t,e,n){return"string"==typeof e&&(e={cls:e}),(e=e||{}).parent=this,createSvg(t,e,n)},window.createEl=function(t,e,n){var r=document.createElement(t);"string"==typeof e&&(e={cls:e});var o=e||{},i=o.cls,s=o.text,a=o.attr,c=o.title,u=o.value,p=o.placeholder,l=o.type,f=o.parent,d=o.prepend,h=o.href;for(var y in i&&(Array.isArray(i)?r.className=i.join(" "):r.className=i),s&&r.setText(s),a&&r.setAttrs(a),void 0!==c&&(r.title=c),void 0!==u&&(r instanceof HTMLInputElement||r instanceof HTMLSelectElement||r instanceof HTMLOptionElement)&&(r.value=u),l&&r instanceof HTMLInputElement&&(r.type=l),l&&r instanceof HTMLStyleElement&&r.setAttribute("type",l),p&&r instanceof HTMLInputElement&&(r.placeholder=p),h&&(r instanceof HTMLAnchorElement||r instanceof HTMLLinkElement||r instanceof HTMLBaseElement)&&(r.href=h),n&&n(r),f&&(d?f.insertBefore(r,f.firstChild):f.appendChild(r)),e)if(e.hasOwnProperty(y)&&y.startsWith("on")){var m=y,v=e[m];"function"==typeof v&&r.addEventListener(m.substring(2),v)}return r},window.createDiv=function(t,e){return createEl("div",t,e)},window.createSpan=function(t,e){return createEl("span",t,e)},window.createSvg=function(t,e,n){var r,o=document.createElementNS("http://www.w3.org/2000/svg",t);"string"==typeof e&&(e={cls:e});var i=e||{},s=i.cls,a=i.attr,c=i.parent,u=i.prepend;return s&&(Array.isArray(s)?(r=o.classList).add.apply(r,s):o.classList.add(s)),a&&o.setAttrs(a),n&&n(o),c&&(u?c.insertBefore(o,c.firstChild):c.appendChild(o)),o},window.createFragment=function(t){var e=document.createDocumentFragment();return t&&t(e),e};var l=function(t,e,n,r){var o=this._EVENTS;o||(o={},this._EVENTS=o);var i=o[t];i||(i=[],o[t]=i);var s=function(t){var r=t.target;if(r.matchParent){var o=r.matchParent(e,t.currentTarget);o&&n.call(this,t,o)}};i.push({selector:e,listener:n,options:r,callback:s}),this.addEventListener(t,s,r)},f=function(t,e,n,r){var o=this,i=this._EVENTS;if(i){var s=i[t];s&&(i[t]=s.filter((function(i){if(i.selector===e&&i.listener===n&&i.options===r){var s=i.callback;return o.removeEventListener(t,s,r),!1}return!0})))}};HTMLElement.prototype.on=l,HTMLElement.prototype.off=f,Document.prototype.on=l,Document.prototype.off=f,HTMLElement.prototype.onClickEvent=function(t,e){this.addEventListener("click",t,e),this.addEventListener("auxclick",t,e)},HTMLElement.prototype.trigger=function(t){var e=document.createEvent("HTMLEvents");e.initEvent(t,!0,!1),this.dispatchEvent(e)},n(UIEvent.prototype,"targetNode",(function(){return this.target})),n(UIEvent.prototype,"win",(function(){return this.view||window})),n(UIEvent.prototype,"doc",(function(){return this.win.document})),UIEvent.prototype.instanceOf=function(t){if(this instanceof t)return!0;var e=this.view;if(!e)return!1;var n=e[t.name];return!(!n||n===t)&&this instanceof n};var d=new WeakMap;HTMLElement.prototype.onNodeInserted=function(t,e){var n=this,r=function(r){n.isShown()&&"node-inserted"===r.animationName&&r.target===n&&(e&&o(),t())},o=function(){n.removeEventListener("animationstart",r);var t=(d.get(n)||0)-1;t<=0?(d.delete(n),n.removeClass("node-insert-event")):d.set(n,t)};return d.set(this,(d.get(this)||0)+1),this.addClass("node-insert-event"),this.addEventListener("animationstart",r),o},HTMLElement.prototype.onWindowMigrated=function(t){var e=this,n=this.win;return this.onNodeInserted((function(){var r=e.win;r!==n&&t(n=r)}))},window.ajax=function(t){var e=t.method,n=t.url,r=t.success,o=t.error,i=t.data,s=t.headers,a=t.withCredentials;e=e||"GET";var c=new XMLHttpRequest;if(t.req=c,c.open(e,n,!0),c.onload=function(){var t=c.status,e=c.response;t>=200&&t<400?r&&r(e,c):o&&o(e,c)},c.onerror=function(t){o&&o(t,c)},s)for(var u in s)s.hasOwnProperty(u)&&c.setRequestHeader(u,s[u]);c.withCredentials=a||!1,i?(void 0===a&&(c.withCredentials=!0),String.isString(i)?c.send(i):i instanceof ArrayBuffer?(c.setRequestHeader("Content-Type","application/octet-stream"),c.send(i)):(c.setRequestHeader("Content-Type","application/json; charset=utf-8"),c.send(JSON.stringify(i)))):c.send()},window.ajaxPromise=function(t){return new Promise((function(e,n){t.success=e,t.error=function(t,e){return n(e)},ajax(t)}))},window.ready=function(t){"loading"!==document.readyState?t():document.addEventListener("DOMContentLoaded",t)},window.sleep=function(t){return new Promise((function(e){return window.setTimeout(e,t)}))},window.nextFrame=function(){return new Promise((function(t){return window.requestAnimationFrame((function(){return t()}))}))},window.activeWindow=window,window.activeDocument=document}t(),window.globalEnhance=t})();
+// DOM helpers used across Basalt and by plugins: createEl / createDiv / createSpan / createSvg, class and attribute shortcuts,
+// delegated events, small async helpers. The function is self-contained on purpose: a pop-out window evaluates its source
+// text (`globalEnhance.toString()`), so it must not use anything from outside itself.
+window.globalEnhance = function globalEnhance() {
+	'use strict';
+	const win = window;
+	const def = (target, name, value) => { if (!target[name]) Object.defineProperty(target, name, { value, enumerable: false, configurable: true, writable: true }); };
+	const getter = (target, name, get) => Object.defineProperty(target, name, { get, enumerable: false, configurable: true });
+	if (!Object.hasOwn) Object.hasOwn = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+
+	// ----- the active window / document (the app moves these when a pop-out window gets focus) -----
+	win.activeWindow = win;
+	win.activeDocument = win.document;
+
+	// ----- plain helpers -----
+	win.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+	win.nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+	win.ready = (fn) => { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); };
+	win.combine = (fns) => () => { for (const f of fns) f(); };
+	win.fish = (selector) => document.querySelector(selector);
+	win.fishAll = (selector) => Array.from(document.querySelectorAll(selector));
+	def(Array.prototype, 'contains', Array.prototype.includes);
+	def(Array.prototype, 'first', function () { if (this.length) return this[0]; });
+	def(Array.prototype, 'last', function () { if (this.length) return this[this.length - 1]; });
+	def(Array.prototype, 'remove', function (item) { for (let i = this.length - 1; i >= 0; i--) if (this[i] === item) this.splice(i, 1); });
+	def(Array.prototype, 'unique', function () { return Array.from(new Set(this)); });
+	def(Array.prototype, 'shuffle', function () { for (let n = this.length; n; ) { const j = Math.floor(Math.random() * n--); const t = this[n]; this[n] = this[j]; this[j] = t; } return this; });
+	if (!Array.combine) Array.combine = (lists) => [].concat(...lists);
+	def(Math, 'clamp', (v, lo, hi) => Math.min(Math.max(v, lo), hi));
+	def(Math, 'square', (n) => n * n);
+	def(String, 'isString', (v) => typeof v === 'string' || v instanceof String);
+	def(String.prototype, 'contains', String.prototype.includes);
+	def(String.prototype, 'format', function (...a) { return this.replace(/{(\d+)}/g, (m, i) => (a[i] !== undefined ? a[i] : m)); });
+	def(Number, 'isNumber', (v) => typeof v === 'number');
+	def(win, 'isBoolean', (v) => typeof v === 'boolean');
+	def(Object, 'isEmpty', (o) => { for (const k in o) if (Object.prototype.hasOwnProperty.call(o, k)) return false; return true; });
+	def(Object, 'each', (obj, fn, ctx) => { for (const k in obj) if (Object.prototype.hasOwnProperty.call(obj, k) && fn.call(ctx, obj[k], k) === false) return false; return true; });
+
+	// ----- XMLHttpRequest wrappers -----
+	const send = (opts, done, fail) => {
+		const req = opts.req || new XMLHttpRequest();
+		req.open(opts.method || 'GET', opts.url, true);
+		if (opts.headers) for (const h in opts.headers) req.setRequestHeader(h, opts.headers[h]);
+		if (opts.withCredentials) req.withCredentials = true;
+		req.onload = () => (req.status >= 200 && req.status < 300 ? done(req.responseType && req.responseType !== 'text' ? req.response : req.responseText, req) : fail(req.status, req));
+		req.onerror = () => fail(req.status || 0, req);
+		let body = opts.data;
+		if (body && typeof body === 'object' && !(body instanceof ArrayBuffer) && !ArrayBuffer.isView(body) && !(body instanceof Blob) && !(body instanceof FormData)) { body = JSON.stringify(body); if (!(opts.headers && Object.keys(opts.headers).some((h) => h.toLowerCase() === 'content-type'))) req.setRequestHeader('Content-Type', 'application/json'); }
+		req.send(body == null ? null : body);
+		return req;
+	};
+	win.ajax = (opts) => send(opts, (res, req) => opts.success && opts.success(res, req), (status, req) => opts.error && opts.error(status, req));
+	win.ajaxPromise = (opts) => new Promise((resolve, reject) => send(opts, (res) => resolve(res), (status, req) => reject(status !== undefined ? status : req)));
+
+	// ----- element creation -----
+	const apply = (el, o) => {
+		if (o == null) return;
+		if (typeof o === 'string') { el.className = o; return; }
+		if (o.cls) el.className = Array.isArray(o.cls) ? o.cls.join(' ') : o.cls;
+		if (o.text != null) { if (typeof o.text === 'string') el.textContent = o.text; else el.appendChild(o.text); }
+		if (o.attr) for (const k in o.attr) { const v = o.attr[k]; if (v === null || v === undefined || v === false) continue; el.setAttribute(k, v === true ? '' : String(v)); }
+		if (o.title != null) el.title = o.title;
+		if (o.value != null) el.value = o.value;
+		if (o.type != null) el.type = o.type;
+		if (o.placeholder != null) el.placeholder = o.placeholder;
+		if (o.href != null) el.href = o.href;
+		if (o.parent) { if (o.prepend) o.parent.insertBefore(el, o.parent.firstChild); else o.parent.appendChild(el); }
+	};
+	const make = (doc, ns, tag, o, cb) => {
+		const el = ns ? doc.createElementNS(ns, tag) : doc.createElement(tag);
+		apply(el, o);
+		if (cb) cb(el);
+		return el;
+	};
+	const SVG = 'http://www.w3.org/2000/svg';
+	// a callback given instead of the options
+	const args = (o, cb) => (typeof o === 'function' ? [null, o] : [o, cb]);
+	const doc = () => win.activeDocument || document;
+	win.createEl = (tag, o, cb) => { [o, cb] = args(o, cb); return make(doc(), null, tag, o, cb); };
+	win.createDiv = (o, cb) => { [o, cb] = args(o, cb); return make(doc(), null, 'div', o, cb); };
+	win.createSpan = (o, cb) => { [o, cb] = args(o, cb); return make(doc(), null, 'span', o, cb); };
+	win.createSvg = (tag, o, cb) => { [o, cb] = args(o, cb); return make(doc(), SVG, tag, o, cb); };
+	win.createFragment = (cb) => { const f = doc().createDocumentFragment(); if (cb) cb(f); return f; };
+
+	const N = win.Node.prototype;
+	const owner = (node) => node.ownerDocument || node;
+	def(N, 'createEl', function (tag, o, cb) { [o, cb] = args(o, cb); const el = make(owner(this), null, tag, o, cb); if (!(o && o.parent)) { if (o && o.prepend) this.insertBefore(el, this.firstChild); else this.appendChild(el); } return el; });
+	def(N, 'createDiv', function (o, cb) { return this.createEl('div', o, cb); });
+	def(N, 'createSpan', function (o, cb) { return this.createEl('span', o, cb); });
+	def(N, 'createSvg', function (tag, o, cb) { [o, cb] = args(o, cb); const el = make(owner(this), SVG, tag, o, cb); if (!(o && o.parent)) { if (o && o.prepend) this.insertBefore(el, this.firstChild); else this.appendChild(el); } return el; });
+	def(N, 'empty', function () { while (this.firstChild) this.removeChild(this.firstChild); });
+	def(N, 'detach', function () { if (this.parentNode) this.parentNode.removeChild(this); });
+	def(N, 'appendText', function (text) { this.appendChild(owner(this).createTextNode(text)); });
+	def(N, 'insertAfter', function (node, ref) { this.insertBefore(node, ref ? ref.nextSibling : this.firstChild); return node; });
+	def(N, 'indexOf', function (child) { return Array.prototype.indexOf.call(this.childNodes, child); });
+	// make the children of this node exactly `children`, touching only what differs
+	def(N, 'setChildrenInPlace', function (children) {
+		let i = 0, cur = this.firstChild;
+		for (; i < children.length; i++) {
+			const want = children[i];
+			if (cur === want) { cur = cur.nextSibling; continue; }
+			this.insertBefore(want, cur);
+		}
+		while (cur) { const next = cur.nextSibling; this.removeChild(cur); cur = next; }
+	});
+	N.constructorWin = win; // the window whose constructors made these nodes
+	getter(N, 'doc', function () { return this.ownerDocument || document; });
+	getter(N, 'win', function () { return this.doc.defaultView || win; });
+	// instanceof that also works for nodes that belong to another window
+	const inst = function (type) { if (this instanceof type) return true; const w = this.constructorWin; const same = w && type && type.name && w[type.name]; return !!same && this instanceof same; };
+	def(N, 'instanceOf', inst);
+	const U = win.UIEvent.prototype;
+	def(U, 'instanceOf', function (type) { if (this instanceof type) return true; const w = this.view || win, same = type && type.name && w[type.name]; return !!same && this instanceof same; });
+	getter(U, 'targetNode', function () { return this.target; });
+	getter(U, 'win', function () { return this.view || win; });
+	getter(U, 'doc', function () { return this.win.document; });
+
+	// ----- elements -----
+	const E = win.Element.prototype;
+	const names = (v) => (Array.isArray(v) ? v : String(v).split(/\s+/)).filter(Boolean);
+	def(E, 'addClass', function (...c) { this.classList.add(...c.flatMap(names)); });
+	def(E, 'addClasses', function (list) { this.classList.add(...list); });
+	def(E, 'removeClass', function (...c) { this.classList.remove(...c.flatMap(names)); });
+	def(E, 'removeClasses', function (list) { this.classList.remove(...list); });
+	def(E, 'toggleClass', function (c, on) { for (const n of names(c)) this.classList.toggle(n, on); });
+	def(E, 'hasClass', function (c) { return this.classList.contains(c); });
+	def(E, 'setAttr', function (k, v) { if (v === null || v === undefined) this.removeAttribute(k); else this.setAttribute(k, String(v)); });
+	def(E, 'setAttrs', function (o) { for (const k in o) this.setAttr(k, o[k]); });
+	def(E, 'getAttr', function (k) { return this.getAttribute(k); });
+	def(E, 'setText', function (t) { if (typeof t === 'string') this.textContent = t; else { this.textContent = ''; this.appendChild(t); } });
+	def(E, 'getText', function () { return this.textContent; });
+	def(E, 'find', function (selector) { return this.querySelector(selector); });
+	def(E, 'findAll', function (selector) { return Array.from(this.querySelectorAll(selector)); });
+	def(E, 'findAllSelf', function (selector) { const out = this.matches(selector) ? [this] : []; return out.concat(Array.from(this.querySelectorAll(selector))); });
+	def(E, 'getCssPropertyValue', function (prop, pseudo) { return (this.ownerDocument.defaultView || win).getComputedStyle(this, pseudo).getPropertyValue(prop).trim(); });
+	def(E, 'matchParent', function (selector, last) { if (this.matches(selector)) return this; if (this === last) return null; const up = this.parentElement; return up ? up.matchParent(selector, last) : null; });
+	// true when this element has the keyboard focus, also inside iframes, and its window is the active one
+	def(E, 'isActiveElement', function () { for (let el = this; el; ) { if (el.doc.activeElement !== el) return false; const frame = el.win.frameElement; if (!frame) return el.win === win.activeWindow; el = frame; } return false; });
+	const DF = win.DocumentFragment.prototype;
+	def(DF, 'find', function (selector) { return this.querySelector(selector); });
+	def(DF, 'findAll', function (selector) { return Array.from(this.querySelectorAll(selector)); });
+
+	// ----- visibility, events -----
+	const H = win.HTMLElement.prototype;
+	def(H, 'show', function () { this.style.display = this.dataset.prevDisplay || ''; delete this.dataset.prevDisplay; });
+	def(H, 'hide', function () { if (this.style.display && this.style.display !== 'none') this.dataset.prevDisplay = this.style.display; this.style.display = 'none'; });
+	def(H, 'toggle', function (on) { if (on) this.show(); else this.hide(); });
+	def(H, 'toggleVisibility', function (on) { this.style.visibility = on ? '' : 'hidden'; });
+	// element.on('click', '.item', (event, matchedElement) => ...): the listener runs for events that come from inside a match
+	const delegates = new WeakMap();
+	const bind = (target, type, selector, listener, options) => {
+		if (typeof selector === 'function') { options = listener; listener = selector; selector = null; }
+		const handler = selector ? (ev) => { let el = ev.target; while (el && el !== target) { if (el.nodeType === 1 && el.matches(selector)) return listener.call(el, ev, el); el = el.parentNode; } } : listener;
+		const key = type + '\u0000' + (selector || '');
+		let reg = delegates.get(target); if (!reg) delegates.set(target, (reg = new Map()));
+		let list = reg.get(key); if (!list) reg.set(key, (list = []));
+		list.push({ listener, handler, options });
+		target.addEventListener(type, handler, options);
+	};
+	const unbind = (target, type, selector, listener, options) => {
+		if (typeof selector === 'function') { options = listener; listener = selector; selector = null; }
+		const reg = delegates.get(target), list = reg && reg.get(type + '\u0000' + (selector || ''));
+		if (!list) return;
+		const i = list.findIndex((x) => x.listener === listener);
+		if (i < 0) return;
+		target.removeEventListener(type, list[i].handler, options !== undefined ? options : list[i].options);
+		list.splice(i, 1);
+	};
+	for (const proto of [H, win.Document.prototype]) {
+		def(proto, 'on', function (type, selector, listener, options) { bind(this, type, selector, listener, options); });
+		def(proto, 'off', function (type, selector, listener, options) { unbind(this, type, selector, listener, options); });
+	}
+	def(H, 'addEventListeners', function (map) { for (const type in map) if (Object.prototype.hasOwnProperty.call(map, type) && typeof map[type] === 'function') this.addEventListener(type, map[type]); });
+	def(H, 'isShown', function () { return !!this.offsetParent; });
+	const inner = (a, b, size) => function () { const cs = getComputedStyle(this); let x = parseFloat(cs[a]), y = parseFloat(cs[b]); if (isNaN(x)) x = 0; if (isNaN(y)) y = 0; return this[size] - x - y; };
+	getter(H, 'innerWidth', inner('paddingLeft', 'paddingRight', 'scrollWidth'));
+	getter(H, 'innerHeight', inner('paddingTop', 'paddingBottom', 'scrollHeight'));
+	const cssProps = function (props) { for (const k in props) this.style.setProperty(k, props[k]); };
+	const cssStyles = function (styles) { Object.assign(this.style, styles); };
+	for (const proto of [H, win.SVGElement.prototype]) { def(proto, 'setCssProps', cssProps); def(proto, 'setCssStyles', cssStyles); }
+	def(H, 'trigger', function (type) { this.dispatchEvent(new Event(type, { bubbles: true, cancelable: true })); });
+	def(H, 'onClickEvent', function (listener, options) { this.addEventListener('click', listener, options); this.addEventListener('auxclick', listener, options); });
+	// calls `listener` when the element is put into a document (right away if it already is); returns a function that cancels
+	def(H, 'onNodeInserted', function (listener, once) {
+		const el = this;
+		let cancelled = false, observer = null;
+		const fire = () => { if (cancelled) return; listener(); if (once) cancel(); };
+		const cancel = () => { cancelled = true; if (observer) observer.disconnect(); };
+		if (el.isConnected) { fire(); if (once) return cancel; }
+		observer = new MutationObserver(() => { if (el.isConnected && !el.__wasConnected) { el.__wasConnected = true; fire(); } else if (!el.isConnected) el.__wasConnected = false; });
+		el.__wasConnected = el.isConnected;
+		observer.observe(el.ownerDocument.documentElement, { childList: true, subtree: true });
+		return cancel;
+	});
+	// pop-out windows: the element can move to another window; listeners run after that (the window code reports it)
+	def(H, 'onWindowMigrated', function (listener) {
+		const el = this;
+		let last = el.constructorWin;
+		const check = () => { const w = el.constructorWin; if (w !== last) { last = w; listener(w); } };
+		const observer = new MutationObserver(check);
+		observer.observe(win.document.documentElement, { childList: true, subtree: true });
+		return () => observer.disconnect();
+	});
+};
+window.globalEnhance();
