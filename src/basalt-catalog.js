@@ -1,5 +1,5 @@
 // Plugin catalog: install plugins straight from GitHub releases, no central store.
-//  - "owner/repo" or a GitHub link installs the latest release (Obsidian-style JS plugin: main.js + manifest.json [+ styles.css],
+//  - "owner/repo" or a GitHub link installs the latest release (JS plugin: main.js + manifest.json [+ styles.css],
 //    or a Wasm plugin: manifest.json with "wasm" + the .wasm file)
 //  - sources: any JSON file by link ([{"repo":"owner/repo","name":"...","description":"..."}]) lists plugins to pick from
 (() => {

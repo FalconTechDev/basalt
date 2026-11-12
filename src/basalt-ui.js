@@ -14,7 +14,7 @@
     "подключить к basalt sync", "connect to basalt sync",
     "аккаунт", "account",
   ]);
-  const SERVICE_TEXT = /basalt (publish|sync)|obsidian (publish|sync)/i;
+  const SERVICE_TEXT = /basalt (publish|sync)/i;
 
   const norm = (t) => (t || "").replace(/\s+/g, " ").trim().toLowerCase();
   const hide = (el) => { if (el && el.style.display !== "none") el.style.display = "none"; };

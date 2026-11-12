@@ -2076,7 +2076,7 @@
     if (cur) out.push(cur);
     return out;
   }
-  // requestUrl (Obsidian's net stack) is preferred inside the app: no CORS, works off file:// too
+  // requestUrl (the app's own net stack) is preferred inside the app: no CORS, works off file:// too
   async function trGet(url) {
     if (typeof requestUrl === "function") {
       const r = await requestUrl({ url });

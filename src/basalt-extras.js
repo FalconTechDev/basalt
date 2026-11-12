@@ -1,7 +1,7 @@
 // Basalt extras: the ideas of a few popular community plugins, built in.
 //  - 2-hop links: a side panel with the notes two links away from the open note (like "2Hop Links")
 //  - table editor: edit the markdown table under the cursor in a grid, or insert a new one (like "Advanced Tables" / "Table Editor")
-//  - admonitions: ```ad-note blocks (and Obsidian's own callouts) in the Basalt look, plus a command to insert one (like "Admonition")
+//  - admonitions: ```ad-note blocks (and the built-in callouts) in the Basalt look, plus a command to insert one (like "Admonition")
 (() => {
   "use strict";
   const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
