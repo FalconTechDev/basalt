@@ -167,7 +167,7 @@ function showOne(name, text) {
 }
 
 if (flag("--text")) {
-  showOne("snippet", opt("--text").replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\r/g, "\r"));
+  showOne("snippet", opt("--text").replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\r/g, "\r").replace(/\\u([0-9a-f]{4})/gi, (m, h) => String.fromCharCode(parseInt(h, 16))));
   process.exit(0);
 }
 // delete lines (then characters) while the difference stays
@@ -275,6 +275,7 @@ if (fuzzN) {
       else if (r < 0.8) chunk = chunk.slice(0, pos) + chunk.slice(pos + 1 + Math.floor(rnd() * 5));
       else chunk = chunk.slice(0, pos) + chunk.slice(Math.floor(rnd() * chunk.length));
     }
+    chunk = chunk.replace(/[\ud800-\udbff](?![\udc00-\udfff])|(?<![\ud800-\udbff])[\udc00-\udfff]/g, "�"); // no lone surrogates (they cannot come from a file)
     jobs.push([`fuzz#${n} (${path.basename(f)})`, chunk]);
   }
 }
@@ -298,7 +299,7 @@ for (const [key, c] of sorted) {
   console.log(`\n[${key}]  ${c.files.size} file(s), ${c.count} difference(s)`);
   for (const e of c.examples) {
     console.log(`  ${e.f}\n    at ${e.d.path}\n    old: ${short(e.d.a)}\n    new: ${short(e.d.b)}`);
-    if (e.f.startsWith("fuzz#") || flag("--min-all")) console.log(`    smallest: ${JSON.stringify(shrink(e.text, e.kind))}`);
+    if (e.f.startsWith("fuzz#") || flag("--min-all")) console.log(`    smallest: ${JSON.stringify(shrink(e.text, e.kind)).replace(/[^\x20-\x7e]/g, (ch) => "\\u" + ch.charCodeAt(0).toString(16).padStart(4, "0"))}`);
   }
 }
 process.exit(metaBad || htmlBad ? 1 : 0);

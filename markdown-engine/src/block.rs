@@ -1876,7 +1876,7 @@ fn definition(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
             return Some(None);
         }
         let _ = before_url;
-        let url_d = decode_raw(&unescape(&url));
+        let url_d = decode_url(&unescape(&url));
         let title_d = title.map(|t| decode_raw(&unescape(&t))).filter(|t| !t.is_empty());
         let mut n = done(p, r, &sub, Ty::Definition);
         n.ident = normalize_id(&identifier);
@@ -1988,21 +1988,11 @@ fn table(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
         row.e = tmp.now(p);
         let len = line.len() + 1;
         let mut idx = 0;
-        let mut queue: S = Vec::new();
         let mut cell: S = Vec::new();
         let mut preamble = true;
         while idx < len {
             let ch = at(&line, idx);
             let exists = idx < line.len();
-            if exists && (ch == TAB || ch == SP) {
-                if !cell.is_empty() {
-                    queue.push(ch);
-                } else {
-                    r.eat(p, &[ch]);
-                }
-                idx += 1;
-                continue;
-            }
             if !exists || ch == c('|') {
                 if preamble {
                     if exists {
@@ -2010,36 +2000,24 @@ fn table(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
                     }
                 } else {
                     if !cell.is_empty() || exists {
-                        let mut subv = cell.clone();
-                        if queue.len() > 1 {
-                            if exists {
-                                subv.extend_from_slice(&queue[..queue.len() - 1]);
-                                queue = vec![queue[queue.len() - 1]];
-                            } else {
-                                subv.extend_from_slice(&queue);
-                                queue.clear();
-                            }
-                        }
+                        // the cell keeps its padding; only the text between is parsed
+                        let lead = cell.iter().take_while(|&&x| x == SP || x == TAB).count();
+                        let trail = cell[lead..].iter().rev().take_while(|&&x| x == SP || x == TAB).count();
+                        let inner = cell[lead..cell.len() - trail].to_vec();
                         let now = r.now(p);
-                        let kids = p.tokenize_inline(&cell, now.line, now.col);
-                        let cs = r.eat(p, &subv);
+                        let kids = p.tokenize_inline(&inner, now.line, now.col + lead);
+                        let cs = r.eat(p, &cell);
                         let ce = r.now(p);
                         let mut cn = mk(Ty::TableCell, cs, ce);
                         cn.ch = kids;
                         row.ch.push(cn);
                     }
-                    let mut q2 = queue.clone();
                     if exists {
-                        q2.push(ch);
+                        r.eat(p, &[ch]);
                     }
-                    r.eat(p, &q2);
-                    queue.clear();
                     cell.clear();
                 }
             } else {
-                if !queue.is_empty() {
-                    cell.append(&mut queue);
-                }
                 cell.push(ch);
                 if ch == c('\\') && idx != len - 1 {
                     cell.push(at(&line, idx + 1));

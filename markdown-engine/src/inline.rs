@@ -180,7 +180,7 @@ fn text(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     let mut nodes: Vec<Node> = Vec::new();
     while i < sub.len() {
         if sub[i] == c('&') {
-            if let Some((len, dec)) = entity_at(&sub[i..]) {
+            if let Some((len, dec)) = entity_at(&sub[i..], true) {
                 if i > seg {
                     let s = r.eat(p, &sub[seg..i]);
                     let e = r.now(p);
@@ -309,7 +309,7 @@ fn auto_link(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
     p.only_text = save_only;
     p.in_link = save_link;
     let mut n = done(p, r, &sub, Ty::Link);
-    n.url = decode_raw(&link);
+    n.url = decode_url(&link);
     n.ch = kids;
     Some(Some(n))
 }
@@ -410,7 +410,7 @@ fn url(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
         }
     }
     let sub = &v[..c0];
-    let mut url = decode_raw(sub);
+    let mut url = decode_url(sub);
     if www {
         let mut h = u("http://");
         h.extend(url);
@@ -478,7 +478,7 @@ fn email(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
         p.in_link = save_link;
         let mut n = done(p, r, h, Ty::Link);
         let mut url = u("mailto:");
-        url.extend(decode_raw(h));
+        url.extend(decode_url(h));
         n.url = url;
         n.ch = kids;
         return Some(Some(n));
@@ -749,7 +749,7 @@ fn link(p: &mut P, r: &mut Run, v: &[u16], silent: bool) -> Out {
         return Some(None);
     }
     sub.push(c(')'));
-    let url_d = decode_raw(&unescape(&url_raw));
+    let url_d = decode_url(&unescape(&url_raw));
     let title_d = title.map(|t| decode_raw(&unescape(&t))).filter(|t| !t.is_empty());
     let mut kids = Vec::new();
     let mut alt = None;

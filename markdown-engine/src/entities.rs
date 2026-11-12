@@ -32,7 +32,21 @@ const OTHER: &[(&str, u32)] = &[
     ("loz", 9674), ("spades", 9824), ("clubs", 9827), ("hearts", 9829), ("diams", 9830), ("nbsp_", 160),
 ];
 
+/// Names that are also decoded without the closing semicolon.
+pub fn is_legacy(name: &str) -> bool {
+    matches!(name, "amp" | "lt" | "gt" | "quot" | "AMP" | "LT" | "GT" | "QUOT" | "COPY" | "REG") || LATIN1.contains(&name)
+}
+
 pub fn lookup(name: &str) -> Option<String> {
+    match name {
+        "AMP" => return Some("&".into()),
+        "LT" => return Some("<".into()),
+        "GT" => return Some(">".into()),
+        "QUOT" => return Some("\"".into()),
+        "COPY" => return Some("\u{a9}".into()),
+        "REG" => return Some("\u{ae}".into()),
+        _ => {}
+    }
     for (i, n) in LATIN1.iter().enumerate() {
         if *n == name {
             return char::from_u32(0xa0 + i as u32).map(|c| c.to_string());

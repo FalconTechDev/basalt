@@ -293,16 +293,19 @@ fn footnotes(root: &mut Node) {
     }
     let mut defs: HashMap<S, (Vec<Node>, Pt, Pt)> = HashMap::new(); // key -> children, pos
     let mut state: HashMap<S, i64> = HashMap::new();
-    fn collect(n: &Node, defs: &mut HashMap<S, (Vec<Node>, Pt, Pt)>, state: &mut HashMap<S, i64>) {
+    fn collect(n: &Node, defs: &mut HashMap<S, (Vec<Node>, Pt, Pt)>, state: &mut HashMap<S, i64>, bodies: bool) {
         if n.ty == Ty::FootnoteDefinition {
-            state.insert(n.ident.clone(), -1);
-            defs.insert(n.ident.clone(), (n.ch.clone(), n.s, n.e));
+            if bodies {
+                defs.insert(n.ident.clone(), (n.ch.clone(), n.s, n.e));
+            } else {
+                state.insert(n.ident.clone(), -1);
+            }
         }
         for c in &n.ch {
-            collect(c, defs, state);
+            collect(c, defs, state, bodies);
         }
     }
-    collect(root, &mut defs, &mut state);
+    collect(root, &mut defs, &mut state, false);
     let mut order: Vec<Entry> = Vec::new();
     let mut inline_defs: HashMap<usize, (Vec<Node>, Pt, Pt, bool)> = HashMap::new();
 
@@ -360,6 +363,8 @@ fn footnotes(root: &mut Node) {
         }
     }
     visit(root, &mut defs, &mut state, &mut order, &mut inline_defs);
+    // the definitions' bodies are taken after the walk: references inside them have been resolved by then
+    collect(root, &mut defs, &mut state, true);
     // backrefs go onto the definition content itself (shared in the original), then into the synthetic list
     let mut items: Vec<Node> = Vec::new();
     for (s, ent) in order.iter().enumerate() {

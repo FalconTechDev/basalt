@@ -384,11 +384,21 @@ fn one(cx: &Ctx, n: &Node, parent: &Node) -> Vec<H> {
         Ty::FnRef => {
             let a = s(&n.val);
             let l = s(&n.fn_id);
-            let link = el("a", vec![text_h(&format!("[{}]", l))]).p("class", "footnote-link").p("href", &format!("#fn-{}", a)).p("data-footref", &s(&n.ident));
+            let mut link = el("a", vec![text_h(&format!("[{}]", l))]).p("class", "footnote-link").p("href", &format!("#fn-{}", a));
+            if !n.ident.is_empty() {
+                link = link.p("data-footref", &s(&n.ident));
+            }
             vec![H::E(el("sup", vec![H::E(link)]).p("class", "footnote-ref").p("data-footnote-id", &format!("fnref-{}", l)))]
         }
         Ty::FnBackref => vec![H::E(el("a", vec![text_h("\u{21a9}\u{fe0e}")]).p("class", "footnote-backref footnote-link").p("href", &format!("#fnref-{}", s(&n.val))))],
         Ty::FnSection => vec![H::E(el("section", all(cx, n)).p("class", "footnotes"))],
+        // a reference the footnote pass never reached (inside an inline note) keeps the plain markup
+        Ty::FootnoteReference => {
+            let id = s(&n.ident);
+            let label = if n.label.is_empty() { id.clone() } else { s(&n.label) };
+            let a = el("a", vec![text_h(&label)]).p("href", &format!("#fn-{}", id)).p("class", "footnote-ref");
+            vec![H::E(el("sup", vec![H::E(a)]).p("id", &format!("fnref-{}", id)))]
+        }
         Ty::Checklist => {
             let mut e = el("input", vec![]).p("class", "task-list-item-checkbox").p("type", "checkbox");
             if n.checked == Some(true) {

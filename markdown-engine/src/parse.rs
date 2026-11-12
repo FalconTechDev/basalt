@@ -231,11 +231,20 @@ pub fn is_escapable(ch: u16) -> bool {
 
 /// Decode character references (`&amp;`, `&#35;`, `&#x23;`).
 pub fn decode_raw(v: &[u16]) -> S {
+    decode_with(v, true)
+}
+
+/// The same for URLs: only complete references are decoded.
+pub fn decode_url(v: &[u16]) -> S {
+    decode_with(v, false)
+}
+
+fn decode_with(v: &[u16], nonterm: bool) -> S {
     let mut out = S::new();
     let mut i = 0;
     while i < v.len() {
         if v[i] == c('&') {
-            if let Some((len, dec)) = entity_at(&v[i..]) {
+            if let Some((len, dec)) = entity_at(&v[i..], nonterm) {
                 out.extend_from_slice(&dec);
                 i += len;
                 continue;
@@ -248,7 +257,7 @@ pub fn decode_raw(v: &[u16]) -> S {
 }
 
 /// If an entity starts at the beginning of `v`, return its source length and decoded text.
-pub fn entity_at(v: &[u16]) -> Option<(usize, S)> {
+pub fn entity_at(v: &[u16], nonterm: bool) -> Option<(usize, S)> {
     if at(v, 0) != c('&') {
         return None;
     }
@@ -262,23 +271,43 @@ pub fn entity_at(v: &[u16]) -> Option<(usize, S)> {
         while i < v.len() && (if hex { (v[i] as u8 as char).is_ascii_hexdigit() && v[i] < 128 } else { is_digit(v[i]) }) {
             i += 1;
         }
-        if i == s0 || at(v, i) != c(';') || i >= v.len() {
+        if i == s0 {
+            return None;
+        }
+        let terminated = at(v, i) == c(';') && i < v.len();
+        if !terminated && !nonterm {
             return None;
         }
         let digits = st(&v[s0..i]);
-        let n = u32::from_str_radix(&digits, if hex { 16 } else { 10 }).ok()?;
+        let n = u32::from_str_radix(&digits, if hex { 16 } else { 10 }).unwrap_or(0x110000);
         let ch = if n == 0 || n > 0x10ffff || (0xd800..=0xdfff).contains(&n) { '\u{fffd}' } else { char::from_u32(n).unwrap_or('\u{fffd}') };
         let mut b = [0u16; 2];
-        return Some((i + 1, ch.encode_utf16(&mut b).to_vec()));
+        return Some((if terminated { i + 1 } else { i }, ch.encode_utf16(&mut b).to_vec()));
     }
     let mut i = 1;
     while i < v.len() && (is_alpha(v[i]) || is_digit(v[i])) {
         i += 1;
     }
-    if i == 1 || at(v, i) != c(';') || i >= v.len() {
+    if i == 1 {
         return None;
     }
-    let name = st(&v[1..i]);
-    let d = crate::entities::lookup(&name)?;
-    Some((i + 1, d.encode_utf16().collect()))
+    let run = st(&v[1..i]);
+    if at(v, i) == c(';') && i < v.len() {
+        if let Some(d) = crate::entities::lookup(&run) {
+            return Some((i + 1, d.encode_utf16().collect()));
+        }
+    }
+    if nonterm {
+        // the old names also work without the semicolon: the longest one that fits
+        let chars: Vec<char> = run.chars().collect();
+        for n in (1..=chars.len().min(6)).rev() {
+            let name: String = chars[..n].iter().collect();
+            if crate::entities::is_legacy(&name) {
+                if let Some(d) = crate::entities::lookup(&name) {
+                    return Some((1 + n, d.encode_utf16().collect()));
+                }
+            }
+        }
+    }
+    None
 }
