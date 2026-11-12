@@ -268,8 +268,8 @@ pub fn transform(root: &mut Node, orig: &[u16]) {
                 }
                 n.alt = Some(t2);
             } else {
-                // no title: keep the initial alt (empty)
-                n.alt = Some(S::new());
+                // no title: the initial alt stays (the title itself: empty text, or none for an image without alt)
+                n.alt = n.title.clone();
             }
         }
     });
