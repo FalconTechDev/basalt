@@ -69,7 +69,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const changed = [];
   const touch = (f, fn = brandText) => { if (rewrite(f, fn)) changed.push(path.relative(root, f)); };
 
-  for (const f of ["i18n.js", "starter.js", "help.js", "starter.html", "help.html", "index.html", "package.json"]) touch(path.join(src, f));
+  for (const f of ["i18n.js", "i18n-ru.js", "starter.js", "help.js", "starter.html", "help.html", "index.html", "package.json"]) touch(path.join(src, f));
   for (const f of ["starter.js", "help.js"]) touch(path.join(src, f), brandSplash);
   // "Obsidian Extracted" was the working title of this fork
   for (const f of ["starter.html", "help.html", "index.html"]) touch(path.join(src, f), (s) => s.replace(/Obsidian Extracted/g, NAME).replace(/Basalt Extracted/g, NAME));

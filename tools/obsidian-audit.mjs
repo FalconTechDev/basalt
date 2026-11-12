@@ -13,7 +13,7 @@ const KINDS = [
   ["plugin API names", /\w*Obsidian\w*(?=\s*[=(:])|require\(["']obsidian["']\)/g],
   ["CSS class / selector", /\.obsidian-[\w-]+|obsidian-app|obsidian-search-match-highlight/g],
 ];
-const files = ["app.js", "main.js", "app.css", "index.html", "starter.html", "help.html", "starter.js", "help.js", "i18n.js", "package.json"].map((f) => path.join(src, f)).filter(fs.existsSync);
+const files = ["app.js", "main.js", "app.css", "index.html", "starter.html", "help.html", "starter.js", "help.js", "i18n.js", "i18n-ru.js", "package.json"].map((f) => path.join(src, f)).filter(fs.existsSync);
 const total = {}; let all = 0; const perFile = {};
 for (const f of files) {
   const t = fs.readFileSync(f, "utf8"); const n = (t.match(/obsidian/gi) || []).length; if (!n) continue;
