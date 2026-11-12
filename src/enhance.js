@@ -55,8 +55,8 @@ window.globalEnhance = function globalEnhance() {
 	// ----- element creation -----
 	const apply = (el, o) => {
 		if (o == null) return;
-		if (typeof o === 'string') { el.className = o; return; }
-		if (o.cls) el.className = Array.isArray(o.cls) ? o.cls.join(' ') : o.cls;
+		if (typeof o === 'string') { el.setAttribute('class', o); return; }
+		if (o.cls) el.setAttribute('class', Array.isArray(o.cls) ? o.cls.join(' ') : o.cls);
 		if (o.text != null) { if (typeof o.text === 'string') el.textContent = o.text; else el.appendChild(o.text); }
 		if (o.attr) for (const k in o.attr) { const v = o.attr[k]; if (v === null || v === undefined || v === false) continue; el.setAttribute(k, v === true ? '' : String(v)); }
 		if (o.title != null) el.title = o.title;
@@ -180,13 +180,13 @@ window.globalEnhance = function globalEnhance() {
 	for (const proto of [H, win.SVGElement.prototype]) { def(proto, 'setCssProps', cssProps); def(proto, 'setCssStyles', cssStyles); }
 	def(H, 'trigger', function (type) { this.dispatchEvent(new Event(type, { bubbles: true, cancelable: true })); });
 	def(H, 'onClickEvent', function (listener, options) { this.addEventListener('click', listener, options); this.addEventListener('auxclick', listener, options); });
-	// calls `listener` when the element is put into a document (right away if it already is); returns a function that cancels
+	// calls `listener` when the element is later put into a document; returns a function that cancels
 	def(H, 'onNodeInserted', function (listener, once) {
 		const el = this;
 		let cancelled = false, observer = null;
 		const fire = () => { if (cancelled) return; listener(); if (once) cancel(); };
 		const cancel = () => { cancelled = true; if (observer) observer.disconnect(); };
-		if (el.isConnected) { Promise.resolve().then(fire); if (once) return cancel; }
+		// only a later insertion counts: callers create the element and finish setting up before it is attached
 		observer = new MutationObserver(() => { if (el.isConnected && !el.__wasConnected) { el.__wasConnected = true; fire(); } else if (!el.isConnected) el.__wasConnected = false; });
 		el.__wasConnected = el.isConnected;
 		observer.observe(el.ownerDocument.documentElement, { childList: true, subtree: true });
