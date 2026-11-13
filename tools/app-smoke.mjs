@@ -102,6 +102,43 @@ const se = await run(`(async () => {
 })()`);
 check("search finds a phrase", se.hits >= 1 && /Other/.test(se.text), se);
 
+// the vault model: create a note through the file manager and through the new-file command, rename with and without an explicit
+// extension, watch the explorer and the vault events follow, then remove the files again
+const vm = await run(`(async () => {
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const events = [];
+  const refs = ["create", "rename", "delete"].map((n) => app.vault.on(n, (f, old) => events.push(n + ":" + f.path + (old ? "<-" + old : ""))));
+  const out = {};
+  try {
+    const made = await app.fileManager.createNewMarkdownFile(null, "Smoke new");
+    out.made = made.path;
+    await wait(300);
+    await app.fileManager.renameFile(made, "Smoke renamed.md");
+    await wait(300);
+    const asPy = await app.fileManager.createNewFile(null, "Smoke script", "py", "x = 1");
+    out.py = asPy.path;
+    await app.fileManager.renameFile(asPy, "Smoke script2.txt");
+    await wait(300);
+    out.afterRename = app.vault.getAbstractFileByPath("Smoke script2.txt") ? "kept .txt" : "lost";
+    await app.commands.executeCommandById("file-explorer:new-file");
+    await wait(1500);
+    const active = app.workspace.getActiveFile();
+    out.command = active ? active.path : null;
+    if (active) { await app.fileManager.renameFile(active, "From command.md"); await wait(300); }
+    const leaf = app.workspace.getLeavesOfType("basalt-files")[0];
+    out.explorer = leaf ? leaf.view.containerEl.innerText : "";
+    for (const f of app.vault.getFiles().filter((x) => /^(Smoke|From command)/.test(x.name))) await app.vault.delete(f);
+    await wait(500);
+    out.left = app.vault.getFiles().filter((x) => /^(Smoke|From command)/.test(x.name)).length;
+  } catch (e) { out.error = String(e && e.stack || e); }
+  refs.forEach((r) => app.vault.offref(r));
+  out.events = events;
+  return out;
+})()`);
+check("create and rename through the file manager", !vm.error && vm.made === "Smoke new.md" && vm.afterRename === "kept .txt" && vm.py === "Smoke script.md", vm);
+check("new-file command + rename, explorer follows, delete cleans up", !vm.error && vm.command && /From command/.test(vm.explorer) && vm.left === 0
+  && vm.events.includes("rename:Smoke renamed.md<-Smoke new.md") && vm.events.includes("delete:Smoke renamed.md"), { command: vm.command, left: vm.left, events: vm.events });
+
 check("no console errors or exceptions", problems.length === 0, problems.slice(0, 8));
 ws.close();
 process.exit(results.every((r) => r.ok) ? 0 : 1);

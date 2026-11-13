@@ -573,5 +573,137 @@
    "orig": "xy",
    "use": "matchScore"
   }
- ]
+ ],
+ "declarators": [
+  {
+   "orig": "QT",
+   "expr": "__basaltOwn.fileClass(\"TAbstractFile\")",
+   "sha1": "4eaff792d9c33377cdce60bda1534f24a2b2bbcf",
+   "originalBytes": 315
+  },
+  {
+   "orig": "XT",
+   "expr": "null",
+   "sha1": "53a9b0a3c30baac2eec4c403e29d5c0b1c41a10c",
+   "originalBytes": 11
+  },
+  {
+   "orig": "$T",
+   "expr": "__basaltOwn.fileClass(\"TFile\")",
+   "sha1": "9c789be6e78a4a6aedb90fb6c2c7e834fa820bd1",
+   "originalBytes": 795
+  },
+  {
+   "orig": "ZT",
+   "expr": "__basaltOwn.fileClass(\"TFolder\")",
+   "sha1": "6922ce84c35ac18c8053cf977c96b0b8c4c540ec",
+   "originalBytes": 522
+  },
+  {
+   "orig": "Eu",
+   "expr": "__basaltOwn.createFileSystemAdapter()",
+   "sha1": "bfd26de141886d5b9e7e0f80415f32ebcb74045f",
+   "originalBytes": 20222
+  },
+  {
+   "orig": "JT",
+   "expr": "__basaltOwn.createVault(VT,Eu)",
+   "sha1": "020d8c45116285ee5922289fa9d8b1cb96e79ff7",
+   "originalBytes": 16852
+  }
+ ],
+ "methods": [
+  {
+   "class": "mI",
+   "name": "getMarkdownNewFileParent",
+   "use": "fmMarkdownNewFileParent",
+   "sha1": "c956027d37430809ff47fce237e4b6da600779c5",
+   "originalBytes": 286
+  },
+  {
+   "class": "mI",
+   "name": "getNewFileParent",
+   "use": "fmNewFileParent",
+   "sha1": "446c777d1cf3f6771c6fe53612e3a4b1240e1d43",
+   "originalBytes": 238
+  },
+  {
+   "class": "mI",
+   "name": "registerFileParentCreator",
+   "use": "fmRegisterFileParentCreator",
+   "sha1": "273453ab7028d05d813fab4033349203cdbb1fab",
+   "originalBytes": 48
+  },
+  {
+   "class": "mI",
+   "name": "unregisterFileCreator",
+   "use": "fmUnregisterFileCreator",
+   "sha1": "525a637b20c66266285e24ce54bd28955d37f5e1",
+   "originalBytes": 51
+  },
+  {
+   "class": "mI",
+   "name": "canCreateFileWithExt",
+   "use": "fmCanCreateFileWithExt",
+   "sha1": "e67dbf34d0b375ebc63e2db6082528307661c142",
+   "originalBytes": 72
+  },
+  {
+   "class": "mI",
+   "name": "createNewMarkdownFileFromLinktext",
+   "use": "fmCreateNewMarkdownFileFromLinktext",
+   "sha1": "ff53bf47014515b4c3b65d4cd9b92399de9c8bcd",
+   "originalBytes": 269
+  },
+  {
+   "class": "mI",
+   "name": "createNewMarkdownFile",
+   "use": "fmCreateNewMarkdownFile",
+   "sha1": "d920d99286eda65a01bba3512dbca6818428defd",
+   "originalBytes": 131
+  },
+  {
+   "class": "mI",
+   "name": "createNewFile",
+   "use": "fmCreateNewFile",
+   "sha1": "e27dd72de34e93d47256549d5f124699764cecb7",
+   "originalBytes": 715
+  },
+  {
+   "class": "mI",
+   "name": "createNewFolder",
+   "use": "fmCreateNewFolder",
+   "sha1": "b942fc655c14b23f9ba81c2591eb969a7409ab87",
+   "originalBytes": 369
+  },
+  {
+   "class": "mI",
+   "name": "renameFile",
+   "use": "fmRenameFile",
+   "sha1": "0abe33e67d34093722252d041617303b75077af9",
+   "originalBytes": 226
+  },
+  {
+   "class": "mI",
+   "name": "runAsyncLinkUpdate",
+   "use": "fmRunAsyncLinkUpdate",
+   "sha1": "b83ecfc3d956247e53801bdae98b8d21c59e522b",
+   "originalBytes": 1142
+  },
+  {
+   "class": "mI",
+   "name": "trashFile",
+   "use": "fmTrashFile",
+   "sha1": "3df062eb6b86ed935ef996c7611bde0d31be5391",
+   "originalBytes": 424
+  },
+  {
+   "class": "mI",
+   "name": "getAvailablePathForAttachment",
+   "use": "fmGetAvailablePathForAttachment",
+   "sha1": "961f29faac441d80c51bf7dc93c8b8b5dd7bff00",
+   "originalBytes": 292
+  }
+ ],
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb"
 }
