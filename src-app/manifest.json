@@ -638,6 +638,14 @@
   {
    "orig": "P0",
    "use": "defineWorkspaceRibbon"
+  },
+  {
+   "orig": "qD",
+   "use": "defineLeafHistory"
+  },
+  {
+   "orig": "jD",
+   "use": "defineWorkspaceLeaf"
   }
  ],
  "host": {
@@ -672,6 +680,15 @@
   "restoreScrollPositions": "lg",
   "scrollWithPointer": "_v",
   "makeDragReorderable": "Gc",
-  "TOOLTIP_DELAY": "sv"
+  "TOOLTIP_DELAY": "sv",
+  "LeafHistory": "qD",
+  "EmptyView": "tD",
+  "DeferredView": "eD",
+  "UnknownView": "nD",
+  "FileView": "MD",
+  "MobileDrawer": "WD",
+  "Notice": "fb",
+  "pointerEntered": "Lc",
+  "WorkspaceTabs": "zD"
  }
 }
