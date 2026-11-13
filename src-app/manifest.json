@@ -646,6 +646,90 @@
   {
    "orig": "jD",
    "use": "defineWorkspaceLeaf"
+  },
+  {
+   "orig": "Ng",
+   "use": "defineScope"
+  },
+  {
+   "orig": "Rg",
+   "use": "defineDynamicScope"
+  },
+  {
+   "orig": "Bg",
+   "use": "defineKeymap"
+  },
+  {
+   "orig": "jk",
+   "use": "defineBaseComponent"
+  },
+  {
+   "orig": "Uk",
+   "use": "defineValueComponent"
+  },
+  {
+   "orig": "Wk",
+   "use": "defineButtonComponent"
+  },
+  {
+   "orig": "_k",
+   "use": "defineExtraButtonComponent"
+  },
+  {
+   "orig": "Gk",
+   "use": "defineToggleComponent"
+  },
+  {
+   "orig": "Kk",
+   "use": "defineAbstractTextComponent"
+  },
+  {
+   "orig": "Yk",
+   "use": "defineTextComponent"
+  },
+  {
+   "orig": "Qk",
+   "use": "defineSearchComponent"
+  },
+  {
+   "orig": "Xk",
+   "use": "defineTextAreaComponent"
+  },
+  {
+   "orig": "Zk",
+   "use": "defineMomentFormatComponent"
+  },
+  {
+   "orig": "Jk",
+   "use": "defineDropdownComponent"
+  },
+  {
+   "orig": "eC",
+   "use": "defineProgressBarComponent"
+  },
+  {
+   "orig": "tC",
+   "use": "defineSliderComponent"
+  },
+  {
+   "orig": "nC",
+   "use": "defineColorComponent"
+  },
+  {
+   "orig": "zk",
+   "use": "defineSetting"
+  },
+  {
+   "orig": "qk",
+   "use": "defineSettingGroup"
+  },
+  {
+   "orig": "_1",
+   "use": "defineSettingTab"
+  },
+  {
+   "orig": "K0",
+   "use": "definePluginSettingTab"
   }
  ],
  "host": {
@@ -689,6 +773,33 @@
   "MobileDrawer": "WD",
   "Notice": "fb",
   "pointerEntered": "Lc",
-  "WorkspaceTabs": "zD"
+  "WorkspaceTabs": "zD",
+  "Keymap": "Bg",
+  "Scope": "Ng",
+  "eventKey": "Lg",
+  "eventVirtualKey": "Ig",
+  "focusElement": "tg",
+  "osName": "zl",
+  "BaseComponent": "jk",
+  "ValueComponent": "Uk",
+  "ButtonComponent": "Wk",
+  "ExtraButtonComponent": "_k",
+  "ToggleComponent": "Gk",
+  "AbstractTextComponent": "Kk",
+  "TextComponent": "Yk",
+  "SearchComponent": "Qk",
+  "TextAreaComponent": "Xk",
+  "MomentFormatComponent": "Zk",
+  "DropdownComponent": "Jk",
+  "ProgressBarComponent": "eC",
+  "SliderComponent": "tC",
+  "ColorComponent": "nC",
+  "Setting": "zk",
+  "SettingGroup": "qk",
+  "SettingTab": "_1",
+  "PluginSettingTab": "K0",
+  "selectOnFocus": "Pv",
+  "hideTooltip": "Cv",
+  "displayTooltip": "kv"
  }
 }

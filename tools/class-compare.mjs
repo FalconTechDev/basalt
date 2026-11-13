@@ -39,10 +39,8 @@ const manifest = readManifest();
 const base = loadBase(manifest.base);
 const stage = fs.mkdtempSync(path.join(os.tmpdir(), "basalt-class-compare-"));
 const NEW = {};
-for (const m of JS_MODULES) {
-  fs.writeFileSync(path.join(stage, m), fs.readFileSync(path.join(root, "src-app", m), "utf8"));
-  Object.assign(NEW, await import(pathToFileURL(path.join(stage, m)).href));
-}
+for (const m of JS_MODULES) fs.writeFileSync(path.join(stage, m), fs.readFileSync(path.join(root, "src-app", m), "utf8"));
+for (const m of JS_MODULES) Object.assign(NEW, await import(pathToFileURL(path.join(stage, m)).href));
 
 const bf = path.join(os.tmpdir(), `basalt-app-base-${manifest.base}.js`);
 const bb = loadBundle(bf);
