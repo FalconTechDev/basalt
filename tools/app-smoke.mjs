@@ -59,6 +59,8 @@ const open = (p) => run(`(async () => {
   const leaf = app.workspace.getLeaf("tab");
   await leaf.openFile(f);
   await new Promise((r) => setTimeout(r, 2500));
+  // the off-screen test window throttles timers: give a canvas up to 30 s to put its nodes into the DOM
+  for (let i = 0; i < 30 && leaf.view.getViewType() === "canvas" && !leaf.view.containerEl.querySelector(".canvas-node"); i++) await new Promise((r) => setTimeout(r, 1000));
   const v = leaf.view;
   return { type: v.getViewType(), text: (v.containerEl.innerText || "").slice(0, 120), canvasNodes: v.containerEl.querySelectorAll(".canvas-node").length, cm: v.containerEl.querySelectorAll(".cm-editor, .cm-content").length, file: v.file && v.file.path };
 })()`);

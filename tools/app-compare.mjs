@@ -38,6 +38,8 @@ const NEW = {};
 for (const m of MODULES) Object.assign(NEW, await import(pathToFileURL(path.join(stage, m)).href));
 
 const manifest = readManifest();
+// functions that are time/DOM dependent and are tested by tools/class-compare.mjs (tools/class-tests/*.mjs) instead
+const COVERED_ELSEWHERE = new Set(["wc"]);
 const base = loadBase(manifest.base);
 // the app-core (Rust) variants that are not wired into the manifest are tested against the same originals
 const RUST_EXTRA = [{ orig: "cu", use: "normalizePathRs" }, { orig: "Pf", use: "formatBytesRs" }, { orig: "LT", use: "plainHeadingRs" }, { orig: "IT", use: "linkSafeHeadingRs" }, { orig: "gy", use: "isOlderVersionRs" }, { orig: "Dy", use: "fuzzyMatch" }];
@@ -144,6 +146,7 @@ let failed = 0, total = 0;
 const rows = [];
 for (const e of entries) {
   const spec = S[e.orig];
+  if (!spec && COVERED_ELSEWHERE.has(e.orig)) { console.log(`skip ${e.orig}: covered by tools/class-compare.mjs`); continue; }
   if (!spec) { console.log(`NO SPEC for ${e.orig}`); failed++; continue; }
   const o = O[e.orig], nw = NEW[e.use];
   let bad = 0, n = 0, thrown = 0;

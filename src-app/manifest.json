@@ -572,6 +572,21 @@
   {
    "orig": "xy",
    "use": "matchScore"
+  },
+  {
+   "orig": "wc",
+   "use": "debounceCall"
   }
- ]
+ ],
+ "classes": [
+  {
+   "orig": "VT",
+   "use": "defineEvents"
+  },
+  {
+   "orig": "jm",
+   "use": "defineComponent"
+  }
+ ],
+ "host": {}
 }
