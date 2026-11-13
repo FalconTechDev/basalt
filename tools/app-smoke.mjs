@@ -59,6 +59,8 @@ const open = (p) => run(`(async () => {
   const leaf = app.workspace.getLeaf("tab");
   await leaf.openFile(f);
   await new Promise((r) => setTimeout(r, 2500));
+  // the off-screen test window throttles timers: give a canvas up to 30 s to put its nodes into the DOM
+  for (let i = 0; i < 30 && leaf.view.getViewType() === "canvas" && !leaf.view.containerEl.querySelector(".canvas-node"); i++) await new Promise((r) => setTimeout(r, 1000));
   const v = leaf.view;
   return { type: v.getViewType(), text: (v.containerEl.innerText || "").slice(0, 120), canvasNodes: v.containerEl.querySelectorAll(".canvas-node").length, cm: v.containerEl.querySelectorAll(".cm-editor, .cm-content").length, file: v.file && v.file.path };
 })()`);
@@ -138,6 +140,84 @@ const vm = await run(`(async () => {
 check("create and rename through the file manager", !vm.error && vm.made === "Smoke new.md" && vm.afterRename === "kept .txt" && vm.py === "Smoke script.md", vm);
 check("new-file command + rename, explorer follows, delete cleans up", !vm.error && vm.command && /From command/.test(vm.explorer) && vm.left === 0
   && vm.events.includes("rename:Smoke renamed.md<-Smoke new.md") && vm.events.includes("delete:Smoke renamed.md"), { command: vm.command, left: vm.left, events: vm.events });
+
+// settings dialog: opens with a tab list and a page, closes again
+const st = await run(`(async () => {
+  try {
+    // Basalt replaces the settings window with its own; the inherited one (Modal + Setting classes) is still reachable like this
+    window.__bsStock = true;
+    app.setting.open();
+    window.__bsStock = false;
+    await new Promise((r) => setTimeout(r, 2500));
+    const tabs = document.querySelectorAll(".modal-container .vertical-tab-nav-item").length;
+    const rows = document.querySelectorAll(".modal-container .setting-item").length;
+    app.setting.close();
+    await new Promise((r) => setTimeout(r, 800));
+    return { tabs, rows, closed: !document.querySelector(".modal-container") };
+  } catch (e) { return { error: String(e) }; }
+})()`);
+check("inherited settings dialog opens and closes", st.tabs >= 3 && st.rows >= 1 && st.closed, st);
+
+// command palette (a suggest modal): opens, filters, closes with Escape
+const cp = await run(`(async () => {
+  try {
+    app.commands.executeCommandById("command-palette:open");
+    await new Promise((r) => setTimeout(r, 1500));
+    const open = !!document.querySelector(".bpal-wrap");
+    const input = document.querySelector(".bpal-in input");
+    if (input) { input.value = "search"; input.dispatchEvent(new Event("input", { bubbles: true })); }
+    await new Promise((r) => setTimeout(r, 1200));
+    const items = document.querySelectorAll(".bpal-list > *").length;
+    if (input) input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+    await new Promise((r) => setTimeout(r, 800));
+    return { open, items, closed: !document.querySelector(".bpal-wrap") };
+  } catch (e) { return { error: String(e) }; }
+})()`);
+check("command palette opens, filters, closes", cp.open && cp.items >= 1 && cp.closed, cp);
+
+// tab splits, tab group menu data and a pop-out window
+const sp = await run(`(async () => {
+  try {
+    const ws = app.workspace;
+    const before = ws.rootSplit.children.length;
+    const a = ws.getLeaf("split", "vertical");
+    await a.openFile(app.vault.getAbstractFileByPath("Other note.md"));
+    const b = ws.getLeaf("split", "horizontal");
+    await b.openFile(app.vault.getAbstractFileByPath("Note.md"));
+    await new Promise((r) => setTimeout(r, 1500));
+    const splits = ws.rootSplit.containerEl.querySelectorAll(".workspace-split").length + ws.rootSplit.containerEl.querySelectorAll(".workspace-tabs").length;
+    const layout = JSON.stringify(ws.getLayout().main);
+    a.detach(); b.detach();
+    await new Promise((r) => setTimeout(r, 800));
+    return { before, after: ws.rootSplit.children.length, splits, layoutOk: /"direction":"horizontal"/.test(layout) };
+  } catch (e) { return { error: String(e) }; }
+})()`);
+check("vertical / horizontal split and close", sp.after === sp.before && sp.splits >= 3 && sp.layoutOk, sp);
+
+const po = await run(`(async () => {
+  try {
+    const ws = app.workspace;
+    const leaf = ws.openPopoutLeaf();
+    await leaf.openFile(app.vault.getAbstractFileByPath("Note.md"));
+    await new Promise((r) => setTimeout(r, 2000));
+    const win = leaf.getContainer();
+    const info = { type: win.type, hasWin: !!(win.win && win.win !== window), bodyHasWorkspace: !!win.doc.querySelector(".workspace-leaf"), titlebar: !!win.doc.querySelector(".titlebar, .app-container") };
+    win.close();
+    await new Promise((r) => setTimeout(r, 800));
+    info.closed = ws.floatingSplit.children.length === 0;
+    return info;
+  } catch (e) { return { error: String(e) }; }
+})()`);
+check("pop-out window opens and closes", po.type === "window" && po.hasWin && po.bodyHasWorkspace && po.closed, po);
+
+// the custom title bar buttons are built with createDiv({ onclick }) (src/enhance.js)
+const tb = await run(`(() => {
+  const btns = [...document.querySelectorAll(".titlebar-button-container .titlebar-button, .titlebar-button")];
+  const probe = createDiv({ cls: "probe", onclick: () => { window.__probeClicked = true; } });
+  probe.click();
+  return { buttons: btns.length, onclickWorks: window.__probeClicked === true };
+})()`);
+check("title bar buttons exist, createDiv({ onclick }) works", tb.buttons >= 1 && tb.onclickWorks, tb);
 
 check("no console errors or exceptions", problems.length === 0, problems.slice(0, 8));
 ws.close();

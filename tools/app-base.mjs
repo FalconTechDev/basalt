@@ -6,13 +6,14 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as acorn from "acorn";
-import { analyze } from "./split-app.mjs";
+import { analyze, loadBundle } from "./split-app.mjs";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
 export function loadBase(rev) {
   const src = execFileSync("git", ["show", `${rev}:src/app.js`], { cwd: root, maxBuffer: 64 << 20, encoding: "utf8" });
   const file = path.join(os.tmpdir(), `basalt-app-base-${rev}.js`);
+  let vdecls = null;
   fs.writeFileSync(file, src);
   const report = analyze(file);
   const funcs = new Map(report.functions.map((f) => [f.name, f]));
@@ -34,13 +35,19 @@ export function loadBase(rev) {
     fn: (name) => (funcs.has(name) ? text(funcs.get(name)) : null),
     /** JS source declaring the given functions plus every function/constant they use; evaluates to an object of those functions. */
     closure(names) {
-      const needF = new Set(), needC = new Set();
+      const needF = new Set(), needC = new Set(), extra = new Map();
+      // functions held in plain vars ("by=function(e,t){...}") are neither top-level functions nor constants
+      const varDecl = (n) => {
+        if (!vdecls) { vdecls = new Map(); for (const nd of loadBundle(file).body) if (nd.type === "VariableDeclaration") for (const d of nd.declarations) if (d.id.type === "Identifier" && d.init) vdecls.set(d.id.name, src.slice(d.start, d.end)); }
+        return vdecls.get(n);
+      };
       const addC = (c) => { if (needC.has(c)) return; needC.add(c); const d = acorn.parseExpressionAt(text(consts.get(c)).replace(/^[^=]+=/, ""), 0, { ecmaVersion: 2022 }); constNames(d).forEach(addC); };
-      const addF = (n) => { if (needF.has(n)) return; needF.add(n); const f = funcs.get(n); if (!f) throw new Error("not a top-level function: " + n); f.deps.forEach(addF); f.constDeps.forEach(addC); };
+      const addF = (n) => { if (needF.has(n)) return; needF.add(n); const f = funcs.get(n); if (!f) { if (consts.has(n)) { addC(n); return; } const v = varDecl(n); if (v) { extra.set(n, v); return; } throw new Error("not a top-level function: " + n); } f.deps.forEach(addF); f.constDeps.forEach(addC); };
       names.forEach(addF);
       const cs = [...needC].map((c) => consts.get(c)).sort((a, b) => a.start - b.start).map((c) => `var ${text(c)};`);
-      const fs_ = [...needF].map((n) => text(funcs.get(n)));
-      return `${cs.join("\n")}\n${fs_.join("\n")}\nreturn {${names.join(",")}};`;
+      const fs_ = [...needF].filter((n) => funcs.has(n)).map((n) => text(funcs.get(n)));
+      const vs = [...extra.values()].map((v) => `var ${v};`);
+      return `${cs.join("\n")}\n${vs.join("\n")}\n${fs_.join("\n")}\nreturn {${names.join(",")}};`;
     },
   };
 }

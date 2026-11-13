@@ -25,7 +25,8 @@ import { loadBase } from "./tools/app-base.mjs";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.join(root, "src-app");
 // order matters only for readability: every module is a flat scope, names must be unique across them
-export const JS_MODULES = ["path.js", "text.js", "misc.js", "frontmatter.js", "search.js", "vault.js"];
+const FIRST = ["path.js", "text.js", "misc.js", "frontmatter.js", "search.js"];
+export const JS_MODULES = [...FIRST, ...fs.readdirSync(srcDir).filter((f) => f.endsWith(".js") && !FIRST.includes(f) && !["core.js", "rust.js"].includes(f)).sort()];
 // the WebAssembly side (app-core): shipped only with --wasm, because on every function measured so far plain JS is as fast or faster
 export const WASM_MODULES = ["core.js", "rust.js"];
 export const MODULES = [...WASM_MODULES.slice(0, 1), ...JS_MODULES, ...WASM_MODULES.slice(1)];
@@ -137,17 +138,43 @@ export function applyOwn(srcText, wasm, tmpPath) {
     fresh.push(sp.label);
     jobs.push({ start: sp.node.start, end: sp.node.end, wrapper: sp.replacement, orig: sp.label, text });
   }
+  // 1b) classes: `X=function(){...}()` declarators get the init replaced by a call of the own factory (the factory runs at the
+  // original position, so every app class it extends already exists); own code reaches app internals through __basaltHost only
+  const vdecl = new Map();
+  for (const n of b.body) if (n.type === "VariableDeclaration") for (const d of n.declarations) if (d.id.type === "Identifier") vdecl.set(d.id.name, d);
+  let baseDecls = null;
+  for (const e of manifest.classes || []) {
+    if (!exported.has(e.use)) throw new Error(`manifest: class ${e.orig} -> ${e.use} is not exported by src-app`);
+    const d = vdecl.get(e.orig);
+    if (!d || !d.init) throw new Error(`manifest: no top-level var ${e.orig} in src/app.js`);
+    const text = srcText.slice(d.init.start, d.init.end);
+    const wrapper = `__basaltOwn.${e.use}(__basaltHost)`;
+    if (!text.startsWith("__basaltOwn.")) {
+      if (!baseDecls) {
+        const bf = path.join(path.dirname(tmpPath), `basalt-app-base-decls-${manifest.base}.js`);
+        fs.writeFileSync(bf, base.src);
+        baseDecls = new Map();
+        const bb = loadBundle(bf);
+        for (const n of bb.body) if (n.type === "VariableDeclaration") for (const x of n.declarations) if (x.id.type === "Identifier" && x.init) baseDecls.set(x.id.name, base.src.slice(x.init.start, x.init.end));
+      }
+      if (text !== baseDecls.get(e.orig)) throw new Error(`manifest: class ${e.orig} differs from base ${manifest.base}; refusing to replace it`);
+      replaced += text.length;
+      e.originalBytes = text.length;
+    }
+    jobs.push({ start: d.init.start, end: d.init.end, wrapper, orig: e.orig, text, isOwn: text.startsWith("__basaltOwn.") });
+  }
   jobs.sort((x, y) => y.start - x.start);
   let out = srcText;
   for (const j of jobs) {
     if (out.slice(j.start, j.end) !== j.text) throw new Error("internal: offsets moved");
     out = out.slice(0, j.start) + j.wrapper + out.slice(j.end);
-    if (!j.text.includes("/*own*/") && !fresh.includes(j.orig) && !j.wrapper.startsWith("__basaltOwn.")) fresh.push(j.orig);
+    if (!j.text.includes("/*own*/") && !j.isOwn && !fresh.includes(j.orig) && !j.wrapper.startsWith("__basaltOwn.")) fresh.push(j.orig);
   }
 
   // 2) the block with the own modules
   const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind}}));` : "";
-  const block = `${BEGIN}${code}${bind}${END}`;
+  const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");
+  const block = `${BEGIN}${code}var __basaltHost={${host}};${bind}${END}`;
   const bi = out.indexOf(BEGIN);
   if (bi >= 0) {
     const ei = out.indexOf(END, bi);
@@ -156,7 +183,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
     const first = b.body[0]; // "use strict", always before any replaced function
     out = out.slice(0, first.end) + block + out.slice(first.end);
   }
-  return { text: out, codeBytes: code.length, replacedFresh: fresh, entries: manifest.entries.length, manifest, manifestChanged };
+  return { text: out, codeBytes: code.length, replacedFresh: fresh, entries: manifest.entries.length + (manifest.classes || []).length, ownBytesReplaced: replaced, manifest, manifestChanged };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
