@@ -72,16 +72,16 @@ for (const f of files) {
     let bad = 0;
     for (let k = 0; k < N; k++) {
       const seed = SEED * 100003 + k;
-      const runSide = (side) => {
+      const runSide = async (side) => {
         const log = [];
         const ctx = { log, rnd: new Rnd(seed) };
         try {
           const world = side === "orig" ? c.origWorld(originalWorld) : c.ownWorld(ownWorld);
-          c.scenario(world, ctx);
+          await c.scenario(world, ctx);
         } catch (e) { log.push("THROW " + (e && e.constructor && e.constructor.name) + ": " + String(e && e.message).slice(0, 120)); }
         return log;
       };
-      const a = runSide("orig"), b = runSide("own");
+      const a = await runSide("orig"), b = await runSide("own");
       total++;
       if (JSON.stringify(a) !== JSON.stringify(b)) {
         bad++;

@@ -822,6 +822,10 @@
   {
    "orig": "zb",
    "use": "defineHotkeyManager"
+  },
+  {
+   "orig": "G0",
+   "use": "definePlugin"
   }
  ],
  "host": {
@@ -924,6 +928,9 @@
   "nextFrame": "Al",
   "MarkdownView": "W6",
   "runCommandCallback": "K6",
-  "formatHotkey": "Rb"
+  "formatHotkey": "Rb",
+  "MarkdownPreviewRenderer": "Gz",
+  "FormulaFunctions": "QW",
+  "PLUGIN_STYLES_FILE": "JD"
  }
 }
