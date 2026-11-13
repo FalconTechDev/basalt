@@ -786,6 +786,34 @@
   {
    "orig": "Ug",
    "use": "defineMenu"
+  },
+  {
+   "orig": "ob",
+   "use": "defineSuggestionList"
+  },
+  {
+   "orig": "ab",
+   "use": "defineGroupedSuggestionList"
+  },
+  {
+   "orig": "sb",
+   "use": "defineSuggestModal"
+  },
+  {
+   "orig": "lb",
+   "use": "defineFuzzySuggestModal"
+  },
+  {
+   "orig": "EI",
+   "use": "definePopoverSuggest"
+  },
+  {
+   "orig": "SI",
+   "use": "defineAbstractInputSuggest"
+  },
+  {
+   "orig": "NI",
+   "use": "defineEditorSuggest"
   }
  ],
  "host": {
@@ -872,6 +900,19 @@
   "isTouchSyntheticMouse": "Uc",
   "frameOffset": "hg",
   "watchElementGone": "Rv",
-  "keyboard": "Im"
+  "keyboard": "Im",
+  "SuggestionList": "ob",
+  "GroupedSuggestionList": "ab",
+  "SuggestModal": "sb",
+  "FuzzySuggestModal": "lb",
+  "PopoverSuggest": "EI",
+  "AbstractInputSuggest": "SI",
+  "EditorSuggest": "NI",
+  "Modal": "tb",
+  "renderInstructions": "rb",
+  "positionNear": "Nv",
+  "rectInTopWindow": "pg",
+  "textDirection": "LI",
+  "nextFrame": "Al"
  }
 }

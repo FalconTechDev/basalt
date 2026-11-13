@@ -161,6 +161,69 @@ await op("menu", `(async () => {
   out.closed = document.querySelectorAll(".menu").length;
   return out;
 })()`);
+await op("suggest-modal", `(async () => {
+  const out = { log: [] };
+  const QS = app.internalPlugins.plugins.switcher.instance.QuickSwitcherModal;
+  let SM = QS; while (SM && !Object.prototype.hasOwnProperty.call(SM.prototype, "selectActiveSuggestion")) SM = Object.getPrototypeOf(SM);
+  const words = ["alpha", "beta", "gamma", "alphabet", "delta"];
+  class S extends SM {
+    getSuggestions(q) { return q ? words.filter((w) => w.includes(q)).map((w) => ({ w, group: w[0] })) : words.map((w) => ({ w })); }
+    renderSuggestion(v, el) { el.setText(v.w); }
+    onChooseSuggestion(v, ev) { out.log.push("chose " + v.w); }
+    onSelectedChange() {}
+  }
+  const m = new S(app);
+  m.setPlaceholder("type"); m.setInstructions([{ command: "Enter", purpose: "go" }]);
+  m.open();
+  await new Promise((r) => setTimeout(r, 1500));
+  const rows = () => [...m.resultContainerEl.querySelectorAll(".suggestion-item")].map((x) => x.textContent + (x.classList.contains("is-selected") ? "*" : ""));
+  out.start = rows();
+  const key = (k, mods) => window.dispatchEvent(new KeyboardEvent("keydown", Object.assign({ key: k, bubbles: true, cancelable: true }, mods || {})));
+  key("ArrowDown"); key("ArrowDown"); out.down = rows();
+  key("ArrowUp"); key("ArrowUp"); key("ArrowUp"); out.wrap = rows();
+  key("End"); out.end = rows(); key("Home"); out.home = rows();
+  m.inputEl.value = "al"; m.inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 800));
+  out.filtered = rows();
+  m.inputEl.value = "zzz"; m.inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 800));
+  out.empty = m.resultContainerEl.textContent;
+  m.inputEl.value = "a"; m.inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 800));
+  out.grouped = m.resultContainerEl.querySelectorAll(".suggestion-group").length;
+  m.resultContainerEl.querySelectorAll(".suggestion-item")[1].dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+  out.hover = rows();
+  key("Enter");
+  await new Promise((r) => setTimeout(r, 800));
+  out.after = [out.log.join(","), document.body.contains(m.containerEl), m.isOpen];
+  out.html = window.__norm(m.modalEl).replace(/opacity: [^;"]*;?/g, "").slice(0, 700);
+  out.chain = (() => { let n = 0, c = Object.getPrototypeOf(S); while (c && c !== Function.prototype) { n++; c = Object.getPrototypeOf(c); } return n; })();
+  return out;
+})()`);
+await op("editor-suggest", `(async () => {
+  const out = {};
+  const leaf = app.workspace.getLeaf("tab");
+  await leaf.openFile(app.vault.getAbstractFileByPath("Note.md"));
+  await new Promise((r) => setTimeout(r, 2500));
+  const ed = leaf.view.editor;
+  ed.focus();
+  ed.setCursor({ line: ed.lastLine(), ch: ed.getLine(ed.lastLine()).length });
+  ed.replaceSelection("\\n[[Oth");
+  await new Promise((r) => setTimeout(r, 2500));
+  const items = () => [...document.querySelectorAll(".suggestion-container .suggestion-item")].map((x) => x.textContent.replace(/\\s+/g, " ").trim() + (x.classList.contains("is-selected") ? "*" : ""));
+  out.res = (app.workspace.editorSuggest.suggests || []).map((s) => { let r; try { r = s.trigger(ed, leaf.view.file, true); } catch (e) { r = "ERR " + e.message; } return [r, s.isOpen]; });
+  await new Promise((r) => setTimeout(r, 2000));
+  out.shown = items();
+  const cur = app.workspace.editorSuggest.suggests.find((s) => s.isOpen);
+  if (cur) { out.ctx = cur.context && [cur.context.query, cur.context.start.ch, cur.context.end.ch]; out.sel = cur.suggestions.selectedItem; cur.suggestions.setSelectedItem(0, null); }
+  out.container = document.querySelectorAll(".suggestion-container").length;
+  window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+  await new Promise((r) => setTimeout(r, 800));
+  out.afterEsc = document.querySelectorAll(".suggestion-container").length;
+  out.text = ed.getValue().slice(-20);
+  leaf.detach();
+  return out;
+})()`);
 
 console.log(JSON.stringify({ steps, problems }, null, 1));
 process.exit(0);
