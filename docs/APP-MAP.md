@@ -32,7 +32,7 @@ A large share of the remaining leaf functions is third-party code (CodeMirror, L
 | step | module | what goes in | status |
 | --- | --- | --- | --- |
 | a | pure utilities | path/name helpers, link text, string/array/number utils, dates, colour, binary, geometry, fuzzy scoring, frontmatter glue | **143 functions replaced** (src-app/path.js, text.js, misc.js, frontmatter.js, search.js) |
-| b | vault / file model | `TAbstractFile`/`TFile`/`TFolder`, `Vault`, adapters (`FileSystemAdapter` Electron + `CapacitorAdapter`), `FileManager` rename/link rewrite | next |
+| b | vault / file model | `TAbstractFile`/`TFile`/`TFolder`, `Vault`, adapters (`FileSystemAdapter` Electron + `CapacitorAdapter`), `FileManager` rename/link rewrite | **done for desktop**: 5 classes + 13 FileManager methods replaced (src-app/vault.js); `CapacitorAdapter` (mobile) and the FileManager dialog methods stay |
 | c | workspace / leaf / tab model | `Workspace*` classes (`WorkspaceItem/Parent/Split/Tabs/Leaf/Root/Window/Floating/Sidedock/Ribbon`), layout (de)serialisation, `ViewRegistry` | |
 | d | editor | CodeMirror 6 glue, `Editor` API wrapper (`cP` class and the `IA/OA/Fq/Nq` position helpers), live preview, markdown view | |
 | e | settings | settings tabs, hotkeys, appearance, `Setting` components | |
