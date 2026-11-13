@@ -281,6 +281,65 @@ await op("fileview", `(async () => {
   leaf.detach();
   return out;
 })()`);
+await op("textfileview", `(async () => {
+  const out = {};
+  const v = app.vault, w = app.workspace;
+  const f = await v.create("tfv.canvas", '{"nodes":[],"edges":[]}');
+  const leaf = w.getLeaf("tab");
+  await leaf.openFile(f);
+  await new Promise((r) => setTimeout(r, 2000));
+  const view = leaf.view;
+  out.type = view.getViewType();
+  out.proto = ["requestSave", "saveImmediately", "setData", "loadFileInternal", "onModify", "saveTitle", "onTitleChange", "renderBreadcrumbs"].map((n) => typeof view[n]);
+  out.initial = [view.data, view.lastSavedData, view.dirty, view.isPlaintext, view.saving];
+  await v.modify(f, '{"nodes":[{"id":"a","type":"text","text":"x","x":0,"y":0,"width":100,"height":50}],"edges":[]}');
+  await new Promise((r) => setTimeout(r, 2000));
+  out.afterExternal = [view.data, view.lastSavedData, typeof view.getViewData === "function" ? String(view.getViewData()).slice(0, 20) : null];
+  view.requestSave(); out.dirty = view.dirty;
+  out.immediate = typeof view.saveImmediately();
+  // rename through the title field
+  const title = view.titleEl;
+  title.focus(); title.dispatchEvent(new Event("focus"));
+  title.setText("renamed"); title.dispatchEvent(new Event("input", { bubbles: true }));
+  out.renaming = view.fileBeingRenamed === f;
+  title.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
+  await new Promise((r) => setTimeout(r, 2000));
+  out.renamed = [f.path, view.getDisplayText()];
+  title.setText("bad/name"); title.dispatchEvent(new Event("focus")); title.dispatchEvent(new Event("input", { bubbles: true }));
+  out.badTip = document.querySelectorAll(".tooltip").length;
+  title.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+  out.afterEsc = title.textContent;
+  await v.trash(f, true);
+  await new Promise((r) => setTimeout(r, 1500));
+  leaf.detach();
+  return out;
+})()`);
+
+await op("hover-popover", `(async () => {
+  const out = {};
+  const w = app.workspace;
+  const leaf = w.getLeaf("tab");
+  await leaf.openFile(app.vault.getAbstractFileByPath("Note.md"));
+  await new Promise((r) => setTimeout(r, 2000));
+  const target = createDiv({ text: "target" }); target.style.cssText = "position:fixed;left:200px;top:200px;width:80px;height:20px"; document.body.appendChild(target);
+  const ev = new MouseEvent("mouseover", { bubbles: true, ctrlKey: true, clientX: 210, clientY: 210 });
+  w.trigger("hover-link", { event: ev, source: "preview", hoverParent: leaf.view, targetEl: target, linktext: "Other note", sourcePath: "Note.md" });
+  await new Promise((r) => setTimeout(r, 2500));
+  out.shown = document.querySelectorAll(".hover-popover").length;
+  out.parent = !!leaf.view.hoverPopover; out.state = leaf.view.hoverPopover && leaf.view.hoverPopover.state;
+  if (leaf.view.hoverPopover) {
+    const p = leaf.view.hoverPopover;
+    out.api = ["onTarget", "onHover", "isFocused", "waitTime"].map((k) => p[k]);
+    p.setIsFocused(true); out.should = p.shouldShow();
+    p.setIsFocused(false); p.onTarget = false; p.transition(); out.afterTransition = p.state;
+    await new Promise((r) => setTimeout(r, 1500));
+    out.afterWait = [p.state, document.querySelectorAll(".hover-popover").length];
+    p.hide();
+  }
+  out.hidden = [document.querySelectorAll(".hover-popover").length, leaf.view.hoverPopover];
+  target.remove(); leaf.detach();
+  return out;
+})()`);
 
 console.log(JSON.stringify({ steps, problems }, null, 1));
 process.exit(0);

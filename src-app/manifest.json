@@ -854,6 +854,18 @@
   {
    "orig": "p0",
    "use": "defineViewRegistry"
+  },
+  {
+   "orig": "rX",
+   "use": "defineHoverPopover"
+  },
+  {
+   "orig": "OX",
+   "use": "defineEditableFileView"
+  },
+  {
+   "orig": "BX",
+   "use": "defineTextFileView"
   }
  ],
  "host": {
@@ -975,6 +987,17 @@
   "VideoView": "XZ",
   "PdfView": "KZ",
   "releaseNotesType": "s0",
-  "ReleaseNotesView": "h0"
+  "ReleaseNotesView": "h0",
+  "PopoverState": "VQ",
+  "EditableFileView": "OX",
+  "focusAndSelectContents": "Av",
+  "pastePlainText": "vg",
+  "normalizeEditable": "mg",
+  "validateFileName": "LX",
+  "showErrorTooltip": "IX",
+  "UNSAFE_NAME_CHARS": "WT",
+  "UNSAFE_NAME_LIST": "jT",
+  "awaitSettled": "Mb",
+  "mergeText": "FX"
  }
 }
