@@ -39,12 +39,12 @@ for (const m of MODULES) Object.assign(NEW, await import(pathToFileURL(path.join
 
 const manifest = readManifest();
 // functions that are time/DOM dependent and are tested by tools/class-compare.mjs (tools/class-tests/*.mjs) instead
-const COVERED_ELSEWHERE = new Set(["wc"]);
+const COVERED_ELSEWHERE = new Set(["wc", "vl", "yl", "jg"]); // vl/yl/jg: DOM transitions and menus, checked by the runtime scenarios (tools/ws-scenario.mjs, tools/api-scenario.mjs)
 const base = loadBase(manifest.base);
 // the app-core (Rust) variants that are not wired into the manifest are tested against the same originals
 const RUST_EXTRA = [{ orig: "cu", use: "normalizePathRs" }, { orig: "Pf", use: "formatBytesRs" }, { orig: "LT", use: "plainHeadingRs" }, { orig: "IT", use: "linkSafeHeadingRs" }, { orig: "gy", use: "isOlderVersionRs" }, { orig: "Dy", use: "fuzzyMatch" }];
 const entries = manifest.entries.concat(RUST_EXTRA).filter((e) => !ONLY || ONLY.includes(e.orig));
-const O = new Function(base.closure(manifest.entries.map((e) => e.orig)))();
+const O = new Function(base.closure(manifest.entries.map((e) => e.orig).filter((n) => !COVERED_ELSEWHERE.has(n))))();
 
 // ---- random inputs ----
 function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -81,6 +81,24 @@ const ver = (r) => r.pick(["", "1", "1.2", "1.2.3", "0.9.10", "1.0", "01.2", "1.
 const date = (r) => new Date(r.pick([0, 86400000 * 365 * 30, 1e12, -1e11, 1709800000000, 4102444800000, r.f() * 4e12]));
 const mkPrepared = (r) => O.My(r.pick(["", "foo", "foo bar", "Fo Ba", "a-b_c", "日本語", "😀 x", "x.md", "  ", "Ünï", "q\u0301", "ǅa", "i̇", "ßß", "a\ud800"]) + r.str(4));
 const fuzzyText = (r) => r.pick(["", "foo bar", "FooBar", "fooBarBaz", "foo/bar/baz.md", "Foo-Bar_baz", "日本語ノート", "x😀y", "Ünï cödé", "İstanbul", "ßtraße", "a b c", "abc", "notes/Daily Notes/2024-01-01"]) + r.str(r.i(15));
+
+// minimal stand-ins for the DOM the match renderer builds (shared prototype methods, so deep-equality compares only the content)
+class FakeFragment { constructor() { this.kids = []; } appendText(s) { this.kids.push(s); } createSpan(o) { this.kids.push(o); } }
+class FakeText { constructor(t) { this.text = t; } }
+class FakeEl { constructor() { this.child = null; } appendChild(c) { this.child = c; } }
+globalThis.document = { createDocumentFragment: () => new FakeFragment(), createTextNode: (t) => new FakeText(t) };
+const cacheOf = (r) => {
+  const pos = () => ({ start: { line: r.i(9), col: r.i(5), offset: r.i(99) }, end: { line: r.i(9), col: r.i(5), offset: r.i(99) } });
+  const names = ["A", "B", "a b", "[x](y)", "C #1", "Sub", "A"];
+  const o = {};
+  if (r.bool(0.9)) o.headings = listOf(r, () => ({ heading: r.pick(names), level: r.int(1, 4), position: pos() }), 6);
+  if (r.bool(0.6)) o.blocks = { b1: { id: "b1", position: pos() }, Xy: { id: "Xy", position: pos() } };
+  if (r.bool(0.5)) o.listItems = [{ id: "b1", position: pos() }, { id: "zz", position: pos() }, { position: pos() }];
+  if (r.bool(0.5)) o.footnotes = [{ id: "f1", position: pos() }, { id: "f2", position: pos() }];
+  return r.bool(0.05) ? null : o;
+};
+const queries = ["foo", "foo bar", "Fo Ba", "日本", "x", "", " ", "bar  foo", "ünï", "a b"];
+const rangesOf = (r) => listOf(r, () => { const s = r.int(-3, 12); return [s, s + r.int(-1, 6)]; }, 4);
 
 // spec: orig name -> (R) => args
 const S = {
@@ -137,10 +155,25 @@ const S = {
   My: (r) => [r.pick(["", "foo", "foo bar", "Fo Ba", "a-b_c", "日本語", "😀 x", "x.md", "  ", "Ünï", "q\u0301", "ǅa", "i̇", "ßß", "a\ud800", "\ud800"]) + r.str(4)],
   Dy: (r) => [mkPrepared(r), fuzzyText(r)],
   xy: (r) => [listOf(r, () => [r.i(9), r.i(20) + 9], 4), r.i(10), r.i(40), r.i(4)],
+  Sy: (r) => [r.pick(queries)], Oy: (r) => [r.pick(queries)],
+  Ly: (r) => [r.pick([[], ["foo"], ["foo", "bar"], ["a", ""], ["日本"], ["x", "x"]]), fuzzyText(r)],
+  Iy: (r) => [r.pick([["foo"], ["foo", "bar"], [""], ["日本"]]), r.pick(["foo bar", "foo", "日本"]), fuzzyText(r)],
+  wy: (r) => [listOf(r, () => { const s = r.i(20); return [s, s + r.i(8)]; }, 7)],
+  Ny: (r) => [new FakeEl(), r.pick(["", "foo bar", "FooBar baz", "日本語"]) + r.str(5), r.pick([null, undefined, [], rangesOf(r)]), r.int(-3, 3)],
+  Fy: (r) => [new FakeEl(), r.pick(["", "foo bar", "FooBar baz"]) + r.str(5), r.pick([null, undefined, { matches: rangesOf(r) }, { matches: [] }]), r.int(-3, 3)],
+  FT: (r) => [cacheOf(r), r.pick(["#", "A", "A#B", "^b1", "^B1", "^xy", "^nope", "[^f1]", "[^f9]", "A#Sub", "##A", "", "a#b#c", "a b", "C #1", "x#y", "[x](y)"])],
 };
 
 const ok = (a, b) => util.isDeepStrictEqual(a, b);
-function run(fn, args) { try { return { v: fn(...args) , a: args }; } catch (e) { return { e: e && e.constructor && e.constructor.name }; } }
+// functions returned by a function (prepareFuzzySearch & co) are compared by what they return for a fixed set of probe texts
+const PROBES = ["", "foo bar", "FooBar", "notes/Foo Bar.md", "日本語ノート", "bar foo", "x😀y", "a b c", "Ünï cödé"];
+function run(fn, args) {
+  try {
+    let v = fn(...args);
+    if (typeof v === "function") v = PROBES.map((p) => { try { return v(p); } catch (e) { return "threw " + (e && e.constructor && e.constructor.name); } });
+    return { v, a: args };
+  } catch (e) { return { e: e && e.constructor && e.constructor.name }; }
+}
 
 let failed = 0, total = 0;
 const rows = [];

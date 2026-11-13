@@ -2,7 +2,7 @@
 // keyboard navigation and nested submenus). Items are grouped by "section" names; "a.b" sections can be folded into a submenu.
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
-import { floatOr } from "./misc.js";
+import { floatOr } from "./text.js";
 import { runTransition } from "./animation.js";
 
 /** The innermost menu that is currently open (the one that receives Escape / arrow keys), or null. */

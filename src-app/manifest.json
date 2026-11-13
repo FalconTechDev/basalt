@@ -588,6 +588,38 @@
   {
    "orig": "jg",
    "use": "closeAllMenus"
+  },
+  {
+   "orig": "Sy",
+   "use": "prepareFuzzyFinder"
+  },
+  {
+   "orig": "Oy",
+   "use": "prepareSimpleFinder"
+  },
+  {
+   "orig": "Ly",
+   "use": "containsAllWords"
+  },
+  {
+   "orig": "Iy",
+   "use": "simpleMatch"
+  },
+  {
+   "orig": "wy",
+   "use": "mergeSpans"
+  },
+  {
+   "orig": "Ny",
+   "use": "renderMatches"
+  },
+  {
+   "orig": "Fy",
+   "use": "renderResults"
+  },
+  {
+   "orig": "FT",
+   "use": "resolveSubpath"
   }
  ],
  "classes": [
