@@ -814,6 +814,14 @@
   {
    "orig": "NI",
    "use": "defineEditorSuggest"
+  },
+  {
+   "orig": "Y6",
+   "use": "defineCommands"
+  },
+  {
+   "orig": "zb",
+   "use": "defineHotkeyManager"
   }
  ],
  "host": {
@@ -913,6 +921,9 @@
   "positionNear": "Nv",
   "rectInTopWindow": "pg",
   "textDirection": "LI",
-  "nextFrame": "Al"
+  "nextFrame": "Al",
+  "MarkdownView": "W6",
+  "runCommandCallback": "K6",
+  "formatHotkey": "Rb"
  }
 }

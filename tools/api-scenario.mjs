@@ -224,6 +224,28 @@ await op("editor-suggest", `(async () => {
   leaf.detach();
   return out;
 })()`);
+await op("commands-hotkeys", `(async () => {
+  const out = { log: [] };
+  const C = app.commands, H = app.hotkeyManager;
+  C.addCommand({ id: "t:plain", name: "plain", hotkeys: [{ modifiers: ["Mod", "Shift"], key: "F9" }], callback: () => out.log.push("plain") });
+  C.addCommand({ id: "t:check", name: "check", checkCallback: (checking) => { if (!checking) out.log.push("check"); return true; } });
+  C.addCommand({ id: "t:fail", name: "fail", callback: () => { throw new Error("x"); } });
+  const key = (k, o) => { const e = new KeyboardEvent("keydown", Object.assign({ key: k, code: k, bubbles: true, cancelable: true }, o)); window.dispatchEvent(e); return e.defaultPrevented; };
+  out.f9 = key("F9", { ctrlKey: true, shiftKey: true });
+  out.f9plain = key("F9", {});
+  H.setHotkeys("t:plain", [{ modifiers: ["Alt"], key: "F8" }]);
+  out.moved = [key("F9", { ctrlKey: true, shiftKey: true }), key("F8", { altKey: true })];
+  H.removeHotkeys("t:plain");
+  out.back = key("F9", { ctrlKey: true, shiftKey: true });
+  out.ex = [C.executeCommandById("t:check"), C.executeCommandById("t:fail"), C.executeCommandById("nope")];
+  out.list = C.listCommands().map((c) => c.id).filter((i) => i.startsWith("t:"));
+  out.print = [H.printHotkeyForCommand("t:plain"), H.printHotkeyForCommand("t:check"), H.printHotkeyForCommand("app:open-settings")];
+  out.custom = Object.keys(H.customKeys);
+  ["t:plain", "t:check", "t:fail"].forEach((id) => C.removeCommand(id));
+  out.log2 = out.log.join(",");
+  out.cleaned = [!!C.findCommand("t:plain"), H.getDefaultHotkeys("t:plain")];
+  return out;
+})()`);
 
 console.log(JSON.stringify({ steps, problems }, null, 1));
 process.exit(0);

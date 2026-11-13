@@ -53,7 +53,8 @@ const EXT = `var f=function(e,t){return f=Object.setPrototypeOf||{__proto__:[]}i
 function originalWorld(names, extra = {}) {
   const keys = Object.keys(extra);
   // "fn:name" asks for a top-level function declaration instead of a var
-  const body = EXT + names.map((n) => (n.startsWith("fn:") ? base.fn(n.slice(3)) : `var ${n}=${baseInit.get(n)};`)).join("\n") + `\nreturn {${names.map((n) => n.replace(/^fn:/, "")).join(",")}};`;
+  // tslib helpers of the bundle (async functions are compiled to y(...) / b(...))
+  const body = EXT + base.fn("y") + "\n" + base.fn("b") + "\n" + names.map((n) => (n.startsWith("fn:") ? base.fn(n.slice(3)) : `var ${n}=${baseInit.get(n)};`)).join("\n") + `\nreturn {${names.map((n) => n.replace(/^fn:/, "")).join(",")}};`;
   return new Function(...keys, body)(...keys.map((k) => extra[k]));
 }
 function ownWorld(spec, host) {
