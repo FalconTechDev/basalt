@@ -634,6 +634,10 @@
   {
    "orig": "dl",
    "use": "defineTransition"
+  },
+  {
+   "orig": "P0",
+   "use": "defineWorkspaceRibbon"
   }
  ],
  "host": {
@@ -665,6 +669,9 @@
   "setIcon": "tv",
   "enableTitlebarDoubleClick": "VD",
   "saveScrollPositions": "ag",
-  "restoreScrollPositions": "lg"
+  "restoreScrollPositions": "lg",
+  "scrollWithPointer": "_v",
+  "makeDragReorderable": "Gc",
+  "TOOLTIP_DELAY": "sv"
  }
 }

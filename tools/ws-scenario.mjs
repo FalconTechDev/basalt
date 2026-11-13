@@ -66,6 +66,8 @@ await op("collapse-right", `app.workspace.rightSplit.collapse()`);
 await op("detach-canvas", `(()=>{ app.workspace.getLeavesOfType("canvas").forEach((l) => l.detach()); })()`);
 await op("move-leaf", `(()=>{ const ls = app.workspace.getLeavesOfType("markdown"); const target = app.workspace.getLeavesOfType("basalt-textfile")[0]; if (ls[1] && target) { ls[1].detach(); } })()`);
 await op("open-in-sidebar", `(async()=>{ const l = app.workspace.getRightLeaf(false); await l.setViewState({ type: "backlink", active: true }); })()`);
+await op("ribbon-add", `(()=>{ const r = app.workspace.leftRibbon; r.addRibbonItemButton("t-one", "star", "One", () => {}); r.addRibbonItemButton("t-two", "lucide-plus", "Two", () => {}); r.addRibbonItemButton("t-one", "star", "One again", () => {}); })()`);
+await op("ribbon-hide-item", `(()=>{ const r = app.workspace.leftRibbon; r.items.find((i) => i.id === "t-two").hidden = true; r.onChange(true); const s = r.serialize(); r.load(Object.assign({}, s, { hiddenItems: Object.fromEntries(Object.entries(s.hiddenItems).reverse()) })); r.removeRibbonAction("t-two"); })()`);
 await op("ribbon", `(()=>{ app.workspace.leftRibbon.hide(); })()`);
 await op("ribbon-show", `(()=>{ app.workspace.leftRibbon.show(); })()`);
 await op("layout-roundtrip", `(async()=>{ const lay = app.workspace.getLayout(); await app.workspace.changeLayout(lay); })()`);
