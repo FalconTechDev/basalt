@@ -620,6 +620,50 @@
   {
    "orig": "FT",
    "use": "resolveSubpath"
+  },
+  {
+   "orig": "pv",
+   "use": "installTooltipHandlers"
+  },
+  {
+   "orig": "vv",
+   "use": "onTooltipPointerOver"
+  },
+  {
+   "orig": "gv",
+   "use": "onTooltipPointerOut"
+  },
+  {
+   "orig": "bv",
+   "use": "showTooltipFromAttributes"
+  },
+  {
+   "orig": "kv",
+   "use": "displayTooltip"
+  },
+  {
+   "orig": "Cv",
+   "use": "hideTooltip"
+  },
+  {
+   "orig": "Ev",
+   "use": "applyTooltipOptions"
+  },
+  {
+   "orig": "Mv",
+   "use": "setElementTooltip"
+  },
+  {
+   "orig": "Sv",
+   "use": "setDynamicTooltip"
+  },
+  {
+   "orig": "fv",
+   "use": "cancelTooltipDelay"
+  },
+  {
+   "orig": "mv",
+   "use": "tooltipsDisabled"
   }
  ],
  "classes": [
@@ -866,6 +910,10 @@
   {
    "orig": "BX",
    "use": "defineTextFileView"
+  },
+  {
+   "orig": "hv",
+   "use": "initTooltips"
   }
  ],
  "host": {

@@ -340,6 +340,41 @@ await op("hover-popover", `(async () => {
   target.remove(); leaf.detach();
   return out;
 })()`);
+await op("tooltip", `(async () => {
+  const A = window.__bsApi, out = {};
+  const host = createDiv(); host.style.cssText = "position:fixed;left:100px;top:100px;width:400px"; document.body.appendChild(host);
+  const place = (el, css) => { el.style.cssText += css; };
+  const mkSetting = (name, opts, css) => { const s = new A.Setting(host).setName(name).setTooltip("tip " + name, opts); place(s.nameEl, css || ""); return s.nameEl; };
+  const bottom = mkSetting("bottom", { delay: 0 });
+  const right = mkSetting("right", { placement: "right", delay: 0 });
+  const left = mkSetting("left", { placement: "left", delay: 0, classes: ["mod-wide"] });
+  const top = mkSetting("top", { placement: "top", delay: 0 });
+  const edge = mkSetting("edge", { delay: 0 }, "position:fixed;left:0px;top:0px");
+  const info = () => { const t = document.querySelector(".tooltip"); return t ? { text: t.textContent, cls: t.className, top: Math.round(parseFloat(t.style.top)), left: Math.round(parseFloat(t.style.left)), arrow: t.querySelector(".tooltip-arrow") ? [t.querySelector(".tooltip-arrow").style.left, t.querySelector(".tooltip-arrow").style.right] : null } : null; };
+  const over = (el, related) => el.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, pointerType: "mouse", relatedTarget: related || null }));
+  const outOf = (el, related) => el.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, pointerType: "mouse", relatedTarget: related || null }));
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  out.attrs = [bottom, right, left, top].map((e) => [e.getAttribute("aria-label"), e.getAttribute("data-tooltip-position"), e.getAttribute("data-tooltip-classes"), e.getAttribute("data-tooltip-delay")]);
+  out.shown = [];
+  for (const el of [bottom, right, left, top, edge]) { over(el); await wait(1400); out.shown.push(info()); outOf(el); out.shown.push(!!document.querySelector(".tooltip")); }
+  // moving between two labelled elements: the second tooltip shows at once
+  over(bottom); await wait(1400); outOf(bottom, right); over(right); await wait(400); out.chain = info();
+  outOf(right); 
+  // update text while showing, dynamic text, opt-out
+  over(bottom); await wait(1400);
+  new A.Setting(host); // no-op
+  const s = new A.Setting(host).setName("dyn"); s.setTooltip("first", { delay: 0 });
+  out.updated = info();
+  const dyn = s.nameEl; let n = 0; place(dyn, ""); 
+  out.manual = (() => { const el = createDiv({ text: "m" }); el.style.cssText = "position:fixed;left:300px;top:300px;width:30px;height:20px"; document.body.appendChild(el); window.__bsApi.setIcon(el, "star"); return typeof el.getAttribute("aria-label"); })();
+  outOf(bottom); await wait(200);
+  const none = mkSetting("none", { delay: 0 }); none.style.setProperty("--no-tooltip", "true"); over(none); await wait(500); out.optOut = !!document.querySelector(".tooltip");
+  outOf(none);
+  const hold = mkSetting("hold", { delay: 400 }); over(hold); await wait(150); out.early = !!document.querySelector(".tooltip"); await wait(900); out.late = !!document.querySelector(".tooltip"); 
+  hold.dispatchEvent(new PointerEvent("pointerup", { bubbles: true })); out.afterUp = !!document.querySelector(".tooltip");
+  host.remove(); document.querySelectorAll(".tooltip").forEach((x) => x.remove());
+  return out;
+})()`);
 
 console.log(JSON.stringify({ steps, problems }, null, 1));
 process.exit(0);
