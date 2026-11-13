@@ -730,6 +730,14 @@
   {
    "orig": "K0",
    "use": "definePluginSettingTab"
+  },
+  {
+   "orig": "fb",
+   "use": "defineNotice"
+  },
+  {
+   "orig": "tb",
+   "use": "defineModal"
   }
  ],
  "host": {
@@ -800,6 +808,15 @@
   "PluginSettingTab": "K0",
   "selectOnFocus": "Pv",
   "hideTooltip": "Cv",
-  "displayTooltip": "kv"
+  "displayTooltip": "kv",
+  "blurAndClearSelection": "Lv",
+  "closeAllMenus": "jg",
+  "registerOpenModal": "zm",
+  "unregisterOpenModal": "qm",
+  "nodeInWindow": "Ov",
+  "onSwipe": "Vm",
+  "slideModalIn": "Pl",
+  "slideModalOut": "Ll",
+  "swipeToDismiss": "_g"
  }
 }
