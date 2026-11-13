@@ -39,7 +39,7 @@ for (const m of MODULES) Object.assign(NEW, await import(pathToFileURL(path.join
 
 const manifest = readManifest();
 // functions that are time/DOM dependent and are tested by tools/class-compare.mjs (tools/class-tests/*.mjs) instead
-const COVERED_ELSEWHERE = new Set(["wc", "vl", "yl", "jg"]); // vl/yl/jg: DOM transitions and menus, checked by the runtime scenarios (tools/ws-scenario.mjs, tools/api-scenario.mjs)
+const COVERED_ELSEWHERE = new Set(["wc", "vl", "yl", "jg", "pv", "vv", "gv", "bv", "kv", "Cv", "Ev", "Mv", "Sv", "fv", "mv"]); // vl/yl/jg: DOM transitions and menus, checked by the runtime scenarios (tools/ws-scenario.mjs, tools/api-scenario.mjs)
 const base = loadBase(manifest.base);
 // the app-core (Rust) variants that are not wired into the manifest are tested against the same originals
 const RUST_EXTRA = [{ orig: "cu", use: "normalizePathRs" }, { orig: "Pf", use: "formatBytesRs" }, { orig: "LT", use: "plainHeadingRs" }, { orig: "IT", use: "linkSafeHeadingRs" }, { orig: "gy", use: "isOlderVersionRs" }, { orig: "Dy", use: "fuzzyMatch" }];
