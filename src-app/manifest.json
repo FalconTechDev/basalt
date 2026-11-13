@@ -586,7 +586,53 @@
   {
    "orig": "jm",
    "use": "defineComponent"
+  },
+  {
+   "orig": "LD",
+   "use": "defineWorkspaceItem"
+  },
+  {
+   "orig": "ID",
+   "use": "defineWorkspaceParent"
+  },
+  {
+   "orig": "OD",
+   "use": "defineWorkspaceSplit"
+  },
+  {
+   "orig": "ND",
+   "use": "defineWorkspaceContainer"
+  },
+  {
+   "orig": "L0",
+   "use": "defineWorkspaceRoot"
+  },
+  {
+   "orig": "I0",
+   "use": "defineWorkspaceFloating"
+  },
+  {
+   "orig": "O0",
+   "use": "defineWorkspaceWindow"
   }
  ],
- "host": {}
+ "host": {
+  "Events": "VT",
+  "Component": "jm",
+  "Platform": "Yl",
+  "WorkspaceItem": "LD",
+  "WorkspaceParent": "ID",
+  "WorkspaceSplit": "OD",
+  "WorkspaceContainer": "ND",
+  "parseColor": "Ak",
+  "colorToHex": "Fk",
+  "installEnhancements": "yZ",
+  "attachElectron": "bZ",
+  "installTooltipHandlers": "pv",
+  "installTitlebar": "kte",
+  "trackWindowFocus": "gZ",
+  "applyLanguage": "bm",
+  "forwardInputEvents": "mZ",
+  "mirrorStyles": "vZ"
+ }
 }
