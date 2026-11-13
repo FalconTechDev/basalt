@@ -246,6 +246,41 @@ await op("commands-hotkeys", `(async () => {
   out.cleaned = [!!C.findCommand("t:plain"), H.getDefaultHotkeys("t:plain")];
   return out;
 })()`);
+await op("fileview", `(async () => {
+  const out = {};
+  const v = app.vault, w = app.workspace;
+  await v.createFolder("tmp/inner").catch(() => {});
+  const f = await v.create("tmp/inner/Temp note.md", "hello");
+  const g = await v.create("tmp/Other temp.md", "x");
+  const leaf = w.getLeaf("tab");
+  await leaf.openFile(f);
+  await new Promise((r) => setTimeout(r, 1500));
+  const view = leaf.view;
+  const snap = () => ({ crumbs: [...view.titleParentEl.querySelectorAll(".view-header-breadcrumb")].map((x) => x.textContent), title: view.titleEl.textContent, type: leaf.view.getViewType(), state: JSON.stringify(view.getState()), tab: leaf.tabHeaderInnerTitleEl.textContent });
+  out.opened = snap();
+  out.display = view.getDisplayText(); out.accept = view.canAcceptExtension("md");
+  await app.fileManager.renameFile(f, "tmp/Moved.md");
+  await new Promise((r) => setTimeout(r, 1200));
+  out.renamed = snap();
+  await leaf.openFile(g); await new Promise((r) => setTimeout(r, 1000));
+  out.second = snap();
+  const reg = app.viewRegistry;
+  out.reg = [reg.getTypeByExtension("md"), reg.getTypeByExtension("png"), reg.getTypeByExtension("pdf"), reg.getTypeByExtension("canvas"), typeof reg.getViewCreatorByType("markdown"), reg.isExtensionRegistered("md"), reg.isExtensionRegistered("zzz")];
+  const log = [];
+  reg.on("extensions-updated", () => log.push("ext")); reg.on("view-registered", (t) => log.push("reg " + t)); reg.on("view-unregistered", (t) => log.push("unreg " + t));
+  reg.registerExtensions(["zzz1", "zzz2"], "markdown"); try { reg.registerExtensions(["zzz3", "md"], "x"); } catch (e) { log.push("threw " + e.message); }
+  out.partial = [reg.isExtensionRegistered("zzz3"), reg.isExtensionRegistered("zzz1")];
+  reg.unregisterExtensions(["zzz1", "zzz2"]); reg.registerView("probe", () => 1); try { reg.registerView("probe", () => 2); } catch (e) { log.push("threw " + e.message); } reg.unregisterView("probe"); reg.unregisterView("probe");
+  out.log = log;
+  await v.trash(g, true); await new Promise((r) => setTimeout(r, 1500));
+  out.afterDelete = { type: leaf.view.getViewType(), hist: leaf.history.backHistory.length, exists: w.getLeavesOfType("markdown").includes(leaf) };
+  const h = await v.create("tmp/Third.md", "z"); await leaf.openFile(h); await new Promise((r) => setTimeout(r, 1000));
+  await v.trash(h, true); await new Promise((r) => setTimeout(r, 1500));
+  out.afterDelete2 = { type: leaf.view.getViewType(), attached: !!leaf.parent };
+  try { await v.trash(v.getAbstractFileByPath("tmp"), true); } catch (e) {}
+  leaf.detach();
+  return out;
+})()`);
 
 console.log(JSON.stringify({ steps, problems }, null, 1));
 process.exit(0);

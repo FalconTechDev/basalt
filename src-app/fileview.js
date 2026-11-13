@@ -152,7 +152,8 @@ export function defineFileView(host) {
         const leaf = this.leaf;
         if (leaf.history.backHistory.length > 0) await leaf.history.back();
         else await leaf.open(null);
-        if (this.leaf.view instanceof host.EmptyView && leaf.parent.children.length > 1) leaf.detach();
+        // (the inherited code assumed the leaf is still in the tree here; it may already be gone)
+        if (this.leaf.view instanceof host.EmptyView && leaf.parent && leaf.parent.children.length > 1) leaf.detach();
       }
       this.app.workspace.onLayoutChange();
     }
