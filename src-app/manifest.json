@@ -914,6 +914,10 @@
   {
    "orig": "hv",
    "use": "initTooltips"
+  },
+  {
+   "orig": "Yl",
+   "use": "definePlatform"
   }
  ],
  "host": {
@@ -1046,6 +1050,10 @@
   "UNSAFE_NAME_CHARS": "WT",
   "UNSAFE_NAME_LIST": "jT",
   "awaitSettled": "Mb",
-  "mergeText": "FX"
+  "mergeText": "FX",
+  "isMacOS": "jl",
+  "isWindows": "Ul",
+  "isLinux": "Wl",
+  "isSafari": "_l"
  }
 }
