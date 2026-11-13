@@ -119,5 +119,48 @@ await op("modal", `(async () => {
   return out;
 })()`);
 
+await op("menu", `(async () => {
+  const A = window.__bsApi, out = { log: [] };
+  const menu = new A.Menu();
+  menu.addSections(["one", "two", "", "three"]).setSectionSubmenu("two", { title: "Sub", icon: "star" });
+  menu.addItem((i) => i.setTitle("A").setIcon("star").setSection("one").onClick(() => out.log.push("A")));
+  menu.addItem((i) => i.setTitle("B").setChecked(true).setSection("one").setWarning(true));
+  menu.addSeparator();
+  menu.addItem((i) => i.setTitle("C").setSection("two").onClick(() => out.log.push("C")));
+  menu.addItem((i) => i.setTitle("D").setSection("two.more").setDisabled(true));
+  menu.addItem((i) => i.setTitle("E").setSection("three").setIsLabel(true));
+  menu.addItem((i) => i.setTitle("F"));
+  const sub = (() => { let s; menu.addItem((i) => { i.setTitle("G").setSection("three"); s = i.setSubmenu(); s.addItem((j) => j.setTitle("G1").onClick(() => out.log.push("G1"))); }); return s; })();
+  menu.onHide(() => out.log.push("hidden"));
+  menu.setParentElement(null);
+  menu.setUseNativeMenu(false).showAtPosition({ x: 120, y: 90 });
+  await new Promise((r) => setTimeout(r, 1500));
+  out.html = window.__norm(menu.dom).replace(/opacity: [^;"]*;?/g, "");
+  out.scopeOk = app.keymap.scope === menu.scope;
+  const key = (k) => window.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true, cancelable: true }));
+  key("ArrowDown"); key("ArrowDown"); out.sel1 = menu.selected;
+  key("ArrowUp"); out.sel2 = menu.selected;
+  for (let i = 0; i < 12; i++) key("ArrowDown");
+  out.sel3 = menu.selected;
+  key("ArrowRight"); await new Promise((r) => setTimeout(r, 1500));
+  out.sub = [!!menu.currentSubmenu, menu.currentSubmenu && menu.currentSubmenu.selected, document.querySelectorAll(".menu").length];
+  key("ArrowLeft"); await new Promise((r) => setTimeout(r, 1500));
+  out.sub2 = [!!menu.currentSubmenu, document.querySelectorAll(".menu").length];
+  key("ArrowUp"); key("ArrowUp"); key("Enter");
+  await new Promise((r) => setTimeout(r, 1500));
+  out.after = [document.querySelectorAll(".menu").length, app.keymap.scope !== menu.scope, out.log.join(",")];
+  // forEvent shares one menu per event, a click outside closes
+  const ev = new MouseEvent("contextmenu", { clientX: 50, clientY: 60, bubbles: true, cancelable: true });
+  const a = A.Menu.forEvent(ev), b = A.Menu.forEvent(ev);
+  a.addItem((i) => i.setTitle("X").onClick(() => out.log.push("X")));
+  out.shared = a === b; out.prevented = ev.defaultPrevented;
+  await new Promise((r) => setTimeout(r, 1500));
+  out.shown = document.querySelectorAll(".menu").length;
+  document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 })); document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 1500));
+  out.closed = document.querySelectorAll(".menu").length;
+  return out;
+})()`);
+
 console.log(JSON.stringify({ steps, problems }, null, 1));
 process.exit(0);

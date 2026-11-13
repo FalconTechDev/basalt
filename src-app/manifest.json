@@ -584,6 +584,10 @@
   {
    "orig": "yl",
    "use": "runTransition"
+  },
+  {
+   "orig": "jg",
+   "use": "closeAllMenus"
   }
  ],
  "classes": [
@@ -738,6 +742,18 @@
   {
    "orig": "tb",
    "use": "defineModal"
+  },
+  {
+   "orig": "Hg",
+   "use": "defineMenuItem"
+  },
+  {
+   "orig": "zg",
+   "use": "defineMenuSeparator"
+  },
+  {
+   "orig": "Ug",
+   "use": "defineMenu"
   }
  ],
  "host": {
@@ -817,6 +833,13 @@
   "onSwipe": "Vm",
   "slideModalIn": "Pl",
   "slideModalOut": "Ll",
-  "swipeToDismiss": "_g"
+  "swipeToDismiss": "_g",
+  "MenuItem": "Hg",
+  "MenuSeparator": "zg",
+  "slideBetween": "El",
+  "isTouchSyntheticMouse": "Uc",
+  "frameOffset": "hg",
+  "watchElementGone": "Rv",
+  "keyboard": "Im"
  }
 }
