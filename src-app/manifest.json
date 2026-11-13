@@ -576,6 +576,14 @@
   {
    "orig": "wc",
    "use": "debounceCall"
+  },
+  {
+   "orig": "vl",
+   "use": "cancelTransition"
+  },
+  {
+   "orig": "yl",
+   "use": "runTransition"
   }
  ],
  "classes": [
@@ -614,6 +622,18 @@
   {
    "orig": "O0",
    "use": "defineWorkspaceWindow"
+  },
+  {
+   "orig": "FD",
+   "use": "defineWorkspaceSidedock"
+  },
+  {
+   "orig": "zD",
+   "use": "defineWorkspaceTabs"
+  },
+  {
+   "orig": "dl",
+   "use": "defineTransition"
   }
  ],
  "host": {
@@ -633,6 +653,18 @@
   "trackWindowFocus": "gZ",
   "applyLanguage": "bm",
   "forwardInputEvents": "mZ",
-  "mirrorStyles": "vZ"
+  "mirrorStyles": "vZ",
+  "WorkspaceSidedock": "FD",
+  "WorkspaceLeaf": "jD",
+  "TFile": "$T",
+  "Menu": "Ug",
+  "Transition": "dl",
+  "t": "gm",
+  "VaultProfile": "DD",
+  "setTooltip": "Mv",
+  "setIcon": "tv",
+  "enableTitlebarDoubleClick": "VD",
+  "saveScrollPositions": "ag",
+  "restoreScrollPositions": "lg"
  }
 }
