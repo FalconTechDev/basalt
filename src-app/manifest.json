@@ -826,6 +826,26 @@
   {
    "orig": "G0",
    "use": "definePlugin"
+  },
+  {
+   "orig": "Kg",
+   "use": "defineView"
+  },
+  {
+   "orig": "Yg",
+   "use": "defineItemView"
+  },
+  {
+   "orig": "eD",
+   "use": "defineDeferredView"
+  },
+  {
+   "orig": "tD",
+   "use": "defineEmptyView"
+  },
+  {
+   "orig": "nD",
+   "use": "defineUnknownView"
   }
  ],
  "host": {
@@ -931,6 +951,11 @@
   "formatHotkey": "Rb",
   "MarkdownPreviewRenderer": "Gz",
   "FormulaFunctions": "QW",
-  "PLUGIN_STYLES_FILE": "JD"
+  "PLUGIN_STYLES_FILE": "JD",
+  "View": "Kg",
+  "ItemView": "Yg",
+  "createNavButton": "Gg",
+  "isMacLike": "jl",
+  "tc": "gm.commands"
  }
 }
