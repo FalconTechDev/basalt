@@ -846,6 +846,14 @@
   {
    "orig": "nD",
    "use": "defineUnknownView"
+  },
+  {
+   "orig": "MD",
+   "use": "defineFileView"
+  },
+  {
+   "orig": "p0",
+   "use": "defineViewRegistry"
   }
  ],
  "host": {
@@ -956,6 +964,17 @@
   "ItemView": "Yg",
   "createNavButton": "Gg",
   "isMacLike": "jl",
-  "tc": "gm.commands"
+  "tc": "gm.commands",
+  "markdownExtensions": "jy",
+  "imageExtensions": "Vy",
+  "audioExtensions": "Hy",
+  "videoExtensions": "zy",
+  "pdfExtensions": "qy",
+  "ImageView": "xZ",
+  "AudioView": "MZ",
+  "VideoView": "XZ",
+  "PdfView": "KZ",
+  "releaseNotesType": "s0",
+  "ReleaseNotesView": "h0"
  }
 }
