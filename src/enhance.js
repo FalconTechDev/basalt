@@ -59,6 +59,7 @@ window.globalEnhance = function globalEnhance() {
 		if (o.cls) el.setAttribute('class', Array.isArray(o.cls) ? o.cls.join(' ') : o.cls);
 		if (o.text != null) { if (typeof o.text === 'string') el.textContent = o.text; else el.appendChild(o.text); }
 		if (o.attr) for (const k in o.attr) { const v = o.attr[k]; if (v === null || v === undefined || v === false) continue; el.setAttribute(k, v === true ? '' : String(v)); }
+		for (const k in o) if (k.length > 2 && k.startsWith('on') && typeof o[k] === 'function') el[k] = o[k];
 		if (o.title != null) el.title = o.title;
 		if (o.value != null) el.value = o.value;
 		if (o.type != null) el.type = o.type;
