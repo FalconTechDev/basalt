@@ -8,9 +8,14 @@
 // app-core/). The build concatenates the modules into one object `__basaltOwn` placed between the markers /*basalt-own:begin*/ and
 // /*basalt-own:end*/ right at the start of the application scope, and turns every function listed in src-app/manifest.json into a
 // one-line wrapper:   function nu(e){return/*own*/__basaltOwn.lastSegment(e)}   (same name, same parameters, so no call site changes).
+// Besides functions the manifest can hold "declarators" (a whole  var X=function(){...}()  class is replaced by an expression such as
+// __basaltOwn.createVault(VT,Eu)), "methods" (one  e.prototype.m=function(){...}  of a class that stays is replaced by
+// __basaltOwn.name) and "envBind" (the application-scope names the own code reads lazily, passed to bindEnv). Each replaced text is
+// checked against the sha1 recorded in the manifest, so nothing else is ever overwritten.
 // The build is repeatable: wrappers are regenerated, the block between the markers is replaced. A function is only swapped if its
 // text is still byte-identical to the one in the base revision named in the manifest (git history keeps the originals).
 import { execSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -20,12 +25,24 @@ import { loadBase } from "./tools/app-base.mjs";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.join(root, "src-app");
 // order matters only for readability: every module is a flat scope, names must be unique across them
-export const JS_MODULES = ["path.js", "text.js", "misc.js", "frontmatter.js", "search.js"];
+export const JS_MODULES = ["path.js", "text.js", "misc.js", "frontmatter.js", "search.js", "vault.js"];
 // the WebAssembly side (app-core): shipped only with --wasm, because on every function measured so far plain JS is as fast or faster
 export const WASM_MODULES = ["core.js", "rust.js"];
 export const MODULES = [...WASM_MODULES.slice(0, 1), ...JS_MODULES, ...WASM_MODULES.slice(1)];
 const BEGIN = "/*basalt-own:begin*/";
 const END = "/*basalt-own:end*/";
+
+/** The `e.prototype.name = <function>` of the class IIFE in `init` (the one in its returned sequence); returns the right-hand node. */
+function findMethod(init, name) {
+  const fn = init.type === "CallExpression" ? init.callee : init;
+  const ret = fn.body.body.find((st) => st.type === "ReturnStatement" && st.argument && st.argument.type === "SequenceExpression");
+  if (!ret) return null;
+  for (const ex of ret.argument.expressions) {
+    const l = ex.type === "AssignmentExpression" && ex.left;
+    if (l && l.type === "MemberExpression" && !l.computed && l.property.name === name && l.object.type === "MemberExpression" && l.object.property.name === "prototype") return ex.right;
+  }
+  return null;
+}
 
 export function readManifest() {
   return JSON.parse(fs.readFileSync(path.join(srcDir, "manifest.json"), "utf8"));
@@ -89,17 +106,48 @@ export function applyOwn(srcText, wasm, tmpPath) {
     }
     jobs.push({ start: n.start, end: n.end, wrapper, orig: e.orig, text });
   }
+  const fresh = [];
+  // 1b) declarators and methods
+  const sha = (t) => crypto.createHash("sha1").update(t).digest("hex");
+  const declInit = new Map();
+  for (const n of b.body) if (n.type === "VariableDeclaration") for (const d of n.declarations) if (d.init) declInit.set(d.id.name, d.init);
+  let manifestChanged = false;
+  const spans = [];
+  for (const e of manifest.declarators || []) {
+    const init = declInit.get(e.orig);
+    if (!init) throw new Error(`manifest: no top-level var ${e.orig}`);
+    spans.push({ node: init, orig: e.orig, entry: e, replacement: e.expr, label: e.orig });
+  }
+  for (const e of manifest.methods || []) {
+    const init = declInit.get(e.class);
+    if (!init) throw new Error(`manifest: no top-level var ${e.class}`);
+    const node = findMethod(init, e.name);
+    if (!node) throw new Error(`manifest: no method ${e.class}.${e.name}`);
+    spans.push({ node, entry: e, replacement: `__basaltOwn.${e.use}`, label: `${e.class}.${e.name}` });
+  }
+  for (const sp of spans) {
+    const text = srcText.slice(sp.node.start, sp.node.end);
+    if (text === sp.replacement) continue;
+    const hash = sha(text);
+    if (sp.entry.sha1 && sp.entry.sha1 !== hash) throw new Error(`manifest: ${sp.label} differs from the recorded original; refusing to replace it`);
+    if (!sp.entry.sha1) manifestChanged = true;
+    sp.entry.sha1 = hash;
+    sp.entry.originalBytes = text.length;
+    replaced += text.length;
+    fresh.push(sp.label);
+    jobs.push({ start: sp.node.start, end: sp.node.end, wrapper: sp.replacement, orig: sp.label, text });
+  }
   jobs.sort((x, y) => y.start - x.start);
   let out = srcText;
-  const fresh = [];
   for (const j of jobs) {
     if (out.slice(j.start, j.end) !== j.text) throw new Error("internal: offsets moved");
     out = out.slice(0, j.start) + j.wrapper + out.slice(j.end);
-    if (!j.text.includes("/*own*/")) fresh.push(j.orig);
+    if (!j.text.includes("/*own*/") && !fresh.includes(j.orig) && !j.wrapper.startsWith("__basaltOwn.")) fresh.push(j.orig);
   }
 
   // 2) the block with the own modules
-  const block = `${BEGIN}${code}${END}`;
+  const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind}}));` : "";
+  const block = `${BEGIN}${code}${bind}${END}`;
   const bi = out.indexOf(BEGIN);
   if (bi >= 0) {
     const ei = out.indexOf(END, bi);
@@ -108,7 +156,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
     const first = b.body[0]; // "use strict", always before any replaced function
     out = out.slice(0, first.end) + block + out.slice(first.end);
   }
-  return { text: out, codeBytes: code.length, replacedFresh: fresh, entries: manifest.entries.length };
+  return { text: out, codeBytes: code.length, replacedFresh: fresh, entries: manifest.entries.length, manifest, manifestChanged };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
@@ -124,6 +172,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   } else {
     const out = arg("--out") ? path.resolve(arg("--out")) : input;
     fs.writeFileSync(out, res.text);
+    if (res.manifestChanged) {
+      const file = path.join(srcDir, "manifest.json");
+      const crlf = fs.readFileSync(file, "utf8").includes("\r\n"); // keep the file's line endings
+      fs.writeFileSync(file, (JSON.stringify(res.manifest, null, 1) + "\n").replace(/\n/g, crlf ? "\r\n" : "\n"));
+    }
     console.log(`app.js: ${out} (${res.text.length} bytes); own block ${res.codeBytes} bytes (${wasm ? `wasm ${wasm.length}` : "no wasm"}); ${res.entries} functions wrapped, ${res.replacedFresh.length} newly`);
   }
 }
