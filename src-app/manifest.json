@@ -1473,6 +1473,30 @@
   {
    "orig": "p8",
    "use": "defineCommandPaletteSettingTab"
+  },
+  {
+   "orig": "T8",
+   "use": "defineFileExplorerTree"
+  },
+  {
+   "orig": "k8",
+   "use": "defineFileExplorerItemBase"
+  },
+  {
+   "orig": "E8",
+   "use": "defineFileItem"
+  },
+  {
+   "orig": "S8",
+   "use": "defineFolderItem"
+  },
+  {
+   "orig": "D8",
+   "use": "defineFileExplorerView"
+  },
+  {
+   "orig": "P8",
+   "use": "defineFileExplorerPlugin"
   }
  ],
  "host": {
@@ -1621,7 +1645,14 @@
   "SearchOperators": "RH",
   "GraphView": "kJ",
   "WebViewerView": "P2",
-  "PluginInstanceSettingTab": "Y0"
+  "PluginInstanceSettingTab": "Y0",
+  "forbiddenNameChars": "UT",
+  "forbiddenNameCharsList": "qT",
+  "unsafeNameChars": "WT",
+  "unsafeNameCharsList": "jT",
+  "activeTouches": "zc",
+  "lastTouchEnd": "Hc",
+  "lastScrollAt": "qc"
  },
  "declarators": [
   {

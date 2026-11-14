@@ -63,6 +63,7 @@ kept on the full bundle so it cannot flatter itself.
 | tag-pane.js | the "Tags" pane: `TagPaneView` (sort / hierarchy / collapse-all / search header, query filtering that keeps ancestors of matches), `TagPaneTree` (fixed `"tag-pane-fold"` key), `TagPaneItem` rows that open `tag:<tag>` in the global search and recycle their DOM across rebuilds |
 | bookmarks.js | the "Bookmarks" pane and plugin: `BookmarksView` + leaf/group tree rows (rename, context menus, active state, drag & drop, copy/cut/paste), the add/edit and add-many modals, the button-modal base, the `Runnable` token, the item factories and the plugin itself (commands, menus, CLI, lookups, open-in-leaf) |
 | palette.js | the quick switcher and command palette: the file/alias/unresolved/bookmark suggest modal (recent files on empty query, basename-first matching, Tab folder completion, create-new-file CTA), the command modal (pinned + recent ordering, hotkey hints, pin flair, last-100 recents in localStorage), both settings tabs (pin list with search suggest and drag reorder) and both plugins; plus `InstanceSettingTab`, the settings-tab base the internal plugins share |
+| file-explorer.js | the "file-explorer" view (kept for compatibility; `src/basalt-files.js` swaps its leaf to the "Files" panel on every layout change, same as before): `FileExplorerView` + `FileExplorerTree`, the file/folder rows (drag source, contenteditable rename, unsupported-file tags, tooltips, hover-link events), the header (new note / folder, sort menu, auto-reveal, collapse-all), clipboard copy/cut/paste (`basalt/files`), drag & drop into folders with auto-expand, rename validation, vault event sync, context menus and the plugin (commands, reveal-in-folder, hover source). Helpers: promise queue, item->file map, clipboard entry extraction, move/copy-into-folder |
 | path.js, text.js, misc.js, frontmatter.js, search.js | the 143 leaf functions of the previous round |
 
 Behaviour changes (all bug fixes, nothing observable in normal use): the leaf history list is trimmed at 20 entries (the inherited
@@ -110,6 +111,7 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   other agent's branch), drag manager (`xP`), the markdown view and its siblings (`W6`, preview, properties, outline,
   canvas glue), `Editor` wrapper (`cP`, `iZ`). The global search UI and the backlink / outgoing-link panes are done
   (search-query.js, search-view.js, link-panes.js); the tag pane, bookmarks and the quick switcher /
-  command palette are done too (tag-pane.js, bookmarks.js, palette.js). Graph view and canvas view glue
-  are still inherited, as are the file explorer, templates / daily notes / random note / word count.
+  command palette and the file explorer are done too (tag-pane.js, bookmarks.js, palette.js,
+  file-explorer.js). Graph view and canvas view glue are still inherited, as are
+  templates / daily notes / random note / word count.
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
