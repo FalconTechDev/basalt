@@ -1,6 +1,7 @@
-/* preview: Reading view: rendered Markdown, callouts, embeds, tables, footnotes, front matter. */
+/* preview: reading view — rendered markdown, callouts, embeds, tables, footnotes */
 
-/* inline-title */
+/* ---------- inline title ---------- */
+
 .inline-title {
   margin-block-end: var(--inline-title-margin-bottom);
   color: var(--inline-title-color);
@@ -17,6 +18,7 @@
   letter-spacing: -0.015em;
 }
 
+/* embedded headings keep their own margins reset inside the title block */
 .inline-title h1,
 .inline-title h2,
 .inline-title h3,
@@ -27,18 +29,17 @@
   margin-block-end: 0;
 }
 
-/* show-inline */
 body:not(.show-inline-title) .inline-title:not([data-level]) {
   display: none;
 }
 
-/* markdown-reading */
+/* ---------- reading view frame ---------- */
+
 .markdown-reading-view {
   display: flex;
   flex-direction: column;
 }
 
-/* markdown-preview */
 .markdown-preview-view {
   position: relative;
   overflow-y: auto;
@@ -61,7 +62,8 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   margin-right: auto;
 }
 
-/* markdown-rendered */
+/* ---------- rendered content ---------- */
+
 .markdown-rendered {
   tab-size: var(--indent-size);
 }
@@ -70,6 +72,7 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   direction: rtl;
 }
 
+/* edge children lose outer margins */
 .markdown-rendered > :first-child {
   margin-top: 0;
 }
@@ -87,7 +90,8 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   margin-bottom: 0;
 }
 
-/* mod-rtl */
+/* ---------- RTL metadata ---------- */
+
 .mod-rtl .metadata-container,
 .is-rtl .metadata-container,
 .rtl .metadata-container {
@@ -106,13 +110,15 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   text-align: right;
 }
 
-/* markdown-rendered */
+/* ---------- search highlight ---------- */
+
 .markdown-rendered .search-highlight > div.is-active {
   box-shadow: 0 0 0px 3px var(--text-accent);
   opacity: 1;
 }
 
-/* markdown-preview */
+/* ---------- folds ---------- */
+
 .markdown-preview-view:not(.allow-fold-lists) .list-collapse-indicator,
 .markdown-preview-view:not(.allow-fold-headings) .heading-collapse-indicator {
   display: none;
@@ -127,7 +133,8 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   display: none;
 }
 
-/* markdown-rendered */
+/* ---------- indentation guides ---------- */
+
 .markdown-rendered.show-indentation-guide li > ul,
 .markdown-rendered.show-indentation-guide li > ol {
   position: relative;
@@ -154,6 +161,8 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   outline: none;
 }
 
+/* ---------- blockquote ---------- */
+
 .markdown-rendered blockquote {
   border-inline-start: var(--blockquote-border-thickness) solid var(--blockquote-border-color);
   padding-top: 0;
@@ -166,8 +175,10 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   background-color: var(--blockquote-background-color);
 }
 
+/* ---------- callouts ---------- */
+
+/* engines with color-mix tint table/embed borders from the callout colour */
 @supports (color: color-mix(in srgb, white 50%, black)) {
-  /* callout */
   .callout {
     --bases-table-header-background: transparent;
     --bases-table-header-background-hover: rgba(var(--callout-color), 0.1);
@@ -177,6 +188,7 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   }
 }
 
+/* each callout type maps to a colour var and an icon name */
 .callout[data-callout="abstract"],
 .callout[data-callout="summary"],
 .callout[data-callout="tldr"] {
@@ -255,12 +267,10 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   --callout-icon: quote-glyph;
 }
 
-/* callout-icon */
 .callout-icon::after {
   content: "\200B";
 }
 
-/* callout-fold */
 .callout-fold::after {
   content: "\200B";
 }
@@ -269,7 +279,8 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   transform: rotate(calc(var(--direction) * -1 * 90deg));
 }
 
-/* markdown-rendered */
+/* ---------- inline code & code blocks ---------- */
+
 .markdown-rendered code {
   border-radius: var(--code-radius);
   border: var(--code-border-width) solid var(--code-border-color);
@@ -302,6 +313,7 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   margin: 0;
 }
 
+/* copy button only on hover */
 .markdown-rendered pre:not(:hover) > button.copy-code-button {
   display: none;
 }
@@ -312,7 +324,7 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   }
 }
 
-/* markdown-preview */
+/* headings inside nested preview pushers lose top margin */
 .markdown-preview-view .markdown-embed .markdown-preview-view .markdown-preview-pusher h1,
 .markdown-preview-view .markdown-embed .markdown-preview-view .markdown-preview-pusher h2,
 .markdown-preview-view .markdown-embed .markdown-preview-view .markdown-preview-pusher h3,
@@ -322,18 +334,18 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   margin-top: 0;
 }
 
-/* markdown-embed */
+/* ---------- embeds ---------- */
+
 .markdown-embed,
 .file-embed {
   position: relative;
 }
 
-/* internal-embed */
 .internal-embed.query-embed .edit-block-button {
   opacity: 1;
 }
 
-/* image-embed */
+/* image embeds hug their content with a small padding */
 div.image-embed {
   width: fit-content;
   padding-bottom: 3px;
@@ -344,13 +356,12 @@ div.image-embed .image-wrapper img:not([width]) {
   width: 100%;
 }
 
-/* is-rtl */
+/* RTL flips the resize-corner cursor */
 .is-rtl div.image-embed .image-resize-corner,
 .cm-line[dir="rtl"] div.image-embed .image-resize-corner {
   cursor: nesw-resize;
 }
 
-/* image-embed */
 div.image-embed .image-resize-corner::after {
   position: absolute;
   display: block;
@@ -365,22 +376,22 @@ div.image-embed .image-resize-corner::after {
   opacity: 0;
 }
 
-/* footnote-link */
+/* ---------- footnotes ---------- */
+
 .footnote-link {
   text-decoration: none;
 }
 
-/* footnotes */
 .footnotes {
   font-size: var(--footnote-size);
 }
 
-/* footnote-ref */
 .footnote-ref {
   vertical-align: super;
 }
 
-/* markdown-rendered */
+/* ---------- frontmatter ---------- */
+
 .markdown-rendered .frontmatter.mod-failed {
   position: relative;
 }
@@ -402,7 +413,8 @@ div.image-embed .image-resize-corner::after {
   mix-blend-mode: var(--highlight-mix-blend-mode);
 }
 
-/* metadata-container */
+/* ---------- metadata properties ---------- */
+
 .metadata-container.is-collapsed .metadata-property {
   display: none;
 }
@@ -412,7 +424,7 @@ div.image-embed .image-resize-corner::after {
   background-color: var(--nav-item-background-selected);
 }
 
-/* metadata-properties */
+/* longtext clamps to a few lines until focused */
 .metadata-properties .metadata-input-longtext:not(:empty) {
   display: -webkit-box;
 }
@@ -437,12 +449,10 @@ div.image-embed .image-resize-corner::after {
   box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
 
-/* metadata-input */
 .metadata-input-text::-webkit-date-and-time-value {
   text-align: start;
 }
 
-/* metadata-property */
 .metadata-property-icon:before {
   width: var(--size-4-1);
   content: "\200B";
@@ -477,6 +487,7 @@ div.image-embed .image-resize-corner::after {
   text-overflow: ellipsis;
 }
 
+/* external-link values get link styling even though they are inputs */
 .metadata-property-value.mod-external-link:not(:placeholder-shown) {
   text-decoration-line: var(--link-decoration);
   text-decoration-thickness: var(--link-decoration-thickness);
@@ -493,6 +504,7 @@ div.image-embed .image-resize-corner::after {
   font-size: inherit;
 }
 
+/* invalid pills strike through in error colour */
 .metadata-property-value .multi-select-container .multi-select-pill.is-invalid {
   --pill-background: transparent;
   --pill-color: var(--text-error);
@@ -507,7 +519,6 @@ div.image-embed .image-resize-corner::after {
   white-space: nowrap;
 }
 
-/* metadata-input */
 .metadata-input-longtext:focus {
   overflow-y: auto;
 }
@@ -517,7 +528,8 @@ div.image-embed .image-resize-corner::after {
   content: attr(placeholder);
 }
 
-/* markdown-rendered */
+/* ---------- headings after blocks ---------- */
+
 .markdown-rendered li h1,
 .markdown-rendered li h2,
 .markdown-rendered li h3,
@@ -527,6 +539,7 @@ div.image-embed .image-resize-corner::after {
   margin-bottom: 0;
 }
 
+/* a heading following a block gets extra top space */
 .markdown-rendered :is(p,pre,table,ul,ol) + :is(h1,h2,h3,h4,h5,h6),
 .markdown-rendered div:is(.el-blockquote,.el-p,.el-pre,.el-table,.el-ul,.el-ol) + div > :is(h1,h2,h3,h4,h5,h6) {
   margin-top: var(--heading-spacing);
@@ -538,7 +551,8 @@ div.image-embed .image-resize-corner::after {
   border-color: var(--hr-color);
 }
 
-/* markdown-preview */
+/* ---------- images ---------- */
+
 .markdown-preview-view img,
 .markdown-rendered img {
   max-width: 100%;
@@ -551,7 +565,8 @@ div.image-embed .image-resize-corner::after {
   outline: none;
 }
 
-/* markdown-rendered */
+/* ---------- lists ---------- */
+
 .markdown-rendered ul,
 .markdown-rendered ol {
   padding-inline-start: 0;
@@ -559,6 +574,7 @@ div.image-embed .image-resize-corner::after {
   margin-block-end: var(--p-spacing);
 }
 
+/* nested lists have no outer margins */
 .markdown-rendered ul ul,
 .markdown-rendered ol ul,
 .markdown-rendered ul ol,
@@ -601,6 +617,7 @@ div.image-embed .image-resize-corner::after {
   display: none;
 }
 
+/* custom bullet glyphs keep a transparent native marker */
 .markdown-rendered ul.has-list-bullet {
   list-style-type: '\200B';
 }
@@ -609,7 +626,7 @@ div.image-embed .image-resize-corner::after {
   color: transparent;
 }
 
-/* list-bullet */
+/* list-bullet: the drawn bullet is a positioned pseudo-element */
 .list-bullet:before {
   content: '\200B';
 }
@@ -633,7 +650,7 @@ div.image-embed .image-resize-corner::after {
 }
 
 @media (hover: hover) {
-  /* list-collapse */
+  /* hovering the fold indicator highlights its bullet */
   .list-collapse-indicator:hover ~ .list-bullet:after,
   .cm-fold-indicator:hover ~ .list-bullet:after,
   .list-collapse-indicator:hover ~ .cm-formatting-list .list-bullet:after,
@@ -642,7 +659,7 @@ div.image-embed .image-resize-corner::after {
     background-color: var(--list-marker-color-hover);
   }
 
-  /* metadata-property */
+  /* unresolved links reveal their hover colour on hover */
   .metadata-property-value .internal-link.is-unresolved:hover,
   .markdown-rendered .internal-link.is-unresolved:hover {
     color: var(--link-color-hover);
@@ -652,14 +669,16 @@ div.image-embed .image-resize-corner::after {
   }
 }
 
-/* markdown-rendered */
+/* ---------- tables ---------- */
+
 .markdown-rendered table {
   margin-block-start: var(--p-spacing);
   margin-block-end: var(--p-spacing);
   word-break: normal;
 }
 
-/* table-drag */
+/* ---------- table drag & drop ---------- */
+
 .table-drag-target {
   position: absolute;
   z-index: 2;
@@ -681,7 +700,8 @@ div.image-embed .image-resize-corner::after {
   inset-inline: calc(-1 * var(--table-drop-indicator-half-width));
 }
 
-/* markdown-rendered */
+/* ---------- paragraphs & marks ---------- */
+
 .markdown-rendered p {
   margin-block-start: var(--p-spacing);
   margin-block-end: var(--p-spacing);
@@ -697,13 +717,13 @@ div.image-embed .image-resize-corner::after {
   color: var(--text-normal);
 }
 
-/* reveal */
+/* ---------- reveal mode & footnotes view ---------- */
+
 .reveal .task-list-item,
 .reveal .footnote-item {
   list-style: none;
 }
 
-/* footnotes-view */
 .footnotes-view .footnote-list-item.is-editing {
   border-color: var(--footnote-divider-color-active);
 }
