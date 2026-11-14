@@ -946,6 +946,10 @@
   {
    "orig": "lz",
    "use": "defineDocumentSearch"
+  },
+  {
+   "orig": "fq",
+   "use": "defineMarkdownPreviewView"
   }
  ],
  "host": {
@@ -1098,7 +1102,14 @@
   "queryEmbed": "pq",
   "EmbedLoader": "sJ",
   "refreshLinkStates": "uq",
-  "textNodes": "zv"
+  "textNodes": "zv",
+  "DocumentSearch": "lz",
+  "propertiesPlugin": "eO",
+  "focusWhenShown": "gg",
+  "markdownOptions": "Ux",
+  "keyNames": "Og",
+  "trackPointer": "Cg",
+  "MarkdownRenderer": "hq"
  },
  "declarators": [
   {

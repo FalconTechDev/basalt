@@ -1,16 +1,16 @@
 # src/app.js rewrite: progress
 
-Branch `app-rewrite-big` (worktree `basalt-wt-big`). Own code lives in `src-app/` and is spliced into the inherited bundle by
+Branch `rewrite-editor` (worktree `basalt-wt-editor`). Own code lives in `src-app/` and is spliced into the inherited bundle by
 `build-app.mjs`; the manifest `src-app/manifest.json` says what is replaced. Numbers come from `node tools/own-stats.mjs`
 (bytes of the ORIGINAL text of every replaced function / class, divided by the size of the base bundle).
 
 | | replaced | bytes of original text |
 | --- | --- | --- |
 | functions (leaf helpers, search, timing, transitions, tooltips, clipboard/url) | 168 | 20.8 KB |
-| classes / objects | 68 | 141.2 KB |
-| **total** | | **162.0 KB = 4.4 % of the 3688.9 KB bundle** |
+| classes / objects | 69 | 148.2 KB |
+| **total** | | **169.0 KB = 4.6 % of the 3688.9 KB bundle** |
 
-Own readable source: 283 KB in `src-app/*.js` (32 modules, comments included).
+Own readable source: 370 KB in `src-app/*.js` (36 files, comments included).
 
 What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
 bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
@@ -36,6 +36,7 @@ kept on the full bundle so it cannot flatter itself.
 | --- | --- |
 | markdown-render.js | `MarkdownRenderChild` (`zz`), `MarkdownPreviewSection` (`qz`), the preview link/hover handlers (`lq`), `MarkdownRenderer` (`hq`, statics `render`/`renderMarkdown`/`postProcess`/`toggleCheckbox` included); `misc.js` also gained `isUrl` (`Yc`) and `copyText` (`Ec`) |
 | document-search.js | the reading-view find bar (`lz`: scope keys, match count, highlight ranges, prev/next) |
+| preview-view.js | `MarkdownPreviewView` (`fq`: reading-mode settings classes, find bar wiring, ephemeral scroll/selection state, touch double-tap mode toggle, copy/context-menu keys) |
 | events.js, timing.js | `Events`, `Component`, `debounce` |
 | keymap.js | `Scope`, the dynamic-parent scope of the workspace, `Keymap` |
 | commands.js | the command registry (`app.commands`), `HotkeyManager` |
