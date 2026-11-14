@@ -134,10 +134,11 @@ community plugin browser lists 10 375 plugins with working detail pane; theme br
 
 ### Not done in this area
 
-* **Sync engine**: the account/vault/publish API client is own (`account.js`), but the inherited sync engine itself
-  (remote-vault chunk sync, vault crypto, `sync-setup` flow) is still inherited. Basalt's own `src/vault-sync.js`
-  (git sync) is separate and already own. Wire formats and crypto constants must be preserved when this is rewritten.
-* **Publish UI**: only the API client exists own; the publish site-management screens are still inherited (small surface,
-  ~8 call sites in the bundle).
+* **Sync/publish screens**: the whole wire layer is own — `account.js` now covers every `gw()` endpoint in the bundle
+  (28 paths: user, subscription, vault regions/list/create/migrate/rename/delete/access/share-*, publish
+  list/create/delete/share-*). What remains inherited are the screens on top: the sync setup wizard / remote-vault
+  chooser cluster (`oC`/`hC`/`fC`/`vC`/`wC`/`SC`/`cC`, ~1.17-1.20 MB offsets) and the publish plugin UI
+  (`u9`/`h9`, `https://publish.basalt.md`, ~3.36-3.41 MB offsets). Basalt's data sync itself is the own git engine
+  (`src/vault-sync.js`, `src/basalt-git.js`); no Obsidian chunk-sync worker/crypto exists in this bundle.
 * Remaining inherited bits reachable through bindEnv: theme/font/ribbon dialogs (`A0`→now own `D0`, `ete`, `zee`),
   markdown render pipeline for READMEs (`Zx`,`Kx`,`xL`,`eb`), HTTP layer `cy`.
