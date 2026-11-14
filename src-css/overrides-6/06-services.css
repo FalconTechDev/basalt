@@ -60,8 +60,3 @@
   flex-grow: 1;
   min-width: 50px;
 }
-
-/* open-vault */
-.open-vault-options input[type='text'] {
-  width: 150px;
-}

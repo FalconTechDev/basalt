@@ -99,7 +99,6 @@
 }
 
 /* workspace-drawer */
-.workspace-drawer .workspace-drawer-actions,
 .workspace-drawer .nav-buttons-container {
   flex-wrap: nowrap;
 }

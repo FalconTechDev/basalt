@@ -51,8 +51,3 @@
   min-width: var(--icon-s);
   color: var(--text-muted);
 }
-
-/* open-vault */
-.open-vault-options.mod-login {
-  justify-content: flex-start;
-}

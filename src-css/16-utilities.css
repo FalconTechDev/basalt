@@ -167,9 +167,6 @@
 }
 
 /* u-clickable */
-.u-clickable {
-  cursor: var(--cursor);
-}
 
 /* mod-active */
 .mod-active .document-search-container {
@@ -189,18 +186,9 @@
   transform: rotate(calc(var(--direction) * -1 * 90deg));
 }
 
-/* is-ios */
-.is-ios .lucide-more-vertical,
+/* mod-macos */
 .mod-macos .lucide-more-vertical {
   transform: rotate(90deg);
-}
-
-/* is-android */
-.is-android {
-  --scrollbar-border-width: 0px;
-  --scrollbar-width: 5px;
-  --scrollbar-height: 5px;
-  --scrollbar-radius: 0;
 }
 
 /* mod-canvas */
@@ -226,20 +214,6 @@
 
 .mod-canvas-color-6 {
   --canvas-color: var(--canvas-color-6);
-}
-
-/* is-ios */
-.is-ios {
-  --slider-thumb-width: 36px;
-  --toggle-width: 62px;
-  --toggle-radius: 24px;
-  --toggle-thumb-radius: 24px;
-  --toggle-thumb-height: 24px;
-  --toggle-thumb-width: 36px;
-  --toggle-thumb-opacity-active: 0.6;
-  --toggle-s-width: 48px;
-  --toggle-s-thumb-height: 15px;
-  --toggle-s-thumb-width: 28px;
 }
 
 /* mod-fade */

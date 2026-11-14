@@ -19,8 +19,3 @@
   flex-direction: row;
   flex-grow: 1;
 }
-
-/* open-vault */
-.open-vault-options .setting-item-control button {
-  width: 100px;
-}

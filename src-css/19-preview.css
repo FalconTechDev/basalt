@@ -527,8 +527,7 @@ div.image-embed .image-resize-corner::after {
   margin-bottom: 0;
 }
 
-.markdown-rendered :is(p,pre,table,ul,ol) + :is(h1,h2,h3,h4,h5,h6),
-.markdown-rendered div:is(.el-blockquote,.el-p,.el-pre,.el-table,.el-ul,.el-ol) + div > :is(h1,h2,h3,h4,h5,h6) {
+.markdown-rendered :is(p,pre,table,ul,ol) + :is(h1,h2,h3,h4,h5,h6) {
   margin-top: var(--heading-spacing);
 }
 

@@ -1,10 +1,7 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
 /* nav-file */
-.nav-file-icon .svg-icon,
-.suggestion-flair .svg-icon,
-.menu-item-icon .svg-icon,
-.status-bar-item .svg-icon {
+.suggestion-flair .svg-icon, .menu-item-icon .svg-icon, .status-bar-item .svg-icon {
   --icon-size: var(--icon-s);
   --icon-stroke: var(--icon-s-stroke-width);
 }

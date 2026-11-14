@@ -64,11 +64,6 @@ body.is-mobile .app-container {
   min-width: unset;
 }
 
-/* is-ios */
-body.is-ios .mobile-tab-switcher-inner-scroll {
-  min-height: calc(100% + 1px);
-}
-
 /* mobile-tab */
 .mobile-tab-switcher-menu-button {
   display: flex;

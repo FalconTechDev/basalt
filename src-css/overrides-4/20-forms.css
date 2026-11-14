@@ -36,9 +36,6 @@
   }
 
   /* input-button */
-  .input-button:hover {
-    color: var(--text-normal);
-  }
 
   textarea:hover,
   .multi-select-container:hover,

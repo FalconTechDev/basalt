@@ -1,10 +1,7 @@
 /* editor (late): rules of this component that have to stay after rules of components further down the build order. */
 
 /* cm-fold */
-.cm-fold-indicator .collapse-indicator,
-.cm-gutterElement .collapse-indicator,
-.collapse-indicator,
-.fold-gutter {
+.cm-fold-indicator .collapse-indicator, .cm-gutterElement .collapse-indicator, .collapse-indicator {
   opacity: 0;
 }
 

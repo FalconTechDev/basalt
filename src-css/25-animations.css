@@ -1,14 +1,5 @@
 /* animations: Keyframes. */
 
-@keyframes node-inserted {
-  from {
-    outline-color: #fff;
-  }
-  to {
-    outline-color: #000;
-  }
-}
-
 @keyframes blink {
   50% {
     background-color: transparent;

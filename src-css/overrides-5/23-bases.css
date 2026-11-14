@@ -56,10 +56,7 @@
 }
 
 /* base-toolbar */
-.base-toolbar-sort-item .bases-sort-property,
-.base-toolbar-groupby-item .bases-sort-property,
-.base-toolbar-sort-item .filter-property-select,
-.base-toolbar-groupby-item .filter-property-select {
+.base-toolbar-sort-item .bases-sort-property, .base-toolbar-sort-item .filter-property-select {
   max-width: 14em;
 }
 

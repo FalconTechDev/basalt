@@ -35,10 +35,7 @@
   max-height: unset;
 }
 
-.is-phone .base-toolbar-sort-item .bases-sort-property,
-.is-phone .base-toolbar-groupby-item .bases-sort-property,
-.is-phone .base-toolbar-sort-item .filter-property-select,
-.is-phone .base-toolbar-groupby-item .filter-property-select {
+.is-phone .base-toolbar-sort-item .bases-sort-property, .is-phone .base-toolbar-sort-item .filter-property-select {
   max-width: unset;
 }
 

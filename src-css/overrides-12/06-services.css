@@ -11,17 +11,3 @@
   margin: 25% auto 0;
   padding: var(--file-margins);
 }
-
-/* open-vault */
-.open-vault-options .back-button {
-  display: flex;
-  align-items: center;
-  border-radius: var(--radius-s);
-  padding: 0 var(--size-4-3) var(--size-4-2);
-  color: var(--text-muted);
-  user-select: none;
-  font-size: var(--font-ui-small);
-  cursor: var(--cursor);
-  -webkit-app-region: no-drag;
-  corner-shape: var(--corner-shape);
-}

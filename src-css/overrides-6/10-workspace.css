@@ -20,21 +20,6 @@
   color: var(--text-faint);
 }
 
-.workspace-drawer-header-name-action-icon {
-  display: flex;
-  align-items: center;
-  margin-inline-start: var(--size-4-2);
-  color: var(--text-muted);
-}
-
-.workspace-drawer-action-item {
-  flex: 0 0 70px;
-  flex-direction: column;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-}
-
 .workspace-drawer-tab-options-list .workspace-drawer-tab-select {
   order: 0;
   pointer-events: none;

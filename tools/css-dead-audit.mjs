@@ -14,12 +14,13 @@ const hay = [];
 const collect = (d, exts) => {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
     const p = path.join(d, e.name);
-    if (e.isDirectory()) { if (e.name !== "node_modules" && e.name !== "lib") collect(p, exts); continue; }
+    if (e.isDirectory()) { if (e.name !== "node_modules") collect(p, exts); continue; }
     if (exts.some((x) => e.name.endsWith(x))) hay.push(fs.readFileSync(p, "utf8"));
   }
 };
 collect(path.join(repo, "src"), [".js", ".html"]);
 collect(path.join(repo, "src-app"), [".js"]);
+collect(path.join(repo, "plugins-sdk"), [".js", ".ts"]);
 const text = hay.join("\n");
 
 const files = [];

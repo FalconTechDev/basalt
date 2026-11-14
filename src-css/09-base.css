@@ -112,12 +112,6 @@ body.is-translucent {
   background-color: transparent;
 }
 
-/* node-insert */
-.node-insert-event {
-  animation-duration: 0.01s;
-  animation-name: node-inserted;
-}
-
 body [contenteditable="true"],
 body [contenteditable=""] {
   user-select: text;
@@ -269,44 +263,6 @@ body.is-frameless.is-hidden-frameless:not(.in-progress) {
   align-items: center;
 }
 
-/* card-container */
-.card-container {
-  display: flex;
-}
-
-/* card */
-.card ul {
-  padding: 0;
-}
-
-/* card-container */
-.card-container.mod-horizontal .card ul {
-  padding-left: 24px;
-}
-
-/* card */
-.card li {
-  margin: 5px 0;
-}
-
-.card.u-clickable {
-  cursor: var(--cursor);
-}
-
-.card.is-selected {
-  border: var(--border-width) solid var(--interactive-accent);
-  background-color: hsla(var(--interactive-accent-hsl), 0.2);
-}
-
-/* card-title */
-.card-title {
-  margin-bottom: 8px;
-  text-align: center;
-  font-size: 20px;
-  line-height: 30px;
-  color: var(--text-muted);
-}
-
 [contenteditable] {
   outline: none;
 }
@@ -379,9 +335,8 @@ body.is-frameless.is-hidden-frameless:not(.in-progress) {
   content: "\200B";
 }
 
-/* is-ios */
-body:not(.is-ios):not(.is-android) input[type='date']:not([disabled="true"]),
-body:not(.is-ios):not(.is-android) input[type='datetime-local']:not([disabled="true"]) {
+body input[type='date']:not([disabled="true"]),
+body input[type='datetime-local']:not([disabled="true"]) {
   padding-left: var(--size-4-6);
 }
 

@@ -40,11 +40,6 @@
 }
 
 /* open-folder */
-.open-folder-input[type='text'] {
-  width: 200px;
-  height: 28px;
-  font-size: var(--font-ui-small);
-}
 
 /* pull-action */
 .pull-action.mod-activated {

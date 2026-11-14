@@ -54,8 +54,3 @@
   display: flex;
   flex-direction: column;
 }
-
-/* open-vault */
-.open-vault-options.mod-login input[type='text'] {
-  width: 250px;
-}

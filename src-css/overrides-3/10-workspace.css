@@ -45,16 +45,6 @@
   font-size: var(--font-ui-smaller);
 }
 
-.workspace-drawer-actions {
-  display: flex;
-  margin: var(--size-4-4) 0 var(--size-4-3) 0;
-  color: var(--text-muted);
-}
-
-.workspace-drawer-action-icon {
-  color: var(--text-faint);
-}
-
 .workspace-drawer-tab-options {
   --no-tooltip: true;
   --icon-color: var(--text-muted);

@@ -7,10 +7,6 @@
 }
 
 /* metadata-error */
-.metadata-error-cta.mobile-tap,
-.metadata-error-cta:hover {
-  color: var(--text-accent-hover);
-}
 
 /* search-result */
 .search-result-file-match.mobile-tap {

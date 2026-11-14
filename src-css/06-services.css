@@ -341,9 +341,6 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
 }
 
 /* slug-input */
-.slug-input {
-  text-transform: lowercase;
-}
 
 /* sync-status */
 .sync-status-icon.mod-spin svg {
@@ -515,9 +512,6 @@ textarea.webviewer-adblock-lists {
 }
 
 /* open-vault */
-.open-vault-options-container::-webkit-scrollbar {
-  display: none;
-}
 
 /* starter */
 .starter .notice {

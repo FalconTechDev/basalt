@@ -91,14 +91,6 @@ body:not(.is-phone) .vertical-tab-nav-item.is-active {
 }
 
 /* mobile-vault */
-.mobile-vault-chooser-version {
-  font-size: var(--font-ui-small);
-  color: var(--text-faint);
-}
-
-.mobile-vault-chooser-actions {
-  padding-bottom: 40px;
-}
 
 .mobile-vault-chooser-action-icon {
   display: flex;

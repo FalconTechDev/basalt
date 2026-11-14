@@ -1,9 +1,6 @@
 /* forms (late): rules of this component that have to stay after rules of components further down the build order. */
 
 /* card */
-.card .button-container {
-  margin: 10px 0;
-}
 
 /* combobox-button */
 .combobox-button .combobox-button-label {
@@ -63,14 +60,6 @@
 }
 
 /* input-button */
-.input-button {
-  position: relative;
-  top: -1px;
-  padding: 6px 14px;
-  margin-inline-start: 14px;
-  color: var(--text-muted);
-  font-size: var(--font-ui-medium);
-}
 
 textarea,
 .multi-select-container,
@@ -141,10 +130,4 @@ input[type="color"] {
   color: var(--pill-color-remove);
   cursor: var(--cursor);
   corner-shape: var(--corner-shape);
-}
-
-/* open-folder */
-.open-folder-button {
-  margin-top: 14px;
-  padding: 6px 36px;
 }

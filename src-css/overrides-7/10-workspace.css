@@ -53,14 +53,6 @@
   color: var(--text-normal);
 }
 
-.workspace-drawer-action-short-name {
-  overflow: hidden;
-  max-width: 80px;
-  font-size: var(--font-ui-small);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .workspace-drawer-tab-options.is-collapsed .workspace-drawer-tab-select {
   --icon-color: var(--text-normal);
   color: var(--text-normal);

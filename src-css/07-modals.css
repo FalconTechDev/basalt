@@ -31,20 +31,10 @@ body.is-frameless .modal {
   direction: ltr;
 }
 
-/* setting-text */
-.setting-text {
-  flex-grow: 1;
-}
-
 /* setting-title */
 .setting-title {
   font-size: var(--font-ui-large);
   line-height: var(--line-height-normal);
-}
-
-/* setting-explanation */
-.setting-explanation {
-  color: var(--text-muted);
 }
 
 /* modal */
@@ -429,10 +419,6 @@ body.is-frameless .modal {
 }
 
 /* modal */
-.modal.mod-new-editor .card,
-.modal.mod-restricted-mode .card {
-  flex: 1 0 0;
-}
 
 /* setting-progress */
 .setting-progress-bar {
@@ -672,20 +658,6 @@ body.is-frameless .modal {
   gap: var(--size-4-4);
   padding: var(--size-4-8) var(--size-4-16);
   scroll-padding: var(--size-4-4);
-}
-
-/* community-readme */
-.community-readme {
-  overflow-x: hidden;
-  overflow-y: visible;
-  height: auto;
-  padding: var(--size-4-4) 0;
-}
-
-.community-readme video,
-.community-readme svg,
-.community-readme img {
-  max-width: 100%;
 }
 
 /* community-modal */

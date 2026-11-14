@@ -444,10 +444,7 @@ body > .workspace-split {
   overflow: hidden;
 }
 
-.workspace-drawer .workspace-drawer-actions::-webkit-scrollbar,
-.workspace-drawer .nav-buttons-container::-webkit-scrollbar,
-.workspace-drawer .workspace-drawer-actions::-webkit-scrollbar-thumb,
-.workspace-drawer .nav-buttons-container::-webkit-scrollbar-thumb {
+.workspace-drawer .nav-buttons-container::-webkit-scrollbar, .workspace-drawer .nav-buttons-container::-webkit-scrollbar-thumb {
   visibility: hidden;
 }
 
@@ -471,10 +468,6 @@ body > .workspace-split {
   padding: 0;
   width: 100%;
   opacity: 0;
-}
-
-.workspace-drawer-separator {
-  margin: 0 0 12px 0;
 }
 
 .workspace-drawer-tab-options:not(.is-collapsed) .workspace-drawer-tab-options-list .workspace-drawer-tab-select {
