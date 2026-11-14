@@ -1,6 +1,6 @@
 /* services (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* sync-history */
+/* sync history modal: avatar chip, version tree line, footer buttons */
 .sync-history-list-item-header .sync-history-list-item-avatar {
   display: flex;
   justify-content: center;
@@ -37,7 +37,7 @@
   white-space: nowrap;
 }
 
-/* webviewer-addressbar */
+/* webviewer address bar: suggestion rows get an icon gutter */
 .webviewer-addressbar-suggestion.suggestion-item {
   gap: var(--size-4-2);
   align-items: center;

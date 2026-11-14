@@ -1,6 +1,6 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-drawer */
+/* drawer nav buttons float above scrolled content */
 .workspace-drawer .nav-buttons-container .nav-action-button {
   z-index: 1;
   padding: var(--size-4-2);

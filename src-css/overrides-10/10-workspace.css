@@ -1,6 +1,6 @@
 /* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-drawer */
+/* collapsed drawer: inner shrinks to zero, tab options collapse their list */
 .workspace-drawer.is-collapsed .workspace-drawer-inner {
   padding: 0;
   width: 0;
