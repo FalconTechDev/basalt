@@ -1525,6 +1525,22 @@
   {
    "orig": "Pee",
    "use": "defineWordCountPlugin"
+  },
+  {
+   "orig": "l5",
+   "use": "defineCanvasUndoStack"
+  },
+  {
+   "orig": "Y3",
+   "use": "defineSpatialIndex"
+  },
+  {
+   "orig": "n8",
+   "use": "defineCanvasDataCache"
+  },
+  {
+   "orig": "M5",
+   "use": "defineNodeInteractionLayer"
   }
  ],
  "host": {
