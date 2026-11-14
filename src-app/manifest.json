@@ -1133,6 +1133,10 @@
   {
    "orig": "rte",
    "use": "defineEditorTab"
+  },
+  {
+   "orig": "tte",
+   "use": "defineAppearanceTab"
   }
  ],
  "host": {
@@ -1429,5 +1433,5 @@
    "originalBytes": 292
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0,JT,Fm,ym"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0,JT,Fm,ym,electron,A0,ete,zee"
 }
