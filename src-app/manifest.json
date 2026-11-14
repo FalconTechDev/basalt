@@ -994,6 +994,18 @@
   {
    "orig": "G6",
    "use": "definePrintToPdfModal"
+  },
+  {
+   "orig": "tO",
+   "use": "defineMetadataEditor"
+  },
+  {
+   "orig": "nO",
+   "use": "definePropertyRow"
+  },
+  {
+   "orig": "AO",
+   "use": "definePropertyKeySuggest"
   }
  ],
  "host": {
@@ -1184,7 +1196,13 @@
   "waitModal": "pD",
   "printToPdfIpc": "jf",
   "sleep": "sleep",
-  "randomHex": "cc"
+  "randomHex": "cc",
+  "containsAllWords": "Ly",
+  "matchScore": "xy",
+  "renderResults": "Fy",
+  "TypeInfoModal": "FO",
+  "yamlStringify": "vA",
+  "collapseElement": "kl"
  },
  "declarators": [
   {
