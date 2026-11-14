@@ -7,8 +7,8 @@ Branch `app-rewrite-big` (worktree `basalt-wt-big`). Own code lives in `src-app/
 | | replaced | bytes of original text |
 | --- | --- | --- |
 | functions (leaf helpers, search, timing, transitions, tooltips) | 171 | 21.0 KB |
-| classes / objects | 65 | 136.3 KB |
-| **total** | | **157.3 KB = 4.26 % of the 3688.9 KB bundle** |
+| classes / objects | 67 | 142.7 KB |
+| **total** | | **163.7 KB = 4.44 % of the 3688.9 KB bundle** |
 
 Own readable source: 283 KB in `src-app/*.js` (32 modules, comments included).
 
@@ -58,6 +58,7 @@ kept on the full bundle so it cannot flatter itself.
 | path.js, text.js, misc.js, frontmatter.js, search.js | the 143 leaf functions of the previous round |
 | drag.js | `DragManager` (`xP`), the dataTransfer helpers `wP`/`bP`/`SP`/`Eg`/`TP`, the `MP` effect map and `EP` drag pixel |
 | statusbar.js | `StatusBar` (`Nee`) |
+| core-plugins.js | `PluginWrapper` (`i2`), `InternalPlugins` (`o2`), the `r2` core-plugin id list |
 
 Behaviour changes (all bug fixes, nothing observable in normal use): the leaf history list is trimmed at 20 entries (the inherited
 `unshift()` without an argument did nothing), `FileView.onDelete` no longer throws when the leaf is already detached,
@@ -100,7 +101,7 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
 
 * `Workspace` itself (`H0`, 66 KB: layout save / load, active leaf, recent files, hotkey glue, URI handlers) and the mobile drawer
   (`WD`, mobile only). The tree it manages is already own code, so what remains is the controller on top.
-* `App` (`Tte`, 56 KB), the internal plugin manager and wrapper (`i2`, `uee`, ...), `MetadataCache`, `Vault` (belongs to the
+* `App` (`Tte`, 56 KB), the community plugin manager (`$0`, 22 KB) and wrapper loader, `MetadataCache`, `Vault` (belongs to the
   other agent's branch), the markdown view and its siblings (`W6`, preview, properties, outline, backlinks, search UI, canvas glue),
   `Editor` wrapper (`cP`, `iZ`).
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.

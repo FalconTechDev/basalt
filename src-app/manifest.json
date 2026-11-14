@@ -952,6 +952,16 @@
     {
       "orig": "Nee",
       "use": "defineStatusBar"
+    },
+    {
+      "orig": "i2",
+      "use": "definePluginWrapper",
+      "originalBytes": 4325
+    },
+    {
+      "orig": "o2",
+      "use": "defineInternalPlugins",
+      "originalBytes": 2271
     }
   ],
   "host": {
@@ -1141,6 +1151,12 @@
       "expr": "__basaltOwn.dragPixel",
       "sha1": "1f088489658055a2b71dd274b9c080e721998b88",
       "originalBytes": 9
+    },
+    {
+      "orig": "r2",
+      "expr": "__basaltOwn.corePluginIds",
+      "sha1": "3de5501f1e6a3828398acaa08b4a4cb52f559e75",
+      "originalBytes": 350
     }
   ],
   "methods": [
