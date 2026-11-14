@@ -982,6 +982,10 @@
   {
    "orig": "Gz",
    "use": "defineMarkdownPreviewRenderer"
+  },
+  {
+   "orig": "W6",
+   "use": "defineMarkdownView"
   }
  ],
  "host": {
@@ -1155,7 +1159,16 @@
   "codeTexts": "Xz",
   "renderFlags": "_z",
   "activeWindow": "activeWindow",
-  "ajaxPromise": "ajaxPromise"
+  "ajaxPromise": "ajaxPromise",
+  "TextFileView": "BX",
+  "MarkdownEditMode": "j6",
+  "MetadataEditor": "tO",
+  "BacklinksPane": "z6",
+  "PrintToPdfModal": "G6",
+  "spliceFrontmatter": "kI",
+  "extractFrontmatter": "Xx",
+  "parseYaml": "mA",
+  "subpathToPos": "FT"
  },
  "declarators": [
   {
