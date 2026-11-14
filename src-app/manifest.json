@@ -948,6 +948,10 @@
       "orig": "xP",
       "use": "defineDragManager",
       "originalBytes": 5966
+    },
+    {
+      "orig": "Nee",
+      "use": "defineStatusBar"
     }
   ],
   "host": {
