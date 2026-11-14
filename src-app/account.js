@@ -5,6 +5,7 @@
 // stay exactly as they were. The API base URL and the fetch implementation are late-bound host
 // values (the base switches to localhost in dev builds), read through hostEnv().
 
+import { inherit } from "./inherit.js";
 import { hostEnv } from "./vault.js";
 
 const env = () => hostEnv();
@@ -238,4 +239,137 @@ export function acctInvitePublishShare(token, siteUid, email) {
 
 export function acctRemovePublishShare(token, siteUid, shareUid) {
   return acctRequest("/publish/share/remove", { token, site_uid: siteUid, share_uid: shareUid });
+}
+
+// ---- account dialogs ----
+
+// The spinning cube shown while a request is in flight (appended to the given element).
+function loaderCube(parent) {
+  const cube = parent.createDiv("loader-cube");
+  for (let n = 1; n <= 9; n++) cube.createDiv({ cls: "sk-cube sk-cube" + n });
+  return cube;
+}
+
+export function defineLoginModal(host) {
+  /** Sign-in dialog: e-mail, password and (when the server asks for it) a 6-digit MFA code. */
+  function LoginModal(app) {
+    const self = host.ButtonModal.call(this, app) || this;
+    const i18n = host.t.setting.account;
+    const modalEl = self.modalEl;
+    const contentEl = self.contentEl;
+    modalEl.addClass("mod-lg", "mod-form");
+    self.loadingEl = loaderCube(modalEl);
+    self.loadingEl.hide();
+    self.titleEl.setText(i18n.labelLogIn());
+    contentEl.createDiv("message-container", (el) => {
+      self.errorEl = el.createDiv("message mod-error");
+      self.errorEl.hide();
+    });
+    self.emailSectionEl = contentEl.createEl("p", "form-field", (el) => {
+      el.createEl("label", { cls: "input-label", text: i18n.labelEmail() });
+      self.emailEl = el.createEl("input", { type: "email", attr: { autocomplete: "email", autocapitalize: "off", autocorrect: "off", spellcheck: "false" } }, (input) => {
+        input.setAttribute("placeholder", i18n.placeholderEmail());
+        input.addEventListener("keydown", (e) => { if (!e.isComposing && e.key === "Enter") self.login(); });
+      });
+    });
+    self.passwordSectionEl = contentEl.createEl("p", "form-field", (el) => {
+      el.createEl("label", { cls: "input-label", text: i18n.labelPassword() });
+      self.passwordEl = el.createEl("input", { type: "password", attr: { autocomplete: "current-password" } }, (input) => {
+        input.setAttribute("placeholder", i18n.placeholderPassword());
+        input.addEventListener("keydown", (e) => { if (!e.isComposing && e.key === "Enter") self.login(); });
+      });
+    });
+    self.mfaSectionEl = contentEl.createEl("p", "form-field", (el) => {
+      el.createEl("label", { cls: "input-label", text: i18n.labelMfaCode() });
+      self.mfaEl = el.createEl("input", { type: "text" }, (input) => {
+        input.setAttribute("autocomplete", "one-time-code");
+        input.setAttribute("maxlength", "6");
+        input.inputMode = "numeric";
+        input.addEventListener("keydown", (e) => { if (!e.isComposing && e.key === "Enter") self.login(); });
+      });
+    });
+    self.mfaSectionEl.hide();
+    self.buttonContainerEl.createEl("a", { cls: "mod-secondary", text: i18n.labelForgotPassword(), attr: { href: "https://github.com/FalconTechDev/basalt", target: "_blank" } });
+    self.buttonContainerEl.createEl("button", { cls: "mod-cta", text: i18n.buttonLogin() }, (el) => {
+      el.addEventListener("click", () => self.login());
+    });
+    self.addCancelButton();
+    return self;
+  }
+  inherit(LoginModal, host.ButtonModal);
+  const proto = LoginModal.prototype;
+  proto.showError = function (message) {
+    this.errorEl.setText(message);
+    this.errorEl.show();
+  };
+  proto.login = async function () {
+    const i18n = host.t.setting.account;
+    const emailEl = this.emailEl;
+    const passwordEl = this.passwordEl;
+    const mfaEl = this.mfaEl;
+    this.errorEl.hide();
+    const email = emailEl.value;
+    const password = passwordEl.value;
+    const mfa = mfaEl.value;
+    if (email === "") return this.showError(i18n.messageEmptyEmail());
+    if (email.indexOf("@") === -1) return this.showError(i18n.messageInvalidEmail());
+    if (password === "") return this.showError(i18n.messageEmptyPassword());
+    if (mfa !== "" && !/^\d{6}$/.test(mfa)) return this.showError(i18n.mfaWrongFormat());
+    this.loadingEl.show();
+    this.contentEl.hide();
+    try {
+      await acctSignIn(account, email, password, mfa);
+      this.close();
+    } catch (err) {
+      if (err instanceof AccountError) {
+        const message = err.error;
+        if (message.includes("2FA code is incorrect")) this.showError(i18n.mfaVerificationFailed());
+        else if (message.includes("2FA code")) {
+          this.emailSectionEl.hide();
+          this.passwordSectionEl.hide();
+          this.mfaSectionEl.show();
+        } else this.showError(message);
+      } else this.showError(i18n.messageLoginFailed());
+      this.loadingEl.hide();
+      this.contentEl.show();
+    }
+  };
+  return LoginModal;
+}
+
+export function defineLicenseModal(host) {
+  /** Commercial licence-key dialog: validates the key against /subscription/business. */
+  function LicenseModal(app) {
+    const self = host.ButtonModal.call(this, app) || this;
+    const i18n = host.t.setting.about;
+    self.modalEl.addClass("mod-lg", "mod-form");
+    self.setTitle(i18n.labelCommercialLicense());
+    self.contentEl.createDiv("message-container", (el) => {
+      self.errorEl = el.createDiv("message mod-error");
+      self.errorEl.hide();
+      el.createEl("p", { cls: "form-field " }, (field) => {
+        field.createEl("label", { cls: "input-label", text: i18n.labelLicenseKey() });
+        self.licenseKeyEl = field.createEl("input", { type: "text" }, (input) => {
+          input.setAttribute("placeholder", i18n.licenseKeyPlaceholder());
+        });
+      });
+    });
+    if (!host.Platform.isAndroidApp) {
+      self.buttonContainerEl.createEl("a", { cls: "mod-secondary", text: host.t.interface.buttonLearnMore(), attr: { href: "https://github.com/FalconTechDev/basalt/wiki", target: "_blank", rel: "noopener" } });
+    }
+    self.addButton("mod-cta", i18n.buttonActivate(), async () => {
+      account.key = self.licenseKeyEl.value.trim();
+      await acctValidateBusinessKey(account);
+      if (account.keyValidation === "valid") {
+        self.close();
+      } else {
+        self.errorEl.setText(account.keyValidation);
+        self.errorEl.show();
+      }
+      return true;
+    }).addCancelButton();
+    return self;
+  }
+  inherit(LicenseModal, host.ButtonModal);
+  return LicenseModal;
 }

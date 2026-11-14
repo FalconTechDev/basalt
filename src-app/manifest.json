@@ -1081,6 +1081,14 @@
    "orig": "vw",
    "use": "defineAccountError",
    "originalBytes": 157
+  },
+  {
+   "orig": "R7",
+   "use": "defineLoginModal"
+  },
+  {
+   "orig": "B7",
+   "use": "defineLicenseModal"
   }
  ],
  "host": {
