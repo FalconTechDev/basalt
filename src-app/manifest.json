@@ -976,6 +976,10 @@
     {
       "orig": "$0",
       "use": "defineCommunityPlugins"
+    },
+    {
+      "orig": "_L",
+      "use": "defineMetadataCache"
     }
   ],
   "host": {
@@ -1132,7 +1136,31 @@
     "activeWindow": "activeWindow",
     "basaltDebug": "iD",
     "cmRequireMap": "W0",
-    "cmDeprecatedMap": "_0"
+    "cmDeprecatedMap": "_0",
+    "tagValid": "$A",
+    "linkCacheKey": "BL",
+    "batchedAsync": "Cb",
+    "collectTags": "DT",
+    "getLinkpath": "ET",
+    "iterateIdbBatches": "GL",
+    "sharesLinkTarget": "HL",
+    "contentHash": "Sf",
+    "applyLinkUpdates": "UL",
+    "openMetadataDb": "Zw",
+    "linkPosToPos": "gT",
+    "isOutdatedMetadata": "kT",
+    "forEachLinkField": "mT",
+    "escapeRegExp": "oc",
+    "BlockCache": "qL",
+    "RefMultimap": "sc",
+    "compareStrings": "ub",
+    "positionToArray": "vT",
+    "SerialTaskQueue": "vb",
+    "deserializeMetadata": "wT",
+    "LinkQueue": "wb",
+    "anyMetadataRef": "xT",
+    "createEl": "createEl",
+    "createFragment": "createFragment"
   },
   "declarators": [
     {
