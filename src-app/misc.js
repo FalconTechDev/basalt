@@ -343,3 +343,6 @@ export function sortHitsByScore(hits) { hits.sort((a, b) => b.match.score - a.ma
 export function shiftRanges(ranges, by) {
   if (ranges) for (const r of ranges) { r[0] += by; r[1] += by; }
 }
+
+/** Locale-aware "sort" comparator used for user-visible name lists. */
+export const stringCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });

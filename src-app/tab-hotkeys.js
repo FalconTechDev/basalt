@@ -3,6 +3,7 @@
 // inherited format; the display string comes from the shared formatHotkey helper.
 import { inherit } from "./inherit.js";
 import { makeHotkey } from "./text.js";
+import { stringCollator } from "./misc.js";
 
 const HOTKEY_STATUS_FILTERS = ["show-all", "show-assigned", "show-user-assigned", "show-unassigned"];
 
@@ -262,7 +263,7 @@ export function defineHotkeysTab(host) {
     }
 
     const sorted = Object.values(commands.commands);
-    sorted.sort((a, b) => nameCollator.compare(a.name, b.name));
+    sorted.sort((a, b) => stringCollator.compare(a.name, b.name));
 
     let shown = 0;
     const conflicted = new Set();
@@ -388,4 +389,3 @@ export function defineHotkeysTab(host) {
   return HotkeysTab;
 }
 
-const nameCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
