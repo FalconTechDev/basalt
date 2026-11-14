@@ -123,6 +123,9 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   region is therefore live code. Own so far (`src-app/canvas-utils.js`, `canvas-plugin.js`):
   undo stack (`l5`), spatial index (`Y3`) + bbox/point variants (`m5`/`v5`/`g5`), data cache
   (`n8`), node interaction layer (`M5`), `.canvas` metadata extractor (`e8`), link updater
-  (`t8`) and the plugin itself (`i8`). Still inherited: the view and node/edge/embed/settings
-  classes (`r8`, `a8`, `s8`, `Q5`, `I5` and the `*8` class region between them, ~85 KB).
+  (`t8`) and the plugin itself (`i8`). Node/modal/suggest/embed classes (`src-app/canvas-nodes.js`,
+  `canvas-node.js`): `w5`, `E5`, `K5`, `Q5`, `L5`, `O5`, `N5`, `lI`, `cI`, `x3`, `T3`, `D3`, node
+  bases `S5`/`x5`/`T5`/`A5` and node types `I5`/`F5`. Still inherited: file node `P5`, frame `R5`,
+  edge `G5`, selection `z3`, menu `U3`, the Canvas class `y5` (~62 KB), view `r8`, embed `a8`,
+  settings `s8`, geometry helpers `L3`/`O3`/`A3`/`E3`/`P3`/`I3` and misc `D5`/`dg`/`M$`/`Cg`/`TT`.
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
