@@ -11993,10 +11993,12 @@ function defineViewHeader(host) {
   };
 
   /**
-   * A sort button whose menu lists `groups` (arrays of sort keys). `labelOf(key)` gives the entry title,
-   * `current()` the active key and `onPick(key)` runs when one is chosen. A separator closes each group.
+   * A sort button whose menu lists `groups` (arrays of sort keys). `labels` maps a key to its title function
+   * (a plain `labelOf(key)` function is also accepted), `current()` is the active key and `onPick(key)` runs
+   * when one is chosen. A separator closes each group.
    */
-  ViewHeader.prototype.addSortButton = function (groups, labelOf, onPick, current) {
+  ViewHeader.prototype.addSortButton = function (groups, labels, onPick, current) {
+    const labelOf = typeof labels === "function" ? labels : (key) => labels[key]();
     return this.addNavButton("lucide-sort-asc", host.t.plugins.fileExplorer.actionChangeSort(), (event) => {
       event.preventDefault();
       const button = event.currentTarget;
