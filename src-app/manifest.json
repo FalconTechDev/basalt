@@ -1436,7 +1436,210 @@
    "use": "fmGetAvailablePathForAttachment",
    "sha1": "961f29faac441d80c51bf7dc93c8b8b5dd7bff00",
    "originalBytes": 292
+  },
+  {
+   "class": "H0",
+   "name": "on",
+   "use": "wsOn",
+   "sha1": "5974e9a7081e080df478675ba93875b923c1d182",
+   "originalBytes": 55
+  },
+  {
+   "class": "H0",
+   "name": "trigger",
+   "use": "wsTrigger",
+   "sha1": "576bfc22529b24cffe944cfb73d064a6fba94360",
+   "originalBytes": 116
+  },
+  {
+   "class": "H0",
+   "name": "isAttached",
+   "use": "wsIsAttached",
+   "sha1": "ca3cdf9f9b1725f37c84ef36a5e5d5d159352629",
+   "originalBytes": 130
+  },
+  {
+   "class": "H0",
+   "name": "getLeftLeaf",
+   "use": "wsGetLeftLeaf",
+   "sha1": "3188a2625378c65d0e2cdaa13d97b044bb6608e9",
+   "originalBytes": 54
+  },
+  {
+   "class": "H0",
+   "name": "getRightLeaf",
+   "use": "wsGetRightLeaf",
+   "sha1": "1b3c19826ae37390cc158350332763a364d34429",
+   "originalBytes": 55
+  },
+  {
+   "class": "H0",
+   "name": "getLeaf",
+   "use": "wsGetLeaf",
+   "sha1": "211ded2122beb11099959b795b59c2f0b3dc765c",
+   "originalBytes": 160
+  },
+  {
+   "class": "H0",
+   "name": "getGroupLeaves",
+   "use": "wsGetGroupLeaves",
+   "sha1": "d6daa03ff45eee91799505e479741aa0b03a7b70",
+   "originalBytes": 97
+  },
+  {
+   "class": "H0",
+   "name": "iterateLeaves",
+   "use": "wsIterateLeaves",
+   "sha1": "bb71dd62d3317d5abf124b718747313ff48b25b7",
+   "originalBytes": 334
+  },
+  {
+   "class": "H0",
+   "name": "iterateTabs",
+   "use": "wsIterateTabs",
+   "sha1": "b9518d9b56f6438d52af9b3cc639a63e9e374157",
+   "originalBytes": 186
+  },
+  {
+   "class": "H0",
+   "name": "iterateAllLeaves",
+   "use": "wsIterateAllLeaves",
+   "sha1": "a4847df435eee4d2adfb213f654bcaafdb34c91e",
+   "originalBytes": 165
+  },
+  {
+   "class": "H0",
+   "name": "iterateRootLeaves",
+   "use": "wsIterateRootLeaves",
+   "sha1": "ab81d04d7cafafdc4c6f9705818f16173417c317",
+   "originalBytes": 49
+  },
+  {
+   "class": "H0",
+   "name": "iterateCodeMirrors",
+   "use": "wsIterateCodeMirrors",
+   "sha1": "07714e6deea17a4e7a859895c769cd8e910e44f0",
+   "originalBytes": 13
+  },
+  {
+   "class": "H0",
+   "name": "hasUndoHistory",
+   "use": "wsHasUndoHistory",
+   "sha1": "becb67aad72c391516991ea287c9abfc2d9eb17e",
+   "originalBytes": 44
+  },
+  {
+   "class": "H0",
+   "name": "isInSidebar",
+   "use": "wsIsInSidebar",
+   "sha1": "f53b2eb354f8139189e63b9b2cd2b6e1437fb9c3",
+   "originalBytes": 85
+  },
+  {
+   "class": "H0",
+   "name": "onLayoutChange",
+   "use": "wsOnLayoutChange",
+   "sha1": "4d7743c86b68d18be5f305cedef06b26de6dfab3",
+   "originalBytes": 98
+  },
+  {
+   "class": "H0",
+   "name": "onLayoutReady",
+   "use": "wsOnLayoutReady",
+   "sha1": "eda77fef15e782fac92fc68e6e6c0bc660b98867",
+   "originalBytes": 140
+  },
+  {
+   "class": "H0",
+   "name": "onQuickPreview",
+   "use": "wsOnQuickPreview",
+   "sha1": "34d6115c546670b4a86091b47e250c580cbb2d3e",
+   "originalBytes": 48
+  },
+  {
+   "class": "H0",
+   "name": "addMobileFileInfo",
+   "use": "wsAddMobileFileInfo",
+   "sha1": "2335f0d14203dfa501db34f68353511977242f29",
+   "originalBytes": 41
+  },
+  {
+   "class": "H0",
+   "name": "getRecentFiles",
+   "use": "wsGetRecentFiles",
+   "sha1": "4017bde3a61e913e4d51dda88fad7576b79cb2d0",
+   "originalBytes": 60
+  },
+  {
+   "class": "H0",
+   "name": "getLastOpenFiles",
+   "use": "wsGetLastOpenFiles",
+   "sha1": "6dba792dbe3f88279b894aabba5c374f85030ae3",
+   "originalBytes": 60
+  },
+  {
+   "class": "H0",
+   "name": "addRecentFile",
+   "use": "wsAddRecentFile",
+   "sha1": "e995da93d613ae7814af76a8f4cc0bd2a1f8425b",
+   "originalBytes": 52
+  },
+  {
+   "class": "H0",
+   "name": "onResize",
+   "use": "wsOnResize",
+   "sha1": "928ee359e9023c416add256e33e03d1c3db332ae",
+   "originalBytes": 34
+  },
+  {
+   "class": "H0",
+   "name": "updateTitle",
+   "use": "wsUpdateTitle",
+   "sha1": "0de8e04341e5048494b585aaf62c134d0bed1ea1",
+   "originalBytes": 124
+  },
+  {
+   "class": "H0",
+   "name": "getActiveFile",
+   "use": "wsGetActiveFile",
+   "sha1": "29297cc28e3dcbbb771191fd90509d8240307080",
+   "originalBytes": 153
+  },
+  {
+   "class": "H0",
+   "name": "getFocusedContainer",
+   "use": "wsGetFocusedContainer",
+   "sha1": "0bef3884c53d9d8767d05c858fd962a9a3817ff3",
+   "originalBytes": 199
+  },
+  {
+   "class": "H0",
+   "name": "getMostRecentLeaf",
+   "use": "wsGetMostRecentLeaf",
+   "sha1": "232f752ac34c14f6ee8f196c76a6b292bbd9a56c",
+   "originalBytes": 193
+  },
+  {
+   "class": "H0",
+   "name": "getActiveViewOfType",
+   "use": "wsGetActiveViewOfType",
+   "sha1": "b9f5feb64360d1d302621fd3300c00c4e2db426c",
+   "originalBytes": 94
+  },
+  {
+   "class": "H0",
+   "name": "getActiveLeafOfViewType",
+   "use": "wsGetActiveLeafOfViewType",
+   "sha1": "d51434d8b1a778f9f5ba96fca8e8f4bf0971c618",
+   "originalBytes": 47
+  },
+  {
+   "class": "H0",
+   "name": "getSideLeaf",
+   "use": "wsGetSideLeaf",
+   "sha1": "ed07a42d3a912eaf67314d28d070558a5e27513b",
+   "originalBytes": 332
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0"
 }
