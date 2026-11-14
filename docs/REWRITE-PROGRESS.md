@@ -125,6 +125,8 @@ own readable source 540.9 KB.
 | tab-plugins.js | core plugins tab `mte` |
 | tab-community.js | community plugins tab `ite` (restricted-mode flow, per-plugin settings/hotkeys/donate/uninstall) |
 | community.js | community modal base `y0` (search, sort, installed-only, detail pane, swipe nav, render queue), plugin browser `M0` (10k+ plugin feed, manifests, versions.json compat pick, install/update/enable/disable/uninstall, share link `basalt://show-plugin`), theme browser `D0` (1k+ theme feed, screenshots, install/use/update/uninstall), donate dialog `S0`. Feeds stay `obsidianmd/obsidian-releases` (required wire compat) |
+| vault-crypto.js | vault crypto: scrypt key, HKDF keyhash (v0/v2/v3), AES-GCM payload, AES-SIV deterministic codec, `obsidian://` callback parser — byte-compatible with inherited impl (cross-decrypt verified) |
+| sync-screens.js | sync onboarding screen stack `oC`..`DC` (25 classes): start/intro/create-vault/setup/encryption/features/auth-choice/vault-list/sign-in/sign-up/verify/method-select/iCloud/Android-perms screens. Same DOM classes, i18n keys, navigation, account+vault API calls. Dead controller IIFE inside `AC` replaced by the synced-keys array it evaluated to |
 
 ### Runtime-verified
 
@@ -134,11 +136,12 @@ community plugin browser lists 10 375 plugins with working detail pane; theme br
 
 ### Not done in this area
 
-* **Sync/publish screens**: the whole wire layer is own — `account.js` now covers every `gw()` endpoint in the bundle
-  (28 paths: user, subscription, vault regions/list/create/migrate/rename/delete/access/share-*, publish
-  list/create/delete/share-*). What remains inherited are the screens on top: the sync setup wizard / remote-vault
-  chooser cluster (`oC`/`hC`/`fC`/`vC`/`wC`/`SC`/`cC`, ~1.17-1.20 MB offsets) and the publish plugin UI
-  (`u9`/`h9`, `https://publish.basalt.md`, ~3.36-3.41 MB offsets). Basalt's data sync itself is the own git engine
-  (`src/vault-sync.js`, `src/basalt-git.js`); no Obsidian chunk-sync worker/crypto exists in this bundle.
+* **Publish plugin UI**: wire layer own (`account.js` `/publish/*` endpoints). The plugin itself
+  (`u9`/`h9`, `https://publish.basalt.md`, classes `V7`..`$9` + plugin `f9`, ~3.68-3.82 MB,
+  ~142 KB minified, 44 classes) is still inherited — site list, create flow, slug setup,
+  site settings, nav/share management, share-code accept. Basalt's data sync itself is the
+  own git engine (`src/vault-sync.js`, `src/basalt-git.js`); no Obsidian chunk-sync
+  worker/crypto exists in this bundle. Sync onboarding screens are now own (`sync-screens.js`,
+  verified: full `app-smoke.mjs` passes with 0 exceptions on the rebuilt bundle).
 * Remaining inherited bits reachable through bindEnv: theme/font/ribbon dialogs (`A0`→now own `D0`, `ete`, `zee`),
   markdown render pipeline for READMEs (`Zx`,`Kx`,`xL`,`eb`), HTTP layer `cy`.
