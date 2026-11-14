@@ -1010,6 +1010,10 @@
   {
    "orig": "cP",
    "use": "defineEditor"
+  },
+  {
+   "orig": "aZ",
+   "use": "defineEditModeBase"
   }
  ],
  "host": {
@@ -1206,7 +1210,26 @@
   "renderResults": "Fy",
   "TypeInfoModal": "FO",
   "yamlStringify": "vA",
-  "collapseElement": "kl"
+  "collapseElement": "kl",
+  "CodeMirrorEditor": "oZ",
+  "EditorSearchBar": "gj",
+  "isSmartIndentTarget": "ff",
+  "cmView": "_o",
+  "cmKeymapFacet": "Jo",
+  "hypermdMode": "Z$",
+  "cmLiveDecorations": "Dq",
+  "cmLineNumbersFixed": "Vs",
+  "cmLineNumbersCompute": "$B",
+  "cmLineNumbersField": "Zs",
+  "cmTableCellFilter": "Mq",
+  "cmIndentGuides": "OV",
+  "cmFoldGutter": "od",
+  "cmFoldDecorations": "AV",
+  "cmFoldHeading": "O$",
+  "cmFoldIndent": "A$",
+  "cmFoldFrontmatter": "F$",
+  "cmAutoPair": "DA",
+  "cmClearCacheEffect": "Tq"
  },
  "declarators": [
   {
