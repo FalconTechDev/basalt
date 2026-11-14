@@ -3,10 +3,10 @@
 // and drag-over drop-effect hints driven by the workspace drag manager.
 export function defineClipboardManager(host) {
   const {
-    MarkdownView, Platform, dragDropEffect, dragLinkText,
+    Platform, dragDropEffect, dragLinkText,
     isImageExtension, pathBaseName, pathNormalize, stripExtBase, escapePathChars,
     sanitizeHtml, htmlToMarkdown, base64ToBuffer, TFile,
-    cmSelection, getExtension, mediaExtensions, clipboardFiles, htmlCommentPrefix, t,
+    getExtension, mediaExtensions, clipboardFiles, htmlCommentPrefix, t,
   } = host;
 
   function ClipboardManager(info) {
@@ -24,7 +24,7 @@ export function defineClipboardManager(host) {
       this.app.workspace.trigger("editor-paste", event, editor, this.info);
     }
     if (event.defaultPrevented) return true;
-    if (event.clipboardData.getData("basalt/properties") && this.info instanceof MarkdownView) {
+    if (event.clipboardData.getData("basalt/properties") && this.info instanceof host.MarkdownView) {
       this.info.handlePaste(event);
     }
     return false;
@@ -63,7 +63,7 @@ export function defineClipboardManager(host) {
     let result = null;
     const draggable = app.dragManager.draggable;
     if (draggable) {
-      if (info instanceof MarkdownView && (Platform.isMacOS ? event.shiftKey : event.altKey)) {
+      if (info instanceof host.MarkdownView && (Platform.isMacOS ? event.shiftKey : event.altKey)) {
         event.preventDefault();
         info.handleDrop(event, draggable, false);
         return true;
@@ -78,7 +78,7 @@ export function defineClipboardManager(host) {
       if (!result) result = this.handleDropIntoEditor(event);
     }
     const cm = this.info.editor.activeCM;
-    cm.dispatch({ selection: cmSelection.single(cm.posAtCoords({ x: event.clientX, y: event.clientY })) });
+    cm.dispatch({ selection: host.cmSelection.single(cm.posAtCoords({ x: event.clientX, y: event.clientY })) });
     if (typeof result === "string") {
       cm.dispatch(cm.state.replaceSelection(result));
       cm.focus();

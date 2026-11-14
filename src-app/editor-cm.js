@@ -13,7 +13,7 @@ export function defineCodeMirrorEditor(host) {
     cmPosToOffset, cmOffsetToPos, cmRefreshEffect, cmIndentUnit, cmEditorField, cmOwnerField,
     livePreviewField, fieldSetEffect, notSetUserEvent, inputEditUserEvent,
     cmFoldedRanges, cmFoldableRange, cmFoldCheck, cmFoldEffect, cmUnfoldEffect,
-    cmKeymapFacet, cmFormatQuery, Menu, Notice, Keymap, MarkdownView, TableCellEditor,
+    cmKeymapFacet, cmFormatQuery, Menu, Notice, Keymap,
     electronMenuInfo, formattingMenu, pointerEntered, treeToHtml, markdownTree,
     shiftPos, truncateText, isUrl, isPlainUrl, setUriList, clipboardFiles, htmlCommentPrefix,
     bracketOpenInput, bracketField, bracketKeys, closeBracketInput,
@@ -299,7 +299,7 @@ export function defineCodeMirrorEditor(host) {
         },
         blur: () => {
           if (Platform.isMobile) self.app.mobileToolbar.update();
-          if (self.owner instanceof MarkdownView) self.owner.saveImmediately();
+          if (self.owner instanceof host.MarkdownView) self.owner.saveImmediately();
           self.editorSuggest.close();
         },
       }));
@@ -936,7 +936,7 @@ export function defineCodeMirrorEditor(host) {
       const cm = this.cm;
       if (table === current?.table && cell === current?.cell) return current;
       const wrapper = createDiv("table-cell-wrapper");
-      const component = this.tableCell = this.addChild(new TableCellEditor(this, wrapper, table, cell));
+      const component = this.tableCell = this.addChild(new host.TableCellEditor(this, wrapper, table, cell));
       cm.observer.ignore(() => {
         cell.lockDimensions();
         cell.contentEl?.hide();

@@ -696,6 +696,16 @@
    "orig": "eO",
    "use": "propertiesPlugin",
    "host": true
+  },
+  {
+   "orig": "T6",
+   "use": "livePreviewDecorations",
+   "host": true
+  },
+  {
+   "orig": "O6",
+   "use": "livePreviewPlugin",
+   "host": true
   }
  ],
  "classes": [
@@ -1354,7 +1364,40 @@
   "stripExtBase": "ou",
   "escapePathChars": "eE",
   "htmlToMarkdown": "yP",
-  "base64ToBuffer": "Cf"
+  "base64ToBuffer": "Cf",
+  "cmViewPlugin": "ji",
+  "cmStateField": "ke",
+  "mobileCursorPlugin": "K2",
+  "mobileCursorEffect": "G2",
+  "mobileCursorAnnotation": "AA",
+  "livePreviewThemeA": "L6",
+  "livePreviewThemeB": "I6",
+  "mobileDragExtensions": "A6",
+  "propertiesLivePreview": "P6",
+  "tableSyncExtension": "wq",
+  "tableWidget": "bq",
+  "livePreviewLinkWidget": "m6",
+  "livePreviewCalloutWidget": "y6",
+  "livePreviewMathWidget": "b6",
+  "livePreviewImageWidget": "f6",
+  "livePreviewHtmlWidget": "k6",
+  "livePreviewHrWidget": "o6",
+  "livePreviewCodeblockWidget": "v6",
+  "livePreviewCodeFallbackWidget": "u6",
+  "livePreviewUnresolvedMark": "t6",
+  "livePreviewAndroidWidget": "E6",
+  "livePreviewCodeblockHide": "X2",
+  "livePreviewCodeblockShow": "Z2",
+  "livePreviewTagBlocklist": "w6",
+  "livePreviewSyntaxClasses": "Zd",
+  "listLinePattern": "aP",
+  "codeblockLangPattern": "Q2",
+  "combineExtensions": "k",
+  "keyModifiers": "Bg",
+  "codeMirrorCompat": "window.CodeMirror",
+  "ensureSyntaxViewport": "np",
+  "isKnownHtmlTag": "eg",
+  "stripLinkSubpath": "ET"
  },
  "declarators": [
   {
