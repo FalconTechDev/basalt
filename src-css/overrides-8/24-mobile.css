@@ -1,12 +1,12 @@
 /* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* is-phone */
+/* ---------- misc mobile hides ---------- */
+
 .is-phone .canvas-card-menu,
 .mod-toolbar-open .canvas-card-menu {
   display: none;
 }
 
-/* mobile-onboarding */
 .mobile-onboarding .back-button.mobile-tap {
   opacity: 0.5;
 }
@@ -21,12 +21,20 @@
   font-size: var(--font-ui-smaller);
 }
 
-/* is-tablet */
 .is-tablet .mod-left-split-toggle {
   display: none;
 }
 
-/* is-phone */
+.is-mobile .status-bar {
+  display: none;
+}
+
+.is-phone .side-dock-ribbon {
+  display: none;
+}
+
+/* ---------- view header ---------- */
+
 .is-phone.is-hidden-nav .view-header {
   --hidden-nav-offset: calc(var(--view-header-height) + var(--view-header-top-offset));
   opacity: 0;
@@ -52,17 +60,18 @@
   font-weight: var(--setting-group-heading-weight);
 }
 
-/* is-mobile */
-.is-mobile .status-bar {
-  display: none;
+.is-phone .modal-title {
+  display: block;
+  overflow: hidden;
+  max-width: 70vw;
+  font-size: var(--font-ui-medium);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* is-phone */
-.is-phone .side-dock-ribbon {
-  display: none;
-}
+/* ---------- image viewer ---------- */
 
-/* mobile-image */
 .mobile-image-viewer {
   position: absolute;
   top: 0;
@@ -76,18 +85,8 @@
   background-color: var(--background-modifier-cover);
 }
 
-/* is-phone */
-.is-phone .modal-title {
-  display: block;
-  overflow: hidden;
-  max-width: 70vw;
-  font-size: var(--font-ui-medium);
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+/* ---------- mobile navbar ---------- */
 
-/* mobile-navbar */
 .mobile-navbar {
   position: var(--navbar-position);
   bottom: 0;
@@ -144,7 +143,8 @@
   }
 }
 
-/* mobile-toolbar */
+/* ---------- mobile toolbar (keyboard accessory bar) ---------- */
+
 .mobile-toolbar {
   flex: 0 0 auto;
   position: absolute;
@@ -209,7 +209,8 @@
   color: var(--text-normal);
 }
 
-/* mobile-tab */
+/* ---------- tab switcher overlay ---------- */
+
 .mobile-tab-switcher {
   position: absolute;
   display: flex;
@@ -309,12 +310,12 @@
   pointer-events: none;
 }
 
-/* is-mobile */
+/* ---------- file tree / vault chooser ---------- */
+
 .is-mobile .file-tree .tree-item-self {
   font-size: var(--font-ui-small);
 }
 
-/* mobile-vault */
 .mobile-vault-chooser {
   position: relative;
   width: 100%;

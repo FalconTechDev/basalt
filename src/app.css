@@ -16162,6 +16162,12 @@ body.is-mobile .app-container{
 .is-tablet .mod-left-split-toggle{
     display:none
 }
+.is-mobile .status-bar{
+    display:none
+}
+.is-phone .side-dock-ribbon{
+    display:none
+}
 .is-phone.is-hidden-nav .view-header{
     --hidden-nav-offset:calc(var(--view-header-height) + var(--view-header-top-offset));
     opacity:0;
@@ -16183,11 +16189,14 @@ body.is-mobile .app-container{
     font-size:var(--setting-group-heading-size);
     font-weight:var(--setting-group-heading-weight)
 }
-.is-mobile .status-bar{
-    display:none
-}
-.is-phone .side-dock-ribbon{
-    display:none
+.is-phone .modal-title{
+    display:block;
+    overflow:hidden;
+    max-width:70vw;
+    font-size:var(--font-ui-medium);
+    text-align:center;
+    text-overflow:ellipsis;
+    white-space:nowrap
 }
 .mobile-image-viewer{
     position:absolute;
@@ -16200,15 +16209,6 @@ body.is-mobile .app-container{
     height:100%;
     width:100%;
     background-color:var(--background-modifier-cover)
-}
-.is-phone .modal-title{
-    display:block;
-    overflow:hidden;
-    max-width:70vw;
-    font-size:var(--font-ui-medium);
-    text-align:center;
-    text-overflow:ellipsis;
-    white-space:nowrap
 }
 .mobile-navbar{
     position:var(--navbar-position);
