@@ -1437,6 +1437,42 @@
   {
    "orig": "bb",
    "use": "defineRunnable"
+  },
+  {
+   "orig": "Y0",
+   "use": "defineInstanceSettingTab"
+  },
+  {
+   "orig": "U2",
+   "use": "defineQuickSwitcherModalBase"
+  },
+  {
+   "orig": "y9",
+   "use": "defineQuickSwitcherModal"
+  },
+  {
+   "orig": "b9",
+   "use": "defineQuickSwitcherSettingTab"
+  },
+  {
+   "orig": "g9",
+   "use": "defineQuickSwitcherPlugin"
+  },
+  {
+   "orig": "l8",
+   "use": "defineCommandPaletteSuggest"
+  },
+  {
+   "orig": "u8",
+   "use": "defineCommandPalettePlugin"
+  },
+  {
+   "orig": "h8",
+   "use": "defineCommandPaletteModal"
+  },
+  {
+   "orig": "p8",
+   "use": "defineCommandPaletteSettingTab"
   }
  ],
  "host": {
@@ -1584,7 +1620,8 @@
   "SearchableExtensions": "Gy",
   "SearchOperators": "RH",
   "GraphView": "kJ",
-  "WebViewerView": "P2"
+  "WebViewerView": "P2",
+  "PluginInstanceSettingTab": "Y0"
  },
  "declarators": [
   {

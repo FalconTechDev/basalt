@@ -544,3 +544,15 @@ export function definePluginSettingTab(host) {
   }
   return inherit(PluginSettingTab, host.SettingTab);
 }
+
+export function defineInstanceSettingTab(host) {
+  /** Settings tab of an internal plugin: named after the plugin instance (`plugin.instance`), not a manifest. */
+  function InstanceSettingTab(app, plugin) {
+    const self = host.SettingTab.call(this, app, app.setting) || this;
+    self.plugin = plugin;
+    self.name = plugin.instance.name;
+    self.id = plugin.instance.id;
+    return self;
+  }
+  return inherit(InstanceSettingTab, host.SettingTab);
+}
