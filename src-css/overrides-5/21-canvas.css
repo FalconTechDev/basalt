@@ -1,6 +1,6 @@
 /* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* canvas-selection */
+/* group selection, card menu divider, control items, resizers in all directions */
 .canvas-selection.mod-group-selection {
   border-width: 3px;
   border-radius: 3px;
@@ -9,13 +9,11 @@
   pointer-events: initial;
 }
 
-/* canvas-card */
 .canvas-card-menu .canvas-card-menu-divider {
   width: 1px;
   background-color: var(--background-modifier-border);
 }
 
-/* canvas-control */
 .canvas-control-item:last-child {
   border-bottom: none;
 }
@@ -32,7 +30,6 @@
 }
 
 @media (hover: hover) {
-  /* canvas-node */
   .canvas-node-label:hover {
     color: var(--text-muted);
   }
@@ -42,7 +39,6 @@
   pointer-events: initial;
 }
 
-/* canvas-group */
 .canvas-group-label[contenteditable="true"] {
   box-shadow: 0 0 0 2px rgb(var(--canvas-color));
   color: var(--text-normal);
@@ -51,7 +47,6 @@
   background-color: var(--background-primary);
 }
 
-/* canvas-node */
 .canvas-node-resizer[data-resize='top'] {
   left: 0;
   right: 0;
@@ -108,7 +103,6 @@
   cursor: nesw-resize;
 }
 
-/* inline-embed */
 .inline-embed > .canvas-minimap {
   max-height: var(--embed-canvas-max-height);
 }

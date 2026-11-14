@@ -1,6 +1,6 @@
 /* base (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* message */
+/* message variants, pill/follow-link/password/search hover states, reveal checkbox */
 .message.mod-success {
   color: var(--text-on-accent);
   background-color: var(--background-modifier-success);
@@ -16,7 +16,6 @@
 }
 
 @media (hover: hover) {
-  /* multi-select */
   .multi-select-pill:hover {
     border: var(--pill-border-width) solid var(--pill-border-color-hover);
     color: var(--pill-color-hover);
@@ -24,23 +23,19 @@
     background-color: var(--pill-background-hover);
   }
 
-  /* follow-link */
   .follow-link-popover:hover {
     background-color: #000000;
   }
 
-  /* password-item */
   .password-item:hover {
     background-color: var(--background-primary);
   }
 
-  /* search-suggest */
   .search-suggest-icon:hover {
     background-color: var(--background-modifier-hover);
   }
 }
 
-/* reveal */
 .reveal input[type='checkbox'] {
   width: 24px;
   height: 24px;

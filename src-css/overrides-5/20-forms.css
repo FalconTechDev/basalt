@@ -1,5 +1,6 @@
 /* forms (late): rules of this component that have to stay after rules of components further down the build order. */
 
+/* radio/checkbox hover, focus ring and checked states */
 input[type="radio"]:hover,
 input[type=checkbox]:hover,
 input[type="radio"]:active,

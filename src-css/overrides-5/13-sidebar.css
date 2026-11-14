@@ -1,6 +1,6 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* tree-item */
+/* tree item states, folder drag-over, search input and result hover */
 .tree-item-self.is-cut {
   opacity: 0.5;
 }
@@ -20,7 +20,6 @@
   white-space: normal;
 }
 
-/* is-grabbing */
 body:not(.is-grabbing) .tree-item-self.is-active:hover,
 .tree-item-self.is-active {
   color: var(--nav-item-color-active);
@@ -40,7 +39,6 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover,
   background-color: var(--interactive-accent);
 }
 
-/* tree-item */
 .tree-item-self .tree-item-icon {
   position: absolute;
   display: flex;
@@ -53,13 +51,11 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover,
   opacity: var(--icon-opacity);
 }
 
-/* nav-folder */
 .nav-folder.is-being-dragged-over {
   border-radius: var(--radius-s);
   background: hsla(var(--interactive-accent-hsl), 0.1);
 }
 
-/* file-tree */
 .file-tree .tree-item-inner {
   display: flex;
   align-items: center;
@@ -67,7 +63,6 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover,
   width: 100%;
 }
 
-/* search-input */
 .search-input-container input {
   display: block;
   width: 100%;
@@ -75,7 +70,6 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover,
 }
 
 @media (hover: hover) {
-  /* search-result */
   .search-result-hover-button:hover {
     opacity: 1;
     background-color: var(--background-modifier-hover);

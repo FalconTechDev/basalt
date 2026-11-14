@@ -1,6 +1,6 @@
 /* menus (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* menu-item */
+/* label and disabled menu items, submenu icon colour */
 .menu-item.is-label {
   overflow-wrap: anywhere;
   font-size: var(--font-ui-medium);

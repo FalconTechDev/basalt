@@ -1,22 +1,19 @@
 /* preview (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* callout-content */
+/* callouts, embed links, metadata rows, footnotes */
 .callout-content .callout {
   margin-top: 20px;
 }
 
-/* callout-icon */
 .callout-icon .svg-icon {
   color: rgb(var(--callout-color));
 }
 
-/* callout-fold */
 .callout-fold .svg-icon {
   transition: transform 100ms ease-in-out;
 }
 
 @media (hover: hover) {
-  /* markdown-embed */
   .markdown-embed-link:hover,
   .file-embed-link:hover {
     color: var(--icon-color-hover);
@@ -25,7 +22,6 @@
   }
 }
 
-/* inline-embed */
 .inline-embed > .markdown-embed-content {
   overflow: auto;
   height: fit-content;
@@ -33,14 +29,12 @@
 }
 
 @media (hover: hover) {
-  /* footnote-backref */
   .footnote-backref:hover {
     color: var(--text-accent);
     text-decoration: none;
   }
 }
 
-/* metadata-container */
 .metadata-container .metadata-show-source-button,
 .metadata-container .metadata-add-button {
   padding-inline-start: var(--size-2-3);
@@ -49,13 +43,11 @@
   font-family: var(--metadata-label-font);
 }
 
-/* metadata-input */
 .metadata-input-text.mod-date {
   padding-inline-end: 0;
   width: auto;
 }
 
-/* metadata-property */
 .metadata-property-icon[aria-disabled='true'] {
   color: var(--text-muted);
   opacity: 0.4;
@@ -99,20 +91,17 @@ input.metadata-property-key-input:focus {
 }
 
 @media (hover: hover) {
-  /* metadata-link */
   .metadata-link-inner:hover {
     text-decoration-line: var(--link-decoration-hover);
     color: var(--link-color-hover);
   }
 
-  /* external-link */
   .external-link:hover {
     color: var(--link-external-color-hover);
     text-decoration-line: var(--link-external-decoration-hover);
   }
 }
 
-/* metadata-property */
 .metadata-property-value .internal-link,
 .markdown-rendered .internal-link {
   --font-weight: var(--link-weight);
@@ -129,7 +118,6 @@ input.metadata-property-key-input:focus {
   }
 }
 
-/* footnotes-view */
 .footnotes-view .footnote-id {
   color: var(--footnote-id-color);
   font-size: var(--footnote-size);
