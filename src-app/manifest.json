@@ -918,6 +918,54 @@
     {
       "orig": "Yl",
       "use": "definePlatform"
+    },
+    {
+      "orig": "nb",
+      "use": "defineButtonModal"
+    },
+    {
+      "orig": "W1",
+      "use": "defineCallout"
+    },
+    {
+      "orig": "Q1",
+      "use": "defineSecretChooser"
+    },
+    {
+      "orig": "Y1",
+      "use": "defineSecretEditModal"
+    },
+    {
+      "orig": "X1",
+      "use": "defineEncryptionInfoModal"
+    },
+    {
+      "orig": "$1",
+      "use": "defineSecretPickerModal"
+    },
+    {
+      "orig": "Z1",
+      "use": "defineSecretComponent"
+    },
+    {
+      "orig": "K1",
+      "use": "defineKeychainTab"
+    },
+    {
+      "orig": "i0",
+      "use": "defineSecretStorageBase"
+    },
+    {
+      "orig": "r0",
+      "use": "defineDesktopSecretStore"
+    },
+    {
+      "orig": "o0",
+      "use": "defineMobileSecretStore"
+    },
+    {
+      "orig": "a0",
+      "use": "defineSecretStorage"
     }
   ],
   "host": {
@@ -1054,7 +1102,21 @@
     "isMacOS": "jl",
     "isWindows": "Ul",
     "isLinux": "Wl",
-    "isSafari": "_l"
+    "isSafari": "_l",
+    "ButtonModal": "nb",
+    "Callout": "W1",
+    "SecretChooser": "Q1",
+    "SecretEditModal": "Y1",
+    "EncryptionInfoModal": "X1",
+    "SecretPickerModal": "$1",
+    "SecretComponent": "Z1",
+    "KeychainTab": "K1",
+    "SecretStorageBase": "i0",
+    "DesktopSecretStore": "r0",
+    "MobileSecretStore": "o0",
+    "SecretStorage": "a0",
+    "keychainI18n": "gm.setting.keychain",
+    "secureStoreNative": "U1"
   },
   "declarators": [
     {
