@@ -251,6 +251,7 @@ export function defineButtonModal(host) {
   proto.onClose = function () {
     host.hideTooltip();
   };
+  bookmarks.ButtonModal = ButtonModal;
   return ButtonModal;
 }
 
@@ -1233,7 +1234,8 @@ export function defineBookmarksPlugin(host) {
           let target = existing;
           if (!target) target = viewToBookmarkItem(leaf);
           if (target) new bookmarks.BookmarkEditModal(self, target, exists).open();
-        }).addClass("mod-bookmark");
+        });
+        action.addClass("mod-bookmark");
         self.bookmarkedViews.set(view, action);
       }
       action.toggleClass(["mod-bookmarked", "mod-filled"], !!item);
