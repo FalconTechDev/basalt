@@ -764,6 +764,66 @@
    "orig": "QL",
    "use": "collapsibleTreeItem",
    "originalBytes": 1246
+  },
+  {
+   "orig": "CH",
+   "use": "tokenizeQuery",
+   "originalBytes": 1416
+  },
+  {
+   "orig": "bH",
+   "use": "parsePrimary",
+   "originalBytes": 2174
+  },
+  {
+   "orig": "yH",
+   "use": "parseAndSequence",
+   "originalBytes": 139
+  },
+  {
+   "orig": "gH",
+   "use": "parseOrExpression",
+   "originalBytes": 283
+  },
+  {
+   "orig": "vH",
+   "use": "buildMatcher",
+   "originalBytes": 74
+  },
+  {
+   "orig": "kH",
+   "use": "checkToken",
+   "originalBytes": 86
+  },
+  {
+   "orig": "wH",
+   "use": "tokenEnd",
+   "originalBytes": 91
+  },
+  {
+   "orig": "oc",
+   "use": "escapeRegExp",
+   "originalBytes": 43
+  },
+  {
+   "orig": "rH",
+   "use": "cachedRegExp",
+   "originalBytes": 116
+  },
+  {
+   "orig": "oH",
+   "use": "regexMatchRanges",
+   "originalBytes": 256
+  },
+  {
+   "orig": "$V",
+   "use": "mergeMatchResults",
+   "originalBytes": 215
+  },
+  {
+   "orig": "Yy",
+   "use": "extensionWithoutContent",
+   "originalBytes": 37
   }
  ],
  "classes": [
@@ -1048,6 +1108,131 @@
    "orig": "R6",
    "use": "defineViewHeader",
    "originalBytes": 874
+  },
+  {
+   "orig": "ZV",
+   "use": "defineSearchMatcherBase",
+   "originalBytes": 318
+  },
+  {
+   "orig": "JV",
+   "use": "defineBooleanMatcher",
+   "originalBytes": 495
+  },
+  {
+   "orig": "eH",
+   "use": "defineEmptyMatcher",
+   "originalBytes": 303
+  },
+  {
+   "orig": "aH",
+   "use": "defineRegexMatcher",
+   "originalBytes": 488
+  },
+  {
+   "orig": "sH",
+   "use": "definePropertyMatcher",
+   "originalBytes": 1232
+  },
+  {
+   "orig": "lH",
+   "use": "defineQuotedTextMatcher",
+   "originalBytes": 694
+  },
+  {
+   "orig": "cH",
+   "use": "defineTextMatcher",
+   "originalBytes": 345
+  },
+  {
+   "orig": "uH",
+   "use": "defineMultiMatcher",
+   "originalBytes": 476
+  },
+  {
+   "orig": "hH",
+   "use": "defineAndGroup",
+   "originalBytes": 319
+  },
+  {
+   "orig": "pH",
+   "use": "defineOrGroup",
+   "originalBytes": 307
+  },
+  {
+   "orig": "dH",
+   "use": "defineWrappedMatcher",
+   "originalBytes": 312
+  },
+  {
+   "orig": "fH",
+   "use": "defineCompareMatcher",
+   "originalBytes": 650
+  },
+  {
+   "orig": "mH",
+   "use": "defineNotMatcher",
+   "originalBytes": 256
+  },
+  {
+   "orig": "EH",
+   "use": "defineCaseMatcher",
+   "originalBytes": 351
+  },
+  {
+   "orig": "SH",
+   "use": "definePathMatcher",
+   "originalBytes": 340
+  },
+  {
+   "orig": "xH",
+   "use": "defineFileMatcher",
+   "originalBytes": 356
+  },
+  {
+   "orig": "TH",
+   "use": "defineContentMatcher",
+   "originalBytes": 363
+  },
+  {
+   "orig": "DH",
+   "use": "defineSplitContentMatcher",
+   "originalBytes": 439
+  },
+  {
+   "orig": "AH",
+   "use": "defineLineMatcher",
+   "originalBytes": 452
+  },
+  {
+   "orig": "PH",
+   "use": "defineBlockMatcher",
+   "originalBytes": 695
+  },
+  {
+   "orig": "OH",
+   "use": "defineSectionMatcher",
+   "originalBytes": 1107
+  },
+  {
+   "orig": "FH",
+   "use": "defineTaskMatcher",
+   "originalBytes": 789
+  },
+  {
+   "orig": "NH",
+   "use": "defineTagMatcher",
+   "originalBytes": 978
+  },
+  {
+   "orig": "YV",
+   "use": "defineSearchTarget",
+   "originalBytes": 732
+  },
+  {
+   "orig": "BH",
+   "use": "defineSearchQuery",
+   "originalBytes": 1725
   }
  ],
  "host": {
@@ -1190,7 +1375,10 @@
   "TreeRoot": "s2",
   "InfinityScroll": "tz",
   "Tree": "l2",
-  "ViewHeader": "R6"
+  "ViewHeader": "R6",
+  "WordCharSource": "WV",
+  "SearchableExtensions": "Gy",
+  "SearchOperators": "RH"
  },
  "declarators": [
   {
@@ -1234,6 +1422,24 @@
    "expr": "__basaltOwn.walkTreeAll",
    "sha1": "9abe299f3b1e24c01475f20b716ccb41ecd2b78a",
    "originalBytes": 136
+  },
+  {
+   "orig": "iH",
+   "expr": "__basaltOwn.resetRegexCaches",
+   "sha1": "9ba6b43d41b00bb083f23c7bba0326a9b897dd0b",
+   "originalBytes": 36
+  },
+  {
+   "orig": "RH",
+   "expr": "__basaltOwn.defineSearchOperators(__basaltHost)",
+   "sha1": "e434bc6d9e17891a5ee235533a0fb8953d54f6d3",
+   "originalBytes": 825
+  },
+  {
+   "orig": "GV",
+   "expr": "__basaltOwn.wholeWordPattern",
+   "sha1": "547fbb074252747b1f93c3bfcf7218f10903ae61",
+   "originalBytes": 197
   }
  ],
  "methods": [
