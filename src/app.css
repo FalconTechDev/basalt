@@ -15247,7 +15247,22 @@ input[type="radio"]:checked{
     color:var(--graph-node-unresolved);
     opacity:0.5
 }
-.graph-view.color-fill-1,.graph-view.color-fill-2,.graph-view.color-fill-3,.graph-view.color-fill-4,.graph-view.color-fill-5,.graph-view.color-fill-6{
+.graph-view.color-fill-1{
+    color:var(--text-muted)
+}
+.graph-view.color-fill-2{
+    color:var(--text-muted)
+}
+.graph-view.color-fill-3{
+    color:var(--text-muted)
+}
+.graph-view.color-fill-4{
+    color:var(--text-muted)
+}
+.graph-view.color-fill-5{
+    color:var(--text-muted)
+}
+.graph-view.color-fill-6{
     color:var(--text-muted)
 }
 .graph-view.color-arrow{
