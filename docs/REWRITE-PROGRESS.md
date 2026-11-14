@@ -108,22 +108,33 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
 * `src-css/` cleanup so far: collapsed dead `csstools-*` light/dark fallback scaffolding, removed the
   `.card` / `node-insert-event` / `setting-text` rules and platform classes (`is-ios`, `is-android`)
   the desktop runtime never applies, then ran `tools/css-drop-dead.mjs` — a postcss codemod that removes
-  selectors positively requiring classes no shipped source emits (68 selectors, ~11 KB minified).
+  selectors positively requiring classes no shipped source emits (68 selectors, ~11 KB minified),
+  `tools/css-drop-orphan-comments.mjs` for the section comments they orphaned, and
+  `tools/css-unused-vars.mjs` to audit custom properties (78 defined-but-unreferenced tokens were left
+  in place — they are theme/plugin API surface, not dead rules).
   Class names inside `:not()` are kept (they do not gate matching); plugin/mobile-facing classes were
   checked against `src/app.js` before removal and retained where referenced.
-* Verify: `node build-css.mjs` (180 files, ~596 KB source -> ~550 KB `src/app.css`),
-  `node tools/css-compare.mjs --port 9700 --old <prev app.css> --new src/app.css`.
-  Dead-rule removal is provably style-neutral; remaining diffs in the compare output are runtime state
-  noise (active tab, recent-vault timing), same instability class seen in old-vs-old passes.
+* Verify: `node build-css.mjs` (179 files, ~596 KB source -> ~550 KB `src/app.css`).
+  `tools/css-compare.mjs --old <base app.css> --new <new app.css>` desktop run, all 20 scene/theme
+  pairs: **0 real computed-style diffs, 0 missing/extra elements, 0 var diffs**; pixel diffs match the
+  old-vs-old noise floor (worst case command-palette 200px in a 5x25 box at the window edge — transient).
+  `context-menu` scene errors in setup (`.nav-file-title` absent) on both stylesheets — harness issue.
+  `tools/app-smoke.mjs`: core flows pass (text file, settings dialog, command palette, splits,
+  pop-out window, title bar, file create/rename/delete). Pre-existing failures also seen with the
+  inherited stylesheet: markdown note opens as empty view, canvas renders 0 nodes, phrase search 0 hits
+  — app-layer issues, not CSS. `--mobile` css-compare runs crashed the isolated app twice at pass 2
+  (devtools endpoint dies; reproducible harness/runtime issue, not a diff result).
+* Fonts verified loading through the `app://` protocol (FontFace API OK; `document.fonts` load()
+  errors were an artifact of a crashed compare leaving the OLD sheet, which references deleted hashed
+  fonts — always rebuild `src/app.css` after a crashed compare run).
 
 ### Still open in this area
 
-* Hand-rewrite of remaining `src-css/` rule bodies per component (today they are regenerated
-  declarations); the dead scaffolding is gone but bodies still carry inherited declaration text.
-* Full `css-compare` matrix after the final rewrite: desktop + 375px mobile + pop-out, light + dark
-  (partially run; preview scenes showed pre-existing noise).
-* `tools/app-smoke.mjs` run against the final CSS; `own-stats.mjs` numbers for this branch.
-* Decision pending: whether Comfortaa gets a CSS use or stays an available local asset.
+* `--mobile` (375px) css-compare pass — blocked by the runtime dying mid-run; needs a healthy runtime.
+* Hand-rewrite of remaining `src-css/` rule bodies per component: dead code is gone and files are
+  deminified/readable, but declaration values still mirror the inherited stylesheet (required for
+  behavior parity — css-compare is the guard).
+* Comfortaa was downloaded during the session but never wired in or committed — no action needed.
 
 ## Not done yet
 
