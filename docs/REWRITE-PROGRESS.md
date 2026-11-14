@@ -102,3 +102,42 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   other agent's branch), drag manager (`xP`), the markdown view and its siblings (`W6`, preview, properties, outline, backlinks,
   search UI, canvas glue), `Editor` wrapper (`cP`, `iZ`).
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
+
+---
+
+## Branch `rewrite-settings-sync` (worktree `basalt-wt-settings-sync`)
+
+Area: settings tabs, theme/plugin browsers, account/licence, sync/publish clients, update checker, branding audit.
+Numbers (`node tools/own-stats.mjs`, cumulative over all branches): **267.1 KB = 7.24 % of the bundle** replaced,
+own readable source 540.9 KB.
+
+### Replaced in this branch
+
+| module (src-app) | replaces |
+| --- | --- |
+| secrets.js | the whole keychain/secrets cluster: `SecretStorage` + desktop/mobile backends, secret chooser/edit/picker modals, encryption-info modal, `KeychainTab` (storage keys `secrets`, `secrets-encrypted`, `secrets-meta`, `secrets-encryption-warning-dismissed` unchanged) |
+| account.js | account/licence/vault/publish API client (`/login`, `/subscription/*`, `/vault*`, `/publish/*` — wire formats identical), `LoginModal`, `LicenseModal` (neutral Basalt branding, `https://github.com/FalconTechDev/basalt` links) |
+| about.js | About/general settings tab: version, update IPC flow (`update`, `check-update`, `disable-update`, `insider-build`, `cli`), language, help, account/licence buttons, advanced |
+| tab-hotkeys.js | hotkeys settings tab `C0`: search, shortcut/status filters, default vs user keys, conflicts, add/delete/restore/customize, `hotkeys.json` persistence |
+| tab-files.js | files-and-links tab `ute`: startup file, new-note/attachment locations, link format, wikilinks, trash, ignore-filters modal, custom config folder, URI callbacks |
+| tab-editor.js | editor tab `rte`: view/edit modes, readable line length, properties, folding, line numbers, spellcheck + dictionary modal, auto-pairing, tabs, HTML conversion, vim confirm flow |
+| tab-appearance.js | appearance tab `tte`: base theme, accent colour, theme/snippet managers, interface options, fonts, zoom, native menus, frame style, custom icon (png/ico/icns decode + trim), translucency, GPU toggle |
+| tab-plugins.js | core plugins tab `mte` |
+| tab-community.js | community plugins tab `ite` (restricted-mode flow, per-plugin settings/hotkeys/donate/uninstall) |
+| community.js | community modal base `y0` (search, sort, installed-only, detail pane, swipe nav, render queue), plugin browser `M0` (10k+ plugin feed, manifests, versions.json compat pick, install/update/enable/disable/uninstall, share link `basalt://show-plugin`), theme browser `D0` (1k+ theme feed, screenshots, install/use/update/uninstall), donate dialog `S0`. Feeds stay `obsidianmd/obsidian-releases` (required wire compat) |
+
+### Runtime-verified
+
+settings tabs (about, hotkeys, files, editor, appearance, core/community plugins) render localized rows with 0 exceptions;
+community plugin browser lists 10 375 plugins with working detail pane; theme browser lists 1 005 themes.
+`build-app.mjs --check` clean after every change.
+
+### Not done in this area
+
+* **Sync engine**: the account/vault/publish API client is own (`account.js`), but the inherited sync engine itself
+  (remote-vault chunk sync, vault crypto, `sync-setup` flow) is still inherited. Basalt's own `src/vault-sync.js`
+  (git sync) is separate and already own. Wire formats and crypto constants must be preserved when this is rewritten.
+* **Publish UI**: only the API client exists own; the publish site-management screens are still inherited (small surface,
+  ~8 call sites in the bundle).
+* Remaining inherited bits reachable through bindEnv: theme/font/ribbon dialogs (`A0`→now own `D0`, `ete`, `zee`),
+  markdown render pipeline for READMEs (`Zx`,`Kx`,`xL`,`eb`), HTTP layer `cy`.
