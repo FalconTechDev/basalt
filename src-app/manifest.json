@@ -1014,6 +1014,10 @@
   {
    "orig": "aZ",
    "use": "defineEditModeBase"
+  },
+  {
+   "orig": "j6",
+   "use": "defineMarkdownEditMode"
   }
  ],
  "host": {
@@ -1229,7 +1233,11 @@
   "cmFoldIndent": "A$",
   "cmFoldFrontmatter": "F$",
   "cmAutoPair": "DA",
-  "cmClearCacheEffect": "Tq"
+  "cmClearCacheEffect": "Tq",
+  "EditModeBase": "aZ",
+  "propertiesExtensionFactory": "nP",
+  "foldChangeEffect": "qp",
+  "propertiesChangeEffect": "jp"
  },
  "declarators": [
   {
