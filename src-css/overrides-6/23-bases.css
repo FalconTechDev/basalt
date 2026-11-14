@@ -1,12 +1,11 @@
 /* bases (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* bases-error */
+/* formula errors, embed content, toolbar menu, filter expression, card titles */
 .bases-error .formula-preview {
   padding: var(--size-4-2);
   background-color: var(--background-secondary);
 }
 
-/* bases-formula */
 .bases-formula-error .warning-icon {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
@@ -16,7 +15,6 @@
   color: rgba(var(--background-modifier-error-rgb), 0.6);
 }
 
-/* canvas-node */
 .canvas-node-content.bases-embed {
   display: flex;
   flex-direction: column;
@@ -26,7 +24,6 @@
   padding: 0;
 }
 
-/* bases-toolbar */
 .bases-toolbar-menu-container-header .menu-title,
 .bases-toolbar-menu-container-header .back-button {
   display: flex;
@@ -130,7 +127,6 @@
   color: var(--text-normal);
 }
 
-/* bases-query */
 .bases-query-container .filter-expression {
   --input-shadow: none;
   --icon-size: var(--icon-s);
@@ -145,7 +141,6 @@
   background-color: var(--interactive-normal);
 }
 
-/* bases-cards */
 .bases-cards-property.mod-title {
   --link-color: var(--text-normal);
   --link-unresolved-color: var(--text-normal);

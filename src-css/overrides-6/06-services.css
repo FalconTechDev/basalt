@@ -1,12 +1,11 @@
 /* services (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* file-recovery */
+/* recovery search, publish/sync status colours, webviewer controls */
 .file-recovery-list .search-input-container {
   width: 100%;
 }
 
 @media (hover: hover) {
-  /* publish-section */
   .publish-section-header-text:hover,
   .publish-section-header-toggle-collapsed-button:hover,
   .publish-section-header-action:hover {
@@ -14,7 +13,6 @@
   }
 }
 
-/* publish-upload */
 .publish-upload-item.mod-failed {
   color: var(--text-error);
 }
@@ -23,7 +21,6 @@
   color: var(--text-success);
 }
 
-/* sync-status */
 .sync-status-icon.mod-success {
   color: var(--text-success);
 }
@@ -36,26 +33,22 @@
   color: var(--text-error);
 }
 
-/* sync-exclude */
 .sync-exclude-folder > * {
   align-self: center;
   display: flex;
 }
 
-/* sync-modal */
 .sync-modal-header {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
 }
 
-/* webviewer-favicon */
 .webviewer-favicon-container {
   display: flex;
   align-items: center;
 }
 
-/* webviewer-address */
 .webviewer-address input {
   flex-grow: 1;
   min-width: 50px;

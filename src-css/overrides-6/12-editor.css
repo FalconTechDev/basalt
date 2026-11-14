@@ -1,12 +1,11 @@
 /* editor (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* cm-s */
+/* header typography tokens for levels 1-6, codeblock and frontmatter colours, table rows */
 .cm-s-basalt .HyperMD-codeblock-begin,
 .cm-s-basalt .HyperMD-codeblock-end {
   color: var(--code-normal);
 }
 
-/* cm-hmd */
 .cm-hmd-frontmatter .is-invalid {
   color: var(--text-error);
 }
@@ -16,7 +15,6 @@
   background-color: var(--text-error);
 }
 
-/* HyperMD-header */
 .HyperMD-header-1,
 .inline-title h1,
 .HyperMD-list-line .cm-header-1 {
@@ -101,7 +99,6 @@
   color: var(--h6-color);
 }
 
-/* cm-s */
 .cm-s-basalt .cm-formatting-list {
   color: var(--list-marker-color);
 }

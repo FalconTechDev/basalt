@@ -1,6 +1,6 @@
 /* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* is-mobile */
+/* keyboard-height aware app container, onboarding, option rows, phone modal */
 .is-mobile .canvas-node-resizer {
   pointer-events: none;
 }
@@ -9,7 +9,6 @@ body.is-mobile .app-container {
   max-height: calc(100vh - var(--keyboard-height));
 }
 
-/* mobile-onboarding */
 .mobile-onboarding .language-dropdown select {
   box-shadow: none;
   width: 100%;
@@ -20,12 +19,10 @@ body.is-mobile .app-container {
   font-size: var(--h1-size);
 }
 
-/* is-mobile */
 .is-mobile .form-field input {
   width: 100%;
 }
 
-/* mobile-option */
 .mobile-option-setting-item {
   display: flex;
   align-items: center;
@@ -45,17 +42,14 @@ body.is-mobile .app-container {
   cursor: var(--cursor);
 }
 
-/* is-phone */
 .is-phone .workspace-drawer-tab-select {
   order: 2;
 }
 
-/* is-mobile */
 .is-mobile input[type='text'] {
   width: 100%;
 }
 
-/* is-phone */
 .is-phone .modal,
 .is-phone .prompt {
   left: 0;
@@ -64,7 +58,6 @@ body.is-mobile .app-container {
   min-width: unset;
 }
 
-/* mobile-tab */
 .mobile-tab-switcher-menu-button {
   display: flex;
   align-items: center;
@@ -80,7 +73,6 @@ body.is-mobile .app-container {
   color: var(--text-faint);
 }
 
-/* mobile-vault */
 .mobile-vault-chooser-action {
   display: flex;
   align-items: center;

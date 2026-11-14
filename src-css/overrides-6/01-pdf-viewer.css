@@ -1,12 +1,11 @@
 /* pdf-viewer (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* theme-dark */
+/* dark-theme popup shadow, thumbnail sidebar, embed sizing, print layout */
 .theme-dark .pdf-container.mod-themed .popupWrapper > div {
   background-color: var(--background-secondary-alt);
   filter: drop-shadow(0px 0px 1px var(--color-base-60)) drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.4)) drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.4));
 }
 
-/* pdf-sidebar */
 .pdf-sidebar-container .pdf-thumbnail-view,
 .pdf-sidebar-container .pdf-outline-view {
   bottom: 0;
@@ -40,12 +39,10 @@
   box-sizing: content-box;
 }
 
-/* annotationLayer */
 .annotationLayer .boundingRect > * {
   pointer-events: initial;
 }
 
-/* pdf-embed */
 .pdf-embed,
 .markdown-source-view .pdf-embed,
 .markdown-source-view.mod-cm6 .cm-content > .pdf-embed,

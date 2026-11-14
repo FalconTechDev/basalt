@@ -1,13 +1,12 @@
 /* preview (late): rules of this component that have to stay after rules of components further down the build order. */
 
+/* metadata icon hover, list collapse/bullet offsets, task checkbox, backlinks margin */
 @media (hover: hover) {
-  /* metadata-property */
   .metadata-property-icon:hover .svg-icon {
     color: var(--icon-color-focused);
   }
 }
 
-/* markdown-rendered */
 .markdown-rendered .list-collapse-indicator {
   margin-inline-start: -2.65em;
   padding-inline-end: 2em;
@@ -18,7 +17,6 @@
   margin-inline-start: -0.8em;
 }
 
-/* markdown-preview */
 .markdown-preview-view .task-list-item-checkbox {
   position: relative;
   top: 0.2em;

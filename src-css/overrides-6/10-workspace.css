@@ -1,6 +1,6 @@
 /* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-drawer */
+/* drawer header layout, vault name chevron, tab select order */
 .workspace-drawer-header {
   align-items: center;
   display: flex;

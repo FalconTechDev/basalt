@@ -1,6 +1,6 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* search-input */
+/* search clear/suggest buttons, result info dropdown, tag pane, drawer input */
 .search-input-clear-button:hover,
 .search-input-clear-button:active {
   color: var(--text-normal);
@@ -12,7 +12,6 @@
     color: var(--text-muted);
   }
 
-  /* search-result */
   .search-result-file-match:hover {
     color: var(--text-normal);
     background-color: var(--text-selection);
@@ -23,7 +22,6 @@
   }
 }
 
-/* search-results */
 .search-results-info .dropdown {
   height: 24px;
   max-width: 60%;
@@ -36,19 +34,16 @@
   background-color: transparent;
 }
 
-/* recent-changes */
 .recent-changes-container .nav-folder-title {
   font-weight: var(--nav-heading-weight);
   color: var(--nav-heading-color);
 }
 
-/* tag-pane */
 .tag-pane-tag.is-active {
   color: var(--text-on-accent);
   background-color: var(--interactive-accent);
 }
 
-/* workspace-drawer */
 .workspace-drawer .search-input-container input {
   border-width: 0 0 var(--border-width) 0;
 }

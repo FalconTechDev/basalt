@@ -1,6 +1,6 @@
 /* base (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* file-embed */
+/* embed empty states, selection colour, upload progress, vault list */
 .file-embed.mod-generic,
 .file-embed.mod-empty {
   padding: var(--size-4-2);
@@ -17,31 +17,24 @@
   font-size: var(--font-smaller);
 }
 
-/* file-tree */
 .file-tree .is-selected {
   color: var(--text-normal);
 }
 
-/* upload-progress */
 .upload-progress-container.is-finished {
   max-height: calc(60vh - 200px);
 }
 
 @media (hover: hover) {
-  /* slides-close */
   .slides-close-btn:hover {
     color: var(--text-muted);
   }
 }
 
-/* vault-list */
 .vault-list-item-title.is-connected {
   color: var(--text-normal);
 }
 
-/* open-folder */
-
-/* pull-action */
 .pull-action.mod-activated {
   color: var(--text-accent);
 }
