@@ -535,3 +535,76 @@ export function livePreviewPlugin(component, view, host) {
     false
   );
 }
+
+// nP: properties-in-live-preview extension pair — a decoration field that
+// hides the frontmatter block (JA replace) or marks it invalid (ZA mark +
+// error badge), plus a transaction filter that keeps edits out of the
+// frontmatter region unless it currently has a YAML error.
+export function livePreviewProperties(component, view, host) {
+  const cm = component.cm;
+  let lastYaml = "", lastError = null;
+  const validate = (text) => {
+    if (text !== lastYaml) {
+      lastYaml = text;
+      try {
+        const parsed = host.parseYaml(text) ?? {};
+        if (typeof parsed !== "object" || Array.isArray(parsed)) {
+          throw new host.yamlParseError([0, 0], "BAD_COLLECTION_TYPE", "Frontmatter must be a valid object!");
+        }
+        lastError = null;
+      } catch (err) { lastError = err; }
+    }
+    return lastError;
+  };
+  const field = host.cmStateField.define({
+    create() { return host.cmDecoration.none; },
+    update(deco, update) {
+      const decos = [], doc = update.newDoc, end = docFrontmatterEnd(doc);
+      let hide = end !== -1 && "source" !== component.app.vault.getConfig("propertiesInDocument");
+      if (end !== -1) {
+        const err = validate(doc.sliceString(3, end - 3));
+        if (err) {
+          hide = false;
+          decos.push(host.livePreviewInvalidMark.range(0, end));
+          if (err instanceof host.yamlParseError) {
+            const pos = Math.clamp(err.pos[0] + 3, 4, end - 3);
+            decos.push(host.cmDecoration.mark({
+              class: "error-marker",
+              attributes: { "aria-label": host.t.properties.labelInvalidYamlMarker() }
+            }).range(pos, pos + 1));
+          }
+        }
+      }
+      if (hide) decos.push(host.livePreviewBlockReplace.range(0, end));
+      return host.cmDecoration.set(decos, true);
+    },
+    provide(f) { return host.cmView.decorations.from(f); }
+  });
+  const filter = host.cmState.transactionFilter.of((tr) => {
+    if (cm.composing || !host.notSetUserEvent(tr)) return tr;
+    if ("source" === component.app.vault.getConfig("propertiesInDocument")) return tr;
+    if (hasEffect([tr], host.metadataPropertyEffect)) {
+      cm.dom.win.setTimeout(() => component.app.commands.executeCommandById("markdown:add-metadata-property"), 30);
+      return tr;
+    }
+    const startDoc = tr.startState.doc, startEnd = docFrontmatterEnd(startDoc);
+    if (startEnd === -1) return tr;
+    if (validate(startDoc.sliceString(3, startEnd - 3))) return tr;
+    let extra, newDoc = tr.newDoc, newEnd = docFrontmatterEnd(newDoc), docLen = newDoc.length;
+    if (docLen === newEnd) { docLen++; extra = [{ insert: "\n", from: newEnd }]; }
+    const sel = tr.newSelection;
+    if (sel.ranges.some((r) => r.from <= startEnd || r.to <= startEnd)) {
+      let touched = false;
+      tr.changes.iterChangedRanges((a, b, c, d) => {
+        if (a >= 3 && b < startEnd - 1) touched = true;
+        if (c === d && b <= startEnd + 1) touched = true;
+      }, true);
+      if (touched) return [];
+      const clamp = (p) => Math.clamp(p, startEnd + 1, docLen);
+      const selection = host.cmSelection.create(sel.ranges.map((r) => host.cmSelection.range(clamp(r.anchor), clamp(r.head))), sel.mainIndex);
+      return [tr, { changes: extra, selection, sequential: true }];
+    }
+    return tr;
+  });
+  return [field, filter];
+}

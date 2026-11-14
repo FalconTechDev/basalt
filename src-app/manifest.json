@@ -706,6 +706,11 @@
    "orig": "O6",
    "use": "livePreviewPlugin",
    "host": true
+  },
+  {
+   "orig": "nP",
+   "use": "livePreviewProperties",
+   "host": true
   }
  ],
  "classes": [
@@ -1397,7 +1402,11 @@
   "codeMirrorCompat": "window.CodeMirror",
   "ensureSyntaxViewport": "np",
   "isKnownHtmlTag": "eg",
-  "stripLinkSubpath": "ET"
+  "stripLinkSubpath": "ET",
+  "yamlParseError": "IS",
+  "metadataPropertyEffect": "TA",
+  "livePreviewInvalidMark": "ZA",
+  "livePreviewBlockReplace": "JA"
  },
  "declarators": [
   {
