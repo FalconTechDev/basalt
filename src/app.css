@@ -3473,15 +3473,6 @@ body.styled-scrollbars .modal-close-button{
     --csstools-light-dark-toggle--23:var(--csstools-color-scheme--dark) #0060df;
     --focus-ring-color:var(--csstools-light-dark-toggle--23,#0df)
 }
-[data-main-rotation="90"]{
-    transform:rotate(90deg) translateY(-100%)
-}
-[data-main-rotation="180"]{
-    transform:rotate(180deg) translate(-100%,-100%)
-}
-[data-main-rotation="270"]{
-    transform:rotate(270deg) translateX(-100%)
-}
 .pdfPresentationMode .spread{
     margin:0
 }
@@ -3567,6 +3558,9 @@ body.is-frameless.in-progress{
     --titlebar-background:var(--background-primary);
     --titlebar-background-focused:var(--background-primary)
 }
+body.is-frameless.is-hidden-frameless:not(.in-progress){
+    padding-top:0!important
+}
 .loader-spinner{
     --icon-size:var(--icon-xl);
     --icon-stroke:var(--icon-l-stroke-width);
@@ -3606,9 +3600,6 @@ body.is-frameless.in-progress{
     top:50%;
     inset-inline-end:var(--input-icon-inset);
     transform:translateY(-50%)
-}
-body.is-frameless.is-hidden-frameless:not(.in-progress){
-    padding-top:0!important
 }
 .value-list-element{
     align-items:center
