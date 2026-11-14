@@ -1,11 +1,12 @@
-/* canvas: Canvas view: board, nodes, edges, toolbar and popups. */
+/* canvas: infinite canvas — nodes, edges, selection, controls, minimap */
 
-/* mod-rtl */
+/* ---------- wrapper states ---------- */
+
 .mod-rtl .canvas-card-menu {
   flex-direction: row-reverse;
 }
 
-/* canvas-wrapper */
+/* while dragging, embedded frames must not steal pointer events */
 .canvas-wrapper.is-dragging iframe:not(.is-controlled),
 .canvas-wrapper.is-dragging webview {
   pointer-events: none;
@@ -24,12 +25,12 @@
   pointer-events: none !important;
 }
 
-/* canvas-background */
+/* ---------- background & selection ---------- */
+
 .canvas-background circle {
   fill: var(--canvas-dot-pattern);
 }
 
-/* canvas-wrapper */
 .canvas-wrapper:not(.mod-readonly) .canvas-selection.mod-group-selection {
   cursor: grab;
 }
@@ -38,7 +39,8 @@
   cursor: grabbing;
 }
 
-/* canvas-controls */
+/* ---------- floating chrome (controls & card menu) ---------- */
+
 .canvas-controls,
 .canvas-card-menu {
   display: flex;
@@ -47,17 +49,14 @@
   font-size: var(--font-ui-medium);
 }
 
-/* canvas-card */
 .canvas-card-menu .canvas-card-menu-button svg {
   fill: var(--background-primary);
 }
 
-/* theme-dark */
 .theme-dark .canvas-card-menu .canvas-card-menu-button svg {
   fill: var(--background-secondary);
 }
 
-/* canvas-card */
 .canvas-card-menu .canvas-card-menu-button.mod-draggable:active {
   cursor: grabbing;
 }
@@ -73,7 +72,6 @@
   }
 }
 
-/* canvas-control */
 .canvas-control-item.is-disabled svg {
   color: var(--text-faint);
 }
@@ -82,7 +80,8 @@
   pointer-events: none;
 }
 
-/* canvas-wrapper */
+/* ---------- nodes ---------- */
+
 .canvas-wrapper:not(.mod-readonly) .canvas-node:not(.is-editing) .canvas-node-container {
   cursor: grab;
 }
@@ -91,12 +90,11 @@
   cursor: grabbing;
 }
 
-/* is-ios */
+/* labels glide to new positions while the canvas animates (non-iOS) */
 body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
   transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* canvas-node */
 .canvas-node-label svg {
   position: relative;
   top: 2px;
@@ -115,12 +113,12 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
   }
 }
 
-/* canvas-wrapper */
+/* zoomed-out view hides labels entirely */
 .canvas-wrapper.mod-zoomed-out .canvas-node-label {
   display: none;
 }
 
-/* canvas-node */
+/* placeholder cards tint their body with the node colour */
 .canvas-node-placeholder::after {
   display: block;
   position: absolute;
@@ -133,7 +131,6 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
   background-color: rgba(var(--canvas-color), 0.1);
 }
 
-/* canvas-icon */
 .canvas-icon-placeholder svg {
   width: 100%;
   height: 100%;
@@ -141,7 +138,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
   opacity: 0.3;
 }
 
-/* canvas-node */
+/* dragging lifts the card with the drag shadow */
 .canvas-node.is-dragging .canvas-node-container {
   box-shadow: var(--shadow-drag);
 }
@@ -162,6 +159,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
   box-shadow: var(--shadow-drag), var(--shadow-border-accent);
 }
 
+/* themed nodes take their colour for border and inset ring */
 .canvas-node.is-themed .canvas-node-container {
   border-color: rgba(var(--canvas-color), 0.7);
   box-shadow: inset 0 0 0 1px rgba(var(--canvas-color), 0.7), var(--shadow-stationary);
@@ -178,25 +176,26 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
   box-shadow: var(--shadow-border-themed-inset), var(--shadow-border-themed);
 }
 
+/* a focused node lets clicks through its content blocker */
 .canvas-node.is-focused:not(.is-dragging) .canvas-node-content-blocker {
   display: none;
 }
 
+/* unfocused groups don't intercept pointer events */
 .canvas-node-group:not(.is-focused):not(.is-selected) {
   pointer-events: none;
 }
 
-/* is-ios */
+/* ---------- group labels ---------- */
+
 body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* canvas-wrapper */
 .canvas-wrapper:not(.mod-readonly) .canvas-group-label:active {
   cursor: grabbing;
 }
 
-/* canvas-node */
 .canvas-node-group.is-themed .canvas-group-label:not([contenteditable="true"]) {
   background-color: rgb(var(--canvas-color));
 }
@@ -209,6 +208,8 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   color: var(--text-on-accent-inverted);
 }
 
+/* ---------- embedded content in nodes ---------- */
+
 .canvas-node-content.markdown-embed > .markdown-embed-link {
   display: none;
 }
@@ -219,13 +220,12 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   padding: 0 var(--size-4-4);
 }
 
-/* canvas-wrapper */
 .canvas-wrapper:not(.mod-readonly) .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view {
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* canvas-node */
+/* flexible spacers keep embed content vertically centred */
 .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view::before,
 .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view::after {
   display: block;
@@ -243,12 +243,12 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   mix-blend-mode: normal;
 }
 
-/* is-focused */
+/* focused embeds get their own layer to avoid blend artefacts */
 .is-focused .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view {
   transform: translateZ(0);
 }
 
-/* canvas-node */
+/* media fills the node */
 .canvas-node-content.media-embed img,
 .canvas-node-content.media-embed video,
 .canvas-node-content.media-embed audio {
@@ -256,12 +256,13 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   flex-grow: 1;
 }
 
-/* canvas-wrapper */
+/* readonly canvases hide resizers */
 .canvas-wrapper.mod-readonly .canvas-node-resizer {
   display: none;
 }
 
-/* canvas-node */
+/* ---------- connection points ---------- */
+
 .canvas-node-connection-point[data-side='top'] {
   top: 1px;
   left: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
@@ -282,6 +283,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   top: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
 }
 
+/* invisible until hovered; a zoom-scaled accent dot */
 .canvas-node-connection-point::after {
   display: block;
   position: relative;
@@ -297,7 +299,8 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   opacity: 0;
 }
 
-/* canvas-snaps */
+/* ---------- alignment snaps ---------- */
+
 .canvas-snaps line {
   stroke-width: 1px;
   stroke: var(--color-accent);
@@ -307,7 +310,9 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   fill: var(--color-accent);
 }
 
-/* canvas-edges */
+/* ---------- edges ---------- */
+
+/* visible stroke scales with zoom */
 .canvas-edges path.canvas-display-path {
   pointer-events: none;
   stroke-width: calc(2px * var(--zoom-multiplier));
@@ -316,6 +321,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   transition: stroke-width 100ms ease-out;
 }
 
+/* fat transparent stroke is the actual hit target */
 .canvas-edges path.canvas-interaction-path {
   pointer-events: stroke;
   stroke-width: calc(24px * var(--zoom-multiplier));
@@ -325,7 +331,6 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   transition: stroke 100ms ease-out;
 }
 
-/* canvas-wrapper */
 .canvas-wrapper:not(.mod-readonly) .canvas-edges path.canvas-interaction-path {
   cursor: grab;
 }
@@ -334,7 +339,6 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   cursor: grabbing;
 }
 
-/* canvas-edges */
 .canvas-edges polygon.canvas-path-end {
   pointer-events: none;
   stroke: rgb(var(--canvas-color));
@@ -347,6 +351,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   transform-origin: center top;
 }
 
+/* hovered/focused edges thicken */
 .canvas-edges g.is-focused path.canvas-display-path,
 .canvas:not(.is-connecting) .canvas-edges g:hover path.canvas-display-path {
   stroke-width: calc(5.5px * var(--zoom-multiplier));
@@ -358,25 +363,25 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
 }
 
 @media (hover: hover) {
-  /* canvas-color */
   .canvas-color-picker-item.canvas-color-picker-custom:not(.is-active):hover {
     box-shadow: 0 0 0 2px var(--background-modifier-border-hover);
   }
 }
 
-/* canvas-empty */
+/* ---------- empty state & instructions ---------- */
+
 .canvas-empty-embed-action-list button {
   padding: var(--size-4-5) var(--size-4-9);
   font-size: var(--font-text-size);
 }
 
-/* canvas-instruction */
 .canvas-instruction-desc {
   display: flex;
   gap: var(--size-4-1);
 }
 
-/* canvas-minimap */
+/* ---------- minimap ---------- */
+
 .canvas-minimap rect {
   stroke-width: 5px;
   stroke: var(--background-modifier-border);
