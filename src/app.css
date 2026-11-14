@@ -5485,11 +5485,7 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
     overflow:hidden;
     background-color:var(--interactive-accent)
 }
-.tooltip.mod-right{
-    animation:pop-right 200ms forwards ease-in-out;
-    transform:translateY(-50%)
-}
-.tooltip.mod-left{
+.tooltip.mod-right,.tooltip.mod-left{
     animation:pop-right 200ms forwards ease-in-out;
     transform:translateY(-50%)
 }
@@ -6579,6 +6575,12 @@ body.is-screenshotting .view-header{
 .graph-controls.is-close > .graph-control-section{
     display:none
 }
+.graph-controls:not(.is-close) .graph-controls-button.mod-close,.graph-controls:not(.is-close) .graph-controls-button.mod-reset{
+    display:flex
+}
+.graph-controls.is-close .graph-controls-button.mod-open,.graph-controls.is-close .graph-controls-button.mod-animate{
+    display:flex
+}
 .workspace-split:not(.mod-root) .graph-controls.is-close{
     background-color:var(--background-secondary)
 }
@@ -6589,7 +6591,7 @@ body.is-screenshotting .view-header{
 .graph-controls .setting-item:first-of-type{
     border-top:none
 }
-.graph-controls .setting-item.mod-slider .setting-item-info{
+.graph-controls .setting-item.mod-slider .setting-item-info,.graph-controls .setting-item.mod-search-setting .setting-item-info{
     margin-inline-end:0
 }
 .graph-controls .setting-item.mod-slider .setting-item-control{
@@ -6597,9 +6599,6 @@ body.is-screenshotting .view-header{
 }
 .graph-controls .setting-item.mod-toggle .setting-item-control{
     padding-top:0
-}
-.graph-controls .setting-item.mod-search-setting .setting-item-info{
-    margin-inline-end:0
 }
 .graph-controls .setting-item-name{
     font-size:var(--font-ui-small)
@@ -6617,15 +6616,6 @@ body.is-screenshotting .view-header{
 }
 .graph-control-section.mod-color-groups .tree-item-children.is-grabbing .graph-color-groups-container{
     padding-bottom:40px
-}
-.graph-controls:not(.is-close) .graph-controls-button.mod-close,.graph-controls:not(.is-close) .graph-controls-button.mod-reset{
-    display:flex
-}
-.graph-controls.is-close .graph-controls-button.mod-open{
-    display:flex
-}
-.graph-controls.is-close .graph-controls-button.mod-animate{
-    display:flex
 }
 .graph-control-section.mod-display .setting-item:not(.mod-slider):last-child .setting-item-info{
     display:none
