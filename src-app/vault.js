@@ -13,10 +13,7 @@ import { lastSegment, parentPath, isHiddenPath, baseName, withoutExtension, exte
 import { linkSafeHeading } from "./text.js";
 import { ownBuffer, statFromNode } from "./misc.js";
 
-let envThunk = () => ({});
-/** Gives the vault code access to the host's values; `thunk` is called on every use, so late-bound variables work. */
-export function bindEnv(thunk) { envThunk = thunk; }
-const vaultEnv = () => envThunk();
+const vaultEnv = env;
 
 const vaultHas = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 const CONTROL_CHARS = /[\x00-\x1F]/g;

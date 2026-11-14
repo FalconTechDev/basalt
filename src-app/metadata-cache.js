@@ -2,11 +2,12 @@
 // worker.js; results are cached in memory and persisted to IndexedDB ("<appId>-cache", v19).
 // Link resolution runs on a low-priority queue so typing stays responsive.
 import { debounceCall } from "./timing.js";
-import { lastSegment, parentPath, withoutExtension, extensionOf } from "./path.js";
+import { lastSegment, parentPath, withoutExtension, extensionOf, linkPath, dropMdSuffix } from "./path.js";
 import { isStringArray } from "./misc.js";
 import { frontmatterAliases } from "./frontmatter.js";
 import { inferPropertyWidget } from "./metadata-types.js";
 import { fileClass } from "./vault.js";
+import { SerialTaskQueue, RefMultimap, LinkQueue, BlockCache, batchedAsync, iterateIdbBatches, contentHash, collectTags, sharesLinkTarget, linkPosToPos, forEachLinkField, escapeRegExp, positionToArray, deserializeMetadata, anyMetadataRef, tagValid, applyLinkUpdates, isOutdatedMetadata } from "./metadata-helpers.js";
 import { inherit } from "./inherit.js";
 
 const CLEANUP_INTERVAL = 6e5; // orphaned metadata sweep, 10 min
@@ -39,8 +40,8 @@ export function defineMetadataCache(host) {
     this.db = null;
     this.fileCache = {};
     this.metadataCache = {};
-    this.workQueue = new host.SerialTaskQueue();
-    this.uniqueFileLookup = new host.RefMultimap();
+    this.workQueue = new SerialTaskQueue();
+    this.uniqueFileLookup = new RefMultimap();
     this.didFinish = debounceCall(() => this.trigger("finished"), 10, true);
     this.initialized = false;
     this.linkUpdaters = {};
@@ -56,7 +57,7 @@ export function defineMetadataCache(host) {
     this.vault = vault;
     this.worker = new Worker("worker.js", { name: "Metadata Cache Worker" });
     this.worker.onmessage = this.onReceiveMessageFromWorker.bind(this);
-    this.blockCache = new host.BlockCache(app);
+    this.blockCache = new BlockCache(app);
     this.linkResolver();
     this.on("finished", this.checkCleanCache, this);
     this.on("resolved", this.checkCleanCache, this);
@@ -106,7 +107,7 @@ export function defineMetadataCache(host) {
     const counts = {};
     const add = (tag) => {
       if (tag.endsWith("/")) tag = tag.slice(0, -1);
-      if (host.tagValid(tag)) {
+      if (tagValid(tag)) {
         counts[tag] = (counts[tag] || 0) + 1;
         const parts = tag.split("/");
         const top = parts[parts.length - 1];
@@ -117,7 +118,7 @@ export function defineMetadataCache(host) {
       if (fileCache.hasOwnProperty(path) && !this.isUserIgnored(path)) {
         const meta = metadataCache[fileCache[path].hash];
         if (meta) {
-          const tags = host.collectTags(meta);
+          const tags = collectTags(meta);
           if (tags) for (const tag of tags) add(tag);
         }
       }
@@ -256,7 +257,7 @@ export function defineMetadataCache(host) {
     const visit = (path) => {
       if (!Object.hasOwn(this.fileCache, path)) return;
       const hash = this.fileCache[path].hash;
-      host.anyMetadataRef(this.metadataCache[hash], (ref) => callback(path, ref));
+      anyMetadataRef(this.metadataCache[hash], (ref) => callback(path, ref));
     };
     for (const path in this.fileCache) visit(path);
     const updaters = this.linkUpdaters;
@@ -268,7 +269,7 @@ export function defineMetadataCache(host) {
     if (updater) updater.iterateReferencesForFile(file.path, callback);
     else {
       const cache = this.getFileCache(file);
-      if (cache) host.anyMetadataRef(cache, callback);
+      if (cache) anyMetadataRef(cache, callback);
     }
   };
 
@@ -282,7 +283,7 @@ export function defineMetadataCache(host) {
         const extension = file.extension;
         const update = changes.get(path);
         if (Object.hasOwn(updaters, extension)) await updaters[extension].applyUpdates(file, update);
-        else await self.vault.process(file, (content) => host.applyLinkUpdates(content, update));
+        else await self.vault.process(file, (content) => applyLinkUpdates(content, update));
       }
       return "continue";
     };
@@ -293,9 +294,9 @@ export function defineMetadataCache(host) {
   /** path -> RefMultimap of files linking to `file`. */
   MetadataCache.prototype.getBacklinksForFile = function (file) {
     const self = this;
-    const backlinks = new host.RefMultimap();
+    const backlinks = new RefMultimap();
     this.iterateAllRefs((sourcePath, ref) => {
-      const linkpath = host.getLinkpath(ref.link);
+      const linkpath = linkPath(ref.link);
       const dest = self.getFirstLinkpathDest(linkpath, sourcePath);
       if (dest && dest === file) backlinks.add(sourcePath, ref);
     });
@@ -317,7 +318,7 @@ export function defineMetadataCache(host) {
       return mdPath.indexOf(dir + "/") === 0 ? prefix + mdPath.substr(dir.length + 1) : prefix + mdPath;
     }
     const short = file.extension === "md" && useMd ? file.basename : file.name;
-    const linkpath = host.getLinkpath(short);
+    const linkpath = linkPath(short);
     const dests = this.getLinkpathDest(linkpath, sourcePath);
     if (dests && dests.length === 1 && dests[0] === file) return short;
     return file.extension === "md" && useMd ? withoutExtension(file.path) : file.path;
@@ -367,15 +368,15 @@ export function defineMetadataCache(host) {
         const value = values[i];
         if (key && value) fileCache[key] = value;
       }
-      await host.iterateIdbBatches(tx.objectStore("metadata"), 300, (keys, values) => {
+      await iterateIdbBatches(tx.objectStore("metadata"), 300, (keys, values) => {
         for (let i = 0; i < keys.length; i++) {
           const key = keys[i];
           const value = values[i];
           if (key && value) {
-            if (host.isOutdatedMetadata(value)) {
+            if (isOutdatedMetadata(value)) {
               db.transaction("metadata", "readwrite", { durability: "relaxed" }).objectStore("metadata").put(deepCloneJson(value), key);
             }
-            metadataCache[key] = host.deserializeMetadata(value);
+            metadataCache[key] = deserializeMetadata(value);
           }
         }
       });
@@ -474,8 +475,8 @@ export function defineMetadataCache(host) {
    */
   MetadataCache.prototype.linkResolver = function () {
     const self = this;
-    const iterable = host.batchedAsync(
-      (this.linkResolverQueue = new host.LinkQueue({
+    const iterable = batchedAsync(
+      (this.linkResolverQueue = new LinkQueue({
         onStop: () => self.trigger("resolved"),
         onCancel: () => {
           self.linkResolverQueue = null;
@@ -502,11 +503,11 @@ export function defineMetadataCache(host) {
     const unresolved = {};
     const file = this.app.vault.getFileByPath(path);
     this.iterateRefsForFile(file, (ref) => {
-      const linkpath = host.getLinkpath(ref.link);
+      const linkpath = linkPath(ref.link);
       const dest = this.getFirstLinkpathDest(linkpath, path);
       if (dest) resolved[dest.path] = (resolved[dest.path] || 0) + 1;
       else {
-        const key = host.linkCacheKey(linkpath);
+        const key = dropMdSuffix(linkpath);
         unresolved[key] = (unresolved[key] || 0) + 1;
       }
     });
@@ -550,7 +551,7 @@ export function defineMetadataCache(host) {
     const unresolved = this.unresolvedLinks;
     const cached = this.getCachedFiles();
     for (const path of cached) {
-      if (host.sharesLinkTarget(lower, resolved[path]) || host.sharesLinkTarget(variants, unresolved[path])) {
+      if (sharesLinkTarget(lower, resolved[path]) || sharesLinkTarget(variants, unresolved[path])) {
         const file = this.vault.getFileByPath(path);
         if (file) this.queueFileForLinkResolution(file);
       }
@@ -592,7 +593,7 @@ export function defineMetadataCache(host) {
             await (async () => {
               const buffer = await self.vault.readBinary(file);
               const text = decodeBuffer(buffer);
-              const hash = await host.contentHash(buffer);
+              const hash = await contentHash(buffer);
               cacheEntry.mtime = stat.mtime;
               cacheEntry.size = stat.size;
               cacheEntry.hash = hash;
@@ -692,10 +693,10 @@ export function defineMetadataCache(host) {
       if (!this.transactionSave) return;
       const copy = deepCloneJson(meta);
       if (copy.frontmatterPosition) {
-        copy.frontmatterPos = host.positionToArray(copy.frontmatterPosition);
+        copy.frontmatterPos = positionToArray(copy.frontmatterPosition);
         delete copy.frontmatterPosition;
       }
-      host.forEachLinkField(copy, host.linkPosToPos);
+      forEachLinkField(copy, linkPosToPos);
       return this.transactionSave("metadata", hash, copy);
     }
     delete this.metadataCache[hash];
@@ -763,7 +764,7 @@ export function defineMetadataCache(host) {
           if (filter.length > 2 && filter.startsWith("/") && filter.endsWith("/")) {
             list.push(new RegExp(filter.substring(1, filter.length - 1), "i"));
           } else {
-            list.push(new RegExp("^" + host.escapeRegExp(filter), "i"));
+            list.push(new RegExp("^" + escapeRegExp(filter), "i"));
           }
         } catch (error) {
           console.error("Bad regex for user ignore filter", error);
