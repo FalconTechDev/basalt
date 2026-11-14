@@ -149,7 +149,6 @@
     }
 }
 .dialog .mainContainer *:focus-visible{
-    --csstools-light-dark-toggle--28:var(--csstools-color-scheme--dark) #0060df;
     outline:var(--focus-ring-outline);
     outline-offset:2px
 }
