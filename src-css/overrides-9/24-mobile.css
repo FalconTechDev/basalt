@@ -3,7 +3,7 @@
 /* ---------- search ---------- */
 
 .is-mobile .search-params {
-  border-radius: var(--touch-radius-xxs);
+  border-radius: var(--touch-size-xxs);
   margin: var(--size-4-1) var(--size-4-3) var(--size-4-2);
   padding: var(--size-4-4) var(--size-4-4) var(--size-4-3);
   background: var(--background-secondary);
