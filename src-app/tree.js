@@ -1065,3 +1065,120 @@ export function defineTree(host) {
 
   return Tree;
 }
+
+// =====================================================================================================================
+// Drag & drop position helpers (shared by the file explorer, bookmarks and other tree views)
+// =====================================================================================================================
+
+// The single drop-indicator element and its bookkeeping; created lazily on first use.
+let dropIndicatorEl = null;
+let dropIndicatorTimer = null;
+let dropHoverSelfEl = null;
+
+function ensureDropIndicator() {
+  if (!dropIndicatorEl) dropIndicatorEl = createDiv("drop-indicator is-active");
+  return dropIndicatorEl;
+}
+
+const moveDropIndicator = debounceCall((pos) => {
+  const indicator = ensureDropIndicator();
+  indicator.style.left = pos.x + "px";
+  indicator.style.top = pos.y + (pos.placement === "after" ? 1 : -1) - 2 + "px";
+}, 0);
+
+/** Where a drag hovering `event` over `tree` would land: { node, parentNode, idx, placement, overlapsNode, x, y }. */
+export function treeDropPosition(event, tree) {
+  const root = tree.root;
+  let result = null;
+  const first = nextVisibleTreeItem(root, true);
+  const left = first.selfEl.offsetLeft;
+  if (!root.vChildren.hasChildren() || (first.selfEl.isShown() && event.clientY < first.selfEl.getBoundingClientRect().top)) {
+    return { node: null, idx: 0, placement: "before", x: left, y: first.selfEl.offsetTop };
+  }
+  const last = lastVisibleTreeItem(root, true);
+  if (last.selfEl.isShown() && event.clientY > last.selfEl.getBoundingClientRect().bottom) {
+    return { node: null, idx: root.vChildren.children.length, placement: "after", x: left, y: last.selfEl.offsetTop + last.selfEl.offsetHeight };
+  }
+  walkTree(root, (item) => {
+    if (item.info.hidden || !item.selfEl.isShown()) return;
+    if (tree.selectedDoms.has(item)) return true;
+    const selfEl = item.selfEl;
+    const rect = selfEl.getBoundingClientRect();
+    let threshold = 2 * rect.height;
+    const fromBottom = rect.bottom - event.clientY;
+    if (!(fromBottom < threshold && event.clientY >= rect.top)) return;
+    threshold = fromBottom;
+    const half = rect.height / 2;
+    const mid = rect.top + half;
+    const dist = Math.abs(event.clientY - mid);
+    let placement = event.clientY > mid ? "after" : "before";
+    let overlapsNode = false;
+    let node = null;
+    let idx = 0;
+    if (hasChildList(item) && item.collapsible && dist / half < 0.9) {
+      overlapsNode = true;
+      placement = "after";
+    }
+    if (hasChildList(item) && !item.collapsed && placement === "after") {
+      node = item;
+      idx = 0;
+    } else {
+      if (item.parent && hasChildList(item.parent)) {
+        node = item.parent;
+        idx = node.vChildren.children.indexOf(item);
+      } else {
+        node = null;
+        idx = tree.root.vChildren.children.indexOf(item);
+      }
+      if (placement === "after") idx++;
+    }
+    let x = left;
+    const y = placement === "before" ? selfEl.offsetTop : selfEl.offsetTop + rect.height;
+    if (node && node !== root) x = node.info.childLeft + node.info.childLeftPadding;
+    result = { node: item, parentNode: node, overlapsNode, idx, placement, x, y };
+  }, true);
+  return result;
+}
+
+/** Shows / moves / hides the drop indicator for `pos`; returns the indicator element (or undefined on drop). */
+export function updateTreeDropIndicator(tree, pos, items, isOver) {
+  const win = tree.containerEl.win;
+  const indicator = ensureDropIndicator();
+  if (dropHoverSelfEl != null) dropHoverSelfEl.removeClass("is-being-dragged-over");
+  if (!isOver) {
+    indicator.detach();
+    dropHoverSelfEl = null;
+    return;
+  }
+  if (pos && pos.overlapsNode && hasChildList(pos.node) && items.indexOf(pos.node) === -1) {
+    const node = pos.node;
+    if (node.selfEl !== dropHoverSelfEl) {
+      win.clearTimeout(dropIndicatorTimer);
+      dropIndicatorTimer = null;
+    }
+    dropHoverSelfEl = node.selfEl;
+    if (dropHoverSelfEl) dropHoverSelfEl.addClass("is-being-dragged-over");
+    if (node.collapsed && !dropIndicatorTimer) {
+      dropIndicatorTimer = win.setTimeout(() => {
+        if (dropHoverSelfEl === node.selfEl) node.setCollapsed(false, true);
+      }, 750);
+    }
+  } else {
+    dropHoverSelfEl = null;
+  }
+  if (pos) {
+    if (indicator.parentNode !== tree.containerEl) tree.containerEl.prepend(indicator);
+    moveDropIndicator(pos);
+  }
+  let show = !!(pos && !dropHoverSelfEl);
+  if (show && tree.selectedDoms.size === 1) {
+    const node = pos.node;
+    const placement = pos.placement;
+    const selected = tree.selectedDoms.values().next().value;
+    if (node === selected || (placement === "after" && node && node === prevTreeSibling(selected)) || (placement === "before" && node && node === nextTreeSibling(selected))) {
+      show = false;
+    }
+  }
+  indicator.toggle(show);
+  return indicator;
+}

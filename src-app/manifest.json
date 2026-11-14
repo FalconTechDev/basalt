@@ -864,6 +864,66 @@
   {
    "orig": "Cb",
    "use": "batchedIteration"
+  },
+  {
+   "orig": "I2",
+   "use": "bookmarkItemForFile"
+  },
+  {
+   "orig": "O2",
+   "use": "bookmarkItemForFolder"
+  },
+  {
+   "orig": "F2",
+   "use": "bookmarkGroupItem"
+  },
+  {
+   "orig": "N2",
+   "use": "bookmarkItemForGraph"
+  },
+  {
+   "orig": "R2",
+   "use": "bookmarkItemForUrl"
+  },
+  {
+   "orig": "B2",
+   "use": "bookmarkItemForSearch"
+  },
+  {
+   "orig": "V2",
+   "use": "viewToBookmarkItem"
+  },
+  {
+   "orig": "z2",
+   "use": "filesToBookmarkItems"
+  },
+  {
+   "orig": "H2",
+   "use": "walkBookmarkItems"
+  },
+  {
+   "orig": "GA",
+   "use": "headingAtPosition"
+  },
+  {
+   "orig": "KA",
+   "use": "blockRefInsertion"
+  },
+  {
+   "orig": "y$",
+   "use": "flattenUniqueFiles"
+  },
+  {
+   "orig": "bP",
+   "use": "setPlainText"
+  },
+  {
+   "orig": "c2",
+   "use": "treeDropPosition"
+  },
+  {
+   "orig": "f2",
+   "use": "updateTreeDropIndicator"
   }
  ],
  "classes": [
@@ -1341,6 +1401,42 @@
   {
    "orig": "bee",
    "use": "defineTagPaneView"
+  },
+  {
+   "orig": "nb",
+   "use": "defineButtonModal"
+  },
+  {
+   "orig": "RJ",
+   "use": "defineBookmarkEditModal"
+  },
+  {
+   "orig": "BJ",
+   "use": "defineBookmarkManyModal"
+  },
+  {
+   "orig": "i3",
+   "use": "defineBookmarkItemBase"
+  },
+  {
+   "orig": "o3",
+   "use": "defineBookmarkLeafItem"
+  },
+  {
+   "orig": "r3",
+   "use": "defineBookmarkGroupItem"
+  },
+  {
+   "orig": "a3",
+   "use": "defineBookmarksView"
+  },
+  {
+   "orig": "l3",
+   "use": "defineBookmarksPlugin"
+  },
+  {
+   "orig": "bb",
+   "use": "defineRunnable"
   }
  ],
  "host": {
@@ -1486,7 +1582,9 @@
   "ViewHeader": "R6",
   "WordCharSource": "WV",
   "SearchableExtensions": "Gy",
-  "SearchOperators": "RH"
+  "SearchOperators": "RH",
+  "GraphView": "kJ",
+  "WebViewerView": "P2"
  },
  "declarators": [
   {
