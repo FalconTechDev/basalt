@@ -122,18 +122,23 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   `tools/app-smoke.mjs`: core flows pass (text file, settings dialog, command palette, splits,
   pop-out window, title bar, file create/rename/delete). Pre-existing failures also seen with the
   inherited stylesheet: markdown note opens as empty view, canvas renders 0 nodes, phrase search 0 hits
-  — app-layer issues, not CSS. `--mobile` css-compare could not complete: across 6 fresh isolated
-  runtimes the app exited mid-run (devtools endpoint lost; once after 3 scene setups, once after ~15).
-  Concurrent `basalt-cli-sasha` pipe contention with another agent's runtime was observed
-  (`EADDRINUSE`); treat as environmental. `tools/css-compare.mjs` now logs per-scene progress and
-  reloads between scenes in `--mobile` mode.
+  — app-layer issues, not CSS. `--mobile` (375px) css-compare completed scene-by-scene across fresh
+  runtimes (the app exits after ~10-15 scene setups; `tools/css-compare.mjs` now logs per-scene progress,
+  reloads between scenes in `--mobile` mode, and writes its report even if the app dies mid-run).
+  Result: **no stylesheet regressions** — the only consistent real diff is the intended
+  `external-link` image URL rename. Apparent diffs are app-state noise (tab `is-active`/`mod-active`
+  flips, plugin status-bar timing, mobile nav-mode layout, preview render-in-progress).
+  This run caught one real regression which was fixed: the markdown renderer builds `el-<tag>` classes
+  dynamically (`addClass('el-'+tagName)`), so the removed `:is(.el-p,...)` heading-spacing branch was
+  live — restored in `19-preview.css` and re-verified (h2 margin-top back to 40px).
 * Fonts verified loading through the `app://` protocol (FontFace API OK; `document.fonts` load()
   errors were an artifact of a crashed compare leaving the OLD sheet, which references deleted hashed
   fonts — always rebuild `src/app.css` after a crashed compare run).
 
 ### Still open in this area
 
-* `--mobile` (375px) css-compare pass — blocked by the runtime dying mid-run; needs a healthy runtime.
+* `context-menu` scene errors in setup on both stylesheets (`.nav-file-title` absent in mobile mode) —
+  harness limitation, seen on desktop too.
 * Hand-rewrite of remaining `src-css/` rule bodies per component: dead code is gone and files are
   deminified/readable, but declaration values still mirror the inherited stylesheet (required for
   behavior parity — css-compare is the guard).
