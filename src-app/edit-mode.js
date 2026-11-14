@@ -224,7 +224,7 @@ export function defineMarkdownEditMode(host) {
         this.requestSaveFolds();
         this.requestOnInternalDataChange();
       }
-      if (transactionHasEffect(transactions, host.foldChangeEffect) || transactionHasEffect(transactions, host.propertiesChangeEffect)) {
+      if (transactionHasEffect(transactions, host.cmFoldEffect) || transactionHasEffect(transactions, host.cmUnfoldEffect)) {
         this.requestSaveFolds();
       }
     },

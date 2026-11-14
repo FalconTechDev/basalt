@@ -94,7 +94,7 @@ function build(host) {
   });
 
   function PropertyRow(app, metadataEditor, entry) {
-    const self = this;
+    const self = host.Component.call(this) || this;
     self.app = app;
     self.metadataEditor = metadataEditor;
     self.entry = entry;
@@ -337,7 +337,7 @@ function build(host) {
   });
 
   function MetadataEditor(app, owner) {
-    const self = this;
+    const self = host.Component.call(this) || this;
     self.hoverPopover = null;
     self.properties = [];
     self.selectedLines = new Set();
