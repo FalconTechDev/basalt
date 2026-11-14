@@ -2003,7 +2003,343 @@
    "use": "wsUpdateLayout",
    "sha1": "69eefec194c773fe98ce3cdeb0ef76c9ca31cc87",
    "originalBytes": 1275
+  },
+  {
+   "class": "Tte",
+   "name": "nextFrame",
+   "use": "appNextFrame",
+   "sha1": "0ca0de2dbaff007dfc80bb0e82fcd4f8e2abee98",
+   "originalBytes": 142
+  },
+  {
+   "class": "Tte",
+   "name": "onNextFrame",
+   "use": "appOnNextFrame",
+   "sha1": "284b1f241b1697fd8658ac32c7fc737fe28652b0",
+   "originalBytes": 133
+  },
+  {
+   "class": "Tte",
+   "name": "nextFrameOnceCallback",
+   "use": "appNextFrameOnceCallback",
+   "sha1": "b6138093ba65c88b8573b722e39f5a084c8a6e3d",
+   "originalBytes": 95
+  },
+  {
+   "class": "Tte",
+   "name": "disableCssTransition",
+   "use": "appDisableCssTransition",
+   "sha1": "1f24c0eac4784d7db041825aec598059859bbdaa",
+   "originalBytes": 61
+  },
+  {
+   "class": "Tte",
+   "name": "enableCssTransition",
+   "use": "appEnableCssTransition",
+   "sha1": "332a58e1145abdadc52b3456fbc8fa12c62a88a4",
+   "originalBytes": 64
+  },
+  {
+   "class": "Tte",
+   "name": "getAppTitle",
+   "use": "appGetAppTitle",
+   "sha1": "12caac8ba6c78d73483ccdf670dca62d0f67813d",
+   "originalBytes": 51
+  },
+  {
+   "class": "Tte",
+   "name": "getWebviewPartition",
+   "use": "appGetWebviewPartition",
+   "sha1": "ce3091d7a9fd481157c9b1cd501905abb97e25c0",
+   "originalBytes": 45
+  },
+  {
+   "class": "Tte",
+   "name": "fixFileLinks",
+   "use": "appFixFileLinks",
+   "sha1": "e6c2dc4d37b7336b85bfe427dd8532866e6c13f2",
+   "originalBytes": 415
+  },
+  {
+   "class": "Tte",
+   "name": "getTheme",
+   "use": "appGetTheme",
+   "sha1": "96841f3b83ef157b01394b8cc29d20970713a66c",
+   "originalBytes": 67
+  },
+  {
+   "class": "Tte",
+   "name": "isDarkMode",
+   "use": "appIsDarkMode",
+   "sha1": "9784e6cf8abcffb0e04693a38839291886aa4494",
+   "originalBytes": 46
+  },
+  {
+   "class": "Tte",
+   "name": "changeTheme",
+   "use": "appChangeTheme",
+   "sha1": "ce402233502387ff14403c6a15a8e84eeff8dc16",
+   "originalBytes": 142
+  },
+  {
+   "class": "Tte",
+   "name": "updateTheme",
+   "use": "appUpdateTheme",
+   "sha1": "535d0c86c14efc3549c4319f15aa086c55fc4d75",
+   "originalBytes": 471
+  },
+  {
+   "class": "Tte",
+   "name": "updateMobileFrameTheme",
+   "use": "appUpdateMobileFrameTheme",
+   "sha1": "a5d9b3ebaf02dce54db84f94ed739d10513dd4e1",
+   "originalBytes": 389
+  },
+  {
+   "class": "Tte",
+   "name": "updateInlineTitleDisplay",
+   "use": "appUpdateInlineTitleDisplay",
+   "sha1": "dd7d00e5ad71e2b5c90986374e94994407d3a8e3",
+   "originalBytes": 98
+  },
+  {
+   "class": "Tte",
+   "name": "updateFloatingNavigationDisplay",
+   "use": "appUpdateFloatingNavigationDisplay",
+   "sha1": "d40f5102f8fd86426a5d2250de9361dc57de576d",
+   "originalBytes": 107
+  },
+  {
+   "class": "Tte",
+   "name": "updateAutoFullScreenDisplay",
+   "use": "appUpdateAutoFullScreenDisplay",
+   "sha1": "40d4c355c5e1db28bcc70eac11d9224093eeaa96",
+   "originalBytes": 96
+  },
+  {
+   "class": "Tte",
+   "name": "updateViewHeaderDisplay",
+   "use": "appUpdateViewHeaderDisplay",
+   "sha1": "1b642d24bb8822189847cb9cfeee2c36fa297916",
+   "originalBytes": 96
+  },
+  {
+   "class": "Tte",
+   "name": "updateRibbonDisplay",
+   "use": "appUpdateRibbonDisplay",
+   "sha1": "b876791a1d54c934a57417942f2ed780d9d9297e",
+   "originalBytes": 87
+  },
+  {
+   "class": "Tte",
+   "name": "updateFontFamily",
+   "use": "appUpdateFontFamily",
+   "sha1": "072c0c27b68a4a145a1c68987b12d94fb584a662",
+   "originalBytes": 533
+  },
+  {
+   "class": "Tte",
+   "name": "updateFontSize",
+   "use": "appUpdateFontSize",
+   "sha1": "ba9c4e70501e0a2a59305ec19c4cdd16f13f9a58",
+   "originalBytes": 257
+  },
+  {
+   "class": "Tte",
+   "name": "updateUseNativeMenu",
+   "use": "appUpdateUseNativeMenu",
+   "sha1": "72019b929157797aa941c15f8be3fa40881ef608",
+   "originalBytes": 101
+  },
+  {
+   "class": "Tte",
+   "name": "updateTabSize",
+   "use": "appUpdateTabSize",
+   "sha1": "1ca38b83cba76f5de1092afb0a4b360e87d8b326",
+   "originalBytes": 108
+  },
+  {
+   "class": "Tte",
+   "name": "showReleaseNotes",
+   "use": "appShowReleaseNotes",
+   "sha1": "6f9b69888ac94b3c542008830b3ba57b6ba4e615",
+   "originalBytes": 98
+  },
+  {
+   "class": "Tte",
+   "name": "updateAccentColor",
+   "use": "appUpdateAccentColor",
+   "sha1": "1fe754fc643ff1247352c01371c5cffa3c62d138",
+   "originalBytes": 76
+  },
+  {
+   "class": "Tte",
+   "name": "getAccentColor",
+   "use": "appGetAccentColor",
+   "sha1": "ccba17ff8e831dfb5170a3cd50bfaf23562b5dbd",
+   "originalBytes": 365
+  },
+  {
+   "class": "Tte",
+   "name": "setAccentColor",
+   "use": "appSetAccentColor",
+   "sha1": "b6acf58971908ff3a604bbd344aa4f8bd8a55b40",
+   "originalBytes": 686
+  },
+  {
+   "class": "Tte",
+   "name": "garbleText",
+   "use": "appGarbleText",
+   "sha1": "18f5d90a772f20ab9a4e3bfe87f00aba9f25626c",
+   "originalBytes": 63
+  },
+  {
+   "class": "Tte",
+   "name": "saveAttachment",
+   "use": "appSaveAttachment",
+   "sha1": "69cc564818f174f21fc1e7bb60113c9175285be2",
+   "originalBytes": 299
+  },
+  {
+   "class": "Tte",
+   "name": "openVaultChooser",
+   "use": "appOpenVaultChooser",
+   "sha1": "92c5c8162333a1f8a4a326dec7b9e95caf2e4484",
+   "originalBytes": 216
+  },
+  {
+   "class": "Tte",
+   "name": "openHelp",
+   "use": "appOpenHelp",
+   "sha1": "be0bb5af2044b8d343c9eb8f6e8220ee5aff9906",
+   "originalBytes": 146
+  },
+  {
+   "class": "Tte",
+   "name": "runOpeningBehavior",
+   "use": "appRunOpeningBehavior",
+   "sha1": "41807179a1fdfcb5a5b51bc99c368c97a3643678",
+   "originalBytes": 814
+  },
+  {
+   "class": "Tte",
+   "name": "openWithDefaultApp",
+   "use": "appOpenWithDefaultApp",
+   "sha1": "84dc7611276baec690c49c3aa194713d79629368",
+   "originalBytes": 479
+  },
+  {
+   "class": "Tte",
+   "name": "showInFolder",
+   "use": "appShowInFolder",
+   "sha1": "4c303a5f8b4e3e4f74bb02daf695420e2283da8d",
+   "originalBytes": 309
+  },
+  {
+   "class": "Tte",
+   "name": "getObsidianUrl",
+   "use": "appGetObsidianUrl",
+   "sha1": "991360dd0d6b1a4de3b5efbb7c2ded531c71b0c4",
+   "originalBytes": 136
+  },
+  {
+   "class": "Tte",
+   "name": "copyObsidianUrl",
+   "use": "appCopyObsidianUrl",
+   "sha1": "f45feb8fee241f1498092101c50b5faf1c950884",
+   "originalBytes": 81
+  },
+  {
+   "class": "Tte",
+   "name": "registerQuitHook",
+   "use": "appRegisterQuitHook",
+   "sha1": "912397d95a206a0020cde0614922abd99d56c4f9",
+   "originalBytes": 422
+  },
+  {
+   "class": "Tte",
+   "name": "loadLocalStorage",
+   "use": "appLoadLocalStorage",
+   "sha1": "1621c497f1b0a5c0c6a7374c70778142c4ed23f2",
+   "originalBytes": 109
+  },
+  {
+   "class": "Tte",
+   "name": "saveLocalStorage",
+   "use": "appSaveLocalStorage",
+   "sha1": "818929214bb04fe184fb4492cfb9c1ea6698c7b8",
+   "originalBytes": 130
+  },
+  {
+   "class": "Tte",
+   "name": "on",
+   "use": "appOn",
+   "sha1": "c5b41789931b82e69bf7839857e8257e2e8b3bb9",
+   "originalBytes": 12
+  },
+  {
+   "class": "Tte",
+   "name": "setTheme",
+   "use": "appSetTheme",
+   "sha1": "0c12df3e8472253e8d8cfbc2846c5bc7c0c7e561",
+   "originalBytes": 71
+  },
+  {
+   "class": "Tte",
+   "name": "emulateMobile",
+   "use": "appEmulateMobile",
+   "sha1": "67777c72407c975e74481487bd4d8eac9fae417d",
+   "originalBytes": 84
+  },
+  {
+   "class": "Tte",
+   "name": "debugMode",
+   "use": "appDebugMode",
+   "sha1": "c4a463fba9cd15f8d8c8e4050160eeeb830d38a0",
+   "originalBytes": 133
+  },
+  {
+   "class": "Tte",
+   "name": "getSpellcheckLanguages",
+   "use": "appGetSpellcheckLanguages",
+   "sha1": "6cb60b592b2c98c4575de27f09248b6b5f62f4e3",
+   "originalBytes": 303
+  },
+  {
+   "class": "Tte",
+   "name": "setSpellcheckLanguages",
+   "use": "appSetSpellcheckLanguages",
+   "sha1": "c5309e735abeab00ae597263d117b7fe59e84572",
+   "originalBytes": 254
+  },
+  {
+   "class": "Tte",
+   "name": "isVimEnabled",
+   "use": "appIsVimEnabled",
+   "sha1": "a4f4d99622a989f050c44c7e68268f19b409856d",
+   "originalBytes": 92
+  },
+  {
+   "class": "Tte",
+   "name": "onConfigChanged",
+   "use": "appOnConfigChanged",
+   "sha1": "f3be59aef94e280fdf876746ed2d475d500879a6",
+   "originalBytes": 803
+  },
+  {
+   "class": "Tte",
+   "name": "importAttachments",
+   "use": "appImportAttachments",
+   "sha1": "1879e2e27071d8aab100b7ac80410eadccfbd9db",
+   "originalBytes": 701
+  },
+  {
+   "class": "Tte",
+   "name": "initializeWithAdapter",
+   "use": "appInitializeWithAdapter",
+   "sha1": "6f93b737ab62a43f8644214dd3e6c8bc2924c131",
+   "originalBytes": 10700
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2"
 }
