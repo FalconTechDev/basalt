@@ -122,8 +122,11 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   `tools/app-smoke.mjs`: core flows pass (text file, settings dialog, command palette, splits,
   pop-out window, title bar, file create/rename/delete). Pre-existing failures also seen with the
   inherited stylesheet: markdown note opens as empty view, canvas renders 0 nodes, phrase search 0 hits
-  — app-layer issues, not CSS. `--mobile` css-compare runs crashed the isolated app twice at pass 2
-  (devtools endpoint dies; reproducible harness/runtime issue, not a diff result).
+  — app-layer issues, not CSS. `--mobile` css-compare could not complete: across 6 fresh isolated
+  runtimes the app exited mid-run (devtools endpoint lost; once after 3 scene setups, once after ~15).
+  Concurrent `basalt-cli-sasha` pipe contention with another agent's runtime was observed
+  (`EADDRINUSE`); treat as environmental. `tools/css-compare.mjs` now logs per-scene progress and
+  reloads between scenes in `--mobile` mode.
 * Fonts verified loading through the `app://` protocol (FontFace API OK; `document.fonts` load()
   errors were an artifact of a crashed compare leaving the OLD sheet, which references deleted hashed
   fonts — always rebuild `src/app.css` after a crashed compare run).
