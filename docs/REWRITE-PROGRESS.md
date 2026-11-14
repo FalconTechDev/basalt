@@ -7,8 +7,8 @@ Branch `app-rewrite-big` (worktree `basalt-wt-big`). Own code lives in `src-app/
 | | replaced | bytes of original text |
 | --- | --- | --- |
 | functions (leaf helpers, search, timing, transitions, tooltips, clipboard/url) | 168 | 20.8 KB |
-| classes / objects | 67 | 137.1 KB |
-| **total** | | **157.9 KB = 4.3 % of the 3688.9 KB bundle** |
+| classes / objects | 68 | 141.2 KB |
+| **total** | | **162.0 KB = 4.4 % of the 3688.9 KB bundle** |
 
 Own readable source: 283 KB in `src-app/*.js` (32 modules, comments included).
 
@@ -35,6 +35,7 @@ kept on the full bundle so it cannot flatter itself.
 | module (src-app) | replaces |
 | --- | --- |
 | markdown-render.js | `MarkdownRenderChild` (`zz`), `MarkdownPreviewSection` (`qz`), the preview link/hover handlers (`lq`), `MarkdownRenderer` (`hq`, statics `render`/`renderMarkdown`/`postProcess`/`toggleCheckbox` included); `misc.js` also gained `isUrl` (`Yc`) and `copyText` (`Ec`) |
+| document-search.js | the reading-view find bar (`lz`: scope keys, match count, highlight ranges, prev/next) |
 | events.js, timing.js | `Events`, `Component`, `debounce` |
 | keymap.js | `Scope`, the dynamic-parent scope of the workspace, `Keymap` |
 | commands.js | the command registry (`app.commands`), `HotkeyManager` |

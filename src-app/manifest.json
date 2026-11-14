@@ -942,6 +942,10 @@
   {
    "orig": "hq",
    "use": "defineMarkdownRenderer"
+  },
+  {
+   "orig": "lz",
+   "use": "defineDocumentSearch"
   }
  ],
  "host": {
@@ -1093,7 +1097,8 @@
   "queryBlockText": "$z",
   "queryEmbed": "pq",
   "EmbedLoader": "sJ",
-  "refreshLinkStates": "uq"
+  "refreshLinkStates": "uq",
+  "textNodes": "zv"
  },
  "declarators": [
   {
