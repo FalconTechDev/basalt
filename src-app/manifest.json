@@ -1026,6 +1026,10 @@
   {
    "orig": "oZ",
    "use": "defineCodeMirrorEditor"
+  },
+  {
+   "orig": "AL",
+   "use": "defineClipboardManager"
   }
  ],
  "host": {
@@ -1341,7 +1345,16 @@
   "vimPrecedence": "Te",
   "vimKeymapClass": "oj",
   "vimThemeAlt": "Lq",
-  "vimStatusField": "lj"
+  "vimStatusField": "lj",
+  "dragDropEffect": "SP",
+  "dragLinkText": "TL",
+  "isImageExtension": "$y",
+  "pathBaseName": "nu",
+  "pathNormalize": "uu",
+  "stripExtBase": "ou",
+  "escapePathChars": "eE",
+  "htmlToMarkdown": "yP",
+  "base64ToBuffer": "Cf"
  },
  "declarators": [
   {
