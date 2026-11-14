@@ -15,6 +15,9 @@ function bindCanvasHost(host) {
   return host;
 }
 
+// Classes produced by the factories below, visible to each other regardless of factory order.
+const canvas = {};
+
 // =====================================================================================================================
 // Bounded undo/redo stack (l5)
 // =====================================================================================================================
@@ -248,6 +251,9 @@ function rbExtendBBoxRange(node, from, to, toBBox, box) {
   }
   return box;
 }
+
+// The SpatialIndex class produced by defineSpatialIndex; the bbox variants below subclass it.
+let spatialIndexClass = null;
 
 export function defineSpatialIndex(host) {
   bindCanvasHost(host);
@@ -566,7 +572,90 @@ export function defineSpatialIndex(host) {
     }
   };
 
+  spatialIndexClass = SpatialIndex;
   return SpatialIndex;
+}
+
+// =====================================================================================================================
+// Spatial-index variants used by the canvas link index (m5 / v5 / g5)
+// =====================================================================================================================
+
+/** Caches item.bbox on insert and drops it on remove; toBBox reads the cache. */
+export function defineBboxCachedIndex(host) {
+  bindCanvasHost(host);
+
+  function BboxCachedIndex(maxEntries) {
+    const self = spatialIndexClass.call(this, maxEntries) || this;
+    return self;
+  }
+  inherit(BboxCachedIndex, spatialIndexClass);
+  const proto = BboxCachedIndex.prototype;
+
+  proto.insert = function (item) {
+    item.bbox = item.getBBox();
+    spatialIndexClass.prototype.insert.call(this, item);
+    return this;
+  };
+
+  proto.remove = function (item) {
+    if (item.bbox) {
+      spatialIndexClass.prototype.remove.call(this, item);
+      item.bbox = null;
+      return this;
+    }
+    return this;
+  };
+
+  proto.toBBox = function (item) {
+    return item.bbox;
+  };
+
+  canvas.BboxIndex = BboxCachedIndex;
+  return BboxCachedIndex;
+}
+
+/** Orders nodes by their x / y position (edge endpoints). */
+export function definePointIndex(host) {
+  bindCanvasHost(host);
+
+  function PointIndex(maxEntries) {
+    const self = canvas.BboxIndex.call(this, maxEntries) || this;
+    return self;
+  }
+  inherit(PointIndex, canvas.BboxIndex);
+  const proto = PointIndex.prototype;
+
+  proto.compareMinX = function (a, b) { return a.x - b.x; };
+  proto.compareMinY = function (a, b) { return a.y - b.y; };
+
+  canvas.PointIndex = PointIndex;
+  return PointIndex;
+}
+
+/** Orders items by their getBBox() min corner. */
+export function defineBBoxItemIndex(host) {
+  bindCanvasHost(host);
+
+  function BBoxItemIndex(maxEntries) {
+    const self = canvas.BboxIndex.call(this, maxEntries) || this;
+    return self;
+  }
+  inherit(BBoxItemIndex, canvas.BboxIndex);
+  const proto = BBoxItemIndex.prototype;
+
+  proto.compareMinX = function (a, b) {
+    const boxA = a.getBBox();
+    const boxB = b.getBBox();
+    return boxA.minX - boxB.minX;
+  };
+  proto.compareMinY = function (a, b) {
+    const boxA = a.getBBox();
+    const boxB = b.getBBox();
+    return boxA.minY - boxB.minY;
+  };
+
+  canvas.BBoxItemIndex = BBoxItemIndex;
+  return BBoxItemIndex;
 }
 
 function rbEnlargement(bbox, node) {
@@ -621,6 +710,73 @@ export function defineCanvasDataCache(host) {
   };
 
   return CanvasDataCache;
+}
+
+// =====================================================================================================================
+// Canvas file metadata extraction (e8)
+// =====================================================================================================================
+
+export function defineCanvasMetadataExtractor(host) {
+  bindCanvasHost(host);
+
+  /**
+   * Extractor for ".canvas" files (JSON): collects file/group-background embed references and parses
+   * each text node's links so the metadata cache can resolve them. `refNodeIds` maps a resolved link
+   * object back to the node id that produced it (WeakMap, for applyUpdates).
+   */
+  function CanvasMetadataExtractor(app) {
+    const self = host.MetadataExtractorBase.call(this, app) || this;
+    self.refNodeIds = new WeakMap();
+    return self;
+  }
+  inherit(CanvasMetadataExtractor, host.MetadataExtractorBase);
+  const proto = CanvasMetadataExtractor.prototype;
+
+  proto.canProcess = function (file) {
+    return file.extension === host.CANVAS_EXTENSION;
+  };
+
+  proto.process = async function (file) {
+    const text = await this.app.vault.cachedRead(file);
+    if (!text) return null;
+    const data = JSON.parse(text);
+    const nodes = data.nodes;
+    if (!nodes || !Array.isArray(nodes)) return null;
+    const embeds = [];
+    const caches = {};
+    const refNodeIds = this.refNodeIds;
+    const self = this;
+
+    const visitNode = async (node) => {
+      if (node.type === "file") {
+        embeds.push({ file: node.file, subpath: node.subpath });
+      } else if (node.type === "group" && node.background) {
+        embeds.push({ file: node.background, subpath: "" });
+      } else if (node.type === "text") {
+        const nodeText = node.text;
+        try {
+          const links = await self.parseText(nodeText);
+          // WeakMap.set returns the map (truthy), so the scan stops after the first link — same as stock.
+          host.indexCacheHasLink(links, (link) => refNodeIds.set(link, node.id));
+          caches[node.id] = links;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    };
+
+    for (const node of nodes) await visitNode(node);
+    this.app.metadataCache.queueFileForLinkResolution(file);
+    return { embeds, caches };
+  };
+
+  proto.parseText = async function (text) {
+    if (text.length < 5000) return host.parseSmallText(text);
+    const proxy = host.fileProxy(text);
+    return await this.app.metadataCache.computeMetadataAsync(proxy);
+  };
+
+  return CanvasMetadataExtractor;
 }
 
 // =====================================================================================================================
