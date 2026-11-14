@@ -94,6 +94,37 @@ node tools/ws-scenario.mjs --port 9655 > new.json   # and the same on a runtime 
 node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenario.mjs)
 ```
 
+## Branch `rewrite-assets-css` (worktree `basalt-wt-assets-css`): styles, fonts, images, index.html
+
+* `src/public/fonts/`: the seven hashed files are replaced by descriptively named open-licence fonts —
+  Source Code Pro (regular/bold/italic/bold-italic), Inter variable (roman/italic), Flow Circular, Comfortaa —
+  all SIL OFL, recorded in `THIRD_PARTY.md`. `src-css/02-fonts.css` was rewritten by hand against the new names;
+  `--font-interface`, `--font-text`, `--font-monospace` and family fallbacks are unchanged.
+* `src/public/images/`: the two hashed external-link icons are replaced by self-drawn
+  `external-link.svg` / `external-link-rtl.svg`; only the `url(...)` inside the existing
+  `linear-gradient(...) , url(...)` rules changed (overrides-2 and overrides-4 `19-preview.css`).
+* `src/index.html`: rewritten (~4 KB). Same script tags in the same order (startup depends on it);
+  CSP tightened — the unused `fonts.googleapis.com` allowance is gone since fonts are now local.
+* `src-css/` cleanup so far: collapsed dead `csstools-*` light/dark fallback scaffolding, removed the
+  `.card` / `node-insert-event` / `setting-text` rules and platform classes (`is-ios`, `is-android`)
+  the desktop runtime never applies, then ran `tools/css-drop-dead.mjs` — a postcss codemod that removes
+  selectors positively requiring classes no shipped source emits (68 selectors, ~11 KB minified).
+  Class names inside `:not()` are kept (they do not gate matching); plugin/mobile-facing classes were
+  checked against `src/app.js` before removal and retained where referenced.
+* Verify: `node build-css.mjs` (180 files, ~596 KB source -> ~550 KB `src/app.css`),
+  `node tools/css-compare.mjs --port 9700 --old <prev app.css> --new src/app.css`.
+  Dead-rule removal is provably style-neutral; remaining diffs in the compare output are runtime state
+  noise (active tab, recent-vault timing), same instability class seen in old-vs-old passes.
+
+### Still open in this area
+
+* Hand-rewrite of remaining `src-css/` rule bodies per component (today they are regenerated
+  declarations); the dead scaffolding is gone but bodies still carry inherited declaration text.
+* Full `css-compare` matrix after the final rewrite: desktop + 375px mobile + pop-out, light + dark
+  (partially run; preview scenes showed pre-existing noise).
+* `tools/app-smoke.mjs` run against the final CSS; `own-stats.mjs` numbers for this branch.
+* Decision pending: whether Comfortaa gets a CSS use or stays an available local asset.
+
 ## Not done yet
 
 * `Workspace` itself (`H0`, 66 KB: layout save / load, active leaf, recent files, hotkey glue, URI handlers) and the mobile drawer
