@@ -5552,12 +5552,112 @@ body.is-focused .titlebar,body.is-focused .workspace-ribbon.mod-left{
 body.is-focused .sidebar-toggle-button,body.is-focused .workspace-tabs.mod-top{
     --tab-container-background:var(--titlebar-background-focused)
 }
-.workspace-ribbon .sidebar-toggle-button{
-    position:absolute;
+.titlebar{
+    position:fixed;
     top:0;
     left:0;
+    right:0;
+    display:flex;
+    border-bottom:var(--titlebar-border-width) solid var(--titlebar-border-color);
+    background-color:var(--titlebar-background);
+    -webkit-app-region:drag
+}
+.titlebar-inner{
+    display:flex;
+    width:100%;
+    color:var(--titlebar-text-color);
+    font-weight:var(--titlebar-text-weight)
+}
+.is-focused .titlebar-inner{
+    color:var(--titlebar-text-color-focused)
+}
+.titlebar-text{
+    position:absolute;
+    top:0;
+    inset-inline-start:0;
+    flex-grow:1;
+    gap:0.15em;
+    display:flex;
     justify-content:center;
-    width:var(--ribbon-width)
+    align-items:center;
+    overflow:hidden;
+    width:100%;
+    height:100%;
+    padding:0 125px;
+    font-size:var(--font-ui-small);
+    text-align:center;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    opacity:0.85
+}
+@media screen and (max-width:300px){
+    .titlebar-text{
+        display:none
+    }
+}
+.titlebar-button-container{
+    display:flex;
+    position:absolute;
+    top:0
+}
+.mod-macos .titlebar-button-container{
+    top:8px
+}
+.titlebar-button-container.mod-left{
+    left:0
+}
+.mod-macos .titlebar-button-container.mod-left{
+    left:calc(80px / var(--zoom-factor))
+}
+.titlebar-button-container.mod-right{
+    right:0
+}
+.titlebar-button-container .mod-back,.titlebar-button-container .mod-forward{
+    color:var(--icon-color)
+}
+.titlebar-button{
+    display:inline-flex;
+    align-items:center;
+    padding:var(--size-2-2) var(--size-2-3);
+    cursor:var(--cursor);
+    -webkit-app-region:no-drag
+}
+@media (hover:hover){
+    .titlebar-button.mod-close:hover{
+        background-color:var(--background-modifier-error)
+    }
+}
+.mod-macos .titlebar-button{
+    border-radius:var(--radius-s)
+}
+body.is-frameless.in-progress .titlebar{
+    display:block;
+    z-index:10001;
+    -webkit-app-region:drag
+}
+.is-hidden-frameless.mod-macos .titlebar{
+    display:none
+}
+.is-hidden-frameless.mod-windows .titlebar,.is-hidden-frameless.mod-linux .titlebar{
+    z-index:var(--layer-popover);
+    border:none;
+    background:transparent;
+    pointer-events:none
+}
+.is-hidden-frameless.mod-windows .titlebar-button.mod-back,.is-hidden-frameless.mod-linux .titlebar-button.mod-back,.is-hidden-frameless.mod-windows .titlebar-button.mod-forward,.is-hidden-frameless.mod-linux .titlebar-button.mod-forward,.is-hidden-frameless.mod-windows .titlebar-text,.is-hidden-frameless.mod-linux .titlebar-text{
+    display:none
+}
+.is-hidden-frameless.mod-windows .titlebar-button-container,.is-hidden-frameless.mod-linux .titlebar-button-container{
+    pointer-events:auto
+}
+@media (hover:hover){
+    .mod-linux .titlebar-button.mod-close:hover,.mod-windows .titlebar-button.mod-close:hover{
+        background-color:var(--background-modifier-error)
+    }
+    .mod-linux .titlebar-button.mod-close:hover .svg-icon,.mod-windows .titlebar-button.mod-close:hover .svg-icon{
+        fill:white;
+        stroke:white
+    }
 }
 .titlebar-button.mod-logo{
     justify-content:center;
@@ -5566,10 +5666,8 @@ body.is-focused .sidebar-toggle-button,body.is-focused .workspace-tabs.mod-top{
 .is-hidden-frameless .titlebar-button.mod-logo{
     display:none
 }
-body.is-frameless.in-progress .titlebar{
-    display:block;
-    z-index:10001;
-    -webkit-app-region:drag
+.titlebar-button.mod-logo:hover .logo-wireframe,.titlebar-button.mod-logo:not(:hover) .logo-full{
+    display:none
 }
 .is-hidden-frameless:not(.is-fullscreen) .workspace-tabs.mod-top-left-space .workspace-tab-header-container{
     padding-left:calc(var(--size-4-2) + var(--frame-left-space))
@@ -5601,7 +5699,62 @@ body.is-frameless.in-progress .titlebar{
 .is-hidden-frameless:not(.is-fullscreen).is-focused .titlebar-button-container.mod-right{
     background-color:var(--titlebar-background-focused)
 }
-.titlebar-button.mod-logo:hover .logo-wireframe,.titlebar-button.mod-logo:not(:hover) .logo-full{
+.is-translucent:not(.is-fullscreen) .titlebar,.is-translucent:not(.is-fullscreen) .app-container{
+    background-color:var(--workspace-background-translucent)
+}
+.is-translucent:not(.is-fullscreen) .workspace-ribbon.mod-left,.is-translucent:not(.is-fullscreen) .workspace-tabs,.is-translucent:not(.is-fullscreen) .workspace-split,.is-translucent:not(.is-fullscreen) .sidebar-toggle-button,.is-translucent:not(.is-fullscreen) .mod-left-split .workspace-tab-header-container,.is-translucent:not(.is-fullscreen) .mod-right-split .workspace-tab-header-container,.is-translucent:not(.is-fullscreen) .mod-top .workspace-tab-header-container,.is-translucent:not(.is-fullscreen) .workspace-tabs .workspace-leaf,.is-translucent:not(.is-fullscreen) .workspace-sidedock-vault-profile,.is-translucent:not(.is-fullscreen) .workspace-ribbon.mod-left:before{
+    background-color:transparent!important
+}
+.is-translucent .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs,.is-translucent .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tabs{
+    visibility:hidden
+}
+.workspace-ribbon .sidebar-toggle-button{
+    position:absolute;
+    top:0;
+    left:0;
+    justify-content:center;
+    width:var(--ribbon-width)
+}
+.workspace-ribbon{
+    flex:0 0 var(--ribbon-width);
+    flex-direction:column;
+    display:flex;
+    overflow:hidden;
+    z-index:var(--layer-sidedock);
+    gap:var(--size-4-1);
+    width:var(--ribbon-width);
+    padding:var(--ribbon-padding);
+    border-right:var(--divider-width) solid var(--divider-color);
+    color:var(--text-muted);
+    background-color:var(--ribbon-background)
+}
+.workspace-ribbon.mod-left:before{
+    position:absolute;
+    left:0;
+    top:0;
+    border-bottom:var(--tab-outline-width) solid var(--tab-outline-color);
+    height:var(--header-height);
+    width:var(--ribbon-width);
+    box-sizing:border-box;
+    background-color:var(--titlebar-background);
+    content:" ";
+    -webkit-app-region:drag
+}
+.workspace-ribbon.mod-left.is-collapsed{
+    border-right-color:var(--divider-color);
+    background-color:var(--ribbon-background-collapsed);
+    transition:background-color 250ms 95ms ease-in-out
+}
+.workspace-ribbon.mod-right{
+    display:none
+}
+.workspace-ribbon.is-hidden{
+    display:none
+}
+.workspace-ribbon.is-collapsed{
+    background-color:var(--background-secondary)
+}
+body:not(.show-ribbon) .workspace-ribbon,body:not(.show-ribbon) .side-dock-ribbon{
     display:none
 }
 .view-header{
@@ -5699,241 +5852,16 @@ body.is-frameless.in-progress .titlebar{
 .view-header-title::-webkit-scrollbar{
     display:none
 }
-.workspace-ribbon.mod-left:before{
-    position:absolute;
-    left:0;
-    top:0;
-    border-bottom:var(--tab-outline-width) solid var(--tab-outline-color);
-    height:var(--header-height);
-    width:var(--ribbon-width);
-    box-sizing:border-box;
-    background-color:var(--titlebar-background);
-    content:" ";
-    -webkit-app-region:drag
-}
-body:not(.show-ribbon) .workspace-ribbon,body:not(.show-ribbon) .side-dock-ribbon{
-    display:none
-}
-.workspace-ribbon{
-    flex:0 0 var(--ribbon-width);
-    flex-direction:column;
-    display:flex;
-    overflow:hidden;
-    z-index:var(--layer-sidedock);
-    gap:var(--size-4-1);
-    width:var(--ribbon-width);
-    padding:var(--ribbon-padding);
-    border-right:var(--divider-width) solid var(--divider-color);
-    color:var(--text-muted);
-    background-color:var(--ribbon-background)
-}
-.workspace-ribbon.mod-left.is-collapsed{
-    border-right-color:var(--divider-color);
-    background-color:var(--ribbon-background-collapsed);
-    transition:background-color 250ms 95ms ease-in-out
-}
-.workspace-ribbon.mod-right{
-    display:none
-}
-.workspace-ribbon.is-hidden{
-    display:none
-}
-.workspace-ribbon.is-collapsed{
-    background-color:var(--background-secondary)
-}
-.mod-rtl .workspace-tab-header-inner-title,.mod-rtl .setting-item-description,.mod-rtl .setting-item-name,.mod-rtl input{
-    text-align:right
-}
-.mod-rtl .sidebar-toggle-button{
-    order:2
-}
-.mod-rtl .sidebar-toggle-button.mod-right{
-    order:-1
-}
-.mod-rtl .workspace .mod-root .workspace-tabs.mod-stacked .workspace-tab-container{
-    flex-direction:row-reverse
-}
-.mod-rtl .workspace .mod-root .workspace-tabs.mod-stacked .workspace-tab-container .workspace-tab-header-inner{
-    flex-direction:row-reverse
-}
-.mod-rtl svg.svg-icon:not( .check-small, .lucide-binary, .lucide-check, .lucide-check-square, .lucide-clock, .lucide-code-2, .lucide-square-function, .lucide-timer, .sidebar-toggle-button-icon ){
-    transform:scale(-1,1)
-}
-.input-right-decorator.clickable-icon.is-active{
-    background-color:transparent
-}
-.status-bar{
-    position:var(--status-bar-position);
-    bottom:0;
-    right:0;
-    display:flex;
-    justify-content:flex-end;
-    gap:var(--size-4-1);
-    z-index:var(--layer-status-bar);
-    width:auto;
-    min-height:18px;
-    border-radius:var(--status-bar-radius);
-    border-style:solid;
-    border-width:var(--status-bar-border-width);
-    border-color:var(--status-bar-border-color);
-    padding:var(--size-4-1);
-    color:var(--status-bar-text-color);
-    font-size:var(--status-bar-font-size);
-    font-variant-numeric:tabular-nums;
-    user-select:none;
-    background-color:var(--status-bar-background)
-}
-body:not(.is-fullscreen) .status-bar{
-    padding-right:var(--size-4-2)
-}
-.status-bar-item{
-    display:inline-flex;
-    align-items:center;
-    border-radius:var(--radius-s);
-    padding:3px var(--size-2-2);
-    line-height:1;
-    corner-shape:var(--corner-shape)
-}
-.status-bar-item.mod-clickable{
-    cursor:var(--cursor)
-}
-@media (hover:hover){
-    .status-bar-item.plugin-editor-status:hover,.status-bar-item.plugin-sync:hover{
-        background-color:var(--background-modifier-hover)
-    }
-}
-.status-bar-item:empty{
-    display:none
-}
-.status-bar-item-icon{
-    display:flex;
-    align-items:center;
-    vertical-align:middle
-}
-.status-bar-item-segment{
-    display:flex;
-    align-items:center;
-    gap:var(--size-2-2);
-    margin-inline-end:var(--size-4-2)
-}
-.is-screenshotting .status-bar{
-    display:none
-}
-.titlebar{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    display:flex;
-    border-bottom:var(--titlebar-border-width) solid var(--titlebar-border-color);
-    background-color:var(--titlebar-background);
-    -webkit-app-region:drag
-}
-.titlebar-inner{
-    display:flex;
-    width:100%;
-    color:var(--titlebar-text-color);
-    font-weight:var(--titlebar-text-weight)
-}
-.is-focused .titlebar-inner{
-    color:var(--titlebar-text-color-focused)
-}
-.titlebar-text{
-    position:absolute;
-    top:0;
-    inset-inline-start:0;
-    flex-grow:1;
-    gap:0.15em;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-    width:100%;
-    height:100%;
-    padding:0 125px;
-    font-size:var(--font-ui-small);
-    text-align:center;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    opacity:0.85
-}
-.titlebar-button-container{
-    display:flex;
-    position:absolute;
-    top:0
-}
-.mod-macos .titlebar-button-container{
-    top:8px
-}
-.titlebar-button-container.mod-left{
-    left:0
-}
-.mod-macos .titlebar-button-container.mod-left{
-    left:calc(80px / var(--zoom-factor))
-}
-.titlebar-button-container .mod-back,.titlebar-button-container .mod-forward{
-    color:var(--icon-color)
-}
-.titlebar-button-container.mod-right{
-    right:0
-}
-.titlebar-button{
-    display:inline-flex;
-    align-items:center;
-    padding:var(--size-2-2) var(--size-2-3);
-    cursor:var(--cursor);
-    -webkit-app-region:no-drag
-}
-@media (hover:hover){
-    .titlebar-button.mod-close:hover{
-        background-color:var(--background-modifier-error)
-    }
-}
-.mod-macos .titlebar-button{
-    border-radius:var(--radius-s)
-}
-.is-hidden-frameless.mod-macos .titlebar{
-    display:none
-}
-.is-hidden-frameless.mod-windows .titlebar,.is-hidden-frameless.mod-linux .titlebar{
-    z-index:var(--layer-popover);
-    border:none;
-    background:transparent;
-    pointer-events:none
-}
-.is-hidden-frameless.mod-windows .titlebar-button.mod-back,.is-hidden-frameless.mod-linux .titlebar-button.mod-back,.is-hidden-frameless.mod-windows .titlebar-button.mod-forward,.is-hidden-frameless.mod-linux .titlebar-button.mod-forward,.is-hidden-frameless.mod-windows .titlebar-text,.is-hidden-frameless.mod-linux .titlebar-text{
-    display:none
-}
-.is-hidden-frameless.mod-windows .titlebar-button-container,.is-hidden-frameless.mod-linux .titlebar-button-container{
-    pointer-events:auto
-}
-@media (hover:hover){
-    .mod-linux .titlebar-button.mod-close:hover,.mod-windows .titlebar-button.mod-close:hover{
-        background-color:var(--background-modifier-error)
-    }
-    .mod-linux .titlebar-button.mod-close:hover .svg-icon,.mod-windows .titlebar-button.mod-close:hover .svg-icon{
-        fill:white;
-        stroke:white
-    }
-}
-@media screen and (max-width:300px){
-    .titlebar-text{
-        display:none
-    }
-}
-.is-translucent:not(.is-fullscreen) .titlebar,.is-translucent:not(.is-fullscreen) .app-container{
-    background-color:var(--workspace-background-translucent)
-}
-.is-translucent:not(.is-fullscreen) .workspace-ribbon.mod-left,.is-translucent:not(.is-fullscreen) .workspace-tabs,.is-translucent:not(.is-fullscreen) .workspace-split,.is-translucent:not(.is-fullscreen) .sidebar-toggle-button,.is-translucent:not(.is-fullscreen) .mod-left-split .workspace-tab-header-container,.is-translucent:not(.is-fullscreen) .mod-right-split .workspace-tab-header-container,.is-translucent:not(.is-fullscreen) .mod-top .workspace-tab-header-container,.is-translucent:not(.is-fullscreen) .workspace-tabs .workspace-leaf,.is-translucent:not(.is-fullscreen) .workspace-sidedock-vault-profile,.is-translucent:not(.is-fullscreen) .workspace-ribbon.mod-left:before{
-    background-color:transparent!important
-}
-.is-translucent .workspace-split.mod-left-split.is-sidedock-collapsed .workspace-tabs,.is-translucent .workspace-split.mod-right-split.is-sidedock-collapsed .workspace-tabs{
-    visibility:hidden
-}
 .view-header-nav-buttons{
     --icon-size:var(--icon-s);
     align-items:center;
     display:flex
+}
+.view-header-always-show{
+    display:flex!important
+}
+body.is-screenshotting .view-header{
+    visibility:hidden
 }
 .workspace-tabs{
     overflow:hidden;
@@ -6020,11 +5948,6 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header.is-highlig
     .mod-root .workspace-tab-header.is-active .workspace-tab-header-status-icon.mod-linked:hover,.mod-root .workspace-tab-header.is-active .workspace-tab-header-inner-close-button.mod-linked:hover,.mod-root .workspace-tab-header.is-active .workspace-tab-header-status-icon.mod-pinned:hover,.mod-root .workspace-tab-header.is-active .workspace-tab-header-inner-close-button.mod-pinned:hover{
         background-color:var(--background-modifier-active-hover)
     }
-}
-.workspace-tab-header.is-active .workspace-tab-header-status-icon::after,.workspace-tab-header.is-active .workspace-tab-header-inner-close-button::after{
-    background-color:transparent
-}
-@media (hover:hover){
     .workspace-tab-header-inner-close-button:hover{
         color:var(--tab-text-color-focused-active-current)
     }
@@ -6034,6 +5957,9 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header.is-highlig
     .workspace-tab-header.is-active .workspace-tab-header-inner-close-button:hover{
         color:var(--tab-text-color-focused-active-current)
     }
+}
+.workspace-tab-header.is-active .workspace-tab-header-status-icon::after,.workspace-tab-header.is-active .workspace-tab-header-inner-close-button::after{
+    background-color:transparent
 }
 .workspace-tab-header.is-before-active .workspace-tab-header-inner{
     border-bottom-right-radius:10px
@@ -6264,11 +6190,83 @@ button:not(.clickable-icon){
     --icon-size:var(--icon-xs);
     --icon-stroke:var(--icon-xs-stroke-width)
 }
-.view-header-always-show{
-    display:flex!important
+.input-right-decorator.clickable-icon.is-active{
+    background-color:transparent
 }
-body.is-screenshotting .view-header{
-    visibility:hidden
+.mod-rtl .workspace-tab-header-inner-title,.mod-rtl .setting-item-description,.mod-rtl .setting-item-name,.mod-rtl input{
+    text-align:right
+}
+.mod-rtl .sidebar-toggle-button{
+    order:2
+}
+.mod-rtl .sidebar-toggle-button.mod-right{
+    order:-1
+}
+.mod-rtl .workspace .mod-root .workspace-tabs.mod-stacked .workspace-tab-container{
+    flex-direction:row-reverse
+}
+.mod-rtl .workspace .mod-root .workspace-tabs.mod-stacked .workspace-tab-container .workspace-tab-header-inner{
+    flex-direction:row-reverse
+}
+.mod-rtl svg.svg-icon:not( .check-small, .lucide-binary, .lucide-check, .lucide-check-square, .lucide-clock, .lucide-code-2, .lucide-square-function, .lucide-timer, .sidebar-toggle-button-icon ){
+    transform:scale(-1,1)
+}
+.status-bar{
+    position:var(--status-bar-position);
+    bottom:0;
+    right:0;
+    display:flex;
+    justify-content:flex-end;
+    gap:var(--size-4-1);
+    z-index:var(--layer-status-bar);
+    width:auto;
+    min-height:18px;
+    border-radius:var(--status-bar-radius);
+    border-style:solid;
+    border-width:var(--status-bar-border-width);
+    border-color:var(--status-bar-border-color);
+    padding:var(--size-4-1);
+    color:var(--status-bar-text-color);
+    font-size:var(--status-bar-font-size);
+    font-variant-numeric:tabular-nums;
+    user-select:none;
+    background-color:var(--status-bar-background)
+}
+body:not(.is-fullscreen) .status-bar{
+    padding-right:var(--size-4-2)
+}
+.status-bar-item{
+    display:inline-flex;
+    align-items:center;
+    border-radius:var(--radius-s);
+    padding:3px var(--size-2-2);
+    line-height:1;
+    corner-shape:var(--corner-shape)
+}
+.status-bar-item.mod-clickable{
+    cursor:var(--cursor)
+}
+@media (hover:hover){
+    .status-bar-item.plugin-editor-status:hover,.status-bar-item.plugin-sync:hover{
+        background-color:var(--background-modifier-hover)
+    }
+}
+.status-bar-item:empty{
+    display:none
+}
+.status-bar-item-icon{
+    display:flex;
+    align-items:center;
+    vertical-align:middle
+}
+.status-bar-item-segment{
+    display:flex;
+    align-items:center;
+    gap:var(--size-2-2);
+    margin-inline-end:var(--size-4-2)
+}
+.is-screenshotting .status-bar{
+    display:none
 }
 .workspace-drawer-tab-options .workspace-tab-header .workspace-tab-header-inner-close-button{
     display:none
