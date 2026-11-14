@@ -7,9 +7,8 @@
 
 :root {
   --csstools-color-scheme--dark: ;
-  --csstools-light-dark-toggle--23: var(--csstools-color-scheme--dark) #0060df;
 
-  --focus-ring-color: var(--csstools-light-dark-toggle--23, #0df);
+  --focus-ring-color: light-dark(#0060df, #0df);
   --focus-ring-outline: 2px solid var(--focus-ring-color);
 
   --h1-weight: 700;
@@ -45,12 +44,6 @@
   --viewer-container-height: 0;
 
   color-scheme: light dark;
-}
-
-@supports (color: light-dark(red, red)) {
-  :root {
-    --focus-ring-color: light-dark(#0060df, #0df);
-  }
 }
 
 @media (prefers-color-scheme: dark) {

@@ -2,23 +2,15 @@
 
 /* editorUndoBar */
 #editorUndoBar {
-  --csstools-light-dark-toggle--0: var(--csstools-color-scheme--dark) #15141a;
-  --text-primary-color: var(--csstools-light-dark-toggle--0, #fbfbfe);
-  --csstools-light-dark-toggle--1: var(--csstools-color-scheme--dark) #0060df;
-  --message-bar-icon-color: var(--csstools-light-dark-toggle--1, #73a7f3);
-  --csstools-light-dark-toggle--2: var(--csstools-color-scheme--dark) #deeafc;
-  --message-bar-bg-color: var(--csstools-light-dark-toggle--2, #003070);
+  --text-primary-color: light-dark(#15141a, #fbfbfe);
+  --message-bar-icon-color: light-dark(#0060df, #73a7f3);
+  --message-bar-bg-color: light-dark(#deeafc, #003070);
   --message-bar-fg-color: var(--text-primary-color);
-  --csstools-light-dark-toggle--29: var(--csstools-color-scheme--dark) rgba(0, 0, 0, 0.08);
-  --message-bar-border-color: var(--csstools-light-dark-toggle--29, rgba(255, 255, 255, 0.08));
-  --csstools-light-dark-toggle--30: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.07);
-  --undo-button-bg-color: var(--csstools-light-dark-toggle--30, rgba(255, 255, 255, 0.08));
-  --csstools-light-dark-toggle--31: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.14);
-  --undo-button-bg-color-hover: var(--csstools-light-dark-toggle--31, rgba(255, 255, 255, 0.14));
-  --csstools-light-dark-toggle--32: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.21);
-  --undo-button-bg-color-active: var(--csstools-light-dark-toggle--32, rgba(255, 255, 255, 0.21));
-  --csstools-light-dark-toggle--3: var(--csstools-color-scheme--dark) #0060df;
-  --undo-button-border: 1px solid var(--csstools-light-dark-toggle--3, #0df);
+  --message-bar-border-color: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+  --undo-button-bg-color: light-dark(rgba(21, 20, 26, 0.07), rgba(255, 255, 255, 0.08));
+  --undo-button-bg-color-hover: light-dark(rgba(21, 20, 26, 0.14), rgba(255, 255, 255, 0.14));
+  --undo-button-bg-color-active: light-dark(rgba(21, 20, 26, 0.21), rgba(255, 255, 255, 0.21));
+  --undo-button-border: 1px solid light-dark(#0060df, #0df);
   --undo-button-fg-color: var(--message-bar-fg-color);
   --undo-button-fg-color-hover: var(--undo-button-fg-color);
   --undo-button-fg-color-active: var(--undo-button-fg-color);
@@ -34,19 +26,6 @@
   font-size: 15px;
   cursor: default;
   transform: translateX(-50%);
-}
-
-@supports (color: light-dark(red, red)) {
-  #editorUndoBar {
-    --text-primary-color: light-dark(#15141a, #fbfbfe);
-    --message-bar-icon-color: light-dark(#0060df, #73a7f3);
-    --message-bar-bg-color: light-dark(#deeafc, #003070);
-    --message-bar-border-color: light-dark( rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08) );
-    --undo-button-bg-color: light-dark( rgba(21, 20, 26, 0.07), rgba(255, 255, 255, 0.08) );
-    --undo-button-bg-color-hover: light-dark( rgba(21, 20, 26, 0.14), rgba(255, 255, 255, 0.14) );
-    --undo-button-bg-color-active: light-dark( rgba(21, 20, 26, 0.21), rgba(255, 255, 255, 0.21) );
-    --undo-button-border: 1px solid light-dark(#0060df, #0df);
-  }
 }
 
 #editorUndoBar * {
