@@ -1278,6 +1278,126 @@
    "orig": "pw",
    "use": "defineCipherV23",
    "originalBytes": 1680
+  },
+  {
+   "orig": "oC",
+   "use": "defineSyncScreenBase",
+   "originalBytes": 511
+  },
+  {
+   "orig": "aC",
+   "use": "defineSyncField",
+   "originalBytes": 667
+  },
+  {
+   "orig": "sC",
+   "use": "defineSyncRadioGroup",
+   "originalBytes": 686
+  },
+  {
+   "orig": "lC",
+   "use": "defineSyncRadioOption",
+   "originalBytes": 332
+  },
+  {
+   "orig": "cC",
+   "use": "defineSyncStartScreen",
+   "originalBytes": 810
+  },
+  {
+   "orig": "uC",
+   "use": "defineSyncIntroScreen",
+   "originalBytes": 500
+  },
+  {
+   "orig": "hC",
+   "use": "defineCreateVaultScreen",
+   "originalBytes": 2106
+  },
+  {
+   "orig": "pC",
+   "use": "defineSyncSetupScreen",
+   "originalBytes": 1194
+  },
+  {
+   "orig": "dC",
+   "use": "defineEncryptionScreen",
+   "originalBytes": 2097
+  },
+  {
+   "orig": "fC",
+   "use": "defineSyncSettingsScreen",
+   "originalBytes": 2259
+  },
+  {
+   "orig": "mC",
+   "use": "defineAuthChoiceScreen",
+   "originalBytes": 409
+  },
+  {
+   "orig": "vC",
+   "use": "defineRemoteVaultOptionsScreen",
+   "originalBytes": 984
+  },
+  {
+   "orig": "gC",
+   "use": "defineVaultListScreen",
+   "originalBytes": 1395
+  },
+  {
+   "orig": "yC",
+   "use": "defineSignInScreen",
+   "originalBytes": 2506
+  },
+  {
+   "orig": "bC",
+   "use": "defineForgotPasswordScreen",
+   "originalBytes": 1260
+  },
+  {
+   "orig": "wC",
+   "use": "defineSyncMethodScreen",
+   "originalBytes": 2595
+  },
+  {
+   "orig": "kC",
+   "use": "defineConnectMethodScreen",
+   "originalBytes": 2037
+  },
+  {
+   "orig": "CC",
+   "use": "defineOtherSyncScreen",
+   "originalBytes": 510
+  },
+  {
+   "orig": "EC",
+   "use": "defineEmailEntryScreen",
+   "originalBytes": 699
+  },
+  {
+   "orig": "MC",
+   "use": "defineSignupScreen",
+   "originalBytes": 1464
+  },
+  {
+   "orig": "SC",
+   "use": "defineEmailVerificationScreen",
+   "originalBytes": 1119
+  },
+  {
+   "orig": "xC",
+   "use": "defineICloudMissingScreen",
+   "originalBytes": 319
+  },
+  {
+   "orig": "TC",
+   "use": "defineStoragePermissionScreen",
+   "originalBytes": 1022
+  },
+  {
+   "orig": "DC",
+   "use": "defineICloudUnsupportedScreen",
+   "originalBytes": 356
   }
  ],
  "host": {
@@ -1489,6 +1609,12 @@
    "expr": "{N:32768,r:8,p:1,maxmem:67108864}",
    "sha1": "bccf82dc240e31d5fede024da785f0af6e8fcdbf",
    "originalBytes": 30
+  },
+  {
+   "orig": "AC",
+   "expr": "[\"accentColor\",\"theme\",\"cssTheme\",\"enabledCssSnippets\",\"showViewHeader\",\"showRibbon\",\"nativeMenus\",\"translucency\",\"textFontFamily\",\"interfaceFontFamily\",\"monospaceFontFamily\",\"baseFontSize\",\"baseFontSizeAction\",\"slidingSidebar\",\"floatingNavigation\",\"autoFullScreen\"]",
+   "sha1": "ca78b22bc3a5de13984e7804174301faa0b4a19e",
+   "originalBytes": 3376
   }
  ],
  "methods": [
@@ -1584,5 +1710,5 @@
    "originalBytes": 292
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0,JT,Fm,ym,electron,A0,ete,zee,cy,Zx,Kx,xL,eb,C0"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0,JT,Fm,ym,electron,A0,ete,zee,cy,Zx,Kx,xL,eb,C0,Sm,kD,Dm,CD"
 }
