@@ -38,6 +38,7 @@ kept on the full bundle so it cannot flatter itself.
 | document-search.js | the reading-view find bar (`lz`: scope keys, match count, highlight ranges, prev/next) |
 | preview-view.js | `MarkdownPreviewView` (`fq`: reading-mode settings classes, find bar wiring, ephemeral scroll/selection state, touch double-tap mode toggle, copy/context-menu keys) |
 | markdown-extras.js | reading-mode helpers: unresolved-link marking (`uq`), query-block embed (`pq`), embed depth lookup (`JZ`), properties-editor getter (`eO`), `EmbedLoader` (`sJ`); `misc.js` gained `focusWhenShown` (`gg`). `build-app.mjs` entries may now opt into `"host": true` to receive `__basaltHost` as a trailing argument |
+| preview-renderer.js | `MarkdownPreviewRenderer` (`Gz`): section parse (sync + worker), section recycling, progressive virtualization, measurement, delegated DOM events (links, tags, footnotes, checkboxes, heading/list collapse indicators, media), search-highlight rectangles, scroll line mapping (`getScroll`/`applyScroll`), fold state export/import, mobile image viewer pinch/pan |
 | events.js, timing.js | `Events`, `Component`, `debounce` |
 | keymap.js | `Scope`, the dynamic-parent scope of the workspace, `Keymap` |
 | commands.js | the command registry (`app.commands`), `HotkeyManager` |

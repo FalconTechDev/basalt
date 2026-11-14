@@ -978,6 +978,10 @@
   {
    "orig": "sJ",
    "use": "defineEmbedLoader"
+  },
+  {
+   "orig": "Gz",
+   "use": "defineMarkdownPreviewRenderer"
   }
  ],
  "host": {
@@ -1143,7 +1147,15 @@
   "activePropertiesEditor": "JI",
   "embedDepths": "ZZ",
   "FileEmbed": "rJ",
-  "FallbackEmbed": "oJ"
+  "FallbackEmbed": "oJ",
+  "MarkdownPreviewSection": "qz",
+  "parseMarkdownSections": "cz",
+  "frontmatterClasses": "rT",
+  "codeText": "$z",
+  "codeTexts": "Xz",
+  "renderFlags": "_z",
+  "activeWindow": "activeWindow",
+  "ajaxPromise": "ajaxPromise"
  },
  "declarators": [
   {
