@@ -1329,6 +1329,18 @@
   {
    "orig": "a7",
    "use": "defineOutgoingLinkComponent"
+  },
+  {
+   "orig": "yee",
+   "use": "defineTagPaneTree"
+  },
+  {
+   "orig": "gee",
+   "use": "defineTagPaneItem"
+  },
+  {
+   "orig": "bee",
+   "use": "defineTagPaneView"
   }
  ],
  "host": {
