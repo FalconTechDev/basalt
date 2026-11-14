@@ -16,6 +16,8 @@ import { ownBuffer, statFromNode } from "./misc.js";
 let envThunk = () => ({});
 /** Gives the vault code access to the host's values; `thunk` is called on every use, so late-bound variables work. */
 export function bindEnv(thunk) { envThunk = thunk; }
+/** The late-bound host values for any own module (same thunk vault.js uses). */
+export function hostEnv() { return envThunk(); }
 const vaultEnv = () => envThunk();
 
 const vaultHas = (object, key) => Object.prototype.hasOwnProperty.call(object, key);

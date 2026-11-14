@@ -1,1253 +1,1374 @@
 {
-  "base": "ca5acac",
-  "entries": [
-    {
-      "orig": "nu",
-      "use": "lastSegment"
-    },
-    {
-      "orig": "iu",
-      "use": "parentPath"
-    },
-    {
-      "orig": "ru",
-      "use": "isHiddenPath"
-    },
-    {
-      "orig": "ou",
-      "use": "baseName"
-    },
-    {
-      "orig": "au",
-      "use": "withoutExtension"
-    },
-    {
-      "orig": "su",
-      "use": "extensionOf"
-    },
-    {
-      "orig": "lu",
-      "use": "joinNameExt"
-    },
-    {
-      "orig": "uu",
-      "use": "collapseSlashes"
-    },
-    {
-      "orig": "tu",
-      "use": "plainSpaces"
-    },
-    {
-      "orig": "cu",
-      "use": "normalizePath"
-    },
-    {
-      "orig": "hu",
-      "use": "displayName"
-    },
-    {
-      "orig": "pu",
-      "use": "withoutMd"
-    },
-    {
-      "orig": "BL",
-      "use": "dropMdSuffix"
-    },
-    {
-      "orig": "q2",
-      "use": "fileLinkPath"
-    },
-    {
-      "orig": "j2",
-      "use": "targetText"
-    },
-    {
-      "orig": "cee",
-      "use": "isPluginFileName"
-    },
-    {
-      "orig": "D5",
-      "use": "pathWith"
-    },
-    {
-      "orig": "ET",
-      "use": "linkPath"
-    },
-    {
-      "orig": "MT",
-      "use": "parseLinktext"
-    },
-    {
-      "orig": "RT",
-      "use": "subpathKind"
-    },
-    {
-      "orig": "YC",
-      "use": "isLocalLink"
-    },
-    {
-      "orig": "XC",
-      "use": "linkDestination"
-    },
-    {
-      "orig": "ZC",
-      "use": "safeDecodeUri"
-    },
-    {
-      "orig": "eE",
-      "use": "escapeLinkChars"
-    },
-    {
-      "orig": "tE",
-      "use": "firstHeadingText"
-    },
-    {
-      "orig": "nE",
-      "use": "headingTrail"
-    },
-    {
-      "orig": "JC",
-      "use": "tidyLinkTarget"
-    },
-    {
-      "orig": "Pf",
-      "use": "formatBytes"
-    },
-    {
-      "orig": "rm",
-      "use": "toKebab"
-    },
-    {
-      "orig": "gc",
-      "use": "ellipsize"
-    },
-    {
-      "orig": "u7",
-      "use": "endWithBlankLine"
-    },
-    {
-      "orig": "pP",
-      "use": "squeezeNewlines"
-    },
-    {
-      "orig": "yA",
-      "use": "escapeTablePipes"
-    },
-    {
-      "orig": "xW",
-      "use": "withHash"
-    },
-    {
-      "orig": "zL",
-      "use": "isShortLine"
-    },
-    {
-      "orig": "ZI",
-      "use": "toStringList"
-    },
-    {
-      "orig": "YA",
-      "use": "emptyToNull"
-    },
-    {
-      "orig": "Ree",
-      "use": "parseCommaList"
-    },
-    {
-      "orig": "Bee",
-      "use": "formatCommaList"
-    },
-    {
-      "orig": "kq",
-      "use": "countQuoteMarks"
-    },
-    {
-      "orig": "Cq",
-      "use": "quoteIndentDepth"
-    },
-    {
-      "orig": "Vj",
-      "use": "dropWordsContaining"
-    },
-    {
-      "orig": "FQ",
-      "use": "formDecode"
-    },
-    {
-      "orig": "NQ",
-      "use": "formEncode"
-    },
-    {
-      "orig": "RQ",
-      "use": "formEncodePath"
-    },
-    {
-      "orig": "NX",
-      "use": "linesOf"
-    },
-    {
-      "orig": "Ej",
-      "use": "hasLatinLetter"
-    },
-    {
-      "orig": "zx",
-      "use": "parseImageSize"
-    },
-    {
-      "orig": "WZ",
-      "use": "intOrNull"
-    },
-    {
-      "orig": "Vl",
-      "use": "floatOr"
-    },
-    {
-      "orig": "f_",
-      "use": "joinClasses"
-    },
-    {
-      "orig": "Js",
-      "use": "ninesAtLeast"
-    },
-    {
-      "orig": "uc",
-      "use": "newlinesBefore"
-    },
-    {
-      "orig": "Dv",
-      "use": "lineBounds"
-    },
-    {
-      "orig": "Nb",
-      "use": "keyLabel"
-    },
-    {
-      "orig": "Fb",
-      "use": "makeHotkey"
-    },
-    {
-      "orig": "my",
-      "use": "valueIgnoringCase"
-    },
-    {
-      "orig": "qV",
-      "use": "keyIgnoringCase"
-    },
-    {
-      "orig": "vy",
-      "use": "parseVersion"
-    },
-    {
-      "orig": "gy",
-      "use": "isOlderVersion"
-    },
-    {
-      "orig": "P1",
-      "use": "severityRank"
-    },
-    {
-      "orig": "L1",
-      "use": "worstSeverity"
-    },
-    {
-      "orig": "rD",
-      "use": "chromeVersion"
-    },
-    {
-      "orig": "tY",
-      "use": "parsePropertyId"
-    },
-    {
-      "orig": "nY",
-      "use": "propertyId"
-    },
-    {
-      "orig": "SY",
-      "use": "shortPropertyId"
-    },
-    {
-      "orig": "xY",
-      "use": "longPropertyId"
-    },
-    {
-      "orig": "PY",
-      "use": "uniqueName"
-    },
-    {
-      "orig": "LT",
-      "use": "plainHeading"
-    },
-    {
-      "orig": "IT",
-      "use": "linkSafeHeading"
-    },
-    {
-      "orig": "kA",
-      "use": "describeCliOptions"
-    },
-    {
-      "orig": "cA",
-      "use": "smaller"
-    },
-    {
-      "orig": "uA",
-      "use": "larger"
-    },
-    {
-      "orig": "MJ",
-      "use": "sliderCurve"
-    },
-    {
-      "orig": "SJ",
-      "use": "sliderCurveInverse"
-    },
-    {
-      "orig": "l4",
-      "use": "unitSteps"
-    },
-    {
-      "orig": "cc",
-      "use": "randomHex"
-    },
-    {
-      "orig": "zs",
-      "use": "asArray"
-    },
-    {
-      "orig": "ac",
-      "use": "distinct"
-    },
-    {
-      "orig": "lc",
-      "use": "moveItem"
-    },
-    {
-      "orig": "N6",
-      "use": "takeFirst"
-    },
-    {
-      "orig": "mc",
-      "use": "binaryFind"
-    },
-    {
-      "orig": "vc",
-      "use": "isStringArray"
-    },
-    {
-      "orig": "hF",
-      "use": "joinLists"
-    },
-    {
-      "orig": "uF",
-      "use": "pushHistory"
-    },
-    {
-      "orig": "ve",
-      "use": "sameItems"
-    },
-    {
-      "orig": "ye",
-      "use": "sameItemsBy"
-    },
-    {
-      "orig": "c8",
-      "use": "sortByOrder"
-    },
-    {
-      "orig": "HI",
-      "use": "matchPenalty"
-    },
-    {
-      "orig": "HV",
-      "use": "localDate"
-    },
-    {
-      "orig": "zV",
-      "use": "localTime"
-    },
-    {
-      "orig": "VV",
-      "use": "twoDigits"
-    },
-    {
-      "orig": "Ok",
-      "use": "hexByte"
-    },
-    {
-      "orig": "Fk",
-      "use": "rgbToHex"
-    },
-    {
-      "orig": "Rk",
-      "use": "rgbToInt"
-    },
-    {
-      "orig": "Hk",
-      "use": "isLightColor"
-    },
-    {
-      "orig": "Lk",
-      "use": "hslToRgb"
-    },
-    {
-      "orig": "Ik",
-      "use": "rgbToHsl"
-    },
-    {
-      "orig": "Nk",
-      "use": "parseHexColor"
-    },
-    {
-      "orig": "H3",
-      "use": "rgbTripleToHex"
-    },
-    {
-      "orig": "Df",
-      "use": "hexToBuffer"
-    },
-    {
-      "orig": "Af",
-      "use": "bufferToHex"
-    },
-    {
-      "orig": "Gee",
-      "use": "stringFromCodes"
-    },
-    {
-      "orig": "Kee",
-      "use": "readInt32BE"
-    },
-    {
-      "orig": "Yee",
-      "use": "readInt32LE"
-    },
-    {
-      "orig": "mu",
-      "use": "ownBuffer"
-    },
-    {
-      "orig": "bf",
-      "use": "ownBuffer"
-    },
-    {
-      "orig": "jb",
-      "use": "zeroFill"
-    },
-    {
-      "orig": "Ub",
-      "use": "xorInto"
-    },
-    {
-      "orig": "Jb",
-      "use": "clearTopBits"
-    },
-    {
-      "orig": "gu",
-      "use": "statFromNode"
-    },
-    {
-      "orig": "dk",
-      "use": "statFromCapacitor"
-    },
-    {
-      "orig": "Ol",
-      "use": "point"
-    },
-    {
-      "orig": "Nl",
-      "use": "rect"
-    },
-    {
-      "orig": "Bl",
-      "use": "distance"
-    },
-    {
-      "orig": "Rl",
-      "use": "rectAt"
-    },
-    {
-      "orig": "Fl",
-      "use": "pointOfEvent"
-    },
-    {
-      "orig": "d3",
-      "use": "box"
-    },
-    {
-      "orig": "f3",
-      "use": "boxOfPoints"
-    },
-    {
-      "orig": "m3",
-      "use": "boxOfRect"
-    },
-    {
-      "orig": "v3",
-      "use": "rectOfBox"
-    },
-    {
-      "orig": "g3",
-      "use": "boxUnion"
-    },
-    {
-      "orig": "y3",
-      "use": "boxGrow"
-    },
-    {
-      "orig": "b3",
-      "use": "boxContains"
-    },
-    {
-      "orig": "w3",
-      "use": "boxCenter"
-    },
-    {
-      "orig": "k3",
-      "use": "centeredOrigin"
-    },
-    {
-      "orig": "P3",
-      "use": "boxPoints"
-    },
-    {
-      "orig": "L3",
-      "use": "sortedBoxPoints"
-    },
-    {
-      "orig": "I3",
-      "use": "sortByKey"
-    },
-    {
-      "orig": "F3",
-      "use": "boxX"
-    },
-    {
-      "orig": "N3",
-      "use": "boxY"
-    },
-    {
-      "orig": "q5",
-      "use": "pushOut"
-    },
-    {
-      "orig": "H5",
-      "use": "sideMidpoint"
-    },
-    {
-      "orig": "j5",
-      "use": "bezierEdge"
-    },
-    {
-      "orig": "Ay",
-      "use": "sortHitsByScore"
-    },
-    {
-      "orig": "Py",
-      "use": "shiftRanges"
-    },
-    {
-      "orig": "eT",
-      "use": "frontmatterEntry"
-    },
-    {
-      "orig": "tT",
-      "use": "frontmatterStrings"
-    },
-    {
-      "orig": "iT",
-      "use": "frontmatterTags"
-    },
-    {
-      "orig": "nT",
-      "use": "frontmatterAliases"
-    },
-    {
-      "orig": "My",
-      "use": "prepareQuery"
-    },
-    {
-      "orig": "Dy",
-      "use": "fuzzyMatchJs"
-    },
-    {
-      "orig": "xy",
-      "use": "matchScore"
-    },
-    {
-      "orig": "wc",
-      "use": "debounceCall"
-    },
-    {
-      "orig": "vl",
-      "use": "cancelTransition"
-    },
-    {
-      "orig": "yl",
-      "use": "runTransition"
-    },
-    {
-      "orig": "jg",
-      "use": "closeAllMenus"
-    },
-    {
-      "orig": "Sy",
-      "use": "prepareFuzzyFinder"
-    },
-    {
-      "orig": "Oy",
-      "use": "prepareSimpleFinder"
-    },
-    {
-      "orig": "Ly",
-      "use": "containsAllWords"
-    },
-    {
-      "orig": "Iy",
-      "use": "simpleMatch"
-    },
-    {
-      "orig": "wy",
-      "use": "mergeSpans"
-    },
-    {
-      "orig": "Ny",
-      "use": "renderMatches"
-    },
-    {
-      "orig": "Fy",
-      "use": "renderResults"
-    },
-    {
-      "orig": "FT",
-      "use": "resolveSubpath"
-    },
-    {
-      "orig": "pv",
-      "use": "installTooltipHandlers"
-    },
-    {
-      "orig": "vv",
-      "use": "onTooltipPointerOver"
-    },
-    {
-      "orig": "gv",
-      "use": "onTooltipPointerOut"
-    },
-    {
-      "orig": "bv",
-      "use": "showTooltipFromAttributes"
-    },
-    {
-      "orig": "kv",
-      "use": "displayTooltip"
-    },
-    {
-      "orig": "Cv",
-      "use": "hideTooltip"
-    },
-    {
-      "orig": "Ev",
-      "use": "applyTooltipOptions"
-    },
-    {
-      "orig": "Mv",
-      "use": "setElementTooltip"
-    },
-    {
-      "orig": "Sv",
-      "use": "setDynamicTooltip"
-    },
-    {
-      "orig": "fv",
-      "use": "cancelTooltipDelay"
-    },
-    {
-      "orig": "mv",
-      "use": "tooltipsDisabled"
-    }
-  ],
-  "classes": [
-    {
-      "orig": "VT",
-      "use": "defineEvents"
-    },
-    {
-      "orig": "jm",
-      "use": "defineComponent"
-    },
-    {
-      "orig": "LD",
-      "use": "defineWorkspaceItem"
-    },
-    {
-      "orig": "ID",
-      "use": "defineWorkspaceParent"
-    },
-    {
-      "orig": "OD",
-      "use": "defineWorkspaceSplit"
-    },
-    {
-      "orig": "ND",
-      "use": "defineWorkspaceContainer"
-    },
-    {
-      "orig": "L0",
-      "use": "defineWorkspaceRoot"
-    },
-    {
-      "orig": "I0",
-      "use": "defineWorkspaceFloating"
-    },
-    {
-      "orig": "O0",
-      "use": "defineWorkspaceWindow"
-    },
-    {
-      "orig": "FD",
-      "use": "defineWorkspaceSidedock"
-    },
-    {
-      "orig": "zD",
-      "use": "defineWorkspaceTabs"
-    },
-    {
-      "orig": "dl",
-      "use": "defineTransition"
-    },
-    {
-      "orig": "P0",
-      "use": "defineWorkspaceRibbon"
-    },
-    {
-      "orig": "qD",
-      "use": "defineLeafHistory"
-    },
-    {
-      "orig": "jD",
-      "use": "defineWorkspaceLeaf"
-    },
-    {
-      "orig": "Ng",
-      "use": "defineScope"
-    },
-    {
-      "orig": "Rg",
-      "use": "defineDynamicScope"
-    },
-    {
-      "orig": "Bg",
-      "use": "defineKeymap"
-    },
-    {
-      "orig": "jk",
-      "use": "defineBaseComponent"
-    },
-    {
-      "orig": "Uk",
-      "use": "defineValueComponent"
-    },
-    {
-      "orig": "Wk",
-      "use": "defineButtonComponent"
-    },
-    {
-      "orig": "_k",
-      "use": "defineExtraButtonComponent"
-    },
-    {
-      "orig": "Gk",
-      "use": "defineToggleComponent"
-    },
-    {
-      "orig": "Kk",
-      "use": "defineAbstractTextComponent"
-    },
-    {
-      "orig": "Yk",
-      "use": "defineTextComponent"
-    },
-    {
-      "orig": "Qk",
-      "use": "defineSearchComponent"
-    },
-    {
-      "orig": "Xk",
-      "use": "defineTextAreaComponent"
-    },
-    {
-      "orig": "Zk",
-      "use": "defineMomentFormatComponent"
-    },
-    {
-      "orig": "Jk",
-      "use": "defineDropdownComponent"
-    },
-    {
-      "orig": "eC",
-      "use": "defineProgressBarComponent"
-    },
-    {
-      "orig": "tC",
-      "use": "defineSliderComponent"
-    },
-    {
-      "orig": "nC",
-      "use": "defineColorComponent"
-    },
-    {
-      "orig": "zk",
-      "use": "defineSetting"
-    },
-    {
-      "orig": "qk",
-      "use": "defineSettingGroup"
-    },
-    {
-      "orig": "_1",
-      "use": "defineSettingTab"
-    },
-    {
-      "orig": "K0",
-      "use": "definePluginSettingTab"
-    },
-    {
-      "orig": "fb",
-      "use": "defineNotice"
-    },
-    {
-      "orig": "tb",
-      "use": "defineModal"
-    },
-    {
-      "orig": "Hg",
-      "use": "defineMenuItem"
-    },
-    {
-      "orig": "zg",
-      "use": "defineMenuSeparator"
-    },
-    {
-      "orig": "Ug",
-      "use": "defineMenu"
-    },
-    {
-      "orig": "ob",
-      "use": "defineSuggestionList"
-    },
-    {
-      "orig": "ab",
-      "use": "defineGroupedSuggestionList"
-    },
-    {
-      "orig": "sb",
-      "use": "defineSuggestModal"
-    },
-    {
-      "orig": "lb",
-      "use": "defineFuzzySuggestModal"
-    },
-    {
-      "orig": "EI",
-      "use": "definePopoverSuggest"
-    },
-    {
-      "orig": "SI",
-      "use": "defineAbstractInputSuggest"
-    },
-    {
-      "orig": "NI",
-      "use": "defineEditorSuggest"
-    },
-    {
-      "orig": "Y6",
-      "use": "defineCommands"
-    },
-    {
-      "orig": "zb",
-      "use": "defineHotkeyManager"
-    },
-    {
-      "orig": "G0",
-      "use": "definePlugin"
-    },
-    {
-      "orig": "Kg",
-      "use": "defineView"
-    },
-    {
-      "orig": "Yg",
-      "use": "defineItemView"
-    },
-    {
-      "orig": "eD",
-      "use": "defineDeferredView"
-    },
-    {
-      "orig": "tD",
-      "use": "defineEmptyView"
-    },
-    {
-      "orig": "nD",
-      "use": "defineUnknownView"
-    },
-    {
-      "orig": "MD",
-      "use": "defineFileView"
-    },
-    {
-      "orig": "p0",
-      "use": "defineViewRegistry"
-    },
-    {
-      "orig": "rX",
-      "use": "defineHoverPopover"
-    },
-    {
-      "orig": "OX",
-      "use": "defineEditableFileView"
-    },
-    {
-      "orig": "BX",
-      "use": "defineTextFileView"
-    },
-    {
-      "orig": "hv",
-      "use": "initTooltips"
-    },
-    {
-      "orig": "Yl",
-      "use": "definePlatform"
-    },
-    {
-      "orig": "nb",
-      "use": "defineButtonModal"
-    },
-    {
-      "orig": "W1",
-      "use": "defineCallout"
-    },
-    {
-      "orig": "Q1",
-      "use": "defineSecretChooser"
-    },
-    {
-      "orig": "Y1",
-      "use": "defineSecretEditModal"
-    },
-    {
-      "orig": "X1",
-      "use": "defineEncryptionInfoModal"
-    },
-    {
-      "orig": "$1",
-      "use": "defineSecretPickerModal"
-    },
-    {
-      "orig": "Z1",
-      "use": "defineSecretComponent"
-    },
-    {
-      "orig": "K1",
-      "use": "defineKeychainTab"
-    },
-    {
-      "orig": "i0",
-      "use": "defineSecretStorageBase"
-    },
-    {
-      "orig": "r0",
-      "use": "defineDesktopSecretStore"
-    },
-    {
-      "orig": "o0",
-      "use": "defineMobileSecretStore"
-    },
-    {
-      "orig": "a0",
-      "use": "defineSecretStorage"
-    }
-  ],
-  "host": {
-    "Events": "VT",
-    "Component": "jm",
-    "Platform": "Yl",
-    "WorkspaceItem": "LD",
-    "WorkspaceParent": "ID",
-    "WorkspaceSplit": "OD",
-    "WorkspaceContainer": "ND",
-    "parseColor": "Ak",
-    "colorToHex": "Fk",
-    "installEnhancements": "yZ",
-    "attachElectron": "bZ",
-    "installTooltipHandlers": "pv",
-    "installTitlebar": "kte",
-    "trackWindowFocus": "gZ",
-    "applyLanguage": "bm",
-    "forwardInputEvents": "mZ",
-    "mirrorStyles": "vZ",
-    "WorkspaceSidedock": "FD",
-    "WorkspaceLeaf": "jD",
-    "TFile": "$T",
-    "Menu": "Ug",
-    "Transition": "dl",
-    "t": "gm",
-    "VaultProfile": "DD",
-    "setTooltip": "Mv",
-    "setIcon": "tv",
-    "enableTitlebarDoubleClick": "VD",
-    "saveScrollPositions": "ag",
-    "restoreScrollPositions": "lg",
-    "scrollWithPointer": "_v",
-    "makeDragReorderable": "Gc",
-    "TOOLTIP_DELAY": "sv",
-    "LeafHistory": "qD",
-    "EmptyView": "tD",
-    "DeferredView": "eD",
-    "UnknownView": "nD",
-    "FileView": "MD",
-    "MobileDrawer": "WD",
-    "Notice": "fb",
-    "pointerEntered": "Lc",
-    "WorkspaceTabs": "zD",
-    "Keymap": "Bg",
-    "Scope": "Ng",
-    "eventKey": "Lg",
-    "eventVirtualKey": "Ig",
-    "focusElement": "tg",
-    "osName": "zl",
-    "BaseComponent": "jk",
-    "ValueComponent": "Uk",
-    "ButtonComponent": "Wk",
-    "ExtraButtonComponent": "_k",
-    "ToggleComponent": "Gk",
-    "AbstractTextComponent": "Kk",
-    "TextComponent": "Yk",
-    "SearchComponent": "Qk",
-    "TextAreaComponent": "Xk",
-    "MomentFormatComponent": "Zk",
-    "DropdownComponent": "Jk",
-    "ProgressBarComponent": "eC",
-    "SliderComponent": "tC",
-    "ColorComponent": "nC",
-    "Setting": "zk",
-    "SettingGroup": "qk",
-    "SettingTab": "_1",
-    "PluginSettingTab": "K0",
-    "selectOnFocus": "Pv",
-    "hideTooltip": "Cv",
-    "displayTooltip": "kv",
-    "blurAndClearSelection": "Lv",
-    "closeAllMenus": "jg",
-    "registerOpenModal": "zm",
-    "unregisterOpenModal": "qm",
-    "nodeInWindow": "Ov",
-    "onSwipe": "Vm",
-    "slideModalIn": "Pl",
-    "slideModalOut": "Ll",
-    "swipeToDismiss": "_g",
-    "MenuItem": "Hg",
-    "MenuSeparator": "zg",
-    "slideBetween": "El",
-    "isTouchSyntheticMouse": "Uc",
-    "frameOffset": "hg",
-    "watchElementGone": "Rv",
-    "keyboard": "Im",
-    "SuggestionList": "ob",
-    "GroupedSuggestionList": "ab",
-    "SuggestModal": "sb",
-    "FuzzySuggestModal": "lb",
-    "PopoverSuggest": "EI",
-    "AbstractInputSuggest": "SI",
-    "EditorSuggest": "NI",
-    "Modal": "tb",
-    "renderInstructions": "rb",
-    "positionNear": "Nv",
-    "rectInTopWindow": "pg",
-    "textDirection": "LI",
-    "nextFrame": "Al",
-    "MarkdownView": "W6",
-    "runCommandCallback": "K6",
-    "formatHotkey": "Rb",
-    "MarkdownPreviewRenderer": "Gz",
-    "FormulaFunctions": "QW",
-    "PLUGIN_STYLES_FILE": "JD",
-    "View": "Kg",
-    "ItemView": "Yg",
-    "createNavButton": "Gg",
-    "isMacLike": "jl",
-    "tc": "gm.commands",
-    "markdownExtensions": "jy",
-    "imageExtensions": "Vy",
-    "audioExtensions": "Hy",
-    "videoExtensions": "zy",
-    "pdfExtensions": "qy",
-    "ImageView": "xZ",
-    "AudioView": "MZ",
-    "VideoView": "XZ",
-    "PdfView": "KZ",
-    "releaseNotesType": "s0",
-    "ReleaseNotesView": "h0",
-    "PopoverState": "VQ",
-    "EditableFileView": "OX",
-    "focusAndSelectContents": "Av",
-    "pastePlainText": "vg",
-    "normalizeEditable": "mg",
-    "validateFileName": "LX",
-    "showErrorTooltip": "IX",
-    "UNSAFE_NAME_CHARS": "WT",
-    "UNSAFE_NAME_LIST": "jT",
-    "awaitSettled": "Mb",
-    "mergeText": "FX",
-    "isMacOS": "jl",
-    "isWindows": "Ul",
-    "isLinux": "Wl",
-    "isSafari": "_l",
-    "ButtonModal": "nb",
-    "Callout": "W1",
-    "SecretChooser": "Q1",
-    "SecretEditModal": "Y1",
-    "EncryptionInfoModal": "X1",
-    "SecretPickerModal": "$1",
-    "SecretComponent": "Z1",
-    "KeychainTab": "K1",
-    "SecretStorageBase": "i0",
-    "DesktopSecretStore": "r0",
-    "MobileSecretStore": "o0",
-    "SecretStorage": "a0",
-    "keychainI18n": "gm.setting.keychain",
-    "secureStoreNative": "U1"
+ "base": "ca5acac",
+ "entries": [
+  {
+   "orig": "nu",
+   "use": "lastSegment"
   },
-  "declarators": [
-    {
-      "orig": "QT",
-      "expr": "__basaltOwn.fileClass(\"TAbstractFile\")",
-      "sha1": "4eaff792d9c33377cdce60bda1534f24a2b2bbcf",
-      "originalBytes": 315
-    },
-    {
-      "orig": "XT",
-      "expr": "null",
-      "sha1": "53a9b0a3c30baac2eec4c403e29d5c0b1c41a10c",
-      "originalBytes": 11
-    },
-    {
-      "orig": "$T",
-      "expr": "__basaltOwn.fileClass(\"TFile\")",
-      "sha1": "9c789be6e78a4a6aedb90fb6c2c7e834fa820bd1",
-      "originalBytes": 795
-    },
-    {
-      "orig": "ZT",
-      "expr": "__basaltOwn.fileClass(\"TFolder\")",
-      "sha1": "6922ce84c35ac18c8053cf977c96b0b8c4c540ec",
-      "originalBytes": 522
-    },
-    {
-      "orig": "Eu",
-      "expr": "__basaltOwn.createFileSystemAdapter()",
-      "sha1": "bfd26de141886d5b9e7e0f80415f32ebcb74045f",
-      "originalBytes": 20222
-    },
-    {
-      "orig": "JT",
-      "expr": "__basaltOwn.createVault(VT,Eu)",
-      "sha1": "020d8c45116285ee5922289fa9d8b1cb96e79ff7",
-      "originalBytes": 16852
-    }
-  ],
-  "methods": [
-    {
-      "class": "mI",
-      "name": "getMarkdownNewFileParent",
-      "use": "fmMarkdownNewFileParent",
-      "sha1": "c956027d37430809ff47fce237e4b6da600779c5",
-      "originalBytes": 286
-    },
-    {
-      "class": "mI",
-      "name": "getNewFileParent",
-      "use": "fmNewFileParent",
-      "sha1": "446c777d1cf3f6771c6fe53612e3a4b1240e1d43",
-      "originalBytes": 238
-    },
-    {
-      "class": "mI",
-      "name": "registerFileParentCreator",
-      "use": "fmRegisterFileParentCreator",
-      "sha1": "273453ab7028d05d813fab4033349203cdbb1fab",
-      "originalBytes": 48
-    },
-    {
-      "class": "mI",
-      "name": "unregisterFileCreator",
-      "use": "fmUnregisterFileCreator",
-      "sha1": "525a637b20c66266285e24ce54bd28955d37f5e1",
-      "originalBytes": 51
-    },
-    {
-      "class": "mI",
-      "name": "canCreateFileWithExt",
-      "use": "fmCanCreateFileWithExt",
-      "sha1": "e67dbf34d0b375ebc63e2db6082528307661c142",
-      "originalBytes": 72
-    },
-    {
-      "class": "mI",
-      "name": "createNewMarkdownFileFromLinktext",
-      "use": "fmCreateNewMarkdownFileFromLinktext",
-      "sha1": "ff53bf47014515b4c3b65d4cd9b92399de9c8bcd",
-      "originalBytes": 269
-    },
-    {
-      "class": "mI",
-      "name": "createNewMarkdownFile",
-      "use": "fmCreateNewMarkdownFile",
-      "sha1": "d920d99286eda65a01bba3512dbca6818428defd",
-      "originalBytes": 131
-    },
-    {
-      "class": "mI",
-      "name": "createNewFile",
-      "use": "fmCreateNewFile",
-      "sha1": "e27dd72de34e93d47256549d5f124699764cecb7",
-      "originalBytes": 715
-    },
-    {
-      "class": "mI",
-      "name": "createNewFolder",
-      "use": "fmCreateNewFolder",
-      "sha1": "b942fc655c14b23f9ba81c2591eb969a7409ab87",
-      "originalBytes": 369
-    },
-    {
-      "class": "mI",
-      "name": "renameFile",
-      "use": "fmRenameFile",
-      "sha1": "0abe33e67d34093722252d041617303b75077af9",
-      "originalBytes": 226
-    },
-    {
-      "class": "mI",
-      "name": "runAsyncLinkUpdate",
-      "use": "fmRunAsyncLinkUpdate",
-      "sha1": "b83ecfc3d956247e53801bdae98b8d21c59e522b",
-      "originalBytes": 1142
-    },
-    {
-      "class": "mI",
-      "name": "trashFile",
-      "use": "fmTrashFile",
-      "sha1": "3df062eb6b86ed935ef996c7611bde0d31be5391",
-      "originalBytes": 424
-    },
-    {
-      "class": "mI",
-      "name": "getAvailablePathForAttachment",
-      "use": "fmGetAvailablePathForAttachment",
-      "sha1": "961f29faac441d80c51bf7dc93c8b8b5dd7bff00",
-      "originalBytes": 292
-    }
-  ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb"
+  {
+   "orig": "iu",
+   "use": "parentPath"
+  },
+  {
+   "orig": "ru",
+   "use": "isHiddenPath"
+  },
+  {
+   "orig": "ou",
+   "use": "baseName"
+  },
+  {
+   "orig": "au",
+   "use": "withoutExtension"
+  },
+  {
+   "orig": "su",
+   "use": "extensionOf"
+  },
+  {
+   "orig": "lu",
+   "use": "joinNameExt"
+  },
+  {
+   "orig": "uu",
+   "use": "collapseSlashes"
+  },
+  {
+   "orig": "tu",
+   "use": "plainSpaces"
+  },
+  {
+   "orig": "cu",
+   "use": "normalizePath"
+  },
+  {
+   "orig": "hu",
+   "use": "displayName"
+  },
+  {
+   "orig": "pu",
+   "use": "withoutMd"
+  },
+  {
+   "orig": "BL",
+   "use": "dropMdSuffix"
+  },
+  {
+   "orig": "q2",
+   "use": "fileLinkPath"
+  },
+  {
+   "orig": "j2",
+   "use": "targetText"
+  },
+  {
+   "orig": "cee",
+   "use": "isPluginFileName"
+  },
+  {
+   "orig": "D5",
+   "use": "pathWith"
+  },
+  {
+   "orig": "ET",
+   "use": "linkPath"
+  },
+  {
+   "orig": "MT",
+   "use": "parseLinktext"
+  },
+  {
+   "orig": "RT",
+   "use": "subpathKind"
+  },
+  {
+   "orig": "YC",
+   "use": "isLocalLink"
+  },
+  {
+   "orig": "XC",
+   "use": "linkDestination"
+  },
+  {
+   "orig": "ZC",
+   "use": "safeDecodeUri"
+  },
+  {
+   "orig": "eE",
+   "use": "escapeLinkChars"
+  },
+  {
+   "orig": "tE",
+   "use": "firstHeadingText"
+  },
+  {
+   "orig": "nE",
+   "use": "headingTrail"
+  },
+  {
+   "orig": "JC",
+   "use": "tidyLinkTarget"
+  },
+  {
+   "orig": "Pf",
+   "use": "formatBytes"
+  },
+  {
+   "orig": "rm",
+   "use": "toKebab"
+  },
+  {
+   "orig": "gc",
+   "use": "ellipsize"
+  },
+  {
+   "orig": "u7",
+   "use": "endWithBlankLine"
+  },
+  {
+   "orig": "pP",
+   "use": "squeezeNewlines"
+  },
+  {
+   "orig": "yA",
+   "use": "escapeTablePipes"
+  },
+  {
+   "orig": "xW",
+   "use": "withHash"
+  },
+  {
+   "orig": "zL",
+   "use": "isShortLine"
+  },
+  {
+   "orig": "ZI",
+   "use": "toStringList"
+  },
+  {
+   "orig": "YA",
+   "use": "emptyToNull"
+  },
+  {
+   "orig": "Ree",
+   "use": "parseCommaList"
+  },
+  {
+   "orig": "Bee",
+   "use": "formatCommaList"
+  },
+  {
+   "orig": "kq",
+   "use": "countQuoteMarks"
+  },
+  {
+   "orig": "Cq",
+   "use": "quoteIndentDepth"
+  },
+  {
+   "orig": "Vj",
+   "use": "dropWordsContaining"
+  },
+  {
+   "orig": "FQ",
+   "use": "formDecode"
+  },
+  {
+   "orig": "NQ",
+   "use": "formEncode"
+  },
+  {
+   "orig": "RQ",
+   "use": "formEncodePath"
+  },
+  {
+   "orig": "NX",
+   "use": "linesOf"
+  },
+  {
+   "orig": "Ej",
+   "use": "hasLatinLetter"
+  },
+  {
+   "orig": "zx",
+   "use": "parseImageSize"
+  },
+  {
+   "orig": "WZ",
+   "use": "intOrNull"
+  },
+  {
+   "orig": "Vl",
+   "use": "floatOr"
+  },
+  {
+   "orig": "f_",
+   "use": "joinClasses"
+  },
+  {
+   "orig": "Js",
+   "use": "ninesAtLeast"
+  },
+  {
+   "orig": "uc",
+   "use": "newlinesBefore"
+  },
+  {
+   "orig": "Dv",
+   "use": "lineBounds"
+  },
+  {
+   "orig": "Nb",
+   "use": "keyLabel"
+  },
+  {
+   "orig": "Fb",
+   "use": "makeHotkey"
+  },
+  {
+   "orig": "my",
+   "use": "valueIgnoringCase"
+  },
+  {
+   "orig": "qV",
+   "use": "keyIgnoringCase"
+  },
+  {
+   "orig": "vy",
+   "use": "parseVersion"
+  },
+  {
+   "orig": "gy",
+   "use": "isOlderVersion"
+  },
+  {
+   "orig": "P1",
+   "use": "severityRank"
+  },
+  {
+   "orig": "L1",
+   "use": "worstSeverity"
+  },
+  {
+   "orig": "rD",
+   "use": "chromeVersion"
+  },
+  {
+   "orig": "tY",
+   "use": "parsePropertyId"
+  },
+  {
+   "orig": "nY",
+   "use": "propertyId"
+  },
+  {
+   "orig": "SY",
+   "use": "shortPropertyId"
+  },
+  {
+   "orig": "xY",
+   "use": "longPropertyId"
+  },
+  {
+   "orig": "PY",
+   "use": "uniqueName"
+  },
+  {
+   "orig": "LT",
+   "use": "plainHeading"
+  },
+  {
+   "orig": "IT",
+   "use": "linkSafeHeading"
+  },
+  {
+   "orig": "kA",
+   "use": "describeCliOptions"
+  },
+  {
+   "orig": "cA",
+   "use": "smaller"
+  },
+  {
+   "orig": "uA",
+   "use": "larger"
+  },
+  {
+   "orig": "MJ",
+   "use": "sliderCurve"
+  },
+  {
+   "orig": "SJ",
+   "use": "sliderCurveInverse"
+  },
+  {
+   "orig": "l4",
+   "use": "unitSteps"
+  },
+  {
+   "orig": "cc",
+   "use": "randomHex"
+  },
+  {
+   "orig": "zs",
+   "use": "asArray"
+  },
+  {
+   "orig": "ac",
+   "use": "distinct"
+  },
+  {
+   "orig": "lc",
+   "use": "moveItem"
+  },
+  {
+   "orig": "N6",
+   "use": "takeFirst"
+  },
+  {
+   "orig": "mc",
+   "use": "binaryFind"
+  },
+  {
+   "orig": "vc",
+   "use": "isStringArray"
+  },
+  {
+   "orig": "hF",
+   "use": "joinLists"
+  },
+  {
+   "orig": "uF",
+   "use": "pushHistory"
+  },
+  {
+   "orig": "ve",
+   "use": "sameItems"
+  },
+  {
+   "orig": "ye",
+   "use": "sameItemsBy"
+  },
+  {
+   "orig": "c8",
+   "use": "sortByOrder"
+  },
+  {
+   "orig": "HI",
+   "use": "matchPenalty"
+  },
+  {
+   "orig": "HV",
+   "use": "localDate"
+  },
+  {
+   "orig": "zV",
+   "use": "localTime"
+  },
+  {
+   "orig": "VV",
+   "use": "twoDigits"
+  },
+  {
+   "orig": "Ok",
+   "use": "hexByte"
+  },
+  {
+   "orig": "Fk",
+   "use": "rgbToHex"
+  },
+  {
+   "orig": "Rk",
+   "use": "rgbToInt"
+  },
+  {
+   "orig": "Hk",
+   "use": "isLightColor"
+  },
+  {
+   "orig": "Lk",
+   "use": "hslToRgb"
+  },
+  {
+   "orig": "Ik",
+   "use": "rgbToHsl"
+  },
+  {
+   "orig": "Nk",
+   "use": "parseHexColor"
+  },
+  {
+   "orig": "H3",
+   "use": "rgbTripleToHex"
+  },
+  {
+   "orig": "Df",
+   "use": "hexToBuffer"
+  },
+  {
+   "orig": "Af",
+   "use": "bufferToHex"
+  },
+  {
+   "orig": "Gee",
+   "use": "stringFromCodes"
+  },
+  {
+   "orig": "Kee",
+   "use": "readInt32BE"
+  },
+  {
+   "orig": "Yee",
+   "use": "readInt32LE"
+  },
+  {
+   "orig": "mu",
+   "use": "ownBuffer"
+  },
+  {
+   "orig": "bf",
+   "use": "ownBuffer"
+  },
+  {
+   "orig": "jb",
+   "use": "zeroFill"
+  },
+  {
+   "orig": "Ub",
+   "use": "xorInto"
+  },
+  {
+   "orig": "Jb",
+   "use": "clearTopBits"
+  },
+  {
+   "orig": "gu",
+   "use": "statFromNode"
+  },
+  {
+   "orig": "dk",
+   "use": "statFromCapacitor"
+  },
+  {
+   "orig": "Ol",
+   "use": "point"
+  },
+  {
+   "orig": "Nl",
+   "use": "rect"
+  },
+  {
+   "orig": "Bl",
+   "use": "distance"
+  },
+  {
+   "orig": "Rl",
+   "use": "rectAt"
+  },
+  {
+   "orig": "Fl",
+   "use": "pointOfEvent"
+  },
+  {
+   "orig": "d3",
+   "use": "box"
+  },
+  {
+   "orig": "f3",
+   "use": "boxOfPoints"
+  },
+  {
+   "orig": "m3",
+   "use": "boxOfRect"
+  },
+  {
+   "orig": "v3",
+   "use": "rectOfBox"
+  },
+  {
+   "orig": "g3",
+   "use": "boxUnion"
+  },
+  {
+   "orig": "y3",
+   "use": "boxGrow"
+  },
+  {
+   "orig": "b3",
+   "use": "boxContains"
+  },
+  {
+   "orig": "w3",
+   "use": "boxCenter"
+  },
+  {
+   "orig": "k3",
+   "use": "centeredOrigin"
+  },
+  {
+   "orig": "P3",
+   "use": "boxPoints"
+  },
+  {
+   "orig": "L3",
+   "use": "sortedBoxPoints"
+  },
+  {
+   "orig": "I3",
+   "use": "sortByKey"
+  },
+  {
+   "orig": "F3",
+   "use": "boxX"
+  },
+  {
+   "orig": "N3",
+   "use": "boxY"
+  },
+  {
+   "orig": "q5",
+   "use": "pushOut"
+  },
+  {
+   "orig": "H5",
+   "use": "sideMidpoint"
+  },
+  {
+   "orig": "j5",
+   "use": "bezierEdge"
+  },
+  {
+   "orig": "Ay",
+   "use": "sortHitsByScore"
+  },
+  {
+   "orig": "Py",
+   "use": "shiftRanges"
+  },
+  {
+   "orig": "eT",
+   "use": "frontmatterEntry"
+  },
+  {
+   "orig": "tT",
+   "use": "frontmatterStrings"
+  },
+  {
+   "orig": "iT",
+   "use": "frontmatterTags"
+  },
+  {
+   "orig": "nT",
+   "use": "frontmatterAliases"
+  },
+  {
+   "orig": "My",
+   "use": "prepareQuery"
+  },
+  {
+   "orig": "Dy",
+   "use": "fuzzyMatchJs"
+  },
+  {
+   "orig": "xy",
+   "use": "matchScore"
+  },
+  {
+   "orig": "wc",
+   "use": "debounceCall"
+  },
+  {
+   "orig": "vl",
+   "use": "cancelTransition"
+  },
+  {
+   "orig": "yl",
+   "use": "runTransition"
+  },
+  {
+   "orig": "jg",
+   "use": "closeAllMenus"
+  },
+  {
+   "orig": "Sy",
+   "use": "prepareFuzzyFinder"
+  },
+  {
+   "orig": "Oy",
+   "use": "prepareSimpleFinder"
+  },
+  {
+   "orig": "Ly",
+   "use": "containsAllWords"
+  },
+  {
+   "orig": "Iy",
+   "use": "simpleMatch"
+  },
+  {
+   "orig": "wy",
+   "use": "mergeSpans"
+  },
+  {
+   "orig": "Ny",
+   "use": "renderMatches"
+  },
+  {
+   "orig": "Fy",
+   "use": "renderResults"
+  },
+  {
+   "orig": "FT",
+   "use": "resolveSubpath"
+  },
+  {
+   "orig": "pv",
+   "use": "installTooltipHandlers"
+  },
+  {
+   "orig": "vv",
+   "use": "onTooltipPointerOver"
+  },
+  {
+   "orig": "gv",
+   "use": "onTooltipPointerOut"
+  },
+  {
+   "orig": "bv",
+   "use": "showTooltipFromAttributes"
+  },
+  {
+   "orig": "kv",
+   "use": "displayTooltip"
+  },
+  {
+   "orig": "Cv",
+   "use": "hideTooltip"
+  },
+  {
+   "orig": "Ev",
+   "use": "applyTooltipOptions"
+  },
+  {
+   "orig": "Mv",
+   "use": "setElementTooltip"
+  },
+  {
+   "orig": "Sv",
+   "use": "setDynamicTooltip"
+  },
+  {
+   "orig": "fv",
+   "use": "cancelTooltipDelay"
+  },
+  {
+   "orig": "mv",
+   "use": "tooltipsDisabled"
+  },
+  {
+   "orig": "gw",
+   "use": "acctRequest",
+   "originalBytes": 315
+  },
+  {
+   "orig": "yw",
+   "use": "acctSignup",
+   "originalBytes": 159
+  },
+  {
+   "orig": "bw",
+   "use": "acctForgetPassword",
+   "originalBytes": 150
+  },
+  {
+   "orig": "ww",
+   "use": "acctResendConfirmation",
+   "originalBytes": 149
+  },
+  {
+   "orig": "kw",
+   "use": "acctAuthToken",
+   "originalBytes": 279
+  },
+  {
+   "orig": "Cw",
+   "use": "acctSignupMobileSync",
+   "originalBytes": 148
+  },
+  {
+   "orig": "Ew",
+   "use": "acctSignIn",
+   "originalBytes": 297
+  },
+  {
+   "orig": "Mw",
+   "use": "acctSignOut",
+   "originalBytes": 358
+  },
+  {
+   "orig": "Sw",
+   "use": "acctUserInfo",
+   "originalBytes": 456
+  },
+  {
+   "orig": "xw",
+   "use": "acctValidateBusinessKey",
+   "originalBytes": 459
+  },
+  {
+   "orig": "Tw",
+   "use": "acctVaultRegions",
+   "originalBytes": 197
+  },
+  {
+   "orig": "Dw",
+   "use": "acctNormalizeVault",
+   "originalBytes": 71
+  },
+  {
+   "orig": "Aw",
+   "use": "acctListVaults",
+   "originalBytes": 260
+  },
+  {
+   "orig": "Pw",
+   "use": "acctCreateVault",
+   "originalBytes": 258
+  },
+  {
+   "orig": "Lw",
+   "use": "acctMigrateVault",
+   "originalBytes": 122
+  },
+  {
+   "orig": "Iw",
+   "use": "acctRenameVault",
+   "originalBytes": 75
+  },
+  {
+   "orig": "Ow",
+   "use": "acctRemoveVaultShare",
+   "originalBytes": 86
+  },
+  {
+   "orig": "Fw",
+   "use": "acctVaultAccess",
+   "originalBytes": 110
+  },
+  {
+   "orig": "Nw",
+   "use": "acctDeletePublishSite",
+   "originalBytes": 67
+  },
+  {
+   "orig": "Rw",
+   "use": "acctInvitePublishShare",
+   "originalBytes": 83
+  },
+  {
+   "orig": "Bw",
+   "use": "acctRemovePublishShare",
+   "originalBytes": 87
+  },
+  {
+   "orig": "Vw",
+   "use": "acctListSubscriptions",
+   "originalBytes": 57
+  }
+ ],
+ "classes": [
+  {
+   "orig": "VT",
+   "use": "defineEvents"
+  },
+  {
+   "orig": "jm",
+   "use": "defineComponent"
+  },
+  {
+   "orig": "LD",
+   "use": "defineWorkspaceItem"
+  },
+  {
+   "orig": "ID",
+   "use": "defineWorkspaceParent"
+  },
+  {
+   "orig": "OD",
+   "use": "defineWorkspaceSplit"
+  },
+  {
+   "orig": "ND",
+   "use": "defineWorkspaceContainer"
+  },
+  {
+   "orig": "L0",
+   "use": "defineWorkspaceRoot"
+  },
+  {
+   "orig": "I0",
+   "use": "defineWorkspaceFloating"
+  },
+  {
+   "orig": "O0",
+   "use": "defineWorkspaceWindow"
+  },
+  {
+   "orig": "FD",
+   "use": "defineWorkspaceSidedock"
+  },
+  {
+   "orig": "zD",
+   "use": "defineWorkspaceTabs"
+  },
+  {
+   "orig": "dl",
+   "use": "defineTransition"
+  },
+  {
+   "orig": "P0",
+   "use": "defineWorkspaceRibbon"
+  },
+  {
+   "orig": "qD",
+   "use": "defineLeafHistory"
+  },
+  {
+   "orig": "jD",
+   "use": "defineWorkspaceLeaf"
+  },
+  {
+   "orig": "Ng",
+   "use": "defineScope"
+  },
+  {
+   "orig": "Rg",
+   "use": "defineDynamicScope"
+  },
+  {
+   "orig": "Bg",
+   "use": "defineKeymap"
+  },
+  {
+   "orig": "jk",
+   "use": "defineBaseComponent"
+  },
+  {
+   "orig": "Uk",
+   "use": "defineValueComponent"
+  },
+  {
+   "orig": "Wk",
+   "use": "defineButtonComponent"
+  },
+  {
+   "orig": "_k",
+   "use": "defineExtraButtonComponent"
+  },
+  {
+   "orig": "Gk",
+   "use": "defineToggleComponent"
+  },
+  {
+   "orig": "Kk",
+   "use": "defineAbstractTextComponent"
+  },
+  {
+   "orig": "Yk",
+   "use": "defineTextComponent"
+  },
+  {
+   "orig": "Qk",
+   "use": "defineSearchComponent"
+  },
+  {
+   "orig": "Xk",
+   "use": "defineTextAreaComponent"
+  },
+  {
+   "orig": "Zk",
+   "use": "defineMomentFormatComponent"
+  },
+  {
+   "orig": "Jk",
+   "use": "defineDropdownComponent"
+  },
+  {
+   "orig": "eC",
+   "use": "defineProgressBarComponent"
+  },
+  {
+   "orig": "tC",
+   "use": "defineSliderComponent"
+  },
+  {
+   "orig": "nC",
+   "use": "defineColorComponent"
+  },
+  {
+   "orig": "zk",
+   "use": "defineSetting"
+  },
+  {
+   "orig": "qk",
+   "use": "defineSettingGroup"
+  },
+  {
+   "orig": "_1",
+   "use": "defineSettingTab"
+  },
+  {
+   "orig": "K0",
+   "use": "definePluginSettingTab"
+  },
+  {
+   "orig": "fb",
+   "use": "defineNotice"
+  },
+  {
+   "orig": "tb",
+   "use": "defineModal"
+  },
+  {
+   "orig": "Hg",
+   "use": "defineMenuItem"
+  },
+  {
+   "orig": "zg",
+   "use": "defineMenuSeparator"
+  },
+  {
+   "orig": "Ug",
+   "use": "defineMenu"
+  },
+  {
+   "orig": "ob",
+   "use": "defineSuggestionList"
+  },
+  {
+   "orig": "ab",
+   "use": "defineGroupedSuggestionList"
+  },
+  {
+   "orig": "sb",
+   "use": "defineSuggestModal"
+  },
+  {
+   "orig": "lb",
+   "use": "defineFuzzySuggestModal"
+  },
+  {
+   "orig": "EI",
+   "use": "definePopoverSuggest"
+  },
+  {
+   "orig": "SI",
+   "use": "defineAbstractInputSuggest"
+  },
+  {
+   "orig": "NI",
+   "use": "defineEditorSuggest"
+  },
+  {
+   "orig": "Y6",
+   "use": "defineCommands"
+  },
+  {
+   "orig": "zb",
+   "use": "defineHotkeyManager"
+  },
+  {
+   "orig": "G0",
+   "use": "definePlugin"
+  },
+  {
+   "orig": "Kg",
+   "use": "defineView"
+  },
+  {
+   "orig": "Yg",
+   "use": "defineItemView"
+  },
+  {
+   "orig": "eD",
+   "use": "defineDeferredView"
+  },
+  {
+   "orig": "tD",
+   "use": "defineEmptyView"
+  },
+  {
+   "orig": "nD",
+   "use": "defineUnknownView"
+  },
+  {
+   "orig": "MD",
+   "use": "defineFileView"
+  },
+  {
+   "orig": "p0",
+   "use": "defineViewRegistry"
+  },
+  {
+   "orig": "rX",
+   "use": "defineHoverPopover"
+  },
+  {
+   "orig": "OX",
+   "use": "defineEditableFileView"
+  },
+  {
+   "orig": "BX",
+   "use": "defineTextFileView"
+  },
+  {
+   "orig": "hv",
+   "use": "initTooltips"
+  },
+  {
+   "orig": "Yl",
+   "use": "definePlatform"
+  },
+  {
+   "orig": "nb",
+   "use": "defineButtonModal"
+  },
+  {
+   "orig": "W1",
+   "use": "defineCallout"
+  },
+  {
+   "orig": "Q1",
+   "use": "defineSecretChooser"
+  },
+  {
+   "orig": "Y1",
+   "use": "defineSecretEditModal"
+  },
+  {
+   "orig": "X1",
+   "use": "defineEncryptionInfoModal"
+  },
+  {
+   "orig": "$1",
+   "use": "defineSecretPickerModal"
+  },
+  {
+   "orig": "Z1",
+   "use": "defineSecretComponent"
+  },
+  {
+   "orig": "K1",
+   "use": "defineKeychainTab"
+  },
+  {
+   "orig": "i0",
+   "use": "defineSecretStorageBase"
+  },
+  {
+   "orig": "r0",
+   "use": "defineDesktopSecretStore"
+  },
+  {
+   "orig": "o0",
+   "use": "defineMobileSecretStore"
+  },
+  {
+   "orig": "a0",
+   "use": "defineSecretStorage"
+  },
+  {
+   "orig": "vw",
+   "use": "defineAccountError",
+   "originalBytes": 157
+  }
+ ],
+ "host": {
+  "Events": "VT",
+  "Component": "jm",
+  "Platform": "Yl",
+  "WorkspaceItem": "LD",
+  "WorkspaceParent": "ID",
+  "WorkspaceSplit": "OD",
+  "WorkspaceContainer": "ND",
+  "parseColor": "Ak",
+  "colorToHex": "Fk",
+  "installEnhancements": "yZ",
+  "attachElectron": "bZ",
+  "installTooltipHandlers": "pv",
+  "installTitlebar": "kte",
+  "trackWindowFocus": "gZ",
+  "applyLanguage": "bm",
+  "forwardInputEvents": "mZ",
+  "mirrorStyles": "vZ",
+  "WorkspaceSidedock": "FD",
+  "WorkspaceLeaf": "jD",
+  "TFile": "$T",
+  "Menu": "Ug",
+  "Transition": "dl",
+  "t": "gm",
+  "VaultProfile": "DD",
+  "setTooltip": "Mv",
+  "setIcon": "tv",
+  "enableTitlebarDoubleClick": "VD",
+  "saveScrollPositions": "ag",
+  "restoreScrollPositions": "lg",
+  "scrollWithPointer": "_v",
+  "makeDragReorderable": "Gc",
+  "TOOLTIP_DELAY": "sv",
+  "LeafHistory": "qD",
+  "EmptyView": "tD",
+  "DeferredView": "eD",
+  "UnknownView": "nD",
+  "FileView": "MD",
+  "MobileDrawer": "WD",
+  "Notice": "fb",
+  "pointerEntered": "Lc",
+  "WorkspaceTabs": "zD",
+  "Keymap": "Bg",
+  "Scope": "Ng",
+  "eventKey": "Lg",
+  "eventVirtualKey": "Ig",
+  "focusElement": "tg",
+  "osName": "zl",
+  "BaseComponent": "jk",
+  "ValueComponent": "Uk",
+  "ButtonComponent": "Wk",
+  "ExtraButtonComponent": "_k",
+  "ToggleComponent": "Gk",
+  "AbstractTextComponent": "Kk",
+  "TextComponent": "Yk",
+  "SearchComponent": "Qk",
+  "TextAreaComponent": "Xk",
+  "MomentFormatComponent": "Zk",
+  "DropdownComponent": "Jk",
+  "ProgressBarComponent": "eC",
+  "SliderComponent": "tC",
+  "ColorComponent": "nC",
+  "Setting": "zk",
+  "SettingGroup": "qk",
+  "SettingTab": "_1",
+  "PluginSettingTab": "K0",
+  "selectOnFocus": "Pv",
+  "hideTooltip": "Cv",
+  "displayTooltip": "kv",
+  "blurAndClearSelection": "Lv",
+  "closeAllMenus": "jg",
+  "registerOpenModal": "zm",
+  "unregisterOpenModal": "qm",
+  "nodeInWindow": "Ov",
+  "onSwipe": "Vm",
+  "slideModalIn": "Pl",
+  "slideModalOut": "Ll",
+  "swipeToDismiss": "_g",
+  "MenuItem": "Hg",
+  "MenuSeparator": "zg",
+  "slideBetween": "El",
+  "isTouchSyntheticMouse": "Uc",
+  "frameOffset": "hg",
+  "watchElementGone": "Rv",
+  "keyboard": "Im",
+  "SuggestionList": "ob",
+  "GroupedSuggestionList": "ab",
+  "SuggestModal": "sb",
+  "FuzzySuggestModal": "lb",
+  "PopoverSuggest": "EI",
+  "AbstractInputSuggest": "SI",
+  "EditorSuggest": "NI",
+  "Modal": "tb",
+  "renderInstructions": "rb",
+  "positionNear": "Nv",
+  "rectInTopWindow": "pg",
+  "textDirection": "LI",
+  "nextFrame": "Al",
+  "MarkdownView": "W6",
+  "runCommandCallback": "K6",
+  "formatHotkey": "Rb",
+  "MarkdownPreviewRenderer": "Gz",
+  "FormulaFunctions": "QW",
+  "PLUGIN_STYLES_FILE": "JD",
+  "View": "Kg",
+  "ItemView": "Yg",
+  "createNavButton": "Gg",
+  "isMacLike": "jl",
+  "tc": "gm.commands",
+  "markdownExtensions": "jy",
+  "imageExtensions": "Vy",
+  "audioExtensions": "Hy",
+  "videoExtensions": "zy",
+  "pdfExtensions": "qy",
+  "ImageView": "xZ",
+  "AudioView": "MZ",
+  "VideoView": "XZ",
+  "PdfView": "KZ",
+  "releaseNotesType": "s0",
+  "ReleaseNotesView": "h0",
+  "PopoverState": "VQ",
+  "EditableFileView": "OX",
+  "focusAndSelectContents": "Av",
+  "pastePlainText": "vg",
+  "normalizeEditable": "mg",
+  "validateFileName": "LX",
+  "showErrorTooltip": "IX",
+  "UNSAFE_NAME_CHARS": "WT",
+  "UNSAFE_NAME_LIST": "jT",
+  "awaitSettled": "Mb",
+  "mergeText": "FX",
+  "isMacOS": "jl",
+  "isWindows": "Ul",
+  "isLinux": "Wl",
+  "isSafari": "_l",
+  "ButtonModal": "nb",
+  "Callout": "W1",
+  "SecretChooser": "Q1",
+  "SecretEditModal": "Y1",
+  "EncryptionInfoModal": "X1",
+  "SecretPickerModal": "$1",
+  "SecretComponent": "Z1",
+  "KeychainTab": "K1",
+  "SecretStorageBase": "i0",
+  "DesktopSecretStore": "r0",
+  "MobileSecretStore": "o0",
+  "SecretStorage": "a0",
+  "keychainI18n": "gm.setting.keychain",
+  "secureStoreNative": "U1"
+ },
+ "declarators": [
+  {
+   "orig": "QT",
+   "expr": "__basaltOwn.fileClass(\"TAbstractFile\")",
+   "sha1": "4eaff792d9c33377cdce60bda1534f24a2b2bbcf",
+   "originalBytes": 315
+  },
+  {
+   "orig": "XT",
+   "expr": "null",
+   "sha1": "53a9b0a3c30baac2eec4c403e29d5c0b1c41a10c",
+   "originalBytes": 11
+  },
+  {
+   "orig": "$T",
+   "expr": "__basaltOwn.fileClass(\"TFile\")",
+   "sha1": "9c789be6e78a4a6aedb90fb6c2c7e834fa820bd1",
+   "originalBytes": 795
+  },
+  {
+   "orig": "ZT",
+   "expr": "__basaltOwn.fileClass(\"TFolder\")",
+   "sha1": "6922ce84c35ac18c8053cf977c96b0b8c4c540ec",
+   "originalBytes": 522
+  },
+  {
+   "orig": "Eu",
+   "expr": "__basaltOwn.createFileSystemAdapter()",
+   "sha1": "bfd26de141886d5b9e7e0f80415f32ebcb74045f",
+   "originalBytes": 20222
+  },
+  {
+   "orig": "JT",
+   "expr": "__basaltOwn.createVault(VT,Eu)",
+   "sha1": "020d8c45116285ee5922289fa9d8b1cb96e79ff7",
+   "originalBytes": 16852
+  },
+  {
+   "orig": "Hw",
+   "expr": "__basaltOwn.account",
+   "sha1": "170efdfd595fe70440769009d25d66032b34f359",
+   "originalBytes": 474
+  }
+ ],
+ "methods": [
+  {
+   "class": "mI",
+   "name": "getMarkdownNewFileParent",
+   "use": "fmMarkdownNewFileParent",
+   "sha1": "c956027d37430809ff47fce237e4b6da600779c5",
+   "originalBytes": 286
+  },
+  {
+   "class": "mI",
+   "name": "getNewFileParent",
+   "use": "fmNewFileParent",
+   "sha1": "446c777d1cf3f6771c6fe53612e3a4b1240e1d43",
+   "originalBytes": 238
+  },
+  {
+   "class": "mI",
+   "name": "registerFileParentCreator",
+   "use": "fmRegisterFileParentCreator",
+   "sha1": "273453ab7028d05d813fab4033349203cdbb1fab",
+   "originalBytes": 48
+  },
+  {
+   "class": "mI",
+   "name": "unregisterFileCreator",
+   "use": "fmUnregisterFileCreator",
+   "sha1": "525a637b20c66266285e24ce54bd28955d37f5e1",
+   "originalBytes": 51
+  },
+  {
+   "class": "mI",
+   "name": "canCreateFileWithExt",
+   "use": "fmCanCreateFileWithExt",
+   "sha1": "e67dbf34d0b375ebc63e2db6082528307661c142",
+   "originalBytes": 72
+  },
+  {
+   "class": "mI",
+   "name": "createNewMarkdownFileFromLinktext",
+   "use": "fmCreateNewMarkdownFileFromLinktext",
+   "sha1": "ff53bf47014515b4c3b65d4cd9b92399de9c8bcd",
+   "originalBytes": 269
+  },
+  {
+   "class": "mI",
+   "name": "createNewMarkdownFile",
+   "use": "fmCreateNewMarkdownFile",
+   "sha1": "d920d99286eda65a01bba3512dbca6818428defd",
+   "originalBytes": 131
+  },
+  {
+   "class": "mI",
+   "name": "createNewFile",
+   "use": "fmCreateNewFile",
+   "sha1": "e27dd72de34e93d47256549d5f124699764cecb7",
+   "originalBytes": 715
+  },
+  {
+   "class": "mI",
+   "name": "createNewFolder",
+   "use": "fmCreateNewFolder",
+   "sha1": "b942fc655c14b23f9ba81c2591eb969a7409ab87",
+   "originalBytes": 369
+  },
+  {
+   "class": "mI",
+   "name": "renameFile",
+   "use": "fmRenameFile",
+   "sha1": "0abe33e67d34093722252d041617303b75077af9",
+   "originalBytes": 226
+  },
+  {
+   "class": "mI",
+   "name": "runAsyncLinkUpdate",
+   "use": "fmRunAsyncLinkUpdate",
+   "sha1": "b83ecfc3d956247e53801bdae98b8d21c59e522b",
+   "originalBytes": 1142
+  },
+  {
+   "class": "mI",
+   "name": "trashFile",
+   "use": "fmTrashFile",
+   "sha1": "3df062eb6b86ed935ef996c7611bde0d31be5391",
+   "originalBytes": 424
+  },
+  {
+   "class": "mI",
+   "name": "getAvailablePathForAttachment",
+   "use": "fmGetAvailablePathForAttachment",
+   "sha1": "961f29faac441d80c51bf7dc93c8b8b5dd7bff00",
+   "originalBytes": 292
+  }
+ ],
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw"
 }
