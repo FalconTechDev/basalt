@@ -217,6 +217,18 @@ export function acctRenameVault(token, vaultUid, name) {
   return acctRequest("/vault/rename", { token, vault_uid: vaultUid, name });
 }
 
+export function acctDeleteVault(token, vaultUid) {
+  return acctRequest("/vault/delete", { token, vault_uid: vaultUid });
+}
+
+export function acctListVaultShares(token, vaultUid) {
+  return acctRequest("/vault/share/list", { token, vault_uid: vaultUid });
+}
+
+export function acctInviteVaultShare(token, vaultUid, email) {
+  return acctRequest("/vault/share/invite", { token, vault_uid: vaultUid, email });
+}
+
 export function acctRemoveVaultShare(token, vaultUid, shareUid) {
   return acctRequest("/vault/share/remove", { token, vault_uid: vaultUid, share_uid: shareUid });
 }
@@ -239,6 +251,22 @@ export function acctInvitePublishShare(token, siteUid, email) {
 
 export function acctRemovePublishShare(token, siteUid, shareUid) {
   return acctRequest("/publish/share/remove", { token, site_uid: siteUid, share_uid: shareUid });
+}
+
+export function acctListPublishSites(token) {
+  return acctRequest("/publish/list", { token });
+}
+
+export function acctCreatePublishSite(token) {
+  return acctRequest("/publish/create", { token });
+}
+
+export function acctListPublishShares(token, siteUid) {
+  return acctRequest("/publish/share/list", { token, site_uid: siteUid });
+}
+
+export function acctAcceptPublishShare(token, code) {
+  return acctRequest("/publish/share/accept", { token, code });
 }
 
 // ---- account dialogs ----
