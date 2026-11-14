@@ -8,7 +8,7 @@ import fs from "node:fs";
 const args = process.argv.slice(2);
 const port = +(args[args.indexOf("--port") + 1] || 9655);
 const list = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
-const page = list.find((t) => t.type === "page");
+const page = list.find((t) => t.type === "page" && t.url.includes("index.html")) || list.find((t) => t.type === "page");
 const ws = new WebSocket(page.webSocketDebuggerUrl);
 await new Promise((r) => (ws.onopen = r));
 let id = 1;

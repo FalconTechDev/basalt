@@ -1856,7 +1856,154 @@
    "use": "wsUnregisterOperatorFuncConfigs",
    "sha1": "4e0bc90047e1a91b4ae6782444786608927946e2",
    "originalBytes": 47
+  },
+  {
+   "class": "H0",
+   "name": "clearLayout",
+   "use": "wsClearLayout",
+   "sha1": "99bcc0d81a933c53537ab17e0008ebae092c27f5",
+   "originalBytes": 811
+  },
+  {
+   "class": "H0",
+   "name": "createLeafBySplit",
+   "use": "wsCreateLeafBySplit",
+   "sha1": "3dac4fd7d0427356f9cbd3a39e8dde6c8055b9fb",
+   "originalBytes": 94
+  },
+  {
+   "class": "H0",
+   "name": "deserializeLayout",
+   "use": "wsDeserializeLayout",
+   "sha1": "f5ff7e8554d41b183d337841211bf6557a88eeed",
+   "originalBytes": 2270
+  },
+  {
+   "class": "H0",
+   "name": "focusLeaf",
+   "use": "wsFocusLeaf",
+   "sha1": "f5faf8dbcf3e959147536e407670b6eb04ad6da9",
+   "originalBytes": 296
+  },
+  {
+   "class": "H0",
+   "name": "getAdjacentLeafInDirection",
+   "use": "wsGetAdjacentLeafInDirection",
+   "sha1": "a5d72a7003bbf75420d653ff506cd4605832490b",
+   "originalBytes": 1051
+  },
+  {
+   "class": "H0",
+   "name": "getLayout",
+   "use": "wsGetLayout",
+   "sha1": "29f293cf8ffb78d3719b75cc3dcc79e4aeeadef7",
+   "originalBytes": 299
+  },
+  {
+   "class": "H0",
+   "name": "getLeavesOfType",
+   "use": "wsGetLeavesOfType",
+   "sha1": "c2bba0eb0162a95436f3c8464e64d4bde335056f",
+   "originalBytes": 104
+  },
+  {
+   "class": "H0",
+   "name": "handleExternalLinkContextMenu",
+   "use": "wsHandleExternalLinkContextMenu",
+   "sha1": "eba7410d257349cde0213dfc4f321136958f66ef",
+   "originalBytes": 437
+  },
+  {
+   "class": "H0",
+   "name": "handleLinkContextMenu",
+   "use": "wsHandleLinkContextMenu",
+   "sha1": "901a000ae1dc34c702a3d98f5b0232b1f04c6a3a",
+   "originalBytes": 1282
+  },
+  {
+   "class": "H0",
+   "name": "loadLayout",
+   "use": "wsLoadLayout",
+   "sha1": "1a014728f4aa970570ab4fee0bcc6fc133eaa5b3",
+   "originalBytes": 1437
+  },
+  {
+   "class": "H0",
+   "name": "onDragLeaf",
+   "use": "wsOnDragLeaf",
+   "sha1": "3e837a0e960da96a0dbe15132f68501044ebccc7",
+   "originalBytes": 5706
+  },
+  {
+   "class": "H0",
+   "name": "onStartLink",
+   "use": "wsOnStartLink",
+   "sha1": "2cf82884cd757e85458211dbebf756ece725bf74",
+   "originalBytes": 674
+  },
+  {
+   "class": "H0",
+   "name": "openPopout",
+   "use": "wsOpenPopout",
+   "sha1": "94a646a38513190b5961b8f7a36bad94b38d79fe",
+   "originalBytes": 89
+  },
+  {
+   "class": "H0",
+   "name": "openPopoutLeaf",
+   "use": "wsOpenPopoutLeaf",
+   "sha1": "29d92da3b94959ae6226f10c44fea700286c691d",
+   "originalBytes": 104
+  },
+  {
+   "class": "H0",
+   "name": "saveLayout",
+   "use": "wsSaveLayout",
+   "sha1": "01ac6739c3a410a9154699b7cc3be4ffe7c86492",
+   "originalBytes": 441
+  },
+  {
+   "class": "H0",
+   "name": "setActiveLeaf",
+   "use": "wsSetActiveLeaf",
+   "sha1": "0b9129f77c894af880781e34b629761d44bf7d3f",
+   "originalBytes": 823
+  },
+  {
+   "class": "H0",
+   "name": "setLayout",
+   "use": "wsSetLayout",
+   "sha1": "1cb80458f4de0e9f7291f467b15acd46d52f03a3",
+   "originalBytes": 2099
+  },
+  {
+   "class": "H0",
+   "name": "splitLeafOrActive",
+   "use": "wsSplitLeafOrActive",
+   "sha1": "64e2ab452d5265bb5fa4ecf2d4490bc26e1334ee",
+   "originalBytes": 75
+  },
+  {
+   "class": "H0",
+   "name": "unsetActiveEditor",
+   "use": "wsUnsetActiveEditor",
+   "sha1": "d8692572d939b2140db877e0ca8b4907002aa9f4",
+   "originalBytes": 65
+  },
+  {
+   "class": "H0",
+   "name": "updateFrameless",
+   "use": "wsUpdateFrameless",
+   "sha1": "d03525b2abc6825767628e25bd8af14fc7e81e6a",
+   "originalBytes": 2686
+  },
+  {
+   "class": "H0",
+   "name": "updateLayout",
+   "use": "wsUpdateLayout",
+   "sha1": "69eefec194c773fe98ce3cdeb0ef76c9ca31cc87",
+   "originalBytes": 1275
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T"
 }
