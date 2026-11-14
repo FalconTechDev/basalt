@@ -1244,12 +1244,6 @@
     --csstools-color-scheme--dark: ;
     --focus-ring-color:light-dark(#0060df,#0df);
     --focus-ring-outline:2px solid var(--focus-ring-color);
-    --h1-weight:700;
-    --h2-weight:600;
-    --h3-weight:600;
-    --h4-weight:600;
-    --h5-weight:600;
-    --h6-weight:600;
     --keyboard-height:0px;
     --loading-icon-delay:400ms;
     --page-border:9px solid transparent;
@@ -1268,6 +1262,14 @@
     :root{
         --csstools-color-scheme--dark:initial
     }
+}
+:root{
+    --h1-weight:700;
+    --h2-weight:600;
+    --h3-weight:600;
+    --h4-weight:600;
+    --h5-weight:600;
+    --h6-weight:600
 }
 @supports (font-variation-settings:normal){
     :root{
@@ -1308,6 +1310,12 @@ body{
     --background-primary:var(--color-base-00);
     --background-primary-alt:var(--color-base-10);
     --background-secondary:var(--color-base-20);
+    --border-width:1px;
+    --divider-color:var(--background-modifier-border);
+    --divider-color-hover:var(--interactive-accent);
+    --divider-vertical-height:calc(100% - var(--header-height));
+    --divider-width:1px;
+    --divider-width-hover:3px;
     --bases-cards-background:var(--background-primary);
     --bases-cards-border-width:var(--border-width);
     --bases-cards-container-background:transparent;
@@ -1381,7 +1389,6 @@ body{
     --bold-color:inherit;
     --bold-modifier:200;
     --bold-weight:calc(var(--font-weight) + var(--bold-modifier));
-    --border-width:1px;
     --button-corner-shape:var(--corner-shape);
     --button-radius:var(--input-radius);
     --callout-blend-mode:var(--highlight-mix-blend-mode);
@@ -1460,11 +1467,6 @@ body{
     --dialog-max-height:85vh;
     --dialog-max-width:80vw;
     --dialog-width:560px;
-    --divider-color:var(--background-modifier-border);
-    --divider-color-hover:var(--interactive-accent);
-    --divider-vertical-height:calc(100% - var(--header-height));
-    --divider-width:1px;
-    --divider-width-hover:3px;
     --drag-ghost-background:rgba(0,0,0,0.85);
     --drag-ghost-text-color:#fff;
     --dropdown-background-blend-mode:hard-light;
