@@ -17,6 +17,8 @@ import { animateCollapse, expandFromZero, mountChildren, markItemCollapsed, make
 import { searchClasses, tokenizeQuery, buildMatcher, tokenEnd } from "./search-query.js";
 
 const V = {};
+// Live registry of every results/view class defined below; sibling own modules (link panes, bookmarks, tags) build on them.
+export const searchViewClasses = V;
 
 // Case-insensitive, numeric-aware text comparison (the same collator the file explorer sorts with).
 const searchTextCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
@@ -119,7 +121,7 @@ export function sortOrderComparator(order) {
   return SEARCH_SORT_ORDERS[order];
 }
 
-const SEARCH_SORT_ORDERS = {
+export const SEARCH_SORT_ORDERS = {
   alphabetical: (a, b) => compareSearchText(a.basename, b.basename),
   alphabeticalReverse: (a, b) => -SEARCH_SORT_ORDERS.alphabetical(a, b),
   byModifiedTime: (a, b) => b.stat.mtime - a.stat.mtime,

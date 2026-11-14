@@ -6,15 +6,15 @@ Branch `app-rewrite-big` (worktree `basalt-wt-big`). Own code lives in `src-app/
 
 | | replaced | bytes of original text |
 | --- | --- | --- |
-| functions (leaf helpers, search, timing, transitions, tooltips) | 166 | 20.4 KB |
-| classes / objects | 63 | 130.3 KB |
-| **total** | | **150.7 KB = 4.1 % of the 3688.9 KB bundle** |
+| functions (leaf helpers, search, timing, transitions, tooltips) | 208 | 33.8 KB |
+| classes / objects | 108 | 222.1 KB |
+| **total** | | **255.9 KB = 6.94 % of the 3688.9 KB bundle** |
 
-Own readable source: 283 KB in `src-app/*.js` (32 modules, comments included).
+Own readable source: 548 KB in `src-app/*.js` (comments included).
 
 What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
 bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
-library, not by rewriting it by hand. The share of the application-specific part is therefore larger than 4.1 %, but the number is
+library, not by rewriting it by hand. The share of the application-specific part is therefore larger than 6.9 %, but the number is
 kept on the full bundle so it cannot flatter itself.
 
 ## Mechanism (new in this branch)
@@ -55,6 +55,11 @@ kept on the full bundle so it cannot flatter itself.
 | plugin.js | `Plugin` |
 | platform.js | `Platform` |
 | search-simple.js | `prepareFuzzySearch`, `prepareSimpleSearch`, the simple matcher, `renderMatches`, `renderResults`, `resolveSubpath` |
+| tree.js | the tree widget: `TreeItem`, `TreeChildren`, `TreeRoot`, collapsible items, virtualised `InfinityScroll`, `Tree`, plus traversal / fold / animation helpers |
+| view-header.js | `ViewHeader` (nav buttons, sort menu) |
+| search-query.js | the search query engine: tokenizer, recursive-descent parser (operators, properties, OR/AND/NOT, comparisons, regexes), the matcher class tree, `SearchQuery` |
+| search-view.js | the global search view: `SearchView`, `SearchResults`, file / match / property result items, `FileQueue`, copy-results modal, search suggest |
+| link-panes.js | the "Backlinks" and "Outgoing links" panes: shared file-following view base, both views, the backlink component (linked + unlinked mentions) and the outgoing-link component (resolved links + unlinked mentions) |
 | path.js, text.js, misc.js, frontmatter.js, search.js | the 143 leaf functions of the previous round |
 
 Behaviour changes (all bug fixes, nothing observable in normal use): the leaf history list is trimmed at 20 entries (the inherited
@@ -99,6 +104,7 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
 * `Workspace` itself (`H0`, 66 KB: layout save / load, active leaf, recent files, hotkey glue, URI handlers) and the mobile drawer
   (`WD`, mobile only). The tree it manages is already own code, so what remains is the controller on top.
 * `App` (`Tte`, 56 KB), the internal plugin manager and wrapper (`i2`, `uee`, ...), `StatusBar`, `MetadataCache`, `Vault` (belongs to the
-  other agent's branch), drag manager (`xP`), the markdown view and its siblings (`W6`, preview, properties, outline, backlinks,
-  search UI, canvas glue), `Editor` wrapper (`cP`, `iZ`).
+  other agent's branch), drag manager (`xP`), the markdown view and its siblings (`W6`, preview, properties, outline,
+  canvas glue), `Editor` wrapper (`cP`, `iZ`). The global search UI and the backlink / outgoing-link panes are done
+  (search-query.js, search-view.js, link-panes.js); graph view and canvas view glue are still inherited.
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.

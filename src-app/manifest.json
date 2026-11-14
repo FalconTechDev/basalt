@@ -1309,6 +1309,26 @@
   {
    "orig": "wb",
    "use": "defineFileQueue"
+  },
+  {
+   "orig": "gJ",
+   "use": "defineLinkPaneView"
+  },
+  {
+   "orig": "H6",
+   "use": "defineBacklinkView"
+  },
+  {
+   "orig": "o7",
+   "use": "defineOutgoingLinkView"
+  },
+  {
+   "orig": "z6",
+   "use": "defineBacklinkComponent"
+  },
+  {
+   "orig": "a7",
+   "use": "defineOutgoingLinkComponent"
   }
  ],
  "host": {
