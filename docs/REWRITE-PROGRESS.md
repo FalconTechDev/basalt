@@ -116,9 +116,13 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   views are already own code shipped as separate scripts (`src/fp-graph.js` on `graph-engine` WASM,
   `src/fp-canvas.js` on `canvas-engine` WASM); the inherited `kJ`/`EJ`/`AQ`/`xJ` and `r8`/`y5` classes are
   dead compatibility code kept only so old view states still resolve.
-* Canvas support classes in `src-app/canvas-utils.js`: undo stack, spatial index (RBush-style, with
-  overlap-minimizing splits), bbox/point index variants (`m5`/`v5`/`g5`), data cache, node interaction
-  layer, `.canvas` metadata extractor (`e8`) and the link updater (`t8`). Still inherited: the canvas
-  node/edge view classes and the canvas view/menu/selection glue (`S5`, `U3`, `z3`, `G5`, `K5`, `i8`,
-  `h3`, plus small helpers `c5`/`u5`/`d5`/`f5`/`p5`/`h5`).
+* Canvas: `src/fp-canvas.js` (canvas-engine WASM) is *not* a standalone replacement — it is
+  baked into `src/fp-canvas.js` and loaded before `app.js`, where `build-canvas.mjs` patches
+  ~30 anchors inside the inherited canvas classes (`showMenu`, `createEdgeEnd`,
+  `nodeInteractionLayer.render`, export progress, version history, ...). The inherited canvas
+  region is therefore live code. Own so far (`src-app/canvas-utils.js`, `canvas-plugin.js`):
+  undo stack (`l5`), spatial index (`Y3`) + bbox/point variants (`m5`/`v5`/`g5`), data cache
+  (`n8`), node interaction layer (`M5`), `.canvas` metadata extractor (`e8`), link updater
+  (`t8`) and the plugin itself (`i8`). Still inherited: the view and node/edge/embed/settings
+  classes (`r8`, `a8`, `s8`, `Q5`, `I5` and the `*8` class region between them, ~85 KB).
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
