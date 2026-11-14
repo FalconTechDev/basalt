@@ -1,16 +1,16 @@
 # src/app.js rewrite: progress
 
-Branch `app-rewrite-big` (worktree `basalt-wt-big`). Own code lives in `src-app/` and is spliced into the inherited bundle by
+Branch `rewrite-core` (worktree `basalt-wt-core`). Own code lives in `src-app/` and is spliced into the inherited bundle by
 `build-app.mjs`; the manifest `src-app/manifest.json` says what is replaced. Numbers come from `node tools/own-stats.mjs`
 (bytes of the ORIGINAL text of every replaced function / class, divided by the size of the base bundle).
 
 | | replaced | bytes of original text |
 | --- | --- | --- |
-| functions (leaf helpers, search, timing, transitions, tooltips) | 172 | 21.2 KB |
-| classes / objects | 70 | 177.8 KB |
-| **total** | | **199.0 KB = 5.39 % of the 3688.9 KB bundle** |
+| functions (leaf helpers, search, timing, transitions, tooltips, metadata helpers) | 189 | 25.5 KB |
+| classes / objects | 76 | 182.7 KB |
+| **total** | | **208.2 KB = 5.64 % of the 3688.9 KB bundle** |
 
-Own readable source: 422.3 KB in `src-app/*.js` (39 files, comments included).
+Own readable source: 441.5 KB in `src-app/*.js` (comments included).
 
 What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
 bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
@@ -62,6 +62,7 @@ kept on the full bundle so it cannot flatter itself.
 | metadata-types.js | `MetadataTypeManager` (`RL`), the `PL` types.json defaults, `inferPropertyWidget` (`NL`) |
 | community-plugins.js | `CommunityPlugins` (`$0`): manifests, enable/disable, install, deprecation and update checks |
 | metadata-cache.js | `MetadataCache` (`_L`): worker indexing, IndexedDB persistence, link/tag/backlink resolution |
+| metadata-helpers.js, env.js | MetadataCache support: `SerialTaskQueue`/`RefMultimap`/`Deque`/`Runnable`/`LinkQueue`/`BlockCache`, `batchedAsync`, `idleOrTimeout`, `iterateIdbBatches`, `contentHash`, `collectTags`, `sharesLinkTarget`, `anyRefMatch`/`anyMetadataRef`, `forEachLinkField`, position (de)serialization, `escapeRegExp`, `tagValid`, `isOutdatedMetadata`, `applyLinkUpdates`; `env.js` shares the lazy host bindings |
 
 Behaviour changes (all bug fixes, nothing observable in normal use): the leaf history list is trimmed at 20 entries (the inherited
 `unshift()` without an argument did nothing), `FileView.onDelete` no longer throws when the leaf is already detached,
@@ -104,7 +105,7 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
 
 * `Workspace` itself (`H0`, 66 KB: layout save / load, active leaf, recent files, hotkey glue, URI handlers) and the mobile drawer
   (`WD`, mobile only). The tree it manages is already own code, so what remains is the controller on top.
-* `App` (`Tte`, 56 KB), the community plugin manager (`$0`, 22 KB) and wrapper loader, `MetadataCache`, `Vault` (belongs to the
-  other agent's branch), the markdown view and its siblings (`W6`, preview, properties, outline, backlinks, search UI, canvas glue),
-  `Editor` wrapper (`cP`, `iZ`).
+* `App` (`Tte`, 56 KB). The community plugin manager (`$0`), `MetadataCache` (`_L`) and its helper classes are own code now;
+  `Vault` belongs to the other agent's branch, the markdown view and its siblings (`W6`, preview, properties, outline,
+  backlinks, search UI, canvas glue), `Editor` wrapper (`cP`, `iZ`).
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
