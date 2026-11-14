@@ -79,6 +79,7 @@ export function defineCanvasUndoStack(host) {
     this.current = 0;
   };
 
+  canvas.UndoStack = CanvasUndoStack;
   return CanvasUndoStack;
 }
 
@@ -573,6 +574,7 @@ export function defineSpatialIndex(host) {
   };
 
   spatialIndexClass = SpatialIndex;
+  canvas.SpatialIndex = SpatialIndex;
   return SpatialIndex;
 }
 
@@ -709,6 +711,7 @@ export function defineCanvasDataCache(host) {
     this.app.saveLocalStorage("canvas-" + path, null);
   };
 
+  canvas.DataCache = CanvasDataCache;
   return CanvasDataCache;
 }
 
@@ -776,6 +779,7 @@ export function defineCanvasMetadataExtractor(host) {
     return await this.app.metadataCache.computeMetadataAsync(proxy);
   };
 
+  canvas.MetadataExtractor = CanvasMetadataExtractor;
   return CanvasMetadataExtractor;
 }
 
@@ -898,6 +902,7 @@ export function defineCanvasLinkUpdater(host) {
     if (updated > 0) new host.Notice("Canvas updated " + updated + " embed cards.");
   };
 
+  canvas.LinkUpdater = CanvasLinkUpdater;
   return CanvasLinkUpdater;
 }
 
@@ -984,5 +989,6 @@ export function defineNodeInteractionLayer(host) {
     });
   };
 
+  canvas.InteractionLayer = NodeInteractionLayer;
   return NodeInteractionLayer;
 }

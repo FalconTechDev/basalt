@@ -1545,6 +1545,26 @@
   {
    "orig": "t8",
    "use": "defineCanvasLinkUpdater"
+  },
+  {
+   "orig": "m5",
+   "use": "defineBboxCachedIndex"
+  },
+  {
+   "orig": "v5",
+   "use": "definePointIndex"
+  },
+  {
+   "orig": "g5",
+   "use": "defineBBoxItemIndex"
+  },
+  {
+   "orig": "e8",
+   "use": "defineCanvasMetadataExtractor"
+  },
+  {
+   "orig": "i8",
+   "use": "defineCanvasPlugin"
   }
  ],
  "host": {
@@ -1716,7 +1736,18 @@
   "applyLinkChanges": "UL",
   "normalizeSubpath": "LT",
   "CANVAS_EXTENSION": "Z5",
-  "indexCacheHasLink": "xT"
+  "indexCacheHasLink": "xT",
+  "MetadataExtractorBase": "X5",
+  "parseSmallText": "fT",
+  "fileProxy": "wf",
+  "RenameQueue": "vb",
+  "canvasI18n": "J5",
+  "CanvasViewType": "$5",
+  "CanvasViewClass": "r8",
+  "JumpToGroupModal": "Q5",
+  "GroupNodeClass": "I5",
+  "CanvasEmbedRenderer": "a8",
+  "CanvasSettingsTab": "s8"
  },
  "declarators": [
   {
