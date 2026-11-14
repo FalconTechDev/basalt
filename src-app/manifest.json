@@ -1137,6 +1137,22 @@
   {
    "orig": "tte",
    "use": "defineAppearanceTab"
+  },
+  {
+   "orig": "y0",
+   "use": "defineCommunityModal"
+  },
+  {
+   "orig": "M0",
+   "use": "definePluginBrowserModal"
+  },
+  {
+   "orig": "D0",
+   "use": "defineThemeBrowserModal"
+  },
+  {
+   "orig": "S0",
+   "use": "defineDonateModal"
   }
  ],
  "host": {
@@ -1433,5 +1449,5 @@
    "originalBytes": 292
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0,JT,Fm,ym,electron,A0,ete,zee"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0,JT,Fm,ym,electron,A0,ete,zee,cy,Zx,Kx,xL,eb,C0"
 }

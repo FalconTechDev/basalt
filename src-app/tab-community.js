@@ -60,7 +60,7 @@ export function defineCommunityPluginsTab(host) {
           .setDesc(i18nPlugin.optionBrowseCommunityPluginsDescription())
           .addButton((button) => {
             button.setCta().setButtonText(i18nPlugin.buttonBrowse()).onClick(() => {
-              new env().M0(app).setCloseCallback(() => self.display()).open();
+              new (env().M0)(app).setCloseCallback(() => self.display()).open();
             });
           });
       });
@@ -254,7 +254,7 @@ export function defineCommunityPluginsTab(host) {
       if (manifest.fundingUrl) {
         row.addExtraButton((button) => {
           button.setIcon("lucide-heart").setTooltip(i18nPlugin.labelDonateModalTitle({ name: manifest.name })).onClick(() => {
-            new env().S0(app, manifest.name, manifest.fundingUrl).open();
+            new (env().S0)(app, manifest.name, manifest.fundingUrl).open();
           });
         });
       }
@@ -287,7 +287,7 @@ export function defineCommunityPluginsTab(host) {
       const infoEl = row.infoEl;
       infoEl.style.cursor = "pointer";
       infoEl.addEventListener("click", () => {
-        new env().M0(app).setCloseCallback(() => self.display()).setAutoOpen(id).open();
+        new (env().M0)(app).setCloseCallback(() => self.display()).setAutoOpen(id).open();
       });
       updateExtraButtons();
     });

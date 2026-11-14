@@ -202,7 +202,7 @@ export function defineAppearanceTab(host) {
     });
     themesSetting.addButton((button) => {
       button.setButtonText(i18nAppearance.optionThemeButtonManage()).setCta().onClick(() => {
-        new env().A0(app, false).setCloseCallback(() => self.display()).open();
+        new (env().A0)(app, false).setCloseCallback(() => self.display()).open();
       });
     });
 
@@ -216,7 +216,7 @@ export function defineAppearanceTab(host) {
           if (updateCount > 0) {
             s.addButton((button) => {
               button.setButtonText(i18nAppearance.buttonViewUpdates()).onClick(() => {
-                new env().A0(app, true).setCloseCallback(() => self.display()).open();
+                new (env().A0)(app, true).setCloseCallback(() => self.display()).open();
               });
             });
             s.addButton((button) => {
@@ -313,7 +313,7 @@ export function defineAppearanceTab(host) {
           .setName(host.t.setting.appearance.optionConfigureRibbon())
           .setDesc(host.t.setting.appearance.optionConfigureRibbonDesc())
           .addButton((button) => {
-            button.setButtonText(host.t.dialogue.buttonManage()).onClick(() => new env().ete(app).open());
+            button.setButtonText(host.t.dialogue.buttonManage()).onClick(() => new (env().ete)(app).open());
           });
       });
     }
@@ -352,7 +352,7 @@ export function defineAppearanceTab(host) {
         row = setting;
         setting.setName(name).addButton((button) => {
           button.setButtonText(i18nAppearance.optionThemeButtonManage()).onClick(() => {
-            new env().zee(app, name, parseCommaList(app.vault.getConfig(configKey)), (values) => {
+            new (env().zee)(app, name, parseCommaList(app.vault.getConfig(configKey)), (values) => {
               app.vault.setConfig(configKey, values.join(","));
               refresh();
             }).open();
