@@ -972,6 +972,10 @@
       "orig": "RL",
       "use": "defineMetadataTypeManager",
       "originalBytes": 3979
+    },
+    {
+      "orig": "$0",
+      "use": "defineCommunityPlugins"
     }
   ],
   "host": {
@@ -1113,7 +1117,22 @@
     "linkPath": "ET",
     "cancelTouchDrag": "Nc",
     "propertyTypeWidgets": "{aliases:bO,checkbox:TO,date:EO,datetime:MO,file:CO,folder:kO,multitext:PO,property:yO,number:xO,tags:wO,text:rO}",
-    "unknownPropertyWidget": "IO"
+    "unknownPropertyWidget": "IO",
+    "Plugin": "G0",
+    "pluginStrings": "J0",
+    "i18n": "gm",
+    "request": "dy",
+    "semverCompare": "gy",
+    "appVersion": "gte",
+    "communityPluginList": "tA",
+    "progressOverlay": "pD.instance",
+    "TrustAuthorModal": "Z0",
+    "trackUsage": "cD",
+    "capacitorApp": "xm",
+    "activeWindow": "activeWindow",
+    "basaltDebug": "iD",
+    "cmRequireMap": "W0",
+    "cmDeprecatedMap": "_0"
   },
   "declarators": [
     {
