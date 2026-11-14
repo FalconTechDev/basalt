@@ -1,19 +1,18 @@
 /* editor: Source mode and live preview editor (CodeMirror) and its syntax colours. */
 
-/* cm-s */
+/* ---------- generic cm-* marks ---------- */
+
 .cm-s-basalt .cm-cursor,
 .cm-s-basalt .cm-dropCursor {
   border-left-color: var(--caret-color);
 }
 
-/* cm-fat */
 .cm-fat-cursor-mark {
   background-color: rgba(20, 255, 20, 0.5);
   -webkit-animation: blink 1.06s steps(1) infinite;
   animation: blink 1.06s steps(1) infinite;
 }
 
-/* cm-animate */
 .cm-animate-fat-cursor {
   width: auto;
   border: 0;
@@ -23,48 +22,41 @@
   animation: blink 1.06s steps(1) infinite;
 }
 
-/* cm-tab */
 .cm-tab {
   display: inline-block;
   text-decoration: inherit;
 }
 
-/* cm-negative */
 .cm-negative {
   color: var(--text-error);
 }
 
-/* cm-positive */
 .cm-positive {
   color: var(--text-success);
 }
 
-/* cm-strikethrough */
 .cm-strikethrough {
   text-decoration: line-through;
 }
 
-/* cm-invalidchar */
 .cm-invalidchar {
   color: var(--text-error);
 }
 
-/* cm-searching */
 .cm-searching {
   background-color: rgba(255, 255, 0, 0.4);
 }
 
-/* cm-force */
 .cm-force-border {
   padding-right: 0.1px;
 }
 
-/* cm-tab */
 .cm-tab-wrap-hack:after {
   content: '';
 }
 
-/* markdown-source */
+/* ---------- markdown-source-view shell ---------- */
+
 .markdown-source-view {
   --list-padding-inline-start: var(--list-indent-source);
   --list-marker-space: 0;
@@ -96,6 +88,7 @@
   background-color: var(--text-selection);
 }
 
+/* readable line width centres the sizer */
 .markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer {
   max-width: var(--file-line-width);
   margin-left: auto;
@@ -152,6 +145,7 @@
   caret-color: var(--caret-color);
 }
 
+/* every rendered line is a plain block with no margins */
 .markdown-source-view.mod-cm6 .cm-content > * {
   display: block;
   margin: 0 !important;
@@ -192,6 +186,8 @@
   word-break: normal;
 }
 
+/* ---------- table widget ---------- */
+
 .markdown-source-view.mod-cm6 .cm-table-widget {
   --table-drag-handle-size: var(--size-4-4);
   overflow-x: auto;
@@ -230,6 +226,7 @@
   user-select: none;
 }
 
+/* selected cells paint their own overlay, hiding the text selection layer */
 .markdown-source-view.mod-cm6 .cm-table-widget th.is-selected::after,
 .markdown-source-view.mod-cm6 .cm-table-widget td.is-selected::after {
   display: block;
@@ -421,6 +418,7 @@
   scrollbar-gutter: auto;
 }
 
+/* selection edge borders and corner radii */
 .markdown-source-view.mod-cm6 .cm-table-widget th.is-selected.start::after,
 .markdown-source-view.mod-cm6 .cm-table-widget td.is-selected.start::after {
   inset-inline-start: calc(-1 * var(--table-selection-border-width));
@@ -457,6 +455,8 @@
 .markdown-source-view.mod-cm6 .cm-table-widget:dir(rtl) .table-col-btn {
   cursor: w-resize;
 }
+
+/* ---------- editor chrome ---------- */
 
 .markdown-source-view.mod-cm6 .cm-line {
   position: relative;
@@ -498,6 +498,7 @@
   background-color: transparent;
 }
 
+/* CM6 uses an invisible buffer img for measuring widgets */
 .markdown-source-view.mod-cm6 img.cm-widgetBuffer {
   display: inline !important;
   width: 0 !important;
@@ -511,15 +512,14 @@
   padding: var(--file-margins);
 }
 
+/* RTL frontmatter lines and callout titles */
 @supports selector(:has(*)) {
-  /* mod-rtl */
   .mod-rtl .cm-line:has(.cm-hmd-frontmatter),
   .is-rtl .cm-line:has(.cm-hmd-frontmatter),
   .rtl .cm-line:has(.cm-hmd-frontmatter) {
     direction: rtl;
   }
 
-  /* cm-callout */
   .cm-callout:has(.callout .callout-title .callout-title-inner:dir(rtl)),
   .callout:has( > .callout-title .callout-title-inner:dir(rtl)) {
     direction: rtl;
@@ -537,24 +537,22 @@
   }
 }
 
-/* cm-s */
+/* ---------- search highlight, fold indicators, indent guides ---------- */
+
 .cm-s-basalt span.basalt-search-match-highlight {
   box-shadow: 0 0 0px 3px var(--text-accent);
   border-radius: 2px;
   mix-blend-mode: var(--highlight-mix-blend-mode);
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .document-search-container {
   flex: 0 0 auto;
 }
 
-/* cm-s */
 .cm-s-basalt span.cm-highlight.basalt-search-match-highlight {
   background-color: var(--text-selection);
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .cm-line:hover .cm-fold-indicator .collapse-indicator,
 .markdown-source-view.mod-cm6 .cm-fold-indicator.is-collapsed .collapse-indicator {
   opacity: 1;
@@ -590,7 +588,8 @@
   border-inline-end: var(--indentation-guide-width-active) solid var(--indentation-guide-color-active);
 }
 
-/* cm-tooltip */
+/* ---------- cm-tooltip ---------- */
+
 .cm-tooltip.cm-tooltip-docstring .active {
   font-weight: var(--font-semibold);
 }
@@ -648,7 +647,8 @@
   background-color: var(--background-modifier-hover);
 }
 
-/* cm-s */
+/* ---------- syntax colours ---------- */
+
 .cm-s-basalt span.cm-quote {
   color: var(--blockquote-color);
 }
@@ -657,7 +657,6 @@
   color: var(--text-faint);
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6.is-live-preview .HyperMD-quote:before,
 .markdown-source-view.mod-cm6 .cm-blockquote-border:before {
   display: block;
@@ -688,7 +687,6 @@
   margin: 1em 0;
 }
 
-/* cm-s */
 .cm-s-basalt span.cm-inline-code {
   -webkit-box-decoration-break: clone;
   color: var(--code-normal);
@@ -706,6 +704,7 @@
   background-color: var(--code-background);
 }
 
+/* inline code split across editing boundaries keeps one rounded box */
 .cm-s-basalt .cm-inline-code:not(.cm-formatting) + .cm-formatting.cm-inline-code {
   border-start-start-radius: 0;
   border-start-end-radius: var(--code-radius);
@@ -722,7 +721,6 @@
   padding: 0.15em 0;
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .cm-hmd-codeblock {
   --indentation-guide-editing-indent: 0;
 }
@@ -746,7 +744,6 @@
   font-size: var(--font-text-size);
 }
 
-/* cm-s */
 .cm-s-basalt .HyperMD-codeblock {
   font-family: var(--font-monospace);
   font-size: var(--code-size);
@@ -760,17 +757,16 @@
   background-color: inherit;
 }
 
-/* cm-editor */
 .cm-editor.cm-focused .cm-matchingBracket .punctuation {
   color: var(--text-normal);
 }
 
-/* inline-embed */
+/* ---------- embeds ---------- */
+
 .inline-embed .markdown-source-view.mod-cm6 .cm-editor {
   min-height: unset;
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .internal-embed {
   white-space: normal;
 }
@@ -817,7 +813,8 @@
   content: " ";
 }
 
-/* cm-s */
+/* ---------- footnotes ---------- */
+
 .cm-s-basalt .cm-line.HyperMD-footnote {
   font-size: var(--footnote-size);
 }
@@ -856,7 +853,8 @@
   color: var(--text-muted);
 }
 
-/* markdown-source */
+/* ---------- metadata / properties ---------- */
+
 .markdown-source-view .metadata-container,
 .markdown-preview-view .metadata-container {
   transform: translateX(calc(var(--size-4-1) * -1 * var(--direction)));
@@ -871,13 +869,13 @@
   display: none;
 }
 
-/* inline-embed */
 .inline-embed .markdown-source-view.is-live-preview.show-properties .metadata-container:not(.mod-error),
 .inline-embed .markdown-preview-view.show-properties .metadata-container:not(.mod-error) {
   display: none;
 }
 
-/* cm-s */
+/* ---------- headers ---------- */
+
 .cm-s-basalt .cm-line.HyperMD-header + .cm-line:not(.HyperMD-header):not(:has(>br:only-child)) {
   padding-top: var(--p-spacing-empty);
 }
@@ -886,7 +884,7 @@
   padding-top: 0;
 }
 
-/* HyperMD-header */
+/* header links inherit the heading weight */
 .HyperMD-header-1 a,
 .inline-title h1 a,
 .HyperMD-list-line .cm-header-1 a,
@@ -950,7 +948,8 @@
   font-size: inherit !important;
 }
 
-/* markdown-source */
+/* ---------- hr and lists ---------- */
+
 .markdown-source-view.mod-cm6 .hr {
   display: flex;
   align-items: center;
@@ -965,12 +964,10 @@
   min-width: var(--list-indent);
 }
 
-/* cm-line */
 .cm-line.HyperMD-list-line {
   tab-size: var(--list-indent);
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6.is-live-preview .cm-line.HyperMD-list-line .cm-fold-indicator .collapse-indicator {
   padding-inline-end: 0;
 }
@@ -980,12 +977,10 @@
   padding-inline-end: var(--list-bullet-end-padding);
 }
 
-/* cm-s */
 .cm-s-basalt .HyperMD-list-line.HyperMD-list-line-nobullet > .cm-hmd-list-indent > .cm-indent-spacing:last-child {
   padding-inline-start: calc(var(--list-indent-editing) + var(--list-marker-space));
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .cm-hmd-list-indent {
   display: inline-block;
   white-space: pre;
@@ -996,7 +991,8 @@
   white-space: pre;
 }
 
-/* cm-s */
+/* ---------- links ---------- */
+
 .cm-s-basalt span.cm-hmd-internal-link {
   color: var(--link-color);
   font-weight: var(--link-weight);
@@ -1050,7 +1046,6 @@
   color: var(--text-faint);
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .is-unresolved .cm-underline {
   text-decoration-line: var(--link-decoration);
   text-decoration-style: var(--link-unresolved-decoration-style);
@@ -1063,14 +1058,13 @@
   text-decoration-thickness: var(--link-decoration-thickness);
 }
 
-/* is-ios */
+/* iOS blocks text selection on blurred link underlines */
 body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underline {
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-modify: read-only;
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6.is-live-preview .cm-hashtag.cm-meta,
 .markdown-source-view.mod-cm6 .cm-hmd-internal-link .cm-underline,
 .markdown-source-view.mod-cm6 .cm-link .cm-underline,
@@ -1098,7 +1092,6 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
   }
 }
 
-/* cm-s */
 .cm-s-basalt.HyperMD-with-alt span.cm-url,
 .cm-s-basalt.HyperMD-with-alt span.cm-link,
 .cm-s-basalt.HyperMD-with-alt span.cm-hashtag,
@@ -1107,6 +1100,8 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
 .cm-s-basalt.HyperMD-with-ctrl span.cm-hashtag {
   cursor: var(--cursor-link);
 }
+
+/* ---------- misc syntax ---------- */
 
 .cm-s-basalt {
   line-height: var(--line-height-normal);
@@ -1183,7 +1178,8 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
   font-size: 13.2pt;
 }
 
-/* cm-html */
+/* ---------- tables (html embeds and rendered markdown) ---------- */
+
 .cm-html-embed table,
 .markdown-rendered table {
   border-collapse: collapse;
@@ -1331,7 +1327,8 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
   border-right-width: var(--table-column-last-border-width);
 }
 
-/* cm-s */
+/* ---------- source-mode tables ---------- */
+
 .cm-s-basalt .HyperMD-table-row {
   overflow-wrap: normal;
   white-space: pre;
@@ -1348,15 +1345,15 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
   direction: rtl;
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .cm-line.HyperMD-table-row {
   min-width: max-content;
 }
 
-/* cm-s */
 .cm-s-basalt span.cm-hashtag.cm-hmd-escape-backslash {
   color: #FCC;
 }
+
+/* ---------- task lists ---------- */
 
 .cm-s-basalt span.cm-formatting-task {
   height: 1em;
@@ -1369,7 +1366,6 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
   background-size: 1em;
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .task-list-label .task-list-item-checkbox {
   top: -0.1em;
   margin-inline-start: var(--checkbox-margin-inline-start);
@@ -1387,19 +1383,18 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
   color: var(--checklist-done-color);
 }
 
-/* cm-s */
+/* ---------- marks ---------- */
+
 .cm-s-basalt span.cm-formatting-highlight,
 .cm-s-basalt span.cm-highlight {
   color: var(--text-normal);
   background-color: var(--text-highlight-bg);
 }
 
-/* cm-strong */
 .cm-strong.cm-em {
   font-weight: calc(var(--font-weight) + var(--bold-modifier));
 }
 
-/* cm-s */
 .cm-s-basalt span.cm-error {
   color: var(--text-error);
 }
