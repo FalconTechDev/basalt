@@ -49,6 +49,7 @@ export function defineUrlEditModal(host) {
       return undefined;
     }
   }
+  canvas.UrlModal = UrlEditModal;
   return UrlEditModal;
 }
 
@@ -123,6 +124,7 @@ export function defineSectionSuggestModal(host) {
       this.fileSuggestions = null;
     }
   }
+  canvas.SectionSuggest = SectionSuggestModal;
   return SectionSuggestModal;
 }
 
@@ -218,6 +220,7 @@ export function defineEdgeLabel(host) {
       edge.labelElement = null;
     }
   }
+  canvas.EdgeLabel = EdgeLabel;
   return EdgeLabel;
 }
 
@@ -253,6 +256,7 @@ export function defineJumpToGroupModal(host) {
       return item.label || cvCanvasT(host).labelUntitledGroup();
     }
   }
+  canvas.JumpModal = JumpToGroupSuggestModal;
   return JumpToGroupSuggestModal;
 }
 
@@ -308,6 +312,7 @@ export function defineViewTypeSuggestModal(host) {
       this.cb(item.name);
     }
   }
+  canvas.ViewTypeSuggest = ViewTypeSuggestModal;
   return ViewTypeSuggestModal;
 }
 
@@ -317,8 +322,8 @@ export function defineViewTypeSuggestModal(host) {
 
 export function defineCanvasMarkdownEmbed(host) {
   class CanvasMarkdownEmbed extends host.MarkdownEmbedBase {
-    constructor(ctx, node) {
-      super(ctx.app, ctx.contentEl, null);
+    constructor(node) {
+      super(node.app, node.contentEl, null);
       this.editable = true;
       this.useIframe = true;
       this.scope = null;
@@ -360,6 +365,7 @@ export function defineCanvasMarkdownEmbed(host) {
       this.app.foldManager.savePath(this.linktext, info);
     }
   }
+  canvas.MarkdownEmbed = CanvasMarkdownEmbed;
   return CanvasMarkdownEmbed;
 }
 
@@ -432,6 +438,7 @@ export function defineCanvasEmptyEmbed(host) {
       ctx.app.workspace.openLinkText(ctx.linktext, ctx.sourcePath, host.Keymap.isModEvent(evt));
     }
   }
+  canvas.EmptyEmbed = CanvasEmptyEmbed;
   return CanvasEmptyEmbed;
 }
 
@@ -487,6 +494,7 @@ export function defineRenamePromptModal(host) {
     }
   }
   canvas.RenamePrompt = RenamePromptModal;
+  canvas.RenamePrompt = RenamePromptModal;
   return RenamePromptModal;
 }
 
@@ -515,6 +523,7 @@ export function defineNewFileModal(host) {
       return undefined;
     }
   }
+  canvas.NewFileModal = NewFileModal;
   return NewFileModal;
 }
 
@@ -591,6 +600,7 @@ export function defineCanvasFileSuggest(host) {
     }
   }
   canvas.FileSuggest = CanvasFileSuggest;
+  canvas.FileSuggest = CanvasFileSuggest;
   return CanvasFileSuggest;
 }
 
@@ -622,6 +632,7 @@ export function defineCanvasMediaSuggest(host) {
     }
   }
   canvas.MediaSuggest = CanvasMediaSuggest;
+  canvas.MediaSuggest = CanvasMediaSuggest;
   return CanvasMediaSuggest;
 }
 
@@ -650,6 +661,7 @@ export function defineCanvasImageSuggest(host) {
       if (this.handleClose) this.handleClose();
     }
   }
+  canvas.ImageSuggest = CanvasImageSuggest;
   canvas.ImageSuggest = CanvasImageSuggest;
   return CanvasImageSuggest;
 }

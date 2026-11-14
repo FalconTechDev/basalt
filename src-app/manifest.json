@@ -1613,6 +1613,30 @@
   {
    "orig": "D3",
    "use": "defineCanvasImageSuggest"
+  },
+  {
+   "orig": "S5",
+   "use": "defineCanvasNode"
+  },
+  {
+   "orig": "x5",
+   "use": "defineContentMountNode"
+  },
+  {
+   "orig": "T5",
+   "use": "defineDummyNode"
+  },
+  {
+   "orig": "A5",
+   "use": "defineEditableNode"
+  },
+  {
+   "orig": "I5",
+   "use": "defineTextNode"
+  },
+  {
+   "orig": "F5",
+   "use": "defineLinkNode"
   }
  ],
  "host": {
@@ -1808,7 +1832,18 @@
   "invalidCharsPattern": "UT",
   "invalidCharsList": "qT",
   "unsafeCharsPattern": "WT",
-  "unsafeCharsList": "jT"
+  "unsafeCharsList": "jT",
+  "isEditableTarget": "M$",
+  "dragWithThreshold": "Cg",
+  "nativeDblClick": "dg",
+  "StatefulEmbedBase": "lJ",
+  "normalizeEmbedUrl": "Az",
+  "isWebviewElement": "_f",
+  "canvasResizeAnchor": "E3",
+  "canvasSnapPoints": "L3",
+  "canvasSnapMatch": "O3",
+  "canvasNearestSide": "A3",
+  "iterateLinks": "TT"
  },
  "declarators": [
   {
