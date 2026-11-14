@@ -1022,6 +1022,10 @@
   {
    "orig": "iZ",
    "use": "defineEditorImpl"
+  },
+  {
+   "orig": "oZ",
+   "use": "defineCodeMirrorEditor"
   }
  ],
  "host": {
@@ -1298,7 +1302,46 @@
   "cmFoldToggle": "Xp",
   "cmUnfoldToggle": "Qp",
   "cmdFoldAll": "R$",
-  "cmdUnfoldAll": "Jp"
+  "cmdUnfoldAll": "Jp",
+  "CMEditorView": "_o",
+  "ClipboardManager": "AL",
+  "iosTap": "jc",
+  "CMEditorComponent": "iZ",
+  "livePreviewPluginFactory": "O6",
+  "cmCompartment": "nZ",
+  "cmBaseExtension": "tZ",
+  "cmHistoryStore": "rZ",
+  "cmHistoryField": "eF",
+  "cmPosToOffset": "IA",
+  "cmOffsetToPos": "OA",
+  "cmRefreshEffect": "BA",
+  "cmIndentUnit": "yp",
+  "cmEditorField": "U$",
+  "cmOwnerField": "W$",
+  "livePreviewField": "G$",
+  "fieldSetEffect": "q$",
+  "notSetUserEvent": "PA",
+  "inputEditUserEvent": "LA",
+  "cmFoldCheck": "EV",
+  "electronMenuInfo": "Gf",
+  "shiftPos": "rP",
+  "truncateText": "gc",
+  "formattingMenu": "BV",
+  "isUrl": "Yc",
+  "isPlainUrl": "Qc",
+  "setUriList": "wP",
+  "clipboardFiles": "CP",
+  "htmlCommentPrefix": "DL",
+  "iosEditorExtensions": "I$",
+  "bracketOpenInput": "sV",
+  "bracketField": "nV",
+  "bracketKeys": "lV",
+  "closeBracketInput": "fj",
+  "vimTheme": "rj",
+  "vimPrecedence": "Te",
+  "vimKeymapClass": "oj",
+  "vimThemeAlt": "Lq",
+  "vimStatusField": "lj"
  },
  "declarators": [
   {
