@@ -1093,6 +1093,10 @@
   {
    "orig": "N7",
    "use": "defineAboutTab"
+  },
+  {
+   "orig": "C0",
+   "use": "defineHotkeysTab"
   }
  ],
  "host": {
