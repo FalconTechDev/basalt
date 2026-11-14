@@ -1565,6 +1565,34 @@
   {
    "orig": "i8",
    "use": "defineCanvasPlugin"
+  },
+  {
+   "orig": "w5",
+   "use": "defineUrlEditModal"
+  },
+  {
+   "orig": "E5",
+   "use": "defineSectionSuggestModal"
+  },
+  {
+   "orig": "K5",
+   "use": "defineEdgeLabel"
+  },
+  {
+   "orig": "Q5",
+   "use": "defineJumpToGroupModal"
+  },
+  {
+   "orig": "L5",
+   "use": "defineViewTypeSuggestModal"
+  },
+  {
+   "orig": "O5",
+   "use": "defineCanvasMarkdownEmbed"
+  },
+  {
+   "orig": "N5",
+   "use": "defineCanvasEmptyEmbed"
   }
  ],
  "host": {
@@ -1747,7 +1775,16 @@
   "JumpToGroupModal": "Q5",
   "GroupNodeClass": "I5",
   "CanvasEmbedRenderer": "a8",
-  "CanvasSettingsTab": "s8"
+  "CanvasSettingsTab": "s8",
+  "TextInputModal": "lI",
+  "MarkdownEmbedBase": "CZ",
+  "Runnable": "bb",
+  "headingBlockSuggestions": "zI",
+  "blockSuggestions": "qI",
+  "renderSectionSuggestion": "jI",
+  "applyCanvasColor": "B3",
+  "normalizeCanvasColor": "H3",
+  "CanvasFileSuggest": "x3"
  },
  "declarators": [
   {
