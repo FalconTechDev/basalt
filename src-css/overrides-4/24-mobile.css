@@ -1,48 +1,41 @@
 /* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* text-icon */
+/* mobile-tap pressed states and phone layout adjustments */
 .text-icon-button.mobile-tap {
   box-shadow: none;
   color: var(--text-normal);
   opacity: var(--icon-opacity-hover);
 }
 
-/* notice-cta */
 .notice-cta.mobile-tap {
   color: var(--text-accent-hover);
 }
 
-/* follow-link */
 .follow-link-popover.mobile-tap {
   opacity: 0.9;
   transform: scale(0.9, 0.9);
 }
 
-/* vertical-tab */
 .vertical-tab-nav-item.mobile-tap {
   --icon-color: var(--text-normal);
   color: var(--text-normal);
   background-color: var(--background-modifier-hover);
 }
 
-/* tree-item */
 .tree-item-self.mobile-tap {
   color: var(--nav-item-color-hover);
   font-weight: var(--nav-item-weight-hover);
   background-color: var(--nav-item-background-hover);
 }
 
-/* is-mobile */
 .is-mobile .metadata-properties-heading {
   padding: var(--size-4-1) 0;
 }
 
-/* external-link */
 .external-link.mobile-tap {
   opacity: 0.5;
 }
 
-/* is-mobile */
 .is-mobile .canvas-control-item {
   border: none;
   background-color: transparent;
@@ -52,12 +45,10 @@ body.is-mobile.keyboard-animating .app-container {
   max-height: 100vh;
 }
 
-/* mobile-onboarding */
 .mobile-onboarding input {
   background-color: transparent;
 }
 
-/* is-phone */
 .is-phone .modal .setting-item-control select,
 .is-phone .modal .setting-item-control input,
 .is-phone .modal .setting-item-control button:not(.clickable-icon) {
@@ -82,30 +73,25 @@ body.is-mobile.keyboard-animating .app-container {
   box-shadow: var(--shadow-l);
 }
 
-/* is-hidden */
 .is-hidden-nav .mobile-navbar {
   --hidden-nav-navbar-transform: translateY(calc(var(--navbar-height) + var(--navbar-bottom-offset)));
   opacity: 0;
   transform: var(--hidden-nav-navbar-transform);
 }
 
-/* mobile-navbar */
 .mobile-navbar-action.mobile-tap {
   opacity: var(--icon-opacity-hover);
 }
 
-/* is-floating */
 .is-floating-nav .mobile-toolbar {
   box-shadow: 0 0 8px var(--background-primary);
   background-color: transparent;
 }
 
-/* mobile-tab */
 .mobile-tab-switcher-menu-button.mobile-tap {
   opacity: var(--icon-opacity-hover);
 }
 
-/* is-phone */
 .is-phone .mod-raised {
   background: var(--raised-background);
 }
@@ -119,7 +105,6 @@ body.is-mobile.keyboard-animating .app-container {
   min-width: fit-content;
 }
 
-/* mobile-vault */
 .mobile-vault-chooser-action.mobile-tap {
   background-color: var(--background-modifier-hover);
 }

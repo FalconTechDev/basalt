@@ -1,11 +1,10 @@
 /* modals (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* setting-item */
+/* sidebar-layout modals, scrollable modals, language picker */
 .setting-item-control .clickable-icon {
   padding: var(--size-2-2);
 }
 
-/* modal */
 .modal.mod-sidebar-layout {
   overflow: hidden;
   display: flex;
@@ -22,17 +21,14 @@
   padding: 0;
 }
 
-/* mod-sidebar */
 .mod-sidebar-layout .modal-header {
   display: none;
 }
 
-/* modal-title */
 .modal-title:empty {
   display: none;
 }
 
-/* modal-button */
 .modal-button-container .mod-checkbox {
   flex-grow: 1;
   display: flex;
@@ -40,7 +36,6 @@
   gap: var(--size-4-1);
 }
 
-/* modal */
 .modal.mod-scrollable {
   position: relative;
   overflow: hidden;
@@ -50,12 +45,10 @@
   padding: var(--size-4-4) 0 0 0;
 }
 
-/* search-params */
 .search-params .setting-item.mod-slider {
   flex-direction: column;
 }
 
-/* modal */
 .modal.mod-sync-log .modal-content {
   display: flex;
   flex-direction: column;
@@ -64,7 +57,6 @@
   padding: var(--size-4-1);
 }
 
-/* setting-item */
 .setting-item.mod-change-language .setting-item-info {
   flex-grow: 0;
 }

@@ -1,7 +1,7 @@
 /* tabs (late): rules of this component that have to stay after rules of components further down the build order. */
 
+/* clickable-icon hover, active-menu and disabled states */
 @media (hover: hover) {
-  /* clickable-icon */
   .clickable-icon:hover {
     box-shadow: none;
     color: var(--icon-color-hover);

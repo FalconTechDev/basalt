@@ -1,6 +1,6 @@
 /* forms (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* text-icon */
+/* text-icon buttons and shared form-field hover/focus states */
 .text-icon-button.is-active {
   color: var(--icon-color-active);
 }
@@ -34,8 +34,6 @@
     opacity: var(--icon-opacity-hover);
     background-color: var(--background-modifier-hover);
   }
-
-  /* input-button */
 
   textarea:hover,
   .multi-select-container:hover,
@@ -111,7 +109,6 @@ input[type='number']:focus-visible {
 }
 
 @media (hover: hover) {
-  /* multi-select */
   .multi-select-pill-remove-button:hover {
     color: var(--pill-color-remove-hover);
   }

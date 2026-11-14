@@ -1,6 +1,6 @@
 /* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* popover */
+/* hover popovers stretch to content with a capped width */
 .popover.hover-popover {
   --callout-blend-mode: normal;
   justify-content: stretch;

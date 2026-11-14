@@ -1,6 +1,6 @@
 /* suggest (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* suggestion-item */
+/* selected, dragged and downranked suggestion items */
 .suggestion-item.is-selected,
 .suggestion-item.mobile-tap {
   background-color: var(--background-modifier-hover);
