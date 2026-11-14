@@ -624,6 +624,128 @@ export function defineCanvasDataCache(host) {
 }
 
 // =====================================================================================================================
+// Link maintenance across canvas files (t8)
+// =====================================================================================================================
+
+export function defineCanvasLinkUpdater(host) {
+  bindCanvasHost(host);
+
+  /**
+   * Keeps "text" nodes and "file" embed subpaths inside .canvas JSON in sync when the files they
+   * point at are renamed or their links change. `canvas.index` is the canvas's link index
+   * ({getAll, getForPath, refNodeIds}); updates are {reference, change} pairs produced by the
+   * metadata cache's link-resolution diff.
+   */
+  function CanvasLinkUpdater(app, canvas) {
+    this.app = app;
+    this.canvas = canvas;
+  }
+  const proto = CanvasLinkUpdater.prototype;
+
+  /** Calls visit(path, link) for every cached reference of every indexed canvas file. */
+  proto.iterateReferences = function (visit) {
+    const all = this.canvas.index.getAll();
+    const self = this;
+    const walk = (path) => {
+      if (!Object.hasOwn(all, path)) return;
+      self.iterateReferencesForFile(path, (link) => visit(path, link));
+    };
+    for (const path in all) walk(path);
+  };
+
+  proto.iterateReferencesForFile = function (path, visit) {
+    const entry = this.canvas.index.getForPath(path);
+    if (!entry) return;
+    for (const key of Object.keys(entry.caches)) {
+      if (Object.hasOwn(entry.caches, key)) host.indexCacheHasLink(entry.caches[key], visit);
+    }
+    for (const embed of entry.embeds) {
+      visit({ link: embed.file + (embed.subpath != null ? embed.subpath : ""), original: "" });
+    }
+  };
+
+  /** Rewrites the text of "text" nodes whose stored link references changed (file renames, heading moves). */
+  proto.applyUpdates = async function (file, updates) {
+    const app = this.app;
+    const refNodeIds = this.canvas.index.refNodeIds;
+    try {
+      await app.vault.process(file, (text) => {
+        const data = JSON.parse(text);
+        const byNode = new host.Multimap();
+        for (const update of updates) {
+          const nodeId = refNodeIds.get(update.reference);
+          if (nodeId) byNode.add(nodeId, update);
+        }
+        for (const node of data.nodes) {
+          if (node.type === "text") {
+            const nodeUpdates = byNode.get(node.id);
+            if (nodeUpdates) node.text = host.applyLinkChanges(node.text, nodeUpdates);
+          }
+        }
+        return host.canvasSerialize(data);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  /**
+   * Points every "file" embed whose subpath matched `oldSubpath` at `newSubpath` inside the canvas
+   * files that reference `file`. `oldSubpath` starting with "^" demands an exact (case-insensitive)
+   * match, otherwise it is compared whitespace/case-normalised.
+   */
+  proto.renameSubpath = async function (file, oldSubpath, newSubpath) {
+    const app = this.app;
+    const filePath = file.path;
+    const affected = [];
+    const all = this.canvas.index.getAll();
+    for (const canvasPath of Object.keys(all)) {
+      if (!Object.hasOwn(all, canvasPath)) continue;
+      const entry = all[canvasPath];
+      for (const embed of entry.embeds) {
+        if (embed.file === filePath && embed.subpath) {
+          const sub = embed.subpath.substring(1);
+          if (oldSubpath.startsWith("^")) {
+            if (sub.toLowerCase() === oldSubpath) {
+              affected.push(canvasPath);
+              break;
+            }
+          } else if (host.normalizeSubpath(sub).toLowerCase() === oldSubpath) {
+            affected.push(canvasPath);
+            break;
+          }
+        }
+      }
+    }
+    if (affected.length === 0) return;
+    new host.Notice("Canvas detected file renames affecting " + affected.length + " canvas files, updating...");
+    let updated = 0;
+    for (const canvasPath of affected) {
+      const canvasFile = app.vault.getAbstractFileByPath(canvasPath);
+      if (!(canvasFile instanceof MarkdownFile()) || canvasFile.extension !== host.CANVAS_EXTENSION) continue;
+      await app.vault.process(canvasFile, (text) => {
+        if (!text) return text;
+        const data = JSON.parse(text);
+        for (const node of data.nodes) {
+          if (node.type === "file" && node.file === filePath && node.subpath) {
+            const sub = node.subpath.substring(1);
+            if (oldSubpath.startsWith("^")) {
+              if (sub.toLowerCase() === oldSubpath) node.subpath = "#" + newSubpath;
+            } else if (host.normalizeSubpath(sub).toLowerCase() === oldSubpath) {
+              node.subpath = "#" + newSubpath;
+            }
+          }
+        }
+        return host.canvasSerialize(data);
+      });
+    }
+    if (updated > 0) new host.Notice("Canvas updated " + updated + " embed cards.");
+  };
+
+  return CanvasLinkUpdater;
+}
+
+// =====================================================================================================================
 // Resize-handle overlay for the selected node (M5)
 // =====================================================================================================================
 

@@ -1541,6 +1541,10 @@
   {
    "orig": "M5",
    "use": "defineNodeInteractionLayer"
+  },
+  {
+   "orig": "t8",
+   "use": "defineCanvasLinkUpdater"
   }
  ],
  "host": {
@@ -1706,7 +1710,13 @@
   "MarkdownFileSuggest": "TI",
   "unicodeLetterSource": "jV",
   "unicodeWordSource": "UV",
-  "PlaintextView": "BX"
+  "PlaintextView": "BX",
+  "Multimap": "sc",
+  "canvasSerialize": "dc",
+  "applyLinkChanges": "UL",
+  "normalizeSubpath": "LT",
+  "CANVAS_EXTENSION": "Z5",
+  "indexCacheHasLink": "xT"
  },
  "declarators": [
   {
