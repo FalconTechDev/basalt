@@ -1,60 +1,57 @@
-/* fonts: Font faces shipped with the app. */
+/* fonts: Font faces shipped with the app. All SIL Open Font License 1.1, see THIRD_PARTY.md. */
 
 @font-face {
   font-family: 'Source Code Pro';
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
-  src: url(public/fonts/70cc7ff27245e82ad414.ttf);
+  src: url(public/fonts/source-code-pro-regular.ttf) format('truetype');
 }
 
 @font-face {
   font-family: 'Source Code Pro';
-  font-weight: normal;
+  font-weight: 400;
   font-style: italic;
   font-display: swap;
-  src: url(public/fonts/454577c22304619db035.ttf);
+  src: url(public/fonts/source-code-pro-italic.ttf) format('truetype');
 }
 
 @font-face {
   font-family: 'Source Code Pro';
-  font-weight: bold;
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
-  src: url(public/fonts/52ac8f3034507f1d9e53.ttf);
+  src: url(public/fonts/source-code-pro-bold.ttf) format('truetype');
 }
 
 @font-face {
   font-family: 'Source Code Pro';
-  font-weight: bold;
+  font-weight: 700;
   font-style: italic;
   font-display: swap;
-  src: url(public/fonts/05b618077343fbbd92b7.ttf);
+  src: url(public/fonts/source-code-pro-bold-italic.ttf) format('truetype');
 }
 
 @font-face {
   font-family: 'Flow Circular';
-  font-display: swap;
-  src: url(public/fonts/4bb6ac751d1c5478ff3a.woff2);
-}
-
-@font-face {
-  font-family: "Inter";
+  font-weight: 400;
   font-style: normal;
-  font-weight: 100 900;
   font-display: swap;
-  src: url(public/fonts/c504db5c06caaf7cdfba.woff2);
+  src: url(public/fonts/flow-circular.woff2) format('woff2');
 }
 
 @font-face {
-  font-family: "Inter";
+  font-family: 'Inter';
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url(public/fonts/inter-variable.woff2) format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 100 900;
   font-style: italic;
-  font-weight: 100 900;
   font-display: swap;
-  src: url(public/fonts/01dcbad1bac635f9c9cd.woff2);
-}
-
-@font-face {
-  font-family: '??';
-  unicode-range: U+0;
+  src: url(public/fonts/inter-variable-italic.woff2) format('woff2');
 }

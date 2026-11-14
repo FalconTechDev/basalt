@@ -94,7 +94,7 @@ input.metadata-property-key-input {
   /* external-link */
   :dir(rtl) .external-link {
     background-position: center left;
-    background-image: linear-gradient(transparent, transparent), url(public/images/2308ab1944a6bfa5c5b8.svg);
+    background-image: linear-gradient(transparent, transparent), url(public/images/external-link-rtl.svg);
     background-repeat: no-repeat;
   }
 }
