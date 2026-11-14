@@ -57,7 +57,7 @@ What was replaced (modules, KB and % of the bundle from `own-stats.mjs`), what s
 
 # YOUR AREA: controller and app shell
 Worktree/branch name: rewrite-core (use it in the git worktree command above, as basalt-wt-core).
-Use a unique test port and scratch dir (port 96100 and up), other agents run at the same time.
+Use a unique test port and scratch dir (ports 9620-9629), other agents run at the same time.
 
 Replace `Workspace` (H0, layout save/load, active leaf, recent files, file-open routing, workspace events), `App`, the internal (core) plugin
 manager and plugin loading, `StatusBar`, the drag manager, `MetadataCache` consumers and the link/tag/backlink index API surface,

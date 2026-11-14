@@ -57,7 +57,7 @@ What was replaced (modules, KB and % of the bundle from `own-stats.mjs`), what s
 
 # YOUR AREA: markdown editing and reading
 Worktree/branch name: rewrite-editor (use it in the git worktree command above, as basalt-wt-editor).
-Use a unique test port and scratch dir (port 96110 and up), other agents run at the same time.
+Use a unique test port and scratch dir (ports 9640-9649), other agents run at the same time.
 
 Replace `MarkdownView` and siblings: source/live-preview editor glue over CodeMirror (extensions, decorations, commands, vim, hotkeys, paste/drop,
 embeds, live-preview widgets), the reading-mode renderer (post-processors, embeds, callouts, math, code highlight), properties/frontmatter panel,

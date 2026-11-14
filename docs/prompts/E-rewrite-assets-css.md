@@ -57,7 +57,7 @@ What was replaced (modules, KB and % of the bundle from `own-stats.mjs`), what s
 
 # YOUR AREA: styles, fonts, images, html
 Worktree/branch name: rewrite-assets-css (use it in the git worktree command above, as basalt-wt-assets-css).
-Use a unique test port and scratch dir (port 96140 and up), other agents run at the same time.
+Use a unique test port and scratch dir (ports 9700-9709), other agents run at the same time.
 
 Rewrite `src-css/` rule bodies by hand per component (today they are mechanically regenerated and still carry inherited declarations),
 keeping class and variable names; drop dead rules; verify with `tools/css-compare.mjs` (desktop, 375px, pop-out, light and dark). Replace

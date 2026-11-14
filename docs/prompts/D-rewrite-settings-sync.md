@@ -57,7 +57,7 @@ What was replaced (modules, KB and % of the bundle from `own-stats.mjs`), what s
 
 # YOUR AREA: settings tabs, sync, publish, plugins browser
 Worktree/branch name: rewrite-settings-sync (use it in the git worktree command above, as basalt-wt-settings-sync).
-Use a unique test port and scratch dir (port 96130 and up), other agents run at the same time.
+Use a unique test port and scratch dir (ports 9680-9689), other agents run at the same time.
 
 Replace the content of every settings tab (appearance, hotkeys, core plugins, community plugins, files and links, about), the theme and plugin
 browsers and installers, the sync and publish clients (keep wire formats and crypto constants identical), account/licence screens (neutral, no

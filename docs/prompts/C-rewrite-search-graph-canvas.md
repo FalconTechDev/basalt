@@ -57,7 +57,7 @@ What was replaced (modules, KB and % of the bundle from `own-stats.mjs`), what s
 
 # YOUR AREA: search, graph, canvas, bookmarks
 Worktree/branch name: rewrite-search-graph-canvas (use it in the git worktree command above, as basalt-wt-search-graph-canvas).
-Use a unique test port and scratch dir (port 96120 and up), other agents run at the same time.
+Use a unique test port and scratch dir (ports 9660-9669), other agents run at the same time.
 
 Replace global search (UI, query syntax, results), quick switcher and command palette content, graph view glue (use `graph-engine`),
 canvas view glue (use `canvas-engine`), file explorer, bookmarks, tags, templates, daily notes, outgoing/backlink panes, random note, word count.
