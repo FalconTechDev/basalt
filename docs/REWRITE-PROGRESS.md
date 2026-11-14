@@ -139,6 +139,11 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
 
 * `context-menu` scene errors in setup on both stylesheets (`.nav-file-title` absent in mobile mode) —
   harness limitation, seen on desktop too.
+* Pop-out: `tools/css-popout-compare.mjs` implements the missing `--popout` coverage — it connects to
+  the pop-out window's own page target and diffs computed styles + screenshot old/old/new. Pop-out
+  windows proved too state-unstable for a clean signal (theme-class propagation races, window size,
+  render progress — old-vs-old noise ≈ new-vs-old pixel diffs), so it is a smoke-level check, not a
+  gate. The pop-out window loads the same `app.css`, so desktop/mobile coverage carries over.
 * Hand-rewrite of remaining `src-css/` rule bodies per component: dead code is gone and files are
   deminified/readable, but declaration values still mirror the inherited stylesheet (required for
   behavior parity — css-compare is the guard).
