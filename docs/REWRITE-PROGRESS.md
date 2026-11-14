@@ -144,9 +144,15 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   windows proved too state-unstable for a clean signal (theme-class propagation races, window size,
   render progress — old-vs-old noise ≈ new-vs-old pixel diffs), so it is a smoke-level check, not a
   gate. The pop-out window loads the same `app.css`, so desktop/mobile coverage carries over.
-* Hand-rewrite of remaining `src-css/` rule bodies per component: dead code is gone and files are
-  deminified/readable, but declaration values still mirror the inherited stylesheet (required for
-  behavior parity — css-compare is the guard).
+* Hand-rewrite of `src-css/` rule bodies: **all 25 numbered base files plus override layers
+  4–12 are now hand-rewritten** into sectioned, independently authored CSS (component label headers
+  plus semantic group comments; selectors, class names and custom-property names preserved).
+  Every batch was rebuilt with `node build-css.mjs` and diffed rule-for-rule against the previous
+  `src/app.css` — `rule diffs: 0` on every commit. Two real typos were caught and fixed this way
+  (`--touch-size-xxs` vs `--touch-radius-xxs` in overrides-9, and a grouped-selector parity fix in
+  overrides-6). Remaining unrewritten: `overrides-1` (19 files, ~1.4k lines), `overrides-2`
+  (19 files, ~2.2k lines), `overrides-3` (18 files, ~2.2k lines) — these layers still carry the
+  inherited formatting and are the last chunk of literal rewrite work.
 * Comfortaa was downloaded during the session but never wired in or committed — no action needed.
 
 ## Not done yet
