@@ -23,10 +23,9 @@ const cvCommandPaletteT = (host) => host.t.plugins.commandPalette;
 export function defineUrlEditModal(host) {
   class UrlEditModal extends host.TextInputModal {
     constructor(app, url, onSave) {
-      super(app);
+      super(app, url);
       this.title = cvCanvasT(host).labelEnterUrl();
       this.onSave = onSave;
-      this.setPrefilledValue(url);
     }
 
     validate(value) {
@@ -434,4 +433,223 @@ export function defineCanvasEmptyEmbed(host) {
     }
   }
   return CanvasEmptyEmbed;
+}
+
+// =====================================================================================================================
+// Rename prompt modal (lI) and new-file modal (cI)
+// =====================================================================================================================
+
+export function defineRenamePromptModal(host) {
+  class RenamePromptModal extends bookmarks.ButtonModal {
+    constructor(app, initialValue) {
+      super(app);
+      this.title = host.t.dialogue.labelRenameFileGeneric();
+      this.modalEl.addClass("mod-file-rename");
+      const inputEl = (this.inputEl = createEl("textarea", { cls: "rename-textarea" }));
+      inputEl.rows = 1;
+      inputEl.innerText = initialValue;
+      app.nextFrame(() => {
+        inputEl.style.height = "auto";
+        inputEl.style.height = inputEl.scrollHeight + "px";
+      });
+      inputEl.addEventListener("keypress", (evt) => {
+        if (evt.key !== "Enter" || evt.isComposing) return;
+        evt.preventDefault();
+        this.submit(inputEl.value.trim());
+      });
+      inputEl.addEventListener("input", () => {
+        host.hideTooltip();
+        inputEl.rows = 1;
+        inputEl.style.height = "auto";
+        inputEl.style.height = inputEl.scrollHeight + "px";
+        const error = this.validate(inputEl.value.trim());
+        if (error) this.displayError(error, false);
+      });
+      this.setContent(createFragment((frag) => frag.appendChild(inputEl)))
+        .addButton("mod-cta", host.t.dialogue.buttonSave(), () => this.submit(inputEl.value.trim()))
+        .addCancelButton();
+    }
+
+    validate(value) {
+      return "";
+    }
+
+    onOpen() {
+      super.onOpen();
+      this.setTitle(this.title);
+      this.inputEl.select();
+      this.inputEl.focus();
+    }
+
+    displayError(message, autoHide) {
+      host.displayTooltip(this.inputEl, message, { classes: ["mod-wide", "mod-error"] });
+      if (autoHide) setTimeout(() => host.hideTooltip(), 2000);
+    }
+  }
+  canvas.RenamePrompt = RenamePromptModal;
+  return RenamePromptModal;
+}
+
+export function defineNewFileModal(host) {
+  class NewFileModal extends canvas.RenamePrompt {
+    constructor(app, initialValue, onSave) {
+      super(app, initialValue);
+      this.onSave = onSave;
+    }
+
+    validate(value) {
+      if (host.invalidCharsPattern.test(value)) return host.t.plugins.fileExplorer.msgInvalidCharacters() + host.invalidCharsList;
+      if (value.startsWith(".")) return host.t.plugins.fileExplorer.msgBadDotfile();
+      if (host.unsafeCharsPattern.test(value)) return host.t.plugins.fileExplorer.msgUnsafeCharacters() + host.unsafeCharsList;
+      return "";
+    }
+
+    async submit(value) {
+      const error = this.validate(value);
+      if (error) {
+        this.displayError(error, false);
+        return true;
+      }
+      this.close();
+      this.onSave(value);
+      return undefined;
+    }
+  }
+  return NewFileModal;
+}
+
+// =====================================================================================================================
+// Canvas file/media/image suggester modals (x3 / T3 / D3) — all extend the quick-switcher file suggest base
+// =====================================================================================================================
+
+function canvasSuggestFlags(host, ctx) {
+  const flags = {
+    emptyStateText: ctx.empty,
+    context: "embed",
+    canvas: ctx.canvas,
+    handleClose: ctx.onClose,
+    handleChoose: ctx.onChoose,
+    shouldShowUnresolved: false,
+    shouldShowMarkdown: ctx.markdown,
+    shouldShowNonAttachments: ctx.attachments,
+    shouldShowImages: ctx.images,
+    shouldShowNonImageAttachments: ctx.nonImageAttachments,
+    shouldShowAllTypes: ctx.allTypes ? ctx.app.vault.getConfig("showUnsupportedFiles") : false,
+  };
+  if (ctx.allowCreate !== undefined) flags.allowCreateNewFile = ctx.allowCreate;
+  return flags;
+}
+
+export function defineCanvasFileSuggest(host) {
+  class CanvasFileSuggest extends palette.ModalBase {
+    constructor(canvas, onChoose, onClose) {
+      super(canvas.view.app);
+      const flags = canvasSuggestFlags(host, {
+        app: canvas.view.app, canvas, onChoose, onClose,
+        empty: host.t.plugins.quickSwitcher.labelNoNoteCreateNew(),
+        allowCreate: true, markdown: true, attachments: true, images: true, nonImageAttachments: true, allTypes: true,
+      });
+      Object.assign(this, flags);
+      this.setPlaceholder(host.t.plugins.canvas.promptStartSearch());
+      this.setInstructions([
+        { command: "↑↓", purpose: host.t.plugins.quickSwitcher.instructionNavigate() },
+        { command: "↵", purpose: host.t.plugins.quickSwitcher.instructionOpen() },
+        { command: "shift ↵", purpose: host.t.plugins.quickSwitcher.instructionCreate() },
+        { command: "esc", purpose: host.t.plugins.quickSwitcher.instructionDismiss() },
+      ]);
+      this.scope.register(["Shift"], "Enter", (evt) => {
+        this.selectSuggestion(null, evt);
+        return false;
+      });
+    }
+
+    showMarkdownAndCanvas(show) {
+      this.shouldShowMarkdown = show;
+      this.shouldShowNonAttachments = show;
+      return this;
+    }
+
+    showAttachments(show) {
+      this.shouldShowNonImageAttachments = show;
+      this.shouldShowImages = show;
+      return this;
+    }
+
+    async onChooseSuggestion(suggestion) {
+      if (!suggestion) {
+        const parent = this.canvas.view.file.path;
+        const file = await this.app.fileManager.createNewMarkdownFileFromLinktext(this.inputEl.value, parent);
+        this.handleChoose(file);
+        return;
+      }
+      if (suggestion.type !== "file" && suggestion.type !== "alias") return;
+      this.handleChoose(suggestion.file);
+    }
+
+    onClose() {
+      if (this.handleClose) this.handleClose();
+    }
+  }
+  canvas.FileSuggest = CanvasFileSuggest;
+  return CanvasFileSuggest;
+}
+
+export function defineCanvasMediaSuggest(host) {
+  class CanvasMediaSuggest extends palette.ModalBase {
+    constructor(canvas, onChoose, onClose) {
+      super(canvas.view.app);
+      Object.assign(this, canvasSuggestFlags(host, {
+        app: canvas.view.app, canvas, onChoose, onClose,
+        empty: host.t.plugins.canvas.labelNoMedia(),
+        allowCreate: false, markdown: false, attachments: true, images: true, nonImageAttachments: true, allTypes: true,
+      }));
+      this.setPlaceholder(host.t.plugins.canvas.promptStartSearch());
+      this.setInstructions([
+        { command: "↑↓", purpose: host.t.plugins.quickSwitcher.instructionNavigate() },
+        { command: "↵", purpose: host.t.plugins.quickSwitcher.instructionOpen() },
+        { command: "esc", purpose: host.t.plugins.quickSwitcher.instructionDismiss() },
+      ]);
+    }
+
+    async onChooseSuggestion(suggestion) {
+      if (suggestion && (suggestion.type === "file" || suggestion.type === "alias")) {
+        this.handleChoose(suggestion.file);
+      }
+    }
+
+    onClose() {
+      if (this.handleClose) this.handleClose();
+    }
+  }
+  canvas.MediaSuggest = CanvasMediaSuggest;
+  return CanvasMediaSuggest;
+}
+
+export function defineCanvasImageSuggest(host) {
+  class CanvasImageSuggest extends palette.ModalBase {
+    constructor(canvas, onChoose, onClose) {
+      super(canvas.view.app);
+      Object.assign(this, canvasSuggestFlags(host, {
+        app: canvas.view.app, canvas, onChoose, onClose,
+        empty: host.t.plugins.canvas.labelNoImages(),
+        allowCreate: undefined, markdown: false, attachments: false, images: true, nonImageAttachments: false, allTypes: false,
+      }));
+      this.setPlaceholder(host.t.plugins.canvas.promptStartSearch());
+      this.setInstructions([
+        { command: "↑↓", purpose: host.t.plugins.quickSwitcher.instructionNavigate() },
+        { command: "↵", purpose: host.t.plugins.quickSwitcher.instructionSelect() },
+        { command: "esc", purpose: host.t.plugins.quickSwitcher.instructionDismiss() },
+      ]);
+    }
+
+    async onChooseSuggestion(suggestion) {
+      if (suggestion && suggestion.type === "file") this.handleChoose(suggestion.file);
+    }
+
+    onClose() {
+      if (this.handleClose) this.handleClose();
+    }
+  }
+  canvas.ImageSuggest = CanvasImageSuggest;
+  return CanvasImageSuggest;
 }

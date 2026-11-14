@@ -1593,6 +1593,26 @@
   {
    "orig": "N5",
    "use": "defineCanvasEmptyEmbed"
+  },
+  {
+   "orig": "lI",
+   "use": "defineRenamePromptModal"
+  },
+  {
+   "orig": "cI",
+   "use": "defineNewFileModal"
+  },
+  {
+   "orig": "x3",
+   "use": "defineCanvasFileSuggest"
+  },
+  {
+   "orig": "T3",
+   "use": "defineCanvasMediaSuggest"
+  },
+  {
+   "orig": "D3",
+   "use": "defineCanvasImageSuggest"
   }
  ],
  "host": {
@@ -1784,7 +1804,11 @@
   "renderSectionSuggestion": "jI",
   "applyCanvasColor": "B3",
   "normalizeCanvasColor": "H3",
-  "CanvasFileSuggest": "x3"
+  "CanvasFileSuggest": "x3",
+  "invalidCharsPattern": "UT",
+  "invalidCharsList": "qT",
+  "unsafeCharsPattern": "WT",
+  "unsafeCharsList": "jT"
  },
  "declarators": [
   {
