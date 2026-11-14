@@ -902,3 +902,1291 @@ export async function appInitializeWithAdapter(adapter) {
     });
   }
 }
+
+export function appRegisterCommands() {
+  const E = env();
+  const {
+    Yl, gm, Fb, activeWindow, electron, xD, TD, Ob, m0, g0, au, JI, jy, kI,
+    eO, W6, U6, jl, RV, iZ, CZ, $I, rP, OA, IA, pe, nu, Gz, Ug, WD,
+  } = E;
+  const app = this;
+  const commands = this.commands;
+  commands.addCommand({
+    id: "app:go-back",
+    name: gm.commands.navigateBack(),
+    icon: "lucide-arrow-left",
+    checkCallback: function (checking) {
+      const leaf = app.workspace.activeLeaf;
+      if (leaf && leaf.view.navigation) {
+        if (!checking) leaf.history.back();
+        return true;
+      }
+      return false;
+    },
+    hotkeys: [Fb(["Mod", "Alt"], "ArrowLeft")],
+  });
+  commands.addCommand({
+    id: "app:go-forward",
+    name: gm.commands.navigateForward(),
+    icon: "lucide-arrow-right",
+    checkCallback: function (checking) {
+      const leaf = app.workspace.activeLeaf;
+      if (leaf && leaf.view.navigation) {
+        if (!checking) leaf.history.forward();
+        return true;
+      }
+      return false;
+    },
+    hotkeys: [Fb(["Mod", "Alt"], "ArrowRight")],
+  });
+  commands.addCommand({
+    id: "app:open-vault",
+    name: gm.commands.manageVaults(),
+    icon: "vault",
+    callback: this.openVaultChooser.bind(this),
+  });
+  commands.addCommand({
+    id: "app:switch-vault",
+    name: gm.commands.changeVault(),
+    icon: "vault",
+    callback: function () {
+      if (Yl.isDesktopApp) new xD(app).open();
+      else if (Yl.isMobileApp) new TD(app).open();
+    },
+  });
+  if (Yl.isDesktopApp) {
+    commands.addCommand({
+      id: "app:open-another-vault",
+      name: gm.commands.openVault(),
+      icon: "vault",
+      callback: function () {
+        new xD(app, false).open();
+      },
+    });
+  }
+  if (Yl.isMobile) {
+    commands.addCommand({
+      id: "app:show-tab-switcher",
+      name: gm.interface.mobile.actionShowSwitcher(),
+      icon: "lucide-square",
+      checkCallback: function (checking) {
+        if (Yl.isPhone) {
+          if (!checking) app.mobileTabSwitcher.show();
+          return true;
+        }
+        return false;
+      },
+    });
+  }
+  commands.addCommand({
+    id: "theme:toggle-light-dark",
+    name: gm.commands.toggleLightDarkMode(),
+    callback: function () {
+      if (app.vault.getConfig("theme") === "system") {
+        const body = document.body;
+        const dark = app.customCss.isDarkMode();
+        app.disableCssTransition();
+        setTimeout(() => app.enableCssTransition(), 200);
+        body.toggleClass("theme-dark", !dark);
+        body.toggleClass("theme-light", dark);
+        app.workspace.trigger("css-change");
+        app.updateMobileFrameTheme(dark);
+      } else {
+        const dark = app.customCss.isDarkMode();
+        app.changeTheme(dark ? "moonstone" : "basalt");
+      }
+    },
+  });
+  commands.addCommand({
+    id: "theme:switch",
+    name: gm.commands.changeTheme(),
+    callback: function () {
+      return new Ob(app).open();
+    },
+  });
+  commands.addCommand({
+    id: "app:open-settings",
+    name: gm.commands.openSettings(),
+    icon: "lucide-settings",
+    callback: function () {
+      return app.setting.open();
+    },
+    hotkeys: [Fb(["Mod"], ",")],
+  });
+  commands.addCommand({
+    id: "app:show-release-notes",
+    name: gm.commands.showReleaseNotes(),
+    callback: function () {
+      return app.showReleaseNotes();
+    },
+  });
+  commands.addCommand({
+    id: "markdown:toggle-preview",
+    name: gm.commands.togglePreview(),
+    icon: "lucide-book-open",
+    checkCallback: function (checking) {
+      const editor = app.workspace.activeEditor;
+      if (editor) {
+        if (!checking) editor.toggleMode();
+        return true;
+      }
+      return false;
+    },
+    hotkeys: [Fb(["Mod"], "E")],
+  });
+  const canEditMetadata = function () {
+    if (JI(app.workspace)) return true;
+    if (app.internalPlugins.getEnabledPluginById("properties")) {
+      const file = app.workspace.getActiveFile();
+      return file?.extension === "md";
+    }
+    return false;
+  };
+  commands.addCommand({
+    id: "markdown:add-metadata-property",
+    name: gm.commands.addProperty(),
+    icon: "lucide-plus-circle",
+    checkCallback: function (checking) {
+      if (canEditMetadata()) {
+        if (!checking) {
+          (async () => {
+            const view = await eO(app);
+            view?.addProperty();
+          })();
+        }
+        return true;
+      }
+      return false;
+    },
+    hotkeys: [Fb(["Mod"], ";")],
+  });
+  commands.addCommand({
+    id: "markdown:add-alias",
+    name: gm.commands.addAlias(),
+    icon: "lucide-forward",
+    checkCallback: function (checking) {
+      if (canEditMetadata()) {
+        if (!checking) {
+          (async () => {
+            const view = await eO(app);
+            view?.addProperty("aliases");
+          })();
+        }
+        return true;
+      }
+      return false;
+    },
+  });
+  commands.addCommand({
+    id: "markdown:clear-metadata-properties",
+    name: gm.commands.clearProperties(),
+    icon: "lucide-package-x",
+    checkCallback: function (checking) {
+      const file = app.workspace.getActiveFile();
+      if (file && jy.contains(file.extension)) {
+        if (!checking) app.vault.process(file, (content) => kI(content, {}));
+        return true;
+      }
+      return false;
+    },
+  });
+  commands.addCommand({
+    id: "app:delete-file",
+    name: gm.commands.deleteCurrentFile(),
+    icon: "lucide-trash-2",
+    checkCallback: function (checking) {
+      const file = app.workspace.getActiveFile();
+      if (file) {
+        if (!checking) app.fileManager.promptForDeletion(file);
+        return true;
+      }
+      return false;
+    },
+  });
+  commands.addCommand({
+    id: "app:toggle-ribbon",
+    name: gm.commands.toggleRibbon(),
+    checkCallback: function (checking) {
+      if (Yl.isDesktop && activeWindow === window) {
+        if (!checking) {
+          const shown = app.vault.getConfig("showRibbon");
+          app.vault.setConfig("showRibbon", !shown);
+        }
+        return true;
+      }
+      return false;
+    },
+  });
+  commands.addCommand({
+    id: "editor:toggle-readable-line-length",
+    name: gm.commands.toggleReadableLineLength(),
+    icon: "lucide-ruler",
+    callback: function () {
+      return app.vault.setConfig("readableLineLength", !app.vault.getConfig("readableLineLength"));
+    },
+  });
+  commands.addCommand({
+    id: "editor:toggle-line-numbers",
+    name: gm.commands.toggleLineNumbers(),
+    icon: "lucide-list-ordered",
+    callback: function () {
+      return app.vault.setConfig("showLineNumber", !app.vault.getConfig("showLineNumber"));
+    },
+  });
+  commands.addCommand({
+    id: "app:toggle-left-sidebar",
+    name: gm.commands.toggleLeftSidebar(),
+    checkCallback: function (checking) {
+      if (activeWindow === window) {
+        if (!checking) {
+          const split = app.workspace.leftSplit;
+          if (Yl.canPinSidebar && split instanceof WD) split.togglePinned();
+          else split.toggle();
+        }
+        return true;
+      }
+      return false;
+    },
+  });
+  commands.addCommand({
+    id: "app:toggle-right-sidebar",
+    name: gm.commands.toggleRightSidebar(),
+    checkCallback: function (checking) {
+      if (activeWindow === window) {
+        if (!checking) {
+          const split = app.workspace.rightSplit;
+          if (Yl.canPinSidebar && split instanceof WD) split.togglePinned();
+          else split.toggle();
+        }
+        return true;
+      }
+      return false;
+    },
+  });
+  commands.addCommand({
+    id: "app:toggle-default-new-pane-mode",
+    name: gm.commands.toggleDefaultNewTabMode(),
+    callback: function () {
+      const mode = app.vault.getConfig("defaultViewMode");
+      if (mode === "source") {
+        app.vault.setConfig("defaultViewMode", "preview");
+        new E.fb(gm.interface.msgSwitchedToRead());
+      } else if (mode === "preview") {
+        app.vault.setConfig("defaultViewMode", "source");
+        new E.fb(gm.interface.msgSwitchedToEdit());
+      }
+    },
+  });
+  commands.addCommand({
+    id: "app:open-help",
+    name: gm.commands.openHelp(),
+    icon: "question-mark-glyph",
+    callback: this.openHelp.bind(this),
+    hotkeys: [Fb([], "F1")],
+  });
+  commands.addCommand({
+    id: "app:reload",
+    name: gm.commands.reload(),
+    icon: "lucide-rotate-ccw",
+    callback: function () {
+      return window.location.reload();
+    },
+  });
+  commands.addCommand({
+    id: "app:show-debug-info",
+    name: gm.commands.showDebugInfo(),
+    callback: function () {
+      return new m0(app).open();
+    },
+  });
+  if (Yl.isDesktopApp) {
+    commands.addCommand({
+      id: "app:open-sandbox-vault",
+      name: gm.commands.openSandboxVault(),
+      callback: function () {
+        electron.ipcRenderer.sendSync("sandbox");
+      },
+    });
+    commands.addCommand({
+      id: "window:toggle-always-on-top",
+      name: gm.commands.alwaysOnTop(),
+      checkCallback: function (checking) {
+        if (activeWindow !== window) {
+          const win = activeWindow.electronWindow;
+          if (!win.isMaximized()) {
+            if (!checking) win.setAlwaysOnTop(!win.isAlwaysOnTop());
+            return true;
+          }
+        }
+        return false;
+      },
+    });
+    commands.addCommand({
+      id: "window:zoom-in",
+      name: gm.commands.zoomIn(),
+      callback: function () {
+        const level = electron.webFrame.getZoomLevel();
+        if (level < 3) electron.webFrame.setZoomLevel(level + 0.5);
+      },
+    });
+    commands.addCommand({
+      id: "window:zoom-out",
+      name: gm.commands.zoomOut(),
+      callback: function () {
+        const level = electron.webFrame.getZoomLevel();
+        if (level > -2.5) electron.webFrame.setZoomLevel(level - 0.5);
+      },
+    });
+    commands.addCommand({
+      id: "window:reset-zoom",
+      name: gm.commands.resetZoom(),
+      callback: function () {
+        electron.webFrame.setZoomLevel(0);
+      },
+    });
+  }
+  commands.addCommand({
+    id: "file-explorer:new-file",
+    name: gm.plugins.fileExplorer.actionCreateNote(),
+    icon: "lucide-file-plus",
+    callback: function () {
+      return app.fileManager.createAndOpenMarkdownFile("", "tab");
+    },
+    hotkeys: [Fb(["Mod"], "N")],
+  });
+  commands.addCommand({
+    id: "file-explorer:new-file-in-current-tab",
+    name: gm.plugins.fileExplorer.actionCreateNoteInCurrentTab(),
+    icon: "lucide-file-plus",
+    callback: function () {
+      return app.fileManager.createAndOpenMarkdownFile("", false);
+    },
+  });
+  commands.addCommand({
+    id: "file-explorer:new-file-in-new-pane",
+    name: gm.plugins.fileExplorer.actionCreateNoteToTheRight(),
+    icon: "lucide-file-plus",
+    callback: function () {
+      return app.fileManager.createAndOpenMarkdownFile("", "split");
+    },
+    hotkeys: [Fb(["Mod", "Shift"], "N")],
+  });
+  commands.addCommand({
+    id: "open-with-default-app:open",
+    name: Yl.isMobileApp ? gm.plugins.openWithDefaultApp.actionOpenFileMobile() : gm.plugins.openWithDefaultApp.actionOpenFile(),
+    icon: "lucide-arrow-up-right",
+    checkCallback: function (checking) {
+      const file = app.workspace.getActiveFile();
+      if (file) {
+        if (!checking) app.openWithDefaultApp(file.path);
+        return true;
+      }
+      return false;
+    },
+  });
+  commands.addCommand({
+    id: "file-explorer:move-file",
+    name: gm.plugins.fileExplorer.commandMoveFile(),
+    icon: "lucide-folder-tree",
+    checkCallback: function (checking) {
+      const file = app.workspace.getActiveFile();
+      if (file) {
+        if (!checking) new g0(app, [file]).open();
+        return true;
+      }
+      return false;
+    },
+  });
+  commands.addCommand({
+    id: "file-explorer:duplicate-file",
+    name: Yl.isMacOS ? gm.plugins.fileExplorer.commandMakeACopyMac() : gm.plugins.fileExplorer.commandMakeACopy(),
+    icon: "lucide-files",
+    checkCallback: function (checking) {
+      const file = app.workspace.getActiveFile();
+      if (file) {
+        if (!checking) {
+          (async () => {
+            const vault = app.vault;
+            const target = vault.getAvailablePath(au(file.path), file.extension);
+            const copy = await vault.copy(file, target);
+            app.workspace.getLeaf("tab").openFile(copy, { active: true, eState: { rename: "all" } });
+          })();
+        }
+        return true;
+      }
+      return false;
+    },
+  });
+  const quickActions = this.mobileQuickActions;
+  if (quickActions) {
+    quickActions.registerQuickAction("new", {
+      title: gm.plugins.fileExplorer.actionNewNote(),
+      iconName: "plus",
+      callback: () =>
+        (async () => {
+          const parent = app.fileManager.getNewFileParent("");
+          const file = await app.fileManager.createNewMarkdownFile(parent);
+          app.workspace.getLeaf(false).openFile(file, { active: true, state: { mode: "source" }, eState: { rename: "all" } });
+        })(),
+    });
+  }
+  if (Yl.isDesktopApp) {
+    commands.addCommand({
+      id: "open-with-default-app:show",
+      name: Yl.isMacOS ? gm.plugins.openWithDefaultApp.actionShowInFolderMac() : gm.plugins.openWithDefaultApp.actionShowInFolder(),
+      icon: "lucide-files",
+      checkCallback: function (checking) {
+        const file = app.workspace.getActiveFile();
+        if (file) {
+          if (!checking) app.showInFolder(file.path);
+          return true;
+        }
+        return false;
+      },
+    });
+  }
+  // editor commands
+  const registerEditorCommands = function (scope) {
+    const app = this;
+    const commands = scope.commands;
+    const foldingEnabled = function () {
+      const heading = app.vault.getConfig("foldHeading");
+      const indent = app.vault.getConfig("foldIndent");
+      return heading || indent;
+    };
+    commands.addCommand({
+      id: "editor:toggle-source",
+      name: gm.commands.toggleSourceMode(),
+      icon: "lucide-code-2",
+      checkCallback: function (checking) {
+        const editor = app.workspace.activeEditor;
+        if (editor instanceof W6 && editor.currentMode === editor.editMode) {
+          if (!checking) {
+            const leaf = editor.leaf;
+            const state = editor.getState();
+            state.source = !state.source;
+            leaf.setViewState({ type: U6, state: state, active: true });
+            app.workspace.requestSaveLayout();
+          }
+          return true;
+        }
+        return false;
+      },
+    });
+    commands.addCommand({
+      id: "editor:open-search",
+      name: gm.commands.searchCurrentFile(),
+      icon: "lucide-search",
+      checkCallback: function (checking) {
+        const editor = app.workspace.activeEditor;
+        if (editor && RV(editor)) {
+          if (!checking) editor.showSearch(false);
+          return true;
+        }
+        const view = app.workspace.activeLeaf?.view;
+        if (view && RV(view)) {
+          if (!checking) view.showSearch(false);
+          return true;
+        }
+        return undefined;
+      },
+      hotkeys: [Fb(["Mod"], "F")],
+    });
+    commands.addCommand({
+      id: "editor:open-search-replace",
+      name: gm.commands.searchReplaceCurrentFile(),
+      icon: "lucide-search",
+      checkCallback: function (checking) {
+        const editor = app.workspace.activeEditor;
+        if (editor && editor.getMode() === "source") {
+          if (!checking) editor.showSearch(true);
+          return true;
+        }
+        return false;
+      },
+      hotkeys: [jl ? Fb(["Mod", "Alt"], "F") : Fb(["Mod"], "H")],
+    });
+    commands.addCommand({
+      id: "editor:focus",
+      name: gm.commands.focusEditor(),
+      checkCallback: function (checking) {
+        let view = app.workspace.getActiveViewOfType(W6);
+        if (!view) {
+          let best = null;
+          app.workspace.iterateAllLeaves((leaf) => {
+            if (leaf.view instanceof W6 && (!best || best.activeTime < leaf.activeTime)) best = leaf;
+          });
+          if (best) view = best.view;
+        }
+        if (view) {
+          if (!checking) view.editor.focus();
+          return true;
+        }
+        return false;
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-fold-properties",
+      name: gm.commands.toggleFoldProperties(),
+      icon: "lucide-diff",
+      checkCallback: function (checking) {
+        const metadata = JI(app.workspace);
+        if (metadata) {
+          if (!checking) metadata.toggleCollapse();
+          return true;
+        }
+        const editor = app.workspace.activeEditor;
+        if (editor?.getMode() === "source") {
+          if (!checking) editor.editMode.toggleFoldFrontmatter();
+          return true;
+        }
+        return false;
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-fold",
+      name: gm.commands.toggleFold(),
+      icon: "lucide-diff",
+      allowProperties: true,
+      editorCheckCallback: function (checking, editor, view) {
+        if (!editor.hasFocus()) {
+          if ($I(view)) {
+            if (!checking) view.metadataEditor.toggleCollapse();
+            return true;
+          }
+          return false;
+        }
+        if (!foldingEnabled()) return false;
+        if (!checking) editor.exec("toggleFold");
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:fold-all",
+      name: gm.commands.foldAll(),
+      icon: "lucide-minimize-2",
+      allowPreview: true,
+      allowProperties: true,
+      editorCheckCallback: function (checking, editor, view) {
+        if ($I(view) && !checking) view.metadataEditor.setCollapse(true, false);
+        if (!foldingEnabled()) return false;
+        if (view.getMode() === "preview") {
+          if (!checking && (view instanceof W6 || view instanceof CZ)) view.previewMode.foldAll();
+          return true;
+        }
+        if (!checking) editor.editMode.editor.exec("foldAll");
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:unfold-all",
+      name: gm.commands.unfoldAll(),
+      icon: "lucide-maximize-2",
+      allowPreview: true,
+      allowProperties: true,
+      editorCheckCallback: function (checking, editor, view) {
+        if ($I(view) && !checking) view.metadataEditor.setCollapse(true, false);
+        if (!foldingEnabled()) return false;
+        if (view.getMode() === "preview") {
+          if (!checking && (view instanceof W6 || view instanceof CZ)) view.previewMode.unfoldAll();
+          return true;
+        }
+        if (!checking) editor.editMode.editor.exec("unfoldAll");
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:fold-less",
+      name: gm("commands.fold-less"),
+      icon: "lucide-unfold-vertical",
+      editorCallback: function (editor) {
+        return editor.foldLess();
+      },
+    });
+    commands.addCommand({
+      id: "editor:fold-more",
+      name: gm.commands.foldMore(),
+      icon: "lucide-fold-vertical",
+      editorCallback: function (editor) {
+        return editor.foldMore();
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-wikilink",
+      name: gm.setting.mobileToolbar.optionInternalLink(),
+      icon: "bracket-glyph",
+      editorCallback: function (editor) {
+        if (editor instanceof iZ) editor.triggerWikilink(false);
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-embed",
+      name: gm.setting.mobileToolbar.optionInternalEmbed(),
+      icon: "lucide-sticky-note",
+      editorCallback: function (editor) {
+        if (editor instanceof iZ) editor.triggerWikilink(true);
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-link",
+      name: gm.commands.insertLink(),
+      icon: "lucide-link",
+      editorCallback: function (editor) {
+        if (editor instanceof iZ) editor.insertMarkdownLink();
+      },
+      hotkeys: [Fb(["Mod"], "K")],
+    });
+    commands.addCommand({
+      id: "editor:insert-tag",
+      name: gm.setting.mobileToolbar.optionTag(),
+      icon: "lucide-tag",
+      editorCallback: function (editor) {
+        const pos = editor.getCursor("from");
+        editor.replaceRange("#", pos, pos, "input.autocomplete");
+        editor.setSelection(rP(pos, 1));
+      },
+    });
+    let headingMenuOpen = false;
+    commands.addCommand({
+      id: "editor:set-heading",
+      name: gm.setting.mobileToolbar.optionHeading(),
+      icon: "heading-glyph",
+      editorCallback: function (editor) {
+        if (headingMenuOpen) return;
+        headingMenuOpen = true;
+        if (Yl.isPhone) editor.blur();
+        const menu = new Ug();
+        const addItem = function (level) {
+          const icon = level === 0 ? "lucide-type" : "lucide-heading-" + level;
+          const title = level === 0 ? gm.editor.headingSuggestion.labelNoHeading() : gm.editor.headingSuggestion.labelHeadingLevel({ level: level });
+          menu.addItem((item) => item.setIcon(icon).setTitle(title).onClick(() => editor.setHeading(level)));
+        };
+        for (const level of [0, 1, 2, 3, 4, 5, 6]) addItem(level);
+        menu.onHide(() => {
+          headingMenuOpen = false;
+          if (Yl.isPhone) editor.focus();
+        });
+        const coords = editor.coordsAtPos(editor.getCursor());
+        menu.showAtPosition({ x: coords.left, y: coords.top });
+      },
+    });
+    commands.addCommand({
+      id: "editor:set-heading-0",
+      name: gm.commands.removeHeading(),
+      icon: "heading-glyph",
+      editorCallback: function (editor) {
+        return editor.setHeading(0);
+      },
+    });
+    const addHeading = function (level) {
+      commands.addCommand({
+        id: "editor:set-heading-" + level,
+        name: gm.commands.toggleHeading({ level: level }),
+        icon: "heading-glyph",
+        editorCallback: function (editor) {
+          return editor.setHeading(level);
+        },
+      });
+    };
+    for (const level of [1, 2, 3, 4, 5, 6]) addHeading(level);
+    commands.addCommand({
+      id: "editor:toggle-bold",
+      name: gm.commands.toggleBold(),
+      icon: "lucide-bold",
+      editorCallback: function (editor) {
+        return editor.toggleMarkdownFormatting("bold");
+      },
+      hotkeys: [Fb(["Mod"], "B")],
+    });
+    commands.addCommand({
+      id: "editor:toggle-italics",
+      name: gm.commands.toggleItalics(),
+      icon: "lucide-italic",
+      editorCallback: function (editor) {
+        return editor.toggleMarkdownFormatting("italic");
+      },
+      hotkeys: [Fb(["Mod"], "I")],
+    });
+    commands.addCommand({
+      id: "editor:toggle-strikethrough",
+      name: gm.setting.mobileToolbar.optionStrikethrough(),
+      icon: "lucide-strikethrough",
+      editorCallback: function (editor) {
+        return editor.toggleMarkdownFormatting("strikethrough");
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-highlight",
+      name: gm.commands.toggleHighlight(),
+      icon: "lucide-highlighter",
+      editorCallback: function (editor) {
+        return editor.toggleMarkdownFormatting("highlight");
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-code",
+      name: gm.setting.mobileToolbar.optionCode(),
+      icon: "lucide-code-2",
+      editorCallback: function (editor) {
+        return editor.toggleMarkdownFormatting("code");
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-inline-math",
+      name: gm.setting.mobileToolbar.optionInlineMath(),
+      icon: "lucide-sigma",
+      editorCallback: function (editor) {
+        return editor.toggleMarkdownFormatting("math");
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-blockquote",
+      name: gm.setting.mobileToolbar.optionBlockquote(),
+      icon: "lucide-quote",
+      editorCheckCallback: function (checking, editor) {
+        if (editor.inTableCell) return false;
+        if (!checking) editor.toggleBlockquote();
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-comments",
+      name: gm.commands.toggleComments(),
+      icon: "lucide-percent",
+      editorCallback: function (editor) {
+        return editor.toggleComment();
+      },
+      hotkeys: [Fb(["Mod"], "/")],
+    });
+    commands.addCommand({
+      id: "editor:clear-formatting",
+      name: gm.commands.clearFormatting(),
+      icon: "lucide-eraser",
+      editorCheckCallback: function (checking, editor) {
+        if (editor instanceof iZ && editor.somethingSelected()) {
+          if (!checking) editor.clearMarkdownFormatting();
+          return true;
+        }
+        return false;
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-bullet-list",
+      name: gm.setting.mobileToolbar.optionBulletList(),
+      icon: "lucide-list",
+      editorCheckCallback: function (checking, editor) {
+        if (editor.inTableCell) return false;
+        if (!checking) editor.toggleBulletList();
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-numbered-list",
+      name: gm.setting.mobileToolbar.optionNumberedList(),
+      icon: "lucide-list-ordered",
+      editorCheckCallback: function (checking, editor) {
+        if (editor.inTableCell) return false;
+        if (!checking) editor.toggleNumberList();
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-checklist-status",
+      name: gm.commands.toggleChecklist(),
+      icon: "lucide-check-square",
+      editorCheckCallback: function (checking, editor) {
+        if (editor.inTableCell) return false;
+        if (!checking) editor.toggleCheckList();
+        return true;
+      },
+      hotkeys: [Fb(["Mod"], "l")],
+    });
+    commands.addCommand({
+      id: "editor:cycle-list-checklist",
+      name: gm.commands.cycleListChecklist(),
+      icon: "lucide-check-square",
+      editorCheckCallback: function (checking, editor) {
+        if (editor.inTableCell) return false;
+        if (!checking) editor.toggleCheckList(true);
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-callout",
+      name: gm.commands.insertCallout(),
+      icon: "lucide-quote",
+      editorCheckCallback: function (checking, editor) {
+        if (editor.inTableCell) return false;
+        if (!checking) editor.insertCallout();
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-codeblock",
+      name: gm.commands.insertCodeBlock(),
+      icon: "lucide-code",
+      editorCheckCallback: function (checking, editor) {
+        if (editor.inTableCell) return false;
+        if (!checking) editor.insertCodeblock();
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-horizontal-rule",
+      name: gm.commands.insertHorizontalRule(),
+      icon: "lucide-minus",
+      editorCallback: function (editor) {
+        return editor.insertHorizontalRule();
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-mathblock",
+      name: gm.commands.insertMathBlock(),
+      icon: "lucide-sigma-square",
+      editorCallback: function (editor) {
+        return editor.insertMathBlock();
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-table",
+      name: gm.commands.insertTable(),
+      icon: "lucide-table",
+      editorCallback: function (editor) {
+        return editor.insertTable();
+      },
+    });
+    commands.addCommand({
+      id: "editor:insert-footnote",
+      name: gm.commands.insertFootnote(),
+      icon: "lucide-file-signature",
+      editorCallback: function (editor) {
+        return editor.insertFootnote();
+      },
+    });
+    commands.addCommand({
+      id: "editor:indent-list",
+      name: gm.setting.mobileToolbar.optionIndentList(),
+      icon: "lucide-indent",
+      editorCallback: function (editor) {
+        return editor.indentList();
+      },
+    });
+    commands.addCommand({
+      id: "editor:unindent-list",
+      name: gm.setting.mobileToolbar.optionUnindentList(),
+      icon: "lucide-outdent",
+      editorCallback: function (editor) {
+        return editor.unindentList();
+      },
+    });
+    commands.addCommand({
+      id: "editor:swap-line-up",
+      name: gm.commands.swapLineUp(),
+      icon: "lucide-corner-right-up",
+      repeatable: true,
+      editorCallback: function (editor) {
+        return editor.exec("swapLineUp");
+      },
+    });
+    commands.addCommand({
+      id: "editor:swap-line-down",
+      name: gm.commands.swapLineDown(),
+      icon: "lucide-corner-right-down",
+      repeatable: true,
+      editorCallback: function (editor) {
+        return editor.exec("swapLineDown");
+      },
+    });
+    commands.addCommand({
+      id: "editor:undo",
+      name: gm.setting.mobileToolbar.optionUndo(),
+      icon: "lucide-undo-2",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        return editor.undo();
+      },
+    });
+    commands.addCommand({
+      id: "editor:redo",
+      name: gm.setting.mobileToolbar.optionRedo(),
+      icon: "lucide-redo-2",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        return editor.redo();
+      },
+    });
+    commands.addCommand({
+      id: "editor:move-caret-up",
+      name: gm.setting.mobileToolbar.optionMoveCaretUp(),
+      icon: "lucide-chevron-up",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        return editor.exec("goUp");
+      },
+    });
+    commands.addCommand({
+      id: "editor:move-caret-down",
+      name: gm.setting.mobileToolbar.optionMoveCaretDown(),
+      icon: "lucide-chevron-down",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        return editor.exec("goDown");
+      },
+    });
+    commands.addCommand({
+      id: "editor:move-caret-left",
+      name: gm.setting.mobileToolbar.optionMoveCaretLeft(),
+      icon: "lucide-chevron-left",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        return editor.exec("goLeft");
+      },
+    });
+    commands.addCommand({
+      id: "editor:move-caret-right",
+      name: gm.setting.mobileToolbar.optionMoveCaretRight(),
+      icon: "lucide-chevron-right",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        return editor.exec("goRight");
+      },
+    });
+    commands.addCommand({
+      id: "editor:go-start",
+      name: gm.setting.mobileToolbar.optionFirstLine(),
+      icon: "lucide-chevrons-up",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        return editor.exec("goStart");
+      },
+    });
+    commands.addCommand({
+      id: "editor:go-end",
+      name: gm.setting.mobileToolbar.optionLastLine(),
+      icon: "lucide-chevrons-down",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        return editor.exec("goEnd");
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-keyboard",
+      name: gm.setting.mobileToolbar.optionToggleKeyboard(),
+      icon: "keyboard-toggle",
+      mobileOnly: true,
+      editorCallback: function (editor) {
+        if (editor.hasFocus()) editor.blur();
+        else editor.focus();
+      },
+    });
+    commands.addCommand({
+      id: "editor:configure-toolbar",
+      name: gm.setting.mobileToolbar.optionConfigureToolbar(),
+      icon: "lucide-wrench",
+      mobileOnly: true,
+      editorCallback: function () {
+        const setting = app.setting;
+        setting.openTabById("mobile");
+        setting.open();
+      },
+    });
+    commands.addCommand({
+      id: "editor:attach-file",
+      name: gm.setting.mobileToolbar.optionAttach(),
+      icon: "lucide-paperclip",
+      editorCallback: function (editor) {
+        const doc = activeDocument;
+        const body = doc.body;
+        const input = body.createEl("input", { type: "file" });
+        input.style.position = "fixed";
+        input.style.opacity = "0";
+        input.style.zIndex = "-9999";
+        let timeout;
+        const cleanup = function () {
+          doc.removeEventListener("focus", onFocus);
+          doc.removeEventListener("click", onFocus);
+          clearTimeout(timeout);
+        };
+        const detach = function () {
+          input.detach();
+        };
+        const onFocus = function () {
+          cleanup();
+          timeout = window.setTimeout(detach, 5000);
+        };
+        input.addEventListener("change", () => {
+          (async () => {
+            cleanup();
+            const files = input.files;
+            if (!files) {
+              detach();
+              return;
+            }
+            const file = app.workspace.getActiveFile();
+            if (!file) {
+              detach();
+              return;
+            }
+            try {
+              for (let i = 0; i < files.length; i++) {
+                const f = files[i];
+                const name = nu(f.name);
+                const buffer = await f.arrayBuffer();
+                const saved = await app.saveAttachment(ou(name), su(name), buffer);
+                if (saved) {
+                  const link = app.fileManager.generateMarkdownLink(saved, file.path);
+                  editor.replaceSelection("!" + link);
+                }
+              }
+            } finally {
+              detach();
+            }
+          })();
+        });
+        input.focus();
+        input.click();
+        setTimeout(() => {
+          doc.addEventListener("focus", onFocus);
+          doc.addEventListener("click", onFocus);
+        }, 0);
+      },
+    });
+    commands.addCommand({
+      id: "editor:delete-paragraph",
+      name: gm.commands.deleteParagraph(),
+      icon: "lucide-scissors",
+      repeatable: true,
+      editorCallback: function (editor) {
+        return editor.exec("deleteLine");
+      },
+      hotkeys: [Fb(["Mod"], "D")],
+    });
+    commands.addCommand({
+      id: "editor:add-cursor-below",
+      name: gm.commands.addCursorBelow(),
+      icon: "lucide-mouse-pointer-click",
+      repeatable: true,
+      editorCheckCallback: function (checking, editor) {
+        if (!(editor instanceof iZ)) return false;
+        if (!checking) {
+          const cm = editor.cm;
+          const selection = cm.state.selection;
+          let range = selection.ranges[0];
+          for (let i = 1; i < selection.ranges.length; i++) {
+            const other = selection.ranges[i];
+            if (other.to > range.to) range = other;
+          }
+          const pos = OA(cm.state.doc, range.from);
+          const target = IA(cm.state.doc, { line: pos.line + 1, ch: pos.ch });
+          cm.dispatch({ selection: selection.addRange(pe.cursor(target)), userEvent: "select" });
+        }
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:add-cursor-above",
+      name: gm.commands.addCursorAbove(),
+      icon: "lucide-mouse-pointer-click",
+      repeatable: true,
+      editorCheckCallback: function (checking, editor) {
+        if (!(editor instanceof iZ)) return false;
+        if (!checking) {
+          const cm = editor.cm;
+          const selection = cm.state.selection;
+          let range = selection.ranges[0];
+          for (let i = 1; i < selection.ranges.length; i++) {
+            const other = selection.ranges[i];
+            if (other.from < range.from) range = other;
+          }
+          const pos = OA(cm.state.doc, range.from);
+          const target = IA(cm.state.doc, { line: pos.line - 1, ch: pos.ch });
+          cm.dispatch({ selection: selection.addRange(pe.cursor(target)), userEvent: "select" });
+        }
+        return true;
+      },
+    });
+    commands.addCommand({
+      id: "editor:toggle-spellcheck",
+      name: gm.commands.toggleSpellcheck(),
+      callback: function () {
+        app.vault.setConfig("spellcheck", !app.vault.getConfig("spellcheck"));
+      },
+    });
+    const addTableCommand = function (suffix, name, icon, action, visible) {
+      commands.addCommand({
+        id: "editor:table-" + suffix,
+        name: gm.table.labelCommand({ command: name }),
+        icon: icon,
+        editorCheckCallback: function (checking, editor) {
+          if (!(editor instanceof iZ && editor.editorComponent.tableCell)) return false;
+          const cell = editor.editorComponent.tableCell;
+          if (checking) return !visible || visible(cell);
+          action(cell);
+          return true;
+        },
+      });
+    };
+    addTableCommand("row-before", gm.table.actionRowBefore(), "lucide-panel-top-close", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.insertRow(cell.row, cell.col);
+    });
+    addTableCommand("row-after", gm.table.actionRowAfter(), "lucide-panel-bottom-close", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.insertRow(cell.row + 1, cell.col);
+    });
+    addTableCommand("row-up", gm.table.actionRowUp(), "lucide-arrow-up", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.moveRow(cell.row, cell.row - 1, cell.col);
+    }, function (c) {
+      return c.cell.row > 0;
+    });
+    addTableCommand("row-down", gm.table.actionRowDown(), "lucide-arrow-down", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.moveRow(cell.row, cell.row + 1, cell.col);
+    }, function (c) {
+      const table = c.table;
+      return c.cell.row < table.rows.length - 1;
+    });
+    addTableCommand("row-copy", gm.table.actionDuplicateRow(), "lucide-copy", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.insertRow(cell.row, cell.col, true);
+    });
+    addTableCommand("row-delete", gm.table.actionDeleteRow(), "lucide-trash-2", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.removeRow(cell.row, cell.col);
+    });
+    addTableCommand("col-before", gm.table.actionColumnBefore(), "lucide-panel-left-close", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      const align = table.alignments[cell.col];
+      table.insertColumn(cell.row, cell.col, align);
+    });
+    addTableCommand("col-after", gm.table.actionColumnAfter(), "lucide-panel-right-close", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      const align = table.alignments[cell.col];
+      table.insertColumn(cell.row, cell.col + 1, align);
+    });
+    addTableCommand("col-left", gm.table.actionColumnLeft(), "lucide-arrow-left", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.moveColumn(cell.col, cell.col - 1, cell.row);
+    }, function (c) {
+      return c.cell.col > 0;
+    });
+    addTableCommand("col-right", gm.table.actionColumnRight(), "lucide-arrow-right", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.moveColumn(cell.col, cell.col + 1, cell.row);
+    }, function (c) {
+      const table = c.table;
+      return c.cell.col < table.alignments.length - 1;
+    });
+    addTableCommand("col-copy", gm.table.actionDuplicateColumn(), "lucide-copy", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      const align = table.alignments[cell.col];
+      table.insertColumn(cell.row, cell.col, align, true);
+    });
+    addTableCommand("col-delete", gm.table.actionDeleteColumn(), "lucide-trash-2", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.removeColumn(cell.row, cell.col);
+    });
+    addTableCommand("col-align-left", gm.table.actionAlignLeft(), "lucide-align-left", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.setAlignment([cell.col], "start");
+    });
+    addTableCommand("col-align-center", gm.table.actionAlignCenter(), "lucide-align-center", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.setAlignment([cell.col], "center");
+    });
+    addTableCommand("col-align-right", gm.table.actionAlignRight(), "lucide-align-right", function (c) {
+      const table = c.table;
+      const cell = c.cell;
+      table.setAlignment([cell.col], "end");
+    });
+    if (Yl.isMobileApp) {
+      commands.addCommand({
+        id: "editor:cut",
+        name: gm.interface.menu.cut(),
+        icon: "lucide-scissors",
+        editorCallback: function (editor) {
+          return (async () => {
+            await window.navigator.clipboard.writeText(editor.getSelection());
+            editor.replaceSelection("");
+          })();
+        },
+      });
+      commands.addCommand({
+        id: "editor:copy",
+        name: gm.interface.menu.copy(),
+        icon: "lucide-copy",
+        editorCallback: function (editor) {
+          return (async () => {
+            return await window.navigator.clipboard.writeText(editor.getSelection());
+          })();
+        },
+      });
+      commands.addCommand({
+        id: "editor:paste",
+        name: gm.interface.menu.paste(),
+        icon: "lucide-clipboard-type",
+        editorCallback: function (editor) {
+          return (async () => {
+            const text = await window.navigator.clipboard.readText();
+            return editor.replaceSelection(text);
+          })();
+        },
+      });
+    }
+    commands.addCommand({
+      id: "editor:context-menu",
+      name: gm.commands.contextMenu(),
+      icon: "lucide-menu",
+      editorCallback: function (editor, eventTarget) {
+        if (editor.editorComponent.tableCell) {
+          const cell = editor.editorComponent.tableCell;
+          eventTarget = cell.owner;
+          editor = cell.editor;
+        }
+        const pos = editor.getCursor("head");
+        const coords = editor.coordsAtPos(pos);
+        if (!coords) return;
+        if (Yl.isDesktopApp) {
+          const contents = editor.containerEl.win.electron.remote.getCurrentWebContents();
+          const zoom = Math.pow(1.2, contents.getZoomLevel());
+          const x = coords.left * zoom;
+          const y = (coords.top + coords.bottom) / 2 * zoom;
+          contents.sendInputEvent({ type: "mouseDown", x: x, y: y, button: "right" });
+          contents.sendInputEvent({ type: "mouseUp", x: x, y: y, button: "right" });
+          return;
+        }
+        eventTarget.editMode.onContextMenu(
+          new MouseEvent("contextmenu", {
+            bubbles: true,
+            cancelable: false,
+            view: window,
+            button: 0,
+            buttons: 0,
+            clientX: coords.left,
+            clientY: coords.top,
+          }),
+          true
+        );
+      },
+    });
+  };
+  registerEditorCommands.call(this, this);
+  if (Yl.isDesktopApp) {
+    Gz.registerPostProcessor((element, ctx) => app.fixFileLinks(element, ctx.sourcePath));
+  }
+}
