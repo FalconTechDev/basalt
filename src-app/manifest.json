@@ -664,6 +664,31 @@
     {
       "orig": "mv",
       "use": "tooltipsDisabled"
+    },
+    {
+      "orig": "wP",
+      "use": "setDragUriData",
+      "originalBytes": 72
+    },
+    {
+      "orig": "bP",
+      "use": "setDragPlainData",
+      "originalBytes": 43
+    },
+    {
+      "orig": "SP",
+      "use": "applyDropEffect",
+      "originalBytes": 158
+    },
+    {
+      "orig": "Eg",
+      "use": "suppressNextEvent",
+      "originalBytes": 239
+    },
+    {
+      "orig": "TP",
+      "use": "setDragImage",
+      "originalBytes": 120
     }
   ],
   "classes": [
@@ -918,6 +943,11 @@
     {
       "orig": "Yl",
       "use": "definePlatform"
+    },
+    {
+      "orig": "xP",
+      "use": "defineDragManager",
+      "originalBytes": 5966
     }
   ],
   "host": {
@@ -1054,7 +1084,10 @@
     "isMacOS": "jl",
     "isWindows": "Ul",
     "isLinux": "Wl",
-    "isSafari": "_l"
+    "isSafari": "_l",
+    "TFolder": "ZT",
+    "linkPath": "ET",
+    "cancelTouchDrag": "Nc"
   },
   "declarators": [
     {
@@ -1092,6 +1125,18 @@
       "expr": "__basaltOwn.createVault(VT,Eu)",
       "sha1": "020d8c45116285ee5922289fa9d8b1cb96e79ff7",
       "originalBytes": 16852
+    },
+    {
+      "orig": "MP",
+      "expr": "__basaltOwn.dragEffectMap",
+      "sha1": "f0a4c1f32d9933faae8531e80432a3bec18a42fa",
+      "originalBytes": 170
+    },
+    {
+      "orig": "EP",
+      "expr": "__basaltOwn.dragPixel",
+      "sha1": "1f088489658055a2b71dd274b9c080e721998b88",
+      "originalBytes": 9
     }
   ],
   "methods": [
