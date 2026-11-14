@@ -1,6 +1,6 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-drawer */
+/* drawer header padding and bottom action bar styling */
 .workspace-drawer .nav-header {
   padding: var(--size-4-1) var(--size-4-4) 0;
 }

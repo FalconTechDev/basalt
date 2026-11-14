@@ -1,11 +1,10 @@
 /* services (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* view-content */
+/* embedded web viewer: content fills the pane, errors centre in the column */
 .view-content.webviewer-content {
   padding: 0;
 }
 
-/* webviewer-content */
 .webviewer-content .error-notice {
   max-width: var(--file-line-width);
   margin: 25% auto 0;

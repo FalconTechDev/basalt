@@ -1,6 +1,6 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* recent-changes */
+/* recent changes list: extra bottom space, flat tree indentation */
 .recent-changes-container .nav-folder-children {
   margin-bottom: var(--size-4-4);
 }
@@ -11,7 +11,7 @@
   margin-inline-start: 0;
 }
 
-/* workspace-drawer */
+/* drawer search field blends into the sidebar background */
 .workspace-drawer .search-input-container {
   --background-modifier-form-field: transparent;
   --background-modifier-form-field-hover: transparent;

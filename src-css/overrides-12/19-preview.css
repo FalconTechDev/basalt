@@ -1,6 +1,6 @@
 /* preview (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* footnotes-view */
+/* footnotes panel: cards use the footnote tokens */
 .footnotes-view .footnote {
   display: flex;
   gap: var(--footnote-gap);

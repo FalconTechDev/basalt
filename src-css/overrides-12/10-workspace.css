@@ -1,6 +1,6 @@
 /* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-drawer */
+/* pinned mobile drawer: fixed width sheet docked to its side edge */
 .workspace-drawer.is-pinned {
   position: relative;
   z-index: var(--layer-cover);
