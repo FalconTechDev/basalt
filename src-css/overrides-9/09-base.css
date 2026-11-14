@@ -1,6 +1,6 @@
 /* base (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* search-suggest */
+/* suggestion group headers inside search results */
 .search-suggest-item.mod-group {
   align-items: center;
   margin: 0;
@@ -12,12 +12,11 @@
   cursor: default;
 }
 
-/* search-info */
 .search-info-container:empty {
   display: none;
 }
 
-/* pull-down */
+/* pull-down / pull-out gestures get edge-anchored action buttons */
 .pull-down-action {
   top: 0;
   left: 0;
@@ -29,7 +28,6 @@
   background: linear-gradient(to bottom, color-mix(in srgb, var(--background-primary) 90%, transparent) 40%, transparent 100%);
 }
 
-/* pull-out */
 .pull-out-action {
   top: 50%;
   padding: var(--size-4-3) var(--size-4-4);

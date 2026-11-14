@@ -1,6 +1,6 @@
 /* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-drawer */
+/* collapsed drawer hides its backdrop */
 .workspace-drawer.is-collapsed .workspace-drawer-backdrop {
   display: none;
   opacity: 0;
