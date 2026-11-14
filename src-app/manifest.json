@@ -986,6 +986,14 @@
   {
    "orig": "W6",
    "use": "defineMarkdownView"
+  },
+  {
+   "orig": "nb",
+   "use": "defineDialogModal"
+  },
+  {
+   "orig": "G6",
+   "use": "definePrintToPdfModal"
   }
  ],
  "host": {
@@ -1168,7 +1176,15 @@
   "spliceFrontmatter": "kI",
   "extractFrontmatter": "Xx",
   "parseYaml": "mA",
-  "subpathToPos": "FT"
+  "subpathToPos": "FT",
+  "DialogModal": "nb",
+  "printModalText": "gm.editor.printModal",
+  "electronBridge": "If",
+  "applyEnhancements": "yZ",
+  "waitModal": "pD",
+  "printToPdfIpc": "jf",
+  "sleep": "sleep",
+  "randomHex": "cc"
  },
  "declarators": [
   {
