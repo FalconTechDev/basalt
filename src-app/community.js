@@ -146,7 +146,7 @@ async function withLoading(el, fn) {
 }
 
 /** Same as withLoading but with `mod-loading` (used on buttons). */
-async function withButtonLoading(el, fn) {
+export async function withButtonLoading(el, fn) {
   el.addClass("mod-loading");
   try {
     return await fn();

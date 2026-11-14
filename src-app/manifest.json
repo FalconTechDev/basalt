@@ -778,6 +778,91 @@
   {
    "orig": "Bm",
    "use": "saveConfigDirPreference"
+  },
+  {
+   "orig": "iw",
+   "use": "importAesGcmKey",
+   "originalBytes": 72
+  },
+  {
+   "orig": "rw",
+   "use": "aesGcmEncrypt",
+   "originalBytes": 376
+  },
+  {
+   "orig": "ow",
+   "use": "aesGcmDecrypt",
+   "originalBytes": 342
+  },
+  {
+   "orig": "lw",
+   "use": "deriveScryptKey",
+   "originalBytes": 499
+  },
+  {
+   "orig": "cw",
+   "use": "initCipher",
+   "originalBytes": 240
+  },
+  {
+   "orig": "uw",
+   "use": "deriveKeyHash",
+   "originalBytes": 646
+  },
+  {
+   "orig": "wk",
+   "use": "deriveVaultKeyhash",
+   "originalBytes": 195
+  },
+  {
+   "orig": "bk",
+   "use": "randomSaltHex",
+   "originalBytes": 64
+  },
+  {
+   "orig": "Ek",
+   "use": "parseCallbackUrl",
+   "originalBytes": 618
+  },
+  {
+   "orig": "Tf",
+   "use": "sha256",
+   "originalBytes": 138
+  },
+  {
+   "orig": "wf",
+   "use": "utf8Bytes",
+   "originalBytes": 54
+  },
+  {
+   "orig": "kf",
+   "use": "utf8String",
+   "originalBytes": 65
+  },
+  {
+   "orig": "Cf",
+   "use": "decodeBase64",
+   "originalBytes": 120
+  },
+  {
+   "orig": "Ef",
+   "use": "encodeBase64",
+   "originalBytes": 44
+  },
+  {
+   "orig": "Mf",
+   "use": "encodeBase64",
+   "originalBytes": 120
+  },
+  {
+   "orig": "rC",
+   "use": "renderFormattedDescription",
+   "originalBytes": 277
+  },
+  {
+   "orig": "Wv",
+   "use": "withButtonLoading",
+   "originalBytes": 298
   }
  ],
  "classes": [
@@ -1153,6 +1238,46 @@
   {
    "orig": "S0",
    "use": "defineDonateModal"
+  },
+  {
+   "orig": "qb",
+   "use": "defineSivError",
+   "originalBytes": 122
+  },
+  {
+   "orig": "Wb",
+   "use": "defineBlock",
+   "originalBytes": 425
+  },
+  {
+   "orig": "Kb",
+   "use": "defineCtrCipher",
+   "originalBytes": 620
+  },
+  {
+   "orig": "Qb",
+   "use": "defineCbcMacCipher",
+   "originalBytes": 771
+  },
+  {
+   "orig": "$b",
+   "use": "defineCmac",
+   "originalBytes": 1592
+  },
+  {
+   "orig": "Zb",
+   "use": "defineSiv",
+   "originalBytes": 1897
+  },
+  {
+   "orig": "hw",
+   "use": "defineCipherV0",
+   "originalBytes": 1226
+  },
+  {
+   "orig": "pw",
+   "use": "defineCipherV23",
+   "originalBytes": 1680
   }
  ],
  "host": {
@@ -1354,6 +1479,16 @@
    "expr": "__basaltOwn.account",
    "sha1": "170efdfd595fe70440769009d25d66032b34f359",
    "originalBytes": 474
+  },
+  {
+   "orig": "aw",
+   "expr": "32768"
+  },
+  {
+   "orig": "sw",
+   "expr": "{N:32768,r:8,p:1,maxmem:67108864}",
+   "sha1": "bccf82dc240e31d5fede024da785f0af6e8fcdbf",
+   "originalBytes": 30
   }
  ],
  "methods": [
