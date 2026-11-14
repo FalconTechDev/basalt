@@ -1,6 +1,6 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* internal-query */
+/* internal query results panel and backlink panes */
 .internal-query .search-result-container {
   overflow: auto;
   padding: var(--size-4-2);
@@ -10,7 +10,6 @@
   background-color: var(--background-secondary);
 }
 
-/* backlink-pane */
 .backlink-pane .search-result-container,
 .outgoing-link-pane .search-result-container {
   padding: var(--size-4-1) 1px var(--size-4-4);
@@ -22,7 +21,6 @@
   color: var(--nav-heading-color);
 }
 
-/* embedded-backlinks */
 .embedded-backlinks .backlink-pane {
   padding: 0;
 }

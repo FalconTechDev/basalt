@@ -1,6 +1,6 @@
 /* base (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* internal-query */
+/* internal query header: icon plus centred label row */
 .internal-query .internal-query-header {
   display: flex;
   justify-content: flex-start;

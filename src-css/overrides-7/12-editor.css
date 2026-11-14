@@ -1,6 +1,6 @@
 /* editor (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* cm-hashtag */
+/* hashtags split into pill halves so adjacent tags join seamlessly */
 .cm-hashtag.cm-hashtag-begin {
   border-start-start-radius: var(--tag-radius);
   border-end-start-radius: var(--tag-radius);

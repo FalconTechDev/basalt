@@ -1,6 +1,6 @@
 /* suggest (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* suggestion-container */
+/* search suggestion popup gets a secondary-surface card */
 .suggestion-container.mod-search-suggestion .suggestion {
   padding: var(--size-2-3);
   border-radius: var(--radius-m);

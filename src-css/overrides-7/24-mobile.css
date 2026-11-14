@@ -1,13 +1,15 @@
 /* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* is-phone */
+/* ---------- bases query ---------- */
+
 .is-phone .bases-query-container .filter-expression {
   flex-wrap: wrap;
   box-shadow: none;
   background-color: var(--interactive-normal);
 }
 
-/* mobile-onboarding */
+/* ---------- onboarding screens ---------- */
+
 .mobile-onboarding {
   --nav-height: 80px;
   --content-height: calc(100vh - var(--safe-area-inset-top));
@@ -55,12 +57,12 @@
   background-color: var(--background-primary);
 }
 
-/* is-tablet */
 .is-tablet.theme-dark .vertical-tab-content {
   background-color: var(--modal-background);
 }
 
-/* is-mobile */
+/* ---------- community / option rows ---------- */
+
 .is-mobile .community-item.mobile-tap {
   background-color: var(--background-modifier-hover);
 }
@@ -70,19 +72,18 @@
   background-color: var(--background-modifier-hover);
 }
 
-/* mobile-option */
 .mobile-option-setting-item-option-icon.mobile-option-setting-drag-icon:active {
   cursor: grabbing;
 }
 
-/* is-mobile */
+/* ---------- workspace root padding for system bars ---------- */
+
 .is-mobile .workspace > .mod-root {
   padding-top: var(--safe-area-inset-top);
   padding-left: var(--safe-area-inset-left);
   background-color: var(--system-status-background);
 }
 
-/* is-phone */
 .is-phone .workspace > .mod-root {
   padding-top: 0;
 }
@@ -92,7 +93,8 @@
   background-color: var(--interactive-normal);
 }
 
-/* mobile-tab */
+/* ---------- tab switcher preview ---------- */
+
 .mobile-tab-preview-empty {
   --icon-size: var(--icon-xl);
   --icon-stroke: var(--icon-xl-stroke-width);

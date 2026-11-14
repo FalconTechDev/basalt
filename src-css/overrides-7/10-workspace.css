@@ -1,6 +1,6 @@
 /* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-drawer */
+/* mobile drawer sheet: fixed side panel over a dimming backdrop */
 .workspace-drawer {
   position: fixed;
   top: 0;
