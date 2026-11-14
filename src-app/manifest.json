@@ -1089,6 +1089,10 @@
   {
    "orig": "B7",
    "use": "defineLicenseModal"
+  },
+  {
+   "orig": "N7",
+   "use": "defineAboutTab"
   }
  ],
  "host": {
@@ -1239,7 +1243,10 @@
   "MobileSecretStore": "o0",
   "SecretStorage": "a0",
   "keychainI18n": "gm.setting.keychain",
-  "secureStoreNative": "U1"
+  "secureStoreNative": "U1",
+  "LoginModal": "R7",
+  "LicenseModal": "B7",
+  "SlowStartupCheck": "I7"
  },
  "declarators": [
   {
@@ -1378,5 +1385,5 @@
    "originalBytes": 292
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em"
 }
