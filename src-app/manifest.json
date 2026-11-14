@@ -672,6 +672,30 @@
   {
    "orig": "Ec",
    "use": "copyText"
+  },
+  {
+   "orig": "gg",
+   "use": "focusWhenShown"
+  },
+  {
+   "orig": "uq",
+   "use": "updateUnresolvedLinks",
+   "host": true
+  },
+  {
+   "orig": "pq",
+   "use": "renderQueryEmbed",
+   "host": true
+  },
+  {
+   "orig": "JZ",
+   "use": "embedDepthAt",
+   "host": true
+  },
+  {
+   "orig": "eO",
+   "use": "propertiesPlugin",
+   "host": true
   }
  ],
  "classes": [
@@ -950,6 +974,10 @@
   {
    "orig": "fq",
    "use": "defineMarkdownPreviewView"
+  },
+  {
+   "orig": "sJ",
+   "use": "defineEmbedLoader"
   }
  ],
  "host": {
@@ -1109,7 +1137,13 @@
   "markdownOptions": "Ux",
   "keyNames": "Og",
   "trackPointer": "Cg",
-  "MarkdownRenderer": "hq"
+  "MarkdownRenderer": "hq",
+  "internalLinkHref": "cq",
+  "QueryResults": "mq",
+  "activePropertiesEditor": "JI",
+  "embedDepths": "ZZ",
+  "FileEmbed": "rJ",
+  "FallbackEmbed": "oJ"
  },
  "declarators": [
   {

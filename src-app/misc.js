@@ -372,3 +372,9 @@ export function copyText(text) {
     activeDocument.body.removeChild(area);
   }
 }
+
+/** Runs `callback` now when `el` is already laid out, otherwise once it is inserted (and shown). */
+export function focusWhenShown(el, callback) {
+  if (el.isShown()) callback();
+  else el.onNodeInserted(callback, true);
+}

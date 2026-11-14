@@ -6,11 +6,11 @@ Branch `rewrite-editor` (worktree `basalt-wt-editor`). Own code lives in `src-ap
 
 | | replaced | bytes of original text |
 | --- | --- | --- |
-| functions (leaf helpers, search, timing, transitions, tooltips, clipboard/url) | 168 | 20.8 KB |
-| classes / objects | 69 | 148.2 KB |
-| **total** | | **169.0 KB = 4.6 % of the 3688.9 KB bundle** |
+| functions (leaf helpers, search, timing, transitions, tooltips, clipboard/url) | 173 | 21.8 KB |
+| classes / objects | 70 | 148.5 KB |
+| **total** | | **170.4 KB = 4.6 % of the 3688.9 KB bundle** |
 
-Own readable source: 370 KB in `src-app/*.js` (36 files, comments included).
+Own readable source: 374 KB in `src-app/*.js` (37 files, comments included).
 
 What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
 bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
@@ -37,6 +37,7 @@ kept on the full bundle so it cannot flatter itself.
 | markdown-render.js | `MarkdownRenderChild` (`zz`), `MarkdownPreviewSection` (`qz`), the preview link/hover handlers (`lq`), `MarkdownRenderer` (`hq`, statics `render`/`renderMarkdown`/`postProcess`/`toggleCheckbox` included); `misc.js` also gained `isUrl` (`Yc`) and `copyText` (`Ec`) |
 | document-search.js | the reading-view find bar (`lz`: scope keys, match count, highlight ranges, prev/next) |
 | preview-view.js | `MarkdownPreviewView` (`fq`: reading-mode settings classes, find bar wiring, ephemeral scroll/selection state, touch double-tap mode toggle, copy/context-menu keys) |
+| markdown-extras.js | reading-mode helpers: unresolved-link marking (`uq`), query-block embed (`pq`), embed depth lookup (`JZ`), properties-editor getter (`eO`), `EmbedLoader` (`sJ`); `misc.js` gained `focusWhenShown` (`gg`). `build-app.mjs` entries may now opt into `"host": true` to receive `__basaltHost` as a trailing argument |
 | events.js, timing.js | `Events`, `Component`, `debounce` |
 | keymap.js | `Scope`, the dynamic-parent scope of the workspace, `Keymap` |
 | commands.js | the command registry (`app.commands`), `HotkeyManager` |
