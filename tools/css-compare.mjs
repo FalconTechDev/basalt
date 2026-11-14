@@ -203,6 +203,9 @@ async function runScenes(label, scenes) {
   for (const sc of scenes) {
     for (const theme of sc.themes) {
       const key = `${sc.name}/${theme}`;
+      console.log(`  ${label}: ${key}`);
+      // mobile emulation makes the app quit after ~10 scene setups; reload per scene to isolate state
+      if (mobile) { await reload(); await run(HELPERS); }
       try {
         await run(`(async () => { const T = ${JSON.stringify(theme)}; ${sc.setup} })()`);
         await sleep(500);
