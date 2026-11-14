@@ -22,6 +22,8 @@ import { keyIgnoringCase } from "./text.js";
 import { lastSegment } from "./path.js";
 
 const cls = {};
+// Live registry of every matcher/query class defined below; other own modules test against it (instanceof).
+export const searchClasses = cls;
 
 // =====================================================================================================================
 // Small helpers

@@ -824,6 +824,46 @@
    "orig": "Yy",
    "use": "extensionWithoutContent",
    "originalBytes": 37
+  },
+  {
+   "orig": "XV",
+   "use": "countSearchMatches"
+  },
+  {
+   "orig": "jH",
+   "use": "sortOrderComparator"
+  },
+  {
+   "orig": "VH",
+   "use": "runSearchOverFiles"
+  },
+  {
+   "orig": "Iz",
+   "use": "renderMatchRanges"
+  },
+  {
+   "orig": "Ry",
+   "use": "contextLineBounds"
+  },
+  {
+   "orig": "Ic",
+   "use": "preventMiddleClick"
+  },
+  {
+   "orig": "kl",
+   "use": "toggleElementVisibility"
+  },
+  {
+   "orig": "CT",
+   "use": "indexOfPositionOffset"
+  },
+  {
+   "orig": "Ec",
+   "use": "copyTextToClipboard"
+  },
+  {
+   "orig": "Cb",
+   "use": "batchedIteration"
   }
  ],
  "classes": [
@@ -1233,6 +1273,42 @@
    "orig": "BH",
    "use": "defineSearchQuery",
    "originalBytes": 1725
+  },
+  {
+   "orig": "mJ",
+   "use": "defineSearchView"
+  },
+  {
+   "orig": "sz",
+   "use": "defineSearchResults"
+  },
+  {
+   "orig": "rz",
+   "use": "defineSearchFileResult"
+  },
+  {
+   "orig": "az",
+   "use": "defineSearchMatchResult"
+  },
+  {
+   "orig": "oz",
+   "use": "defineSearchPropertyResult"
+  },
+  {
+   "orig": "aq",
+   "use": "defineSearchQueueComponent"
+  },
+  {
+   "orig": "vJ",
+   "use": "defineCopyResultsModal"
+  },
+  {
+   "orig": "hJ",
+   "use": "defineSearchSuggest"
+  },
+  {
+   "orig": "wb",
+   "use": "defineFileQueue"
   }
  ],
  "host": {
