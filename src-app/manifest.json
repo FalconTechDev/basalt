@@ -1101,6 +1101,10 @@
   {
    "orig": "mte",
    "use": "defineCorePluginsTab"
+  },
+  {
+   "orig": "ite",
+   "use": "defineCommunityPluginsTab"
   }
  ],
  "host": {
@@ -1393,5 +1397,5 @@
    "originalBytes": 292
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0"
 }
