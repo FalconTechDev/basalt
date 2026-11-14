@@ -6,11 +6,11 @@ Branch `app-rewrite-big` (worktree `basalt-wt-big`). Own code lives in `src-app/
 
 | | replaced | bytes of original text |
 | --- | --- | --- |
-| functions (leaf helpers, search, timing, transitions, tooltips) | 171 | 21.0 KB |
-| classes / objects | 67 | 142.7 KB |
-| **total** | | **163.7 KB = 4.44 % of the 3688.9 KB bundle** |
+| functions (leaf helpers, search, timing, transitions, tooltips) | 172 | 21.2 KB |
+| classes / objects | 68 | 146.6 KB |
+| **total** | | **167.8 KB = 4.55 % of the 3688.9 KB bundle** |
 
-Own readable source: 283 KB in `src-app/*.js` (32 modules, comments included).
+Own readable source: 369.4 KB in `src-app/*.js` (37 files, comments included).
 
 What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
 bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
@@ -59,6 +59,7 @@ kept on the full bundle so it cannot flatter itself.
 | drag.js | `DragManager` (`xP`), the dataTransfer helpers `wP`/`bP`/`SP`/`Eg`/`TP`, the `MP` effect map and `EP` drag pixel |
 | statusbar.js | `StatusBar` (`Nee`) |
 | core-plugins.js | `PluginWrapper` (`i2`), `InternalPlugins` (`o2`), the `r2` core-plugin id list |
+| metadata-types.js | `MetadataTypeManager` (`RL`), the `PL` types.json defaults, `inferPropertyWidget` (`NL`) |
 
 Behaviour changes (all bug fixes, nothing observable in normal use): the leaf history list is trimmed at 20 entries (the inherited
 `unshift()` without an argument did nothing), `FileView.onDelete` no longer throws when the leaf is already detached,

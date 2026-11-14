@@ -689,6 +689,11 @@
       "orig": "TP",
       "use": "setDragImage",
       "originalBytes": 120
+    },
+    {
+      "orig": "NL",
+      "use": "inferPropertyWidget",
+      "originalBytes": 208
     }
   ],
   "classes": [
@@ -962,6 +967,11 @@
       "orig": "o2",
       "use": "defineInternalPlugins",
       "originalBytes": 2271
+    },
+    {
+      "orig": "RL",
+      "use": "defineMetadataTypeManager",
+      "originalBytes": 3979
     }
   ],
   "host": {
@@ -1101,7 +1111,9 @@
     "isSafari": "_l",
     "TFolder": "ZT",
     "linkPath": "ET",
-    "cancelTouchDrag": "Nc"
+    "cancelTouchDrag": "Nc",
+    "propertyTypeWidgets": "{aliases:bO,checkbox:TO,date:EO,datetime:MO,file:CO,folder:kO,multitext:PO,property:yO,number:xO,tags:wO,text:rO}",
+    "unknownPropertyWidget": "IO"
   },
   "declarators": [
     {
@@ -1157,6 +1169,12 @@
       "expr": "__basaltOwn.corePluginIds",
       "sha1": "3de5501f1e6a3828398acaa08b4a4cb52f559e75",
       "originalBytes": 350
+    },
+    {
+      "orig": "PL",
+      "expr": "__basaltOwn.propertyTypeDefaults",
+      "sha1": "1a73996d5db8a30e75068ad7dee0004d982109ce",
+      "originalBytes": 141
     }
   ],
   "methods": [
