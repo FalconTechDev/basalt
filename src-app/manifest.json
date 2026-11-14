@@ -1497,6 +1497,34 @@
   {
    "orig": "P8",
    "use": "defineFileExplorerPlugin"
+  },
+  {
+   "orig": "wee",
+   "use": "defineTemplatesPlugin"
+  },
+  {
+   "orig": "kee",
+   "use": "defineTemplateSuggestModal"
+  },
+  {
+   "orig": "Cee",
+   "use": "defineTemplatesSettingTab"
+  },
+  {
+   "orig": "v8",
+   "use": "defineDailyNotesPlugin"
+  },
+  {
+   "orig": "y8",
+   "use": "defineDailyNotesSettingTab"
+  },
+  {
+   "orig": "w9",
+   "use": "defineRandomNotePlugin"
+  },
+  {
+   "orig": "Pee",
+   "use": "defineWordCountPlugin"
   }
  ],
  "host": {
@@ -1652,7 +1680,17 @@
   "unsafeNameCharsList": "jT",
   "activeTouches": "zc",
   "lastTouchEnd": "Hc",
-  "lastScrollAt": "qc"
+  "lastScrollAt": "qc",
+  "VaultClass": "JT",
+  "parseYaml": "mA",
+  "hasMetadataEditor": "$I",
+  "isAttachmentExtension": "$y",
+  "FolderSuggest": "AI",
+  "FolderPathSuggest": "PI",
+  "MarkdownFileSuggest": "TI",
+  "unicodeLetterSource": "jV",
+  "unicodeWordSource": "UV",
+  "PlaintextView": "BX"
  },
  "declarators": [
   {

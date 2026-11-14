@@ -7,10 +7,10 @@ Branch `app-rewrite-big` (worktree `basalt-wt-big`). Own code lives in `src-app/
 | | replaced | bytes of original text |
 | --- | --- | --- |
 | functions (leaf helpers, search, timing, transitions, tooltips) | 223 | 37.4 KB |
-| classes / objects | 129 | 280.7 KB |
-| **total** | | **318.1 KB = 8.62 % of the 3688.9 KB bundle** |
+| classes / objects | 142 | 333.6 KB |
+| **total** | | **371.0 KB = 10.06 % of the 3688.9 KB bundle** |
 
-Own readable source: 663 KB in `src-app/*.js` (comments included).
+Own readable source: 761 KB in `src-app/*.js` (comments included).
 
 What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
 bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
@@ -64,6 +64,7 @@ kept on the full bundle so it cannot flatter itself.
 | bookmarks.js | the "Bookmarks" pane and plugin: `BookmarksView` + leaf/group tree rows (rename, context menus, active state, drag & drop, copy/cut/paste), the add/edit and add-many modals, the button-modal base, the `Runnable` token, the item factories and the plugin itself (commands, menus, CLI, lookups, open-in-leaf) |
 | palette.js | the quick switcher and command palette: the file/alias/unresolved/bookmark suggest modal (recent files on empty query, basename-first matching, Tab folder completion, create-new-file CTA), the command modal (pinned + recent ordering, hotkey hints, pin flair, last-100 recents in localStorage), both settings tabs (pin list with search suggest and drag reorder) and both plugins; plus `InstanceSettingTab`, the settings-tab base the internal plugins share |
 | file-explorer.js | the "file-explorer" view (kept for compatibility; `src/basalt-files.js` swaps its leaf to the "Files" panel on every layout change, same as before): `FileExplorerView` + `FileExplorerTree`, the file/folder rows (drag source, contenteditable rename, unsupported-file tags, tooltips, hover-link events), the header (new note / folder, sort menu, auto-reveal, collapse-all), clipboard copy/cut/paste (`basalt/files`), drag & drop into folders with auto-expand, rename validation, vault event sync, context menus and the plugin (commands, reveal-in-folder, hover source). Helpers: promise queue, item->file map, clipboard entry extraction, move/copy-into-folder |
+| notes-utils.js | the small core plugins: templates (`TemplatesPlugin` + `TemplateSuggestModal` + settings tab; `{{title}}`/`{{date}}`/`{{time}}` substitution, frontmatter split into the metadata editor, CLI `templates`/`template:read`/`template:insert`), daily notes (`DailyNotesPlugin` + settings tab; format/folder/template options, create-from-template, prev/next navigation, `daily` protocol + `daily:*` CLI, startup path/template helpers), random note and word count (status-bar segments fed by a Web Worker with the stock word regex, `wordcount` CLI, mobile file info). Helpers: frontmatter bounds, template splitter, pane-type check, format validation |
 | path.js, text.js, misc.js, frontmatter.js, search.js | the 143 leaf functions of the previous round |
 
 Behaviour changes (all bug fixes, nothing observable in normal use): the leaf history list is trimmed at 20 entries (the inherited
@@ -109,9 +110,10 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   (`WD`, mobile only). The tree it manages is already own code, so what remains is the controller on top.
 * `App` (`Tte`, 56 KB), the internal plugin manager and wrapper (`i2`, `uee`, ...), `StatusBar`, `MetadataCache`, `Vault` (belongs to the
   other agent's branch), drag manager (`xP`), the markdown view and its siblings (`W6`, preview, properties, outline,
-  canvas glue), `Editor` wrapper (`cP`, `iZ`). The global search UI and the backlink / outgoing-link panes are done
-  (search-query.js, search-view.js, link-panes.js); the tag pane, bookmarks and the quick switcher /
-  command palette and the file explorer are done too (tag-pane.js, bookmarks.js, palette.js,
-  file-explorer.js). Graph view and canvas view glue are still inherited, as are
-  templates / daily notes / random note / word count.
+  canvas glue), `Editor` wrapper (`cP`, `iZ`). The global search UI, the backlink / outgoing-link panes,
+  the tag pane, bookmarks, the quick switcher / command palette, the file explorer and the small core
+  plugins (templates, daily notes, random note, word count — notes-utils.js) are done. Graph and canvas
+  views are already own code shipped as separate scripts (`src/fp-graph.js` on `graph-engine` WASM,
+  `src/fp-canvas.js` on `canvas-engine` WASM); the inherited `kJ`/`EJ`/`AQ`/`xJ` and `r8`/`y5` classes are
+  dead compatibility code kept only so old view states still resolve.
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
