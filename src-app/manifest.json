@@ -1639,7 +1639,224 @@
    "use": "wsGetSideLeaf",
    "sha1": "ed07a42d3a912eaf67314d28d070558a5e27513b",
    "originalBytes": 332
+  },
+  {
+   "class": "H0",
+   "name": "getActiveFileView",
+   "use": "wsGetActiveFileView",
+   "sha1": "e266d1c8d5f4de70c217426fcb15f0dbe4069f26",
+   "originalBytes": 255
+  },
+  {
+   "class": "H0",
+   "name": "activeLeafEvents",
+   "use": "wsActiveLeafEvents",
+   "sha1": "fcb0f5f6bccbcffbd05893518cef2877889d778b",
+   "originalBytes": 239
+  },
+  {
+   "class": "H0",
+   "name": "pushUndoHistory",
+   "use": "wsPushUndoHistory",
+   "sha1": "8e9b548e96b5793c1155f3fc8fde106f581cb41d",
+   "originalBytes": 232
+  },
+  {
+   "class": "H0",
+   "name": "changeLayout",
+   "use": "wsChangeLayout",
+   "sha1": "911b732347b2e712a7dc522ec0089de358f1bee8",
+   "originalBytes": 232
+  },
+  {
+   "class": "H0",
+   "name": "updateOptions",
+   "use": "wsUpdateOptions",
+   "sha1": "a1802abe1bb75bc3b0d042cc7bc8e8205ab1bb95",
+   "originalBytes": 177
+  },
+  {
+   "class": "H0",
+   "name": "registerObsidianProtocolHandler",
+   "use": "wsRegisterObsidianProtocolHandler",
+   "sha1": "838e31aaecfb7bc99f313d467d44f7d3dcfdc34b",
+   "originalBytes": 155
+  },
+  {
+   "class": "H0",
+   "name": "unregisterObsidianProtocolHandler",
+   "use": "wsUnregisterObsidianProtocolHandler",
+   "sha1": "d15f740358536dbc4b1825c4387468893d0de6ce",
+   "originalBytes": 83
+  },
+  {
+   "class": "H0",
+   "name": "registerUriHook",
+   "use": "wsRegisterUriHook",
+   "sha1": "2b4894056fc0329d5560f95b5d342752be395a50",
+   "originalBytes": 517
+  },
+  {
+   "class": "H0",
+   "name": "getUnpinnedLeaf",
+   "use": "wsGetUnpinnedLeaf",
+   "sha1": "2669cb181a81989f279671882d93a1e54613c301",
+   "originalBytes": 519
+  },
+  {
+   "class": "H0",
+   "name": "ensureSideLeaf",
+   "use": "wsEnsureSideLeaf",
+   "sha1": "100b7f32605ed0533063cbccd8bed46b91ab46e4",
+   "originalBytes": 603
+  },
+  {
+   "class": "H0",
+   "name": "revealLeaf",
+   "use": "wsRevealLeaf",
+   "sha1": "3486677b3a762829c860ccee7369e8451ee6fcb2",
+   "originalBytes": 516
+  },
+  {
+   "class": "H0",
+   "name": "splitLeaf",
+   "use": "wsSplitLeaf",
+   "sha1": "147ffb8bfb0e8b980d0e2637c0138cb7b96dd015",
+   "originalBytes": 480
+  },
+  {
+   "class": "H0",
+   "name": "getDropDirection",
+   "use": "wsGetDropDirection",
+   "sha1": "2c49e8393168dbad321d9cb5cbf55ea876cac168",
+   "originalBytes": 912
+  },
+  {
+   "class": "H0",
+   "name": "getDropLocation",
+   "use": "wsGetDropLocation",
+   "sha1": "26a012294680fca5b5ad70ddccb576d71da8a100",
+   "originalBytes": 588
+  },
+  {
+   "class": "H0",
+   "name": "duplicateLeaf",
+   "use": "wsDuplicateLeaf",
+   "sha1": "91070abbd4e20bda9936b6fa5a4799f007672e18",
+   "originalBytes": 414
+  },
+  {
+   "class": "H0",
+   "name": "createLeafInTabGroup",
+   "use": "wsCreateLeafInTabGroup",
+   "sha1": "ec5bd2b399f922911be371f709a6ce3a4406a4b1",
+   "originalBytes": 387
+  },
+  {
+   "class": "H0",
+   "name": "updateMobileVisibleTabGroup",
+   "use": "wsUpdateMobileVisibleTabGroup",
+   "sha1": "e0dbb81e869484d1748ba504697fa736a8b2014c",
+   "originalBytes": 367
+  },
+  {
+   "class": "H0",
+   "name": "readWorkspaceFile",
+   "use": "wsReadWorkspaceFile",
+   "sha1": "34d708d5330f6dcd6eb1797aae902c5e86b71b1a",
+   "originalBytes": 357
+  },
+  {
+   "class": "H0",
+   "name": "moveLeafToPopout",
+   "use": "wsMoveLeafToPopout",
+   "sha1": "491b0607f407905e122b5bcd5524c8a0687b6d64",
+   "originalBytes": 348
+  },
+  {
+   "class": "H0",
+   "name": "splitActiveLeaf",
+   "use": "wsSplitActiveLeaf",
+   "sha1": "f6cabb2c0aa39e083243c141b769284a28c461fa",
+   "originalBytes": 122
+  },
+  {
+   "class": "H0",
+   "name": "openLinkText",
+   "use": "wsOpenLinkText",
+   "sha1": "54cbde3d450241b7b2b2e8025cb60061645cd26b",
+   "originalBytes": 188
+  },
+  {
+   "class": "H0",
+   "name": "recursiveGetTarget",
+   "use": "wsRecursiveGetTarget",
+   "sha1": "3e9f41c934774a0aed9798bbe8ea8979affe62c9",
+   "originalBytes": 173
+  },
+  {
+   "class": "H0",
+   "name": "createLeafInParent",
+   "use": "wsCreateLeafInParent",
+   "sha1": "e8f8b59bc0206dc241c706278dfe8d9199859be4",
+   "originalBytes": 146
+  },
+  {
+   "class": "H0",
+   "name": "getLeafById",
+   "use": "wsGetLeafById",
+   "sha1": "b04893a252e9bfae372a35781c7cb0847fda5f41",
+   "originalBytes": 96
+  },
+  {
+   "class": "H0",
+   "name": "detachLeavesOfType",
+   "use": "wsDetachLeavesOfType",
+   "sha1": "df622bcac59226d3891b8ba858ae04163b580f3f",
+   "originalBytes": 81
+  },
+  {
+   "class": "H0",
+   "name": "registerEditorExtension",
+   "use": "wsRegisterEditorExtension",
+   "sha1": "63e777d0e3b02e5f540fde4102d102a3e12edf98",
+   "originalBytes": 63
+  },
+  {
+   "class": "H0",
+   "name": "unregisterEditorExtension",
+   "use": "wsUnregisterEditorExtension",
+   "sha1": "d53f2757b3a885beb2ad71ea80310b75701ceff5",
+   "originalBytes": 65
+  },
+  {
+   "class": "H0",
+   "name": "registerHoverLinkSource",
+   "use": "wsRegisterHoverLinkSource",
+   "sha1": "d0dd175190e82c2047f6727b719e5566f7738ca8",
+   "originalBytes": 41
+  },
+  {
+   "class": "H0",
+   "name": "unregisterHoverLinkSource",
+   "use": "wsUnregisterHoverLinkSource",
+   "sha1": "449bec459de3ba919da47fa3d40a998e6316a138",
+   "originalBytes": 44
+  },
+  {
+   "class": "H0",
+   "name": "registerOperatorFuncConfigs",
+   "use": "wsRegisterOperatorFuncConfigs",
+   "sha1": "b7a786b763cc8b0575fb1c17491148fd859eb500",
+   "originalBytes": 44
+  },
+  {
+   "class": "H0",
+   "name": "unregisterOperatorFuncConfigs",
+   "use": "wsUnregisterOperatorFuncConfigs",
+   "sha1": "4e0bc90047e1a91b4ae6782444786608927946e2",
+   "originalBytes": 47
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb"
 }
