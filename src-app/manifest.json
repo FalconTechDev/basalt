@@ -1125,6 +1125,14 @@
   {
    "orig": "ute",
    "use": "defineFilesLinksTab"
+  },
+  {
+   "orig": "ote",
+   "use": "defineSpellcheckDictionaryModal"
+  },
+  {
+   "orig": "rte",
+   "use": "defineEditorTab"
   }
  ],
  "host": {
@@ -1281,7 +1289,8 @@
   "SlowStartupCheck": "I7",
   "FilePathSuggest": "xI",
   "FolderPathSuggest": "AI",
-  "IgnoreFiltersModal": "hte"
+  "IgnoreFiltersModal": "hte",
+  "SpellcheckDictionaryModal": "ote"
  },
  "declarators": [
   {
@@ -1420,5 +1429,5 @@
    "originalBytes": 292
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0,JT,Fm"
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,dw,mw,Of,sm,lm,Jf,Zf,Tm,gy,zf,yte,fy,gte,Em,M0,S0,JT,Fm,ym"
 }
