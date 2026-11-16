@@ -138,14 +138,6 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
 }
 
 /* nav-file */
-.nav-file-icon {
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-  margin-inline-end: var(--size-2-3);
-  color: var(--icon-color);
-  opacity: var(--icon-opacity);
-}
 
 .nav-file-tag {
   align-self: center;

@@ -127,6 +127,67 @@ node tools/ws-scenario.mjs --port 9655 > new.json   # and the same on a runtime 
 node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenario.mjs)
 ```
 
+## Branch `rewrite-assets-css` (worktree `basalt-wt-assets-css`): styles, fonts, images, index.html
+
+* `src/public/fonts/`: the seven hashed files are replaced by descriptively named open-licence fonts —
+  Source Code Pro (regular/bold/italic/bold-italic), Inter variable (roman/italic), Flow Circular, Comfortaa —
+  all SIL OFL, recorded in `THIRD_PARTY.md`. `src-css/02-fonts.css` was rewritten by hand against the new names;
+  `--font-interface`, `--font-text`, `--font-monospace` and family fallbacks are unchanged.
+* `src/public/images/`: the two hashed external-link icons are replaced by self-drawn
+  `external-link.svg` / `external-link-rtl.svg`; only the `url(...)` inside the existing
+  `linear-gradient(...) , url(...)` rules changed (overrides-2 and overrides-4 `19-preview.css`).
+* `src/index.html`: rewritten (~4 KB). Same script tags in the same order (startup depends on it);
+  CSP tightened — the unused `fonts.googleapis.com` allowance is gone since fonts are now local.
+* `src-css/` cleanup so far: collapsed dead `csstools-*` light/dark fallback scaffolding, removed the
+  `.card` / `node-insert-event` / `setting-text` rules and platform classes (`is-ios`, `is-android`)
+  the desktop runtime never applies, then ran `tools/css-drop-dead.mjs` — a postcss codemod that removes
+  selectors positively requiring classes no shipped source emits (68 selectors, ~11 KB minified),
+  `tools/css-drop-orphan-comments.mjs` for the section comments they orphaned, and
+  `tools/css-unused-vars.mjs` to audit custom properties (78 defined-but-unreferenced tokens were left
+  in place — they are theme/plugin API surface, not dead rules).
+  Class names inside `:not()` are kept (they do not gate matching); plugin/mobile-facing classes were
+  checked against `src/app.js` before removal and retained where referenced.
+* Verify: `node build-css.mjs` (179 files, ~596 KB source -> ~550 KB `src/app.css`).
+  `tools/css-compare.mjs --old <base app.css> --new <new app.css>` desktop run, all 20 scene/theme
+  pairs: **0 real computed-style diffs, 0 missing/extra elements, 0 var diffs**; pixel diffs match the
+  old-vs-old noise floor (worst case command-palette 200px in a 5x25 box at the window edge — transient).
+  `context-menu` scene errors in setup (`.nav-file-title` absent) on both stylesheets — harness issue.
+  `tools/app-smoke.mjs`: core flows pass (text file, settings dialog, command palette, splits,
+  pop-out window, title bar, file create/rename/delete). Pre-existing failures also seen with the
+  inherited stylesheet: markdown note opens as empty view, canvas renders 0 nodes, phrase search 0 hits
+  — app-layer issues, not CSS. `--mobile` (375px) css-compare completed scene-by-scene across fresh
+  runtimes (the app exits after ~10-15 scene setups; `tools/css-compare.mjs` now logs per-scene progress,
+  reloads between scenes in `--mobile` mode, and writes its report even if the app dies mid-run).
+  Result: **no stylesheet regressions** — the only consistent real diff is the intended
+  `external-link` image URL rename. Apparent diffs are app-state noise (tab `is-active`/`mod-active`
+  flips, plugin status-bar timing, mobile nav-mode layout, preview render-in-progress).
+  This run caught one real regression which was fixed: the markdown renderer builds `el-<tag>` classes
+  dynamically (`addClass('el-'+tagName)`), so the removed `:is(.el-p,...)` heading-spacing branch was
+  live — restored in `19-preview.css` and re-verified (h2 margin-top back to 40px).
+* Fonts verified loading through the `app://` protocol (FontFace API OK; `document.fonts` load()
+  errors were an artifact of a crashed compare leaving the OLD sheet, which references deleted hashed
+  fonts — always rebuild `src/app.css` after a crashed compare run).
+
+### Still open in this area
+
+* `context-menu` scene errors in setup on both stylesheets (`.nav-file-title` absent in mobile mode) —
+  harness limitation, seen on desktop too.
+* Pop-out: `tools/css-popout-compare.mjs` implements the missing `--popout` coverage — it connects to
+  the pop-out window's own page target and diffs computed styles + screenshot old/old/new. Pop-out
+  windows proved too state-unstable for a clean signal (theme-class propagation races, window size,
+  render progress — old-vs-old noise ≈ new-vs-old pixel diffs), so it is a smoke-level check, not a
+  gate. The pop-out window loads the same `app.css`, so desktop/mobile coverage carries over.
+* Hand-rewrite of `src-css/` rule bodies: **all 25 numbered base files plus override layers
+  4–12 are now hand-rewritten** into sectioned, independently authored CSS (component label headers
+  plus semantic group comments; selectors, class names and custom-property names preserved).
+  Every batch was rebuilt with `node build-css.mjs` and diffed rule-for-rule against the previous
+  `src/app.css` — `rule diffs: 0` on every commit. Two real typos were caught and fixed this way
+  (`--touch-size-xxs` vs `--touch-radius-xxs` in overrides-9, and a grouped-selector parity fix in
+  overrides-6). Remaining unrewritten: `overrides-1` (19 files, ~1.4k lines), `overrides-2`
+  (19 files, ~2.2k lines), `overrides-3` (18 files, ~2.2k lines) — these layers still carry the
+  inherited formatting and are the last chunk of literal rewrite work.
+* Comfortaa was downloaded during the session but never wired in or committed — no action needed.
+
 ## Not done yet
 
 * `Vault` (`Tg`) belongs to the other agent's branch; its adapter-level helpers used by `App.initializeWithAdapter` are still

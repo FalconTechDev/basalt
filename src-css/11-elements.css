@@ -1,6 +1,7 @@
-/* elements: Bare HTML elements: headings, lists, tables, rules, images. */
+/* elements: bare HTML elements — icons, keys, headings, lists, links, tags, tasks */
 
-/* svg-icon */
+/* ---------- icons & inline code ---------- */
+
 svg.svg-icon {
   height: var(--icon-size);
   width: var(--icon-size);
@@ -16,6 +17,9 @@ kbd {
   background-color: var(--code-background);
 }
 
+/* ---------- headings ---------- */
+
+/* every heading level shares the same block rhythm */
 h1,
 h2,
 h3,
@@ -26,6 +30,7 @@ h6 {
   margin-block-end: var(--p-spacing);
 }
 
+/* links inside a heading inherit the heading weight via --link-weight */
 h1 a,
 .markdown-rendered h1 a {
   --link-weight: var(--h1-weight);
@@ -46,6 +51,7 @@ h4 a,
   --link-weight: var(--h4-weight);
 }
 
+/* h5/h6 carry their full type scale; the --font-weight var feeds font-weight */
 h5,
 .markdown-rendered h5 {
   --font-weight: var(--h5-weight);
@@ -82,6 +88,8 @@ h6 a,
   --link-weight: var(--h6-weight);
 }
 
+/* ---------- rules & lists ---------- */
+
 hr {
   border: none;
   border-top: var(--hr-thickness) solid;
@@ -89,6 +97,7 @@ hr {
   margin: 2rem 0;
 }
 
+/* nesting deeper than one level returns to disc bullets */
 ul ul,
 ol ul,
 ol ol ul,
@@ -112,17 +121,20 @@ ul > li::marker {
   color: var(--list-marker-color);
 }
 
-/* is-collapsed */
+/* collapsed folds dim their marker */
 ol > li.is-collapsed::marker,
 ul > li.is-collapsed::marker {
   color: var(--list-marker-color-collapsed);
 }
 
+/* the fold bullet gets a halo ring in the collapsed colour */
 li.is-collapsed .list-bullet:after,
 .is-collapsed ~ .cm-formatting-list .list-bullet:after {
   box-shadow: 0 0 0 4px var(--background-modifier-active-hover);
   background-color: var(--list-marker-color-collapsed);
 }
+
+/* ---------- links ---------- */
 
 a {
   --font-weight: var(--link-weight);
@@ -142,7 +154,7 @@ a {
   }
 }
 
-/* mobile-tap */
+/* mobile tap feedback dims the link */
 a.mobile-tap {
   opacity: 0.5;
 }
@@ -151,7 +163,8 @@ mjx-container {
   outline: none;
 }
 
-/* tag */
+/* ---------- tags ---------- */
+
 a.tag {
   border: var(--tag-border-width) solid var(--tag-border-color);
   border-radius: var(--tag-radius);
@@ -174,7 +187,8 @@ a.tag {
   }
 }
 
-/* task-list */
+/* ---------- task lists ---------- */
+
 ul > li.task-list-item {
   list-style: none;
 }

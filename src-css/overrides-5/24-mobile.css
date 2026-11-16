@@ -1,30 +1,21 @@
 /* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* is-mobile */
+/* suggestion width, view header, menus, tab pin, vault chooser */
 .is-mobile .suggestion-container {
   max-width: calc(100vw - 20px - var(--safe-area-inset-left) - var(--safe-area-inset-right));
   max-height: 240px;
 }
 
-/* metadata-error */
-.metadata-error-cta.mobile-tap,
-.metadata-error-cta:hover {
-  color: var(--text-accent-hover);
-}
-
-/* search-result */
 .search-result-file-match.mobile-tap {
   color: var(--text-normal);
   background-color: var(--text-selection);
 }
 
-/* is-phone */
 .is-phone .bases-toolbar-menu-container {
   --bases-property-menu-item-radius: 0;
   max-width: 100%;
 }
 
-/* mobile-onboarding */
 .mobile-onboarding .logo {
   color: var(--interactive-accent);
 }
@@ -36,7 +27,6 @@
   width: 100%;
 }
 
-/* is-mobile */
 .is-mobile .view-header {
   border-top: none;
   height: var(--view-header-height);
@@ -59,7 +49,6 @@
   background-color: color-mix(in srgb, var(--menu-background) var(--blur-opacity-m), transparent);
 }
 
-/* is-phone */
 .is-phone .menu-scroll {
   max-height: 60vh;
 }
@@ -70,12 +59,10 @@
   width: var(--touch-size-m);
 }
 
-/* mobile-tab */
 .mobile-tab .mobile-tab-pin {
   color: var(--interactive-accent);
 }
 
-/* mobile-vault */
 .mobile-vault-chooser-action.is-warning {
   color: var(--text-error);
 }

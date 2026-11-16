@@ -37,8 +37,7 @@
 }
 
 /* base-toolbar */
-.base-toolbar-sort-item .combobox-button,
-.base-toolbar-groupby-item .combobox-button {
+.base-toolbar-sort-item .combobox-button {
   box-shadow: none;
   border-radius: 0;
 }

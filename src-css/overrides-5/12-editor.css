@@ -1,6 +1,6 @@
 /* editor (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* cm-tooltip */
+/* CodeMirror docstring/completion/autocomplete tooltips */
 .cm-tooltip.cm-tooltip-docstring {
   border-radius: var(--radius-s);
   border: none;
@@ -40,7 +40,6 @@
   backdrop-filter: var(--suggestion-backdrop-filter);
 }
 
-/* cm-s */
 .cm-s-basalt .HyperMD-goback {
   width: 1px;
 }

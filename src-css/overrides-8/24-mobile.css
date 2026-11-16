@@ -1,12 +1,12 @@
 /* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* is-phone */
+/* ---------- misc mobile hides ---------- */
+
 .is-phone .canvas-card-menu,
 .mod-toolbar-open .canvas-card-menu {
   display: none;
 }
 
-/* mobile-onboarding */
 .mobile-onboarding .back-button.mobile-tap {
   opacity: 0.5;
 }
@@ -21,12 +21,20 @@
   font-size: var(--font-ui-smaller);
 }
 
-/* is-tablet */
 .is-tablet .mod-left-split-toggle {
   display: none;
 }
 
-/* is-phone */
+.is-mobile .status-bar {
+  display: none;
+}
+
+.is-phone .side-dock-ribbon {
+  display: none;
+}
+
+/* ---------- view header ---------- */
+
 .is-phone.is-hidden-nav .view-header {
   --hidden-nav-offset: calc(var(--view-header-height) + var(--view-header-top-offset));
   opacity: 0;
@@ -52,17 +60,18 @@
   font-weight: var(--setting-group-heading-weight);
 }
 
-/* is-mobile */
-.is-mobile .status-bar {
-  display: none;
+.is-phone .modal-title {
+  display: block;
+  overflow: hidden;
+  max-width: 70vw;
+  font-size: var(--font-ui-medium);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* is-phone */
-.is-phone .side-dock-ribbon {
-  display: none;
-}
+/* ---------- image viewer ---------- */
 
-/* mobile-image */
 .mobile-image-viewer {
   position: absolute;
   top: 0;
@@ -76,18 +85,8 @@
   background-color: var(--background-modifier-cover);
 }
 
-/* is-phone */
-.is-phone .modal-title {
-  display: block;
-  overflow: hidden;
-  max-width: 70vw;
-  font-size: var(--font-ui-medium);
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+/* ---------- mobile navbar ---------- */
 
-/* mobile-navbar */
 .mobile-navbar {
   position: var(--navbar-position);
   bottom: 0;
@@ -144,7 +143,8 @@
   }
 }
 
-/* mobile-toolbar */
+/* ---------- mobile toolbar (keyboard accessory bar) ---------- */
+
 .mobile-toolbar {
   flex: 0 0 auto;
   position: absolute;
@@ -209,7 +209,8 @@
   color: var(--text-normal);
 }
 
-/* mobile-tab */
+/* ---------- tab switcher overlay ---------- */
+
 .mobile-tab-switcher {
   position: absolute;
   display: flex;
@@ -309,12 +310,12 @@
   pointer-events: none;
 }
 
-/* is-mobile */
+/* ---------- file tree / vault chooser ---------- */
+
 .is-mobile .file-tree .tree-item-self {
   font-size: var(--font-ui-small);
 }
 
-/* mobile-vault */
 .mobile-vault-chooser {
   position: relative;
   width: 100%;
@@ -322,51 +323,6 @@
   background-color: var(--background-primary);
 }
 
-.mobile-vault-chooser-screen {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  padding-top: var(--safe-area-inset-top);
-  padding-left: var(--safe-area-inset-left);
-  padding-right: var(--safe-area-inset-right);
-  background-color: var(--background-primary);
-}
-
-.mobile-vault-chooser-header {
-  display: flex;
-  flex: 0 0 50px;
-  align-items: center;
-  border-bottom: var(--border-width) solid var(--background-modifier-border);
-  color: var(--text-muted);
-  font-size: 18px;
-  background-color: var(--background-primary);
-}
-
-.mobile-vault-chooser-content {
-  flex: 1 0 0;
-  overflow-y: auto;
-  padding: 20px;
-  padding-bottom: var(--safe-area-inset-bottom);
-  height: 100%;
-  max-width: 800px;
-  width: 100%;
-  margin: 0 auto;
-  scrollbar-gutter: stable both-edges;
-}
-
 .mobile-vault-chooser-action.is-warning .mobile-vault-chooser-action-icon {
   color: var(--text-error);
-}
-
-.mobile-vault-chooser-action-description {
-  overflow: hidden;
-  max-width: calc(100vw - 110px);
-  color: var(--text-muted);
-  font-size: 17px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }

@@ -85,10 +85,6 @@
 }
 
 /* publish-changes */
-.publish-changes-buttons {
-  padding-bottom: var(--size-4-4);
-  text-align: right;
-}
 
 /* publish-upload */
 .publish-upload-item {
@@ -187,12 +183,6 @@
   text-align: center;
 }
 
-.sync-history-content-buttons {
-  border-top: 1px solid var(--background-modifier-border);
-  margin: 0;
-  padding: var(--size-4-3);
-}
-
 /* sync-file */
 .sync-file-tree-container {
   overflow: auto;
@@ -202,10 +192,4 @@
 /* webviewer-address */
 .webviewer-address-container {
   padding: 0 var(--size-4-2);
-}
-
-/* splash-brand */
-.splash-brand {
-  flex: 0 0 content;
-  padding: 20px 0;
 }

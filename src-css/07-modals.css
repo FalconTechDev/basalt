@@ -1,13 +1,14 @@
-/* modals: Modals and the settings dialog, hotkey list, plugin browser. */
+/* modals: modal shell, settings dialog, community browser, hotkeys, toggles */
 
-/* modal */
+/* ---------- modal shell ---------- */
+
+/* file-browser modal is a fixed-height column layout */
 .modal.mod-file-browser .modal-content {
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* modal-view */
 .modal-view-options-toolbar {
   display: flex;
   gap: var(--size-4-1);
@@ -20,34 +21,23 @@
   color: var(--icon-color-active);
 }
 
-/* is-frameless */
+/* frameless windows: modal content is not draggable */
 body.is-frameless .modal {
   -webkit-app-region: no-drag;
 }
 
-/* mod-rtl */
+/* RTL: readme and canvas stay LTR inside RTL UI */
 .mod-rtl .community-modal-readme,
 .mod-rtl .canvas-wrapper {
   direction: ltr;
 }
 
-/* setting-text */
-.setting-text {
-  flex-grow: 1;
-}
-
-/* setting-title */
 .setting-title {
   font-size: var(--font-ui-large);
   line-height: var(--line-height-normal);
 }
 
-/* setting-explanation */
-.setting-explanation {
-  color: var(--text-muted);
-}
-
-/* modal */
+/* per-modal width overrides */
 .modal.mod-new-editor {
   max-width: 600px;
 }
@@ -80,6 +70,8 @@ body.is-frameless .modal {
   font-size: var(--font-ui-smaller);
 }
 
+/* ---------- settings modal ---------- */
+
 .modal.mod-settings {
   background-color: var(--settings-background, var(--modal-background));
 }
@@ -105,7 +97,8 @@ body.is-frameless .modal {
   max-width: 400px;
 }
 
-/* setting-group */
+/* ---------- setting groups & items ---------- */
+
 .setting-group .setting-group-search {
   padding: var(--setting-items-padding);
   border-top-left-radius: var(--setting-items-radius);
@@ -115,6 +108,7 @@ body.is-frameless .modal {
   background-color: var(--setting-items-background);
 }
 
+/* search bar shares the card: square bottom corners, no top border */
 .setting-group .setting-group-search + .setting-items {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -139,7 +133,7 @@ body.is-frameless .modal {
   padding-bottom: 0;
 }
 
-/* setting-item */
+/* card-style setting item */
 .setting-item {
   display: flex;
   align-items: center;
@@ -151,7 +145,7 @@ body.is-frameless .modal {
   background-color: var(--setting-items-background);
 }
 
-/* modal */
+/* inside non-settings modals items become flat divided rows */
 .modal:not(.mod-settings) .setting-item:not(.setting-item-heading) {
   padding: var(--size-4-4) 0;
   border-top: var(--border-width) solid var(--background-modifier-border);
@@ -169,8 +163,8 @@ body.is-frameless .modal {
   padding-bottom: 0;
 }
 
+/* very narrow modals stack info above the control */
 @container (max-width: 340px) {
-  /* setting-item */
   .setting-item:not(.mod-toggle):not(.setting-item-heading) {
     flex-direction: column;
   }
@@ -283,14 +277,15 @@ body.is-frameless .modal {
   max-width: 400px;
 }
 
-/* setting-command */
+/* ---------- hotkeys ---------- */
+
 .setting-command-hotkeys {
   display: flex;
   flex-wrap: wrap;
   gap: var(--size-4-1);
 }
 
-/* setting-hotkey */
+/* keycap chip */
 .setting-hotkey {
   align-self: flex-end;
   align-items: center;
@@ -325,7 +320,6 @@ body.is-frameless .modal {
   padding-inline-end: var(--size-4-2);
 }
 
-/* setting-password */
 .setting-password {
   overflow: hidden;
   max-width: 10ch;
@@ -333,7 +327,6 @@ body.is-frameless .modal {
   text-overflow: ellipsis;
 }
 
-/* setting-hotkey */
 .setting-hotkey-icon {
   display: flex;
   align-items: center;
@@ -344,14 +337,12 @@ body.is-frameless .modal {
 }
 
 @media (hover: hover) {
-  /* setting-delete */
   .setting-delete-hotkey:hover {
     color: var(--text-on-accent);
     background-color: var(--background-modifier-error);
   }
 }
 
-/* setting-add */
 .setting-add-hotkey-button,
 .setting-restore-hotkey-button {
   padding: var(--size-2-2);
@@ -375,22 +366,20 @@ body.is-frameless .modal {
   }
 }
 
-/* setting-message */
 .setting-message {
   font-size: var(--font-ui-small);
 }
 
-/* setting-font */
 .setting-font-list {
   margin: 1.5em 0 0.75em 0;
 }
 
-/* hotkey-list */
+/* ---------- hotkey list modal ---------- */
+
 .hotkey-list-container {
   overflow: auto;
 }
 
-/* hotkey-filter */
 .hotkey-filter {
   align-items: center;
   display: flex;
@@ -402,14 +391,12 @@ body.is-frameless .modal {
   corner-shape: var(--corner-shape);
 }
 
-/* setting-filter */
 .setting-filter-container {
   display: flex;
   gap: var(--size-4-2);
   margin-bottom: var(--size-4-4);
 }
 
-/* hotkey-filter */
 .hotkey-filter-remove-button {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
@@ -428,13 +415,8 @@ body.is-frameless .modal {
   }
 }
 
-/* modal */
-.modal.mod-new-editor .card,
-.modal.mod-restricted-mode .card {
-  flex: 1 0 0;
-}
+/* ---------- progress & secret modal ---------- */
 
-/* setting-progress */
 .setting-progress-bar {
   width: 100%;
   height: var(--size-4-2);
@@ -450,7 +432,6 @@ body.is-frameless .modal {
   background-color: var(--interactive-accent);
 }
 
-/* modal */
 .modal.mod-secret .suggestion-filter-toolbar .search-input-container {
   flex: 1;
 }
@@ -461,7 +442,8 @@ body.is-frameless .modal {
   height: 300px;
 }
 
-/* mod-community */
+/* ---------- community modal ---------- */
+
 .mod-community-modal .modal-sidebar .setting-item:not(.setting-item-heading) {
   gap: var(--size-4-2);
   max-width: var(--modal-community-sidebar-width);
@@ -480,7 +462,6 @@ body.is-frameless .modal {
   width: 100%;
 }
 
-/* community-modal */
 .community-modal-search-summary {
   padding: var(--size-4-1) var(--size-4-3) var(--size-4-3) var(--size-4-4);
   font-size: var(--font-ui-small);
@@ -547,7 +528,8 @@ body.is-frameless .modal {
   color: var(--text-muted);
 }
 
-/* community-item */
+/* ---------- community item cards ---------- */
+
 .community-item {
   position: relative;
   display: flex;
@@ -611,6 +593,7 @@ body.is-frameless .modal {
   line-height: var(--line-height-tight);
 }
 
+/* update badge pinned top-inline-end */
 .community-item-badge.mod-update {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
@@ -634,7 +617,8 @@ body.is-frameless .modal {
   color: var(--text-muted);
 }
 
-/* community-modal */
+/* ---------- community detail pane ---------- */
+
 .community-modal-info-name {
   margin-bottom: var(--size-4-6);
   font-size: var(--h2-size);
@@ -674,21 +658,6 @@ body.is-frameless .modal {
   scroll-padding: var(--size-4-4);
 }
 
-/* community-readme */
-.community-readme {
-  overflow-x: hidden;
-  overflow-y: visible;
-  height: auto;
-  padding: var(--size-4-4) 0;
-}
-
-.community-readme video,
-.community-readme svg,
-.community-readme img {
-  max-width: 100%;
-}
-
-/* community-modal */
 .community-modal-button-container {
   display: flex;
   flex-wrap: wrap;
@@ -710,6 +679,7 @@ body.is-frameless .modal {
   margin-inline-start: var(--size-4-1);
 }
 
+/* readme renders like a preview but stays selectable */
 .community-modal-readme {
   overflow-wrap: break-word;
   font-size: var(--font-text-size);
@@ -720,7 +690,8 @@ body.is-frameless .modal {
   -webkit-user-select: text;
 }
 
-/* modal-container */
+/* ---------- modal container ---------- */
+
 .modal-container.mod-dim .modal {
   box-shadow: var(--shadow-l);
 }
@@ -733,18 +704,16 @@ body.is-frameless .modal {
   opacity: 0 !important;
 }
 
-/* modal-status */
 .modal-status-icon {
   --icon-size: 72px;
   --icon-stroke: 1.5px;
 }
 
-/* styled-scrollbars */
+/* styled scrollbars inset the close button */
 body.styled-scrollbars .modal-close-button {
   inset-inline-end: 12px;
 }
 
-/* modal-title */
 .modal-title {
   margin-left: auto;
   margin-right: auto;
@@ -754,12 +723,12 @@ body.styled-scrollbars .modal-close-button {
   text-align: start;
 }
 
-/* modal */
 .modal .modal-nav-action.mod-secondary {
   inset-inline-start: 0;
 }
 
-/* prompt-input */
+/* ---------- prompt inputs ---------- */
+
 .prompt-input-container {
   --search-clear-button-size: 17px;
   display: flex;
@@ -770,18 +739,17 @@ body.styled-scrollbars .modal-close-button {
   inset-inline-end: var(--size-4-4);
 }
 
-/* prompt-instruction */
 .prompt-instruction-command {
   margin-inline-end: var(--size-2-2);
   font-weight: var(--bold-weight);
 }
 
-/* vertical-tabs */
+/* ---------- vertical tabs ---------- */
+
 .vertical-tabs-container {
   display: flex;
 }
 
-/* vertical-tab */
 .vertical-tab-content h1 {
   display: none;
 }
@@ -792,7 +760,9 @@ body.styled-scrollbars .modal-close-button {
   }
 }
 
-/* checkbox-container */
+/* ---------- toggle (checkbox-container) ---------- */
+
+/* hit-area overlay for the whole toggle row */
 .checkbox-container:before {
   display: block;
   position: absolute;
@@ -804,6 +774,7 @@ body.styled-scrollbars .modal-close-button {
   opacity: 0;
 }
 
+/* small toggle thumb; slides via translate3d */
 .checkbox-container:after {
   display: block;
   position: absolute;
@@ -828,6 +799,7 @@ body.styled-scrollbars .modal-close-button {
   transform: translate3d(calc(var(--toggle-s-width) - var(--toggle-s-thumb-width) - var(--toggle-s-border-width)), 0, 0);
 }
 
+/* press stretches the thumb */
 .checkbox-container:active:after {
   width: calc(var(--toggle-s-thumb-width) + var(--toggle-s-border-width) * 2);
   height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2);
@@ -835,7 +807,7 @@ body.styled-scrollbars .modal-close-button {
   opacity: var(--toggle-thumb-opacity-active);
 }
 
-/* modal */
+/* modal toggles are the larger size */
 .modal .checkbox-container:focus-visible {
   outline: var(--toggle-border-width) solid var(--background-modifier-border-focus);
 }
@@ -862,7 +834,6 @@ body.styled-scrollbars .modal-close-button {
   opacity: var(--toggle-thumb-opacity-active);
 }
 
-/* checkbox-container */
 .checkbox-container.mod-small:focus-visible {
   outline: var(--toggle-s-border-width) solid var(--background-modifier-border-focus);
 }
@@ -891,7 +862,8 @@ body.styled-scrollbars .modal-close-button {
   }
 }
 
-/* setting-item */
+/* ---------- search settings ---------- */
+
 .setting-item.mod-search-setting .setting-item-control .search-input-container {
   position: relative;
   flex-grow: 1;
@@ -903,7 +875,6 @@ body.styled-scrollbars .modal-close-button {
   animation: 1000ms ease-in-out 300ms infinite progress-bar;
 }
 
-/* search-params */
 .search-params .setting-item:first-of-type {
   border-top: none;
 }
@@ -920,7 +891,6 @@ body.styled-scrollbars .modal-close-button {
   font-size: var(--font-ui-small);
 }
 
-/* setting-item */
 .setting-item.mod-change-language {
   -webkit-app-region: no-drag;
 }

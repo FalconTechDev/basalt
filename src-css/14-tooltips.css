@@ -1,17 +1,18 @@
-/* tooltips: Tooltips and notices. */
+/* tooltips: tooltip bubbles, their arrows, and notice/progress styling */
 
-/* notice */
+/* ---------- notices & progress ---------- */
+
 .notice progress {
   width: 100%;
 }
 
-/* theme-light */
+/* light theme tints the progress track darker so the accent bar reads */
 .theme-light .notice progress[value]::-webkit-progress-bar {
   box-shadow: inset 0px 0px 0px 1px #363636;
   background-color: #262626;
 }
 
-/* notice */
+/* the track is an inset-bordered pill everywhere progress appears */
 .notice progress[value]::-webkit-progress-bar,
 .markdown-preview-view progress[value]::-webkit-progress-bar,
 .markdown-rendered progress[value]::-webkit-progress-bar,
@@ -22,6 +23,7 @@
   background-color: var(--background-secondary);
 }
 
+/* the filled portion uses the accent colour */
 .notice progress[value]::-webkit-progress-value,
 .markdown-preview-view progress[value]::-webkit-progress-value,
 .markdown-rendered progress[value]::-webkit-progress-value,
@@ -30,17 +32,16 @@
   background-color: var(--interactive-accent);
 }
 
-/* tooltip */
-.tooltip.mod-right {
-  animation: pop-right 200ms forwards ease-in-out;
-  transform: translateY(-50%);
-}
+/* ---------- tooltip positioning ---------- */
 
+/* side tooltips slide in from the right and centre vertically */
+.tooltip.mod-right,
 .tooltip.mod-left {
   animation: pop-right 200ms forwards ease-in-out;
   transform: translateY(-50%);
 }
 
+/* arrow: a 5px CSS triangle on the side facing the anchor */
 .tooltip.mod-right .tooltip-arrow {
   top: calc(50% - 5px);
   left: -5px;
@@ -63,6 +64,7 @@
   border-bottom: 5px solid transparent;
 }
 
+/* error tooltips recolour the arrow to match the error background */
 .tooltip.mod-error .tooltip-arrow {
   border-bottom-color: var(--background-modifier-error);
 }

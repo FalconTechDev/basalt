@@ -1,10 +1,5 @@
 /* base (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* card-container */
-.card-container.mod-horizontal {
-  flex-direction: column;
-}
-
 /* list-item */
 .list-item.mod-empty {
   padding: var(--size-4-4);
@@ -185,8 +180,7 @@
 }
 
 /* base-toolbar */
-.base-toolbar-sort-item,
-.base-toolbar-groupby-item {
+.base-toolbar-sort-item {
   --input-shadow: none;
   --icon-size: var(--icon-s);
   --icon-stroke: var(--icon-s-stroke-width);

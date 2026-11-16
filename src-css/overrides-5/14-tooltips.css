@@ -1,13 +1,12 @@
 /* tooltips (late): rules of this component that have to stay after rules of components further down the build order. */
 
+/* notice hover, error/wide tooltip variants, tooltip arrow */
 @media (hover: hover) {
-  /* notice-cta */
   .notice-cta:hover {
     color: var(--text-accent-hover);
   }
 }
 
-/* tooltip */
 .tooltip.mod-error {
   width: 200px;
   color: var(--text-on-accent);

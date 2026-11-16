@@ -1,16 +1,14 @@
 /* preview (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* markdown-embed */
+/* embed padding, metadata property rows, external link rtl icon */
 .markdown-embed .markdown-preview-view {
   padding: 0;
 }
 
-/* inline-embed */
 .inline-embed > .markdown-embed-title {
   padding: var(--embed-padding);
 }
 
-/* metadata-properties */
 .metadata-properties .metadata-input-longtext {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--metadata-input-longtext-lines);
@@ -23,7 +21,6 @@
 }
 
 @media (hover: hover) {
-  /* metadata-property */
   .metadata-property:hover {
     --metadata-divider-color: var(--metadata-divider-color-hover);
     box-shadow: var(--metadata-property-box-shadow-hover);
@@ -85,16 +82,14 @@ input.metadata-property-key-input {
   background-color: var(--metadata-input-background-active);
 }
 
-/* markdown-preview */
 .markdown-preview-view.show-properties .metadata-container {
   display: var(--metadata-display-reading);
 }
 
 @supports selector(:dir(rtl)) {
-  /* external-link */
   :dir(rtl) .external-link {
     background-position: center left;
-    background-image: linear-gradient(transparent, transparent), url(public/images/2308ab1944a6bfa5c5b8.svg);
+    background-image: linear-gradient(transparent, transparent), url(public/images/external-link-rtl.svg);
     background-repeat: no-repeat;
   }
 }

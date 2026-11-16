@@ -1,6 +1,6 @@
 /* graph (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* graph-controls */
+/* graph control panel: settings rows and colour groups */
 .graph-controls.is-close {
   min-width: inherit;
   width: auto;
@@ -25,7 +25,6 @@
   width: 100%;
 }
 
-/* graph-color */
 .graph-color-group .clickable-icon {
   padding: var(--size-2-2);
 }
@@ -42,12 +41,10 @@
   transition: none;
 }
 
-/* graph-controls */
 .graph-controls-button.mod-animate {
   margin-top: var(--size-4-2);
 }
 
-/* graph-control */
 .graph-control-section > .tree-item-self {
   padding-inline-start: var(--size-4-4);
 }
@@ -58,7 +55,6 @@
   border-inline-start: none;
 }
 
-/* workspace-drawer */
 .workspace-drawer-active-tab-content .graph-controls {
   display: none;
 }

@@ -1,6 +1,6 @@
 /* utilities (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* svg-icon */
+/* icons inside labelled elements never capture pointer events */
 [aria-label] .svg-icon {
   pointer-events: none;
 }

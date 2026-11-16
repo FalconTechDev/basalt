@@ -1,11 +1,12 @@
 /* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* mobile-onboarding */
+/* ---------- onboarding / navbar ---------- */
+
 .mobile-onboarding-navbar .back-button {
   padding: var(--size-4-2) 0;
 }
 
-/* mobile-navbar */
+/* navbar actions are circular touch targets; tab count badge overlays the icon */
 .mobile-navbar-action .clickable-icon,
 .mobile-navbar-action button {
   display: flex;
@@ -32,7 +33,8 @@
   opacity: var(--icon-opacity);
 }
 
-/* is-phone */
+/* ---------- notices ---------- */
+
 .is-phone .notice-container {
   bottom: auto;
   top: max(var(--size-4-1),var(--safe-area-inset-top));
@@ -64,7 +66,8 @@
   font-size: var(--font-ui-smaller);
 }
 
-/* is-mobile */
+/* ---------- quick switcher prompt ---------- */
+
 .is-mobile .prompt {
   --prompt-top: calc(var(--safe-area-inset-top) + var(--header-height) + var(--size-4-4));
   top: var(--prompt-top);
@@ -92,7 +95,6 @@
   line-height: 0;
 }
 
-/* is-phone */
 .is-phone .prompt {
   margin: 0 auto;
   width: calc(100% - var(--safe-area-inset-left) - var(--safe-area-inset-right));
@@ -116,19 +118,18 @@
   display: none;
 }
 
-/* is-floating */
+/* ---------- floating toolbar / tab switcher ---------- */
+
 .is-floating-nav .mobile-toolbar-options-container {
   margin: 0 auto;
   width: calc(100% - var(--size-4-4));
 }
 
-/* mobile-toolbar */
 .mobile-toolbar-floating-options .mobile-toolbar-option {
   min-width: var(--toolbar-option-width);
   color: var(--text-normal);
 }
 
-/* mobile-tab */
 .mobile-tab-switcher-menu-spacer:first-child {
   justify-content: flex-start;
 }
@@ -137,6 +138,7 @@
   justify-content: flex-end;
 }
 
+/* pin and close buttons overlay the tab preview corner */
 .mobile-tab .mobile-tab-pin,
 .mobile-tab .close-button {
   --icon-size: var(--icon-m);
@@ -153,7 +155,8 @@
   background-color: var(--background-primary-alt);
 }
 
-/* is-mobile */
+/* ---------- suggestion popups ---------- */
+
 .is-mobile .suggestion-container {
   border-radius: calc(var(--touch-radius-xs) - var(--size-2-3));
   background-color: color-mix(in srgb, var(--suggestion-background) var(--blur-opacity-m), transparent);
@@ -164,13 +167,13 @@
   border-radius: var(--touch-radius-xxs);
 }
 
-/* is-phone */
 .is-phone .suggestion-bg {
   display: block;
   z-index: var(--layer-modal);
 }
 
-/* is-mobile */
+/* ---------- publish / sync history ---------- */
+
 .is-mobile .publish-changes-info-publishing-to {
   display: none;
 }
@@ -191,7 +194,6 @@
   border: none;
 }
 
-/* is-phone */
 .is-phone .sync-history-list-item-header {
   margin: 0;
   border-radius: 0;

@@ -1,29 +1,25 @@
 /* pdf-viewer (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* pdf-sidebar */
+/* hidden sidebar panels, phone findbar and annotation modal layout */
 .pdf-sidebar-content > .hidden {
   display: none;
 }
 
-/* is-mobile */
 .is-mobile .pdf-sidebar-resizer,
 .pdf-embed .pdf-sidebar-resizer {
   display: none;
 }
 
-/* hover-popover */
 .hover-popover .pdf-toolbar {
   display: none;
 }
 
-/* pdf-toolbar */
 .pdf-toolbar-left.hidden,
 .pdf-toolbar-center.hidden,
 .pdf-toolbar-right.hidden {
   display: none;
 }
 
-/* pdf-findbar */
 .pdf-findbar input {
   min-width: 300px;
 }
@@ -38,7 +34,6 @@
   align-items: center;
 }
 
-/* is-phone */
 .is-phone .pdf-findbar .pdf-toolbar-button {
   flex-grow: 0;
   flex-shrink: 0;
@@ -49,12 +44,10 @@
   background-color: transparent;
 }
 
-/* pdf-find */
 .pdf-find-results-count:empty {
   display: none;
 }
 
-/* pdf-container */
 .pdf-container .pdfViewer .page {
   --page-border: calc(var(--size-4-1) * var(--scale-factor)) solid transparent;
   --page-margin: 0 auto;
@@ -63,7 +56,6 @@
   box-sizing: content-box;
 }
 
-/* is-phone */
 .is-phone .pdf-annotation-modal {
   align-items: flex-end;
 }
@@ -74,7 +66,6 @@
   height: 100%;
 }
 
-/* pdf-embed */
 .pdf-embed:not(.canvas-node-content) {
   border: var(--border-width) solid var(--background-modifier-border);
   border-radius: var(--radius-s);

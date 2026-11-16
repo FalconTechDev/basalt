@@ -1,6 +1,6 @@
 /* tabs (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* metadata-property */
+/* metadata property icons and view-header reload button */
 .metadata-property-value .clickable-icon {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
@@ -9,7 +9,6 @@
   padding: 4px;
 }
 
-/* view-header */
 .view-header-reload-button {
   --icon-size: var(--icon-s);
   display: flex;

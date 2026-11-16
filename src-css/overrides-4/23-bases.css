@@ -1,6 +1,6 @@
 /* bases (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* formula-editor */
+/* formula editor focus ring, rendered values, toolbar and table summary cells */
 .formula-editor:active,
 .formula-editor:focus,
 .formula-editor:focus-visible,
@@ -25,25 +25,21 @@
   font-size: var(--font-small);
 }
 
-/* bases-rendered */
 .bases-rendered-value input {
   padding: 0;
   background: transparent;
 }
 
 @media (hover: hover) {
-  /* bases-toolbar */
   .bases-toolbar-menu-item:hover {
     background-color: var(--background-modifier-hover);
   }
 }
 
-/* hover-popover */
 .hover-popover.bases-new-item-popover .metadata-container {
   display: var(--metadata-display-editing);
 }
 
-/* bases-table */
 .bases-table-header-resizer.is-active {
   background-color: var(--divider-color-hover);
 }

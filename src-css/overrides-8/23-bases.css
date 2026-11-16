@@ -1,6 +1,6 @@
 /* bases (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* bases-toolbar */
+/* toolbar menu icon colours, query row errors, table summary cells, cell icons */
 .bases-toolbar-menu-item .clickable-icon:hover {
   color: var(--text-normal);
 }
@@ -9,13 +9,11 @@
   color: var(--icon-color);
 }
 
-/* bases-query */
 .bases-query-container .filter-row .filter-row-error {
   color: var(--text-error);
   font-size: var(--font-ui-smaller);
 }
 
-/* bases-table */
 .bases-table-group-summary-row.bases-tr .summary-function-value {
   color: var(--text-muted);
 }
@@ -32,7 +30,6 @@
   opacity: 1;
 }
 
-/* bases-td */
 .bases-td .bases-metadata-value .clickable-icon {
   opacity: 0;
 }

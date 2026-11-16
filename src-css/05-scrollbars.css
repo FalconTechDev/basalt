@@ -1,11 +1,11 @@
-/* scrollbars: Scrollbar styling. */
+/* scrollbars: thin overlay scrollbars, hidden during screenshots */
 
-/* multi-select */
+/* the multi-select filter input never shows a scrollbar */
 .multi-select-input::-webkit-scrollbar {
   display: none;
 }
 
-/* styled-scrollbars */
+/* styled scrollbars are opt-in via body.styled-scrollbars */
 body.styled-scrollbars ::-webkit-scrollbar {
   width: var(--scrollbar-width);
   height: var(--scrollbar-height);
@@ -17,6 +17,7 @@ body.styled-scrollbars ::-webkit-scrollbar-track {
   background-color: transparent;
 }
 
+/* the thumb is a padded pill: border-width insets it from the track edge */
 body.styled-scrollbars ::-webkit-scrollbar-thumb {
   -webkit-border-radius: var(--scrollbar-radius);
   border: 2px solid transparent;
@@ -39,13 +40,13 @@ body.styled-scrollbars ::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-/* search-params */
+/* search parameter popovers hide their scrollbars entirely */
 .search-params::-webkit-scrollbar,
 .search-params::-webkit-scrollbar-thumb {
   display: none;
 }
 
-/* is-screenshotting */
+/* screenshot mode hides every scrollbar on the page */
 body.is-screenshotting *::-webkit-scrollbar {
   display: none;
 }

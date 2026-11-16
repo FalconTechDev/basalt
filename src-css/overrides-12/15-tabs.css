@@ -1,6 +1,6 @@
 /* tabs (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-drawer */
+/* drawer tab options: plain rows, select row gets button chrome */
 .workspace-drawer-tab-options .workspace-tab-header {
   padding: 0;
   user-select: none;

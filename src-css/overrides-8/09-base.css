@@ -1,6 +1,6 @@
 /* base (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* file-tree */
+/* selected file-tree rows tinted by their status colour */
 .file-tree .mod-changed.is-selected {
   background-color: hsla(var(--interactive-accent-hsl), 0.2);
 }
@@ -14,7 +14,6 @@
   background-color: rgba(var(--background-modifier-error-rgb), 0.2);
 }
 
-/* search-suggest */
 .search-suggest-item.mod-group:hover,
 .search-suggest-item.mod-group.is-selected {
   background-color: initial;

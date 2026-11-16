@@ -1,5 +1,6 @@
-/* code: Syntax highlight tokens for fenced code. */
+/* code: syntax-highlighted fenced code blocks */
 
+/* base reset for highlighted code: LTR, monospace, pre-wrap, no hyphenation */
 code[class*="language-"] {
   color: var(--code-normal);
   word-wrap: break-word;
@@ -15,7 +16,7 @@ code[class*="language-"] {
   background: none;
 }
 
-/* token */
+/* token emphasis */
 .token.important,
 .token.bold {
   font-weight: bold;

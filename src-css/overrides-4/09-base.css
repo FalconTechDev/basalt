@@ -1,17 +1,15 @@
 /* base (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* drop-indicator */
+/* inactive drop indicators, empty popups, embed hover, search param inputs */
 .drop-indicator:not(.is-active) {
   display: none;
 }
 
-/* popupContent */
 .popupContent:empty {
   display: none;
 }
 
 @media (hover: hover) {
-  /* file-embed */
   .file-embed.mod-generic:hover,
   .file-embed.mod-empty:hover {
     color: var(--text-normal);
@@ -19,7 +17,6 @@
   }
 }
 
-/* search-params */
 .search-params input[type='text'],
 .search-params input[type='range'] {
   width: 100%;

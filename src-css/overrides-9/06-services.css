@@ -1,6 +1,6 @@
 /* services (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* file-recovery */
+/* file recovery / sync history rows share the active-item accent treatment */
 .file-recovery-list-item-header.is-active,
 .file-recovery-list-item-header.is-active:hover {
   color: var(--text-on-accent);
@@ -19,19 +19,16 @@
   }
 }
 
-/* publish-changes */
 .publish-changes-switch-site .clickable-icon {
   --icon-size: var(--icon-s);
   --icon-stroke: var(--icon-s-stroke-width);
   padding: var(--size-2-2);
 }
 
-/* publish-upload */
 .publish-upload-item.mod-completed > * {
   position: relative;
 }
 
-/* sync-history */
 .sync-history-list-item-header.is-active,
 .sync-history-list-item-header.is-active:hover {
   color: var(--text-on-accent);
@@ -72,7 +69,7 @@
   color: var(--nav-item-color);
 }
 
-/* modal */
+/* sync log modal body is a monospace console panel */
 .modal.mod-sync-log .sync-log-container {
   overflow: auto;
   overflow-y: auto;
@@ -84,12 +81,4 @@
   font-size: var(--font-ui-smaller);
   color: var(--text-muted);
   background-color: var(--background-secondary);
-}
-
-/* open-vault */
-.open-vault-options .setting-item-description {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
 }

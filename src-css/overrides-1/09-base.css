@@ -6,18 +6,7 @@
   margin: 0 auto;
 }
 
-/* card-container */
-.card-container.mod-horizontal .card {
-  margin: 10px 0;
-}
-
 @media (hover: hover) {
-  /* card */
-  .card.u-clickable:hover {
-    border: var(--border-width) solid var(--interactive-accent);
-    background-color: hsla(var(--interactive-accent-hsl), 0.1);
-  }
-
   /* list-item */
   .list-item.mod-selectable:hover {
     background-color: var(--background-modifier-hover);

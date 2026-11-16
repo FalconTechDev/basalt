@@ -1,6 +1,6 @@
 /* workspace (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* popover */
+/* shared popover surface, follow-link arrow, drawer leaf background */
 .popover,
 .suggestion-container,
 .cm-tooltip.cm-tooltip-autocomplete {
@@ -18,7 +18,6 @@
   width: var(--popover-width);
 }
 
-/* follow-link */
 .follow-link-popover .popover-arrow {
   position: absolute;
   top: calc(100%);
@@ -34,7 +33,6 @@
   content: " ";
 }
 
-/* workspace-drawer */
 .workspace-drawer .workspace-leaf {
   background-color: transparent;
 }

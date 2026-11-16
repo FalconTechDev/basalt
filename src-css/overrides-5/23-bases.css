@@ -1,12 +1,11 @@
 /* bases (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* markdown-reading */
+/* embed sizing, group headings, toolbar menu items, query and table details */
 .markdown-reading-view .bases-embed {
   width: var(--bases-embed-width, 100%);
   transform: var(--bases-embed-transform, none);
 }
 
-/* hover-popover */
 .hover-popover > .bases-embed {
   --bases-table-cell-edge-padding: var(--size-4-1);
   --bases-embed-border-width: 0;
@@ -14,7 +13,6 @@
   max-height: var(--popover-height);
 }
 
-/* bases-group */
 .bases-group-heading .bases-group-property {
   display: var(--bases-group-heading-property-display);
   font-size: var(--bases-group-heading-property-size);
@@ -22,13 +20,11 @@
   color: var(--bases-group-heading-property-color);
 }
 
-/* bases-header */
 .bases-header .title {
   color: var(--h2-color);
   font-size: var(--h2-size);
 }
 
-/* bases-toolbar */
 .bases-toolbar-menu-container-header .back-icon,
 .bases-toolbar-menu-container-header .close-icon {
   display: flex;
@@ -55,15 +51,10 @@
   width: var(--bases-filter-menu-width);
 }
 
-/* base-toolbar */
-.base-toolbar-sort-item .bases-sort-property,
-.base-toolbar-groupby-item .bases-sort-property,
-.base-toolbar-sort-item .filter-property-select,
-.base-toolbar-groupby-item .filter-property-select {
+.base-toolbar-sort-item .bases-sort-property, .base-toolbar-sort-item .filter-property-select {
   max-width: 14em;
 }
 
-/* bases-toolbar */
 .bases-toolbar-menu-form .formula-editor {
   overflow: auto;
   min-width: 100%;
@@ -87,7 +78,6 @@
   color: var(--text-muted);
 }
 
-/* bases-query */
 .bases-query-container .filter-group {
   gap: var(--size-2-3);
   display: flex;
@@ -96,20 +86,17 @@
 }
 
 @media (hover: hover) {
-  /* bases-cards */
   .bases-cards-item:hover {
     box-shadow: var(--bases-cards-shadow-hover);
     transition: box-shadow var(--anim-duration-fast) ease-in-out;
   }
 }
 
-/* bases-list */
 .bases-list-item .bases-list-separator {
   font-size: var(--bases-table-font-size);
   color: var(--text-muted);
 }
 
-/* bases-table */
 .bases-table-container input[type='text'],
 .bases-table-container input[type='date'],
 .bases-table-container input[type='datetime-local'],
@@ -119,7 +106,6 @@
   border: none;
 }
 
-/* bases-thead */
 .bases-thead .bases-table-header {
   display: flex;
   align-items: center;
@@ -127,7 +113,6 @@
   height: var(--bases-table-row-height);
 }
 
-/* bases-table */
 .bases-table-summary-cell .summary-content {
   --input-placeholder-color: var(--text-faint);
   flex-grow: 0;
@@ -145,13 +130,11 @@
   cursor: var(--cursor);
 }
 
-/* bases-summary */
 .bases-summary-menu-item .bases-toolbar-menu-item-value {
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
 
-/* bases-td */
 .bases-td:focus-within {
   z-index: 1;
   border-radius: var(--bases-table-cell-radius-focus);

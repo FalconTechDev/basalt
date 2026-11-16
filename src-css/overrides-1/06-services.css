@@ -24,8 +24,7 @@
   max-width: 100%;
 }
 
-.sync-history-content-container.mod-empty .sync-history-content,
-.sync-history-content-container.mod-empty .sync-history-content-buttons {
+.sync-history-content-container.mod-empty .sync-history-content {
   display: none;
 }
 

@@ -1,28 +1,20 @@
-/* tokens: Design tokens: the variables every component reads (colours, type, spacing, radii, layers) and the light/dark theme values. */
+/* tokens: design tokens — every custom property the components read,
+   plus the light/dark theme palettes. Grouped by subsystem. */
+
+/* ---------- pdf.js form fields ---------- */
 
 :root {
   --xfa-focus-outline: auto;
   --xfa-unfocused-field-background: url("data:image/svg+xml;charset=UTF-8,<svg width='1px' height='1px' xmlns='http://www.w3.org/2000/svg'><rect width='100%' height='100%' style='fill:rgba(0, 54, 255, 0.13);'/></svg>");
 }
 
+/* ---------- root / document ---------- */
+
 :root {
   --csstools-color-scheme--dark: ;
-  --csstools-light-dark-toggle--23: var(--csstools-color-scheme--dark) #0060df;
 
-  --focus-ring-color: var(--csstools-light-dark-toggle--23, #0df);
+  --focus-ring-color: light-dark(#0060df, #0df);
   --focus-ring-outline: 2px solid var(--focus-ring-color);
-
-  --h1-weight: 700;
-
-  --h2-weight: 600;
-
-  --h3-weight: 600;
-
-  --h4-weight: 600;
-
-  --h5-weight: 600;
-
-  --h6-weight: 600;
 
   --keyboard-height: 0px;
 
@@ -47,18 +39,29 @@
   color-scheme: light dark;
 }
 
-@supports (color: light-dark(red, red)) {
-  :root {
-    --focus-ring-color: light-dark(#0060df, #0df);
-  }
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --csstools-color-scheme--dark: initial;
   }
 }
 
+/* static fallbacks when variable fonts are unavailable */
+:root {
+  --h1-weight: 700;
+
+  --h2-weight: 600;
+
+  --h3-weight: 600;
+
+  --h4-weight: 600;
+
+  --h5-weight: 600;
+
+  --h6-weight: 600;
+}
+
+/* variable fonts get finer heading weights (must come after the
+   static fallbacks so it wins when supported) */
 @supports (font-variation-settings: normal) {
   :root {
     --h1-weight: 700;
@@ -75,10 +78,16 @@
   }
 }
 
+/* ================= body tokens ================= */
+
 body {
+  /* ---------- accent ---------- */
+
   --accent-h: 258;
   --accent-l: 66%;
   --accent-s: 88%;
+
+  /* ---------- animation ---------- */
 
   --anim-duration-fast: 140ms;
   --anim-duration-moderate: 300ms;
@@ -89,6 +98,8 @@ body {
   --anim-motion-jumpy: cubic-bezier(0.68, -0.55, 0.27, 1.55);
   --anim-motion-smooth: cubic-bezier(0.45, 0.05, 0.55, 0.95);
   --anim-motion-swing: cubic-bezier(0, 0.55, 0.45, 1);
+
+  /* ---------- backgrounds & borders ---------- */
 
   --background-modifier-active-hover: hsla(var(--interactive-accent-hsl), 0.1);
   --background-modifier-border: var(--color-base-30);
@@ -106,6 +117,16 @@ body {
   --background-primary: var(--color-base-00);
   --background-primary-alt: var(--color-base-10);
   --background-secondary: var(--color-base-20);
+
+  --border-width: 1px;
+
+  --divider-color: var(--background-modifier-border);
+  --divider-color-hover: var(--interactive-accent);
+  --divider-vertical-height: calc(100% - var(--header-height));
+  --divider-width: 1px;
+  --divider-width-hover: 3px;
+
+  /* ---------- bases (database views) ---------- */
 
   --bases-cards-background: var(--background-primary);
   --bases-cards-border-width: var(--border-width);
@@ -162,11 +183,15 @@ body {
   --bases-toolbar-badge-display: none;
   --bases-toolbar-label-display: block;
 
+  /* ---------- blockquote ---------- */
+
   --blockquote-background-color: transparent;
   --blockquote-border-color: var(--interactive-accent);
   --blockquote-border-thickness: 2px;
   --blockquote-color: inherit;
   --blockquote-font-style: normal;
+
+  /* ---------- blur / raised surfaces ---------- */
 
   --blur-background: color-mix(in srgb, var(--background-primary) var(--blur-opacity-s), transparent) linear-gradient(var(--background-primary), color-mix(in srgb, var(--background-primary) var(--blur-opacity-s), transparent));
   --blur-brightness: 1.15;
@@ -184,10 +209,12 @@ body {
   --bold-modifier: 200;
   --bold-weight: calc(var(--font-weight) + var(--bold-modifier));
 
-  --border-width: 1px;
+  /* ---------- buttons ---------- */
 
   --button-corner-shape: var(--corner-shape);
   --button-radius: var(--input-radius);
+
+  /* ---------- callouts ---------- */
 
   --callout-blend-mode: var(--highlight-mix-blend-mode);
   --callout-border-opacity: 0.25;
@@ -215,6 +242,8 @@ body {
   --callout-todo: var(--color-blue-rgb);
   --callout-warning: var(--color-orange-rgb);
 
+  /* ---------- canvas ---------- */
+
   --canvas-background: var(--background-primary);
   --canvas-card-label-color: var(--text-faint);
   --canvas-color: 192, 192, 192;
@@ -228,6 +257,8 @@ body {
   --canvas-controls-icon-stroke: var(--icon-s-stroke-width);
   --canvas-controls-radius: var(--radius-s);
   --canvas-dot-pattern: var(--color-base-30);
+
+  /* ---------- caret & checkbox ---------- */
 
   --caret-color: var(--text-normal);
 
@@ -244,6 +275,8 @@ body {
   --checklist-done-decoration: line-through;
 
   --clickable-icon-radius: var(--radius-s);
+
+  /* ---------- code ---------- */
 
   --code-background: var(--background-primary-alt);
   --code-border-color: var(--background-modifier-border);
@@ -264,6 +297,8 @@ body {
   --code-value: var(--color-purple);
   --code-white-space: pre-wrap;
 
+  /* ---------- collapse / cursor / dialog ---------- */
+
   --collapse-icon-color: var(--text-faint);
   --collapse-icon-color-collapsed: var(--text-accent);
 
@@ -276,14 +311,10 @@ body {
   --dialog-max-width: 80vw;
   --dialog-width: 560px;
 
-  --divider-color: var(--background-modifier-border);
-  --divider-color-hover: var(--interactive-accent);
-  --divider-vertical-height: calc(100% - var(--header-height));
-  --divider-width: 1px;
-  --divider-width-hover: 3px;
-
   --drag-ghost-background: rgba(0, 0, 0, 0.85);
   --drag-ghost-text-color: #fff;
+
+  /* ---------- dropdowns ---------- */
 
   --dropdown-background-blend-mode: hard-light;
   --dropdown-background-position: var(--inset-end) var(--dropdown-icon-inset) top 50%, 0 0;
@@ -293,6 +324,8 @@ body {
   --dropdown-padding: 0 var(--dropdown-padding-end) 0 var(--dropdown-padding-start);
   --dropdown-padding-end: 1.9em;
   --dropdown-padding-start: 0.8em;
+
+  /* ---------- embeds ---------- */
 
   --embed-background: inherit;
   --embed-block-shadow-hover: 0 0 0 1px var(--background-modifier-border), inset 0 0 0 1px var(--background-modifier-border);
@@ -304,6 +337,8 @@ body {
   --embed-font-style: inherit;
   --embed-max-height: 4000px;
   --embed-padding: 0 0 0 var(--size-4-6);
+
+  /* ---------- files & margins ---------- */
 
   --file-folding-offset: 24px;
   --file-header-background: var(--background-primary);
@@ -318,8 +353,12 @@ body {
   --file-margins-x: var(--size-4-8);
   --file-margins-y: var(--size-4-8);
 
+  /* ---------- flair ---------- */
+
   --flair-background: var(--interactive-normal);
   --flair-color: var(--text-normal);
+
+  /* ---------- fonts ---------- */
 
   --font-black: 900;
   --font-bold: 700;
@@ -354,6 +393,8 @@ body {
   --font-ui-smaller: 12px;
   --font-weight: var(--font-normal);
 
+  /* ---------- footnotes ---------- */
+
   --footnote-divider-color: var(--metadata-divider-color);
   --footnote-divider-color-active: var(--metadata-divider-color-focus);
   --footnote-divider-width: var(--border-width);
@@ -369,6 +410,8 @@ body {
   --footnote-radius: var(--radius-s);
   --footnote-size: var(--font-smaller);
 
+  /* ---------- graph view ---------- */
+
   --graph-controls-width: 240px;
   --graph-line: var(--color-base-35, var(--background-modifier-border-focus));
   --graph-node: var(--text-muted);
@@ -377,6 +420,8 @@ body {
   --graph-node-tag: var(--color-green);
   --graph-node-unresolved: var(--text-faint);
   --graph-text: var(--text-normal);
+
+  /* ---------- headings ---------- */
 
   --h1-color: inherit;
   --h1-font: inherit;
@@ -434,6 +479,8 @@ body {
   --hr-color: var(--background-modifier-border);
   --hr-thickness: 2px;
 
+  /* ---------- icons ---------- */
+
   --icon-color: var(--text-muted);
   --icon-color-active: var(--text-accent);
   --icon-color-focused: var(--text-normal);
@@ -454,6 +501,8 @@ body {
   --icon-xs: 14px;
   --icon-xs-stroke-width: 2px;
 
+  /* ---------- indentation ---------- */
+
   --indent-size: 4;
   --indent-unit: 0.5625em;
 
@@ -465,6 +514,8 @@ body {
   --indentation-guide-width: var(--border-width);
   --indentation-guide-width-active: var(--border-width);
 
+  /* ---------- inline title (mirrors h1) ---------- */
+
   --inline-title-color: var(--h1-color);
   --inline-title-font: var(--h1-font);
   --inline-title-line-height: var(--h1-line-height);
@@ -473,6 +524,8 @@ body {
   --inline-title-style: var(--h1-style);
   --inline-title-variant: var(--h1-variant);
   --inline-title-weight: var(--h1-weight);
+
+  /* ---------- inputs ---------- */
 
   --input-border-width: var(--border-width);
   --input-border-width-focus: 2px;
@@ -485,6 +538,8 @@ body {
   --input-placeholder-color: var(--text-faint);
   --input-radius: 5px;
 
+  /* ---------- interactive ---------- */
+
   --interactive-accent: var(--color-accent-1);
   --interactive-accent-hover: var(--color-accent-2);
   --interactive-accent-hsl: var(--color-accent-hsl);
@@ -493,6 +548,8 @@ body {
 
   --italic-color: inherit;
   --italic-weight: inherit;
+
+  /* ---------- z layers ---------- */
 
   --layer-cover: 5;
   --layer-dragged-item: 80;
@@ -507,6 +564,8 @@ body {
 
   --line-height-normal: 1.5;
   --line-height-tight: 1.3;
+
+  /* ---------- links ---------- */
 
   --link-color: var(--text-accent);
   --link-color-hover: var(--text-accent-hover);
@@ -525,6 +584,8 @@ body {
   --link-unresolved-opacity: 0.7;
   --link-weight: var(--font-weight);
 
+  /* ---------- lists ---------- */
+
   --list-bullet-border: none;
   --list-bullet-end-padding: 1.3rem;
   --list-bullet-radius: 50%;
@@ -539,6 +600,8 @@ body {
   --list-numbered-style: decimal;
   --list-spacing: 0.075em;
 
+  /* ---------- menus ---------- */
+
   --menu-backdrop-filter: none;
   --menu-background: var(--background-secondary);
   --menu-border-color: var(--background-modifier-border-hover);
@@ -548,6 +611,8 @@ body {
   --menu-radius: var(--radius-m);
   --menu-scroll-mask: linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.1) 48px);
   --menu-shadow: var(--shadow-s);
+
+  /* ---------- metadata properties ---------- */
 
   --metadata-background: transparent;
   --metadata-border-color: var(--background-modifier-border);
@@ -595,6 +660,8 @@ body {
   --metadata-sidebar-input-font-size: var(--font-ui-small);
   --metadata-sidebar-label-font-size: var(--font-ui-small);
 
+  /* ---------- modals ---------- */
+
   --modal-background: var(--background-primary);
   --modal-border-color: var(--color-base-40, var(--background-modifier-border-focus));
   --modal-border-width: var(--border-width);
@@ -607,6 +674,8 @@ body {
   --modal-radius: var(--radius-l);
   --modal-shadow: none;
   --modal-width: 90vw;
+
+  /* ---------- nav (file explorer etc.) ---------- */
 
   --nav-collapse-icon-color: var(--collapse-icon-color);
   --nav-collapse-icon-color-collapsed: var(--text-faint);
@@ -644,8 +713,12 @@ body {
   --nav-tag-radius: var(--radius-s);
   --nav-tag-weight: var(--font-semibold);
 
+  /* ---------- paragraph spacing ---------- */
+
   --p-spacing: 1rem;
   --p-spacing-empty: 0rem;
+
+  /* ---------- pdf ---------- */
 
   --pdf-background: var(--background-primary);
   --pdf-page-background: var(--background-primary);
@@ -653,6 +726,8 @@ body {
   --pdf-sidebar-background: var(--background-primary);
   --pdf-spread-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
   --pdf-thumbnail-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  /* ---------- pills (multi-select chips) ---------- */
 
   --pill-background: transparent;
   --pill-background-hover: transparent;
@@ -672,12 +747,16 @@ body {
   --pill-radius: 2em;
   --pill-weight: inherit;
 
+  /* ---------- popovers ---------- */
+
   --popover-font-size: var(--font-text-size);
   --popover-height: 400px;
   --popover-max-height: 95vh;
   --popover-pdf-height: 400px;
   --popover-pdf-width: 450px;
   --popover-width: 450px;
+
+  /* ---------- prompts ---------- */
 
   --prompt-backdrop-filter: none;
   --prompt-background: var(--background-primary);
@@ -688,10 +767,14 @@ body {
   --prompt-max-width: 80vw;
   --prompt-width: 700px;
 
+  /* ---------- radii ---------- */
+
   --radius-l: 12px;
   --radius-m: 8px;
   --radius-s: 4px;
   --radius-xl: 16px;
+
+  /* ---------- raised surfaces ---------- */
 
   --raised-background: var(--blur-background);
   --raised-blur: var(--blur-s);
@@ -702,10 +785,14 @@ body {
   --raised-mask-display: block;
   --raised-shadow: var(--shadow-xs);
 
+  /* ---------- ribbon ---------- */
+
   --ribbon-background: var(--background-secondary);
   --ribbon-background-collapsed: var(--background-primary);
   --ribbon-padding: var(--size-4-2) var(--size-4-1) var(--size-4-3);
   --ribbon-width: 44px;
+
+  /* ---------- scrollbars ---------- */
 
   --scrollbar-active-thumb-bg: rgba(var(--mono-rgb-100), 0.2);
   --scrollbar-bg: rgba(var(--mono-rgb-100), 0.05);
@@ -715,11 +802,15 @@ body {
   --scrollbar-thumb-bg: rgba(var(--mono-rgb-100), 0.1);
   --scrollbar-width: 12px;
 
+  /* ---------- search ---------- */
+
   --search-clear-button-color: var(--text-muted);
   --search-clear-button-size: 13px;
   --search-icon-color: var(--text-muted);
   --search-icon-size: 18px;
   --search-result-background: var(--background-primary);
+
+  /* ---------- settings ---------- */
 
   --setting-group-heading-color: var(--text-normal);
   --setting-group-heading-size: var(--font-ui-medium);
@@ -730,12 +821,16 @@ body {
   --setting-items-padding: var(--size-4-5);
   --setting-items-radius: var(--radius-l);
 
+  /* ---------- sidebars ---------- */
+
   --sidebar-left-toggle-inner-width: 8.33%;
   --sidebar-left-toggle-inner-width-open: 24%;
   --sidebar-markdown-font-size: calc(var(--font-text-size) * 0.9);
   --sidebar-right-toggle-inner-width: 8.33%;
   --sidebar-right-toggle-inner-width-open: 24%;
   --sidebar-tab-text-display: none;
+
+  /* ---------- spacing scale ---------- */
 
   --size-2-1: 2px;
   --size-2-2: 4px;
@@ -753,6 +848,8 @@ body {
   --size-4-8: 32px;
   --size-4-9: 36px;
 
+  /* ---------- sliders ---------- */
+
   --slider-s-thumb-position: -5px;
   --slider-s-thumb-size: 15px;
   --slider-thumb-border-color: var(--background-modifier-border-hover);
@@ -764,6 +861,8 @@ body {
   --slider-track-background: var(--background-modifier-border);
   --slider-track-height: 3px;
 
+  /* ---------- status bar ---------- */
+
   --status-bar-background: var(--background-secondary);
   --status-bar-border-color: var(--divider-color);
   --status-bar-border-width: var(--border-width) 0 0 var(--border-width);
@@ -772,13 +871,19 @@ body {
   --status-bar-radius: var(--radius-m) 0 0 0;
   --status-bar-text-color: var(--text-muted);
 
+  /* ---------- suggestions ---------- */
+
   --suggestion-backdrop-filter: none;
   --suggestion-background: var(--background-primary);
+
+  /* ---------- swatches ---------- */
 
   --swatch-height: 22px;
   --swatch-radius: 14px;
   --swatch-shadow: inset 0 0 0 1px rgba(var(--mono-rgb-100), 0.15);
   --swatch-width: 22px;
+
+  /* ---------- sync avatars ---------- */
 
   --sync-avatar-color-1: var(--color-red);
   --sync-avatar-color-2: var(--color-orange);
@@ -789,6 +894,8 @@ body {
   --sync-avatar-color-7: var(--color-purple);
   --sync-avatar-color-8: var(--color-pink);
   --sync-avatar-color-current-user: transparent;
+
+  /* ---------- tabs ---------- */
 
   --tab-background-active: var(--background-primary);
   --tab-container-background: var(--background-secondary);
@@ -822,6 +929,8 @@ body {
   --tab-text-color-focused-active-current: var(--text-normal);
   --tab-text-color-focused-highlighted: var(--text-accent);
   --tab-width: 200px;
+
+  /* ---------- tables ---------- */
 
   --table-add-button-background: transparent;
   --table-add-button-border-color: var(--background-modifier-border);
@@ -862,6 +971,8 @@ body {
   --table-text-size: var(--font-text-size);
   --table-white-space: break-spaces;
 
+  /* ---------- tags ---------- */
+
   --tag-background: hsla(var(--interactive-accent-hsl), 0.1);
   --tag-background-hover: hsla(var(--interactive-accent-hsl), 0.2);
   --tag-border-color: hsla(var(--interactive-accent-hsl), 0.15);
@@ -878,6 +989,8 @@ body {
   --tag-size: var(--font-smaller);
   --tag-weight: inherit;
 
+  /* ---------- text ---------- */
+
   --text-accent: var(--color-accent);
   --text-accent-hover: var(--color-accent-2);
   --text-error: var(--color-red);
@@ -892,6 +1005,8 @@ body {
   --text-success: var(--color-green);
   --text-warning: var(--color-orange);
 
+  /* ---------- titlebar ---------- */
+
   --titlebar-background: var(--background-secondary);
   --titlebar-background-focused: var(--background-secondary-alt);
   --titlebar-border-color: var(--background-modifier-border);
@@ -900,6 +1015,8 @@ body {
   --titlebar-text-color: var(--text-muted);
   --titlebar-text-color-focused: var(--text-normal);
   --titlebar-text-weight: var(--font-bold);
+
+  /* ---------- toggles ---------- */
 
   --toggle-border-width: 2px;
   --toggle-radius: 18px;
@@ -912,6 +1029,8 @@ body {
   --toggle-thumb-radius: 18px;
   --toggle-thumb-width: 18px;
   --toggle-width: 40px;
+
+  /* ---------- touch targets ---------- */
 
   --touch-radius-l: var(--touch-size-l);
   --touch-radius-m: var(--touch-size-m);
@@ -928,6 +1047,8 @@ body {
 
   --traffic-lights-offset-x: var(--header-height);
   --traffic-lights-offset-y: var(--header-height);
+
+  /* ---------- vault profile ---------- */
 
   --vault-profile-actions-display: flex;
   --vault-profile-color: var(--text-normal);
@@ -955,11 +1076,15 @@ body {
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
+/* ---------- shared theme bits ---------- */
+
 .theme-light,
 .theme-dark {
   --dropdown-background: var(--interactive-normal);
   --dropdown-background-hover: var(--interactive-hover);
 }
+
+/* ---------- light theme palette ---------- */
 
 .theme-light {
   --background-modifier-box-shadow: rgba(0, 0, 0, 0.1);
@@ -1014,6 +1139,8 @@ body {
 
   color-scheme: light;
 }
+
+/* ---------- dark theme palette ---------- */
 
 .theme-dark {
   --background-modifier-box-shadow: rgba(0, 0, 0, 0.3);
@@ -1084,10 +1211,13 @@ body {
   color-scheme: dark;
 }
 
+/* ---------- misc token rules ---------- */
+
 body:not(.show-ribbon) {
   --ribbon-width: 0px;
 }
 
+/* writing direction defaults; RTL is flipped by .mod-rtl elsewhere */
 body,
 [dir='ltr'] {
   --direction: 1;

@@ -1,6 +1,6 @@
 /* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* canvas-card */
+/* card menu button and node label/embed adjustments */
 .canvas-card-menu .canvas-card-menu-button {
   --icon-size: var(--icon-xl);
   --icon-stroke: var(--icon-xl-stroke-width);
@@ -19,7 +19,6 @@
   }
 }
 
-/* canvas-node */
 .canvas-node.is-selected .canvas-node-label,
 .canvas-node.is-focused .canvas-node-label {
   color: var(--text-muted);

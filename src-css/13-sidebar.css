@@ -1,6 +1,7 @@
-/* sidebar: Side panes: file explorer, search results, backlinks, outline, tags, bookmarks. */
+/* sidebar: side panes — file explorer, search, backlinks, outline, tags */
 
-/* pane-empty */
+/* ---------- empty states ---------- */
+
 .pane-empty {
   margin: var(--size-4-2) auto;
   padding: var(--size-4-6) var(--size-4-4);
@@ -13,13 +14,15 @@
   margin-top: var(--size-4-4);
 }
 
-/* mod-rtl */
+/* search decorations mirror horizontally in RTL */
 .mod-rtl .search-input-container:before,
 .mod-rtl .checkbox-container {
   transform: scale(-1, 1);
 }
 
-/* search-input */
+/* ---------- search input ---------- */
+
+/* the clear button only exists once the field has text */
 .search-input-container input:placeholder-shown ~ .search-input-clear-button {
   display: none;
 }
@@ -28,12 +31,12 @@
   padding-inline-end: 28px;
 }
 
-/* global-search */
+/* global search reserves extra room for its extra buttons */
 .global-search-input-container.search-input-container input:not(:placeholder-shown) {
   padding-inline-end: 56px;
 }
 
-/* search-input */
+/* decorator (e.g. match count) shifts right of the clear button */
 .search-input-container input:not(:placeholder-shown) ~ .input-right-decorator {
   inset-inline-end: calc(var(--input-icon-inset) + 28px);
 }
@@ -42,7 +45,9 @@
   inset-inline-end: var(--size-4-8);
 }
 
-/* tree-item */
+/* ---------- tree items (nav / file explorer) ---------- */
+
+/* zero-width content keeps rows aligned before text arrives */
 .tree-item-self:before {
   content: '\200B';
 }
@@ -65,7 +70,9 @@
   text-overflow: ellipsis;
 }
 
-/* backlink-pane */
+/* ---------- backlink / outgoing-link panes ---------- */
+
+/* top-level rows read as headings */
 .backlink-pane > .tree-item-self .tree-item-inner,
 .outgoing-link-pane > .tree-item-self .tree-item-inner {
   font-weight: var(--nav-heading-weight);
@@ -83,12 +90,14 @@
   }
 }
 
+/* these panes never show fold arrows on top-level rows */
 .backlink-pane > .tree-item-self .collapse-icon,
 .outgoing-link-pane > .tree-item-self .collapse-icon {
   display: none;
 }
 
-/* embedded-backlinks */
+/* ---------- embedded backlinks ---------- */
+
 .embedded-backlinks .backlink-pane > .tree-item-self .tree-item-inner {
   margin-inline-end: var(--size-2-3);
 }
@@ -97,6 +106,7 @@
   font-size: max(var(--font-ui-small),var(--font-smallest));
 }
 
+/* hover actions float at the row's inline end */
 .embedded-backlinks .nav-buttons-container {
   position: absolute;
   inset-inline-end: 0;
@@ -104,7 +114,8 @@
   z-index: 1;
 }
 
-/* workspace-leaf */
+/* ---------- bases leaf ---------- */
+
 .workspace-leaf-content[data-type="bases"] {
   --bases-table-container-border-width: 0;
   --bases-table-container-border-radius: 0;
@@ -114,23 +125,24 @@
   --bases-header-padding-end: var(--size-4-2);
 }
 
-/* nav-files */
+/* ---------- nav files ---------- */
+
+/* unsupported files hidden unless the filter is on */
 .nav-files-container:not(.show-unsupported) .is-unsupported {
   display: none;
 }
 
-/* nav-file */
 .nav-file-title-content:not([contenteditable="true"]),
 .nav-folder-title-content:not([contenteditable="true"]) {
   text-overflow: ellipsis;
 }
 
-/* nav-folder */
+/* drag-over highlight on the folder arrow */
 .nav-folder.is-being-dragged-over > .nav-folder-title .collapse-icon {
   color: var(--nav-item-color-highlighted);
 }
 
-/* file-tree */
+/* pending-delete rows hide their flair unless selected */
 .file-tree .mod-to-delete .tree-item-flair {
   display: none;
 }
@@ -139,12 +151,12 @@
   display: block;
 }
 
-/* workspace-leaf */
+/* file-properties leaf hides the properties heading (it is the pane) */
 .workspace-leaf-content[data-type=file-properties] .metadata-properties-heading {
   display: none;
 }
 
-/* tree-item */
+/* custom nav items: hidden ones fade, inner row is a flex line */
 .tree-item.mod-custom-nav.hidden .tree-item-self {
   color: var(--text-faint);
 }
@@ -155,11 +167,13 @@
   position: relative;
 }
 
-/* search-input */
+/* ---------- search input chrome ---------- */
+
 .search-input-container {
   position: relative;
 }
 
+/* magnifier is a masked SVG pinned to the inline start */
 .search-input-container:before {
   top: calc((var(--input-height) - var(--search-icon-size)) / 2);
   inset-inline-start: var(--size-4-2);
@@ -173,6 +187,7 @@
   -webkit-mask-repeat: no-repeat;
 }
 
+/* clear button glyph is an inline masked SVG */
 .search-input-clear-button:after {
   display: block;
   height: var(--search-clear-button-size);
@@ -183,7 +198,9 @@
   -webkit-mask-repeat: no-repeat;
 }
 
-/* search-result */
+/* ---------- search results ---------- */
+
+/* loading state reuses the top progress-bar sweep */
 .search-result-container:before {
   position: absolute;
   top: 0;
@@ -228,13 +245,13 @@
   word-break: break-all;
 }
 
-/* search-results */
 .search-results-result-count {
   font-size: var(--font-ui-smaller);
   font-variant-numeric: tabular-nums;
 }
 
-/* recent-changes */
+/* ---------- recent changes pane ---------- */
+
 .recent-changes-container .nav-folder-title:hover {
   font-weight: var(--nav-heading-weight) !important;
 }
@@ -253,17 +270,20 @@
   }
 }
 
-/* tree-item */
+/* ---------- tag pane ---------- */
+
+/* nested tags hide their parent label */
 .tree-item-children .tag-pane-tag .tag-pane-tag-parent {
   display: none;
 }
 
-/* workspace-leaf */
+/* ---------- misc leaves ---------- */
+
 .workspace-leaf-content[data-type="browser"] .view-header {
   gap: 0;
 }
 
-/* workspace-drawer */
+/* the drawer's root folder row is redundant — hide its title */
 .workspace-drawer .nav-folder.mod-root > .nav-folder-title {
   display: none;
 }

@@ -1,12 +1,11 @@
 /* editor (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* cm-s */
+/* inline code border, code-block flair badge, hidden metadata containers */
 .cm-s-basalt .cm-inline-code {
   border-color: var(--code-border-color);
   border-style: solid;
 }
 
-/* markdown-source */
 .markdown-source-view.mod-cm6 .code-block-flair {
   position: absolute;
   right: 6px;
@@ -30,7 +29,6 @@
   max-width: 100%;
 }
 
-/* cm-s */
 .cm-s-basalt img.hmd-emoji {
   height: 1.2em;
   vertical-align: middle;

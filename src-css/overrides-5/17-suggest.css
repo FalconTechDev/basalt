@@ -1,6 +1,6 @@
 /* suggest (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* suggestion-container */
+/* suggestion container is a column flex surface sized for the notice layer */
 .suggestion-container {
   align-self: stretch;
   overflow: hidden;

@@ -1,12 +1,11 @@
 /* tabs (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* clickable-icon */
+/* drawer tab rows: large icons, faint chevrons */
 .clickable-icon:hover .more-options-icon {
   background-color: var(--icon-color-hover);
   opacity: var(--icon-opacity-hover);
 }
 
-/* workspace-drawer */
 .workspace-drawer-tab-options .workspace-tab-header-inner-icon {
   --icon-size: var(--icon-l);
   --icon-stroke: var(--icon-l-stroke-width);

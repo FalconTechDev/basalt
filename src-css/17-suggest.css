@@ -1,12 +1,15 @@
-/* suggest: Suggestion popups, command palette and quick switcher. */
+/* suggest: autocomplete popups, command palette, quick switcher */
 
-/* suggestion-item */
+/* ---------- secret-key suggestions ---------- */
+
+/* secret rows centre the checkbox and tighten spacing */
 .suggestion-item.mod-complex.suggestion-secret-key {
   --checkbox-size: 18px;
   align-items: center;
   gap: var(--size-4-1);
 }
 
+/* selected secret rows get an accent wash */
 .suggestion-item.mod-complex.suggestion-secret-key.is-selected {
   background-color: hsla(var(--color-accent-hsl), 0.15);
 }
@@ -24,18 +27,19 @@
   margin: 0 var(--size-4-1);
 }
 
-/* combobox */
+/* a combobox that lost input focus drops the selection highlight */
 .combobox:not(.has-input-focus) .suggestion-item.is-selected {
   background-color: transparent;
 }
 
-/* cm-tooltip */
+/* inside CodeMirror autocomplete popups the flair hugs the icon edge */
 .cm-tooltip.cm-tooltip-autocomplete > ul > li[role="option"].mod-complex .suggestion-icon .suggestion-flair {
   margin: 0;
   margin-inline-end: var(--size-4-2);
 }
 
-/* suggestion-item */
+/* ---------- suggestion rows ---------- */
+
 .suggestion-item,
 .suggestion-empty {
   margin-bottom: 1px;
@@ -48,12 +52,14 @@
   white-space: nowrap;
 }
 
+/* the checked glyph trails the label in toggle rows */
 .suggestion-item.mod-toggle .mod-checked {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
   order: 2;
 }
 
+/* complex rows: title wraps, key prefix gets a colon, match is bold */
 .suggestion-item.mod-complex .suggestion-title {
   overflow-wrap: break-word;
 }
@@ -66,6 +72,7 @@
   font-weight: bold;
 }
 
+/* icon and aux columns never shrink; they centre themselves */
 .suggestion-item.mod-complex .suggestion-icon,
 .suggestion-item.mod-complex .suggestion-aux {
   display: flex;
@@ -74,6 +81,7 @@
   flex-shrink: 0;
 }
 
+/* spacing between trailing hotkey/flair badges */
 .suggestion-item.mod-complex .suggestion-hotkey:not(:last-child) {
   margin-inline-start: 10px;
 }
@@ -96,12 +104,11 @@
   margin-inline-end: var(--size-4-1);
 }
 
-/* suggestion-highlight */
+/* search-result suggestions render slightly smaller */
 .suggestion-highlight {
   font-weight: bold;
 }
 
-/* search-suggest */
 .search-suggest-item.suggestion-item {
   font-size: var(--font-ui-small);
 }

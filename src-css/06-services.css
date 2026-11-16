@@ -1,12 +1,14 @@
-/* services: Account-side screens: sync, publish, web viewer, file recovery, release notes, vault chooser. */
+/* services: account-side screens — sync, publish, web viewer, recovery */
 
-/* attachments-gallery */
+/* ---------- attachments gallery ---------- */
+
 .attachments-gallery {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--size-4-1);
 }
 
+/* each tile is a square media preview with an inset ring and bottom scrim */
 .attachments-gallery .download-attachment-item {
   --checkbox-marker-color: var(--text-on-accent);
   --checkbox-size: 1.15rem;
@@ -41,6 +43,7 @@
   box-shadow: inset 0 0 0 1px rgba(var(--mono-rgb-100), 0.3);
 }
 
+/* selection checkbox floats bottom-inline-end above the scrim */
 .attachments-gallery .download-attachment-item input[type=checkbox] {
   position: absolute;
   bottom: var(--size-4-2);
@@ -78,7 +81,8 @@
   display: none;
 }
 
-/* feedback-banner */
+/* ---------- feedback banner ---------- */
+
 .feedback-banner-container {
   display: none;
   padding-top: var(--size-4-4);
@@ -109,6 +113,7 @@
   background-color: var(--setting-items-background);
 }
 
+/* dismiss button straddles the card's top-inline-end corner */
 .feedback-banner-dismiss-button {
   position: absolute;
   top: -8px;
@@ -119,17 +124,17 @@
   color: var(--interactive-accent);
 }
 
-/* is-frameless */
+/* ---------- titlebar & loader ---------- */
+
 body.is-frameless.is-hidden-frameless.starter .titlebar {
   height: var(--titlebar-height);
 }
 
-/* is-hidden */
 .is-hidden-frameless:not(.starter) .titlebar {
   -webkit-app-region: no-drag;
 }
 
-/* loader-cube */
+/* 3x3 cube-grid spinner, staggered per cell */
 .loader-cube {
   width: 40px;
   height: 40px;
@@ -190,7 +195,8 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   animation-delay: 0.2s;
 }
 
-/* release-notes */
+/* ---------- release notes ---------- */
+
 .release-notes-view {
   padding: var(--file-margins);
 }
@@ -199,7 +205,8 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   overflow: visible;
 }
 
-/* spellchecker-dictionary */
+/* ---------- spellchecker dictionary ---------- */
+
 .spellchecker-dictionary-container {
   overflow: auto;
   max-height: 60vh;
@@ -226,13 +233,15 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   }
 }
 
-/* changelog-item */
+/* ---------- changelog items ---------- */
+
 .changelog-item {
   margin: var(--size-4-2) 0;
   font-size: var(--font-ui-medium);
   line-height: var(--line-height);
 }
 
+/* the label pill is generated from data-label */
 .changelog-item:before {
   display: inline-block;
   width: 50px;
@@ -260,12 +269,12 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   background-color: var(--interactive-accent);
 }
 
-/* diff-view */
+/* ---------- diff view ---------- */
+
 .diff-view {
   user-select: text;
 }
 
-/* diff-line */
 .diff-line {
   padding: 0 var(--size-4-2);
   white-space: pre-wrap;
@@ -280,7 +289,6 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   background-color: rgba(var(--background-modifier-success-rgb), 0.2);
 }
 
-/* diff-collapsed */
 .diff-collapsed {
   margin: var(--size-4-2) 0;
   text-align: center;
@@ -289,13 +297,15 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   cursor: pointer;
 }
 
-/* file-recovery */
+/* ---------- file recovery ---------- */
+
 .file-recovery-text[data-ext="md"] {
   font-family: var(--font-text);
   font-size: var(--font-text-size);
 }
 
-/* publish-section */
+/* ---------- publish ---------- */
+
 .publish-section {
   margin-bottom: var(--size-4-1);
 }
@@ -306,19 +316,18 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   cursor: var(--cursor);
 }
 
-/* publish-changes */
 .publish-changes-current-site-name {
   margin-inline-start: var(--size-2-3);
   text-decoration: underline;
 }
 
-/* publish-upload */
 .publish-upload-item-title {
   word-break: break-word;
   font-size: var(--nav-item-size);
   line-height: var(--line-height-tight);
 }
 
+/* progress bar fills left-to-right; green ok, red failed, full = done */
 .publish-upload-item:before {
   position: absolute;
   top: 0;
@@ -340,12 +349,8 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   width: 100%;
 }
 
-/* slug-input */
-.slug-input {
-  text-transform: lowercase;
-}
+/* ---------- sync ---------- */
 
-/* sync-status */
 .sync-status-icon.mod-spin svg {
   animation-name: spin;
   animation-duration: 5000ms;
@@ -359,7 +364,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   }
 }
 
-/* sync-history */
+/* active sync-history rows invert their avatar colours */
 .sync-history-list-item-header.is-active {
   --nav-collapse-icon-color: var(--text-on-accent);
 }
@@ -405,6 +410,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   }
 }
 
+/* the version textarea is chromeless */
 .sync-history-content-container textarea:hover,
 .sync-history-content-container textarea:active,
 .sync-history-content-container textarea:focus {
@@ -419,7 +425,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   }
 }
 
-/* modal */
+/* sync log modal: plain wrapped lines, errors in red */
 .modal.mod-sync-log .sync-log-container .list-item {
   gap: 0;
   margin: 0;
@@ -431,7 +437,8 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   color: var(--text-error);
 }
 
-/* sync-exclude */
+/* ---------- sync exclude ---------- */
+
 .sync-exclude-folder {
   display: flex;
   margin: var(--size-4-3) 0;
@@ -446,17 +453,19 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   visibility: visible;
 }
 
-/* sync-vault */
+/* ---------- sync vault shares ---------- */
+
 .sync-vault-shares-list-item-container {
   overflow: auto;
 }
 
-/* webviewer-address */
+/* ---------- web viewer ---------- */
+
 .webviewer-address-container::after {
   background: transparent !important;
 }
 
-/* webviewer-addressbar */
+/* address-bar suggestions: title truncates, url dims below it */
 .webviewer-addressbar-suggestion.suggestion-item .suggestion-icon:last-child:empty {
   display: none;
 }
@@ -486,7 +495,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   margin-left: 0;
 }
 
-/* webviewer-content */
+/* reader mode content scrolls; readable-width centres the sizer */
 .webviewer-content .reader-mode-content {
   overflow-y: auto;
 }
@@ -497,29 +506,22 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   margin-right: auto;
 }
 
-/* webviewer-history */
 .webviewer-history-view-item {
   overflow: hidden;
   text-wrap: nowrap;
 }
 
-/* webviewer-adblock */
 textarea.webviewer-adblock-lists {
   flex-grow: 1;
 }
 
-/* starter */
+/* ---------- starter screen ---------- */
+
 .starter {
   padding-top: 0 !important;
   -webkit-user-select: none;
 }
 
-/* open-vault */
-.open-vault-options-container::-webkit-scrollbar {
-  display: none;
-}
-
-/* starter */
 .starter .notice {
   top: 38px;
 }

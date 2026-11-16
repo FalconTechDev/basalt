@@ -1,12 +1,13 @@
-/* workspace: The window frame: the split tree of leaves, dock sides, resize handles, drag feedback, popovers. */
+/* workspace: window frame — split tree of leaves, docks, resize, drag, popovers */
 
-/* is-grabbing */
+/* ---------- global drag & app frame ---------- */
+
+/* while the app is grabbing, embedded frames must not eat events */
 body.is-grabbing iframe:not(.is-controlled),
 body.is-grabbing webview {
   pointer-events: none;
 }
 
-/* app-container */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -18,12 +19,13 @@ body.is-grabbing webview {
   transition: none !important;
 }
 
-/* workspace-leaf */
+/* read mode puts the source view beneath the preview */
 .workspace-leaf-content.is-read-mode .markdown-source-view {
   z-index: 0;
 }
 
-/* drag-ghost */
+/* ---------- drag ghosts ---------- */
+
 .drag-ghost {
   position: fixed;
   z-index: var(--layer-dragged-item);
@@ -48,7 +50,6 @@ body.is-grabbing webview {
   margin-right: var(--size-2-3);
 }
 
-/* drag-reorder */
 .drag-reorder-ghost {
   position: fixed;
   z-index: var(--layer-dragged-item);
@@ -59,7 +60,6 @@ body.is-grabbing webview {
   corner-shape: var(--corner-shape);
 }
 
-/* drag-ghost */
 .drag-ghost-self {
   display: flex;
 }
@@ -89,6 +89,7 @@ body.is-grabbing webview {
   opacity: 0.7;
 }
 
+/* hidden ghost keeps layout space but paints an accent placeholder */
 .drag-ghost-hidden {
   visibility: hidden;
   position: relative;
@@ -106,17 +107,18 @@ body.is-grabbing webview {
   background-color: hsla(var(--interactive-accent-hsl), 0.3);
 }
 
-/* mod-macos */
+/* macOS pop-out windows reserve titlebar space on the left */
 .mod-macos.is-popout-window {
   --frame-left-space: 80px;
 }
 
-/* is-frameless */
+/* frameless windows disable window-drag on siblings of the container */
 body.is-frameless > .app-container ~ * {
   -webkit-app-region: no-drag;
 }
 
-/* workspace-split */
+/* ---------- splits ---------- */
+
 .workspace-split.mod-root .view-content {
   background-color: var(--background-primary);
 }
@@ -131,20 +133,20 @@ body.is-frameless > .app-container ~ * {
   height: 100%;
 }
 
-/* hover-popover */
+/* hover popovers hide the inline title (the popover is the title) */
 .hover-popover .inline-title,
 .inline-embed .inline-title {
   display: none;
 }
 
-/* workspace-leaf */
+/* read mode preview fills the leaf edge-to-edge */
 .workspace-leaf-content.is-read-mode .markdown-preview-view {
   inset-inline-start: 0;
   width: 100%;
   background-color: var(--background-primary);
 }
 
-/* mod-rtl */
+/* RTL flips direction on all floating UI layers */
 .mod-rtl .workspace-sidedock-vault-profile,
 .mod-rtl .modal,
 .mod-rtl .notice,
@@ -163,7 +165,8 @@ body.is-frameless > .app-container ~ * {
   direction: rtl;
 }
 
-/* workspace */
+/* ---------- workspace root ---------- */
+
 .workspace {
   display: flex;
   flex: 1 0 0;
@@ -172,12 +175,10 @@ body.is-frameless > .app-container ~ * {
   transition: padding-left 100ms ease-in;
 }
 
-/* is-translucent */
 .is-translucent .workspace {
   background-color: transparent;
 }
 
-/* workspace-split */
 .workspace-split {
   display: flex;
   position: relative;
@@ -204,7 +205,8 @@ body.is-frameless > .app-container ~ * {
   background-color: var(--background-primary);
 }
 
-/* workspace-leaf */
+/* ---------- leaves ---------- */
+
 .workspace-leaf {
   display: flex;
   flex-direction: column;
@@ -214,12 +216,11 @@ body.is-frameless > .app-container ~ * {
   isolation: isolate;
 }
 
-/* workspace-split */
 .workspace-split.mod-root .workspace-leaf:last-child .workspace-leaf-resize-handle {
   display: none;
 }
 
-/* workspace-leaf */
+/* drop-target highlight washes the whole leaf */
 .workspace-leaf.is-highlighted:before {
   position: absolute;
   top: 0;
@@ -272,7 +273,8 @@ body.is-frameless > .app-container ~ * {
   max-width: 100%;
 }
 
-/* workspace-fake */
+/* ---------- drop overlays ---------- */
+
 .workspace-fake-target-overlay,
 .workspace-drop-overlay {
   position: fixed;
@@ -287,7 +289,7 @@ body.is-frameless > .app-container ~ * {
   transition: all 100ms ease-in-out;
 }
 
-/* workspace-drop */
+/* drop overlay shows an inset accent frame */
 .workspace-drop-overlay:before {
   position: absolute;
   top: 0;
@@ -303,7 +305,6 @@ body.is-frameless > .app-container ~ * {
   opacity: 0.5;
 }
 
-/* workspace-fake */
 .workspace-fake-target-container {
   visibility: hidden;
   position: absolute;
@@ -318,18 +319,18 @@ body.is-frameless > .app-container ~ * {
   background-color: var(--background-primary);
 }
 
-/* workspace-sidedock */
+/* ---------- sidedock ---------- */
+
 .workspace-sidedock-empty-state {
   padding: 20px 30px;
   font-size: var(--font-ui-small);
 }
 
-/* workspace-split */
 body > .workspace-split {
   height: 100%;
 }
 
-/* mod-right */
+/* side splits use tighter file margins and the sidebar font size */
 .mod-right-split .markdown-preview-view,
 .mod-left-split .markdown-preview-view,
 .mod-right-split .markdown-source-view.mod-cm6 .cm-scroller,
@@ -344,7 +345,8 @@ body > .workspace-split {
   font-size: var(--sidebar-markdown-font-size);
 }
 
-/* popover */
+/* ---------- hover popovers ---------- */
+
 .popover.hover-popover.is-editing {
   outline: 2px var(--background-modifier-border-focus) solid;
   border-color: var(--background-modifier-border-focus);
@@ -386,18 +388,18 @@ body > .workspace-split {
   --file-margins: var(--size-4-3) var(--size-4-4);
 }
 
-/* app-container */
+/* ---------- bases & sidedock vars ---------- */
+
 .app-container .block-language-base,
 .app-container .bases-embed {
   --bases-header-border-width: 0;
 }
 
-/* mod-sidedock */
 .mod-sidedock {
   --bases-table-header-background: var(--background-secondary);
 }
 
-/* workspace-leaf */
+/* bookmark action only exists on browser leaves */
 .workspace-leaf-content:not([data-type="browser"]) .view-action.mod-bookmark {
   display: none;
 }
@@ -406,7 +408,7 @@ body > .workspace-split {
   display: flex;
 }
 
-/* workspace */
+/* nested splits tighten metadata spacing */
 .workspace > .workspace-split:not(.mod-root) .metadata-container .metadata-properties {
   --metadata-gap: 0;
 }
@@ -415,7 +417,8 @@ body > .workspace-split {
   box-shadow: none;
 }
 
-/* workspace-drawer */
+/* ---------- workspace drawer ---------- */
+
 .workspace-drawer.mod-left.is-pinned {
   --mobile-sidebar-radius: 0;
   border-right: var(--divider-width) solid var(--divider-color);
@@ -444,10 +447,7 @@ body > .workspace-split {
   overflow: hidden;
 }
 
-.workspace-drawer .workspace-drawer-actions::-webkit-scrollbar,
-.workspace-drawer .nav-buttons-container::-webkit-scrollbar,
-.workspace-drawer .workspace-drawer-actions::-webkit-scrollbar-thumb,
-.workspace-drawer .nav-buttons-container::-webkit-scrollbar-thumb {
+.workspace-drawer .nav-buttons-container::-webkit-scrollbar, .workspace-drawer .nav-buttons-container::-webkit-scrollbar-thumb {
   visibility: hidden;
 }
 
@@ -466,15 +466,12 @@ body > .workspace-split {
   display: flex;
 }
 
+/* invisible select overlays the header name for switching */
 .workspace-drawer-header-switcher select {
   position: absolute;
   padding: 0;
   width: 100%;
   opacity: 0;
-}
-
-.workspace-drawer-separator {
-  margin: 0 0 12px 0;
 }
 
 .workspace-drawer-tab-options:not(.is-collapsed) .workspace-drawer-tab-options-list .workspace-drawer-tab-select {

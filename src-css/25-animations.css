@@ -1,22 +1,17 @@
-/* animations: Keyframes. */
+/* animations: keyframes referenced by animation/transition rules */
 
-@keyframes node-inserted {
-  from {
-    outline-color: #fff;
-  }
-  to {
-    outline-color: #000;
-  }
-}
-
+/* generic opacity blink (50% transparent) */
 @keyframes blink {
   50% {
     background-color: transparent;
   }
 }
 
+/* loading-grid cube: shrinks to nothing mid-cycle */
 @keyframes sk-cubeGridScaleDelay {
-  0%, 70%, 100% {
+  0%,
+  70%,
+  100% {
     -webkit-transform: scale3D(1, 1, 1);
     transform: scale3D(1, 1, 1);
   }
@@ -26,6 +21,7 @@
   }
 }
 
+/* multi-select highlight sweeps link colour to warning */
 @keyframes multi-select-highlight {
   from {
     --link-color: var(--text-warning);
@@ -33,6 +29,7 @@
   }
 }
 
+/* progress bar travels left-to-right while growing */
 @keyframes increase {
   from {
     transform: translateX(-5%) scaleX(0.05);
@@ -51,6 +48,7 @@
   }
 }
 
+/* pop-down: fade + overshoot scale, horizontally centred */
 @keyframes pop-down {
   0% {
     opacity: 0;
@@ -70,6 +68,7 @@
   }
 }
 
+/* pop-right: same overshoot but vertically centred (tooltips) */
 @keyframes pop-right {
   0% {
     opacity: 0;
@@ -98,8 +97,10 @@
   }
 }
 
+/* hmd file upload spinner pulse */
 @keyframes hmd-file-uploading-ani {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
   }
   50% {
@@ -107,6 +108,7 @@
   }
 }
 
+/* top progress bar: grow from left, then drain from right */
 @keyframes progress-bar {
   0% {
     left: 0;
@@ -139,6 +141,7 @@
   }
 }
 
+/* slide-in panel: rise 8px while scaling up from the bottom edge */
 @keyframes slideIn {
   0% {
     opacity: 0;

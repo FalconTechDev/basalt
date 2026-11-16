@@ -1,17 +1,19 @@
-/* bases: Database-style views: table, cards, list, toolbar, filters. */
+/* bases: database views — table, cards, list, toolbar, filters, formulas */
 
-/* hover-popover */
+/* ---------- inline titles in popovers ---------- */
+
 .hover-popover.bases-new-item-popover .inline-title,
 .hover-popover .markdown-embed[data-type="heading"] .inline-title {
   display: block;
 }
 
-/* show-inline */
 body:not(.show-inline-title) .bases-new-item-popover .inline-title {
   display: block;
 }
 
-/* bases-toolbar */
+/* ---------- bidi ---------- */
+
+/* user-authored text gets plaintext bidi resolution everywhere it appears */
 .bases-toolbar-result-count,
 .community-item-desc,
 .community-modal-info-desc,
@@ -39,14 +41,14 @@ input {
   unicode-bidi: plaintext;
 }
 
-/* mod-rtl */
 .mod-rtl .bases-embed,
 .is-rtl .bases-embed,
 .rtl .bases-embed {
   direction: rtl;
 }
 
-/* formula-editor */
+/* ---------- formula editor ---------- */
+
 .formula-editor::placeholder {
   color: var(--input-placeholder-color);
 }
@@ -63,7 +65,8 @@ input {
   font-family: var(--font-interface);
 }
 
-/* bases-view */
+/* ---------- bases view chrome ---------- */
+
 .bases-view.is-being-dragged-over {
   position: relative;
 }
@@ -80,13 +83,12 @@ input {
   background: hsla(var(--interactive-accent-hsl), 0.1);
 }
 
-/* bases-formula */
 .bases-formula-error .bases-formula-error-message {
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* workspace-leaf */
+/* markdown embeds get the embed border/padding vars */
 .workspace-leaf-content[data-type="markdown"] .block-language-base .bases-view,
 .workspace-leaf-content[data-type="markdown"] .bases-embed .bases-view {
   overflow-x: auto;
@@ -102,7 +104,7 @@ input {
   display: none;
 }
 
-/* markdown-source */
+/* live-preview embeds size to content width/transform */
 .markdown-source-view.mod-cm6 .cm-content > .bases-embed,
 .markdown-source-view.mod-cm6 .cm-content > .cm-lang-base {
   --bases-header-padding-end: calc(var(--icon-m) + var(--size-4-4));
@@ -116,20 +118,20 @@ input {
   opacity: 1;
 }
 
-/* hover-popover */
 .hover-popover > .bases-embed .bases-header {
   --bases-header-padding-start: var(--size-4-2);
   --bases-header-padding-end: var(--size-4-2);
 }
 
-/* canvas-node */
+/* canvas nodes flatten the embed chrome */
 .canvas-node .bases-embed {
   --bases-embed-border-width: 0;
   --bases-embed-border-radius: 0;
   --bases-header-border-width: 0 0 var(--border-width) 0;
 }
 
-/* bases-rendered */
+/* ---------- rendered values ---------- */
+
 .bases-rendered-value input[disabled=true][type=date],
 .bases-rendered-value input[disabled=true][type=datetime-local] {
   width: auto;
@@ -140,7 +142,6 @@ input {
   max-height: 100%;
 }
 
-/* bases-group */
 .bases-group-heading .bases-group-value {
   overflow: hidden;
   font-size: var(--bases-group-heading-value-size);
@@ -148,15 +149,16 @@ input {
   text-overflow: ellipsis;
 }
 
+/* narrow containers collapse toolbar labels/badges */
 @container (width < 540px) {
-  /* bases-header */
   .bases-header .bases-toolbar-item:not(.bases-toolbar-result-count) {
     --bases-toolbar-label-display: none;
     --bases-toolbar-badge-display: none;
   }
 }
 
-/* bases-toolbar */
+/* ---------- toolbar ---------- */
+
 .bases-toolbar-menu-container-header .menu-title-inner {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -169,6 +171,7 @@ input {
   text-overflow: ellipsis;
 }
 
+/* labels hide via the --bases-toolbar-label-display var */
 .bases-toolbar .bases-toolbar-item:not(.bases-toolbar-views-menu, .bases-toolbar-result-count) .text-button-label {
   display: var(--bases-toolbar-label-display);
 }
@@ -208,6 +211,7 @@ input {
   fill: var(--text-muted);
 }
 
+/* drag handles on menu items */
 .bases-toolbar-items .suggestion-group[data-group="views"]:not(.mod-hidden) .bases-toolbar-menu-item-info-icon,
 .bases-toolbar-items .suggestion-group[data-group="properties"]:not(.mod-hidden) .bases-toolbar-menu-item-info-icon {
   cursor: grab;
@@ -227,6 +231,7 @@ input {
   border-bottom: var(--border-width) solid var(--background-modifier-border);
 }
 
+/* error state: red ring on sort/group-by rows */
 .bases-toolbar-menu .bases-sort-container .bases-sort-property-container.mod-error,
 .bases-toolbar-menu .bases-groupby-container .bases-sort-property-container.mod-error {
   box-shadow: 0 0 0 var(--border-width) var(--background-modifier-error);
@@ -256,6 +261,7 @@ input {
   min-height: var(--input-height);
 }
 
+/* form rows: controls grow; mod-error gets the red ring */
 .bases-toolbar-menu-form .input-row .input-row-content .combobox-button,
 .bases-toolbar-menu-form .input-row .input-row-content button,
 .bases-toolbar-menu-form .input-row .input-row-content select,
@@ -300,7 +306,8 @@ input {
   content: "\200B";
 }
 
-/* bases-query */
+/* ---------- query builder (filters) ---------- */
+
 .bases-query-container .filter-group .filter-group-header-actions {
   --icon-size: var(--icon-s);
   --icon-stroke: var(--icon-s-stroke-width);
@@ -376,19 +383,35 @@ input {
   display: none;
 }
 
-/* tooltip */
 .tooltip.bases-filter-query-message {
   z-index: var(--layer-popover);
   animation: none;
 }
 
-/* bases-view */
+/* ---------- view-type vars ---------- */
+
 .bases-view[data-view-type="cards"] {
   --bases-view-padding: var(--size-4-3);
   --bases-embed-padding: var(--size-4-1) 1px;
 }
 
-/* bases-cards */
+.bases-view[data-view-type="list"] {
+  --bases-view-padding: var(--size-4-2) var(--size-4-4) 60px var(--size-4-2);
+  --bases-embed-padding: 0;
+}
+
+.bases-view[data-view-type="list"].is-grouped {
+  --bases-view-padding: 0 var(--size-4-4) 60px var(--size-4-4);
+}
+
+.bases-view[data-view-type="table"] {
+  --bases-view-padding: 0;
+  --bases-embed-border-width: var(--border-width);
+  position: relative;
+}
+
+/* ---------- cards view ---------- */
+
 .bases-cards-group {
   position: absolute;
   gap: var(--size-4-3);
@@ -414,6 +437,7 @@ input {
   text-overflow: ellipsis;
 }
 
+/* empty cells show an em-dash */
 .bases-cards-line:empty:before {
   color: var(--text-faint);
   content: "\2014";
@@ -429,17 +453,8 @@ input {
   content: "—";
 }
 
-/* bases-view */
-.bases-view[data-view-type="list"] {
-  --bases-view-padding: var(--size-4-2) var(--size-4-4) 60px var(--size-4-2);
-  --bases-embed-padding: 0;
-}
+/* ---------- list view ---------- */
 
-.bases-view[data-view-type="list"].is-grouped {
-  --bases-view-padding: 0 var(--size-4-4) 60px var(--size-4-4);
-}
-
-/* bases-list */
 .bases-list-group-list {
   position: relative;
 }
@@ -464,7 +479,7 @@ input {
   user-select: text;
 }
 
-/* show-indentation */
+/* optional indentation guide line on nested properties */
 .show-indentation-guide .bases-list-item-properties.nested:before {
   position: absolute;
   display: block;
@@ -475,14 +490,9 @@ input {
   content: "\200b";
 }
 
-/* bases-view */
-.bases-view[data-view-type="table"] {
-  --bases-view-padding: 0;
-  --bases-embed-border-width: var(--border-width);
-  position: relative;
-}
+/* ---------- table view ---------- */
 
-/* bases-thead */
+/* sorted headers get a fade mask on the sort side */
 .bases-thead .bases-td[data-sort] .bases-table-header {
   mask-image: var(--bases-table-header-sort-mask);
 }
@@ -491,7 +501,6 @@ input {
   padding-inline-end: var(--size-4-4);
 }
 
-/* bases-table */
 .bases-table-footer .bases-td {
   box-shadow: none;
 }
@@ -508,7 +517,7 @@ input {
   opacity: 1;
 }
 
-/* bases-td */
+/* measuring pass: let content size itself */
 .bases-td.is-measuring * {
   overflow: visible !important;
   width: max-content !important;
@@ -518,6 +527,7 @@ input {
   display: block;
 }
 
+/* empty date cells stay invisible until interacted with */
 .bases-td .metadata-input.mod-date,
 .bases-td .metadata-input.mod-datetime {
   --input-placeholder-color: var(--text-faint);
@@ -535,7 +545,7 @@ input {
   opacity: 1;
 }
 
-/* bases-table */
+/* single-line mode: fixed row height, nowrap cells */
 .bases-table-container:not(.mod-multiline) .bases-tr {
   --input-height: var(--bases-table-row-height);
 }
@@ -564,6 +574,7 @@ input {
   flex-wrap: nowrap;
 }
 
+/* active cell / selection overlays */
 .bases-table-active-cell,
 .bases-table-selection {
   position: absolute;
@@ -584,6 +595,7 @@ input {
   box-shadow: var(--bases-table-cell-shadow-focus);
 }
 
+/* multiline mode: top-aligned, scrollable long text */
 .bases-table-container.mod-multiline .bases-table-cell {
   align-items: start;
 }

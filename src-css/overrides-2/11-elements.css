@@ -1,20 +1,6 @@
 /* elements (late): rules of this component that have to stay after rules of components further down the build order. */
 
 /* collapse-indicator */
-h1:hover .collapse-indicator,
-h2:hover .collapse-indicator,
-h3:hover .collapse-indicator,
-h4:hover .collapse-indicator,
-h5:hover .collapse-indicator,
-h6:hover .collapse-indicator,
-.collapse-indicator:hover,
-.is-collapsed .collapse-indicator,
-.cm-fold-indicator.is-collapsed .collapse-indicator,
-.cm-gutterElement:hover .collapse-indicator,
-.cm-gutterElement .is-collapsed .collapse-indicator,
-.cm-line:hover .cm-fold-indicator .collapse-indicator,
-.fold-gutter.is-collapsed,
-.fold-gutter:hover,
-.metadata-properties-heading:hover .collapse-indicator {
+h1:hover .collapse-indicator, h2:hover .collapse-indicator, h3:hover .collapse-indicator, h4:hover .collapse-indicator, h5:hover .collapse-indicator, h6:hover .collapse-indicator, .collapse-indicator:hover, .is-collapsed .collapse-indicator, .cm-fold-indicator.is-collapsed .collapse-indicator, .cm-gutterElement:hover .collapse-indicator, .cm-gutterElement .is-collapsed .collapse-indicator, .cm-line:hover .cm-fold-indicator .collapse-indicator, .metadata-properties-heading:hover .collapse-indicator {
   opacity: 1;
 }

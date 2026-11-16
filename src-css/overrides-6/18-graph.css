@@ -1,6 +1,6 @@
 /* graph (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* graph-view */
+/* graph view colour modes and controls close/reset buttons */
 .graph-view.color-fill {
   color: var(--graph-node);
 }
@@ -71,7 +71,6 @@
   color: var(--interactive-accent);
 }
 
-/* graph-controls */
 .graph-controls-button.mod-close,
 .graph-controls-button.mod-reset {
   position: absolute;

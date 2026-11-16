@@ -1,6 +1,6 @@
 /* code (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* token */
+/* prism token colour mapping */
 .token.comment,
 .token.prolog,
 .token.doctype,

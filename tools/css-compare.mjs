@@ -66,6 +66,8 @@ async function connect() {
   ws = new WebSocket(page.webSocketDebuggerUrl);
   await new Promise((r) => (ws.onopen = r));
   ws.onmessage = (e) => { const m = JSON.parse(e.data); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } };
+  // the app can exit mid-run; fail pending calls instead of hanging forever
+  ws.onclose = () => { for (const res of pending.values()) res({ wsClosed: true }); pending.clear(); };
 }
 const send = (method, params) => new Promise((res) => { const id = nextId++; pending.set(id, res); ws.send(JSON.stringify({ id, method, params })); });
 async function run(expression) {
@@ -203,6 +205,9 @@ async function runScenes(label, scenes) {
   for (const sc of scenes) {
     for (const theme of sc.themes) {
       const key = `${sc.name}/${theme}`;
+      console.log(`  ${label}: ${key}`);
+      // mobile emulation makes the app quit after ~10 scene setups; reload per scene to isolate state
+      if (mobile) { await reload(); await run(HELPERS); }
       try {
         await run(`(async () => { const T = ${JSON.stringify(theme)}; ${sc.setup} })()`);
         await sleep(500);
@@ -246,13 +251,15 @@ await send("Page.enable");
 const original = fs.readFileSync(target);
 const scenes = SCENES.filter((s) => (!only || only.includes(s.name)) && (!mobile || MOBILE_ONLY.has(s.name)));
 if (mobile) { await run("app.emulateMobile(true)").catch(() => {}); await sleep(3000); await ready(); }
-let A, B, C;
+let A = {}, B = {}, C = {};
 try {
   console.log("pass 1/3: old stylesheet"); A = await runScenes("old", scenes);
   console.log("pass 2/3: old stylesheet again (noise floor)"); B = await runScenes("old2", scenes);
   console.log("pass 3/3: new stylesheet"); C = await runScenes("new", scenes);
+} catch (e) {
+  console.log("compare interrupted:", String(e && e.message || e).slice(0, 300));
 } finally {
-  fs.writeFileSync(target, original);
+  try { fs.writeFileSync(target, original); } catch {}
   if (mobile) await run("app.emulateMobile(false)").catch(() => {});
 }
 
@@ -261,6 +268,7 @@ const report = [];
 console.log("\nscene                       elems  missing/extra  real-diffs  (elements)  noise  pixels(new)  pixels(noise)  vars");
 for (const key of Object.keys(A)) {
   const a = A[key], b = B[key], c = C[key];
+  if (!a || !b || !c) { console.log(key.padEnd(27), "MISSING-PASS"); continue; }
   if (a.error || b.error || c.error) { console.log(key.padEnd(27), "ERROR", a.error || b.error || c.error); totalReal++; continue; }
   const names = [...PROPS, "rect"];
   const real = diffMaps(a.snap.els, c.snap.els, names);
