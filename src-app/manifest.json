@@ -1652,6 +1652,472 @@
    "originalBytes": 421
   },
   {
+   "orig": "wA",
+   "use": "s05CommandScore",
+   "originalBytes": 562
+  },
+  {
+   "orig": "QD",
+   "use": "applyTemplateVars",
+   "originalBytes": 335
+  },
+  {
+   "orig": "Xx",
+   "use": "frontmatterBounds",
+   "originalBytes": 369
+  },
+  {
+   "orig": "uT",
+   "use": "s05Point"
+  },
+  {
+   "orig": "hT",
+   "use": "s05Range"
+  },
+  {
+   "orig": "lT",
+   "use": "s05HasPosition"
+  },
+  {
+   "orig": "cT",
+   "use": "s05HasKey"
+  },
+  {
+   "orig": "sT",
+   "use": "s05InlineText"
+  },
+  {
+   "orig": "aT",
+   "use": "s05ChildrenText"
+  },
+  {
+   "orig": "dT",
+   "use": "s05FrontmatterLinks"
+  },
+  {
+   "orig": "ST",
+   "use": "s05HasRef"
+  },
+  {
+   "orig": "OT",
+   "use": "s05HeadingText"
+  },
+  {
+   "orig": "GT",
+   "use": "s05IsValidFileName"
+  },
+  {
+   "orig": "KT",
+   "use": "s05AssertValidFileName"
+  },
+  {
+   "orig": "CD",
+   "use": "s05CheckFilePermissions"
+  },
+  {
+   "orig": "cD",
+   "use": "s05TrackAction"
+  },
+  {
+   "orig": "uD",
+   "use": "s05LookupAnimNode"
+  },
+  {
+   "orig": "hD",
+   "use": "s05AnimDuration"
+  },
+  {
+   "orig": "dD",
+   "use": "s05CreateLoaderCube"
+  },
+  {
+   "orig": "fD",
+   "use": "s05CreateLoaderSpinner"
+  },
+  {
+   "orig": "mD",
+   "use": "s05WithLoader"
+  },
+  {
+   "orig": "pA",
+   "use": "s05FindBreakIndex"
+  },
+  {
+   "orig": "BT",
+   "use": "s05NextFootnoteId"
+  },
+  {
+   "orig": "rT",
+   "use": "s05CssClasses"
+  },
+  {
+   "orig": "oD",
+   "use": "s05SystemInfo"
+  },
+  {
+   "orig": "VD",
+   "use": "s05TitlebarDoubleClick"
+  },
+  {
+   "orig": "ED",
+   "use": "s05MobileVaultList"
+  },
+  {
+   "orig": "fT",
+   "use": "s05ParseCache",
+   "originalBytes": 2766
+  },
+  {
+   "orig": "NT",
+   "use": "s05ExtractSubpath",
+   "originalBytes": 1180
+  },
+  {
+   "orig": "HD",
+   "use": "s05WheelScroll",
+   "originalBytes": 154
+  },
+  {
+   "orig": "PK",
+   "use": "s09ParseFormula",
+   "originalBytes": 526
+  },
+  {
+   "orig": "LK",
+   "use": "s09NodeText",
+   "originalBytes": 45
+  },
+  {
+   "orig": "IK",
+   "use": "s09IsIdentifierName",
+   "originalBytes": 63
+  },
+  {
+   "orig": "OK",
+   "use": "s09FindErrorNode",
+   "originalBytes": 117
+  },
+  {
+   "orig": "FK",
+   "use": "s09TreeToParsed",
+   "originalBytes": 2315
+  },
+  {
+   "orig": "$K",
+   "use": "s09SummaryFormulasFor",
+   "originalBytes": 120
+  },
+  {
+   "orig": "kY",
+   "use": "s09IsCustomProperty",
+   "originalBytes": 174
+  },
+  {
+   "orig": "MY",
+   "use": "s09DeserializeFilter",
+   "originalBytes": 686
+  },
+  {
+   "orig": "TY",
+   "use": "s09DeserializeView",
+   "originalBytes": 1892
+  },
+  {
+   "orig": "AY",
+   "use": "s09DefaultValueForWidget",
+   "originalBytes": 318
+  },
+  {
+   "orig": "LY",
+   "use": "s09PropertyToRef",
+   "originalBytes": 193
+  },
+  {
+   "orig": "OY",
+   "use": "s09ValueTypeName",
+   "originalBytes": 167
+  },
+  {
+   "orig": "FY",
+   "use": "s09FiltersToFrontmatter",
+   "originalBytes": 1386
+  },
+  {
+   "orig": "NY",
+   "use": "s09FormulaPropertyRef",
+   "originalBytes": 751
+  },
+  {
+   "orig": "RY",
+   "use": "s09EvalSummaryFormulas",
+   "originalBytes": 250
+  },
+  {
+   "orig": "BY",
+   "use": "s09ValueToDisplay",
+   "originalBytes": 614
+  },
+  {
+   "orig": "IY",
+   "use": "s09FormulaEditorExtensions",
+   "originalBytes": 90
+  },
+  {
+   "orig": "PQ",
+   "use": "s09GraphLocalData",
+   "originalBytes": 796
+  },
+  {
+   "orig": "BQ",
+   "use": "s09SortTreeItems",
+   "originalBytes": 438
+  },
+  {
+   "orig": "kQ",
+   "use": "s09GraphNodeData",
+   "originalBytes": 59
+  },
+  {
+   "orig": "CQ",
+   "use": "s09GraphNodeDataFrom",
+   "originalBytes": 86
+  },
+  {
+   "orig": "OQ",
+   "use": "s09PublishGraphData",
+   "originalBytes": 1086
+  },
+  {
+   "orig": "oX",
+   "use": "s09PublishResolveSub",
+   "originalBytes": 113
+  },
+  {
+   "orig": "O9",
+   "use": "s15ScrollLoadMore",
+   "originalBytes": 138
+  },
+  {
+   "orig": "wq",
+   "use": "s23TableSync",
+   "host": true,
+   "originalBytes": 1192
+  },
+  {
+   "orig": "Mq",
+   "use": "s23ListRenumber",
+   "host": true,
+   "originalBytes": 2172
+  },
+  {
+   "orig": "Sq",
+   "use": "s23ListMarker",
+   "host": true,
+   "originalBytes": 57
+  },
+  {
+   "orig": "xq",
+   "use": "s23InsideCode",
+   "host": true,
+   "originalBytes": 210
+  },
+  {
+   "orig": "VJ",
+   "use": "s28TitleToFileName",
+   "originalBytes": 119
+  },
+  {
+   "orig": "iP",
+   "use": "s06Pos",
+   "originalBytes": 56
+  },
+  {
+   "orig": "oP",
+   "use": "s06PosEq",
+   "originalBytes": 53
+  },
+  {
+   "orig": "rP",
+   "use": "s06PosAdd",
+   "originalBytes": 47
+  },
+  {
+   "orig": "IA",
+   "use": "s06PosToOffset",
+   "originalBytes": 177
+  },
+  {
+   "orig": "OA",
+   "use": "s06OffsetToPos",
+   "originalBytes": 98
+  },
+  {
+   "orig": "_A",
+   "use": "s06QuotePrefixWidth",
+   "originalBytes": 159
+  },
+  {
+   "orig": "jL",
+   "use": "s06SetPath",
+   "originalBytes": 254
+  },
+  {
+   "orig": "yI",
+   "use": "s06MergeDeep",
+   "originalBytes": 277
+  },
+  {
+   "orig": "vI",
+   "use": "s06UpdateFrontmatter",
+   "originalBytes": 249
+  },
+  {
+   "orig": "bI",
+   "use": "s06ParseFrontmatter",
+   "originalBytes": 124
+  },
+  {
+   "orig": "kI",
+   "use": "s06WithFrontmatter",
+   "originalBytes": 70
+  },
+  {
+   "orig": "wI",
+   "use": "s06FrontmatterBlock",
+   "originalBytes": 113
+  },
+  {
+   "orig": "mP",
+   "use": "s06IsHeaderRow",
+   "originalBytes": 309
+  },
+  {
+   "orig": "uP",
+   "use": "s06OffsetsToPositions",
+   "originalBytes": 192
+  },
+  {
+   "orig": "vP",
+   "use": "s06Colspan",
+   "originalBytes": 114
+  },
+  {
+   "orig": "gP",
+   "use": "s06ColspanRepeat",
+   "originalBytes": 40
+  },
+  {
+   "orig": "qA",
+   "use": "s06EscapeTableCell",
+   "originalBytes": 387
+  },
+  {
+   "orig": "jA",
+   "use": "s06UnescapeTableCell",
+   "originalBytes": 556
+  },
+  {
+   "orig": "GI",
+   "use": "s06MatchBasenameFirst",
+   "originalBytes": 108
+  },
+  {
+   "orig": "kP",
+   "use": "s06HasIosFilesDrop",
+   "originalBytes": 139
+  },
+  {
+   "orig": "RI",
+   "use": "s06LinkTarget",
+   "originalBytes": 276
+  },
+  {
+   "orig": "$I",
+   "use": "s06HasMetadataEditor",
+   "host": true,
+   "originalBytes": 111
+  },
+  {
+   "orig": "JI",
+   "use": "s06ActivePropertiesEditor",
+   "host": true,
+   "originalBytes": 208
+  },
+  {
+   "orig": "xL",
+   "use": "s06SanitizeHtml",
+   "host": true,
+   "originalBytes": 64
+  },
+  {
+   "orig": "TL",
+   "use": "s06DropLinkTexts",
+   "host": true,
+   "originalBytes": 681
+  },
+  {
+   "orig": "WL",
+   "use": "s06RewriteLink",
+   "host": true,
+   "originalBytes": 529
+  },
+  {
+   "orig": "gI",
+   "use": "s06LinkChangeFor",
+   "host": true,
+   "originalBytes": 478
+  },
+  {
+   "orig": "QI",
+   "use": "s06TagSuggestions",
+   "host": true,
+   "originalBytes": 406
+  },
+  {
+   "orig": "kte",
+   "use": "s36WindowChrome",
+   "originalBytes": 55245
+  },
+  {
+   "orig": "R0",
+   "use": "s12leafTypeOrFalse",
+   "originalBytes": 79
+  },
+  {
+   "orig": "V0",
+   "use": "s12requireDesktopApp",
+   "originalBytes": 184
+  },
+  {
+   "orig": "K6",
+   "use": "s12runCommandCallback",
+   "originalBytes": 141
+  },
+  {
+   "orig": "h6",
+   "use": "s12appendImageSizeText",
+   "originalBytes": 370
+  },
+  {
+   "orig": "d6",
+   "use": "s12ImageContextMenuEntry"
+  },
+  {
+   "orig": "jZ",
+   "use": "s27TextOffsetAt",
+   "originalBytes": 172
+  },
+  {
+   "orig": "UZ",
+   "use": "s27TextLayerNodeAt",
+   "originalBytes": 243
+  },
+  {
+   "orig": "$Z",
+   "use": "s27ShowEmbedError",
+   "originalBytes": 107
+  },
+  {
    "orig": "Fq",
    "use": "s07posToOffset",
    "originalBytes": 143
@@ -1795,10 +2261,6 @@
   {
    "orig": "zq",
    "use": "s07emitStored"
-  },
-  {
-   "orig": "Sq",
-   "use": "s07leadingListMarker"
   },
   {
    "orig": "mV",
@@ -3358,6 +3820,1000 @@
    "use": "defineS13BasesPlugin"
   },
   {
+   "orig": "CA",
+   "use": "defineCli",
+   "originalBytes": 64702
+  },
+  {
+   "orig": "bA",
+   "use": "defineTable",
+   "originalBytes": 1313
+  },
+  {
+   "orig": "fA",
+   "use": "defineDiffBuilder"
+  },
+  {
+   "orig": "pD",
+   "use": "defineProgressBar"
+  },
+  {
+   "orig": "SD",
+   "use": "defineVaultSuggest"
+  },
+  {
+   "orig": "xD",
+   "use": "defineVaultSwitcher"
+  },
+  {
+   "orig": "TD",
+   "use": "defineMobileVaultSelect"
+  },
+  {
+   "orig": "BD",
+   "use": "defineTitlebar",
+   "originalBytes": 2964
+  },
+  {
+   "orig": "_D",
+   "use": "defineFilesDrawer",
+   "originalBytes": 2025
+  },
+  {
+   "orig": "GD",
+   "use": "defineInfoDrawer",
+   "originalBytes": 1425
+  },
+  {
+   "orig": "WD",
+   "use": "defineMobileDrawer"
+  },
+  {
+   "orig": "AK",
+   "use": "s09FormulaSyntax",
+   "originalBytes": 464
+  },
+  {
+   "orig": "NK",
+   "use": "s09FormulaNode",
+   "originalBytes": 1133
+  },
+  {
+   "orig": "RK",
+   "use": "s09InvalidNode",
+   "originalBytes": 380
+  },
+  {
+   "orig": "BK",
+   "use": "s09EmptyNode",
+   "originalBytes": 211
+  },
+  {
+   "orig": "VK",
+   "use": "s09CompareNode",
+   "originalBytes": 1208
+  },
+  {
+   "orig": "HK",
+   "use": "s09MathNode",
+   "originalBytes": 1705
+  },
+  {
+   "orig": "zK",
+   "use": "s09NegateNode",
+   "originalBytes": 354
+  },
+  {
+   "orig": "qK",
+   "use": "s09NotNode",
+   "originalBytes": 275
+  },
+  {
+   "orig": "jK",
+   "use": "s09CallNode",
+   "originalBytes": 3693
+  },
+  {
+   "orig": "UK",
+   "use": "s09ArrayAccessNode",
+   "originalBytes": 1269
+  },
+  {
+   "orig": "WK",
+   "use": "s09ObjectAccessNode",
+   "originalBytes": 692
+  },
+  {
+   "orig": "_K",
+   "use": "s09ParenNode",
+   "originalBytes": 242
+  },
+  {
+   "orig": "GK",
+   "use": "s09PrimitiveNode",
+   "originalBytes": 211
+  },
+  {
+   "orig": "KK",
+   "use": "s09RegexpNode",
+   "originalBytes": 234
+  },
+  {
+   "orig": "YK",
+   "use": "s09ArrayNode",
+   "originalBytes": 381
+  },
+  {
+   "orig": "QK",
+   "use": "s09IdentNode",
+   "originalBytes": 217
+  },
+  {
+   "orig": "DK",
+   "use": "s09FormulaText",
+   "originalBytes": 278
+  },
+  {
+   "orig": "ZK",
+   "use": "s09ValuesContext",
+   "originalBytes": 212
+  },
+  {
+   "orig": "JK",
+   "use": "s09EmptyValuesContext",
+   "originalBytes": 77
+  },
+  {
+   "orig": "iY",
+   "use": "s09FilterContext",
+   "originalBytes": 404
+  },
+  {
+   "orig": "oY",
+   "use": "s09FileContext",
+   "originalBytes": 1450
+  },
+  {
+   "orig": "aY",
+   "use": "s09FormulaResults",
+   "originalBytes": 376
+  },
+  {
+   "orig": "sY",
+   "use": "s09ThisFileValue",
+   "originalBytes": 245
+  },
+  {
+   "orig": "lY",
+   "use": "s09FormulasValue",
+   "originalBytes": 504
+  },
+  {
+   "orig": "uY",
+   "use": "s09FilterBase",
+   "originalBytes": 847
+  },
+  {
+   "orig": "hY",
+   "use": "s09RuleFilter",
+   "originalBytes": 278
+  },
+  {
+   "orig": "pY",
+   "use": "s09ConjunctionFilter",
+   "originalBytes": 394
+  },
+  {
+   "orig": "dY",
+   "use": "s09AndFilter",
+   "originalBytes": 399
+  },
+  {
+   "orig": "fY",
+   "use": "s09OrFilter",
+   "originalBytes": 397
+  },
+  {
+   "orig": "mY",
+   "use": "s09NotFilter",
+   "originalBytes": 429
+  },
+  {
+   "orig": "gY",
+   "use": "s09PropertyConfig",
+   "originalBytes": 788
+  },
+  {
+   "orig": "CY",
+   "use": "s09View",
+   "originalBytes": 2955
+  },
+  {
+   "orig": "EY",
+   "use": "s09Query",
+   "originalBytes": 5457
+  },
+  {
+   "orig": "DY",
+   "use": "s09EvalContext",
+   "originalBytes": 1145
+  },
+  {
+   "orig": "HY",
+   "use": "s09PropertySuggest",
+   "originalBytes": 1608
+  },
+  {
+   "orig": "xQ",
+   "use": "s09GraphNode",
+   "originalBytes": 3863
+  },
+  {
+   "orig": "TQ",
+   "use": "s09GraphLink",
+   "originalBytes": 2111
+  },
+  {
+   "orig": "DQ",
+   "use": "s09GraphPowerTag",
+   "originalBytes": 1029
+  },
+  {
+   "orig": "AQ",
+   "use": "s09GraphRenderer",
+   "originalBytes": 14173
+  },
+  {
+   "orig": "KY",
+   "use": "s09PublishSiteCache",
+   "originalBytes": 1893
+  },
+  {
+   "orig": "zY",
+   "use": "s09BasesToolbarButton",
+   "originalBytes": 721
+  },
+  {
+   "orig": "qY",
+   "use": "s09BasesDropdown",
+   "originalBytes": 948
+  },
+  {
+   "orig": "jY",
+   "use": "s09BasesMenu",
+   "originalBytes": 3833
+  },
+  {
+   "orig": "zQ",
+   "use": "s09PublishTreeItem",
+   "originalBytes": 343
+  },
+  {
+   "orig": "qQ",
+   "use": "s09PublishFileItem",
+   "originalBytes": 432
+  },
+  {
+   "orig": "jQ",
+   "use": "s09PublishFolderItem",
+   "originalBytes": 336
+  },
+  {
+   "orig": "UQ",
+   "use": "s09PublishTree",
+   "originalBytes": 1301
+  },
+  {
+   "orig": "WQ",
+   "use": "s09PublishOutlineItem",
+   "originalBytes": 505
+  },
+  {
+   "orig": "_Q",
+   "use": "s09PublishOutlineTree",
+   "originalBytes": 696
+  },
+  {
+   "orig": "GQ",
+   "use": "s09PublishOutlineView",
+   "originalBytes": 1328
+  },
+  {
+   "orig": "HQ",
+   "use": "s09PublishNavView",
+   "originalBytes": 1945
+  },
+  {
+   "orig": "KQ",
+   "use": "s09PublishModalBase",
+   "originalBytes": 857
+  },
+  {
+   "orig": "YQ",
+   "use": "s09PublishPasswordModal",
+   "originalBytes": 2089
+  },
+  {
+   "orig": "QQ",
+   "use": "s09PublishTagModal",
+   "originalBytes": 859
+  },
+  {
+   "orig": "IQ",
+   "use": "s09PublishGraphView",
+   "originalBytes": 3534
+  },
+  {
+   "orig": "aX",
+   "use": "s09PublishEmbedView",
+   "originalBytes": 5676
+  },
+  {
+   "orig": "sX",
+   "use": "s09PublishPageView",
+   "originalBytes": 2887
+  },
+  {
+   "orig": "q7",
+   "use": "definePublishPathSuggest",
+   "originalBytes": 287
+  },
+  {
+   "orig": "j7",
+   "use": "definePublishSection",
+   "originalBytes": 238
+  },
+  {
+   "orig": "U7",
+   "use": "definePublishOfflineSection",
+   "originalBytes": 135
+  },
+  {
+   "orig": "W7",
+   "use": "definePublishLoginSection",
+   "originalBytes": 620
+  },
+  {
+   "orig": "_7",
+   "use": "definePublishManageSitesSection",
+   "originalBytes": 5524
+  },
+  {
+   "orig": "G7",
+   "use": "definePublishSiteOptionsSection",
+   "originalBytes": 7156
+  },
+  {
+   "orig": "K7",
+   "use": "definePublishSiteFiltersSection",
+   "originalBytes": 1649
+  },
+  {
+   "orig": "Y7",
+   "use": "definePublishTreeItemBase",
+   "originalBytes": 431
+  },
+  {
+   "orig": "X7",
+   "use": "definePublishFileItem",
+   "originalBytes": 3426
+  },
+  {
+   "orig": "$7",
+   "use": "definePublishFolderItem",
+   "originalBytes": 1452
+  },
+  {
+   "orig": "Z7",
+   "use": "definePublishTreeSection",
+   "originalBytes": 2799
+  },
+  {
+   "orig": "J7",
+   "use": "definePublishReviewSection",
+   "originalBytes": 4840
+  },
+  {
+   "orig": "e9",
+   "use": "definePublishUploadSection",
+   "originalBytes": 3732
+  },
+  {
+   "orig": "t9",
+   "use": "definePublishEditSlugSection",
+   "originalBytes": 1555
+  },
+  {
+   "orig": "n9",
+   "use": "definePublishPasswordsSection",
+   "originalBytes": 1584
+  },
+  {
+   "orig": "i9",
+   "use": "definePublishAddPasswordSection",
+   "originalBytes": 1632
+  },
+  {
+   "orig": "r9",
+   "use": "definePublishCustomDomainSection",
+   "originalBytes": 1786
+  },
+  {
+   "orig": "o9",
+   "use": "definePublishShareModal",
+   "originalBytes": 2509
+  },
+  {
+   "orig": "a9",
+   "use": "definePublishCompareModal",
+   "originalBytes": 1170
+  },
+  {
+   "orig": "s9",
+   "use": "definePublishConfirmModal",
+   "originalBytes": 699
+  },
+  {
+   "orig": "l9",
+   "use": "definePublishIncludedFoldersModal",
+   "originalBytes": 612
+  },
+  {
+   "orig": "c9",
+   "use": "definePublishExcludedFoldersModal",
+   "originalBytes": 651
+  },
+  {
+   "orig": "p9",
+   "use": "definePublishRequestErrorClass",
+   "originalBytes": 155
+  },
+  {
+   "orig": "f9",
+   "use": "definePublishPlugin",
+   "originalBytes": 14163
+  },
+  {
+   "orig": "P9",
+   "use": "defineSyncSettingsView",
+   "originalBytes": 11959
+  },
+  {
+   "orig": "I9",
+   "use": "defineSyncFileHistoryView",
+   "originalBytes": 10203
+  },
+  {
+   "orig": "F9",
+   "use": "defineSyncFileHistoryModal",
+   "originalBytes": 1162
+  },
+  {
+   "orig": "N9",
+   "use": "defineSyncDeletedFilesModal",
+   "originalBytes": 2921
+  },
+  {
+   "orig": "R9",
+   "use": "defineSyncUpgradeEncryptionModal",
+   "originalBytes": 633
+  },
+  {
+   "orig": "B9",
+   "use": "defineSyncMigrateVaultModal",
+   "originalBytes": 5035
+  },
+  {
+   "orig": "V9",
+   "use": "defineSyncCreateVaultModal",
+   "originalBytes": 3131
+  },
+  {
+   "orig": "H9",
+   "use": "defineSyncRemoteVaultsModal",
+   "originalBytes": 8354
+  },
+  {
+   "orig": "z9",
+   "use": "defineSyncLogModal",
+   "originalBytes": 2413
+  },
+  {
+   "orig": "q9",
+   "use": "defineSyncExcludedFoldersSuggest",
+   "originalBytes": 591
+  },
+  {
+   "orig": "j9",
+   "use": "defineSyncLargestFilesModal",
+   "originalBytes": 617
+  },
+  {
+   "orig": "U9",
+   "use": "defineSyncConnectVaultModal",
+   "originalBytes": 3819
+  },
+  {
+   "orig": "W9",
+   "use": "defineSyncRenameVaultModal",
+   "originalBytes": 537
+  },
+  {
+   "orig": "_9",
+   "use": "defineSyncManageSharingModal",
+   "originalBytes": 3555
+  },
+  {
+   "orig": "K9",
+   "use": "defineSyncChangesView",
+   "originalBytes": 5297
+  },
+  {
+   "orig": "k9",
+   "use": "defineSlashCommandPlugin",
+   "originalBytes": 484
+  },
+  {
+   "orig": "E9",
+   "use": "defineSlashCommandSuggest",
+   "originalBytes": 1563
+  },
+  {
+   "orig": "S9",
+   "use": "defineSlidesPlugin",
+   "originalBytes": 782
+  },
+  {
+   "orig": "x9",
+   "use": "defineSlidesView",
+   "originalBytes": 2468
+  },
+  {
+   "orig": "gj",
+   "use": "s23EditorSearchBar",
+   "originalBytes": 4127
+  },
+  {
+   "orig": "Tq",
+   "use": "s23ListIndentClass",
+   "originalBytes": 3873
+  },
+  {
+   "orig": "AX",
+   "use": "defineS25FilterMenu",
+   "originalBytes": 2030
+  },
+  {
+   "orig": "PX",
+   "use": "defineS25FormulaSuggester",
+   "originalBytes": 581
+  },
+  {
+   "orig": "HX",
+   "use": "defineS25BasesView",
+   "originalBytes": 3262
+  },
+  {
+   "orig": "jX",
+   "use": "defineS25NewItemButton",
+   "originalBytes": 2978
+  },
+  {
+   "orig": "UX",
+   "use": "defineS25FormulaEditor",
+   "originalBytes": 1291
+  },
+  {
+   "orig": "WX",
+   "use": "defineS25ToolbarPage",
+   "originalBytes": 218
+  },
+  {
+   "orig": "GX",
+   "use": "defineS25PropertiesMenu",
+   "originalBytes": 1902
+  },
+  {
+   "orig": "KX",
+   "use": "defineS25PropertyListPage",
+   "originalBytes": 5777
+  },
+  {
+   "orig": "YX",
+   "use": "defineS25PropertyEditPage",
+   "originalBytes": 881
+  },
+  {
+   "orig": "QX",
+   "use": "defineS25PropertyForm",
+   "originalBytes": 2934
+  },
+  {
+   "orig": "$X",
+   "use": "defineS25ResultsMenu",
+   "originalBytes": 2805
+  },
+  {
+   "orig": "ZX",
+   "use": "defineS25SearchMenu",
+   "originalBytes": 1447
+  },
+  {
+   "orig": "e$",
+   "use": "defineS25SortMenu",
+   "originalBytes": 3210
+  },
+  {
+   "orig": "t$",
+   "use": "defineS25SortRowBase",
+   "originalBytes": 1963
+  },
+  {
+   "orig": "n$",
+   "use": "defineS25SortRow",
+   "originalBytes": 553
+  },
+  {
+   "orig": "i$",
+   "use": "defineS25GroupRow",
+   "originalBytes": 363
+  },
+  {
+   "orig": "a$",
+   "use": "defineS25ViewChooser",
+   "originalBytes": 2313
+  },
+  {
+   "orig": "s$",
+   "use": "defineS25ViewsMenu",
+   "originalBytes": 1807
+  },
+  {
+   "orig": "l$",
+   "use": "defineS25ViewConfigPage",
+   "originalBytes": 6971
+  },
+  {
+   "orig": "c$",
+   "use": "defineS25GroupEntries",
+   "originalBytes": 143
+  },
+  {
+   "orig": "u$",
+   "use": "defineS25QueryData",
+   "originalBytes": 3105
+  },
+  {
+   "orig": "bJ",
+   "use": "s28GraphPlugin",
+   "originalBytes": 2504
+  },
+  {
+   "orig": "kJ",
+   "use": "s28GraphView",
+   "originalBytes": 1778
+  },
+  {
+   "orig": "EJ",
+   "use": "s28LocalGraphView",
+   "originalBytes": 2112
+  },
+  {
+   "orig": "xJ",
+   "use": "s28GraphEngine",
+   "originalBytes": 9953
+  },
+  {
+   "orig": "TJ",
+   "use": "s28GraphControlSection",
+   "originalBytes": 998
+  },
+  {
+   "orig": "DJ",
+   "use": "s28GraphFilterSection",
+   "originalBytes": 3627
+  },
+  {
+   "orig": "AJ",
+   "use": "s28GraphColorSection",
+   "originalBytes": 2973
+  },
+  {
+   "orig": "LJ",
+   "use": "s28GraphDisplaySection",
+   "originalBytes": 1616
+  },
+  {
+   "orig": "OJ",
+   "use": "s28GraphForceSection",
+   "originalBytes": 1432
+  },
+  {
+   "orig": "HJ",
+   "use": "s28WebViewerAddressBar",
+   "originalBytes": 694
+  },
+  {
+   "orig": "zJ",
+   "use": "s28WebViewerAddressSuggest",
+   "originalBytes": 2651
+  },
+  {
+   "orig": "qJ",
+   "use": "s28WebViewerFindBar",
+   "originalBytes": 1253
+  },
+  {
+   "orig": "iO",
+   "use": "defineS06ValueItem"
+  },
+  {
+   "orig": "LO",
+   "use": "defineS06UnknownValue"
+  },
+  {
+   "orig": "mO",
+   "use": "defineS06CheckboxValue"
+  },
+  {
+   "orig": "dO",
+   "use": "defineS06FileValue"
+  },
+  {
+   "orig": "fO",
+   "use": "defineS06FolderValue"
+  },
+  {
+   "orig": "uO",
+   "use": "defineS06DateValue"
+  },
+  {
+   "orig": "pO",
+   "use": "defineS06DateTimeValue"
+  },
+  {
+   "orig": "hO",
+   "use": "defineS06DailyNoteDateValue"
+  },
+  {
+   "orig": "SO",
+   "use": "defineS06NumberValue"
+  },
+  {
+   "orig": "OO",
+   "use": "defineS06TagValueSuggest"
+  },
+  {
+   "orig": "DI",
+   "use": "defineS06FilteredFileSuggest"
+  },
+  {
+   "orig": "TI",
+   "use": "defineS06MarkdownFileSuggest"
+  },
+  {
+   "orig": "PI",
+   "use": "defineS06FolderSuggest"
+  },
+  {
+   "orig": "FO",
+   "use": "defineS06ChangeTypeModal"
+  },
+  {
+   "orig": "aO",
+   "use": "defineS06TextValue",
+   "originalBytes": 1721
+  },
+  {
+   "orig": "sO",
+   "use": "defineS06MultiTextValue",
+   "originalBytes": 1211
+  },
+  {
+   "orig": "lO",
+   "use": "defineS06TagsValue",
+   "originalBytes": 1294
+  },
+  {
+   "orig": "cO",
+   "use": "defineS06AliasesValue",
+   "originalBytes": 767
+  },
+  {
+   "orig": "gO",
+   "use": "defineS06PropertyKeyValue",
+   "originalBytes": 384
+  },
+  {
+   "orig": "vO",
+   "use": "defineS06TypeCombobox",
+   "originalBytes": 303
+  },
+  {
+   "orig": "XI",
+   "use": "defineS06MultiSelect",
+   "originalBytes": 6415
+  },
+  {
+   "orig": "MI",
+   "use": "defineS06Combobox",
+   "originalBytes": 5512
+  },
+  {
+   "orig": "n6",
+   "use": "defineS12BlockquoteBorderWidget",
+   "originalBytes": 194
+  },
+  {
+   "orig": "r6",
+   "use": "defineS12HrWidget",
+   "originalBytes": 523
+  },
+  {
+   "orig": "l6",
+   "use": "defineS12TaskCheckboxWidget",
+   "originalBytes": 1192
+  },
+  {
+   "orig": "c6",
+   "use": "defineS12StyleSpanWidget",
+   "originalBytes": 256
+  },
+  {
+   "orig": "u6",
+   "use": "defineS12CodeFlairWidget",
+   "originalBytes": 658
+  },
+  {
+   "orig": "C6",
+   "use": "defineS12EmptyWidgetType",
+   "originalBytes": 223
+  },
+  {
+   "orig": "b6",
+   "use": "defineS12MathWidget",
+   "originalBytes": 844
+  },
+  {
+   "orig": "k6",
+   "use": "defineS12HtmlWidget",
+   "originalBytes": 647
+  },
+  {
+   "orig": "f6",
+   "use": "defineS12ImageWidget",
+   "originalBytes": 959
+  },
+  {
+   "orig": "m6",
+   "use": "defineS12InternalEmbedWidget",
+   "originalBytes": 1371
+  },
+  {
+   "orig": "v6",
+   "use": "defineS12CodeblockWidget",
+   "originalBytes": 1895
+  },
+  {
+   "orig": "g6",
+   "use": "defineS12CalloutBaseWidget",
+   "originalBytes": 1231
+  },
+  {
+   "orig": "y6",
+   "use": "defineS12CalloutWidget",
+   "originalBytes": 2473
+  },
+  {
+   "orig": "F6",
+   "use": "defineS12CalloutOtherSuggest",
+   "originalBytes": 825
+  },
+  {
+   "orig": "p6",
+   "use": "defineS12NoteComposerSuggest",
+   "originalBytes": 801
+  },
+  {
+   "orig": "M6",
+   "use": "defineS12BaseDecoPlugin",
+   "originalBytes": 477
+  },
+  {
+   "orig": "S6",
+   "use": "defineS12SearchDecoPlugin",
+   "originalBytes": 3755
+  },
+  {
+   "orig": "x6",
+   "use": "defineS12TaskLineDecoPlugin",
+   "originalBytes": 498
+  },
+  {
+   "orig": "B0",
+   "use": "defineS12RecentFiles"
+  },
+  {
+   "orig": "BZ",
+   "use": "s27PdfPasswordDialogClass",
+   "originalBytes": 1552
+  },
+  {
+   "orig": "HZ",
+   "use": "s27PdfToolbarClass",
+   "originalBytes": 5723
+  },
+  {
+   "orig": "_Z",
+   "use": "s27PdfViewerClass",
+   "originalBytes": 18298
+  },
+  {
+   "orig": "GZ",
+   "use": "s27PdfComponentClass",
+   "originalBytes": 1041
+  },
+  {
+   "orig": "KZ",
+   "use": "s27PdfViewClass",
+   "originalBytes": 1502
+  },
+  {
+   "orig": "YZ",
+   "use": "s27PdfEmbedClass",
+   "originalBytes": 1180
+  },
+  {
+   "orig": "XZ",
+   "use": "s27VideoViewClass",
+   "originalBytes": 658
+  },
+  {
+   "orig": "eJ",
+   "use": "s27MediaEmbedClass",
+   "originalBytes": 255
+  },
+  {
+   "orig": "tJ",
+   "use": "s27ImageEmbedClass",
+   "originalBytes": 216
+  },
+  {
+   "orig": "nJ",
+   "use": "s27AudioEmbedClass",
+   "originalBytes": 216
+  },
+  {
+   "orig": "iJ",
+   "use": "s27VideoEmbedClass",
+   "originalBytes": 216
+  },
+  {
+   "orig": "rJ",
+   "use": "s27FileEmbedClass",
+   "originalBytes": 671
+  },
+  {
+   "orig": "oJ",
+   "use": "s27FallbackEmbedClass",
+   "originalBytes": 1410
+  },
+  {
+   "orig": "aJ",
+   "use": "s27EmbedRegistryClass",
+   "originalBytes": 1193
+  },
+  {
+   "orig": "lJ",
+   "use": "s27MarkdownEmbedClass",
+   "originalBytes": 10032
+  },
+  {
+   "orig": "dJ",
+   "use": "defineS27GlobalSearchPlugin",
+   "originalBytes": 5366
+  },
+  {
    "orig": "dq",
    "use": "defineMarkdownEmbedView"
   },
@@ -3576,9 +5032,6 @@
   "extractFrontmatter": "Xx",
   "parseYaml": "mA",
   "subpathToPos": "FT",
-  "subpathContent": "NT",
-  "EmbedCursorBase": "FV",
-  "EmbedWidgetBase": "Rn",
   "DialogModal": "nb",
   "printModalText": "gm.editor.printModal",
   "electronBridge": "If",
@@ -4082,7 +5535,48 @@
   "wW": "wW",
   "xL": "xL",
   "xW": "xW",
-  "zV": "zV"
+  "zV": "zV",
+  "s27PdfLib": "pdfjsLib",
+  "s27PdfViewerNs": "pdfjsViewer",
+  "s27PdfConfig": "TZ",
+  "s27PdfL10n": "OZ",
+  "s27LoadPdfViewer": "pz",
+  "s27PdfFindBar": "LZ",
+  "s27PdfOutline": "NZ",
+  "s27PreserveScroll": "cg",
+  "s27StopMedia": "Kc",
+  "s27DisplayModeEmbed": "dq",
+  "s27PdfEmbed": "YZ",
+  "s27SearchViewType": "fJ",
+  "s27SearchView": "mJ",
+  "s12cmTreeIterate": "Nu.prototype.iterate",
+  "s12cmEdgeMarkAlt": "$2",
+  "s06Purify": "EL",
+  "s06PurifyConfig": "SL",
+  "s06MdLinkPattern": "pT",
+  "s25FilterBuilder": "EX",
+  "s25FilePathSuggest": "DI",
+  "s25MultiTextComponent": "XI",
+  "s25FormulaSuggester": "PX",
+  "s25PropForm": "QX",
+  "s25PropListPage": "KX",
+  "s25PropEditPage": "YX",
+  "s25GroupRow": "i$",
+  "s25SortRow": "n$",
+  "s25SortRowBase": "t$",
+  "s25GroupSet": "c$",
+  "s25ViewChooser": "a$",
+  "s25ViewConfigPage": "l$",
+  "s25FacetOf": "Ja",
+  "s25PlaceholderExtension": "Ua",
+  "s25LinkChange": "WL",
+  "s23Transaction": "_e",
+  "s23FrontmatterEnd": "tP",
+  "s23ScheduleFrame": "Cc",
+  "s23RangeSetBuilder": "ct",
+  "subpathContent": "NT",
+  "EmbedCursorBase": "FV",
+  "EmbedWidgetBase": "Rn"
  },
  "declarators": [
   {
@@ -5066,6 +6560,1172 @@
    "expr": "__basaltOwn.s13BasesCellBase",
    "sha1": "5c8e9a87c248bab4799732dec76af64242c6b5f2",
    "originalBytes": 99
+  },
+  {
+   "orig": "eA",
+   "expr": "__basaltOwn.s05CommunityPluginsUrl",
+   "sha1": "31b47de3731fcdc0256f24f25d758f938e0e299b",
+   "originalBytes": 59
+  },
+  {
+   "orig": "nA",
+   "expr": "__basaltOwn.s05CommunityPluginStatsUrl",
+   "sha1": "eb1d3004df3189f4daf90ce0fa1372cd69a1ede6",
+   "originalBytes": 64
+  },
+  {
+   "orig": "tA",
+   "expr": "__basaltOwn.s05CommunityPlugins",
+   "sha1": "268441f5f19ae024bb89bbd323010ddc0466f3db",
+   "originalBytes": 258
+  },
+  {
+   "orig": "iA",
+   "expr": "__basaltOwn.s05CommunityPluginStats",
+   "sha1": "869711740f0bcd67356d75a2c2eb304c67d63cc1",
+   "originalBytes": 44
+  },
+  {
+   "orig": "DD",
+   "expr": "__basaltOwn.s05VaultProfile(__basaltHost)",
+   "sha1": "839a294d0209d71fefa024a243b235687605a26f",
+   "originalBytes": 2427
+  },
+  {
+   "orig": "sD",
+   "expr": "{\"views\":0,\"deferredViews\":0}",
+   "sha1": "317391a7f215ee8654a042a265b9e8fc939cacb1",
+   "originalBytes": 25
+  },
+  {
+   "orig": "kD",
+   "expr": "false",
+   "sha1": "229db9bc4ef680cb90e1ef2793d6c761a444884f",
+   "originalBytes": 2
+  },
+  {
+   "orig": "iD",
+   "expr": "false",
+   "sha1": "229db9bc4ef680cb90e1ef2793d6c761a444884f",
+   "originalBytes": 2
+  },
+  {
+   "orig": "aD",
+   "expr": "Array()",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "gD",
+   "expr": "Array()",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "lD",
+   "expr": "{\"key\":\"\",\"children\":{},\"duration\":0}",
+   "sha1": "89d95355cc24f5bfb3309b4f6744e211f20350ab",
+   "originalBytes": 31
+  },
+  {
+   "orig": "PD",
+   "expr": "{\"duration\":140,\"fn\":\"var(--anim-motion-swing)\"}",
+   "sha1": "2afbf8f67c411789fcf1c1b4b015234f286025ae",
+   "originalBytes": 44
+  },
+  {
+   "orig": "hA",
+   "expr": "new RegExp(\"\\\\W\")",
+   "sha1": "fda7c88d4f15b114eaf64f1e77adf10db3bd034b",
+   "originalBytes": 4
+  },
+  {
+   "orig": "gA",
+   "expr": "window[\"moment\"]",
+   "sha1": "83e1d33bdf8a029d91b0fc7ef8ba7fb07ef6b0be",
+   "originalBytes": 13
+  },
+  {
+   "orig": "TK",
+   "expr": "__basaltOwn.s09Formulas()",
+   "sha1": "b5f8c96b0e6e5df954a543e4685df40c8dd825f6",
+   "originalBytes": 11
+  },
+  {
+   "orig": "eY",
+   "expr": "__basaltOwn.s09BasesStrings()",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "cY",
+   "expr": "__basaltOwn.s09BasesStrings()",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "XK",
+   "expr": "__basaltOwn.s09SummaryFormulas()",
+   "sha1": "c69f8eff5003c7b799721ba31dea0c2305cb1618",
+   "originalBytes": 563
+  },
+  {
+   "orig": "rY",
+   "expr": "__basaltOwn.s09FormulaLoopSentinel",
+   "sha1": "2d1e3506a4b52f8326159a414211cb0f13e30386",
+   "originalBytes": 8
+  },
+  {
+   "orig": "vY",
+   "expr": "__basaltOwn.s09FilePropLabels()",
+   "sha1": "1b322de0f1fbaf80eb48125b197e5dd53224046f",
+   "originalBytes": 501
+  },
+  {
+   "orig": "yY",
+   "expr": "__basaltOwn.s09DefaultSort",
+   "sha1": "042bafb5da7f1bb17e3c0fede01e86ddb356be46",
+   "originalBytes": 40
+  },
+  {
+   "orig": "bY",
+   "expr": "__basaltOwn.s09DefaultOrder",
+   "sha1": "0d82bda98b2987f08833ce3c359a35f2ce04d42a",
+   "originalBytes": 13
+  },
+  {
+   "orig": "wY",
+   "expr": "__basaltOwn.s09FileProperties",
+   "sha1": "2ac5b5b168dc41bde84c2f8eca271c9dc69b37ea",
+   "originalBytes": 95
+  },
+  {
+   "orig": "mQ",
+   "expr": "__basaltOwn.s09Damp",
+   "sha1": "d8aa7f083efcc236db28b8553375c971b56e4fe8",
+   "originalBytes": 54
+  },
+  {
+   "orig": "vQ",
+   "expr": "__basaltOwn.s09LerpColor",
+   "sha1": "2658d9c0e7e39df907afef75a5c7c9d7a092a4e3",
+   "originalBytes": 97
+  },
+  {
+   "orig": "gQ",
+   "expr": "__basaltOwn.s09BoxesDisjoint",
+   "sha1": "356cbb0d3686cd931881abda3581287144bf9087",
+   "originalBytes": 84
+  },
+  {
+   "orig": "yQ",
+   "expr": "__basaltOwn.s09BoxAround",
+   "sha1": "4c5e22ef1b30c378f0cebbba149e4409023bb3ff",
+   "originalBytes": 62
+  },
+  {
+   "orig": "bQ",
+   "expr": "__basaltOwn.s09ResetCanvasStyle",
+   "sha1": "26c21610a84f1b41b984de112cdcba7bd00099ba",
+   "originalBytes": 139
+  },
+  {
+   "orig": "wQ",
+   "expr": "__basaltOwn.s09GraphDefaults",
+   "sha1": "0a3acfce0798bfc0afd9bd98719ae990a172dbe7",
+   "originalBytes": 148
+  },
+  {
+   "orig": "fQ",
+   "expr": "__basaltOwn.s09GraphLinkAlpha",
+   "sha1": "2db92f66554fa5837dd62843ecf91c4dc772ae55",
+   "originalBytes": 2
+  },
+  {
+   "orig": "EQ",
+   "expr": "__basaltOwn.s09GraphNoWeightTypes",
+   "sha1": "97d4f06bec75475459c0f66e3263eda546f9ab5b",
+   "originalBytes": 8
+  },
+  {
+   "orig": "MQ",
+   "expr": "__basaltOwn.s09GraphColorClasses",
+   "sha1": "632af5d3c6ad5139024d8017422d56a35b0f8e78",
+   "originalBytes": 307
+  },
+  {
+   "orig": "SQ",
+   "expr": "__basaltOwn.s09GraphNodeBaseSize",
+   "sha1": "310b86e0b62b828562fc91c7be5380a992b2786a",
+   "originalBytes": 3
+  },
+  {
+   "orig": "LQ",
+   "expr": "__basaltOwn.s09LoadPixiScript",
+   "sha1": "7e43fdddeaa8ae0b46caa27874d3f6280b68bea8",
+   "originalBytes": 28
+  },
+  {
+   "orig": "YY",
+   "expr": "__basaltOwn.s09PubOptIndexFile",
+   "sha1": "ec314aa4773907b1ea256888bdc0eb9572a36e0f",
+   "originalBytes": 11
+  },
+  {
+   "orig": "QY",
+   "expr": "__basaltOwn.s09PubOptSiteName",
+   "sha1": "2a6716a1fd3f3ca83953a866848da548ae4a2b83",
+   "originalBytes": 10
+  },
+  {
+   "orig": "XY",
+   "expr": "__basaltOwn.s09PubOptLogo",
+   "sha1": "01338915e9c4e5672564060e13c0b816a51e6113",
+   "originalBytes": 6
+  },
+  {
+   "orig": "$Y",
+   "expr": "__basaltOwn.s09PubOptNoindex",
+   "sha1": "a15ce0d096ff1aa0c60b19702adba4049a16260a",
+   "originalBytes": 9
+  },
+  {
+   "orig": "ZY",
+   "expr": "__basaltOwn.s09PubOptDefaultTheme",
+   "sha1": "0ce51889c24f935ab5766e764504c73c31ca4103",
+   "originalBytes": 14
+  },
+  {
+   "orig": "JY",
+   "expr": "__basaltOwn.s09PubOptShowThemeToggle",
+   "sha1": "bc53ff4e0baf3eed26b0fc65619e9cd8eef9d1de",
+   "originalBytes": 17
+  },
+  {
+   "orig": "eQ",
+   "expr": "__basaltOwn.s09PubOptShowNavigation",
+   "sha1": "b1fc9074b4bf0b19cc1684725a6b75183fefd848",
+   "originalBytes": 16
+  },
+  {
+   "orig": "tQ",
+   "expr": "__basaltOwn.s09PubOptShowGraph",
+   "sha1": "aa7d871b0b197f36f134b3da03b9c9c285a9c0a3",
+   "originalBytes": 11
+  },
+  {
+   "orig": "nQ",
+   "expr": "__basaltOwn.s09PubOptShowOutline",
+   "sha1": "7a8a62f5aa1f75e80e79818fd3206a25147a8709",
+   "originalBytes": 13
+  },
+  {
+   "orig": "iQ",
+   "expr": "__basaltOwn.s09PubOptShowSearch",
+   "sha1": "da7275d5cb66afca9cd8b5c43f83d84ee4c09e5d",
+   "originalBytes": 12
+  },
+  {
+   "orig": "rQ",
+   "expr": "__basaltOwn.s09PubOptGoogleAnalytics",
+   "sha1": "3aca11f4c7274481d8d668034dc9e1e8c0fa19b6",
+   "originalBytes": 17
+  },
+  {
+   "orig": "oQ",
+   "expr": "__basaltOwn.s09PubOptHideTitle",
+   "sha1": "34914676f53a2004f447ea015a9ee72114474217",
+   "originalBytes": 11
+  },
+  {
+   "orig": "aQ",
+   "expr": "__basaltOwn.s09PubOptReadableLineLength",
+   "sha1": "35fe8ac5ec9847d7fd2fd7d5fb66dd5019bf322c",
+   "originalBytes": 20
+  },
+  {
+   "orig": "sQ",
+   "expr": "__basaltOwn.s09PubOptStrictLineBreaks",
+   "sha1": "685682d2e1f6ea97c56702972dfca8452d4db181",
+   "originalBytes": 18
+  },
+  {
+   "orig": "lQ",
+   "expr": "__basaltOwn.s09PubOptShowHoverPreview",
+   "sha1": "9b9e8c959756a07889411cb91706fb451850b1e5",
+   "originalBytes": 18
+  },
+  {
+   "orig": "cQ",
+   "expr": "__basaltOwn.s09PubOptShowBacklinks",
+   "sha1": "78c738427f55d56a147c95f217a83ce55215142c",
+   "originalBytes": 15
+  },
+  {
+   "orig": "uQ",
+   "expr": "__basaltOwn.s09PubOptSlidingWindowMode",
+   "sha1": "8bc6c72bb109e7fa2fa85b408b67719f6e6cfc1b",
+   "originalBytes": 19
+  },
+  {
+   "orig": "hQ",
+   "expr": "__basaltOwn.s09PubOptNavigationOrdering",
+   "sha1": "b1d4b2212554bd2bbbf091b8acebcbb06d8a9bae",
+   "originalBytes": 20
+  },
+  {
+   "orig": "pQ",
+   "expr": "__basaltOwn.s09PubOptNavigationHiddenItems",
+   "sha1": "813426f1070e5a06591c5808cc133311b96442b5",
+   "originalBytes": 23
+  },
+  {
+   "orig": "dQ",
+   "expr": "VY=__basaltOwn.s09PublishDefaults()",
+   "sha1": "6b1e0f0870152b2fb0465272bcd8cbe2607ef06d",
+   "originalBytes": 202
+  },
+  {
+   "orig": "XQ",
+   "expr": "__basaltOwn.s09PublishHiddenHovers",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "$Q",
+   "expr": "__basaltOwn.s09PublishActiveHovers",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "ZQ",
+   "expr": "__basaltOwn.s09PublishHoverTimer",
+   "sha1": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
+   "originalBytes": 1
+  },
+  {
+   "orig": "JQ",
+   "expr": "__basaltOwn.s09PublishHoverPoint",
+   "sha1": "2be88ca4242c76e8253ac62474851065032d6833",
+   "originalBytes": 4
+  },
+  {
+   "orig": "eX",
+   "expr": "function(e){__basaltOwn.s09PublishHoverClick(e)}",
+   "sha1": "e1d876351e1b8f939fed7783e48bc2a42f23e2da",
+   "originalBytes": 314
+  },
+  {
+   "orig": "tX",
+   "expr": "function(e){__basaltOwn.s09PublishHoverMove(e)}",
+   "sha1": "a8c642f92d6eaaed1e1c34e817ba708f198ed477",
+   "originalBytes": 51
+  },
+  {
+   "orig": "nX",
+   "expr": "function(){__basaltOwn.s09PublishHoverTick()}",
+   "sha1": "2375fce01eeef1a16e6aecb27b80976b8a365bf9",
+   "originalBytes": 369
+  },
+  {
+   "orig": "iX",
+   "expr": "function(){__basaltOwn.s09PublishHoverStart()}",
+   "sha1": "fd76505456e891513a8135deb62c402b799740a4",
+   "originalBytes": 191
+  },
+  {
+   "orig": "Q7",
+   "expr": "__basaltOwn.s15PublishItemSort",
+   "sha1": "308ac3af0d81794f4af75140d89b372f6b6d07ae",
+   "originalBytes": 124
+  },
+  {
+   "orig": "u9",
+   "expr": "__basaltOwn.s15Env().gm.plugins.publish",
+   "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
+   "originalBytes": 18
+  },
+  {
+   "orig": "T9",
+   "expr": "__basaltOwn.s15Env().gm.plugins.sync",
+   "sha1": "2cb35f6768d475d28ffbccfc2c43fa33fca71a9a",
+   "originalBytes": 15
+  },
+  {
+   "orig": "G9",
+   "expr": "__basaltOwn.s15Env().gm.plugins.sync",
+   "sha1": "2cb35f6768d475d28ffbccfc2c43fa33fca71a9a",
+   "originalBytes": 15
+  },
+  {
+   "orig": "D9",
+   "expr": "__basaltOwn.s15Env().gm.plugins.publish",
+   "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
+   "originalBytes": 18
+  },
+  {
+   "orig": "m9",
+   "expr": "__basaltOwn.s15Env().gm.plugins.quickSwitcher",
+   "sha1": "a66b1d230f3eb1f0e71b8f91b08b691f5c410082",
+   "originalBytes": 24
+  },
+  {
+   "orig": "h9",
+   "expr": "__basaltOwn.s15PublishUrl",
+   "sha1": "a590a2c81292877011d80d2461e2391703e43d31",
+   "originalBytes": 27
+  },
+  {
+   "orig": "d9",
+   "expr": "__basaltOwn.s15PublishAssets",
+   "sha1": "bb34a7702f148105fc4716028cdaf9145b63f7ad",
+   "originalBytes": 55
+  },
+  {
+   "orig": "L9",
+   "expr": "__basaltOwn.s15AvatarColorClasses",
+   "sha1": "83c9230ee597be017b517e6aded3f1399151be3b",
+   "originalBytes": 169
+  },
+  {
+   "orig": "A9",
+   "expr": "__basaltOwn.s15SyncHourMs",
+   "sha1": "afa31f8135d8e3a100e5f974ef67cdb5b50cbfff",
+   "originalBytes": 4
+  },
+  {
+   "orig": "C9",
+   "expr": "__basaltOwn.s15SlashCommandPattern",
+   "sha1": "09e390eef3edd19da22641e46189bd9acaf95601",
+   "originalBytes": 21
+  },
+  {
+   "orig": "M9",
+   "expr": "__basaltOwn.s15Env().Hv(\"/lib/reveal/reveal.js\")",
+   "sha1": "4933725e20cfdd13dc9ed83635463667d65db2f4",
+   "originalBytes": 27
+  },
+  {
+   "orig": "v9",
+   "expr": "__basaltOwn.QUICK_SWITCHER_DEFAULTS",
+   "sha1": "777739e8d43da61b10510e6fb5e015ceebc9c9ce",
+   "originalBytes": 60
+  },
+  {
+   "orig": "Dq",
+   "expr": "__basaltOwn.s23ListIndentPlugin(__basaltHost)",
+   "sha1": "116f65ebc9d7663abd850c2982cdff5d7d5dd2f4",
+   "originalBytes": 90
+  },
+  {
+   "orig": "Eq",
+   "expr": "__basaltOwn.s23BreakPattern",
+   "sha1": "345220fd7d046fb9d9115cd43521b2b09d3c7c5a",
+   "originalBytes": 51
+  },
+  {
+   "orig": "fj",
+   "expr": "__basaltOwn.s23WrapPairInput(__basaltHost)",
+   "sha1": "4b07c5f0961584a13b7317dc752726c18889fc57",
+   "originalBytes": 604
+  },
+  {
+   "orig": "dj",
+   "expr": "__basaltOwn.s23WrapPairChars",
+   "sha1": "9271a2cbe7aad586ebfcf4a322d5ae41142062f0",
+   "originalBytes": 17
+  },
+  {
+   "orig": "aj",
+   "expr": "__basaltOwn.s23SearchMatchMark(__basaltHost)",
+   "sha1": "422da6cd2b7d6683f294ca821d9ba8937e8e0222",
+   "originalBytes": 48
+  },
+  {
+   "orig": "mj",
+   "expr": "__basaltOwn.s23SearchMatchClass",
+   "sha1": "471d032451e957fe7d1d47551ef4a147e4d0ba28",
+   "originalBytes": 31
+  },
+  {
+   "orig": "fJ",
+   "expr": "__basaltOwn.s28SearchViewType",
+   "sha1": "ede94f4e836f1cba807a6cc67c74395d09d8c469",
+   "originalBytes": 8
+  },
+  {
+   "orig": "yJ",
+   "expr": "__basaltOwn.s28GraphStrings(__basaltHost)",
+   "sha1": "496f1f7b58908971355f410fbb9007800fd5bf47",
+   "originalBytes": 20
+  },
+  {
+   "orig": "wJ",
+   "expr": "__basaltOwn.s28GraphViewType",
+   "sha1": "e74147a3fabab018bf1ba4d0bb7115e435ab0817",
+   "originalBytes": 7
+  },
+  {
+   "orig": "CJ",
+   "expr": "__basaltOwn.s28LocalGraphViewType",
+   "sha1": "27bc91ef9758321901edc5b3043ef668db899f06",
+   "originalBytes": 12
+  },
+  {
+   "orig": "PJ",
+   "expr": "__basaltOwn.s28GraphDisplayDefaults",
+   "sha1": "49af16fdd536cfeef165ad67f2b7744f3fe0c7bb",
+   "originalBytes": 77
+  },
+  {
+   "orig": "IJ",
+   "expr": "__basaltOwn.s28GraphForceDefaults",
+   "sha1": "0eb1f278573cde7b8543669534a409538d5dde0e",
+   "originalBytes": 84
+  },
+  {
+   "orig": "FJ",
+   "expr": "__basaltOwn.s28BookmarkParentSymbol",
+   "sha1": "12d4de7df3726d0b9c435cffbff8315512c6d5f5",
+   "originalBytes": 16
+  },
+  {
+   "orig": "NJ",
+   "expr": "__basaltOwn.s28BookmarkStrings(__basaltHost)",
+   "sha1": "cf2fd143b0abc4b77438af8ca5925c12cbe93861",
+   "originalBytes": 20
+  },
+  {
+   "orig": "WA",
+   "expr": "__basaltOwn.s06BlockquoteRe",
+   "sha1": "616a7f86764868615ccde3a4d4c1b50ae07fc098",
+   "originalBytes": 16
+  },
+  {
+   "orig": "XA",
+   "expr": "__basaltOwn.s06FootnoteRefRe",
+   "sha1": "4ee7b1a7f853ac357f854511b210db0a61f31c28",
+   "originalBytes": 8
+  },
+  {
+   "orig": "aP",
+   "expr": "__basaltOwn.s06ListMarkerRe",
+   "sha1": "8faa41167dbec08acc3580f5cf00ff434a0b782b",
+   "originalBytes": 48
+  },
+  {
+   "orig": "sP",
+   "expr": "__basaltOwn.s06HeadingRe",
+   "sha1": "bff3c942624abb77b14ec705dcfa98b835b83ebe",
+   "originalBytes": 25
+  },
+  {
+   "orig": "FL",
+   "expr": "__basaltOwn.s06DateTimeRe",
+   "sha1": "fef389f561b94ed24ef9076f1d56fa743193c1bb",
+   "originalBytes": 40
+  },
+  {
+   "orig": "OL",
+   "expr": "__basaltOwn.s06DateRe",
+   "sha1": "4a8adca03f2fac2d8eac49bb427976e77ceb1525",
+   "originalBytes": 24
+  },
+  {
+   "orig": "IL",
+   "expr": "__basaltOwn.s06DateTimeFormats",
+   "sha1": "da8d9880cc476fb87e14290718ec93ee60bb867b",
+   "originalBytes": 87
+  },
+  {
+   "orig": "LL",
+   "expr": "__basaltOwn.s06DateFormats",
+   "sha1": "0ad2748c5aca8ef05fea8cccc8bbfa28812ba84b",
+   "originalBytes": 14
+  },
+  {
+   "orig": "DL",
+   "expr": "__basaltOwn.s06CommentPrefix",
+   "sha1": "11b1e9735b8024a9c63a554fe1724ec639188c34",
+   "originalBytes": 23
+  },
+  {
+   "orig": "KI",
+   "expr": "__basaltOwn.s06TagRe",
+   "sha1": "94bee48dc8f241a96d04d4994b3d4b490fa93b45",
+   "originalBytes": 75
+  },
+  {
+   "orig": "fI",
+   "expr": "__basaltOwn.s06WikiLinkRe",
+   "sha1": "6ddff9279f4752742b258947d550d553a6dc230d",
+   "originalBytes": 30
+  },
+  {
+   "orig": "lP",
+   "expr": "__basaltOwn.s06CjkBrackets",
+   "sha1": "80acd742c4351fd226032e3371fdd1ee6cebee4e",
+   "originalBytes": 153
+  },
+  {
+   "orig": "fP",
+   "expr": "{left:\":--\",right:\"--:\",center:\":-:\"}"
+  },
+  {
+   "orig": "VI",
+   "expr": "{type:\"none\",matches:null,score:0}"
+  },
+  {
+   "orig": "BI",
+   "expr": "__basaltOwn.s06CompareScoreDesc",
+   "sha1": "f5738ea14c6f7ae5011fc13a6755c5a61ba5e86e",
+   "originalBytes": 37
+  },
+  {
+   "orig": "VL",
+   "expr": "__basaltOwn.s06ComparePathLength",
+   "sha1": "10a54413e282244fd112dfc25b920d11c1d4ffd8",
+   "originalBytes": 49
+  },
+  {
+   "orig": "rO",
+   "expr": "__basaltOwn.s06PropertyOptionText(__basaltHost)",
+   "sha1": "83eaca695d398d5b6c18b4e52882e3a11faa8aef",
+   "originalBytes": 297
+  },
+  {
+   "orig": "yO",
+   "expr": "__basaltOwn.s06PropertyOptionPropertyName(__basaltHost)",
+   "sha1": "0ae89a6264b979b4e326f27d58bfcd169cd3d920",
+   "originalBytes": 188
+  },
+  {
+   "orig": "bO",
+   "expr": "__basaltOwn.s06PropertyOptionAliases(__basaltHost)",
+   "sha1": "4a9da8b69f50194f8b63a124fc0e18a78f5e9462",
+   "originalBytes": 208
+  },
+  {
+   "orig": "wO",
+   "expr": "__basaltOwn.s06PropertyOptionTags(__basaltHost)",
+   "sha1": "17c630f325fd65070c00896a3d1ea42024901054",
+   "originalBytes": 196
+  },
+  {
+   "orig": "kO",
+   "expr": "__basaltOwn.s06PropertyOptionFolder(__basaltHost)",
+   "sha1": "14da60069a39869bac0ae942ede7432d578d3d8c",
+   "originalBytes": 182
+  },
+  {
+   "orig": "CO",
+   "expr": "__basaltOwn.s06PropertyOptionFile(__basaltHost)",
+   "sha1": "f398196acf117b1fecaa5dfd28506a5a39bf5c9c",
+   "originalBytes": 176
+  },
+  {
+   "orig": "EO",
+   "expr": "__basaltOwn.s06PropertyOptionDate(__basaltHost)",
+   "sha1": "858d20b1ee776dd52a7ef5793f854dc17be96792",
+   "originalBytes": 179
+  },
+  {
+   "orig": "MO",
+   "expr": "__basaltOwn.s06PropertyOptionDatetime(__basaltHost)",
+   "sha1": "b484cded7c6d343dedfbb9fdd55d99d2c4cd4985",
+   "originalBytes": 184
+  },
+  {
+   "orig": "xO",
+   "expr": "__basaltOwn.s06PropertyOptionNumber(__basaltHost)",
+   "sha1": "6a0d48865c6ad15ef4677f6cf0a24932302d1ee3",
+   "originalBytes": 167
+  },
+  {
+   "orig": "TO",
+   "expr": "__basaltOwn.s06PropertyOptionCheckbox(__basaltHost)",
+   "sha1": "09f3acad7084b0653758c042ef24f59623d2933e",
+   "originalBytes": 177
+  },
+  {
+   "orig": "PO",
+   "expr": "__basaltOwn.s06PropertyOptionMultitext(__basaltHost)",
+   "sha1": "aa4eb4f9b595848af59fa333d3e879ad85410311",
+   "originalBytes": 184
+  },
+  {
+   "orig": "IO",
+   "expr": "__basaltOwn.s06PropertyOptionUnknownDescriptor(__basaltHost)",
+   "sha1": "99baa6211fe0adbc985770ee7ebd377141554f7c",
+   "originalBytes": 157
+  },
+  {
+   "orig": "G1",
+   "expr": "__basaltHost.i18n.setting.keychain",
+   "sha1": "4641e64f1d4256c2329dd387837e4529f32a8464",
+   "originalBytes": 19
+  },
+  {
+   "orig": "J1",
+   "expr": "__basaltOwn.s12SecretsWarningKey()",
+   "sha1": "0f851c87d64079d6c948ffcb4daa2f6e8b811cf3",
+   "originalBytes": 38
+  },
+  {
+   "orig": "e0",
+   "expr": "__basaltOwn.s12SecretsDirName()",
+   "sha1": "150d157a469cbbc19514c9caf3b4dc52e9a88274",
+   "originalBytes": 9
+  },
+  {
+   "orig": "t0",
+   "expr": "__basaltOwn.s12SecretsEncryptedName()",
+   "sha1": "1a47df2d58a258dec3b9080cc8f223d8b5a7e374",
+   "originalBytes": 19
+  },
+  {
+   "orig": "n0",
+   "expr": "__basaltOwn.s12SecretsMetaName()",
+   "sha1": "5a03d746761f89764f8727ab2f21d2de67da2efb",
+   "originalBytes": 14
+  },
+  {
+   "orig": "s0",
+   "expr": "__basaltOwn.s12ReleaseNotesViewType()",
+   "sha1": "7fba9562dd793b1e0cb40b74c665c2cf013d7f7c",
+   "originalBytes": 15
+  },
+  {
+   "orig": "l0",
+   "expr": "__basaltOwn.s12ReleaseNotesRepo()",
+   "sha1": "a692bdd7efca2a33e1417da59d04957485efa376",
+   "originalBytes": 26
+  },
+  {
+   "orig": "c0",
+   "expr": "__basaltHost.i18n.interface.releaseNotes",
+   "sha1": "9ab13657e3564a25afcb4ff19ca24cfbea8cbf63",
+   "originalBytes": 25
+  },
+  {
+   "orig": "v0",
+   "expr": "__basaltHost.i18n.plugins.fileExplorer",
+   "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
+   "originalBytes": 23
+  },
+  {
+   "orig": "b0",
+   "expr": "__basaltHost.i18n.setting.hotkeys",
+   "sha1": "15ecb357527ac4b4c823408eab284a8addfeb9aa",
+   "originalBytes": 18
+  },
+  {
+   "orig": "k0",
+   "expr": "__basaltOwn.s12HotkeyFilterLabels()",
+   "sha1": "98305bf4d28f59abaf84bb9bd5f1e7bea2592ef6",
+   "originalBytes": 152
+  },
+  {
+   "orig": "E0",
+   "expr": "__basaltHost.i18n.setting.thirdPartyPlugin",
+   "sha1": "df95dae967e943b16b2e6f92988091474187b4d5",
+   "originalBytes": 27
+  },
+  {
+   "orig": "T0",
+   "expr": "__basaltHost.i18n.setting.thirdPartyPlugin",
+   "sha1": "df95dae967e943b16b2e6f92988091474187b4d5",
+   "originalBytes": 27
+  },
+  {
+   "orig": "J0",
+   "expr": "__basaltHost.i18n.setting.thirdPartyPlugin",
+   "sha1": "df95dae967e943b16b2e6f92988091474187b4d5",
+   "originalBytes": 27
+  },
+  {
+   "orig": "x0",
+   "expr": "__basaltHost.i18n.plugins.customCss",
+   "sha1": "2d965a235769dadaa9b5639dc0071b00f0a41619",
+   "originalBytes": 20
+  },
+  {
+   "orig": "F0",
+   "expr": "__basaltOwn.s12WorkspaceLayoutFile()",
+   "sha1": "495ccecf066613e6532fb21351014c659ec761b9",
+   "originalBytes": 16
+  },
+  {
+   "orig": "N0",
+   "expr": "__basaltOwn.s12WorkspaceMobileLayoutFile()",
+   "sha1": "6bf13484fd2d55fd160d33b6babeeb7f43fa304b",
+   "originalBytes": 23
+  },
+  {
+   "orig": "z0",
+   "expr": "__basaltOwn.s12CmIterateErrorDetail()",
+   "sha1": "86cec7b5cbf120eb6bf7b4ec75576a1676903d51",
+   "originalBytes": 153
+  },
+  {
+   "orig": "q0",
+   "expr": "__basaltHost.s12cmTreeIterate",
+   "sha1": "bd765b67061dee9fdc1887d550bb04be73513546",
+   "originalBytes": 20
+  },
+  {
+   "orig": "j0",
+   "expr": "__basaltOwn.s12CmIterateCompat",
+   "sha1": "e06e85e090abdb4d8baa46f06a1d64775fc39108",
+   "originalBytes": 144
+  },
+  {
+   "orig": "U0",
+   "expr": "__basaltOwn.s12CmEmptyFieldConfig()",
+   "sha1": "547baf08e441efaa445b6132e9ca3738ec0b55da",
+   "originalBytes": 19
+  },
+  {
+   "orig": "W0",
+   "expr": "__basaltOwn.s12PluginRequireMap()",
+   "sha1": "b150fe40717b6a8a787acfac7fb58c17d075d38b",
+   "originalBytes": 275
+  },
+  {
+   "orig": "_0",
+   "expr": "__basaltOwn.s12PluginDeprecatedRequireMap()",
+   "sha1": "7ea2c53feeb37e0e7ce6426aa45289dacb17b182",
+   "originalBytes": 318
+  },
+  {
+   "orig": "Q0",
+   "expr": "__basaltOwn.s12InlineSourcemapPattern()",
+   "sha1": "9d5c1e42e3bc28d1e18ea98f62fd16dbc246393b",
+   "originalBytes": 86
+  },
+  {
+   "orig": "X0",
+   "expr": "__basaltOwn.s12NoSourcemapMarker()",
+   "sha1": "588d15252c21d4b8dc507961a19905c21d4355d6",
+   "originalBytes": 21
+  },
+  {
+   "orig": "e2",
+   "expr": "__basaltOwn.s12DeprecationIndexUrl()",
+   "sha1": "79dda8ab905fba514a31b7bb0a181d3f942acb31",
+   "originalBytes": 70
+  },
+  {
+   "orig": "t2",
+   "expr": "__basaltOwn.s12EmptyWebviewerOptions()",
+   "sha1": "bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f",
+   "originalBytes": 2
+  },
+  {
+   "orig": "n2",
+   "expr": "__basaltOwn.s12PluginSortLabels()",
+   "sha1": "309bba3c514295dcb3ada12bcb200c5b803b7fe0",
+   "originalBytes": 217
+  },
+  {
+   "orig": "u2",
+   "expr": "__basaltOwn.s12DropIndicatorElement()",
+   "sha1": "6eba17c7e760237df361932094138ce8fa12cca0",
+   "originalBytes": 37
+  },
+  {
+   "orig": "h2",
+   "expr": "__basaltOwn.s12DropIndicatorUpdater()",
+   "sha1": "15e9b24508e84fd2adfb594c5a7b818f3712a178",
+   "originalBytes": 112
+  },
+  {
+   "orig": "p2",
+   "expr": "__basaltOwn.s12NullDropState()",
+   "sha1": "2be88ca4242c76e8253ac62474851065032d6833",
+   "originalBytes": 4
+  },
+  {
+   "orig": "d2",
+   "expr": "__basaltOwn.s12NullDropState()",
+   "sha1": "2be88ca4242c76e8253ac62474851065032d6833",
+   "originalBytes": 4
+  },
+  {
+   "orig": "m2",
+   "expr": "__basaltHost.i18n.plugins.webViewer",
+   "sha1": "e2fc417e762b4bcbc6686875c5b5d8075de600d7",
+   "originalBytes": 20
+  },
+  {
+   "orig": "k2",
+   "expr": "__basaltHost.i18n.plugins.webViewer",
+   "sha1": "e2fc417e762b4bcbc6686875c5b5d8075de600d7",
+   "originalBytes": 20
+  },
+  {
+   "orig": "D2",
+   "expr": "__basaltHost.i18n.plugins.webViewer",
+   "sha1": "e2fc417e762b4bcbc6686875c5b5d8075de600d7",
+   "originalBytes": 20
+  },
+  {
+   "orig": "y2",
+   "expr": "__basaltOwn.s12WebviewerViewType()",
+   "sha1": "d47f934b69507884d9c9d486385484ef70961ea2",
+   "originalBytes": 11
+  },
+  {
+   "orig": "b2",
+   "expr": "__basaltOwn.s12WebviewerHistoryViewType()",
+   "sha1": "f486ecd5852f80c6dad6bccc4a944eb2654cf4c0",
+   "originalBytes": 19
+  },
+  {
+   "orig": "w2",
+   "expr": "__basaltOwn.s12DefaultSearchEngineKey()",
+   "sha1": "cb2c38858d26f69c72152d16621d7bcc2d507141",
+   "originalBytes": 12
+  },
+  {
+   "orig": "A2",
+   "expr": "__basaltOwn.s12WebviewerEmptyPageUrl()",
+   "sha1": "d6c7df380cb909fa41683d710935dbcfb04acfce",
+   "originalBytes": 18
+  },
+  {
+   "orig": "C2",
+   "expr": "__basaltOwn.s12WebviewerSearchEngines()",
+   "sha1": "04fc8ca60a7067bd08a32cb42d0d8b1d6ae1b1bb",
+   "originalBytes": 291
+  },
+  {
+   "orig": "E2",
+   "expr": "__basaltOwn.s12WebviewerDefaultOptions()",
+   "sha1": "9c65060eab9d70df2825210c2fcc7f067e9df4a6",
+   "originalBytes": 41
+  },
+  {
+   "orig": "L2",
+   "expr": "__basaltHost.i18n.plugins.bookmarks",
+   "sha1": "cf2fd143b0abc4b77438af8ca5925c12cbe93861",
+   "originalBytes": 20
+  },
+  {
+   "orig": "W2",
+   "expr": "__basaltOwn.s12CalloutTypeLabels()",
+   "sha1": "dc465897966ce250ab8d89e018f97501e26771ad",
+   "originalBytes": 245
+  },
+  {
+   "orig": "_2",
+   "expr": "__basaltOwn.s12CalloutTypeNames()",
+   "sha1": "c51659ddb9bf95b05113b05fb609b91a4818afa0",
+   "originalBytes": 202
+  },
+  {
+   "orig": "G2",
+   "expr": "__basaltOwn.s12CmPostprocessEffect()",
+   "sha1": "31041be5deb4e5ce0ba0b5c5db6fa99078526c95",
+   "originalBytes": 11
+  },
+  {
+   "orig": "K2",
+   "expr": "__basaltOwn.s12CmMouseDownPlugin()",
+   "sha1": "78d63dfe0b10d8f3070b0603fab1035cd9d789ed",
+   "originalBytes": 45
+  },
+  {
+   "orig": "Y2",
+   "expr": "__basaltOwn.s12LivepreviewSyntaxTags()",
+   "sha1": "7b9d0a67260be5084dd756d5e722b8e81c136c49",
+   "originalBytes": 141
+  },
+  {
+   "orig": "Q2",
+   "expr": "__basaltOwn.s12CodeblockFencePattern()",
+   "sha1": "495526034b4b531bc07969e8875645bad126cc8f",
+   "originalBytes": 43
+  },
+  {
+   "orig": "X2",
+   "expr": "__basaltOwn.s12cmEmptyReplace()",
+   "sha1": "8b2e761d8999262c47d1273aa63d97de3d6c591b",
+   "originalBytes": 14
+  },
+  {
+   "orig": "$2",
+   "expr": "__basaltOwn.s12cmEmptyReplace()",
+   "sha1": "8b2e761d8999262c47d1273aa63d97de3d6c591b",
+   "originalBytes": 14
+  },
+  {
+   "orig": "Z2",
+   "expr": "__basaltOwn.s12cmEmptyReplace()",
+   "sha1": "8b2e761d8999262c47d1273aa63d97de3d6c591b",
+   "originalBytes": 14
+  },
+  {
+   "orig": "J2",
+   "expr": "__basaltOwn.s12CmUnderlineMark()",
+   "sha1": "b60bccebab0be5dacd45ad4692c1b0af9b315edf",
+   "originalBytes": 75
+  },
+  {
+   "orig": "e6",
+   "expr": "__basaltOwn.s12CmTransparentMark()",
+   "sha1": "a1b43223b1a963686377e6e5b740ab51ad5b5b04",
+   "originalBytes": 33
+  },
+  {
+   "orig": "t6",
+   "expr": "__basaltOwn.s12CmUnresolvedMark()",
+   "sha1": "8f0096eac0a82841e8a1ec4ef5460388e274e95a",
+   "originalBytes": 32
+  },
+  {
+   "orig": "a6",
+   "expr": "__basaltOwn.s12CmListBulletMark()",
+   "sha1": "e105e257ca7aa26f8f099a9052545eae77f8f38b",
+   "originalBytes": 30
+  },
+  {
+   "orig": "s6",
+   "expr": "__basaltOwn.s12CmListNumberMark()",
+   "sha1": "4593e63c41893f6cfad3e8efa73963ee7110556f",
+   "originalBytes": 30
+  },
+  {
+   "orig": "w6",
+   "expr": "__basaltOwn.s12WebviewTagBlocklist()",
+   "sha1": "c9a2d71417d6409a4fc91db4cac732a22cab6f59",
+   "originalBytes": 59
+  },
+  {
+   "orig": "B6",
+   "expr": "__basaltOwn.s12BacklinkViewType()",
+   "sha1": "5594d7c9589a1c18d34d3cb33e0ece77b620f16c",
+   "originalBytes": 10
+  },
+  {
+   "orig": "U6",
+   "expr": "__basaltOwn.s12MarkdownViewTypeName()",
+   "sha1": "5d9a0e7b2580ae488fcb648203e2771f6ccc2c33",
+   "originalBytes": 10
+  },
+  {
+   "orig": "_6",
+   "expr": "__basaltHost.i18n.editor.printModal",
+   "sha1": "28bd8570ec5b7ba24194b5626ab8efb009d46867",
+   "originalBytes": 20
+  },
+  {
+   "orig": "U1",
+   "expr": "__basaltOwn.s12RegisterSecureStorage()",
+   "sha1": "e42082858871ba0a5a02e60cbbd41df607be776f",
+   "originalBytes": 304
+  },
+  {
+   "orig": "D6",
+   "expr": "__basaltOwn.s12cmRefreshDispatch",
+   "sha1": "0e5266f284afc45695da955b5e4857f7496b3fe5",
+   "originalBytes": 88
+  },
+  {
+   "orig": "P6",
+   "expr": "__basaltOwn.s12PropertiesLivePreviewPlugin",
+   "sha1": "f997c8aa151a81f8368526e006b363f85e9d3acd",
+   "originalBytes": 164
+  },
+  {
+   "orig": "i6",
+   "expr": "__basaltOwn.s12cmBlockquoteBorderDeco()",
+   "sha1": "e99f8e309ad099eb9d016d889706ee56345b56e8",
+   "originalBytes": 27
+  },
+  {
+   "orig": "o6",
+   "expr": "__basaltOwn.s12cmHrWidgetInstance()",
+   "sha1": "eb166adf8670bcd5dc02baeed2d223a28d398703",
+   "originalBytes": 6
+  },
+  {
+   "orig": "E6",
+   "expr": "__basaltOwn.s12cmEmptyWidgetDeco()",
+   "sha1": "1c61d33b89d83faa69f4e947823a0b148628a271",
+   "originalBytes": 34
+  },
+  {
+   "orig": "L6",
+   "expr": "__basaltOwn.s12SearchHighlightPlugin()",
+   "sha1": "5a6ad21c096b771b820a84fbb7d18e607e9a7ab7",
+   "originalBytes": 90
+  },
+  {
+   "orig": "I6",
+   "expr": "__basaltOwn.s12TaskLinePlugin()",
+   "sha1": "a48a5f6030b376211dd0f960c894305abad4be9b",
+   "originalBytes": 90
+  },
+  {
+   "orig": "A6",
+   "expr": "__basaltOwn.s12MobileDragExtensions(__basaltHost)",
+   "sha1": "0a01740e2841587dff31da26ce7830ce1033724b",
+   "originalBytes": 1240
+  },
+  {
+   "orig": "RZ",
+   "expr": "__basaltOwn.s27PdfI18n()",
+   "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+   "originalBytes": 6
+  },
+  {
+   "orig": "VZ",
+   "expr": "__basaltOwn.s27PdfI18n()",
+   "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+   "originalBytes": 6
+  },
+  {
+   "orig": "zZ",
+   "expr": "__basaltOwn.s27PdfI18n()",
+   "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+   "originalBytes": 6
+  },
+  {
+   "orig": "qZ",
+   "expr": "__basaltOwn.s27PdfStorageKey",
+   "sha1": "67b315d406259a4fab51e6886f79128c60675375",
+   "originalBytes": 17
+  },
+  {
+   "orig": "QZ",
+   "expr": "__basaltOwn.s27VideoViewType",
+   "sha1": "b53c54f0a814aab43d7729f68732b181b86b7f3c",
+   "originalBytes": 7
+  },
+  {
+   "orig": "ZZ",
+   "expr": "__basaltOwn.s27EmbedDepths",
+   "sha1": "53a9b0a3c30baac2eec4c403e29d5c0b1c41a10c",
+   "originalBytes": 11
+  },
+  {
+   "orig": "cJ",
+   "expr": "__basaltOwn.s27SearchI18n()",
+   "sha1": "b4154efdcf48fd241f859327be778a43a9c38620",
+   "originalBytes": 17
+  },
+  {
+   "orig": "pJ",
+   "expr": "__basaltOwn.s27SearchI18n()",
+   "sha1": "b4154efdcf48fd241f859327be778a43a9c38620",
+   "originalBytes": 17
+  },
+  {
+   "orig": "uJ",
+   "expr": "__basaltOwn.s27SearchOperatorSuggestions()",
+   "sha1": "c649d22d1573bd639331db5750c478fbf7a83150",
+   "originalBytes": 639
   },
   {
    "orig": "nz",
@@ -6251,7 +8911,7 @@
    "originalBytes": 26549
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,nF,iF,Iz,createEl,ub,$x,oT,hT,Hv,Jl,ajaxPromise,Xz,eq,aP",
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,Pl,Ll,s12cmDecoration:Vn,s12cmViewPlugin:ji,s12cmStateField:ke,s12cmStateEffect:We,s12cmFacet:me,s12cmEditorViewStatics:_o,s12cmRangeSet:lt,s12lezerTree:Nu,s12webpackRequire:n,s12capacitor:km,s12githubRaw:ty,s12reqObsidian:d,s12reqAutocomplete:l,s12reqCollab:h,s12reqCommands:a,s12reqLanguage:o,s12reqLint:p,s12reqSearch:s,s12reqState:e,s12reqView:t,s12reqLezerCommon:i,s12reqLezerLr:c,s12reqLezerHighlight:r,s12txHasEffect:VA,s12treePusherEl:JH,s12wikilinkPattern:fI,s12mdLinkPattern:pT,s12pathParentDir:By,s12sanitizeTitle:VJ,s12bookmarkUrlItem:R2,s12bookmarkEditModal:RJ,s12webviewerAddressBar:HJ,s12systemInfo:oD,s12graphOptions:TJ,s12svgIcon:T1,s12backlinksView:H6,s12defaults:it,s12widgetBase:FV,s12cmWidgetType:Rn,s12rangeSetBuilder:ct,s12measureIndent:_A,s12cmHighlightDecoField:xA,s12cmHighlightEffect:EA,s12rangeHasMatch:NA,s12rangeContainsMark:RA,s12cmStyleSpan:C6,s12embedChildBase:NV,s12fileSuggestBase:U2,s12syntaxClassProp:$d,s12isUrlLike:YC,s12mathReady:bz,s12renderMath:kz,s12recalcMath:xz,s12iframeEmbed:Pz,s12fetchBuffer:hy,s12mimeMap:du,s12headerLookup:qV,s12toBuffer:vu,s12nativeClipboard:Qf,s12pointerPos:Fl,s12dragPointer:Cg,s12pdfEmbed:YZ,s12basesEmbed:E$,s12imageFileEmbed:tJ,s12isImageDimension:zx,s12cmAnnotation:qe,s12applyIcon:tv,s12ariaTooltip:Mv,s12syntaxHighlight:Yz ,s12extMarkdown:jy,s12extCanvas:Uy,s12extImage:Vy,nF,iF,Iz,createEl,hT,Jl,Xz,eq,aP",
  "patches": [
   {
    "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",

@@ -203,9 +203,17 @@ export function applyOwn(srcText, wasm, tmpPath) {
   }
 
   // 2) the block with the own modules
-  // every binding is a getter: a name is only read when an own module asks for it, so names that are defined later (or only on some platforms) never throw at load
-  const envGetters = (manifest.envBind || "").split(",").filter(Boolean).map((t) => { const i = t.indexOf(":"); return i < 0 ? `get ${t}(){return ${t}}` : `get ${t.slice(0, i)}(){return ${t.slice(i + 1)}}`; }).join(",");
-  const bind = envGetters ? `__basaltOwn.bindEnv(()=>({${envGetters}}));` : "";
+  // envBind entries are `name` or `alias:orig`; each becomes a lazy getter so
+  // reading one bound value never forces evaluation of the others (some are
+  // only defined late in bundle init).
+  const bind = manifest.envBind
+    ? `__basaltOwn.bindEnv(()=>({${manifest.envBind.split(",").map((t) => {
+        const i = t.indexOf(":");
+        const alias = i >= 0 ? t.slice(0, i).trim() : t.trim();
+        const orig = i >= 0 ? t.slice(i + 1).trim() : alias;
+        return `get ${alias}(){return ${orig}},set ${alias}(v){${orig}=v}`;
+      }).join(",")}}));`
+    : "";
   const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");
   const block = `${BEGIN}${code}var __basaltHost={${host}};${bind}${END}`;
   const bi = out.indexOf(BEGIN);
