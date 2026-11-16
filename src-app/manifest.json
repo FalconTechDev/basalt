@@ -1,4024 +1,4174 @@
 {
-  "base": "ca5acac",
-  "entries": [
-    {
-      "orig": "nu",
-      "use": "lastSegment"
-    },
-    {
-      "orig": "iu",
-      "use": "parentPath"
-    },
-    {
-      "orig": "ru",
-      "use": "isHiddenPath"
-    },
-    {
-      "orig": "ou",
-      "use": "baseName"
-    },
-    {
-      "orig": "au",
-      "use": "withoutExtension"
-    },
-    {
-      "orig": "su",
-      "use": "extensionOf"
-    },
-    {
-      "orig": "lu",
-      "use": "joinNameExt"
-    },
-    {
-      "orig": "uu",
-      "use": "collapseSlashes"
-    },
-    {
-      "orig": "tu",
-      "use": "plainSpaces"
-    },
-    {
-      "orig": "cu",
-      "use": "normalizePath"
-    },
-    {
-      "orig": "hu",
-      "use": "displayName"
-    },
-    {
-      "orig": "pu",
-      "use": "withoutMd"
-    },
-    {
-      "orig": "BL",
-      "use": "dropMdSuffix"
-    },
-    {
-      "orig": "q2",
-      "use": "fileLinkPath"
-    },
-    {
-      "orig": "j2",
-      "use": "targetText"
-    },
-    {
-      "orig": "cee",
-      "use": "isPluginFileName"
-    },
-    {
-      "orig": "D5",
-      "use": "pathWith"
-    },
-    {
-      "orig": "ET",
-      "use": "linkPath"
-    },
-    {
-      "orig": "MT",
-      "use": "parseLinktext"
-    },
-    {
-      "orig": "RT",
-      "use": "subpathKind"
-    },
-    {
-      "orig": "YC",
-      "use": "isLocalLink"
-    },
-    {
-      "orig": "XC",
-      "use": "linkDestination"
-    },
-    {
-      "orig": "ZC",
-      "use": "safeDecodeUri"
-    },
-    {
-      "orig": "eE",
-      "use": "escapeLinkChars"
-    },
-    {
-      "orig": "tE",
-      "use": "firstHeadingText"
-    },
-    {
-      "orig": "nE",
-      "use": "headingTrail"
-    },
-    {
-      "orig": "JC",
-      "use": "tidyLinkTarget"
-    },
-    {
-      "orig": "Pf",
-      "use": "formatBytes"
-    },
-    {
-      "orig": "rm",
-      "use": "toKebab"
-    },
-    {
-      "orig": "gc",
-      "use": "ellipsize"
-    },
-    {
-      "orig": "u7",
-      "use": "endWithBlankLine"
-    },
-    {
-      "orig": "pP",
-      "use": "squeezeNewlines"
-    },
-    {
-      "orig": "yA",
-      "use": "escapeTablePipes"
-    },
-    {
-      "orig": "xW",
-      "use": "withHash"
-    },
-    {
-      "orig": "zL",
-      "use": "isShortLine"
-    },
-    {
-      "orig": "ZI",
-      "use": "toStringList"
-    },
-    {
-      "orig": "YA",
-      "use": "emptyToNull"
-    },
-    {
-      "orig": "Ree",
-      "use": "parseCommaList"
-    },
-    {
-      "orig": "Bee",
-      "use": "formatCommaList"
-    },
-    {
-      "orig": "kq",
-      "use": "countQuoteMarks"
-    },
-    {
-      "orig": "Cq",
-      "use": "quoteIndentDepth"
-    },
-    {
-      "orig": "Vj",
-      "use": "dropWordsContaining"
-    },
-    {
-      "orig": "FQ",
-      "use": "formDecode"
-    },
-    {
-      "orig": "NQ",
-      "use": "formEncode"
-    },
-    {
-      "orig": "RQ",
-      "use": "formEncodePath"
-    },
-    {
-      "orig": "NX",
-      "use": "linesOf"
-    },
-    {
-      "orig": "Ej",
-      "use": "hasLatinLetter"
-    },
-    {
-      "orig": "zx",
-      "use": "parseImageSize"
-    },
-    {
-      "orig": "WZ",
-      "use": "intOrNull"
-    },
-    {
-      "orig": "Vl",
-      "use": "floatOr"
-    },
-    {
-      "orig": "f_",
-      "use": "joinClasses"
-    },
-    {
-      "orig": "Js",
-      "use": "ninesAtLeast"
-    },
-    {
-      "orig": "uc",
-      "use": "newlinesBefore"
-    },
-    {
-      "orig": "Dv",
-      "use": "lineBounds"
-    },
-    {
-      "orig": "Nb",
-      "use": "keyLabel"
-    },
-    {
-      "orig": "Fb",
-      "use": "makeHotkey"
-    },
-    {
-      "orig": "my",
-      "use": "valueIgnoringCase"
-    },
-    {
-      "orig": "qV",
-      "use": "keyIgnoringCase"
-    },
-    {
-      "orig": "vy",
-      "use": "parseVersion"
-    },
-    {
-      "orig": "gy",
-      "use": "isOlderVersion"
-    },
-    {
-      "orig": "P1",
-      "use": "severityRank"
-    },
-    {
-      "orig": "L1",
-      "use": "worstSeverity"
-    },
-    {
-      "orig": "rD",
-      "use": "chromeVersion"
-    },
-    {
-      "orig": "tY",
-      "use": "parsePropertyId"
-    },
-    {
-      "orig": "nY",
-      "use": "propertyId"
-    },
-    {
-      "orig": "SY",
-      "use": "shortPropertyId"
-    },
-    {
-      "orig": "xY",
-      "use": "longPropertyId"
-    },
-    {
-      "orig": "PY",
-      "use": "uniqueName"
-    },
-    {
-      "orig": "LT",
-      "use": "plainHeading"
-    },
-    {
-      "orig": "IT",
-      "use": "linkSafeHeading"
-    },
-    {
-      "orig": "kA",
-      "use": "describeCliOptions"
-    },
-    {
-      "orig": "cA",
-      "use": "smaller"
-    },
-    {
-      "orig": "uA",
-      "use": "larger"
-    },
-    {
-      "orig": "MJ",
-      "use": "sliderCurve"
-    },
-    {
-      "orig": "SJ",
-      "use": "sliderCurveInverse"
-    },
-    {
-      "orig": "l4",
-      "use": "unitSteps"
-    },
-    {
-      "orig": "cc",
-      "use": "randomHex"
-    },
-    {
-      "orig": "zs",
-      "use": "asArray"
-    },
-    {
-      "orig": "ac",
-      "use": "distinct"
-    },
-    {
-      "orig": "lc",
-      "use": "moveItem"
-    },
-    {
-      "orig": "N6",
-      "use": "takeFirst"
-    },
-    {
-      "orig": "mc",
-      "use": "binaryFind"
-    },
-    {
-      "orig": "vc",
-      "use": "isStringArray"
-    },
-    {
-      "orig": "hF",
-      "use": "joinLists"
-    },
-    {
-      "orig": "uF",
-      "use": "pushHistory"
-    },
-    {
-      "orig": "ve",
-      "use": "sameItems"
-    },
-    {
-      "orig": "ye",
-      "use": "sameItemsBy"
-    },
-    {
-      "orig": "c8",
-      "use": "sortByOrder"
-    },
-    {
-      "orig": "HI",
-      "use": "matchPenalty"
-    },
-    {
-      "orig": "HV",
-      "use": "localDate"
-    },
-    {
-      "orig": "zV",
-      "use": "localTime"
-    },
-    {
-      "orig": "VV",
-      "use": "twoDigits"
-    },
-    {
-      "orig": "Ok",
-      "use": "hexByte"
-    },
-    {
-      "orig": "Fk",
-      "use": "rgbToHex"
-    },
-    {
-      "orig": "Rk",
-      "use": "rgbToInt"
-    },
-    {
-      "orig": "Hk",
-      "use": "isLightColor"
-    },
-    {
-      "orig": "Lk",
-      "use": "hslToRgb"
-    },
-    {
-      "orig": "Ik",
-      "use": "rgbToHsl"
-    },
-    {
-      "orig": "Nk",
-      "use": "parseHexColor"
-    },
-    {
-      "orig": "H3",
-      "use": "rgbTripleToHex"
-    },
-    {
-      "orig": "Df",
-      "use": "hexToBuffer"
-    },
-    {
-      "orig": "Af",
-      "use": "bufferToHex"
-    },
-    {
-      "orig": "Gee",
-      "use": "stringFromCodes"
-    },
-    {
-      "orig": "Kee",
-      "use": "readInt32BE"
-    },
-    {
-      "orig": "Yee",
-      "use": "readInt32LE"
-    },
-    {
-      "orig": "mu",
-      "use": "ownBuffer"
-    },
-    {
-      "orig": "bf",
-      "use": "ownBuffer"
-    },
-    {
-      "orig": "jb",
-      "use": "zeroFill"
-    },
-    {
-      "orig": "Ub",
-      "use": "xorInto"
-    },
-    {
-      "orig": "Jb",
-      "use": "clearTopBits"
-    },
-    {
-      "orig": "gu",
-      "use": "statFromNode"
-    },
-    {
-      "orig": "dk",
-      "use": "statFromCapacitor"
-    },
-    {
-      "orig": "Ol",
-      "use": "point"
-    },
-    {
-      "orig": "Nl",
-      "use": "rect"
-    },
-    {
-      "orig": "Bl",
-      "use": "distance"
-    },
-    {
-      "orig": "Rl",
-      "use": "rectAt"
-    },
-    {
-      "orig": "Fl",
-      "use": "pointOfEvent"
-    },
-    {
-      "orig": "d3",
-      "use": "box"
-    },
-    {
-      "orig": "f3",
-      "use": "boxOfPoints"
-    },
-    {
-      "orig": "m3",
-      "use": "boxOfRect"
-    },
-    {
-      "orig": "v3",
-      "use": "rectOfBox"
-    },
-    {
-      "orig": "g3",
-      "use": "boxUnion"
-    },
-    {
-      "orig": "y3",
-      "use": "boxGrow"
-    },
-    {
-      "orig": "b3",
-      "use": "boxContains"
-    },
-    {
-      "orig": "w3",
-      "use": "boxCenter"
-    },
-    {
-      "orig": "k3",
-      "use": "centeredOrigin"
-    },
-    {
-      "orig": "P3",
-      "use": "boxPoints"
-    },
-    {
-      "orig": "L3",
-      "use": "sortedBoxPoints"
-    },
-    {
-      "orig": "I3",
-      "use": "sortByKey"
-    },
-    {
-      "orig": "F3",
-      "use": "boxX"
-    },
-    {
-      "orig": "N3",
-      "use": "boxY"
-    },
-    {
-      "orig": "q5",
-      "use": "pushOut"
-    },
-    {
-      "orig": "H5",
-      "use": "sideMidpoint"
-    },
-    {
-      "orig": "j5",
-      "use": "bezierEdge"
-    },
-    {
-      "orig": "Ay",
-      "use": "sortHitsByScore"
-    },
-    {
-      "orig": "Py",
-      "use": "shiftRanges"
-    },
-    {
-      "orig": "eT",
-      "use": "frontmatterEntry"
-    },
-    {
-      "orig": "tT",
-      "use": "frontmatterStrings"
-    },
-    {
-      "orig": "iT",
-      "use": "frontmatterTags"
-    },
-    {
-      "orig": "nT",
-      "use": "frontmatterAliases"
-    },
-    {
-      "orig": "My",
-      "use": "prepareQuery"
-    },
-    {
-      "orig": "Dy",
-      "use": "fuzzyMatchJs"
-    },
-    {
-      "orig": "xy",
-      "use": "matchScore"
-    },
-    {
-      "orig": "wc",
-      "use": "debounceCall"
-    },
-    {
-      "orig": "vl",
-      "use": "cancelTransition"
-    },
-    {
-      "orig": "yl",
-      "use": "runTransition"
-    },
-    {
-      "orig": "jg",
-      "use": "closeAllMenus"
-    },
-    {
-      "orig": "Sy",
-      "use": "prepareFuzzyFinder"
-    },
-    {
-      "orig": "Oy",
-      "use": "prepareSimpleFinder"
-    },
-    {
-      "orig": "Ly",
-      "use": "containsAllWords"
-    },
-    {
-      "orig": "Iy",
-      "use": "simpleMatch"
-    },
-    {
-      "orig": "wy",
-      "use": "mergeSpans"
-    },
-    {
-      "orig": "Ny",
-      "use": "renderMatches"
-    },
-    {
-      "orig": "Fy",
-      "use": "renderResults"
-    },
-    {
-      "orig": "FT",
-      "use": "resolveSubpath"
-    },
-    {
-      "orig": "pv",
-      "use": "installTooltipHandlers"
-    },
-    {
-      "orig": "vv",
-      "use": "onTooltipPointerOver"
-    },
-    {
-      "orig": "gv",
-      "use": "onTooltipPointerOut"
-    },
-    {
-      "orig": "bv",
-      "use": "showTooltipFromAttributes"
-    },
-    {
-      "orig": "kv",
-      "use": "displayTooltip"
-    },
-    {
-      "orig": "Cv",
-      "use": "hideTooltip"
-    },
-    {
-      "orig": "Ev",
-      "use": "applyTooltipOptions"
-    },
-    {
-      "orig": "Mv",
-      "use": "setElementTooltip"
-    },
-    {
-      "orig": "Sv",
-      "use": "setDynamicTooltip"
-    },
-    {
-      "orig": "fv",
-      "use": "cancelTooltipDelay"
-    },
-    {
-      "orig": "mv",
-      "use": "tooltipsDisabled"
-    },
-    {
-      "orig": "wP",
-      "use": "setDragUriData",
-      "originalBytes": 72
-    },
-    {
-      "orig": "bP",
-      "use": "setDragPlainData",
-      "originalBytes": 43
-    },
-    {
-      "orig": "SP",
-      "use": "applyDropEffect",
-      "originalBytes": 158
-    },
-    {
-      "orig": "Eg",
-      "use": "suppressNextEvent",
-      "originalBytes": 239
-    },
-    {
-      "orig": "TP",
-      "use": "setDragImage",
-      "originalBytes": 120
-    },
-    {
-      "orig": "NL",
-      "use": "inferPropertyWidget",
-      "originalBytes": 208
-    },
-    {
-      "orig": "Cb",
-      "use": "batchedAsync",
-      "originalBytes": 952
-    },
-    {
-      "orig": "Pc",
-      "use": "idleOrTimeout",
-      "originalBytes": 407
-    },
-    {
-      "orig": "GL",
-      "use": "iterateIdbBatches",
-      "originalBytes": 367
-    },
-    {
-      "orig": "Sf",
-      "use": "contentHash",
-      "originalBytes": 185
-    },
-    {
-      "orig": "DT",
-      "use": "collectTags",
-      "originalBytes": 200
-    },
-    {
-      "orig": "xT",
-      "use": "anyMetadataRef",
-      "originalBytes": 103
-    },
-    {
-      "orig": "TT",
-      "use": "anyRefMatch",
-      "originalBytes": 98
-    },
-    {
-      "orig": "mT",
-      "use": "forEachLinkField",
-      "originalBytes": 480
-    },
-    {
-      "orig": "gT",
-      "use": "linkPosToPos",
-      "originalBytes": 67
-    },
-    {
-      "orig": "vT",
-      "use": "positionToArray",
-      "originalBytes": 89
-    },
-    {
-      "orig": "yT",
-      "use": "positionFromArray",
-      "originalBytes": 99
-    },
-    {
-      "orig": "bT",
-      "use": "linkPosFromArray",
-      "originalBytes": 94
-    },
-    {
-      "orig": "wT",
-      "use": "deserializeMetadata",
-      "originalBytes": 118
-    },
-    {
-      "orig": "oc",
-      "use": "escapeRegExp",
-      "originalBytes": 43
-    },
-    {
-      "orig": "$A",
-      "use": "tagValid",
-      "originalBytes": 50
-    },
-    {
-      "orig": "kT",
-      "use": "isOutdatedMetadata",
-      "originalBytes": 387
-    },
-    {
-      "orig": "UL",
-      "use": "applyLinkUpdates",
-      "originalBytes": 649
-    },
-    {
-      "orig": "GH",
-      "use": "walkTree",
-      "originalBytes": 158
-    },
-    {
-      "orig": "WH",
-      "use": "hasChildList",
-      "originalBytes": 55
-    },
-    {
-      "orig": "KH",
-      "use": "treeRange",
-      "originalBytes": 248
-    },
-    {
-      "orig": "QH",
-      "use": "nextVisibleTreeItem",
-      "originalBytes": 234
-    },
-    {
-      "orig": "$H",
-      "use": "prevVisibleTreeItem",
-      "originalBytes": 173
-    },
-    {
-      "orig": "ZH",
-      "use": "lastVisibleTreeItem",
-      "originalBytes": 276
-    },
-    {
-      "orig": "XH",
-      "use": "prevTreeSibling",
-      "originalBytes": 88
-    },
-    {
-      "orig": "YH",
-      "use": "nextTreeSibling",
-      "originalBytes": 94
-    },
-    {
-      "orig": "_H",
-      "use": "treeAncestorPath",
-      "originalBytes": 119
-    },
-    {
-      "orig": "Cl",
-      "use": "mountChildren",
-      "originalBytes": 310
-    },
-    {
-      "orig": "KL",
-      "use": "markItemCollapsed",
-      "originalBytes": 115
-    },
-    {
-      "orig": "JH",
-      "use": "makeTreePusher",
-      "originalBytes": 109
-    },
-    {
-      "orig": "Vv",
-      "use": "offsetBox",
-      "originalBytes": 333
-    },
-    {
-      "orig": "wl",
-      "use": "animateCollapse",
-      "originalBytes": 274
-    },
-    {
-      "orig": "bl",
-      "use": "expandFromZero",
-      "originalBytes": 274
-    },
-    {
-      "orig": "ml",
-      "use": "boxMetrics",
-      "originalBytes": 196
-    },
-    {
-      "orig": "yg",
-      "use": "isEditableNode",
-      "originalBytes": 108
-    },
-    {
-      "orig": "Vg",
-      "use": "syntheticKeyEvent",
-      "originalBytes": 294
-    },
-    {
-      "orig": "QL",
-      "use": "collapsibleTreeItem",
-      "originalBytes": 1246
-    },
-    {
-      "orig": "CH",
-      "use": "tokenizeQuery",
-      "originalBytes": 1416
-    },
-    {
-      "orig": "bH",
-      "use": "parsePrimary",
-      "originalBytes": 2174
-    },
-    {
-      "orig": "yH",
-      "use": "parseAndSequence",
-      "originalBytes": 139
-    },
-    {
-      "orig": "gH",
-      "use": "parseOrExpression",
-      "originalBytes": 283
-    },
-    {
-      "orig": "vH",
-      "use": "buildMatcher",
-      "originalBytes": 74
-    },
-    {
-      "orig": "kH",
-      "use": "checkToken",
-      "originalBytes": 86
-    },
-    {
-      "orig": "wH",
-      "use": "tokenEnd",
-      "originalBytes": 91
-    },
-    {
-      "orig": "rH",
-      "use": "cachedRegExp",
-      "originalBytes": 116
-    },
-    {
-      "orig": "oH",
-      "use": "regexMatchRanges",
-      "originalBytes": 256
-    },
-    {
-      "orig": "$V",
-      "use": "mergeMatchResults",
-      "originalBytes": 215
-    },
-    {
-      "orig": "Yy",
-      "use": "extensionWithoutContent",
-      "originalBytes": 37
-    },
-    {
-      "orig": "XV",
-      "use": "countSearchMatches"
-    },
-    {
-      "orig": "jH",
-      "use": "sortOrderComparator"
-    },
-    {
-      "orig": "VH",
-      "use": "runSearchOverFiles"
-    },
-    {
-      "orig": "Iz",
-      "use": "renderMatchRanges"
-    },
-    {
-      "orig": "Ry",
-      "use": "contextLineBounds"
-    },
-    {
-      "orig": "Ic",
-      "use": "preventMiddleClick"
-    },
-    {
-      "orig": "kl",
-      "use": "toggleElementVisibility"
-    },
-    {
-      "orig": "CT",
-      "use": "indexOfPositionOffset"
-    },
-    {
-      "orig": "Ec",
-      "use": "copyTextToClipboard"
-    },
-    {
-      "orig": "I2",
-      "use": "bookmarkItemForFile"
-    },
-    {
-      "orig": "O2",
-      "use": "bookmarkItemForFolder"
-    },
-    {
-      "orig": "F2",
-      "use": "bookmarkGroupItem"
-    },
-    {
-      "orig": "N2",
-      "use": "bookmarkItemForGraph"
-    },
-    {
-      "orig": "R2",
-      "use": "bookmarkItemForUrl"
-    },
-    {
-      "orig": "B2",
-      "use": "bookmarkItemForSearch"
-    },
-    {
-      "orig": "V2",
-      "use": "viewToBookmarkItem"
-    },
-    {
-      "orig": "z2",
-      "use": "filesToBookmarkItems"
-    },
-    {
-      "orig": "H2",
-      "use": "walkBookmarkItems"
-    },
-    {
-      "orig": "GA",
-      "use": "headingAtPosition"
-    },
-    {
-      "orig": "KA",
-      "use": "blockRefInsertion"
-    },
-    {
-      "orig": "y$",
-      "use": "flattenUniqueFiles"
-    },
-    {
-      "orig": "c2",
-      "use": "treeDropPosition"
-    },
-    {
-      "orig": "f2",
-      "use": "updateTreeDropIndicator"
-    },
-    {
-      "orig": "Yc",
-      "use": "isUrl"
-    },
-    {
-      "orig": "gg",
-      "use": "focusWhenShown"
-    },
-    {
-      "orig": "uq",
-      "use": "updateUnresolvedLinks",
-      "host": true
-    },
-    {
-      "orig": "pq",
-      "use": "renderQueryEmbed",
-      "host": true
-    },
-    {
-      "orig": "JZ",
-      "use": "embedDepthAt",
-      "host": true
-    },
-    {
-      "orig": "eO",
-      "use": "propertiesPlugin",
-      "host": true
-    },
-    {
-      "orig": "T6",
-      "use": "livePreviewDecorations",
-      "host": true
-    },
-    {
-      "orig": "O6",
-      "use": "livePreviewPlugin",
-      "host": true
-    },
-    {
-      "orig": "nP",
-      "use": "livePreviewProperties",
-      "host": true
-    },
-    {
-      "orig": "gw",
-      "use": "acctRequest",
-      "originalBytes": 315
-    },
-    {
-      "orig": "yw",
-      "use": "acctSignup",
-      "originalBytes": 159
-    },
-    {
-      "orig": "bw",
-      "use": "acctForgetPassword",
-      "originalBytes": 150
-    },
-    {
-      "orig": "ww",
-      "use": "acctResendConfirmation",
-      "originalBytes": 149
-    },
-    {
-      "orig": "kw",
-      "use": "acctAuthToken",
-      "originalBytes": 279
-    },
-    {
-      "orig": "Cw",
-      "use": "acctSignupMobileSync",
-      "originalBytes": 148
-    },
-    {
-      "orig": "Ew",
-      "use": "acctSignIn",
-      "originalBytes": 297
-    },
-    {
-      "orig": "Mw",
-      "use": "acctSignOut",
-      "originalBytes": 358
-    },
-    {
-      "orig": "Sw",
-      "use": "acctUserInfo",
-      "originalBytes": 456
-    },
-    {
-      "orig": "xw",
-      "use": "acctValidateBusinessKey",
-      "originalBytes": 459
-    },
-    {
-      "orig": "Tw",
-      "use": "acctVaultRegions",
-      "originalBytes": 197
-    },
-    {
-      "orig": "Dw",
-      "use": "acctNormalizeVault",
-      "originalBytes": 71
-    },
-    {
-      "orig": "Aw",
-      "use": "acctListVaults",
-      "originalBytes": 260
-    },
-    {
-      "orig": "Pw",
-      "use": "acctCreateVault",
-      "originalBytes": 258
-    },
-    {
-      "orig": "Lw",
-      "use": "acctMigrateVault",
-      "originalBytes": 122
-    },
-    {
-      "orig": "Iw",
-      "use": "acctRenameVault",
-      "originalBytes": 75
-    },
-    {
-      "orig": "Ow",
-      "use": "acctRemoveVaultShare",
-      "originalBytes": 86
-    },
-    {
-      "orig": "Fw",
-      "use": "acctVaultAccess",
-      "originalBytes": 110
-    },
-    {
-      "orig": "Nw",
-      "use": "acctDeletePublishSite",
-      "originalBytes": 67
-    },
-    {
-      "orig": "Rw",
-      "use": "acctInvitePublishShare",
-      "originalBytes": 83
-    },
-    {
-      "orig": "Bw",
-      "use": "acctRemovePublishShare",
-      "originalBytes": 87
-    },
-    {
-      "orig": "Vw",
-      "use": "acctListSubscriptions",
-      "originalBytes": 57
-    },
-    {
-      "orig": "Bm",
-      "use": "saveConfigDirPreference"
-    },
-    {
-      "orig": "iw",
-      "use": "importAesGcmKey",
-      "originalBytes": 72
-    },
-    {
-      "orig": "rw",
-      "use": "aesGcmEncrypt",
-      "originalBytes": 376
-    },
-    {
-      "orig": "ow",
-      "use": "aesGcmDecrypt",
-      "originalBytes": 342
-    },
-    {
-      "orig": "lw",
-      "use": "deriveScryptKey",
-      "originalBytes": 499
-    },
-    {
-      "orig": "cw",
-      "use": "initCipher",
-      "originalBytes": 240
-    },
-    {
-      "orig": "uw",
-      "use": "deriveKeyHash",
-      "originalBytes": 646
-    },
-    {
-      "orig": "wk",
-      "use": "deriveVaultKeyhash",
-      "originalBytes": 195
-    },
-    {
-      "orig": "bk",
-      "use": "randomSaltHex",
-      "originalBytes": 64
-    },
-    {
-      "orig": "Ek",
-      "use": "parseCallbackUrl",
-      "originalBytes": 618
-    },
-    {
-      "orig": "Tf",
-      "use": "sha256",
-      "originalBytes": 138
-    },
-    {
-      "orig": "wf",
-      "use": "utf8Bytes",
-      "originalBytes": 54
-    },
-    {
-      "orig": "kf",
-      "use": "utf8String",
-      "originalBytes": 65
-    },
-    {
-      "orig": "Cf",
-      "use": "decodeBase64",
-      "originalBytes": 120
-    },
-    {
-      "orig": "Ef",
-      "use": "encodeBase64",
-      "originalBytes": 44
-    },
-    {
-      "orig": "Mf",
-      "use": "encodeBase64",
-      "originalBytes": 120
-    },
-    {
-      "orig": "rC",
-      "use": "renderFormattedDescription",
-      "originalBytes": 277
-    },
-    {
-      "orig": "Wv",
-      "use": "withButtonLoading",
-      "originalBytes": 298
-    }
-  ],
-  "classes": [
-    {
-      "orig": "VT",
-      "use": "defineEvents"
-    },
-    {
-      "orig": "jm",
-      "use": "defineComponent"
-    },
-    {
-      "orig": "LD",
-      "use": "defineWorkspaceItem"
-    },
-    {
-      "orig": "ID",
-      "use": "defineWorkspaceParent"
-    },
-    {
-      "orig": "OD",
-      "use": "defineWorkspaceSplit"
-    },
-    {
-      "orig": "ND",
-      "use": "defineWorkspaceContainer"
-    },
-    {
-      "orig": "L0",
-      "use": "defineWorkspaceRoot"
-    },
-    {
-      "orig": "I0",
-      "use": "defineWorkspaceFloating"
-    },
-    {
-      "orig": "O0",
-      "use": "defineWorkspaceWindow"
-    },
-    {
-      "orig": "FD",
-      "use": "defineWorkspaceSidedock"
-    },
-    {
-      "orig": "zD",
-      "use": "defineWorkspaceTabs"
-    },
-    {
-      "orig": "dl",
-      "use": "defineTransition"
-    },
-    {
-      "orig": "P0",
-      "use": "defineWorkspaceRibbon"
-    },
-    {
-      "orig": "qD",
-      "use": "defineLeafHistory"
-    },
-    {
-      "orig": "jD",
-      "use": "defineWorkspaceLeaf"
-    },
-    {
-      "orig": "Ng",
-      "use": "defineScope"
-    },
-    {
-      "orig": "Rg",
-      "use": "defineDynamicScope"
-    },
-    {
-      "orig": "Bg",
-      "use": "defineKeymap"
-    },
-    {
-      "orig": "jk",
-      "use": "defineBaseComponent"
-    },
-    {
-      "orig": "Uk",
-      "use": "defineValueComponent"
-    },
-    {
-      "orig": "Wk",
-      "use": "defineButtonComponent"
-    },
-    {
-      "orig": "_k",
-      "use": "defineExtraButtonComponent"
-    },
-    {
-      "orig": "Gk",
-      "use": "defineToggleComponent"
-    },
-    {
-      "orig": "Kk",
-      "use": "defineAbstractTextComponent"
-    },
-    {
-      "orig": "Yk",
-      "use": "defineTextComponent"
-    },
-    {
-      "orig": "Qk",
-      "use": "defineSearchComponent"
-    },
-    {
-      "orig": "Xk",
-      "use": "defineTextAreaComponent"
-    },
-    {
-      "orig": "Zk",
-      "use": "defineMomentFormatComponent"
-    },
-    {
-      "orig": "Jk",
-      "use": "defineDropdownComponent"
-    },
-    {
-      "orig": "eC",
-      "use": "defineProgressBarComponent"
-    },
-    {
-      "orig": "tC",
-      "use": "defineSliderComponent"
-    },
-    {
-      "orig": "nC",
-      "use": "defineColorComponent"
-    },
-    {
-      "orig": "zk",
-      "use": "defineSetting"
-    },
-    {
-      "orig": "qk",
-      "use": "defineSettingGroup"
-    },
-    {
-      "orig": "_1",
-      "use": "defineSettingTab"
-    },
-    {
-      "orig": "K0",
-      "use": "definePluginSettingTab"
-    },
-    {
-      "orig": "fb",
-      "use": "defineNotice"
-    },
-    {
-      "orig": "tb",
-      "use": "defineModal"
-    },
-    {
-      "orig": "Hg",
-      "use": "defineMenuItem"
-    },
-    {
-      "orig": "zg",
-      "use": "defineMenuSeparator"
-    },
-    {
-      "orig": "Ug",
-      "use": "defineMenu"
-    },
-    {
-      "orig": "ob",
-      "use": "defineSuggestionList"
-    },
-    {
-      "orig": "ab",
-      "use": "defineGroupedSuggestionList"
-    },
-    {
-      "orig": "sb",
-      "use": "defineSuggestModal"
-    },
-    {
-      "orig": "lb",
-      "use": "defineFuzzySuggestModal"
-    },
-    {
-      "orig": "EI",
-      "use": "definePopoverSuggest"
-    },
-    {
-      "orig": "SI",
-      "use": "defineAbstractInputSuggest"
-    },
-    {
-      "orig": "NI",
-      "use": "defineEditorSuggest"
-    },
-    {
-      "orig": "Y6",
-      "use": "defineCommands"
-    },
-    {
-      "orig": "zb",
-      "use": "defineHotkeyManager"
-    },
-    {
-      "orig": "G0",
-      "use": "definePlugin"
-    },
-    {
-      "orig": "Kg",
-      "use": "defineView"
-    },
-    {
-      "orig": "Yg",
-      "use": "defineItemView"
-    },
-    {
-      "orig": "eD",
-      "use": "defineDeferredView"
-    },
-    {
-      "orig": "tD",
-      "use": "defineEmptyView"
-    },
-    {
-      "orig": "nD",
-      "use": "defineUnknownView"
-    },
-    {
-      "orig": "MD",
-      "use": "defineFileView"
-    },
-    {
-      "orig": "p0",
-      "use": "defineViewRegistry"
-    },
-    {
-      "orig": "rX",
-      "use": "defineHoverPopover"
-    },
-    {
-      "orig": "OX",
-      "use": "defineEditableFileView"
-    },
-    {
-      "orig": "BX",
-      "use": "defineTextFileView"
-    },
-    {
-      "orig": "hv",
-      "use": "initTooltips"
-    },
-    {
-      "orig": "Yl",
-      "use": "definePlatform"
-    },
-    {
-      "orig": "xP",
-      "use": "defineDragManager",
-      "originalBytes": 5966
-    },
-    {
-      "orig": "Nee",
-      "use": "defineStatusBar"
-    },
-    {
-      "orig": "i2",
-      "use": "definePluginWrapper",
-      "originalBytes": 4325
-    },
-    {
-      "orig": "o2",
-      "use": "defineInternalPlugins",
-      "originalBytes": 2271
-    },
-    {
-      "orig": "RL",
-      "use": "defineMetadataTypeManager",
-      "originalBytes": 3979
-    },
-    {
-      "orig": "$0",
-      "use": "defineCommunityPlugins"
-    },
-    {
-      "orig": "_L",
-      "use": "defineMetadataCache"
-    },
-    {
-      "orig": "vb",
-      "use": "defineSerialTaskQueue",
-      "originalBytes": 150
-    },
-    {
-      "orig": "sc",
-      "use": "defineRefMultimap",
-      "originalBytes": 720
-    },
-    {
-      "orig": "mb",
-      "use": "defineDeque",
-      "originalBytes": 883
-    },
-    {
-      "orig": "bb",
-      "use": "defineBookmarkRunnable",
-      "originalBytes": 582
-    },
-    {
-      "orig": "wb",
-      "use": "defineFileQueue",
-      "originalBytes": 996
-    },
-    {
-      "orig": "qL",
-      "use": "defineBlockCache",
-      "originalBytes": 1705
-    },
-    {
-      "orig": "UH",
-      "use": "defineTreeChildren",
-      "originalBytes": 800
-    },
-    {
-      "orig": "YL",
-      "use": "defineTreeItem",
-      "originalBytes": 626
-    },
-    {
-      "orig": "s2",
-      "use": "defineTreeRoot",
-      "originalBytes": 210
-    },
-    {
-      "orig": "tz",
-      "use": "defineInfinityScroll",
-      "originalBytes": 6613
-    },
-    {
-      "orig": "l2",
-      "use": "defineTree",
-      "originalBytes": 7238
-    },
-    {
-      "orig": "R6",
-      "use": "defineViewHeader",
-      "originalBytes": 874
-    },
-    {
-      "orig": "ZV",
-      "use": "defineSearchMatcherBase",
-      "originalBytes": 318
-    },
-    {
-      "orig": "JV",
-      "use": "defineBooleanMatcher",
-      "originalBytes": 495
-    },
-    {
-      "orig": "eH",
-      "use": "defineEmptyMatcher",
-      "originalBytes": 303
-    },
-    {
-      "orig": "aH",
-      "use": "defineRegexMatcher",
-      "originalBytes": 488
-    },
-    {
-      "orig": "sH",
-      "use": "definePropertyMatcher",
-      "originalBytes": 1232
-    },
-    {
-      "orig": "lH",
-      "use": "defineQuotedTextMatcher",
-      "originalBytes": 694
-    },
-    {
-      "orig": "cH",
-      "use": "defineTextMatcher",
-      "originalBytes": 345
-    },
-    {
-      "orig": "uH",
-      "use": "defineMultiMatcher",
-      "originalBytes": 476
-    },
-    {
-      "orig": "hH",
-      "use": "defineAndGroup",
-      "originalBytes": 319
-    },
-    {
-      "orig": "pH",
-      "use": "defineOrGroup",
-      "originalBytes": 307
-    },
-    {
-      "orig": "dH",
-      "use": "defineWrappedMatcher",
-      "originalBytes": 312
-    },
-    {
-      "orig": "fH",
-      "use": "defineCompareMatcher",
-      "originalBytes": 650
-    },
-    {
-      "orig": "mH",
-      "use": "defineNotMatcher",
-      "originalBytes": 256
-    },
-    {
-      "orig": "EH",
-      "use": "defineCaseMatcher",
-      "originalBytes": 351
-    },
-    {
-      "orig": "SH",
-      "use": "definePathMatcher",
-      "originalBytes": 340
-    },
-    {
-      "orig": "xH",
-      "use": "defineFileMatcher",
-      "originalBytes": 356
-    },
-    {
-      "orig": "TH",
-      "use": "defineContentMatcher",
-      "originalBytes": 363
-    },
-    {
-      "orig": "DH",
-      "use": "defineSplitContentMatcher",
-      "originalBytes": 439
-    },
-    {
-      "orig": "AH",
-      "use": "defineLineMatcher",
-      "originalBytes": 452
-    },
-    {
-      "orig": "PH",
-      "use": "defineBlockMatcher",
-      "originalBytes": 695
-    },
-    {
-      "orig": "OH",
-      "use": "defineSectionMatcher",
-      "originalBytes": 1107
-    },
-    {
-      "orig": "FH",
-      "use": "defineTaskMatcher",
-      "originalBytes": 789
-    },
-    {
-      "orig": "NH",
-      "use": "defineTagMatcher",
-      "originalBytes": 978
-    },
-    {
-      "orig": "YV",
-      "use": "defineSearchTarget",
-      "originalBytes": 732
-    },
-    {
-      "orig": "BH",
-      "use": "defineSearchQuery",
-      "originalBytes": 1725
-    },
-    {
-      "orig": "mJ",
-      "use": "defineSearchView"
-    },
-    {
-      "orig": "sz",
-      "use": "defineSearchResults"
-    },
-    {
-      "orig": "rz",
-      "use": "defineSearchFileResult"
-    },
-    {
-      "orig": "az",
-      "use": "defineSearchMatchResult"
-    },
-    {
-      "orig": "oz",
-      "use": "defineSearchPropertyResult"
-    },
-    {
-      "orig": "aq",
-      "use": "defineSearchQueueComponent"
-    },
-    {
-      "orig": "vJ",
-      "use": "defineCopyResultsModal"
-    },
-    {
-      "orig": "hJ",
-      "use": "defineSearchSuggest"
-    },
-    {
-      "orig": "gJ",
-      "use": "defineLinkPaneView"
-    },
-    {
-      "orig": "H6",
-      "use": "defineBacklinkView"
-    },
-    {
-      "orig": "o7",
-      "use": "defineOutgoingLinkView"
-    },
-    {
-      "orig": "z6",
-      "use": "defineBacklinkComponent"
-    },
-    {
-      "orig": "a7",
-      "use": "defineOutgoingLinkComponent"
-    },
-    {
-      "orig": "yee",
-      "use": "defineTagPaneTree"
-    },
-    {
-      "orig": "gee",
-      "use": "defineTagPaneItem"
-    },
-    {
-      "orig": "bee",
-      "use": "defineTagPaneView"
-    },
-    {
-      "orig": "nb",
-      "use": "defineButtonModal"
-    },
-    {
-      "orig": "RJ",
-      "use": "defineBookmarkEditModal"
-    },
-    {
-      "orig": "BJ",
-      "use": "defineBookmarkManyModal"
-    },
-    {
-      "orig": "i3",
-      "use": "defineBookmarkItemBase"
-    },
-    {
-      "orig": "o3",
-      "use": "defineBookmarkLeafItem"
-    },
-    {
-      "orig": "r3",
-      "use": "defineBookmarkGroupItem"
-    },
-    {
-      "orig": "a3",
-      "use": "defineBookmarksView"
-    },
-    {
-      "orig": "l3",
-      "use": "defineBookmarksPlugin"
-    },
-    {
-      "orig": "Y0",
-      "use": "defineInstanceSettingTab"
-    },
-    {
-      "orig": "U2",
-      "use": "defineQuickSwitcherModalBase"
-    },
-    {
-      "orig": "y9",
-      "use": "defineQuickSwitcherModal"
-    },
-    {
-      "orig": "b9",
-      "use": "defineQuickSwitcherSettingTab"
-    },
-    {
-      "orig": "g9",
-      "use": "defineQuickSwitcherPlugin"
-    },
-    {
-      "orig": "l8",
-      "use": "defineCommandPaletteSuggest"
-    },
-    {
-      "orig": "u8",
-      "use": "defineCommandPalettePlugin"
-    },
-    {
-      "orig": "h8",
-      "use": "defineCommandPaletteModal"
-    },
-    {
-      "orig": "p8",
-      "use": "defineCommandPaletteSettingTab"
-    },
-    {
-      "orig": "T8",
-      "use": "defineFileExplorerTree"
-    },
-    {
-      "orig": "k8",
-      "use": "defineFileExplorerItemBase"
-    },
-    {
-      "orig": "E8",
-      "use": "defineFileItem"
-    },
-    {
-      "orig": "S8",
-      "use": "defineFolderItem"
-    },
-    {
-      "orig": "D8",
-      "use": "defineFileExplorerView"
-    },
-    {
-      "orig": "P8",
-      "use": "defineFileExplorerPlugin"
-    },
-    {
-      "orig": "wee",
-      "use": "defineTemplatesPlugin"
-    },
-    {
-      "orig": "kee",
-      "use": "defineTemplateSuggestModal"
-    },
-    {
-      "orig": "Cee",
-      "use": "defineTemplatesSettingTab"
-    },
-    {
-      "orig": "v8",
-      "use": "defineDailyNotesPlugin"
-    },
-    {
-      "orig": "y8",
-      "use": "defineDailyNotesSettingTab"
-    },
-    {
-      "orig": "w9",
-      "use": "defineRandomNotePlugin"
-    },
-    {
-      "orig": "Pee",
-      "use": "defineWordCountPlugin"
-    },
-    {
-      "orig": "l5",
-      "use": "defineCanvasUndoStack"
-    },
-    {
-      "orig": "Y3",
-      "use": "defineSpatialIndex"
-    },
-    {
-      "orig": "n8",
-      "use": "defineCanvasDataCache"
-    },
-    {
-      "orig": "M5",
-      "use": "defineNodeInteractionLayer"
-    },
-    {
-      "orig": "t8",
-      "use": "defineCanvasLinkUpdater"
-    },
-    {
-      "orig": "m5",
-      "use": "defineBboxCachedIndex"
-    },
-    {
-      "orig": "v5",
-      "use": "definePointIndex"
-    },
-    {
-      "orig": "g5",
-      "use": "defineBBoxItemIndex"
-    },
-    {
-      "orig": "e8",
-      "use": "defineCanvasMetadataExtractor"
-    },
-    {
-      "orig": "i8",
-      "use": "defineCanvasPlugin"
-    },
-    {
-      "orig": "w5",
-      "use": "defineUrlEditModal"
-    },
-    {
-      "orig": "E5",
-      "use": "defineSectionSuggestModal"
-    },
-    {
-      "orig": "K5",
-      "use": "defineEdgeLabel"
-    },
-    {
-      "orig": "Q5",
-      "use": "defineJumpToGroupModal"
-    },
-    {
-      "orig": "L5",
-      "use": "defineViewTypeSuggestModal"
-    },
-    {
-      "orig": "O5",
-      "use": "defineCanvasMarkdownEmbed"
-    },
-    {
-      "orig": "N5",
-      "use": "defineCanvasEmptyEmbed"
-    },
-    {
-      "orig": "lI",
-      "use": "defineRenamePromptModal"
-    },
-    {
-      "orig": "cI",
-      "use": "defineNewFileModal"
-    },
-    {
-      "orig": "x3",
-      "use": "defineCanvasFileSuggest"
-    },
-    {
-      "orig": "T3",
-      "use": "defineCanvasMediaSuggest"
-    },
-    {
-      "orig": "D3",
-      "use": "defineCanvasImageSuggest"
-    },
-    {
-      "orig": "S5",
-      "use": "defineCanvasNode"
-    },
-    {
-      "orig": "x5",
-      "use": "defineContentMountNode"
-    },
-    {
-      "orig": "T5",
-      "use": "defineDummyNode"
-    },
-    {
-      "orig": "A5",
-      "use": "defineEditableNode"
-    },
-    {
-      "orig": "I5",
-      "use": "defineTextNode"
-    },
-    {
-      "orig": "F5",
-      "use": "defineLinkNode"
-    },
-    {
-      "orig": "zz",
-      "use": "defineMarkdownRenderChild"
-    },
-    {
-      "orig": "qz",
-      "use": "defineMarkdownPreviewSection"
-    },
-    {
-      "orig": "lq",
-      "use": "definePreviewLinkHandlers"
-    },
-    {
-      "orig": "hq",
-      "use": "defineMarkdownRenderer"
-    },
-    {
-      "orig": "lz",
-      "use": "defineDocumentSearch"
-    },
-    {
-      "orig": "fq",
-      "use": "defineMarkdownPreviewView"
-    },
-    {
-      "orig": "sJ",
-      "use": "defineEmbedLoader"
-    },
-    {
-      "orig": "Gz",
-      "use": "defineMarkdownPreviewRenderer"
-    },
-    {
-      "orig": "W6",
-      "use": "defineMarkdownView"
-    },
-    {
-      "orig": "G6",
-      "use": "definePrintToPdfModal"
-    },
-    {
-      "orig": "tO",
-      "use": "defineMetadataEditor"
-    },
-    {
-      "orig": "nO",
-      "use": "definePropertyRow"
-    },
-    {
-      "orig": "AO",
-      "use": "definePropertyKeySuggest"
-    },
-    {
-      "orig": "cP",
-      "use": "defineEditor"
-    },
-    {
-      "orig": "aZ",
-      "use": "defineEditModeBase"
-    },
-    {
-      "orig": "j6",
-      "use": "defineMarkdownEditMode"
-    },
-    {
-      "orig": "iZ",
-      "use": "defineEditorImpl"
-    },
-    {
-      "orig": "oZ",
-      "use": "defineCodeMirrorEditor"
-    },
-    {
-      "orig": "AL",
-      "use": "defineClipboardManager"
-    },
-    {
-      "orig": "uZ",
-      "use": "defineTableCellEditor"
-    },
-    {
-      "orig": "W1",
-      "use": "defineCallout"
-    },
-    {
-      "orig": "Q1",
-      "use": "defineSecretChooser"
-    },
-    {
-      "orig": "Y1",
-      "use": "defineSecretEditModal"
-    },
-    {
-      "orig": "X1",
-      "use": "defineEncryptionInfoModal"
-    },
-    {
-      "orig": "$1",
-      "use": "defineSecretPickerModal"
-    },
-    {
-      "orig": "Z1",
-      "use": "defineSecretComponent"
-    },
-    {
-      "orig": "K1",
-      "use": "defineKeychainTab"
-    },
-    {
-      "orig": "i0",
-      "use": "defineSecretStorageBase"
-    },
-    {
-      "orig": "r0",
-      "use": "defineDesktopSecretStore"
-    },
-    {
-      "orig": "o0",
-      "use": "defineMobileSecretStore"
-    },
-    {
-      "orig": "a0",
-      "use": "defineSecretStorage"
-    },
-    {
-      "orig": "vw",
-      "use": "defineAccountError",
-      "originalBytes": 157
-    },
-    {
-      "orig": "R7",
-      "use": "defineLoginModal"
-    },
-    {
-      "orig": "B7",
-      "use": "defineLicenseModal"
-    },
-    {
-      "orig": "N7",
-      "use": "defineAboutTab"
-    },
-    {
-      "orig": "C0",
-      "use": "defineHotkeysTab"
-    },
-    {
-      "orig": "mte",
-      "use": "defineCorePluginsTab"
-    },
-    {
-      "orig": "ite",
-      "use": "defineCommunityPluginsTab"
-    },
-    {
-      "orig": "xI",
-      "use": "defineFilePathSuggest"
-    },
-    {
-      "orig": "AI",
-      "use": "defineFolderPathSuggest"
-    },
-    {
-      "orig": "hte",
-      "use": "defineIgnoreFiltersModal"
-    },
-    {
-      "orig": "ute",
-      "use": "defineFilesLinksTab"
-    },
-    {
-      "orig": "ote",
-      "use": "defineSpellcheckDictionaryModal"
-    },
-    {
-      "orig": "rte",
-      "use": "defineEditorTab"
-    },
-    {
-      "orig": "tte",
-      "use": "defineAppearanceTab"
-    },
-    {
-      "orig": "y0",
-      "use": "defineCommunityModal"
-    },
-    {
-      "orig": "M0",
-      "use": "definePluginBrowserModal"
-    },
-    {
-      "orig": "D0",
-      "use": "defineThemeBrowserModal"
-    },
-    {
-      "orig": "S0",
-      "use": "defineDonateModal"
-    },
-    {
-      "orig": "qb",
-      "use": "defineSivError",
-      "originalBytes": 122
-    },
-    {
-      "orig": "Wb",
-      "use": "defineBlock",
-      "originalBytes": 425
-    },
-    {
-      "orig": "Kb",
-      "use": "defineCtrCipher",
-      "originalBytes": 620
-    },
-    {
-      "orig": "Qb",
-      "use": "defineCbcMacCipher",
-      "originalBytes": 771
-    },
-    {
-      "orig": "$b",
-      "use": "defineCmac",
-      "originalBytes": 1592
-    },
-    {
-      "orig": "Zb",
-      "use": "defineSiv",
-      "originalBytes": 1897
-    },
-    {
-      "orig": "hw",
-      "use": "defineCipherV0",
-      "originalBytes": 1226
-    },
-    {
-      "orig": "pw",
-      "use": "defineCipherV23",
-      "originalBytes": 1680
-    },
-    {
-      "orig": "oC",
-      "use": "defineSyncScreenBase",
-      "originalBytes": 511
-    },
-    {
-      "orig": "aC",
-      "use": "defineSyncField",
-      "originalBytes": 667
-    },
-    {
-      "orig": "sC",
-      "use": "defineSyncRadioGroup",
-      "originalBytes": 686
-    },
-    {
-      "orig": "lC",
-      "use": "defineSyncRadioOption",
-      "originalBytes": 332
-    },
-    {
-      "orig": "cC",
-      "use": "defineSyncStartScreen",
-      "originalBytes": 810
-    },
-    {
-      "orig": "uC",
-      "use": "defineSyncIntroScreen",
-      "originalBytes": 500
-    },
-    {
-      "orig": "hC",
-      "use": "defineCreateVaultScreen",
-      "originalBytes": 2106
-    },
-    {
-      "orig": "pC",
-      "use": "defineSyncSetupScreen",
-      "originalBytes": 1194
-    },
-    {
-      "orig": "dC",
-      "use": "defineEncryptionScreen",
-      "originalBytes": 2097
-    },
-    {
-      "orig": "fC",
-      "use": "defineSyncSettingsScreen",
-      "originalBytes": 2259
-    },
-    {
-      "orig": "mC",
-      "use": "defineAuthChoiceScreen",
-      "originalBytes": 409
-    },
-    {
-      "orig": "vC",
-      "use": "defineRemoteVaultOptionsScreen",
-      "originalBytes": 984
-    },
-    {
-      "orig": "gC",
-      "use": "defineVaultListScreen",
-      "originalBytes": 1395
-    },
-    {
-      "orig": "yC",
-      "use": "defineSignInScreen",
-      "originalBytes": 2506
-    },
-    {
-      "orig": "bC",
-      "use": "defineForgotPasswordScreen",
-      "originalBytes": 1260
-    },
-    {
-      "orig": "wC",
-      "use": "defineSyncMethodScreen",
-      "originalBytes": 2595
-    },
-    {
-      "orig": "kC",
-      "use": "defineConnectMethodScreen",
-      "originalBytes": 2037
-    },
-    {
-      "orig": "CC",
-      "use": "defineOtherSyncScreen",
-      "originalBytes": 510
-    },
-    {
-      "orig": "EC",
-      "use": "defineEmailEntryScreen",
-      "originalBytes": 699
-    },
-    {
-      "orig": "MC",
-      "use": "defineSignupScreen",
-      "originalBytes": 1464
-    },
-    {
-      "orig": "SC",
-      "use": "defineEmailVerificationScreen",
-      "originalBytes": 1119
-    },
-    {
-      "orig": "xC",
-      "use": "defineICloudMissingScreen",
-      "originalBytes": 319
-    },
-    {
-      "orig": "TC",
-      "use": "defineStoragePermissionScreen",
-      "originalBytes": 1022
-    },
-    {
-      "orig": "DC",
-      "use": "defineICloudUnsupportedScreen",
-      "originalBytes": 356
-    }
-  ],
-  "host": {
-    "Events": "VT",
-    "Component": "jm",
-    "Platform": "Yl",
-    "WorkspaceItem": "LD",
-    "WorkspaceParent": "ID",
-    "WorkspaceSplit": "OD",
-    "WorkspaceContainer": "ND",
-    "parseColor": "Ak",
-    "colorToHex": "Fk",
-    "installEnhancements": "yZ",
-    "attachElectron": "bZ",
-    "installTooltipHandlers": "pv",
-    "installTitlebar": "kte",
-    "trackWindowFocus": "gZ",
-    "applyLanguage": "bm",
-    "forwardInputEvents": "mZ",
-    "mirrorStyles": "vZ",
-    "WorkspaceSidedock": "FD",
-    "WorkspaceLeaf": "jD",
-    "TFile": "$T",
-    "Menu": "Ug",
-    "Transition": "dl",
-    "t": "gm",
-    "VaultProfile": "DD",
-    "setTooltip": "Mv",
-    "setIcon": "tv",
-    "enableTitlebarDoubleClick": "VD",
-    "saveScrollPositions": "ag",
-    "restoreScrollPositions": "lg",
-    "scrollWithPointer": "_v",
-    "makeDragReorderable": "Gc",
-    "TOOLTIP_DELAY": "sv",
-    "LeafHistory": "qD",
-    "EmptyView": "tD",
-    "DeferredView": "eD",
-    "UnknownView": "nD",
-    "FileView": "MD",
-    "MobileDrawer": "WD",
-    "Notice": "fb",
-    "pointerEntered": "Lc",
-    "WorkspaceTabs": "zD",
-    "Keymap": "Bg",
-    "Scope": "Ng",
-    "eventKey": "Lg",
-    "eventVirtualKey": "Ig",
-    "focusElement": "tg",
-    "osName": "zl",
-    "BaseComponent": "jk",
-    "ValueComponent": "Uk",
-    "ButtonComponent": "Wk",
-    "ExtraButtonComponent": "_k",
-    "ToggleComponent": "Gk",
-    "AbstractTextComponent": "Kk",
-    "TextComponent": "Yk",
-    "SearchComponent": "Qk",
-    "TextAreaComponent": "Xk",
-    "MomentFormatComponent": "Zk",
-    "DropdownComponent": "Jk",
-    "ProgressBarComponent": "eC",
-    "SliderComponent": "tC",
-    "ColorComponent": "nC",
-    "Setting": "zk",
-    "SettingGroup": "qk",
-    "SettingTab": "_1",
-    "PluginSettingTab": "K0",
-    "selectOnFocus": "Pv",
-    "hideTooltip": "Cv",
-    "displayTooltip": "kv",
-    "blurAndClearSelection": "Lv",
-    "closeAllMenus": "jg",
-    "registerOpenModal": "zm",
-    "unregisterOpenModal": "qm",
-    "nodeInWindow": "Ov",
-    "onSwipe": "Vm",
-    "slideModalIn": "Pl",
-    "slideModalOut": "Ll",
-    "swipeToDismiss": "_g",
-    "MenuItem": "Hg",
-    "MenuSeparator": "zg",
-    "slideBetween": "El",
-    "isTouchSyntheticMouse": "Uc",
-    "frameOffset": "hg",
-    "watchElementGone": "Rv",
-    "keyboard": "Im",
-    "SuggestionList": "ob",
-    "GroupedSuggestionList": "ab",
-    "SuggestModal": "sb",
-    "FuzzySuggestModal": "lb",
-    "PopoverSuggest": "EI",
-    "AbstractInputSuggest": "SI",
-    "EditorSuggest": "NI",
-    "Modal": "tb",
-    "renderInstructions": "rb",
-    "positionNear": "Nv",
-    "rectInTopWindow": "pg",
-    "textDirection": "LI",
-    "nextFrame": "Al",
-    "MarkdownView": "W6",
-    "runCommandCallback": "K6",
-    "formatHotkey": "Rb",
-    "MarkdownPreviewRenderer": "Gz",
-    "FormulaFunctions": "QW",
-    "PLUGIN_STYLES_FILE": "JD",
-    "View": "Kg",
-    "ItemView": "Yg",
-    "createNavButton": "Gg",
-    "isMacLike": "jl",
-    "tc": "gm.commands",
-    "markdownExtensions": "jy",
-    "imageExtensions": "Vy",
-    "audioExtensions": "Hy",
-    "videoExtensions": "zy",
-    "pdfExtensions": "qy",
-    "ImageView": "xZ",
-    "AudioView": "MZ",
-    "VideoView": "XZ",
-    "PdfView": "KZ",
-    "releaseNotesType": "s0",
-    "ReleaseNotesView": "h0",
-    "PopoverState": "VQ",
-    "EditableFileView": "OX",
-    "focusAndSelectContents": "Av",
-    "pastePlainText": "vg",
-    "normalizeEditable": "mg",
-    "validateFileName": "LX",
-    "showErrorTooltip": "IX",
-    "UNSAFE_NAME_CHARS": "WT",
-    "UNSAFE_NAME_LIST": "jT",
-    "awaitSettled": "Mb",
-    "mergeText": "FX",
-    "isMacOS": "jl",
-    "isWindows": "Ul",
-    "isLinux": "Wl",
-    "isSafari": "_l",
-    "ButtonModal": "nb",
-    "Callout": "W1",
-    "SecretChooser": "Q1",
-    "SecretEditModal": "Y1",
-    "EncryptionInfoModal": "X1",
-    "SecretPickerModal": "$1",
-    "SecretComponent": "Z1",
-    "KeychainTab": "K1",
-    "SecretStorageBase": "i0",
-    "DesktopSecretStore": "r0",
-    "MobileSecretStore": "o0",
-    "SecretStorage": "a0",
-    "keychainI18n": "gm.setting.keychain",
-    "secureStoreNative": "U1",
-    "LoginModal": "R7",
-    "LicenseModal": "B7",
-    "SlowStartupCheck": "I7",
-    "FilePathSuggest": "xI",
-    "FolderPathSuggest": "PI",
-    "IgnoreFiltersModal": "hte",
-    "SpellcheckDictionaryModal": "ote",
-    "sanitizeHtml": "xL",
-    "setCollapsed": "KL",
-    "PreviewLinkHandlers": "lq",
-    "MarkdownRenderChild": "zz",
-    "debounce": "wc",
-    "MarkdownPreviewView": "fq",
-    "markdownTree": "Kx",
-    "treeFrontmatter": "$x",
-    "treeToHtml": "Zx",
-    "renderSectionHtml": "cz",
-    "embedDepth": "JZ",
-    "queryBlockText": "$z",
-    "queryEmbed": "pq",
-    "EmbedLoader": "sJ",
-    "refreshLinkStates": "uq",
-    "textNodes": "zv",
-    "DocumentSearch": "lz",
-    "propertiesPlugin": "eO",
-    "focusWhenShown": "gg",
-    "markdownOptions": "Ux",
-    "keyNames": "Og",
-    "trackPointer": "Cg",
-    "MarkdownRenderer": "hq",
-    "internalLinkHref": "cq",
-    "QueryResults": "mq",
-    "activePropertiesEditor": "JI",
-    "embedDepths": "ZZ",
-    "FileEmbed": "rJ",
-    "FallbackEmbed": "oJ",
-    "MarkdownPreviewSection": "qz",
-    "parseMarkdownSections": "cz",
-    "frontmatterClasses": "rT",
-    "codeText": "$z",
-    "codeTexts": "Xz",
-    "renderFlags": "_z",
-    "activeWindow": "activeWindow",
-    "ajaxPromise": "ajaxPromise",
-    "TextFileView": "BX",
-    "MarkdownEditMode": "j6",
-    "MetadataEditor": "tO",
-    "BacklinksPane": "z6",
-    "PrintToPdfModal": "G6",
-    "spliceFrontmatter": "kI",
-    "extractFrontmatter": "Xx",
-    "parseYaml": "mA",
-    "subpathToPos": "FT",
-    "DialogModal": "nb",
-    "printModalText": "gm.editor.printModal",
-    "electronBridge": "If",
-    "applyEnhancements": "yZ",
-    "waitModal": "pD",
-    "printToPdfIpc": "jf",
-    "sleep": "sleep",
-    "randomHex": "cc",
-    "containsAllWords": "Ly",
-    "matchScore": "xy",
-    "renderResults": "Fy",
-    "TypeInfoModal": "FO",
-    "yamlStringify": "vA",
-    "collapseElement": "kl",
-    "CodeMirrorEditor": "oZ",
-    "EditorSearchBar": "gj",
-    "isSmartIndentTarget": "ff",
-    "cmView": "_o",
-    "cmKeymapFacet": "Jo",
-    "hypermdMode": "Z$",
-    "cmLiveDecorations": "Dq",
-    "cmLineNumbersFixed": "Vs",
-    "cmLineNumbersCompute": "$B",
-    "cmLineNumbersField": "Zs",
-    "cmTableCellFilter": "Mq",
-    "cmIndentGuides": "OV",
-    "cmFoldGutter": "od",
-    "cmFoldDecorations": "AV",
-    "cmFoldHeading": "O$",
-    "cmFoldIndent": "A$",
-    "cmFoldFrontmatter": "F$",
-    "cmAutoPair": "DA",
-    "cmClearCacheEffect": "Tq",
-    "EditModeBase": "aZ",
-    "propertiesExtensionFactory": "nP",
-    "cmFoldEffect": "qp",
-    "cmUnfoldEffect": "jp",
-    "EditorApi": "cP",
-    "cmSelection": "pe",
-    "cmChangeSet": "re",
-    "cmState": "nt",
-    "cmDecoration": "Vn",
-    "highlightCache": "SA",
-    "cmHighlightState": "xA",
-    "cmHighlightField": "EA",
-    "cmFilterEffect": "MA",
-    "cmFoldedRanges": "Gp",
-    "cmFoldableRange": "Hp",
-    "cmRangeContains": "FA",
-    "cmSyntaxTree": "tp",
-    "cmSyntaxExcludeBuffers": "Lu",
-    "cmSyntaxPropClasses": "$d",
-    "cmFormatQuery": "df",
-    "cmFormatSpan": "hf",
-    "cmFormatNodes": "yf",
-    "cmFormatRemove": "vf",
-    "cmFormatInner": "gf",
-    "cmFormatLineBounds": "mf",
-    "cmFormatSeek": "pf",
-    "SearchCursorImpl": "zR",
-    "cmUndo": "nF",
-    "cmRedo": "iF",
-    "cmCursorRange": "UA",
-    "TableCellEditor": "uZ",
-    "EmbedFileView": "lJ",
-    "HoverPopover": "S$",
-    "parseLinkText": "MT",
-    "trimSlashes": "tu",
-    "mediaExtensions": "Vy",
-    "getExtension": "su",
-    "isImageDimension": "zx",
-    "isInternalUrl": "YC",
-    "decodeExternalUrl": "XC",
-    "isEmailAddress": "Zc",
-    "normalizeExternalUrl": "QC",
-    "nextFootnoteId": "BT",
-    "cmdGoUp": "ZF",
-    "cmdGoDown": "JF",
-    "cmdGoLeft": "TF",
-    "cmdGoRight": "DF",
-    "cmdGoStart": "N$",
-    "cmdGoEnd": "GN",
-    "cmdGoWordLeft": "RF",
-    "cmdGoWordRight": "BF",
-    "cmdIndentMore": "H$",
-    "cmdIndentLess": "z$",
-    "cmdNewlineAndIndent": "SR",
-    "cmdSwapLineUp": "gR",
-    "cmdSwapLineDown": "yR",
-    "cmdDeleteLine": "CR",
-    "cmFoldToggle": "Xp",
-    "cmUnfoldToggle": "Qp",
-    "cmdFoldAll": "R$",
-    "cmdUnfoldAll": "Jp",
-    "CMEditorView": "_o",
-    "ClipboardManager": "AL",
-    "iosTap": "jc",
-    "CMEditorComponent": "iZ",
-    "livePreviewPluginFactory": "O6",
-    "cmCompartment": "nZ",
-    "cmBaseExtension": "tZ",
-    "cmHistoryStore": "rZ",
-    "cmHistoryField": "eF",
-    "cmPosToOffset": "IA",
-    "cmOffsetToPos": "OA",
-    "cmRefreshEffect": "BA",
-    "cmIndentUnit": "yp",
-    "cmEditorField": "U$",
-    "cmOwnerField": "W$",
-    "livePreviewField": "G$",
-    "fieldSetEffect": "q$",
-    "notSetUserEvent": "PA",
-    "inputEditUserEvent": "LA",
-    "cmFoldCheck": "EV",
-    "electronMenuInfo": "Gf",
-    "shiftPos": "rP",
-    "truncateText": "gc",
-    "formattingMenu": "BV",
-    "isUrl": "Yc",
-    "isPlainUrl": "Qc",
-    "setUriList": "wP",
-    "clipboardFiles": "CP",
-    "htmlCommentPrefix": "DL",
-    "iosEditorExtensions": "I$",
-    "bracketOpenInput": "sV",
-    "bracketField": "nV",
-    "bracketKeys": "lV",
-    "closeBracketInput": "fj",
-    "vimTheme": "rj",
-    "vimPrecedence": "Te",
-    "vimKeymapClass": "oj",
-    "vimThemeAlt": "Lq",
-    "vimStatusField": "lj",
-    "dragDropEffect": "SP",
-    "dragLinkText": "TL",
-    "isImageExtension": "$y",
-    "pathBaseName": "nu",
-    "pathNormalize": "uu",
-    "stripExtBase": "ou",
-    "escapePathChars": "eE",
-    "htmlToMarkdown": "yP",
-    "base64ToBuffer": "Cf",
-    "cmViewPlugin": "ji",
-    "cmStateField": "ke",
-    "mobileCursorPlugin": "K2",
-    "mobileCursorEffect": "G2",
-    "mobileCursorAnnotation": "AA",
-    "livePreviewThemeA": "L6",
-    "livePreviewThemeB": "I6",
-    "mobileDragExtensions": "A6",
-    "propertiesLivePreview": "P6",
-    "tableSyncExtension": "wq",
-    "tableWidget": "bq",
-    "livePreviewLinkWidget": "m6",
-    "livePreviewCalloutWidget": "y6",
-    "livePreviewMathWidget": "b6",
-    "livePreviewImageWidget": "f6",
-    "livePreviewHtmlWidget": "k6",
-    "livePreviewHrWidget": "o6",
-    "livePreviewCodeblockWidget": "v6",
-    "livePreviewCodeFallbackWidget": "u6",
-    "livePreviewUnresolvedMark": "t6",
-    "livePreviewAndroidWidget": "E6",
-    "livePreviewCodeblockHide": "X2",
-    "livePreviewCodeblockShow": "Z2",
-    "livePreviewTagBlocklist": "w6",
-    "livePreviewSyntaxClasses": "Zd",
-    "listLinePattern": "aP",
-    "codeblockLangPattern": "Q2",
-    "combineExtensions": "k",
-    "keyModifiers": "Bg",
-    "codeMirrorCompat": "window.CodeMirror",
-    "ensureSyntaxViewport": "np",
-    "isKnownHtmlTag": "eg",
-    "stripLinkSubpath": "ET",
-    "yamlParseError": "IS",
-    "metadataPropertyEffect": "TA",
-    "livePreviewInvalidMark": "ZA",
-    "livePreviewBlockReplace": "JA",
-    "parseTableCellText": "jA",
-    "vimApi": "ij",
-    "tableCellLanguage": "J$",
-    "tableUpdateAnnotation": "yq",
-    "cmCompartmentClass": "Ae",
-    "textDirectionEnum": "Xn",
-    "textDirectionOf": "Tv",
-    "selectDocStart": "KN",
-    "selectDocEnd": "YN",
-    "pageUp": "nN",
-    "pageDown": "iN",
-    "selectPageUp": "BN",
-    "selectPageDown": "VN",
-    "TreeItem": "YL",
-    "TreeChildren": "UH",
-    "TreeRoot": "s2",
-    "InfinityScroll": "tz",
-    "Tree": "l2",
-    "ViewHeader": "R6",
-    "WordCharSource": "WV",
-    "SearchableExtensions": "Gy",
-    "SearchOperators": "RH",
-    "GraphView": "kJ",
-    "WebViewerView": "P2",
-    "PluginInstanceSettingTab": "Y0",
-    "forbiddenNameChars": "UT",
-    "forbiddenNameCharsList": "qT",
-    "unsafeNameChars": "WT",
-    "unsafeNameCharsList": "jT",
-    "activeTouches": "zc",
-    "lastTouchEnd": "Hc",
-    "lastScrollAt": "qc",
-    "VaultClass": "JT",
-    "hasMetadataEditor": "$I",
-    "isAttachmentExtension": "$y",
-    "FolderSuggest": "AI",
-    "MarkdownFileSuggest": "TI",
-    "unicodeLetterSource": "jV",
-    "unicodeWordSource": "UV",
-    "PlaintextView": "BX",
-    "Multimap": "sc",
-    "canvasSerialize": "dc",
-    "applyLinkChanges": "UL",
-    "normalizeSubpath": "LT",
-    "CANVAS_EXTENSION": "Z5",
-    "indexCacheHasLink": "xT",
-    "MetadataExtractorBase": "X5",
-    "parseSmallText": "fT",
-    "fileProxy": "wf",
-    "RenameQueue": "vb",
-    "canvasI18n": "J5",
-    "CanvasViewType": "$5",
-    "CanvasViewClass": "r8",
-    "JumpToGroupModal": "Q5",
-    "GroupNodeClass": "I5",
-    "CanvasEmbedRenderer": "a8",
-    "CanvasSettingsTab": "s8",
-    "TextInputModal": "lI",
-    "MarkdownEmbedBase": "CZ",
-    "Runnable": "bb",
-    "headingBlockSuggestions": "zI",
-    "blockSuggestions": "qI",
-    "renderSectionSuggestion": "jI",
-    "applyCanvasColor": "B3",
-    "normalizeCanvasColor": "H3",
-    "CanvasFileSuggest": "x3",
-    "invalidCharsPattern": "UT",
-    "invalidCharsList": "qT",
-    "unsafeCharsPattern": "WT",
-    "unsafeCharsList": "jT",
-    "isEditableTarget": "M$",
-    "dragWithThreshold": "Cg",
-    "nativeDblClick": "dg",
-    "StatefulEmbedBase": "lJ",
-    "normalizeEmbedUrl": "Az",
-    "isWebviewElement": "_f",
-    "canvasResizeAnchor": "E3",
-    "canvasSnapPoints": "L3",
-    "canvasSnapMatch": "O3",
-    "canvasNearestSide": "A3",
-    "iterateLinks": "TT",
-    "TFolder": "ZT",
-    "linkPath": "ET",
-    "cancelTouchDrag": "Nc",
-    "propertyTypeWidgets": "{aliases:bO,checkbox:TO,date:EO,datetime:MO,file:CO,folder:kO,multitext:PO,property:yO,number:xO,tags:wO,text:rO}",
-    "unknownPropertyWidget": "IO",
-    "Plugin": "G0",
-    "pluginStrings": "J0",
-    "i18n": "gm",
-    "request": "dy",
-    "semverCompare": "gy",
-    "appVersion": "gte",
-    "communityPluginList": "tA",
-    "progressOverlay": "pD.instance",
-    "TrustAuthorModal": "Z0",
-    "trackUsage": "cD",
-    "capacitorApp": "xm",
-    "basaltDebug": "iD",
-    "cmRequireMap": "W0",
-    "cmDeprecatedMap": "_0",
-    "tagValid": "$A",
-    "linkCacheKey": "BL",
-    "batchedAsync": "Cb",
-    "collectTags": "DT",
-    "getLinkpath": "ET",
-    "iterateIdbBatches": "GL",
-    "sharesLinkTarget": "HL",
-    "contentHash": "Sf",
-    "applyLinkUpdates": "UL",
-    "openMetadataDb": "Zw",
-    "linkPosToPos": "gT",
-    "isOutdatedMetadata": "kT",
-    "forEachLinkField": "mT",
-    "escapeRegExp": "oc",
-    "BlockCache": "qL",
-    "RefMultimap": "sc",
-    "compareStrings": "ub",
-    "positionToArray": "vT",
-    "SerialTaskQueue": "vb",
-    "deserializeMetadata": "wT",
-    "LinkQueue": "wb",
-    "anyMetadataRef": "xT",
-    "createEl": "createEl",
-    "createFragment": "createFragment",
-    "FolderPathSuggestTab": "AI"
+ "base": "ca5acac",
+ "entries": [
+  {
+   "orig": "nu",
+   "use": "lastSegment"
   },
-  "declarators": [
-    {
-      "orig": "QT",
-      "expr": "__basaltOwn.fileClass(\"TAbstractFile\")",
-      "sha1": "4eaff792d9c33377cdce60bda1534f24a2b2bbcf",
-      "originalBytes": 315
-    },
-    {
-      "orig": "XT",
-      "expr": "null",
-      "sha1": "53a9b0a3c30baac2eec4c403e29d5c0b1c41a10c",
-      "originalBytes": 11
-    },
-    {
-      "orig": "$T",
-      "expr": "__basaltOwn.fileClass(\"TFile\")",
-      "sha1": "9c789be6e78a4a6aedb90fb6c2c7e834fa820bd1",
-      "originalBytes": 795
-    },
-    {
-      "orig": "ZT",
-      "expr": "__basaltOwn.fileClass(\"TFolder\")",
-      "sha1": "6922ce84c35ac18c8053cf977c96b0b8c4c540ec",
-      "originalBytes": 522
-    },
-    {
-      "orig": "Eu",
-      "expr": "__basaltOwn.createFileSystemAdapter()",
-      "sha1": "bfd26de141886d5b9e7e0f80415f32ebcb74045f",
-      "originalBytes": 20222
-    },
-    {
-      "orig": "JT",
-      "expr": "__basaltOwn.createVault(VT,Eu)",
-      "sha1": "020d8c45116285ee5922289fa9d8b1cb96e79ff7",
-      "originalBytes": 16852
-    },
-    {
-      "orig": "MP",
-      "expr": "__basaltOwn.dragEffectMap",
-      "sha1": "f0a4c1f32d9933faae8531e80432a3bec18a42fa",
-      "originalBytes": 170
-    },
-    {
-      "orig": "EP",
-      "expr": "__basaltOwn.dragPixel",
-      "sha1": "1f088489658055a2b71dd274b9c080e721998b88",
-      "originalBytes": 9
-    },
-    {
-      "orig": "r2",
-      "expr": "__basaltOwn.corePluginIds",
-      "sha1": "3de5501f1e6a3828398acaa08b4a4cb52f559e75",
-      "originalBytes": 350
-    },
-    {
-      "orig": "PL",
-      "expr": "__basaltOwn.propertyTypeDefaults",
-      "sha1": "1a73996d5db8a30e75068ad7dee0004d982109ce",
-      "originalBytes": 141
-    },
-    {
-      "orig": "HL",
-      "expr": "__basaltOwn.sharesLinkTarget",
-      "sha1": "05b38e1bd5197aca970ce6aab5a046d0b608b7c3",
-      "originalBytes": 138
-    },
-    {
-      "orig": "ez",
-      "expr": "__basaltOwn.walkTreeAll",
-      "sha1": "9abe299f3b1e24c01475f20b716ccb41ecd2b78a",
-      "originalBytes": 136
-    },
-    {
-      "orig": "iH",
-      "expr": "__basaltOwn.resetRegexCaches",
-      "sha1": "9ba6b43d41b00bb083f23c7bba0326a9b897dd0b",
-      "originalBytes": 36
-    },
-    {
-      "orig": "RH",
-      "expr": "__basaltOwn.defineSearchOperators(__basaltHost)",
-      "sha1": "e434bc6d9e17891a5ee235533a0fb8953d54f6d3",
-      "originalBytes": 825
-    },
-    {
-      "orig": "GV",
-      "expr": "__basaltOwn.wholeWordPattern",
-      "sha1": "547fbb074252747b1f93c3bfcf7218f10903ae61",
-      "originalBytes": 197
-    },
-    {
-      "orig": "Hw",
-      "expr": "__basaltOwn.account",
-      "sha1": "170efdfd595fe70440769009d25d66032b34f359",
-      "originalBytes": 474
-    },
-    {
-      "orig": "aw",
-      "expr": "32768"
-    },
-    {
-      "orig": "sw",
-      "expr": "{N:32768,r:8,p:1,maxmem:67108864}",
-      "sha1": "bccf82dc240e31d5fede024da785f0af6e8fcdbf",
-      "originalBytes": 30
-    },
-    {
-      "orig": "AC",
-      "expr": "[\"accentColor\",\"theme\",\"cssTheme\",\"enabledCssSnippets\",\"showViewHeader\",\"showRibbon\",\"nativeMenus\",\"translucency\",\"textFontFamily\",\"interfaceFontFamily\",\"monospaceFontFamily\",\"baseFontSize\",\"baseFontSizeAction\",\"slidingSidebar\",\"floatingNavigation\",\"autoFullScreen\"]",
-      "sha1": "ca78b22bc3a5de13984e7804174301faa0b4a19e",
-      "originalBytes": 3376
-    }
-  ],
-  "methods": [
-    {
-      "class": "mI",
-      "name": "getMarkdownNewFileParent",
-      "use": "fmMarkdownNewFileParent",
-      "sha1": "c956027d37430809ff47fce237e4b6da600779c5",
-      "originalBytes": 286
-    },
-    {
-      "class": "mI",
-      "name": "getNewFileParent",
-      "use": "fmNewFileParent",
-      "sha1": "446c777d1cf3f6771c6fe53612e3a4b1240e1d43",
-      "originalBytes": 238
-    },
-    {
-      "class": "mI",
-      "name": "registerFileParentCreator",
-      "use": "fmRegisterFileParentCreator",
-      "sha1": "273453ab7028d05d813fab4033349203cdbb1fab",
-      "originalBytes": 48
-    },
-    {
-      "class": "mI",
-      "name": "unregisterFileCreator",
-      "use": "fmUnregisterFileCreator",
-      "sha1": "525a637b20c66266285e24ce54bd28955d37f5e1",
-      "originalBytes": 51
-    },
-    {
-      "class": "mI",
-      "name": "canCreateFileWithExt",
-      "use": "fmCanCreateFileWithExt",
-      "sha1": "e67dbf34d0b375ebc63e2db6082528307661c142",
-      "originalBytes": 72
-    },
-    {
-      "class": "mI",
-      "name": "createNewMarkdownFileFromLinktext",
-      "use": "fmCreateNewMarkdownFileFromLinktext",
-      "sha1": "ff53bf47014515b4c3b65d4cd9b92399de9c8bcd",
-      "originalBytes": 269
-    },
-    {
-      "class": "mI",
-      "name": "createNewMarkdownFile",
-      "use": "fmCreateNewMarkdownFile",
-      "sha1": "d920d99286eda65a01bba3512dbca6818428defd",
-      "originalBytes": 131
-    },
-    {
-      "class": "mI",
-      "name": "createNewFile",
-      "use": "fmCreateNewFile",
-      "sha1": "e27dd72de34e93d47256549d5f124699764cecb7",
-      "originalBytes": 715
-    },
-    {
-      "class": "mI",
-      "name": "createNewFolder",
-      "use": "fmCreateNewFolder",
-      "sha1": "b942fc655c14b23f9ba81c2591eb969a7409ab87",
-      "originalBytes": 369
-    },
-    {
-      "class": "mI",
-      "name": "renameFile",
-      "use": "fmRenameFile",
-      "sha1": "0abe33e67d34093722252d041617303b75077af9",
-      "originalBytes": 226
-    },
-    {
-      "class": "mI",
-      "name": "runAsyncLinkUpdate",
-      "use": "fmRunAsyncLinkUpdate",
-      "sha1": "b83ecfc3d956247e53801bdae98b8d21c59e522b",
-      "originalBytes": 1142
-    },
-    {
-      "class": "mI",
-      "name": "trashFile",
-      "use": "fmTrashFile",
-      "sha1": "3df062eb6b86ed935ef996c7611bde0d31be5391",
-      "originalBytes": 424
-    },
-    {
-      "class": "mI",
-      "name": "getAvailablePathForAttachment",
-      "use": "fmGetAvailablePathForAttachment",
-      "sha1": "961f29faac441d80c51bf7dc93c8b8b5dd7bff00",
-      "originalBytes": 292
-    },
-    {
-      "class": "H0",
-      "name": "on",
-      "use": "wsOn",
-      "sha1": "5974e9a7081e080df478675ba93875b923c1d182",
-      "originalBytes": 55
-    },
-    {
-      "class": "H0",
-      "name": "trigger",
-      "use": "wsTrigger",
-      "sha1": "576bfc22529b24cffe944cfb73d064a6fba94360",
-      "originalBytes": 116
-    },
-    {
-      "class": "H0",
-      "name": "isAttached",
-      "use": "wsIsAttached",
-      "sha1": "ca3cdf9f9b1725f37c84ef36a5e5d5d159352629",
-      "originalBytes": 130
-    },
-    {
-      "class": "H0",
-      "name": "getLeftLeaf",
-      "use": "wsGetLeftLeaf",
-      "sha1": "3188a2625378c65d0e2cdaa13d97b044bb6608e9",
-      "originalBytes": 54
-    },
-    {
-      "class": "H0",
-      "name": "getRightLeaf",
-      "use": "wsGetRightLeaf",
-      "sha1": "1b3c19826ae37390cc158350332763a364d34429",
-      "originalBytes": 55
-    },
-    {
-      "class": "H0",
-      "name": "getLeaf",
-      "use": "wsGetLeaf",
-      "sha1": "211ded2122beb11099959b795b59c2f0b3dc765c",
-      "originalBytes": 160
-    },
-    {
-      "class": "H0",
-      "name": "getGroupLeaves",
-      "use": "wsGetGroupLeaves",
-      "sha1": "d6daa03ff45eee91799505e479741aa0b03a7b70",
-      "originalBytes": 97
-    },
-    {
-      "class": "H0",
-      "name": "iterateLeaves",
-      "use": "wsIterateLeaves",
-      "sha1": "bb71dd62d3317d5abf124b718747313ff48b25b7",
-      "originalBytes": 334
-    },
-    {
-      "class": "H0",
-      "name": "iterateTabs",
-      "use": "wsIterateTabs",
-      "sha1": "b9518d9b56f6438d52af9b3cc639a63e9e374157",
-      "originalBytes": 186
-    },
-    {
-      "class": "H0",
-      "name": "iterateAllLeaves",
-      "use": "wsIterateAllLeaves",
-      "sha1": "a4847df435eee4d2adfb213f654bcaafdb34c91e",
-      "originalBytes": 165
-    },
-    {
-      "class": "H0",
-      "name": "iterateRootLeaves",
-      "use": "wsIterateRootLeaves",
-      "sha1": "ab81d04d7cafafdc4c6f9705818f16173417c317",
-      "originalBytes": 49
-    },
-    {
-      "class": "H0",
-      "name": "iterateCodeMirrors",
-      "use": "wsIterateCodeMirrors",
-      "sha1": "07714e6deea17a4e7a859895c769cd8e910e44f0",
-      "originalBytes": 13
-    },
-    {
-      "class": "H0",
-      "name": "hasUndoHistory",
-      "use": "wsHasUndoHistory",
-      "sha1": "becb67aad72c391516991ea287c9abfc2d9eb17e",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "isInSidebar",
-      "use": "wsIsInSidebar",
-      "sha1": "f53b2eb354f8139189e63b9b2cd2b6e1437fb9c3",
-      "originalBytes": 85
-    },
-    {
-      "class": "H0",
-      "name": "onLayoutChange",
-      "use": "wsOnLayoutChange",
-      "sha1": "4d7743c86b68d18be5f305cedef06b26de6dfab3",
-      "originalBytes": 98
-    },
-    {
-      "class": "H0",
-      "name": "onLayoutReady",
-      "use": "wsOnLayoutReady",
-      "sha1": "eda77fef15e782fac92fc68e6e6c0bc660b98867",
-      "originalBytes": 140
-    },
-    {
-      "class": "H0",
-      "name": "onQuickPreview",
-      "use": "wsOnQuickPreview",
-      "sha1": "34d6115c546670b4a86091b47e250c580cbb2d3e",
-      "originalBytes": 48
-    },
-    {
-      "class": "H0",
-      "name": "addMobileFileInfo",
-      "use": "wsAddMobileFileInfo",
-      "sha1": "2335f0d14203dfa501db34f68353511977242f29",
-      "originalBytes": 41
-    },
-    {
-      "class": "H0",
-      "name": "getRecentFiles",
-      "use": "wsGetRecentFiles",
-      "sha1": "4017bde3a61e913e4d51dda88fad7576b79cb2d0",
-      "originalBytes": 60
-    },
-    {
-      "class": "H0",
-      "name": "getLastOpenFiles",
-      "use": "wsGetLastOpenFiles",
-      "sha1": "6dba792dbe3f88279b894aabba5c374f85030ae3",
-      "originalBytes": 60
-    },
-    {
-      "class": "H0",
-      "name": "addRecentFile",
-      "use": "wsAddRecentFile",
-      "sha1": "e995da93d613ae7814af76a8f4cc0bd2a1f8425b",
-      "originalBytes": 52
-    },
-    {
-      "class": "H0",
-      "name": "onResize",
-      "use": "wsOnResize",
-      "sha1": "928ee359e9023c416add256e33e03d1c3db332ae",
-      "originalBytes": 34
-    },
-    {
-      "class": "H0",
-      "name": "updateTitle",
-      "use": "wsUpdateTitle",
-      "sha1": "0de8e04341e5048494b585aaf62c134d0bed1ea1",
-      "originalBytes": 124
-    },
-    {
-      "class": "H0",
-      "name": "getActiveFile",
-      "use": "wsGetActiveFile",
-      "sha1": "29297cc28e3dcbbb771191fd90509d8240307080",
-      "originalBytes": 153
-    },
-    {
-      "class": "H0",
-      "name": "getFocusedContainer",
-      "use": "wsGetFocusedContainer",
-      "sha1": "0bef3884c53d9d8767d05c858fd962a9a3817ff3",
-      "originalBytes": 199
-    },
-    {
-      "class": "H0",
-      "name": "getMostRecentLeaf",
-      "use": "wsGetMostRecentLeaf",
-      "sha1": "232f752ac34c14f6ee8f196c76a6b292bbd9a56c",
-      "originalBytes": 193
-    },
-    {
-      "class": "H0",
-      "name": "getActiveViewOfType",
-      "use": "wsGetActiveViewOfType",
-      "sha1": "b9f5feb64360d1d302621fd3300c00c4e2db426c",
-      "originalBytes": 94
-    },
-    {
-      "class": "H0",
-      "name": "getActiveLeafOfViewType",
-      "use": "wsGetActiveLeafOfViewType",
-      "sha1": "d51434d8b1a778f9f5ba96fca8e8f4bf0971c618",
-      "originalBytes": 47
-    },
-    {
-      "class": "H0",
-      "name": "getSideLeaf",
-      "use": "wsGetSideLeaf",
-      "sha1": "ed07a42d3a912eaf67314d28d070558a5e27513b",
-      "originalBytes": 332
-    },
-    {
-      "class": "H0",
-      "name": "getActiveFileView",
-      "use": "wsGetActiveFileView",
-      "sha1": "e266d1c8d5f4de70c217426fcb15f0dbe4069f26",
-      "originalBytes": 255
-    },
-    {
-      "class": "H0",
-      "name": "activeLeafEvents",
-      "use": "wsActiveLeafEvents",
-      "sha1": "fcb0f5f6bccbcffbd05893518cef2877889d778b",
-      "originalBytes": 239
-    },
-    {
-      "class": "H0",
-      "name": "pushUndoHistory",
-      "use": "wsPushUndoHistory",
-      "sha1": "8e9b548e96b5793c1155f3fc8fde106f581cb41d",
-      "originalBytes": 232
-    },
-    {
-      "class": "H0",
-      "name": "changeLayout",
-      "use": "wsChangeLayout",
-      "sha1": "911b732347b2e712a7dc522ec0089de358f1bee8",
-      "originalBytes": 232
-    },
-    {
-      "class": "H0",
-      "name": "updateOptions",
-      "use": "wsUpdateOptions",
-      "sha1": "a1802abe1bb75bc3b0d042cc7bc8e8205ab1bb95",
-      "originalBytes": 177
-    },
-    {
-      "class": "H0",
-      "name": "registerObsidianProtocolHandler",
-      "use": "wsRegisterObsidianProtocolHandler",
-      "sha1": "838e31aaecfb7bc99f313d467d44f7d3dcfdc34b",
-      "originalBytes": 155
-    },
-    {
-      "class": "H0",
-      "name": "unregisterObsidianProtocolHandler",
-      "use": "wsUnregisterObsidianProtocolHandler",
-      "sha1": "d15f740358536dbc4b1825c4387468893d0de6ce",
-      "originalBytes": 83
-    },
-    {
-      "class": "H0",
-      "name": "registerUriHook",
-      "use": "wsRegisterUriHook",
-      "sha1": "2b4894056fc0329d5560f95b5d342752be395a50",
-      "originalBytes": 517
-    },
-    {
-      "class": "H0",
-      "name": "getUnpinnedLeaf",
-      "use": "wsGetUnpinnedLeaf",
-      "sha1": "2669cb181a81989f279671882d93a1e54613c301",
-      "originalBytes": 519
-    },
-    {
-      "class": "H0",
-      "name": "ensureSideLeaf",
-      "use": "wsEnsureSideLeaf",
-      "sha1": "100b7f32605ed0533063cbccd8bed46b91ab46e4",
-      "originalBytes": 603
-    },
-    {
-      "class": "H0",
-      "name": "revealLeaf",
-      "use": "wsRevealLeaf",
-      "sha1": "3486677b3a762829c860ccee7369e8451ee6fcb2",
-      "originalBytes": 516
-    },
-    {
-      "class": "H0",
-      "name": "splitLeaf",
-      "use": "wsSplitLeaf",
-      "sha1": "147ffb8bfb0e8b980d0e2637c0138cb7b96dd015",
-      "originalBytes": 480
-    },
-    {
-      "class": "H0",
-      "name": "getDropDirection",
-      "use": "wsGetDropDirection",
-      "sha1": "2c49e8393168dbad321d9cb5cbf55ea876cac168",
-      "originalBytes": 912
-    },
-    {
-      "class": "H0",
-      "name": "getDropLocation",
-      "use": "wsGetDropLocation",
-      "sha1": "26a012294680fca5b5ad70ddccb576d71da8a100",
-      "originalBytes": 588
-    },
-    {
-      "class": "H0",
-      "name": "duplicateLeaf",
-      "use": "wsDuplicateLeaf",
-      "sha1": "91070abbd4e20bda9936b6fa5a4799f007672e18",
-      "originalBytes": 414
-    },
-    {
-      "class": "H0",
-      "name": "createLeafInTabGroup",
-      "use": "wsCreateLeafInTabGroup",
-      "sha1": "ec5bd2b399f922911be371f709a6ce3a4406a4b1",
-      "originalBytes": 387
-    },
-    {
-      "class": "H0",
-      "name": "updateMobileVisibleTabGroup",
-      "use": "wsUpdateMobileVisibleTabGroup",
-      "sha1": "e0dbb81e869484d1748ba504697fa736a8b2014c",
-      "originalBytes": 367
-    },
-    {
-      "class": "H0",
-      "name": "readWorkspaceFile",
-      "use": "wsReadWorkspaceFile",
-      "sha1": "34d708d5330f6dcd6eb1797aae902c5e86b71b1a",
-      "originalBytes": 357
-    },
-    {
-      "class": "H0",
-      "name": "moveLeafToPopout",
-      "use": "wsMoveLeafToPopout",
-      "sha1": "491b0607f407905e122b5bcd5524c8a0687b6d64",
-      "originalBytes": 348
-    },
-    {
-      "class": "H0",
-      "name": "splitActiveLeaf",
-      "use": "wsSplitActiveLeaf",
-      "sha1": "f6cabb2c0aa39e083243c141b769284a28c461fa",
-      "originalBytes": 122
-    },
-    {
-      "class": "H0",
-      "name": "openLinkText",
-      "use": "wsOpenLinkText",
-      "sha1": "54cbde3d450241b7b2b2e8025cb60061645cd26b",
-      "originalBytes": 188
-    },
-    {
-      "class": "H0",
-      "name": "recursiveGetTarget",
-      "use": "wsRecursiveGetTarget",
-      "sha1": "3e9f41c934774a0aed9798bbe8ea8979affe62c9",
-      "originalBytes": 173
-    },
-    {
-      "class": "H0",
-      "name": "createLeafInParent",
-      "use": "wsCreateLeafInParent",
-      "sha1": "e8f8b59bc0206dc241c706278dfe8d9199859be4",
-      "originalBytes": 146
-    },
-    {
-      "class": "H0",
-      "name": "getLeafById",
-      "use": "wsGetLeafById",
-      "sha1": "b04893a252e9bfae372a35781c7cb0847fda5f41",
-      "originalBytes": 96
-    },
-    {
-      "class": "H0",
-      "name": "detachLeavesOfType",
-      "use": "wsDetachLeavesOfType",
-      "sha1": "df622bcac59226d3891b8ba858ae04163b580f3f",
-      "originalBytes": 81
-    },
-    {
-      "class": "H0",
-      "name": "registerEditorExtension",
-      "use": "wsRegisterEditorExtension",
-      "sha1": "63e777d0e3b02e5f540fde4102d102a3e12edf98",
-      "originalBytes": 63
-    },
-    {
-      "class": "H0",
-      "name": "unregisterEditorExtension",
-      "use": "wsUnregisterEditorExtension",
-      "sha1": "d53f2757b3a885beb2ad71ea80310b75701ceff5",
-      "originalBytes": 65
-    },
-    {
-      "class": "H0",
-      "name": "registerHoverLinkSource",
-      "use": "wsRegisterHoverLinkSource",
-      "sha1": "d0dd175190e82c2047f6727b719e5566f7738ca8",
-      "originalBytes": 41
-    },
-    {
-      "class": "H0",
-      "name": "unregisterHoverLinkSource",
-      "use": "wsUnregisterHoverLinkSource",
-      "sha1": "449bec459de3ba919da47fa3d40a998e6316a138",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "registerOperatorFuncConfigs",
-      "use": "wsRegisterOperatorFuncConfigs",
-      "sha1": "b7a786b763cc8b0575fb1c17491148fd859eb500",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "unregisterOperatorFuncConfigs",
-      "use": "wsUnregisterOperatorFuncConfigs",
-      "sha1": "4e0bc90047e1a91b4ae6782444786608927946e2",
-      "originalBytes": 47
-    },
-    {
-      "class": "H0",
-      "name": "clearLayout",
-      "use": "wsClearLayout",
-      "sha1": "99bcc0d81a933c53537ab17e0008ebae092c27f5",
-      "originalBytes": 811
-    },
-    {
-      "class": "H0",
-      "name": "createLeafBySplit",
-      "use": "wsCreateLeafBySplit",
-      "sha1": "3dac4fd7d0427356f9cbd3a39e8dde6c8055b9fb",
-      "originalBytes": 94
-    },
-    {
-      "class": "H0",
-      "name": "deserializeLayout",
-      "use": "wsDeserializeLayout",
-      "sha1": "f5ff7e8554d41b183d337841211bf6557a88eeed",
-      "originalBytes": 2270
-    },
-    {
-      "class": "H0",
-      "name": "focusLeaf",
-      "use": "wsFocusLeaf",
-      "sha1": "f5faf8dbcf3e959147536e407670b6eb04ad6da9",
-      "originalBytes": 296
-    },
-    {
-      "class": "H0",
-      "name": "getAdjacentLeafInDirection",
-      "use": "wsGetAdjacentLeafInDirection",
-      "sha1": "a5d72a7003bbf75420d653ff506cd4605832490b",
-      "originalBytes": 1051
-    },
-    {
-      "class": "H0",
-      "name": "getLayout",
-      "use": "wsGetLayout",
-      "sha1": "29f293cf8ffb78d3719b75cc3dcc79e4aeeadef7",
-      "originalBytes": 299
-    },
-    {
-      "class": "H0",
-      "name": "getLeavesOfType",
-      "use": "wsGetLeavesOfType",
-      "sha1": "c2bba0eb0162a95436f3c8464e64d4bde335056f",
-      "originalBytes": 104
-    },
-    {
-      "class": "H0",
-      "name": "handleExternalLinkContextMenu",
-      "use": "wsHandleExternalLinkContextMenu",
-      "sha1": "eba7410d257349cde0213dfc4f321136958f66ef",
-      "originalBytes": 437
-    },
-    {
-      "class": "H0",
-      "name": "handleLinkContextMenu",
-      "use": "wsHandleLinkContextMenu",
-      "sha1": "901a000ae1dc34c702a3d98f5b0232b1f04c6a3a",
-      "originalBytes": 1282
-    },
-    {
-      "class": "H0",
-      "name": "loadLayout",
-      "use": "wsLoadLayout",
-      "sha1": "1a014728f4aa970570ab4fee0bcc6fc133eaa5b3",
-      "originalBytes": 1437
-    },
-    {
-      "class": "H0",
-      "name": "onDragLeaf",
-      "use": "wsOnDragLeaf",
-      "sha1": "3e837a0e960da96a0dbe15132f68501044ebccc7",
-      "originalBytes": 5706
-    },
-    {
-      "class": "H0",
-      "name": "onStartLink",
-      "use": "wsOnStartLink",
-      "sha1": "2cf82884cd757e85458211dbebf756ece725bf74",
-      "originalBytes": 674
-    },
-    {
-      "class": "H0",
-      "name": "openPopout",
-      "use": "wsOpenPopout",
-      "sha1": "94a646a38513190b5961b8f7a36bad94b38d79fe",
-      "originalBytes": 89
-    },
-    {
-      "class": "H0",
-      "name": "openPopoutLeaf",
-      "use": "wsOpenPopoutLeaf",
-      "sha1": "29d92da3b94959ae6226f10c44fea700286c691d",
-      "originalBytes": 104
-    },
-    {
-      "class": "H0",
-      "name": "saveLayout",
-      "use": "wsSaveLayout",
-      "sha1": "01ac6739c3a410a9154699b7cc3be4ffe7c86492",
-      "originalBytes": 441
-    },
-    {
-      "class": "H0",
-      "name": "setActiveLeaf",
-      "use": "wsSetActiveLeaf",
-      "sha1": "0b9129f77c894af880781e34b629761d44bf7d3f",
-      "originalBytes": 823
-    },
-    {
-      "class": "H0",
-      "name": "setLayout",
-      "use": "wsSetLayout",
-      "sha1": "1cb80458f4de0e9f7291f467b15acd46d52f03a3",
-      "originalBytes": 2099
-    },
-    {
-      "class": "H0",
-      "name": "splitLeafOrActive",
-      "use": "wsSplitLeafOrActive",
-      "sha1": "64e2ab452d5265bb5fa4ecf2d4490bc26e1334ee",
-      "originalBytes": 75
-    },
-    {
-      "class": "H0",
-      "name": "unsetActiveEditor",
-      "use": "wsUnsetActiveEditor",
-      "sha1": "d8692572d939b2140db877e0ca8b4907002aa9f4",
-      "originalBytes": 65
-    },
-    {
-      "class": "H0",
-      "name": "updateFrameless",
-      "use": "wsUpdateFrameless",
-      "sha1": "d03525b2abc6825767628e25bd8af14fc7e81e6a",
-      "originalBytes": 2686
-    },
-    {
-      "class": "H0",
-      "name": "updateLayout",
-      "use": "wsUpdateLayout",
-      "sha1": "69eefec194c773fe98ce3cdeb0ef76c9ca31cc87",
-      "originalBytes": 1275
-    },
-    {
-      "class": "Tte",
-      "name": "nextFrame",
-      "use": "appNextFrame",
-      "sha1": "0ca0de2dbaff007dfc80bb0e82fcd4f8e2abee98",
-      "originalBytes": 142
-    },
-    {
-      "class": "Tte",
-      "name": "onNextFrame",
-      "use": "appOnNextFrame",
-      "sha1": "284b1f241b1697fd8658ac32c7fc737fe28652b0",
-      "originalBytes": 133
-    },
-    {
-      "class": "Tte",
-      "name": "nextFrameOnceCallback",
-      "use": "appNextFrameOnceCallback",
-      "sha1": "b6138093ba65c88b8573b722e39f5a084c8a6e3d",
-      "originalBytes": 95
-    },
-    {
-      "class": "Tte",
-      "name": "disableCssTransition",
-      "use": "appDisableCssTransition",
-      "sha1": "1f24c0eac4784d7db041825aec598059859bbdaa",
-      "originalBytes": 61
-    },
-    {
-      "class": "Tte",
-      "name": "enableCssTransition",
-      "use": "appEnableCssTransition",
-      "sha1": "332a58e1145abdadc52b3456fbc8fa12c62a88a4",
-      "originalBytes": 64
-    },
-    {
-      "class": "Tte",
-      "name": "getAppTitle",
-      "use": "appGetAppTitle",
-      "sha1": "12caac8ba6c78d73483ccdf670dca62d0f67813d",
-      "originalBytes": 51
-    },
-    {
-      "class": "Tte",
-      "name": "getWebviewPartition",
-      "use": "appGetWebviewPartition",
-      "sha1": "ce3091d7a9fd481157c9b1cd501905abb97e25c0",
-      "originalBytes": 45
-    },
-    {
-      "class": "Tte",
-      "name": "fixFileLinks",
-      "use": "appFixFileLinks",
-      "sha1": "e6c2dc4d37b7336b85bfe427dd8532866e6c13f2",
-      "originalBytes": 415
-    },
-    {
-      "class": "Tte",
-      "name": "getTheme",
-      "use": "appGetTheme",
-      "sha1": "96841f3b83ef157b01394b8cc29d20970713a66c",
-      "originalBytes": 67
-    },
-    {
-      "class": "Tte",
-      "name": "isDarkMode",
-      "use": "appIsDarkMode",
-      "sha1": "9784e6cf8abcffb0e04693a38839291886aa4494",
-      "originalBytes": 46
-    },
-    {
-      "class": "Tte",
-      "name": "changeTheme",
-      "use": "appChangeTheme",
-      "sha1": "ce402233502387ff14403c6a15a8e84eeff8dc16",
-      "originalBytes": 142
-    },
-    {
-      "class": "Tte",
-      "name": "updateTheme",
-      "use": "appUpdateTheme",
-      "sha1": "535d0c86c14efc3549c4319f15aa086c55fc4d75",
-      "originalBytes": 471
-    },
-    {
-      "class": "Tte",
-      "name": "updateMobileFrameTheme",
-      "use": "appUpdateMobileFrameTheme",
-      "sha1": "a5d9b3ebaf02dce54db84f94ed739d10513dd4e1",
-      "originalBytes": 389
-    },
-    {
-      "class": "Tte",
-      "name": "updateInlineTitleDisplay",
-      "use": "appUpdateInlineTitleDisplay",
-      "sha1": "dd7d00e5ad71e2b5c90986374e94994407d3a8e3",
-      "originalBytes": 98
-    },
-    {
-      "class": "Tte",
-      "name": "updateFloatingNavigationDisplay",
-      "use": "appUpdateFloatingNavigationDisplay",
-      "sha1": "d40f5102f8fd86426a5d2250de9361dc57de576d",
-      "originalBytes": 107
-    },
-    {
-      "class": "Tte",
-      "name": "updateAutoFullScreenDisplay",
-      "use": "appUpdateAutoFullScreenDisplay",
-      "sha1": "40d4c355c5e1db28bcc70eac11d9224093eeaa96",
-      "originalBytes": 96
-    },
-    {
-      "class": "Tte",
-      "name": "updateViewHeaderDisplay",
-      "use": "appUpdateViewHeaderDisplay",
-      "sha1": "1b642d24bb8822189847cb9cfeee2c36fa297916",
-      "originalBytes": 96
-    },
-    {
-      "class": "Tte",
-      "name": "updateRibbonDisplay",
-      "use": "appUpdateRibbonDisplay",
-      "sha1": "b876791a1d54c934a57417942f2ed780d9d9297e",
-      "originalBytes": 87
-    },
-    {
-      "class": "Tte",
-      "name": "updateFontFamily",
-      "use": "appUpdateFontFamily",
-      "sha1": "072c0c27b68a4a145a1c68987b12d94fb584a662",
-      "originalBytes": 533
-    },
-    {
-      "class": "Tte",
-      "name": "updateFontSize",
-      "use": "appUpdateFontSize",
-      "sha1": "ba9c4e70501e0a2a59305ec19c4cdd16f13f9a58",
-      "originalBytes": 257
-    },
-    {
-      "class": "Tte",
-      "name": "updateUseNativeMenu",
-      "use": "appUpdateUseNativeMenu",
-      "sha1": "72019b929157797aa941c15f8be3fa40881ef608",
-      "originalBytes": 101
-    },
-    {
-      "class": "Tte",
-      "name": "updateTabSize",
-      "use": "appUpdateTabSize",
-      "sha1": "1ca38b83cba76f5de1092afb0a4b360e87d8b326",
-      "originalBytes": 108
-    },
-    {
-      "class": "Tte",
-      "name": "showReleaseNotes",
-      "use": "appShowReleaseNotes",
-      "sha1": "6f9b69888ac94b3c542008830b3ba57b6ba4e615",
-      "originalBytes": 98
-    },
-    {
-      "class": "Tte",
-      "name": "updateAccentColor",
-      "use": "appUpdateAccentColor",
-      "sha1": "1fe754fc643ff1247352c01371c5cffa3c62d138",
-      "originalBytes": 76
-    },
-    {
-      "class": "Tte",
-      "name": "getAccentColor",
-      "use": "appGetAccentColor",
-      "sha1": "ccba17ff8e831dfb5170a3cd50bfaf23562b5dbd",
-      "originalBytes": 365
-    },
-    {
-      "class": "Tte",
-      "name": "setAccentColor",
-      "use": "appSetAccentColor",
-      "sha1": "b6acf58971908ff3a604bbd344aa4f8bd8a55b40",
-      "originalBytes": 686
-    },
-    {
-      "class": "Tte",
-      "name": "garbleText",
-      "use": "appGarbleText",
-      "sha1": "18f5d90a772f20ab9a4e3bfe87f00aba9f25626c",
-      "originalBytes": 63
-    },
-    {
-      "class": "Tte",
-      "name": "saveAttachment",
-      "use": "appSaveAttachment",
-      "sha1": "69cc564818f174f21fc1e7bb60113c9175285be2",
-      "originalBytes": 299
-    },
-    {
-      "class": "Tte",
-      "name": "openVaultChooser",
-      "use": "appOpenVaultChooser",
-      "sha1": "92c5c8162333a1f8a4a326dec7b9e95caf2e4484",
-      "originalBytes": 216
-    },
-    {
-      "class": "Tte",
-      "name": "openHelp",
-      "use": "appOpenHelp",
-      "sha1": "be0bb5af2044b8d343c9eb8f6e8220ee5aff9906",
-      "originalBytes": 146
-    },
-    {
-      "class": "Tte",
-      "name": "runOpeningBehavior",
-      "use": "appRunOpeningBehavior",
-      "sha1": "41807179a1fdfcb5a5b51bc99c368c97a3643678",
-      "originalBytes": 814
-    },
-    {
-      "class": "Tte",
-      "name": "openWithDefaultApp",
-      "use": "appOpenWithDefaultApp",
-      "sha1": "84dc7611276baec690c49c3aa194713d79629368",
-      "originalBytes": 479
-    },
-    {
-      "class": "Tte",
-      "name": "showInFolder",
-      "use": "appShowInFolder",
-      "sha1": "4c303a5f8b4e3e4f74bb02daf695420e2283da8d",
-      "originalBytes": 309
-    },
-    {
-      "class": "Tte",
-      "name": "getObsidianUrl",
-      "use": "appGetObsidianUrl",
-      "sha1": "991360dd0d6b1a4de3b5efbb7c2ded531c71b0c4",
-      "originalBytes": 136
-    },
-    {
-      "class": "Tte",
-      "name": "copyObsidianUrl",
-      "use": "appCopyObsidianUrl",
-      "sha1": "f45feb8fee241f1498092101c50b5faf1c950884",
-      "originalBytes": 81
-    },
-    {
-      "class": "Tte",
-      "name": "registerQuitHook",
-      "use": "appRegisterQuitHook",
-      "sha1": "912397d95a206a0020cde0614922abd99d56c4f9",
-      "originalBytes": 422
-    },
-    {
-      "class": "Tte",
-      "name": "loadLocalStorage",
-      "use": "appLoadLocalStorage",
-      "sha1": "1621c497f1b0a5c0c6a7374c70778142c4ed23f2",
-      "originalBytes": 109
-    },
-    {
-      "class": "Tte",
-      "name": "saveLocalStorage",
-      "use": "appSaveLocalStorage",
-      "sha1": "818929214bb04fe184fb4492cfb9c1ea6698c7b8",
-      "originalBytes": 130
-    },
-    {
-      "class": "Tte",
-      "name": "on",
-      "use": "appOn",
-      "sha1": "c5b41789931b82e69bf7839857e8257e2e8b3bb9",
-      "originalBytes": 12
-    },
-    {
-      "class": "Tte",
-      "name": "setTheme",
-      "use": "appSetTheme",
-      "sha1": "0c12df3e8472253e8d8cfbc2846c5bc7c0c7e561",
-      "originalBytes": 71
-    },
-    {
-      "class": "Tte",
-      "name": "emulateMobile",
-      "use": "appEmulateMobile",
-      "sha1": "67777c72407c975e74481487bd4d8eac9fae417d",
-      "originalBytes": 84
-    },
-    {
-      "class": "Tte",
-      "name": "debugMode",
-      "use": "appDebugMode",
-      "sha1": "c4a463fba9cd15f8d8c8e4050160eeeb830d38a0",
-      "originalBytes": 133
-    },
-    {
-      "class": "Tte",
-      "name": "getSpellcheckLanguages",
-      "use": "appGetSpellcheckLanguages",
-      "sha1": "6cb60b592b2c98c4575de27f09248b6b5f62f4e3",
-      "originalBytes": 303
-    },
-    {
-      "class": "Tte",
-      "name": "setSpellcheckLanguages",
-      "use": "appSetSpellcheckLanguages",
-      "sha1": "c5309e735abeab00ae597263d117b7fe59e84572",
-      "originalBytes": 254
-    },
-    {
-      "class": "Tte",
-      "name": "isVimEnabled",
-      "use": "appIsVimEnabled",
-      "sha1": "a4f4d99622a989f050c44c7e68268f19b409856d",
-      "originalBytes": 92
-    },
-    {
-      "class": "Tte",
-      "name": "onConfigChanged",
-      "use": "appOnConfigChanged",
-      "sha1": "f3be59aef94e280fdf876746ed2d475d500879a6",
-      "originalBytes": 803
-    },
-    {
-      "class": "Tte",
-      "name": "importAttachments",
-      "use": "appImportAttachments",
-      "sha1": "1879e2e27071d8aab100b7ac80410eadccfbd9db",
-      "originalBytes": 701
-    },
-    {
-      "class": "Tte",
-      "name": "initializeWithAdapter",
-      "use": "appInitializeWithAdapter",
-      "sha1": "6f93b737ab62a43f8644214dd3e6c8bc2924c131",
-      "originalBytes": 10700
-    },
-    {
-      "class": "Tte",
-      "name": "registerCommands",
-      "use": "appRegisterCommands",
-      "sha1": "4a2a8facfe695db7a0f28d819e2d26a14cabbf15",
-      "originalBytes": 26549
-    }
-  ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD",
-  "patches": [
-    {
-      "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
-      "find": "P5=function(e){function t(){var t=null!==e&&e.apply(this,arguments)||this;return t.filePath=\"\"",
-      "replace": "P5=function(e){function t(){var t=Reflect.construct(e,arguments,this.constructor);return t.filePath=\"\""
-    }
-  ]
+  {
+   "orig": "iu",
+   "use": "parentPath"
+  },
+  {
+   "orig": "ru",
+   "use": "isHiddenPath"
+  },
+  {
+   "orig": "ou",
+   "use": "baseName"
+  },
+  {
+   "orig": "au",
+   "use": "withoutExtension"
+  },
+  {
+   "orig": "su",
+   "use": "extensionOf"
+  },
+  {
+   "orig": "lu",
+   "use": "joinNameExt"
+  },
+  {
+   "orig": "uu",
+   "use": "collapseSlashes"
+  },
+  {
+   "orig": "tu",
+   "use": "plainSpaces"
+  },
+  {
+   "orig": "cu",
+   "use": "normalizePath"
+  },
+  {
+   "orig": "hu",
+   "use": "displayName"
+  },
+  {
+   "orig": "pu",
+   "use": "withoutMd"
+  },
+  {
+   "orig": "BL",
+   "use": "dropMdSuffix"
+  },
+  {
+   "orig": "q2",
+   "use": "fileLinkPath"
+  },
+  {
+   "orig": "j2",
+   "use": "targetText"
+  },
+  {
+   "orig": "cee",
+   "use": "isPluginFileName"
+  },
+  {
+   "orig": "D5",
+   "use": "pathWith"
+  },
+  {
+   "orig": "ET",
+   "use": "linkPath"
+  },
+  {
+   "orig": "MT",
+   "use": "parseLinktext"
+  },
+  {
+   "orig": "RT",
+   "use": "subpathKind"
+  },
+  {
+   "orig": "YC",
+   "use": "isLocalLink"
+  },
+  {
+   "orig": "XC",
+   "use": "linkDestination"
+  },
+  {
+   "orig": "ZC",
+   "use": "safeDecodeUri"
+  },
+  {
+   "orig": "eE",
+   "use": "escapeLinkChars"
+  },
+  {
+   "orig": "tE",
+   "use": "firstHeadingText"
+  },
+  {
+   "orig": "nE",
+   "use": "headingTrail"
+  },
+  {
+   "orig": "JC",
+   "use": "tidyLinkTarget"
+  },
+  {
+   "orig": "Pf",
+   "use": "formatBytes"
+  },
+  {
+   "orig": "rm",
+   "use": "toKebab"
+  },
+  {
+   "orig": "gc",
+   "use": "ellipsize"
+  },
+  {
+   "orig": "u7",
+   "use": "endWithBlankLine"
+  },
+  {
+   "orig": "pP",
+   "use": "squeezeNewlines"
+  },
+  {
+   "orig": "yA",
+   "use": "escapeTablePipes"
+  },
+  {
+   "orig": "xW",
+   "use": "withHash"
+  },
+  {
+   "orig": "zL",
+   "use": "isShortLine"
+  },
+  {
+   "orig": "ZI",
+   "use": "toStringList"
+  },
+  {
+   "orig": "YA",
+   "use": "emptyToNull"
+  },
+  {
+   "orig": "Ree",
+   "use": "parseCommaList"
+  },
+  {
+   "orig": "Bee",
+   "use": "formatCommaList"
+  },
+  {
+   "orig": "kq",
+   "use": "countQuoteMarks"
+  },
+  {
+   "orig": "Cq",
+   "use": "quoteIndentDepth"
+  },
+  {
+   "orig": "Vj",
+   "use": "dropWordsContaining"
+  },
+  {
+   "orig": "FQ",
+   "use": "formDecode"
+  },
+  {
+   "orig": "NQ",
+   "use": "formEncode"
+  },
+  {
+   "orig": "RQ",
+   "use": "formEncodePath"
+  },
+  {
+   "orig": "NX",
+   "use": "linesOf"
+  },
+  {
+   "orig": "Ej",
+   "use": "hasLatinLetter"
+  },
+  {
+   "orig": "zx",
+   "use": "parseImageSize"
+  },
+  {
+   "orig": "WZ",
+   "use": "intOrNull"
+  },
+  {
+   "orig": "Vl",
+   "use": "floatOr"
+  },
+  {
+   "orig": "f_",
+   "use": "joinClasses"
+  },
+  {
+   "orig": "Js",
+   "use": "ninesAtLeast"
+  },
+  {
+   "orig": "uc",
+   "use": "newlinesBefore"
+  },
+  {
+   "orig": "Dv",
+   "use": "lineBounds"
+  },
+  {
+   "orig": "Nb",
+   "use": "keyLabel"
+  },
+  {
+   "orig": "Fb",
+   "use": "makeHotkey"
+  },
+  {
+   "orig": "my",
+   "use": "valueIgnoringCase"
+  },
+  {
+   "orig": "qV",
+   "use": "keyIgnoringCase"
+  },
+  {
+   "orig": "vy",
+   "use": "parseVersion"
+  },
+  {
+   "orig": "gy",
+   "use": "isOlderVersion"
+  },
+  {
+   "orig": "P1",
+   "use": "severityRank"
+  },
+  {
+   "orig": "L1",
+   "use": "worstSeverity"
+  },
+  {
+   "orig": "rD",
+   "use": "chromeVersion"
+  },
+  {
+   "orig": "tY",
+   "use": "parsePropertyId"
+  },
+  {
+   "orig": "nY",
+   "use": "propertyId"
+  },
+  {
+   "orig": "SY",
+   "use": "shortPropertyId"
+  },
+  {
+   "orig": "xY",
+   "use": "longPropertyId"
+  },
+  {
+   "orig": "PY",
+   "use": "uniqueName"
+  },
+  {
+   "orig": "LT",
+   "use": "plainHeading"
+  },
+  {
+   "orig": "IT",
+   "use": "linkSafeHeading"
+  },
+  {
+   "orig": "kA",
+   "use": "describeCliOptions"
+  },
+  {
+   "orig": "cA",
+   "use": "smaller"
+  },
+  {
+   "orig": "uA",
+   "use": "larger"
+  },
+  {
+   "orig": "MJ",
+   "use": "sliderCurve"
+  },
+  {
+   "orig": "SJ",
+   "use": "sliderCurveInverse"
+  },
+  {
+   "orig": "l4",
+   "use": "unitSteps"
+  },
+  {
+   "orig": "cc",
+   "use": "randomHex"
+  },
+  {
+   "orig": "zs",
+   "use": "asArray"
+  },
+  {
+   "orig": "ac",
+   "use": "distinct"
+  },
+  {
+   "orig": "lc",
+   "use": "moveItem"
+  },
+  {
+   "orig": "N6",
+   "use": "takeFirst"
+  },
+  {
+   "orig": "mc",
+   "use": "binaryFind"
+  },
+  {
+   "orig": "vc",
+   "use": "isStringArray"
+  },
+  {
+   "orig": "hF",
+   "use": "joinLists"
+  },
+  {
+   "orig": "uF",
+   "use": "pushHistory"
+  },
+  {
+   "orig": "ve",
+   "use": "sameItems"
+  },
+  {
+   "orig": "ye",
+   "use": "sameItemsBy"
+  },
+  {
+   "orig": "c8",
+   "use": "sortByOrder"
+  },
+  {
+   "orig": "HI",
+   "use": "matchPenalty"
+  },
+  {
+   "orig": "HV",
+   "use": "localDate"
+  },
+  {
+   "orig": "zV",
+   "use": "localTime"
+  },
+  {
+   "orig": "VV",
+   "use": "twoDigits"
+  },
+  {
+   "orig": "Ok",
+   "use": "hexByte"
+  },
+  {
+   "orig": "Fk",
+   "use": "rgbToHex"
+  },
+  {
+   "orig": "Rk",
+   "use": "rgbToInt"
+  },
+  {
+   "orig": "Hk",
+   "use": "isLightColor"
+  },
+  {
+   "orig": "Lk",
+   "use": "hslToRgb"
+  },
+  {
+   "orig": "Ik",
+   "use": "rgbToHsl"
+  },
+  {
+   "orig": "Nk",
+   "use": "parseHexColor"
+  },
+  {
+   "orig": "H3",
+   "use": "rgbTripleToHex"
+  },
+  {
+   "orig": "Df",
+   "use": "hexToBuffer"
+  },
+  {
+   "orig": "Af",
+   "use": "bufferToHex"
+  },
+  {
+   "orig": "Gee",
+   "use": "stringFromCodes"
+  },
+  {
+   "orig": "Kee",
+   "use": "readInt32BE"
+  },
+  {
+   "orig": "Yee",
+   "use": "readInt32LE"
+  },
+  {
+   "orig": "mu",
+   "use": "ownBuffer"
+  },
+  {
+   "orig": "bf",
+   "use": "ownBuffer"
+  },
+  {
+   "orig": "jb",
+   "use": "zeroFill"
+  },
+  {
+   "orig": "Ub",
+   "use": "xorInto"
+  },
+  {
+   "orig": "Jb",
+   "use": "clearTopBits"
+  },
+  {
+   "orig": "gu",
+   "use": "statFromNode"
+  },
+  {
+   "orig": "dk",
+   "use": "statFromCapacitor"
+  },
+  {
+   "orig": "Ol",
+   "use": "point"
+  },
+  {
+   "orig": "Nl",
+   "use": "rect"
+  },
+  {
+   "orig": "Bl",
+   "use": "distance"
+  },
+  {
+   "orig": "Rl",
+   "use": "rectAt"
+  },
+  {
+   "orig": "Fl",
+   "use": "pointOfEvent"
+  },
+  {
+   "orig": "d3",
+   "use": "box"
+  },
+  {
+   "orig": "f3",
+   "use": "boxOfPoints"
+  },
+  {
+   "orig": "m3",
+   "use": "boxOfRect"
+  },
+  {
+   "orig": "v3",
+   "use": "rectOfBox"
+  },
+  {
+   "orig": "g3",
+   "use": "boxUnion"
+  },
+  {
+   "orig": "y3",
+   "use": "boxGrow"
+  },
+  {
+   "orig": "b3",
+   "use": "boxContains"
+  },
+  {
+   "orig": "w3",
+   "use": "boxCenter"
+  },
+  {
+   "orig": "k3",
+   "use": "centeredOrigin"
+  },
+  {
+   "orig": "P3",
+   "use": "boxPoints"
+  },
+  {
+   "orig": "L3",
+   "use": "sortedBoxPoints"
+  },
+  {
+   "orig": "I3",
+   "use": "sortByKey"
+  },
+  {
+   "orig": "F3",
+   "use": "boxX"
+  },
+  {
+   "orig": "N3",
+   "use": "boxY"
+  },
+  {
+   "orig": "q5",
+   "use": "pushOut"
+  },
+  {
+   "orig": "H5",
+   "use": "sideMidpoint"
+  },
+  {
+   "orig": "j5",
+   "use": "bezierEdge"
+  },
+  {
+   "orig": "Ay",
+   "use": "sortHitsByScore"
+  },
+  {
+   "orig": "Py",
+   "use": "shiftRanges"
+  },
+  {
+   "orig": "eT",
+   "use": "frontmatterEntry"
+  },
+  {
+   "orig": "tT",
+   "use": "frontmatterStrings"
+  },
+  {
+   "orig": "iT",
+   "use": "frontmatterTags"
+  },
+  {
+   "orig": "nT",
+   "use": "frontmatterAliases"
+  },
+  {
+   "orig": "My",
+   "use": "prepareQuery"
+  },
+  {
+   "orig": "Dy",
+   "use": "fuzzyMatchJs"
+  },
+  {
+   "orig": "xy",
+   "use": "matchScore"
+  },
+  {
+   "orig": "wc",
+   "use": "debounceCall"
+  },
+  {
+   "orig": "vl",
+   "use": "cancelTransition"
+  },
+  {
+   "orig": "yl",
+   "use": "runTransition"
+  },
+  {
+   "orig": "jg",
+   "use": "closeAllMenus"
+  },
+  {
+   "orig": "Sy",
+   "use": "prepareFuzzyFinder"
+  },
+  {
+   "orig": "Oy",
+   "use": "prepareSimpleFinder"
+  },
+  {
+   "orig": "Ly",
+   "use": "containsAllWords"
+  },
+  {
+   "orig": "Iy",
+   "use": "simpleMatch"
+  },
+  {
+   "orig": "wy",
+   "use": "mergeSpans"
+  },
+  {
+   "orig": "Ny",
+   "use": "renderMatches"
+  },
+  {
+   "orig": "Fy",
+   "use": "renderResults"
+  },
+  {
+   "orig": "FT",
+   "use": "resolveSubpath"
+  },
+  {
+   "orig": "pv",
+   "use": "installTooltipHandlers"
+  },
+  {
+   "orig": "vv",
+   "use": "onTooltipPointerOver"
+  },
+  {
+   "orig": "gv",
+   "use": "onTooltipPointerOut"
+  },
+  {
+   "orig": "bv",
+   "use": "showTooltipFromAttributes"
+  },
+  {
+   "orig": "kv",
+   "use": "displayTooltip"
+  },
+  {
+   "orig": "Cv",
+   "use": "hideTooltip"
+  },
+  {
+   "orig": "Ev",
+   "use": "applyTooltipOptions"
+  },
+  {
+   "orig": "Mv",
+   "use": "setElementTooltip"
+  },
+  {
+   "orig": "Sv",
+   "use": "setDynamicTooltip"
+  },
+  {
+   "orig": "fv",
+   "use": "cancelTooltipDelay"
+  },
+  {
+   "orig": "mv",
+   "use": "tooltipsDisabled"
+  },
+  {
+   "orig": "wP",
+   "use": "setDragUriData",
+   "originalBytes": 72
+  },
+  {
+   "orig": "bP",
+   "use": "setDragPlainData",
+   "originalBytes": 43
+  },
+  {
+   "orig": "SP",
+   "use": "applyDropEffect",
+   "originalBytes": 158
+  },
+  {
+   "orig": "Eg",
+   "use": "suppressNextEvent",
+   "originalBytes": 239
+  },
+  {
+   "orig": "TP",
+   "use": "setDragImage",
+   "originalBytes": 120
+  },
+  {
+   "orig": "NL",
+   "use": "inferPropertyWidget",
+   "originalBytes": 208
+  },
+  {
+   "orig": "Cb",
+   "use": "batchedAsync",
+   "originalBytes": 952
+  },
+  {
+   "orig": "Pc",
+   "use": "idleOrTimeout",
+   "originalBytes": 407
+  },
+  {
+   "orig": "GL",
+   "use": "iterateIdbBatches",
+   "originalBytes": 367
+  },
+  {
+   "orig": "Sf",
+   "use": "contentHash",
+   "originalBytes": 185
+  },
+  {
+   "orig": "DT",
+   "use": "collectTags",
+   "originalBytes": 200
+  },
+  {
+   "orig": "xT",
+   "use": "anyMetadataRef",
+   "originalBytes": 103
+  },
+  {
+   "orig": "TT",
+   "use": "anyRefMatch",
+   "originalBytes": 98
+  },
+  {
+   "orig": "mT",
+   "use": "forEachLinkField",
+   "originalBytes": 480
+  },
+  {
+   "orig": "gT",
+   "use": "linkPosToPos",
+   "originalBytes": 67
+  },
+  {
+   "orig": "vT",
+   "use": "positionToArray",
+   "originalBytes": 89
+  },
+  {
+   "orig": "yT",
+   "use": "positionFromArray",
+   "originalBytes": 99
+  },
+  {
+   "orig": "bT",
+   "use": "linkPosFromArray",
+   "originalBytes": 94
+  },
+  {
+   "orig": "wT",
+   "use": "deserializeMetadata",
+   "originalBytes": 118
+  },
+  {
+   "orig": "oc",
+   "use": "escapeRegExp",
+   "originalBytes": 43
+  },
+  {
+   "orig": "$A",
+   "use": "tagValid",
+   "originalBytes": 50
+  },
+  {
+   "orig": "kT",
+   "use": "isOutdatedMetadata",
+   "originalBytes": 387
+  },
+  {
+   "orig": "UL",
+   "use": "applyLinkUpdates",
+   "originalBytes": 649
+  },
+  {
+   "orig": "GH",
+   "use": "walkTree",
+   "originalBytes": 158
+  },
+  {
+   "orig": "WH",
+   "use": "hasChildList",
+   "originalBytes": 55
+  },
+  {
+   "orig": "KH",
+   "use": "treeRange",
+   "originalBytes": 248
+  },
+  {
+   "orig": "QH",
+   "use": "nextVisibleTreeItem",
+   "originalBytes": 234
+  },
+  {
+   "orig": "$H",
+   "use": "prevVisibleTreeItem",
+   "originalBytes": 173
+  },
+  {
+   "orig": "ZH",
+   "use": "lastVisibleTreeItem",
+   "originalBytes": 276
+  },
+  {
+   "orig": "XH",
+   "use": "prevTreeSibling",
+   "originalBytes": 88
+  },
+  {
+   "orig": "YH",
+   "use": "nextTreeSibling",
+   "originalBytes": 94
+  },
+  {
+   "orig": "_H",
+   "use": "treeAncestorPath",
+   "originalBytes": 119
+  },
+  {
+   "orig": "Cl",
+   "use": "mountChildren",
+   "originalBytes": 310
+  },
+  {
+   "orig": "KL",
+   "use": "markItemCollapsed",
+   "originalBytes": 115
+  },
+  {
+   "orig": "JH",
+   "use": "makeTreePusher",
+   "originalBytes": 109
+  },
+  {
+   "orig": "Vv",
+   "use": "offsetBox",
+   "originalBytes": 333
+  },
+  {
+   "orig": "wl",
+   "use": "animateCollapse",
+   "originalBytes": 274
+  },
+  {
+   "orig": "bl",
+   "use": "expandFromZero",
+   "originalBytes": 274
+  },
+  {
+   "orig": "ml",
+   "use": "boxMetrics",
+   "originalBytes": 196
+  },
+  {
+   "orig": "yg",
+   "use": "isEditableNode",
+   "originalBytes": 108
+  },
+  {
+   "orig": "Vg",
+   "use": "syntheticKeyEvent",
+   "originalBytes": 294
+  },
+  {
+   "orig": "QL",
+   "use": "collapsibleTreeItem",
+   "originalBytes": 1246
+  },
+  {
+   "orig": "CH",
+   "use": "tokenizeQuery",
+   "originalBytes": 1416
+  },
+  {
+   "orig": "bH",
+   "use": "parsePrimary",
+   "originalBytes": 2174
+  },
+  {
+   "orig": "yH",
+   "use": "parseAndSequence",
+   "originalBytes": 139
+  },
+  {
+   "orig": "gH",
+   "use": "parseOrExpression",
+   "originalBytes": 283
+  },
+  {
+   "orig": "vH",
+   "use": "buildMatcher",
+   "originalBytes": 74
+  },
+  {
+   "orig": "kH",
+   "use": "checkToken",
+   "originalBytes": 86
+  },
+  {
+   "orig": "wH",
+   "use": "tokenEnd",
+   "originalBytes": 91
+  },
+  {
+   "orig": "rH",
+   "use": "cachedRegExp",
+   "originalBytes": 116
+  },
+  {
+   "orig": "oH",
+   "use": "regexMatchRanges",
+   "originalBytes": 256
+  },
+  {
+   "orig": "$V",
+   "use": "mergeMatchResults",
+   "originalBytes": 215
+  },
+  {
+   "orig": "Yy",
+   "use": "extensionWithoutContent",
+   "originalBytes": 37
+  },
+  {
+   "orig": "XV",
+   "use": "countSearchMatches"
+  },
+  {
+   "orig": "jH",
+   "use": "sortOrderComparator"
+  },
+  {
+   "orig": "VH",
+   "use": "runSearchOverFiles"
+  },
+  {
+   "orig": "Iz",
+   "use": "renderMatchRanges"
+  },
+  {
+   "orig": "Ry",
+   "use": "contextLineBounds"
+  },
+  {
+   "orig": "Ic",
+   "use": "preventMiddleClick"
+  },
+  {
+   "orig": "kl",
+   "use": "toggleElementVisibility"
+  },
+  {
+   "orig": "CT",
+   "use": "indexOfPositionOffset"
+  },
+  {
+   "orig": "Ec",
+   "use": "copyTextToClipboard"
+  },
+  {
+   "orig": "I2",
+   "use": "bookmarkItemForFile"
+  },
+  {
+   "orig": "O2",
+   "use": "bookmarkItemForFolder"
+  },
+  {
+   "orig": "F2",
+   "use": "bookmarkGroupItem"
+  },
+  {
+   "orig": "N2",
+   "use": "bookmarkItemForGraph"
+  },
+  {
+   "orig": "R2",
+   "use": "bookmarkItemForUrl"
+  },
+  {
+   "orig": "B2",
+   "use": "bookmarkItemForSearch"
+  },
+  {
+   "orig": "V2",
+   "use": "viewToBookmarkItem"
+  },
+  {
+   "orig": "z2",
+   "use": "filesToBookmarkItems"
+  },
+  {
+   "orig": "H2",
+   "use": "walkBookmarkItems"
+  },
+  {
+   "orig": "GA",
+   "use": "headingAtPosition"
+  },
+  {
+   "orig": "KA",
+   "use": "blockRefInsertion"
+  },
+  {
+   "orig": "y$",
+   "use": "flattenUniqueFiles"
+  },
+  {
+   "orig": "c2",
+   "use": "treeDropPosition"
+  },
+  {
+   "orig": "f2",
+   "use": "updateTreeDropIndicator"
+  },
+  {
+   "orig": "Yc",
+   "use": "isUrl"
+  },
+  {
+   "orig": "gg",
+   "use": "focusWhenShown"
+  },
+  {
+   "orig": "uq",
+   "use": "updateUnresolvedLinks",
+   "host": true
+  },
+  {
+   "orig": "pq",
+   "use": "renderQueryEmbed",
+   "host": true
+  },
+  {
+   "orig": "JZ",
+   "use": "embedDepthAt",
+   "host": true
+  },
+  {
+   "orig": "eO",
+   "use": "propertiesPlugin",
+   "host": true
+  },
+  {
+   "orig": "T6",
+   "use": "livePreviewDecorations",
+   "host": true
+  },
+  {
+   "orig": "O6",
+   "use": "livePreviewPlugin",
+   "host": true
+  },
+  {
+   "orig": "nP",
+   "use": "livePreviewProperties",
+   "host": true
+  },
+  {
+   "orig": "gw",
+   "use": "acctRequest",
+   "originalBytes": 315
+  },
+  {
+   "orig": "yw",
+   "use": "acctSignup",
+   "originalBytes": 159
+  },
+  {
+   "orig": "bw",
+   "use": "acctForgetPassword",
+   "originalBytes": 150
+  },
+  {
+   "orig": "ww",
+   "use": "acctResendConfirmation",
+   "originalBytes": 149
+  },
+  {
+   "orig": "kw",
+   "use": "acctAuthToken",
+   "originalBytes": 279
+  },
+  {
+   "orig": "Cw",
+   "use": "acctSignupMobileSync",
+   "originalBytes": 148
+  },
+  {
+   "orig": "Ew",
+   "use": "acctSignIn",
+   "originalBytes": 297
+  },
+  {
+   "orig": "Mw",
+   "use": "acctSignOut",
+   "originalBytes": 358
+  },
+  {
+   "orig": "Sw",
+   "use": "acctUserInfo",
+   "originalBytes": 456
+  },
+  {
+   "orig": "xw",
+   "use": "acctValidateBusinessKey",
+   "originalBytes": 459
+  },
+  {
+   "orig": "Tw",
+   "use": "acctVaultRegions",
+   "originalBytes": 197
+  },
+  {
+   "orig": "Dw",
+   "use": "acctNormalizeVault",
+   "originalBytes": 71
+  },
+  {
+   "orig": "Aw",
+   "use": "acctListVaults",
+   "originalBytes": 260
+  },
+  {
+   "orig": "Pw",
+   "use": "acctCreateVault",
+   "originalBytes": 258
+  },
+  {
+   "orig": "Lw",
+   "use": "acctMigrateVault",
+   "originalBytes": 122
+  },
+  {
+   "orig": "Iw",
+   "use": "acctRenameVault",
+   "originalBytes": 75
+  },
+  {
+   "orig": "Ow",
+   "use": "acctRemoveVaultShare",
+   "originalBytes": 86
+  },
+  {
+   "orig": "Fw",
+   "use": "acctVaultAccess",
+   "originalBytes": 110
+  },
+  {
+   "orig": "Nw",
+   "use": "acctDeletePublishSite",
+   "originalBytes": 67
+  },
+  {
+   "orig": "Rw",
+   "use": "acctInvitePublishShare",
+   "originalBytes": 83
+  },
+  {
+   "orig": "Bw",
+   "use": "acctRemovePublishShare",
+   "originalBytes": 87
+  },
+  {
+   "orig": "Vw",
+   "use": "acctListSubscriptions",
+   "originalBytes": 57
+  },
+  {
+   "orig": "Bm",
+   "use": "saveConfigDirPreference"
+  },
+  {
+   "orig": "iw",
+   "use": "importAesGcmKey",
+   "originalBytes": 72
+  },
+  {
+   "orig": "rw",
+   "use": "aesGcmEncrypt",
+   "originalBytes": 376
+  },
+  {
+   "orig": "ow",
+   "use": "aesGcmDecrypt",
+   "originalBytes": 342
+  },
+  {
+   "orig": "lw",
+   "use": "deriveScryptKey",
+   "originalBytes": 499
+  },
+  {
+   "orig": "cw",
+   "use": "initCipher",
+   "originalBytes": 240
+  },
+  {
+   "orig": "uw",
+   "use": "deriveKeyHash",
+   "originalBytes": 646
+  },
+  {
+   "orig": "wk",
+   "use": "deriveVaultKeyhash",
+   "originalBytes": 195
+  },
+  {
+   "orig": "bk",
+   "use": "randomSaltHex",
+   "originalBytes": 64
+  },
+  {
+   "orig": "Ek",
+   "use": "parseCallbackUrl",
+   "originalBytes": 618
+  },
+  {
+   "orig": "Tf",
+   "use": "sha256",
+   "originalBytes": 138
+  },
+  {
+   "orig": "wf",
+   "use": "utf8Bytes",
+   "originalBytes": 54
+  },
+  {
+   "orig": "kf",
+   "use": "utf8String",
+   "originalBytes": 65
+  },
+  {
+   "orig": "Cf",
+   "use": "decodeBase64",
+   "originalBytes": 120
+  },
+  {
+   "orig": "Ef",
+   "use": "encodeBase64",
+   "originalBytes": 44
+  },
+  {
+   "orig": "Mf",
+   "use": "encodeBase64",
+   "originalBytes": 120
+  },
+  {
+   "orig": "rC",
+   "use": "renderFormattedDescription",
+   "originalBytes": 277
+  },
+  {
+   "orig": "Wv",
+   "use": "withButtonLoading",
+   "originalBytes": 298
+  }
+ ],
+ "classes": [
+  {
+   "orig": "VT",
+   "use": "defineEvents"
+  },
+  {
+   "orig": "jm",
+   "use": "defineComponent"
+  },
+  {
+   "orig": "LD",
+   "use": "defineWorkspaceItem"
+  },
+  {
+   "orig": "ID",
+   "use": "defineWorkspaceParent"
+  },
+  {
+   "orig": "OD",
+   "use": "defineWorkspaceSplit"
+  },
+  {
+   "orig": "ND",
+   "use": "defineWorkspaceContainer"
+  },
+  {
+   "orig": "L0",
+   "use": "defineWorkspaceRoot"
+  },
+  {
+   "orig": "I0",
+   "use": "defineWorkspaceFloating"
+  },
+  {
+   "orig": "O0",
+   "use": "defineWorkspaceWindow"
+  },
+  {
+   "orig": "FD",
+   "use": "defineWorkspaceSidedock"
+  },
+  {
+   "orig": "zD",
+   "use": "defineWorkspaceTabs"
+  },
+  {
+   "orig": "dl",
+   "use": "defineTransition"
+  },
+  {
+   "orig": "P0",
+   "use": "defineWorkspaceRibbon"
+  },
+  {
+   "orig": "qD",
+   "use": "defineLeafHistory"
+  },
+  {
+   "orig": "jD",
+   "use": "defineWorkspaceLeaf"
+  },
+  {
+   "orig": "Ng",
+   "use": "defineScope"
+  },
+  {
+   "orig": "Rg",
+   "use": "defineDynamicScope"
+  },
+  {
+   "orig": "Bg",
+   "use": "defineKeymap"
+  },
+  {
+   "orig": "jk",
+   "use": "defineBaseComponent"
+  },
+  {
+   "orig": "Uk",
+   "use": "defineValueComponent"
+  },
+  {
+   "orig": "Wk",
+   "use": "defineButtonComponent"
+  },
+  {
+   "orig": "_k",
+   "use": "defineExtraButtonComponent"
+  },
+  {
+   "orig": "Gk",
+   "use": "defineToggleComponent"
+  },
+  {
+   "orig": "Kk",
+   "use": "defineAbstractTextComponent"
+  },
+  {
+   "orig": "Yk",
+   "use": "defineTextComponent"
+  },
+  {
+   "orig": "Qk",
+   "use": "defineSearchComponent"
+  },
+  {
+   "orig": "Xk",
+   "use": "defineTextAreaComponent"
+  },
+  {
+   "orig": "Zk",
+   "use": "defineMomentFormatComponent"
+  },
+  {
+   "orig": "Jk",
+   "use": "defineDropdownComponent"
+  },
+  {
+   "orig": "eC",
+   "use": "defineProgressBarComponent"
+  },
+  {
+   "orig": "tC",
+   "use": "defineSliderComponent"
+  },
+  {
+   "orig": "nC",
+   "use": "defineColorComponent"
+  },
+  {
+   "orig": "zk",
+   "use": "defineSetting"
+  },
+  {
+   "orig": "qk",
+   "use": "defineSettingGroup"
+  },
+  {
+   "orig": "_1",
+   "use": "defineSettingTab"
+  },
+  {
+   "orig": "K0",
+   "use": "definePluginSettingTab"
+  },
+  {
+   "orig": "fb",
+   "use": "defineNotice"
+  },
+  {
+   "orig": "tb",
+   "use": "defineModal"
+  },
+  {
+   "orig": "Hg",
+   "use": "defineMenuItem"
+  },
+  {
+   "orig": "zg",
+   "use": "defineMenuSeparator"
+  },
+  {
+   "orig": "Ug",
+   "use": "defineMenu"
+  },
+  {
+   "orig": "ob",
+   "use": "defineSuggestionList"
+  },
+  {
+   "orig": "ab",
+   "use": "defineGroupedSuggestionList"
+  },
+  {
+   "orig": "sb",
+   "use": "defineSuggestModal"
+  },
+  {
+   "orig": "lb",
+   "use": "defineFuzzySuggestModal"
+  },
+  {
+   "orig": "EI",
+   "use": "definePopoverSuggest"
+  },
+  {
+   "orig": "SI",
+   "use": "defineAbstractInputSuggest"
+  },
+  {
+   "orig": "NI",
+   "use": "defineEditorSuggest"
+  },
+  {
+   "orig": "Y6",
+   "use": "defineCommands"
+  },
+  {
+   "orig": "zb",
+   "use": "defineHotkeyManager"
+  },
+  {
+   "orig": "G0",
+   "use": "definePlugin"
+  },
+  {
+   "orig": "Kg",
+   "use": "defineView"
+  },
+  {
+   "orig": "Yg",
+   "use": "defineItemView"
+  },
+  {
+   "orig": "eD",
+   "use": "defineDeferredView"
+  },
+  {
+   "orig": "tD",
+   "use": "defineEmptyView"
+  },
+  {
+   "orig": "nD",
+   "use": "defineUnknownView"
+  },
+  {
+   "orig": "MD",
+   "use": "defineFileView"
+  },
+  {
+   "orig": "p0",
+   "use": "defineViewRegistry"
+  },
+  {
+   "orig": "rX",
+   "use": "defineHoverPopover"
+  },
+  {
+   "orig": "OX",
+   "use": "defineEditableFileView"
+  },
+  {
+   "orig": "BX",
+   "use": "defineTextFileView"
+  },
+  {
+   "orig": "hv",
+   "use": "initTooltips"
+  },
+  {
+   "orig": "Yl",
+   "use": "definePlatform"
+  },
+  {
+   "orig": "xP",
+   "use": "defineDragManager",
+   "originalBytes": 5966
+  },
+  {
+   "orig": "Nee",
+   "use": "defineStatusBar"
+  },
+  {
+   "orig": "i2",
+   "use": "definePluginWrapper",
+   "originalBytes": 4325
+  },
+  {
+   "orig": "o2",
+   "use": "defineInternalPlugins",
+   "originalBytes": 2271
+  },
+  {
+   "orig": "RL",
+   "use": "defineMetadataTypeManager",
+   "originalBytes": 3979
+  },
+  {
+   "orig": "$0",
+   "use": "defineCommunityPlugins"
+  },
+  {
+   "orig": "_L",
+   "use": "defineMetadataCache"
+  },
+  {
+   "orig": "vb",
+   "use": "defineSerialTaskQueue",
+   "originalBytes": 150
+  },
+  {
+   "orig": "sc",
+   "use": "defineRefMultimap",
+   "originalBytes": 720
+  },
+  {
+   "orig": "mb",
+   "use": "defineDeque",
+   "originalBytes": 883
+  },
+  {
+   "orig": "bb",
+   "use": "defineBookmarkRunnable",
+   "originalBytes": 582
+  },
+  {
+   "orig": "wb",
+   "use": "defineFileQueue",
+   "originalBytes": 996
+  },
+  {
+   "orig": "qL",
+   "use": "defineBlockCache",
+   "originalBytes": 1705
+  },
+  {
+   "orig": "UH",
+   "use": "defineTreeChildren",
+   "originalBytes": 800
+  },
+  {
+   "orig": "YL",
+   "use": "defineTreeItem",
+   "originalBytes": 626
+  },
+  {
+   "orig": "s2",
+   "use": "defineTreeRoot",
+   "originalBytes": 210
+  },
+  {
+   "orig": "tz",
+   "use": "defineInfinityScroll",
+   "originalBytes": 6613
+  },
+  {
+   "orig": "l2",
+   "use": "defineTree",
+   "originalBytes": 7238
+  },
+  {
+   "orig": "R6",
+   "use": "defineViewHeader",
+   "originalBytes": 874
+  },
+  {
+   "orig": "ZV",
+   "use": "defineSearchMatcherBase",
+   "originalBytes": 318
+  },
+  {
+   "orig": "JV",
+   "use": "defineBooleanMatcher",
+   "originalBytes": 495
+  },
+  {
+   "orig": "eH",
+   "use": "defineEmptyMatcher",
+   "originalBytes": 303
+  },
+  {
+   "orig": "aH",
+   "use": "defineRegexMatcher",
+   "originalBytes": 488
+  },
+  {
+   "orig": "sH",
+   "use": "definePropertyMatcher",
+   "originalBytes": 1232
+  },
+  {
+   "orig": "lH",
+   "use": "defineQuotedTextMatcher",
+   "originalBytes": 694
+  },
+  {
+   "orig": "cH",
+   "use": "defineTextMatcher",
+   "originalBytes": 345
+  },
+  {
+   "orig": "uH",
+   "use": "defineMultiMatcher",
+   "originalBytes": 476
+  },
+  {
+   "orig": "hH",
+   "use": "defineAndGroup",
+   "originalBytes": 319
+  },
+  {
+   "orig": "pH",
+   "use": "defineOrGroup",
+   "originalBytes": 307
+  },
+  {
+   "orig": "dH",
+   "use": "defineWrappedMatcher",
+   "originalBytes": 312
+  },
+  {
+   "orig": "fH",
+   "use": "defineCompareMatcher",
+   "originalBytes": 650
+  },
+  {
+   "orig": "mH",
+   "use": "defineNotMatcher",
+   "originalBytes": 256
+  },
+  {
+   "orig": "EH",
+   "use": "defineCaseMatcher",
+   "originalBytes": 351
+  },
+  {
+   "orig": "SH",
+   "use": "definePathMatcher",
+   "originalBytes": 340
+  },
+  {
+   "orig": "xH",
+   "use": "defineFileMatcher",
+   "originalBytes": 356
+  },
+  {
+   "orig": "TH",
+   "use": "defineContentMatcher",
+   "originalBytes": 363
+  },
+  {
+   "orig": "DH",
+   "use": "defineSplitContentMatcher",
+   "originalBytes": 439
+  },
+  {
+   "orig": "AH",
+   "use": "defineLineMatcher",
+   "originalBytes": 452
+  },
+  {
+   "orig": "PH",
+   "use": "defineBlockMatcher",
+   "originalBytes": 695
+  },
+  {
+   "orig": "OH",
+   "use": "defineSectionMatcher",
+   "originalBytes": 1107
+  },
+  {
+   "orig": "FH",
+   "use": "defineTaskMatcher",
+   "originalBytes": 789
+  },
+  {
+   "orig": "NH",
+   "use": "defineTagMatcher",
+   "originalBytes": 978
+  },
+  {
+   "orig": "YV",
+   "use": "defineSearchTarget",
+   "originalBytes": 732
+  },
+  {
+   "orig": "BH",
+   "use": "defineSearchQuery",
+   "originalBytes": 1725
+  },
+  {
+   "orig": "mJ",
+   "use": "defineSearchView"
+  },
+  {
+   "orig": "sz",
+   "use": "defineSearchResults"
+  },
+  {
+   "orig": "rz",
+   "use": "defineSearchFileResult"
+  },
+  {
+   "orig": "az",
+   "use": "defineSearchMatchResult"
+  },
+  {
+   "orig": "oz",
+   "use": "defineSearchPropertyResult"
+  },
+  {
+   "orig": "aq",
+   "use": "defineSearchQueueComponent"
+  },
+  {
+   "orig": "vJ",
+   "use": "defineCopyResultsModal"
+  },
+  {
+   "orig": "hJ",
+   "use": "defineSearchSuggest"
+  },
+  {
+   "orig": "gJ",
+   "use": "defineLinkPaneView"
+  },
+  {
+   "orig": "H6",
+   "use": "defineBacklinkView"
+  },
+  {
+   "orig": "o7",
+   "use": "defineOutgoingLinkView"
+  },
+  {
+   "orig": "z6",
+   "use": "defineBacklinkComponent"
+  },
+  {
+   "orig": "a7",
+   "use": "defineOutgoingLinkComponent"
+  },
+  {
+   "orig": "yee",
+   "use": "defineTagPaneTree"
+  },
+  {
+   "orig": "gee",
+   "use": "defineTagPaneItem"
+  },
+  {
+   "orig": "bee",
+   "use": "defineTagPaneView"
+  },
+  {
+   "orig": "nb",
+   "use": "defineButtonModal"
+  },
+  {
+   "orig": "RJ",
+   "use": "defineBookmarkEditModal"
+  },
+  {
+   "orig": "BJ",
+   "use": "defineBookmarkManyModal"
+  },
+  {
+   "orig": "i3",
+   "use": "defineBookmarkItemBase"
+  },
+  {
+   "orig": "o3",
+   "use": "defineBookmarkLeafItem"
+  },
+  {
+   "orig": "r3",
+   "use": "defineBookmarkGroupItem"
+  },
+  {
+   "orig": "a3",
+   "use": "defineBookmarksView"
+  },
+  {
+   "orig": "l3",
+   "use": "defineBookmarksPlugin"
+  },
+  {
+   "orig": "Y0",
+   "use": "defineInstanceSettingTab"
+  },
+  {
+   "orig": "U2",
+   "use": "defineQuickSwitcherModalBase"
+  },
+  {
+   "orig": "y9",
+   "use": "defineQuickSwitcherModal"
+  },
+  {
+   "orig": "b9",
+   "use": "defineQuickSwitcherSettingTab"
+  },
+  {
+   "orig": "g9",
+   "use": "defineQuickSwitcherPlugin"
+  },
+  {
+   "orig": "l8",
+   "use": "defineCommandPaletteSuggest"
+  },
+  {
+   "orig": "u8",
+   "use": "defineCommandPalettePlugin"
+  },
+  {
+   "orig": "h8",
+   "use": "defineCommandPaletteModal"
+  },
+  {
+   "orig": "p8",
+   "use": "defineCommandPaletteSettingTab"
+  },
+  {
+   "orig": "T8",
+   "use": "defineFileExplorerTree"
+  },
+  {
+   "orig": "k8",
+   "use": "defineFileExplorerItemBase"
+  },
+  {
+   "orig": "E8",
+   "use": "defineFileItem"
+  },
+  {
+   "orig": "S8",
+   "use": "defineFolderItem"
+  },
+  {
+   "orig": "D8",
+   "use": "defineFileExplorerView"
+  },
+  {
+   "orig": "P8",
+   "use": "defineFileExplorerPlugin"
+  },
+  {
+   "orig": "wee",
+   "use": "defineTemplatesPlugin"
+  },
+  {
+   "orig": "kee",
+   "use": "defineTemplateSuggestModal"
+  },
+  {
+   "orig": "Cee",
+   "use": "defineTemplatesSettingTab"
+  },
+  {
+   "orig": "v8",
+   "use": "defineDailyNotesPlugin"
+  },
+  {
+   "orig": "y8",
+   "use": "defineDailyNotesSettingTab"
+  },
+  {
+   "orig": "w9",
+   "use": "defineRandomNotePlugin"
+  },
+  {
+   "orig": "Pee",
+   "use": "defineWordCountPlugin"
+  },
+  {
+   "orig": "l5",
+   "use": "defineCanvasUndoStack"
+  },
+  {
+   "orig": "Y3",
+   "use": "defineSpatialIndex"
+  },
+  {
+   "orig": "n8",
+   "use": "defineCanvasDataCache"
+  },
+  {
+   "orig": "M5",
+   "use": "defineNodeInteractionLayer"
+  },
+  {
+   "orig": "t8",
+   "use": "defineCanvasLinkUpdater"
+  },
+  {
+   "orig": "m5",
+   "use": "defineBboxCachedIndex"
+  },
+  {
+   "orig": "v5",
+   "use": "definePointIndex"
+  },
+  {
+   "orig": "g5",
+   "use": "defineBBoxItemIndex"
+  },
+  {
+   "orig": "e8",
+   "use": "defineCanvasMetadataExtractor"
+  },
+  {
+   "orig": "i8",
+   "use": "defineCanvasPlugin"
+  },
+  {
+   "orig": "w5",
+   "use": "defineUrlEditModal"
+  },
+  {
+   "orig": "E5",
+   "use": "defineSectionSuggestModal"
+  },
+  {
+   "orig": "K5",
+   "use": "defineEdgeLabel"
+  },
+  {
+   "orig": "Q5",
+   "use": "defineJumpToGroupModal"
+  },
+  {
+   "orig": "L5",
+   "use": "defineViewTypeSuggestModal"
+  },
+  {
+   "orig": "O5",
+   "use": "defineCanvasMarkdownEmbed"
+  },
+  {
+   "orig": "N5",
+   "use": "defineCanvasEmptyEmbed"
+  },
+  {
+   "orig": "lI",
+   "use": "defineRenamePromptModal"
+  },
+  {
+   "orig": "cI",
+   "use": "defineNewFileModal"
+  },
+  {
+   "orig": "x3",
+   "use": "defineCanvasFileSuggest"
+  },
+  {
+   "orig": "T3",
+   "use": "defineCanvasMediaSuggest"
+  },
+  {
+   "orig": "D3",
+   "use": "defineCanvasImageSuggest"
+  },
+  {
+   "orig": "S5",
+   "use": "defineCanvasNode"
+  },
+  {
+   "orig": "x5",
+   "use": "defineContentMountNode"
+  },
+  {
+   "orig": "T5",
+   "use": "defineDummyNode"
+  },
+  {
+   "orig": "A5",
+   "use": "defineEditableNode"
+  },
+  {
+   "orig": "I5",
+   "use": "defineTextNode"
+  },
+  {
+   "orig": "F5",
+   "use": "defineLinkNode"
+  },
+  {
+   "orig": "zz",
+   "use": "defineMarkdownRenderChild"
+  },
+  {
+   "orig": "qz",
+   "use": "defineMarkdownPreviewSection"
+  },
+  {
+   "orig": "lq",
+   "use": "definePreviewLinkHandlers"
+  },
+  {
+   "orig": "hq",
+   "use": "defineMarkdownRenderer"
+  },
+  {
+   "orig": "lz",
+   "use": "defineDocumentSearch"
+  },
+  {
+   "orig": "fq",
+   "use": "defineMarkdownPreviewView"
+  },
+  {
+   "orig": "sJ",
+   "use": "defineEmbedLoader"
+  },
+  {
+   "orig": "Gz",
+   "use": "defineMarkdownPreviewRenderer"
+  },
+  {
+   "orig": "W6",
+   "use": "defineMarkdownView"
+  },
+  {
+   "orig": "G6",
+   "use": "definePrintToPdfModal"
+  },
+  {
+   "orig": "tO",
+   "use": "defineMetadataEditor"
+  },
+  {
+   "orig": "nO",
+   "use": "definePropertyRow"
+  },
+  {
+   "orig": "AO",
+   "use": "definePropertyKeySuggest"
+  },
+  {
+   "orig": "cP",
+   "use": "defineEditor"
+  },
+  {
+   "orig": "aZ",
+   "use": "defineEditModeBase"
+  },
+  {
+   "orig": "j6",
+   "use": "defineMarkdownEditMode"
+  },
+  {
+   "orig": "iZ",
+   "use": "defineEditorImpl"
+  },
+  {
+   "orig": "oZ",
+   "use": "defineCodeMirrorEditor"
+  },
+  {
+   "orig": "AL",
+   "use": "defineClipboardManager"
+  },
+  {
+   "orig": "uZ",
+   "use": "defineTableCellEditor"
+  },
+  {
+   "orig": "W1",
+   "use": "defineCallout"
+  },
+  {
+   "orig": "Q1",
+   "use": "defineSecretChooser"
+  },
+  {
+   "orig": "Y1",
+   "use": "defineSecretEditModal"
+  },
+  {
+   "orig": "X1",
+   "use": "defineEncryptionInfoModal"
+  },
+  {
+   "orig": "$1",
+   "use": "defineSecretPickerModal"
+  },
+  {
+   "orig": "Z1",
+   "use": "defineSecretComponent"
+  },
+  {
+   "orig": "K1",
+   "use": "defineKeychainTab"
+  },
+  {
+   "orig": "i0",
+   "use": "defineSecretStorageBase"
+  },
+  {
+   "orig": "r0",
+   "use": "defineDesktopSecretStore"
+  },
+  {
+   "orig": "o0",
+   "use": "defineMobileSecretStore"
+  },
+  {
+   "orig": "a0",
+   "use": "defineSecretStorage"
+  },
+  {
+   "orig": "vw",
+   "use": "defineAccountError",
+   "originalBytes": 157
+  },
+  {
+   "orig": "R7",
+   "use": "defineLoginModal"
+  },
+  {
+   "orig": "B7",
+   "use": "defineLicenseModal"
+  },
+  {
+   "orig": "N7",
+   "use": "defineAboutTab"
+  },
+  {
+   "orig": "C0",
+   "use": "defineHotkeysTab"
+  },
+  {
+   "orig": "mte",
+   "use": "defineCorePluginsTab"
+  },
+  {
+   "orig": "ite",
+   "use": "defineCommunityPluginsTab"
+  },
+  {
+   "orig": "xI",
+   "use": "defineFilePathSuggest"
+  },
+  {
+   "orig": "AI",
+   "use": "defineFolderPathSuggest"
+  },
+  {
+   "orig": "hte",
+   "use": "defineIgnoreFiltersModal"
+  },
+  {
+   "orig": "ute",
+   "use": "defineFilesLinksTab"
+  },
+  {
+   "orig": "ote",
+   "use": "defineSpellcheckDictionaryModal"
+  },
+  {
+   "orig": "rte",
+   "use": "defineEditorTab"
+  },
+  {
+   "orig": "tte",
+   "use": "defineAppearanceTab"
+  },
+  {
+   "orig": "y0",
+   "use": "defineCommunityModal"
+  },
+  {
+   "orig": "M0",
+   "use": "definePluginBrowserModal"
+  },
+  {
+   "orig": "D0",
+   "use": "defineThemeBrowserModal"
+  },
+  {
+   "orig": "S0",
+   "use": "defineDonateModal"
+  },
+  {
+   "orig": "qb",
+   "use": "defineSivError",
+   "originalBytes": 122
+  },
+  {
+   "orig": "Wb",
+   "use": "defineBlock",
+   "originalBytes": 425
+  },
+  {
+   "orig": "Kb",
+   "use": "defineCtrCipher",
+   "originalBytes": 620
+  },
+  {
+   "orig": "Qb",
+   "use": "defineCbcMacCipher",
+   "originalBytes": 771
+  },
+  {
+   "orig": "$b",
+   "use": "defineCmac",
+   "originalBytes": 1592
+  },
+  {
+   "orig": "Zb",
+   "use": "defineSiv",
+   "originalBytes": 1897
+  },
+  {
+   "orig": "hw",
+   "use": "defineCipherV0",
+   "originalBytes": 1226
+  },
+  {
+   "orig": "pw",
+   "use": "defineCipherV23",
+   "originalBytes": 1680
+  },
+  {
+   "orig": "oC",
+   "use": "defineSyncScreenBase",
+   "originalBytes": 511
+  },
+  {
+   "orig": "aC",
+   "use": "defineSyncField",
+   "originalBytes": 667
+  },
+  {
+   "orig": "sC",
+   "use": "defineSyncRadioGroup",
+   "originalBytes": 686
+  },
+  {
+   "orig": "lC",
+   "use": "defineSyncRadioOption",
+   "originalBytes": 332
+  },
+  {
+   "orig": "cC",
+   "use": "defineSyncStartScreen",
+   "originalBytes": 810
+  },
+  {
+   "orig": "uC",
+   "use": "defineSyncIntroScreen",
+   "originalBytes": 500
+  },
+  {
+   "orig": "hC",
+   "use": "defineCreateVaultScreen",
+   "originalBytes": 2106
+  },
+  {
+   "orig": "pC",
+   "use": "defineSyncSetupScreen",
+   "originalBytes": 1194
+  },
+  {
+   "orig": "dC",
+   "use": "defineEncryptionScreen",
+   "originalBytes": 2097
+  },
+  {
+   "orig": "fC",
+   "use": "defineSyncSettingsScreen",
+   "originalBytes": 2259
+  },
+  {
+   "orig": "mC",
+   "use": "defineAuthChoiceScreen",
+   "originalBytes": 409
+  },
+  {
+   "orig": "vC",
+   "use": "defineRemoteVaultOptionsScreen",
+   "originalBytes": 984
+  },
+  {
+   "orig": "gC",
+   "use": "defineVaultListScreen",
+   "originalBytes": 1395
+  },
+  {
+   "orig": "yC",
+   "use": "defineSignInScreen",
+   "originalBytes": 2506
+  },
+  {
+   "orig": "bC",
+   "use": "defineForgotPasswordScreen",
+   "originalBytes": 1260
+  },
+  {
+   "orig": "wC",
+   "use": "defineSyncMethodScreen",
+   "originalBytes": 2595
+  },
+  {
+   "orig": "kC",
+   "use": "defineConnectMethodScreen",
+   "originalBytes": 2037
+  },
+  {
+   "orig": "CC",
+   "use": "defineOtherSyncScreen",
+   "originalBytes": 510
+  },
+  {
+   "orig": "EC",
+   "use": "defineEmailEntryScreen",
+   "originalBytes": 699
+  },
+  {
+   "orig": "MC",
+   "use": "defineSignupScreen",
+   "originalBytes": 1464
+  },
+  {
+   "orig": "SC",
+   "use": "defineEmailVerificationScreen",
+   "originalBytes": 1119
+  },
+  {
+   "orig": "xC",
+   "use": "defineICloudMissingScreen",
+   "originalBytes": 319
+  },
+  {
+   "orig": "TC",
+   "use": "defineStoragePermissionScreen",
+   "originalBytes": 1022
+  },
+  {
+   "orig": "DC",
+   "use": "defineICloudUnsupportedScreen",
+   "originalBytes": 356
+  }
+ ],
+ "host": {
+  "Events": "VT",
+  "Component": "jm",
+  "Platform": "Yl",
+  "WorkspaceItem": "LD",
+  "WorkspaceParent": "ID",
+  "WorkspaceSplit": "OD",
+  "WorkspaceContainer": "ND",
+  "parseColor": "Ak",
+  "colorToHex": "Fk",
+  "installEnhancements": "yZ",
+  "attachElectron": "bZ",
+  "installTooltipHandlers": "pv",
+  "installTitlebar": "kte",
+  "trackWindowFocus": "gZ",
+  "applyLanguage": "bm",
+  "forwardInputEvents": "mZ",
+  "mirrorStyles": "vZ",
+  "WorkspaceSidedock": "FD",
+  "WorkspaceLeaf": "jD",
+  "TFile": "$T",
+  "Menu": "Ug",
+  "Transition": "dl",
+  "t": "gm",
+  "VaultProfile": "DD",
+  "setTooltip": "Mv",
+  "setIcon": "tv",
+  "enableTitlebarDoubleClick": "VD",
+  "saveScrollPositions": "ag",
+  "restoreScrollPositions": "lg",
+  "scrollWithPointer": "_v",
+  "makeDragReorderable": "Gc",
+  "TOOLTIP_DELAY": "sv",
+  "LeafHistory": "qD",
+  "EmptyView": "tD",
+  "DeferredView": "eD",
+  "UnknownView": "nD",
+  "FileView": "MD",
+  "MobileDrawer": "WD",
+  "Notice": "fb",
+  "pointerEntered": "Lc",
+  "WorkspaceTabs": "zD",
+  "Keymap": "Bg",
+  "Scope": "Ng",
+  "eventKey": "Lg",
+  "eventVirtualKey": "Ig",
+  "focusElement": "tg",
+  "osName": "zl",
+  "BaseComponent": "jk",
+  "ValueComponent": "Uk",
+  "ButtonComponent": "Wk",
+  "ExtraButtonComponent": "_k",
+  "ToggleComponent": "Gk",
+  "AbstractTextComponent": "Kk",
+  "TextComponent": "Yk",
+  "SearchComponent": "Qk",
+  "TextAreaComponent": "Xk",
+  "MomentFormatComponent": "Zk",
+  "DropdownComponent": "Jk",
+  "ProgressBarComponent": "eC",
+  "SliderComponent": "tC",
+  "ColorComponent": "nC",
+  "Setting": "zk",
+  "SettingGroup": "qk",
+  "SettingTab": "_1",
+  "PluginSettingTab": "K0",
+  "selectOnFocus": "Pv",
+  "hideTooltip": "Cv",
+  "displayTooltip": "kv",
+  "blurAndClearSelection": "Lv",
+  "closeAllMenus": "jg",
+  "registerOpenModal": "zm",
+  "unregisterOpenModal": "qm",
+  "nodeInWindow": "Ov",
+  "onSwipe": "Vm",
+  "slideModalIn": "Pl",
+  "slideModalOut": "Ll",
+  "swipeToDismiss": "_g",
+  "MenuItem": "Hg",
+  "MenuSeparator": "zg",
+  "slideBetween": "El",
+  "isTouchSyntheticMouse": "Uc",
+  "frameOffset": "hg",
+  "watchElementGone": "Rv",
+  "keyboard": "Im",
+  "SuggestionList": "ob",
+  "GroupedSuggestionList": "ab",
+  "SuggestModal": "sb",
+  "FuzzySuggestModal": "lb",
+  "PopoverSuggest": "EI",
+  "AbstractInputSuggest": "SI",
+  "EditorSuggest": "NI",
+  "Modal": "tb",
+  "renderInstructions": "rb",
+  "positionNear": "Nv",
+  "rectInTopWindow": "pg",
+  "textDirection": "LI",
+  "nextFrame": "Al",
+  "MarkdownView": "W6",
+  "runCommandCallback": "K6",
+  "formatHotkey": "Rb",
+  "MarkdownPreviewRenderer": "Gz",
+  "FormulaFunctions": "QW",
+  "PLUGIN_STYLES_FILE": "JD",
+  "View": "Kg",
+  "ItemView": "Yg",
+  "createNavButton": "Gg",
+  "isMacLike": "jl",
+  "tc": "gm.commands",
+  "markdownExtensions": "jy",
+  "imageExtensions": "Vy",
+  "audioExtensions": "Hy",
+  "videoExtensions": "zy",
+  "pdfExtensions": "qy",
+  "ImageView": "xZ",
+  "AudioView": "MZ",
+  "VideoView": "XZ",
+  "PdfView": "KZ",
+  "releaseNotesType": "s0",
+  "ReleaseNotesView": "h0",
+  "PopoverState": "VQ",
+  "EditableFileView": "OX",
+  "focusAndSelectContents": "Av",
+  "pastePlainText": "vg",
+  "normalizeEditable": "mg",
+  "validateFileName": "LX",
+  "showErrorTooltip": "IX",
+  "UNSAFE_NAME_CHARS": "WT",
+  "UNSAFE_NAME_LIST": "jT",
+  "awaitSettled": "Mb",
+  "mergeText": "FX",
+  "isMacOS": "jl",
+  "isWindows": "Ul",
+  "isLinux": "Wl",
+  "isSafari": "_l",
+  "ButtonModal": "nb",
+  "Callout": "W1",
+  "SecretChooser": "Q1",
+  "SecretEditModal": "Y1",
+  "EncryptionInfoModal": "X1",
+  "SecretPickerModal": "$1",
+  "SecretComponent": "Z1",
+  "KeychainTab": "K1",
+  "SecretStorageBase": "i0",
+  "DesktopSecretStore": "r0",
+  "MobileSecretStore": "o0",
+  "SecretStorage": "a0",
+  "keychainI18n": "gm.setting.keychain",
+  "secureStoreNative": "U1",
+  "LoginModal": "R7",
+  "LicenseModal": "B7",
+  "SlowStartupCheck": "I7",
+  "FilePathSuggest": "xI",
+  "FolderPathSuggest": "PI",
+  "IgnoreFiltersModal": "hte",
+  "SpellcheckDictionaryModal": "ote",
+  "sanitizeHtml": "xL",
+  "setCollapsed": "KL",
+  "PreviewLinkHandlers": "lq",
+  "MarkdownRenderChild": "zz",
+  "debounce": "wc",
+  "MarkdownPreviewView": "fq",
+  "markdownTree": "Kx",
+  "treeFrontmatter": "$x",
+  "treeToHtml": "Zx",
+  "renderSectionHtml": "cz",
+  "embedDepth": "JZ",
+  "queryBlockText": "$z",
+  "queryEmbed": "pq",
+  "EmbedLoader": "sJ",
+  "refreshLinkStates": "uq",
+  "textNodes": "zv",
+  "DocumentSearch": "lz",
+  "propertiesPlugin": "eO",
+  "focusWhenShown": "gg",
+  "markdownOptions": "Ux",
+  "keyNames": "Og",
+  "trackPointer": "Cg",
+  "MarkdownRenderer": "hq",
+  "internalLinkHref": "cq",
+  "QueryResults": "mq",
+  "activePropertiesEditor": "JI",
+  "embedDepths": "ZZ",
+  "FileEmbed": "rJ",
+  "FallbackEmbed": "oJ",
+  "MarkdownPreviewSection": "qz",
+  "parseMarkdownSections": "cz",
+  "frontmatterClasses": "rT",
+  "codeText": "$z",
+  "codeTexts": "Xz",
+  "renderFlags": "_z",
+  "activeWindow": "activeWindow",
+  "ajaxPromise": "ajaxPromise",
+  "TextFileView": "BX",
+  "MarkdownEditMode": "j6",
+  "MetadataEditor": "tO",
+  "BacklinksPane": "z6",
+  "PrintToPdfModal": "G6",
+  "spliceFrontmatter": "kI",
+  "extractFrontmatter": "Xx",
+  "parseYaml": "mA",
+  "subpathToPos": "FT",
+  "DialogModal": "nb",
+  "printModalText": "gm.editor.printModal",
+  "electronBridge": "If",
+  "applyEnhancements": "yZ",
+  "waitModal": "pD",
+  "printToPdfIpc": "jf",
+  "sleep": "sleep",
+  "randomHex": "cc",
+  "containsAllWords": "Ly",
+  "matchScore": "xy",
+  "renderResults": "Fy",
+  "TypeInfoModal": "FO",
+  "yamlStringify": "vA",
+  "collapseElement": "kl",
+  "CodeMirrorEditor": "oZ",
+  "EditorSearchBar": "gj",
+  "isSmartIndentTarget": "ff",
+  "cmView": "_o",
+  "cmKeymapFacet": "Jo",
+  "hypermdMode": "Z$",
+  "cmLiveDecorations": "Dq",
+  "cmLineNumbersFixed": "Vs",
+  "cmLineNumbersCompute": "$B",
+  "cmLineNumbersField": "Zs",
+  "cmTableCellFilter": "Mq",
+  "cmIndentGuides": "OV",
+  "cmFoldGutter": "od",
+  "cmFoldDecorations": "AV",
+  "cmFoldHeading": "O$",
+  "cmFoldIndent": "A$",
+  "cmFoldFrontmatter": "F$",
+  "cmAutoPair": "DA",
+  "cmClearCacheEffect": "Tq",
+  "EditModeBase": "aZ",
+  "propertiesExtensionFactory": "nP",
+  "cmFoldEffect": "qp",
+  "cmUnfoldEffect": "jp",
+  "EditorApi": "cP",
+  "cmSelection": "pe",
+  "cmChangeSet": "re",
+  "cmState": "nt",
+  "cmDecoration": "Vn",
+  "highlightCache": "SA",
+  "cmHighlightState": "xA",
+  "cmHighlightField": "EA",
+  "cmFilterEffect": "MA",
+  "cmFoldedRanges": "Gp",
+  "cmFoldableRange": "Hp",
+  "cmRangeContains": "FA",
+  "cmSyntaxTree": "tp",
+  "cmSyntaxExcludeBuffers": "Lu",
+  "cmSyntaxPropClasses": "$d",
+  "cmFormatQuery": "df",
+  "cmFormatSpan": "hf",
+  "cmFormatNodes": "yf",
+  "cmFormatRemove": "vf",
+  "cmFormatInner": "gf",
+  "cmFormatLineBounds": "mf",
+  "cmFormatSeek": "pf",
+  "SearchCursorImpl": "zR",
+  "cmUndo": "nF",
+  "cmRedo": "iF",
+  "cmCursorRange": "UA",
+  "TableCellEditor": "uZ",
+  "EmbedFileView": "lJ",
+  "HoverPopover": "S$",
+  "parseLinkText": "MT",
+  "trimSlashes": "tu",
+  "mediaExtensions": "Vy",
+  "getExtension": "su",
+  "isImageDimension": "zx",
+  "isInternalUrl": "YC",
+  "decodeExternalUrl": "XC",
+  "isEmailAddress": "Zc",
+  "normalizeExternalUrl": "QC",
+  "nextFootnoteId": "BT",
+  "cmdGoUp": "ZF",
+  "cmdGoDown": "JF",
+  "cmdGoLeft": "TF",
+  "cmdGoRight": "DF",
+  "cmdGoStart": "N$",
+  "cmdGoEnd": "GN",
+  "cmdGoWordLeft": "RF",
+  "cmdGoWordRight": "BF",
+  "cmdIndentMore": "H$",
+  "cmdIndentLess": "z$",
+  "cmdNewlineAndIndent": "SR",
+  "cmdSwapLineUp": "gR",
+  "cmdSwapLineDown": "yR",
+  "cmdDeleteLine": "CR",
+  "cmFoldToggle": "Xp",
+  "cmUnfoldToggle": "Qp",
+  "cmdFoldAll": "R$",
+  "cmdUnfoldAll": "Jp",
+  "CMEditorView": "_o",
+  "ClipboardManager": "AL",
+  "iosTap": "jc",
+  "CMEditorComponent": "iZ",
+  "livePreviewPluginFactory": "O6",
+  "cmCompartment": "nZ",
+  "cmBaseExtension": "tZ",
+  "cmHistoryStore": "rZ",
+  "cmHistoryField": "eF",
+  "cmPosToOffset": "IA",
+  "cmOffsetToPos": "OA",
+  "cmRefreshEffect": "BA",
+  "cmIndentUnit": "yp",
+  "cmEditorField": "U$",
+  "cmOwnerField": "W$",
+  "livePreviewField": "G$",
+  "fieldSetEffect": "q$",
+  "notSetUserEvent": "PA",
+  "inputEditUserEvent": "LA",
+  "cmFoldCheck": "EV",
+  "electronMenuInfo": "Gf",
+  "shiftPos": "rP",
+  "truncateText": "gc",
+  "formattingMenu": "BV",
+  "isUrl": "Yc",
+  "isPlainUrl": "Qc",
+  "setUriList": "wP",
+  "clipboardFiles": "CP",
+  "htmlCommentPrefix": "DL",
+  "iosEditorExtensions": "I$",
+  "bracketOpenInput": "sV",
+  "bracketField": "nV",
+  "bracketKeys": "lV",
+  "closeBracketInput": "fj",
+  "vimTheme": "rj",
+  "vimPrecedence": "Te",
+  "vimKeymapClass": "oj",
+  "vimThemeAlt": "Lq",
+  "vimStatusField": "lj",
+  "dragDropEffect": "SP",
+  "dragLinkText": "TL",
+  "isImageExtension": "$y",
+  "pathBaseName": "nu",
+  "pathNormalize": "uu",
+  "stripExtBase": "ou",
+  "escapePathChars": "eE",
+  "htmlToMarkdown": "yP",
+  "base64ToBuffer": "Cf",
+  "cmViewPlugin": "ji",
+  "cmStateField": "ke",
+  "mobileCursorPlugin": "K2",
+  "mobileCursorEffect": "G2",
+  "mobileCursorAnnotation": "AA",
+  "livePreviewThemeA": "L6",
+  "livePreviewThemeB": "I6",
+  "mobileDragExtensions": "A6",
+  "propertiesLivePreview": "P6",
+  "tableSyncExtension": "wq",
+  "tableWidget": "bq",
+  "livePreviewLinkWidget": "m6",
+  "livePreviewCalloutWidget": "y6",
+  "livePreviewMathWidget": "b6",
+  "livePreviewImageWidget": "f6",
+  "livePreviewHtmlWidget": "k6",
+  "livePreviewHrWidget": "o6",
+  "livePreviewCodeblockWidget": "v6",
+  "livePreviewCodeFallbackWidget": "u6",
+  "livePreviewUnresolvedMark": "t6",
+  "livePreviewAndroidWidget": "E6",
+  "livePreviewCodeblockHide": "X2",
+  "livePreviewCodeblockShow": "Z2",
+  "livePreviewTagBlocklist": "w6",
+  "livePreviewSyntaxClasses": "Zd",
+  "listLinePattern": "aP",
+  "codeblockLangPattern": "Q2",
+  "combineExtensions": "k",
+  "keyModifiers": "Bg",
+  "codeMirrorCompat": "window.CodeMirror",
+  "ensureSyntaxViewport": "np",
+  "isKnownHtmlTag": "eg",
+  "stripLinkSubpath": "ET",
+  "yamlParseError": "IS",
+  "metadataPropertyEffect": "TA",
+  "livePreviewInvalidMark": "ZA",
+  "livePreviewBlockReplace": "JA",
+  "parseTableCellText": "jA",
+  "vimApi": "ij",
+  "tableCellLanguage": "J$",
+  "tableUpdateAnnotation": "yq",
+  "cmCompartmentClass": "Ae",
+  "textDirectionEnum": "Xn",
+  "textDirectionOf": "Tv",
+  "selectDocStart": "KN",
+  "selectDocEnd": "YN",
+  "pageUp": "nN",
+  "pageDown": "iN",
+  "selectPageUp": "BN",
+  "selectPageDown": "VN",
+  "TreeItem": "YL",
+  "TreeChildren": "UH",
+  "TreeRoot": "s2",
+  "InfinityScroll": "tz",
+  "Tree": "l2",
+  "ViewHeader": "R6",
+  "WordCharSource": "WV",
+  "SearchableExtensions": "Gy",
+  "SearchOperators": "RH",
+  "GraphView": "kJ",
+  "WebViewerView": "P2",
+  "PluginInstanceSettingTab": "Y0",
+  "forbiddenNameChars": "UT",
+  "forbiddenNameCharsList": "qT",
+  "unsafeNameChars": "WT",
+  "unsafeNameCharsList": "jT",
+  "activeTouches": "zc",
+  "lastTouchEnd": "Hc",
+  "lastScrollAt": "qc",
+  "VaultClass": "JT",
+  "hasMetadataEditor": "$I",
+  "isAttachmentExtension": "$y",
+  "FolderSuggest": "AI",
+  "MarkdownFileSuggest": "TI",
+  "unicodeLetterSource": "jV",
+  "unicodeWordSource": "UV",
+  "PlaintextView": "BX",
+  "Multimap": "sc",
+  "canvasSerialize": "dc",
+  "applyLinkChanges": "UL",
+  "normalizeSubpath": "LT",
+  "CANVAS_EXTENSION": "Z5",
+  "indexCacheHasLink": "xT",
+  "MetadataExtractorBase": "X5",
+  "parseSmallText": "fT",
+  "fileProxy": "wf",
+  "RenameQueue": "vb",
+  "canvasI18n": "J5",
+  "CanvasViewType": "$5",
+  "CanvasViewClass": "r8",
+  "JumpToGroupModal": "Q5",
+  "GroupNodeClass": "I5",
+  "CanvasEmbedRenderer": "a8",
+  "CanvasSettingsTab": "s8",
+  "TextInputModal": "lI",
+  "MarkdownEmbedBase": "CZ",
+  "Runnable": "bb",
+  "headingBlockSuggestions": "zI",
+  "blockSuggestions": "qI",
+  "renderSectionSuggestion": "jI",
+  "applyCanvasColor": "B3",
+  "normalizeCanvasColor": "H3",
+  "CanvasFileSuggest": "x3",
+  "invalidCharsPattern": "UT",
+  "invalidCharsList": "qT",
+  "unsafeCharsPattern": "WT",
+  "unsafeCharsList": "jT",
+  "isEditableTarget": "M$",
+  "dragWithThreshold": "Cg",
+  "nativeDblClick": "dg",
+  "StatefulEmbedBase": "lJ",
+  "normalizeEmbedUrl": "Az",
+  "isWebviewElement": "_f",
+  "canvasResizeAnchor": "E3",
+  "canvasSnapPoints": "L3",
+  "canvasSnapMatch": "O3",
+  "canvasNearestSide": "A3",
+  "iterateLinks": "TT",
+  "TFolder": "ZT",
+  "linkPath": "ET",
+  "cancelTouchDrag": "Nc",
+  "propertyTypeWidgets": "{aliases:bO,checkbox:TO,date:EO,datetime:MO,file:CO,folder:kO,multitext:PO,property:yO,number:xO,tags:wO,text:rO}",
+  "unknownPropertyWidget": "IO",
+  "Plugin": "G0",
+  "pluginStrings": "J0",
+  "i18n": "gm",
+  "request": "dy",
+  "semverCompare": "gy",
+  "appVersion": "gte",
+  "communityPluginList": "tA",
+  "progressOverlay": "pD.instance",
+  "TrustAuthorModal": "Z0",
+  "trackUsage": "cD",
+  "capacitorApp": "xm",
+  "basaltDebug": "iD",
+  "cmRequireMap": "W0",
+  "cmDeprecatedMap": "_0",
+  "tagValid": "$A",
+  "linkCacheKey": "BL",
+  "batchedAsync": "Cb",
+  "collectTags": "DT",
+  "getLinkpath": "ET",
+  "iterateIdbBatches": "GL",
+  "sharesLinkTarget": "HL",
+  "contentHash": "Sf",
+  "applyLinkUpdates": "UL",
+  "openMetadataDb": "Zw",
+  "linkPosToPos": "gT",
+  "isOutdatedMetadata": "kT",
+  "forEachLinkField": "mT",
+  "escapeRegExp": "oc",
+  "BlockCache": "qL",
+  "RefMultimap": "sc",
+  "compareStrings": "ub",
+  "positionToArray": "vT",
+  "SerialTaskQueue": "vb",
+  "deserializeMetadata": "wT",
+  "LinkQueue": "wb",
+  "anyMetadataRef": "xT",
+  "createEl": "createEl",
+  "createFragment": "createFragment",
+  "FolderPathSuggestTab": "AI"
+ },
+ "declarators": [
+  {
+   "orig": "QT",
+   "expr": "__basaltOwn.fileClass(\"TAbstractFile\")",
+   "sha1": "4eaff792d9c33377cdce60bda1534f24a2b2bbcf",
+   "originalBytes": 315
+  },
+  {
+   "orig": "XT",
+   "expr": "null",
+   "sha1": "53a9b0a3c30baac2eec4c403e29d5c0b1c41a10c",
+   "originalBytes": 11
+  },
+  {
+   "orig": "$T",
+   "expr": "__basaltOwn.fileClass(\"TFile\")",
+   "sha1": "9c789be6e78a4a6aedb90fb6c2c7e834fa820bd1",
+   "originalBytes": 795
+  },
+  {
+   "orig": "ZT",
+   "expr": "__basaltOwn.fileClass(\"TFolder\")",
+   "sha1": "6922ce84c35ac18c8053cf977c96b0b8c4c540ec",
+   "originalBytes": 522
+  },
+  {
+   "orig": "Eu",
+   "expr": "__basaltOwn.createFileSystemAdapter()",
+   "sha1": "bfd26de141886d5b9e7e0f80415f32ebcb74045f",
+   "originalBytes": 20222
+  },
+  {
+   "orig": "JT",
+   "expr": "__basaltOwn.createVault(VT,Eu)",
+   "sha1": "020d8c45116285ee5922289fa9d8b1cb96e79ff7",
+   "originalBytes": 16852
+  },
+  {
+   "orig": "MP",
+   "expr": "__basaltOwn.dragEffectMap",
+   "sha1": "f0a4c1f32d9933faae8531e80432a3bec18a42fa",
+   "originalBytes": 170
+  },
+  {
+   "orig": "EP",
+   "expr": "__basaltOwn.dragPixel",
+   "sha1": "1f088489658055a2b71dd274b9c080e721998b88",
+   "originalBytes": 9
+  },
+  {
+   "orig": "r2",
+   "expr": "__basaltOwn.corePluginIds",
+   "sha1": "3de5501f1e6a3828398acaa08b4a4cb52f559e75",
+   "originalBytes": 350
+  },
+  {
+   "orig": "PL",
+   "expr": "__basaltOwn.propertyTypeDefaults",
+   "sha1": "1a73996d5db8a30e75068ad7dee0004d982109ce",
+   "originalBytes": 141
+  },
+  {
+   "orig": "HL",
+   "expr": "__basaltOwn.sharesLinkTarget",
+   "sha1": "05b38e1bd5197aca970ce6aab5a046d0b608b7c3",
+   "originalBytes": 138
+  },
+  {
+   "orig": "ez",
+   "expr": "__basaltOwn.walkTreeAll",
+   "sha1": "9abe299f3b1e24c01475f20b716ccb41ecd2b78a",
+   "originalBytes": 136
+  },
+  {
+   "orig": "iH",
+   "expr": "__basaltOwn.resetRegexCaches",
+   "sha1": "9ba6b43d41b00bb083f23c7bba0326a9b897dd0b",
+   "originalBytes": 36
+  },
+  {
+   "orig": "RH",
+   "expr": "__basaltOwn.defineSearchOperators(__basaltHost)",
+   "sha1": "e434bc6d9e17891a5ee235533a0fb8953d54f6d3",
+   "originalBytes": 825
+  },
+  {
+   "orig": "GV",
+   "expr": "__basaltOwn.wholeWordPattern",
+   "sha1": "547fbb074252747b1f93c3bfcf7218f10903ae61",
+   "originalBytes": 197
+  },
+  {
+   "orig": "Hw",
+   "expr": "__basaltOwn.account",
+   "sha1": "170efdfd595fe70440769009d25d66032b34f359",
+   "originalBytes": 474
+  },
+  {
+   "orig": "aw",
+   "expr": "32768"
+  },
+  {
+   "orig": "sw",
+   "expr": "{N:32768,r:8,p:1,maxmem:67108864}",
+   "sha1": "bccf82dc240e31d5fede024da785f0af6e8fcdbf",
+   "originalBytes": 30
+  },
+  {
+   "orig": "AC",
+   "expr": "[\"accentColor\",\"theme\",\"cssTheme\",\"enabledCssSnippets\",\"showViewHeader\",\"showRibbon\",\"nativeMenus\",\"translucency\",\"textFontFamily\",\"interfaceFontFamily\",\"monospaceFontFamily\",\"baseFontSize\",\"baseFontSizeAction\",\"slidingSidebar\",\"floatingNavigation\",\"autoFullScreen\"]",
+   "sha1": "ca78b22bc3a5de13984e7804174301faa0b4a19e",
+   "originalBytes": 3376
+  },
+  {
+   "orig": "cX",
+   "expr": "__basaltOwn.s10PublishPaneMinWidth",
+   "sha1": "d8e4bbea3af2e4861ad5a445aaec573e02f9aca2",
+   "originalBytes": 3
+  },
+  {
+   "orig": "uX",
+   "expr": "__basaltOwn.s10PublishPaneOffset",
+   "sha1": "fc074d501302eb2b93e2554793fcaf50b3bf7291",
+   "originalBytes": 2
+  },
+  {
+   "orig": "hX",
+   "expr": "__basaltOwn.s10BasaltCssName",
+   "sha1": "ec7be83c9695cac70c4657f0c4598c93b20a6450",
+   "originalBytes": 12
+  },
+  {
+   "orig": "pX",
+   "expr": "__basaltOwn.s10PublishCssName",
+   "sha1": "1f4621496db3247f49b51042a776fec45032024a",
+   "originalBytes": 13
+  },
+  {
+   "orig": "dX",
+   "expr": "__basaltOwn.s10PublishJsName",
+   "sha1": "5860ad8ed1ea24fc372cb1b8c459a8651305242e",
+   "originalBytes": 12
+  },
+  {
+   "orig": "fX",
+   "expr": "__basaltOwn.s10FaviconPattern",
+   "sha1": "6d03877fa18c87873d682d8e798c5f68fe2da1c0",
+   "originalBytes": 35
+  },
+  {
+   "orig": "VX",
+   "expr": "__basaltOwn.s10BasesViewType",
+   "sha1": "ff1ec5df3ac2aba2dd2958df9638a97174e29b0c",
+   "originalBytes": 7
+  },
+  {
+   "orig": "kX",
+   "expr": "__basaltOwn.s10FilterCompareOps",
+   "sha1": "614e6c5bd69d54c907be1a1a63775581e63cb020",
+   "originalBytes": 29
+  },
+  {
+   "orig": "CX",
+   "expr": "__basaltOwn.s10FilterOrderOps",
+   "sha1": "305fe6c60b93a5dcee52c505e916772c2b20bd2d",
+   "originalBytes": 19
+  },
+  {
+   "orig": "o$",
+   "expr": "__basaltOwn.s10WikiLinkChars",
+   "sha1": "ad67bc91f86678941a51a9a5dd0a777e04cea819",
+   "originalBytes": 42
+  },
+  {
+   "orig": "hZ",
+   "expr": "__basaltOwn.s10PopoutStyleVars",
+   "sha1": "7dc41798bff483b7f6914cafae7cf9cd7a719288",
+   "originalBytes": 37
+  },
+  {
+   "orig": "pZ",
+   "expr": "__basaltOwn.s10PopoutBodyClasses",
+   "sha1": "f88d21666bd28824eaeafac45c14e3d1f2041a87",
+   "originalBytes": 45
+  },
+  {
+   "orig": "dZ",
+   "expr": "__basaltOwn.s10ForwardedEvents",
+   "sha1": "bfb66c4640e722feb7bb71a2e00f0078d2d6adfc",
+   "originalBytes": 208
+  },
+  {
+   "orig": "V$",
+   "expr": "__basaltOwn.s10LinePrefix",
+   "sha1": "f9fb0336041b08b5720d1537ef0be554870fbd68",
+   "originalBytes": 9
+  },
+  {
+   "orig": "x$",
+   "expr": "__basaltOwn.s10UnboundEditorKeys",
+   "sha1": "3ca4c8759fd81ab2b2fdc596729aa104d7c5f60a",
+   "originalBytes": 107
+  },
+  {
+   "orig": "eZ",
+   "expr": "__basaltOwn.s10EditorExtensions",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "rZ",
+   "expr": "__basaltOwn.s10CmHistoryStore",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "wX",
+   "expr": "__basaltHost.t.plugins.bases",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "zX",
+   "expr": "__basaltHost.t.plugins.bases",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "_X",
+   "expr": "__basaltHost.t.plugins.bases",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "XX",
+   "expr": "__basaltHost.t.plugins.bases",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "JX",
+   "expr": "__basaltHost.t.plugins.bases",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "r$",
+   "expr": "__basaltHost.t.plugins.bases",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "w$",
+   "expr": "__basaltHost.t.plugins.bases",
+   "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+   "originalBytes": 16
+  },
+  {
+   "orig": "qX",
+   "expr": "__basaltHost.t.plugins.fileExplorer",
+   "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
+   "originalBytes": 23
+  }
+ ],
+ "methods": [
+  {
+   "class": "mI",
+   "name": "getMarkdownNewFileParent",
+   "use": "fmMarkdownNewFileParent",
+   "sha1": "c956027d37430809ff47fce237e4b6da600779c5",
+   "originalBytes": 286
+  },
+  {
+   "class": "mI",
+   "name": "getNewFileParent",
+   "use": "fmNewFileParent",
+   "sha1": "446c777d1cf3f6771c6fe53612e3a4b1240e1d43",
+   "originalBytes": 238
+  },
+  {
+   "class": "mI",
+   "name": "registerFileParentCreator",
+   "use": "fmRegisterFileParentCreator",
+   "sha1": "273453ab7028d05d813fab4033349203cdbb1fab",
+   "originalBytes": 48
+  },
+  {
+   "class": "mI",
+   "name": "unregisterFileCreator",
+   "use": "fmUnregisterFileCreator",
+   "sha1": "525a637b20c66266285e24ce54bd28955d37f5e1",
+   "originalBytes": 51
+  },
+  {
+   "class": "mI",
+   "name": "canCreateFileWithExt",
+   "use": "fmCanCreateFileWithExt",
+   "sha1": "e67dbf34d0b375ebc63e2db6082528307661c142",
+   "originalBytes": 72
+  },
+  {
+   "class": "mI",
+   "name": "createNewMarkdownFileFromLinktext",
+   "use": "fmCreateNewMarkdownFileFromLinktext",
+   "sha1": "ff53bf47014515b4c3b65d4cd9b92399de9c8bcd",
+   "originalBytes": 269
+  },
+  {
+   "class": "mI",
+   "name": "createNewMarkdownFile",
+   "use": "fmCreateNewMarkdownFile",
+   "sha1": "d920d99286eda65a01bba3512dbca6818428defd",
+   "originalBytes": 131
+  },
+  {
+   "class": "mI",
+   "name": "createNewFile",
+   "use": "fmCreateNewFile",
+   "sha1": "e27dd72de34e93d47256549d5f124699764cecb7",
+   "originalBytes": 715
+  },
+  {
+   "class": "mI",
+   "name": "createNewFolder",
+   "use": "fmCreateNewFolder",
+   "sha1": "b942fc655c14b23f9ba81c2591eb969a7409ab87",
+   "originalBytes": 369
+  },
+  {
+   "class": "mI",
+   "name": "renameFile",
+   "use": "fmRenameFile",
+   "sha1": "0abe33e67d34093722252d041617303b75077af9",
+   "originalBytes": 226
+  },
+  {
+   "class": "mI",
+   "name": "runAsyncLinkUpdate",
+   "use": "fmRunAsyncLinkUpdate",
+   "sha1": "b83ecfc3d956247e53801bdae98b8d21c59e522b",
+   "originalBytes": 1142
+  },
+  {
+   "class": "mI",
+   "name": "trashFile",
+   "use": "fmTrashFile",
+   "sha1": "3df062eb6b86ed935ef996c7611bde0d31be5391",
+   "originalBytes": 424
+  },
+  {
+   "class": "mI",
+   "name": "getAvailablePathForAttachment",
+   "use": "fmGetAvailablePathForAttachment",
+   "sha1": "961f29faac441d80c51bf7dc93c8b8b5dd7bff00",
+   "originalBytes": 292
+  },
+  {
+   "class": "H0",
+   "name": "on",
+   "use": "wsOn",
+   "sha1": "5974e9a7081e080df478675ba93875b923c1d182",
+   "originalBytes": 55
+  },
+  {
+   "class": "H0",
+   "name": "trigger",
+   "use": "wsTrigger",
+   "sha1": "576bfc22529b24cffe944cfb73d064a6fba94360",
+   "originalBytes": 116
+  },
+  {
+   "class": "H0",
+   "name": "isAttached",
+   "use": "wsIsAttached",
+   "sha1": "ca3cdf9f9b1725f37c84ef36a5e5d5d159352629",
+   "originalBytes": 130
+  },
+  {
+   "class": "H0",
+   "name": "getLeftLeaf",
+   "use": "wsGetLeftLeaf",
+   "sha1": "3188a2625378c65d0e2cdaa13d97b044bb6608e9",
+   "originalBytes": 54
+  },
+  {
+   "class": "H0",
+   "name": "getRightLeaf",
+   "use": "wsGetRightLeaf",
+   "sha1": "1b3c19826ae37390cc158350332763a364d34429",
+   "originalBytes": 55
+  },
+  {
+   "class": "H0",
+   "name": "getLeaf",
+   "use": "wsGetLeaf",
+   "sha1": "211ded2122beb11099959b795b59c2f0b3dc765c",
+   "originalBytes": 160
+  },
+  {
+   "class": "H0",
+   "name": "getGroupLeaves",
+   "use": "wsGetGroupLeaves",
+   "sha1": "d6daa03ff45eee91799505e479741aa0b03a7b70",
+   "originalBytes": 97
+  },
+  {
+   "class": "H0",
+   "name": "iterateLeaves",
+   "use": "wsIterateLeaves",
+   "sha1": "bb71dd62d3317d5abf124b718747313ff48b25b7",
+   "originalBytes": 334
+  },
+  {
+   "class": "H0",
+   "name": "iterateTabs",
+   "use": "wsIterateTabs",
+   "sha1": "b9518d9b56f6438d52af9b3cc639a63e9e374157",
+   "originalBytes": 186
+  },
+  {
+   "class": "H0",
+   "name": "iterateAllLeaves",
+   "use": "wsIterateAllLeaves",
+   "sha1": "a4847df435eee4d2adfb213f654bcaafdb34c91e",
+   "originalBytes": 165
+  },
+  {
+   "class": "H0",
+   "name": "iterateRootLeaves",
+   "use": "wsIterateRootLeaves",
+   "sha1": "ab81d04d7cafafdc4c6f9705818f16173417c317",
+   "originalBytes": 49
+  },
+  {
+   "class": "H0",
+   "name": "iterateCodeMirrors",
+   "use": "wsIterateCodeMirrors",
+   "sha1": "07714e6deea17a4e7a859895c769cd8e910e44f0",
+   "originalBytes": 13
+  },
+  {
+   "class": "H0",
+   "name": "hasUndoHistory",
+   "use": "wsHasUndoHistory",
+   "sha1": "becb67aad72c391516991ea287c9abfc2d9eb17e",
+   "originalBytes": 44
+  },
+  {
+   "class": "H0",
+   "name": "isInSidebar",
+   "use": "wsIsInSidebar",
+   "sha1": "f53b2eb354f8139189e63b9b2cd2b6e1437fb9c3",
+   "originalBytes": 85
+  },
+  {
+   "class": "H0",
+   "name": "onLayoutChange",
+   "use": "wsOnLayoutChange",
+   "sha1": "4d7743c86b68d18be5f305cedef06b26de6dfab3",
+   "originalBytes": 98
+  },
+  {
+   "class": "H0",
+   "name": "onLayoutReady",
+   "use": "wsOnLayoutReady",
+   "sha1": "eda77fef15e782fac92fc68e6e6c0bc660b98867",
+   "originalBytes": 140
+  },
+  {
+   "class": "H0",
+   "name": "onQuickPreview",
+   "use": "wsOnQuickPreview",
+   "sha1": "34d6115c546670b4a86091b47e250c580cbb2d3e",
+   "originalBytes": 48
+  },
+  {
+   "class": "H0",
+   "name": "addMobileFileInfo",
+   "use": "wsAddMobileFileInfo",
+   "sha1": "2335f0d14203dfa501db34f68353511977242f29",
+   "originalBytes": 41
+  },
+  {
+   "class": "H0",
+   "name": "getRecentFiles",
+   "use": "wsGetRecentFiles",
+   "sha1": "4017bde3a61e913e4d51dda88fad7576b79cb2d0",
+   "originalBytes": 60
+  },
+  {
+   "class": "H0",
+   "name": "getLastOpenFiles",
+   "use": "wsGetLastOpenFiles",
+   "sha1": "6dba792dbe3f88279b894aabba5c374f85030ae3",
+   "originalBytes": 60
+  },
+  {
+   "class": "H0",
+   "name": "addRecentFile",
+   "use": "wsAddRecentFile",
+   "sha1": "e995da93d613ae7814af76a8f4cc0bd2a1f8425b",
+   "originalBytes": 52
+  },
+  {
+   "class": "H0",
+   "name": "onResize",
+   "use": "wsOnResize",
+   "sha1": "928ee359e9023c416add256e33e03d1c3db332ae",
+   "originalBytes": 34
+  },
+  {
+   "class": "H0",
+   "name": "updateTitle",
+   "use": "wsUpdateTitle",
+   "sha1": "0de8e04341e5048494b585aaf62c134d0bed1ea1",
+   "originalBytes": 124
+  },
+  {
+   "class": "H0",
+   "name": "getActiveFile",
+   "use": "wsGetActiveFile",
+   "sha1": "29297cc28e3dcbbb771191fd90509d8240307080",
+   "originalBytes": 153
+  },
+  {
+   "class": "H0",
+   "name": "getFocusedContainer",
+   "use": "wsGetFocusedContainer",
+   "sha1": "0bef3884c53d9d8767d05c858fd962a9a3817ff3",
+   "originalBytes": 199
+  },
+  {
+   "class": "H0",
+   "name": "getMostRecentLeaf",
+   "use": "wsGetMostRecentLeaf",
+   "sha1": "232f752ac34c14f6ee8f196c76a6b292bbd9a56c",
+   "originalBytes": 193
+  },
+  {
+   "class": "H0",
+   "name": "getActiveViewOfType",
+   "use": "wsGetActiveViewOfType",
+   "sha1": "b9f5feb64360d1d302621fd3300c00c4e2db426c",
+   "originalBytes": 94
+  },
+  {
+   "class": "H0",
+   "name": "getActiveLeafOfViewType",
+   "use": "wsGetActiveLeafOfViewType",
+   "sha1": "d51434d8b1a778f9f5ba96fca8e8f4bf0971c618",
+   "originalBytes": 47
+  },
+  {
+   "class": "H0",
+   "name": "getSideLeaf",
+   "use": "wsGetSideLeaf",
+   "sha1": "ed07a42d3a912eaf67314d28d070558a5e27513b",
+   "originalBytes": 332
+  },
+  {
+   "class": "H0",
+   "name": "getActiveFileView",
+   "use": "wsGetActiveFileView",
+   "sha1": "e266d1c8d5f4de70c217426fcb15f0dbe4069f26",
+   "originalBytes": 255
+  },
+  {
+   "class": "H0",
+   "name": "activeLeafEvents",
+   "use": "wsActiveLeafEvents",
+   "sha1": "fcb0f5f6bccbcffbd05893518cef2877889d778b",
+   "originalBytes": 239
+  },
+  {
+   "class": "H0",
+   "name": "pushUndoHistory",
+   "use": "wsPushUndoHistory",
+   "sha1": "8e9b548e96b5793c1155f3fc8fde106f581cb41d",
+   "originalBytes": 232
+  },
+  {
+   "class": "H0",
+   "name": "changeLayout",
+   "use": "wsChangeLayout",
+   "sha1": "911b732347b2e712a7dc522ec0089de358f1bee8",
+   "originalBytes": 232
+  },
+  {
+   "class": "H0",
+   "name": "updateOptions",
+   "use": "wsUpdateOptions",
+   "sha1": "a1802abe1bb75bc3b0d042cc7bc8e8205ab1bb95",
+   "originalBytes": 177
+  },
+  {
+   "class": "H0",
+   "name": "registerObsidianProtocolHandler",
+   "use": "wsRegisterObsidianProtocolHandler",
+   "sha1": "838e31aaecfb7bc99f313d467d44f7d3dcfdc34b",
+   "originalBytes": 155
+  },
+  {
+   "class": "H0",
+   "name": "unregisterObsidianProtocolHandler",
+   "use": "wsUnregisterObsidianProtocolHandler",
+   "sha1": "d15f740358536dbc4b1825c4387468893d0de6ce",
+   "originalBytes": 83
+  },
+  {
+   "class": "H0",
+   "name": "registerUriHook",
+   "use": "wsRegisterUriHook",
+   "sha1": "2b4894056fc0329d5560f95b5d342752be395a50",
+   "originalBytes": 517
+  },
+  {
+   "class": "H0",
+   "name": "getUnpinnedLeaf",
+   "use": "wsGetUnpinnedLeaf",
+   "sha1": "2669cb181a81989f279671882d93a1e54613c301",
+   "originalBytes": 519
+  },
+  {
+   "class": "H0",
+   "name": "ensureSideLeaf",
+   "use": "wsEnsureSideLeaf",
+   "sha1": "100b7f32605ed0533063cbccd8bed46b91ab46e4",
+   "originalBytes": 603
+  },
+  {
+   "class": "H0",
+   "name": "revealLeaf",
+   "use": "wsRevealLeaf",
+   "sha1": "3486677b3a762829c860ccee7369e8451ee6fcb2",
+   "originalBytes": 516
+  },
+  {
+   "class": "H0",
+   "name": "splitLeaf",
+   "use": "wsSplitLeaf",
+   "sha1": "147ffb8bfb0e8b980d0e2637c0138cb7b96dd015",
+   "originalBytes": 480
+  },
+  {
+   "class": "H0",
+   "name": "getDropDirection",
+   "use": "wsGetDropDirection",
+   "sha1": "2c49e8393168dbad321d9cb5cbf55ea876cac168",
+   "originalBytes": 912
+  },
+  {
+   "class": "H0",
+   "name": "getDropLocation",
+   "use": "wsGetDropLocation",
+   "sha1": "26a012294680fca5b5ad70ddccb576d71da8a100",
+   "originalBytes": 588
+  },
+  {
+   "class": "H0",
+   "name": "duplicateLeaf",
+   "use": "wsDuplicateLeaf",
+   "sha1": "91070abbd4e20bda9936b6fa5a4799f007672e18",
+   "originalBytes": 414
+  },
+  {
+   "class": "H0",
+   "name": "createLeafInTabGroup",
+   "use": "wsCreateLeafInTabGroup",
+   "sha1": "ec5bd2b399f922911be371f709a6ce3a4406a4b1",
+   "originalBytes": 387
+  },
+  {
+   "class": "H0",
+   "name": "updateMobileVisibleTabGroup",
+   "use": "wsUpdateMobileVisibleTabGroup",
+   "sha1": "e0dbb81e869484d1748ba504697fa736a8b2014c",
+   "originalBytes": 367
+  },
+  {
+   "class": "H0",
+   "name": "readWorkspaceFile",
+   "use": "wsReadWorkspaceFile",
+   "sha1": "34d708d5330f6dcd6eb1797aae902c5e86b71b1a",
+   "originalBytes": 357
+  },
+  {
+   "class": "H0",
+   "name": "moveLeafToPopout",
+   "use": "wsMoveLeafToPopout",
+   "sha1": "491b0607f407905e122b5bcd5524c8a0687b6d64",
+   "originalBytes": 348
+  },
+  {
+   "class": "H0",
+   "name": "splitActiveLeaf",
+   "use": "wsSplitActiveLeaf",
+   "sha1": "f6cabb2c0aa39e083243c141b769284a28c461fa",
+   "originalBytes": 122
+  },
+  {
+   "class": "H0",
+   "name": "openLinkText",
+   "use": "wsOpenLinkText",
+   "sha1": "54cbde3d450241b7b2b2e8025cb60061645cd26b",
+   "originalBytes": 188
+  },
+  {
+   "class": "H0",
+   "name": "recursiveGetTarget",
+   "use": "wsRecursiveGetTarget",
+   "sha1": "3e9f41c934774a0aed9798bbe8ea8979affe62c9",
+   "originalBytes": 173
+  },
+  {
+   "class": "H0",
+   "name": "createLeafInParent",
+   "use": "wsCreateLeafInParent",
+   "sha1": "e8f8b59bc0206dc241c706278dfe8d9199859be4",
+   "originalBytes": 146
+  },
+  {
+   "class": "H0",
+   "name": "getLeafById",
+   "use": "wsGetLeafById",
+   "sha1": "b04893a252e9bfae372a35781c7cb0847fda5f41",
+   "originalBytes": 96
+  },
+  {
+   "class": "H0",
+   "name": "detachLeavesOfType",
+   "use": "wsDetachLeavesOfType",
+   "sha1": "df622bcac59226d3891b8ba858ae04163b580f3f",
+   "originalBytes": 81
+  },
+  {
+   "class": "H0",
+   "name": "registerEditorExtension",
+   "use": "wsRegisterEditorExtension",
+   "sha1": "63e777d0e3b02e5f540fde4102d102a3e12edf98",
+   "originalBytes": 63
+  },
+  {
+   "class": "H0",
+   "name": "unregisterEditorExtension",
+   "use": "wsUnregisterEditorExtension",
+   "sha1": "d53f2757b3a885beb2ad71ea80310b75701ceff5",
+   "originalBytes": 65
+  },
+  {
+   "class": "H0",
+   "name": "registerHoverLinkSource",
+   "use": "wsRegisterHoverLinkSource",
+   "sha1": "d0dd175190e82c2047f6727b719e5566f7738ca8",
+   "originalBytes": 41
+  },
+  {
+   "class": "H0",
+   "name": "unregisterHoverLinkSource",
+   "use": "wsUnregisterHoverLinkSource",
+   "sha1": "449bec459de3ba919da47fa3d40a998e6316a138",
+   "originalBytes": 44
+  },
+  {
+   "class": "H0",
+   "name": "registerOperatorFuncConfigs",
+   "use": "wsRegisterOperatorFuncConfigs",
+   "sha1": "b7a786b763cc8b0575fb1c17491148fd859eb500",
+   "originalBytes": 44
+  },
+  {
+   "class": "H0",
+   "name": "unregisterOperatorFuncConfigs",
+   "use": "wsUnregisterOperatorFuncConfigs",
+   "sha1": "4e0bc90047e1a91b4ae6782444786608927946e2",
+   "originalBytes": 47
+  },
+  {
+   "class": "H0",
+   "name": "clearLayout",
+   "use": "wsClearLayout",
+   "sha1": "99bcc0d81a933c53537ab17e0008ebae092c27f5",
+   "originalBytes": 811
+  },
+  {
+   "class": "H0",
+   "name": "createLeafBySplit",
+   "use": "wsCreateLeafBySplit",
+   "sha1": "3dac4fd7d0427356f9cbd3a39e8dde6c8055b9fb",
+   "originalBytes": 94
+  },
+  {
+   "class": "H0",
+   "name": "deserializeLayout",
+   "use": "wsDeserializeLayout",
+   "sha1": "f5ff7e8554d41b183d337841211bf6557a88eeed",
+   "originalBytes": 2270
+  },
+  {
+   "class": "H0",
+   "name": "focusLeaf",
+   "use": "wsFocusLeaf",
+   "sha1": "f5faf8dbcf3e959147536e407670b6eb04ad6da9",
+   "originalBytes": 296
+  },
+  {
+   "class": "H0",
+   "name": "getAdjacentLeafInDirection",
+   "use": "wsGetAdjacentLeafInDirection",
+   "sha1": "a5d72a7003bbf75420d653ff506cd4605832490b",
+   "originalBytes": 1051
+  },
+  {
+   "class": "H0",
+   "name": "getLayout",
+   "use": "wsGetLayout",
+   "sha1": "29f293cf8ffb78d3719b75cc3dcc79e4aeeadef7",
+   "originalBytes": 299
+  },
+  {
+   "class": "H0",
+   "name": "getLeavesOfType",
+   "use": "wsGetLeavesOfType",
+   "sha1": "c2bba0eb0162a95436f3c8464e64d4bde335056f",
+   "originalBytes": 104
+  },
+  {
+   "class": "H0",
+   "name": "handleExternalLinkContextMenu",
+   "use": "wsHandleExternalLinkContextMenu",
+   "sha1": "eba7410d257349cde0213dfc4f321136958f66ef",
+   "originalBytes": 437
+  },
+  {
+   "class": "H0",
+   "name": "handleLinkContextMenu",
+   "use": "wsHandleLinkContextMenu",
+   "sha1": "901a000ae1dc34c702a3d98f5b0232b1f04c6a3a",
+   "originalBytes": 1282
+  },
+  {
+   "class": "H0",
+   "name": "loadLayout",
+   "use": "wsLoadLayout",
+   "sha1": "1a014728f4aa970570ab4fee0bcc6fc133eaa5b3",
+   "originalBytes": 1437
+  },
+  {
+   "class": "H0",
+   "name": "onDragLeaf",
+   "use": "wsOnDragLeaf",
+   "sha1": "3e837a0e960da96a0dbe15132f68501044ebccc7",
+   "originalBytes": 5706
+  },
+  {
+   "class": "H0",
+   "name": "onStartLink",
+   "use": "wsOnStartLink",
+   "sha1": "2cf82884cd757e85458211dbebf756ece725bf74",
+   "originalBytes": 674
+  },
+  {
+   "class": "H0",
+   "name": "openPopout",
+   "use": "wsOpenPopout",
+   "sha1": "94a646a38513190b5961b8f7a36bad94b38d79fe",
+   "originalBytes": 89
+  },
+  {
+   "class": "H0",
+   "name": "openPopoutLeaf",
+   "use": "wsOpenPopoutLeaf",
+   "sha1": "29d92da3b94959ae6226f10c44fea700286c691d",
+   "originalBytes": 104
+  },
+  {
+   "class": "H0",
+   "name": "saveLayout",
+   "use": "wsSaveLayout",
+   "sha1": "01ac6739c3a410a9154699b7cc3be4ffe7c86492",
+   "originalBytes": 441
+  },
+  {
+   "class": "H0",
+   "name": "setActiveLeaf",
+   "use": "wsSetActiveLeaf",
+   "sha1": "0b9129f77c894af880781e34b629761d44bf7d3f",
+   "originalBytes": 823
+  },
+  {
+   "class": "H0",
+   "name": "setLayout",
+   "use": "wsSetLayout",
+   "sha1": "1cb80458f4de0e9f7291f467b15acd46d52f03a3",
+   "originalBytes": 2099
+  },
+  {
+   "class": "H0",
+   "name": "splitLeafOrActive",
+   "use": "wsSplitLeafOrActive",
+   "sha1": "64e2ab452d5265bb5fa4ecf2d4490bc26e1334ee",
+   "originalBytes": 75
+  },
+  {
+   "class": "H0",
+   "name": "unsetActiveEditor",
+   "use": "wsUnsetActiveEditor",
+   "sha1": "d8692572d939b2140db877e0ca8b4907002aa9f4",
+   "originalBytes": 65
+  },
+  {
+   "class": "H0",
+   "name": "updateFrameless",
+   "use": "wsUpdateFrameless",
+   "sha1": "d03525b2abc6825767628e25bd8af14fc7e81e6a",
+   "originalBytes": 2686
+  },
+  {
+   "class": "H0",
+   "name": "updateLayout",
+   "use": "wsUpdateLayout",
+   "sha1": "69eefec194c773fe98ce3cdeb0ef76c9ca31cc87",
+   "originalBytes": 1275
+  },
+  {
+   "class": "Tte",
+   "name": "nextFrame",
+   "use": "appNextFrame",
+   "sha1": "0ca0de2dbaff007dfc80bb0e82fcd4f8e2abee98",
+   "originalBytes": 142
+  },
+  {
+   "class": "Tte",
+   "name": "onNextFrame",
+   "use": "appOnNextFrame",
+   "sha1": "284b1f241b1697fd8658ac32c7fc737fe28652b0",
+   "originalBytes": 133
+  },
+  {
+   "class": "Tte",
+   "name": "nextFrameOnceCallback",
+   "use": "appNextFrameOnceCallback",
+   "sha1": "b6138093ba65c88b8573b722e39f5a084c8a6e3d",
+   "originalBytes": 95
+  },
+  {
+   "class": "Tte",
+   "name": "disableCssTransition",
+   "use": "appDisableCssTransition",
+   "sha1": "1f24c0eac4784d7db041825aec598059859bbdaa",
+   "originalBytes": 61
+  },
+  {
+   "class": "Tte",
+   "name": "enableCssTransition",
+   "use": "appEnableCssTransition",
+   "sha1": "332a58e1145abdadc52b3456fbc8fa12c62a88a4",
+   "originalBytes": 64
+  },
+  {
+   "class": "Tte",
+   "name": "getAppTitle",
+   "use": "appGetAppTitle",
+   "sha1": "12caac8ba6c78d73483ccdf670dca62d0f67813d",
+   "originalBytes": 51
+  },
+  {
+   "class": "Tte",
+   "name": "getWebviewPartition",
+   "use": "appGetWebviewPartition",
+   "sha1": "ce3091d7a9fd481157c9b1cd501905abb97e25c0",
+   "originalBytes": 45
+  },
+  {
+   "class": "Tte",
+   "name": "fixFileLinks",
+   "use": "appFixFileLinks",
+   "sha1": "e6c2dc4d37b7336b85bfe427dd8532866e6c13f2",
+   "originalBytes": 415
+  },
+  {
+   "class": "Tte",
+   "name": "getTheme",
+   "use": "appGetTheme",
+   "sha1": "96841f3b83ef157b01394b8cc29d20970713a66c",
+   "originalBytes": 67
+  },
+  {
+   "class": "Tte",
+   "name": "isDarkMode",
+   "use": "appIsDarkMode",
+   "sha1": "9784e6cf8abcffb0e04693a38839291886aa4494",
+   "originalBytes": 46
+  },
+  {
+   "class": "Tte",
+   "name": "changeTheme",
+   "use": "appChangeTheme",
+   "sha1": "ce402233502387ff14403c6a15a8e84eeff8dc16",
+   "originalBytes": 142
+  },
+  {
+   "class": "Tte",
+   "name": "updateTheme",
+   "use": "appUpdateTheme",
+   "sha1": "535d0c86c14efc3549c4319f15aa086c55fc4d75",
+   "originalBytes": 471
+  },
+  {
+   "class": "Tte",
+   "name": "updateMobileFrameTheme",
+   "use": "appUpdateMobileFrameTheme",
+   "sha1": "a5d9b3ebaf02dce54db84f94ed739d10513dd4e1",
+   "originalBytes": 389
+  },
+  {
+   "class": "Tte",
+   "name": "updateInlineTitleDisplay",
+   "use": "appUpdateInlineTitleDisplay",
+   "sha1": "dd7d00e5ad71e2b5c90986374e94994407d3a8e3",
+   "originalBytes": 98
+  },
+  {
+   "class": "Tte",
+   "name": "updateFloatingNavigationDisplay",
+   "use": "appUpdateFloatingNavigationDisplay",
+   "sha1": "d40f5102f8fd86426a5d2250de9361dc57de576d",
+   "originalBytes": 107
+  },
+  {
+   "class": "Tte",
+   "name": "updateAutoFullScreenDisplay",
+   "use": "appUpdateAutoFullScreenDisplay",
+   "sha1": "40d4c355c5e1db28bcc70eac11d9224093eeaa96",
+   "originalBytes": 96
+  },
+  {
+   "class": "Tte",
+   "name": "updateViewHeaderDisplay",
+   "use": "appUpdateViewHeaderDisplay",
+   "sha1": "1b642d24bb8822189847cb9cfeee2c36fa297916",
+   "originalBytes": 96
+  },
+  {
+   "class": "Tte",
+   "name": "updateRibbonDisplay",
+   "use": "appUpdateRibbonDisplay",
+   "sha1": "b876791a1d54c934a57417942f2ed780d9d9297e",
+   "originalBytes": 87
+  },
+  {
+   "class": "Tte",
+   "name": "updateFontFamily",
+   "use": "appUpdateFontFamily",
+   "sha1": "072c0c27b68a4a145a1c68987b12d94fb584a662",
+   "originalBytes": 533
+  },
+  {
+   "class": "Tte",
+   "name": "updateFontSize",
+   "use": "appUpdateFontSize",
+   "sha1": "ba9c4e70501e0a2a59305ec19c4cdd16f13f9a58",
+   "originalBytes": 257
+  },
+  {
+   "class": "Tte",
+   "name": "updateUseNativeMenu",
+   "use": "appUpdateUseNativeMenu",
+   "sha1": "72019b929157797aa941c15f8be3fa40881ef608",
+   "originalBytes": 101
+  },
+  {
+   "class": "Tte",
+   "name": "updateTabSize",
+   "use": "appUpdateTabSize",
+   "sha1": "1ca38b83cba76f5de1092afb0a4b360e87d8b326",
+   "originalBytes": 108
+  },
+  {
+   "class": "Tte",
+   "name": "showReleaseNotes",
+   "use": "appShowReleaseNotes",
+   "sha1": "6f9b69888ac94b3c542008830b3ba57b6ba4e615",
+   "originalBytes": 98
+  },
+  {
+   "class": "Tte",
+   "name": "updateAccentColor",
+   "use": "appUpdateAccentColor",
+   "sha1": "1fe754fc643ff1247352c01371c5cffa3c62d138",
+   "originalBytes": 76
+  },
+  {
+   "class": "Tte",
+   "name": "getAccentColor",
+   "use": "appGetAccentColor",
+   "sha1": "ccba17ff8e831dfb5170a3cd50bfaf23562b5dbd",
+   "originalBytes": 365
+  },
+  {
+   "class": "Tte",
+   "name": "setAccentColor",
+   "use": "appSetAccentColor",
+   "sha1": "b6acf58971908ff3a604bbd344aa4f8bd8a55b40",
+   "originalBytes": 686
+  },
+  {
+   "class": "Tte",
+   "name": "garbleText",
+   "use": "appGarbleText",
+   "sha1": "18f5d90a772f20ab9a4e3bfe87f00aba9f25626c",
+   "originalBytes": 63
+  },
+  {
+   "class": "Tte",
+   "name": "saveAttachment",
+   "use": "appSaveAttachment",
+   "sha1": "69cc564818f174f21fc1e7bb60113c9175285be2",
+   "originalBytes": 299
+  },
+  {
+   "class": "Tte",
+   "name": "openVaultChooser",
+   "use": "appOpenVaultChooser",
+   "sha1": "92c5c8162333a1f8a4a326dec7b9e95caf2e4484",
+   "originalBytes": 216
+  },
+  {
+   "class": "Tte",
+   "name": "openHelp",
+   "use": "appOpenHelp",
+   "sha1": "be0bb5af2044b8d343c9eb8f6e8220ee5aff9906",
+   "originalBytes": 146
+  },
+  {
+   "class": "Tte",
+   "name": "runOpeningBehavior",
+   "use": "appRunOpeningBehavior",
+   "sha1": "41807179a1fdfcb5a5b51bc99c368c97a3643678",
+   "originalBytes": 814
+  },
+  {
+   "class": "Tte",
+   "name": "openWithDefaultApp",
+   "use": "appOpenWithDefaultApp",
+   "sha1": "84dc7611276baec690c49c3aa194713d79629368",
+   "originalBytes": 479
+  },
+  {
+   "class": "Tte",
+   "name": "showInFolder",
+   "use": "appShowInFolder",
+   "sha1": "4c303a5f8b4e3e4f74bb02daf695420e2283da8d",
+   "originalBytes": 309
+  },
+  {
+   "class": "Tte",
+   "name": "getObsidianUrl",
+   "use": "appGetObsidianUrl",
+   "sha1": "991360dd0d6b1a4de3b5efbb7c2ded531c71b0c4",
+   "originalBytes": 136
+  },
+  {
+   "class": "Tte",
+   "name": "copyObsidianUrl",
+   "use": "appCopyObsidianUrl",
+   "sha1": "f45feb8fee241f1498092101c50b5faf1c950884",
+   "originalBytes": 81
+  },
+  {
+   "class": "Tte",
+   "name": "registerQuitHook",
+   "use": "appRegisterQuitHook",
+   "sha1": "912397d95a206a0020cde0614922abd99d56c4f9",
+   "originalBytes": 422
+  },
+  {
+   "class": "Tte",
+   "name": "loadLocalStorage",
+   "use": "appLoadLocalStorage",
+   "sha1": "1621c497f1b0a5c0c6a7374c70778142c4ed23f2",
+   "originalBytes": 109
+  },
+  {
+   "class": "Tte",
+   "name": "saveLocalStorage",
+   "use": "appSaveLocalStorage",
+   "sha1": "818929214bb04fe184fb4492cfb9c1ea6698c7b8",
+   "originalBytes": 130
+  },
+  {
+   "class": "Tte",
+   "name": "on",
+   "use": "appOn",
+   "sha1": "c5b41789931b82e69bf7839857e8257e2e8b3bb9",
+   "originalBytes": 12
+  },
+  {
+   "class": "Tte",
+   "name": "setTheme",
+   "use": "appSetTheme",
+   "sha1": "0c12df3e8472253e8d8cfbc2846c5bc7c0c7e561",
+   "originalBytes": 71
+  },
+  {
+   "class": "Tte",
+   "name": "emulateMobile",
+   "use": "appEmulateMobile",
+   "sha1": "67777c72407c975e74481487bd4d8eac9fae417d",
+   "originalBytes": 84
+  },
+  {
+   "class": "Tte",
+   "name": "debugMode",
+   "use": "appDebugMode",
+   "sha1": "c4a463fba9cd15f8d8c8e4050160eeeb830d38a0",
+   "originalBytes": 133
+  },
+  {
+   "class": "Tte",
+   "name": "getSpellcheckLanguages",
+   "use": "appGetSpellcheckLanguages",
+   "sha1": "6cb60b592b2c98c4575de27f09248b6b5f62f4e3",
+   "originalBytes": 303
+  },
+  {
+   "class": "Tte",
+   "name": "setSpellcheckLanguages",
+   "use": "appSetSpellcheckLanguages",
+   "sha1": "c5309e735abeab00ae597263d117b7fe59e84572",
+   "originalBytes": 254
+  },
+  {
+   "class": "Tte",
+   "name": "isVimEnabled",
+   "use": "appIsVimEnabled",
+   "sha1": "a4f4d99622a989f050c44c7e68268f19b409856d",
+   "originalBytes": 92
+  },
+  {
+   "class": "Tte",
+   "name": "onConfigChanged",
+   "use": "appOnConfigChanged",
+   "sha1": "f3be59aef94e280fdf876746ed2d475d500879a6",
+   "originalBytes": 803
+  },
+  {
+   "class": "Tte",
+   "name": "importAttachments",
+   "use": "appImportAttachments",
+   "sha1": "1879e2e27071d8aab100b7ac80410eadccfbd9db",
+   "originalBytes": 701
+  },
+  {
+   "class": "Tte",
+   "name": "initializeWithAdapter",
+   "use": "appInitializeWithAdapter",
+   "sha1": "6f93b737ab62a43f8644214dd3e6c8bc2924c131",
+   "originalBytes": 10700
+  },
+  {
+   "class": "Tte",
+   "name": "registerCommands",
+   "use": "appRegisterCommands",
+   "sha1": "4a2a8facfe695db7a0f28d819e2d26a14cabbf15",
+   "originalBytes": 26549
+  }
+ ],
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD",
+ "patches": [
+  {
+   "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
+   "find": "P5=function(e){function t(){var t=null!==e&&e.apply(this,arguments)||this;return t.filePath=\"\"",
+   "replace": "P5=function(e){function t(){var t=Reflect.construct(e,arguments,this.constructor);return t.filePath=\"\""
+  }
+ ]
 }
