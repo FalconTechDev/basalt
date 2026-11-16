@@ -470,7 +470,7 @@ function s30WebviewerClasses(host) {
   };
   WebviewerView.prototype.getReaderModeContent = async function () {
     const res = await fetch("/lib/readability.js");
-    if (!res.ok) throw new H.Notice(s30WvI18n().msgErrorExtractingContent());
+    if (!res.ok) { new H.Notice(s30WvI18n().msgErrorExtractingContent()); return; }
     const src = await res.text();
     await this.webview.executeJavaScript(src);
     const expr = "new Readability(document.cloneNode(true)).parse()";
@@ -478,18 +478,21 @@ function s30WebviewerClasses(host) {
     try {
       article = await this.webview.executeJavaScript(expr);
     } catch (e) {
-      throw new H.Notice(s30WvI18n().msgErrorFindingContent());
+      new H.Notice(s30WvI18n().msgErrorFindingContent());
+      return;
     }
     if (!article || !article.content || "string" != typeof article.content) {
-      throw new H.Notice(s30WvI18n().msgErrorFindingContent());
+      new H.Notice(s30WvI18n().msgErrorFindingContent());
+      return;
     }
     let title = article.title || article.siteName || "Untitled";
     if ("string" != typeof title) {
       console.error("Unexpected value when extracting site title");
-      throw new H.Notice(s30WvI18n().msgErrorFindingContent());
+      new H.Notice(s30WvI18n().msgErrorFindingContent());
+      return;
     }
-    title = s30We().VJ_safe ? s30We().VJ_safe(title) : s30We().s30VJ(title);
-    const md = s30We().yP(s30We().xL(article.content));
+    title = s30We().s30VJ(title);
+    const md = H.htmlToMarkdown(H.sanitizeHtml(article.content));
     return { md: md, title: title };
   };
   WebviewerView.prototype.displayReaderView = async function () {
@@ -653,14 +656,12 @@ function s30WebviewerClasses(host) {
       label: s30WvI18n().actionSaveImage(),
       click: function () {
         return (async function () {
-          try {
-            const res = await s30We().s30hy(src);
-            let data = res.arrayBuffer;
-            let name = s30We().s30fu(res.headers["content-type"]) || s30We().su(src);
-            const path = await self.app.vault.getAvailablePathForAttachments(s30We().VJ_safe ? s30We().VJ_safe(s30We().s30ou(decodeURIComponent(name))) : s30We().s30VJ(s30We().s30ou(decodeURIComponent(name))), name, null);
-            self.app.vault.createBinary(path, data);
-            new H.Notice('Stored as "'.concat(path, '"'));
-          } catch (e) {}
+          const res = await s30We().s30hy(src);
+          const name = s30We().s30VJ(decodeURIComponent(s30We().ou(src)));
+          const ext = s30We().s30fu(res.headers["content-type"]) || s30We().su(src);
+          const path = await self.app.vault.getAvailablePathForAttachments(name, ext, null);
+          self.app.vault.createBinary(path, res.arrayBuffer);
+          new H.Notice('Stored as "'.concat(path, '"'));
         })();
       },
     }, {
