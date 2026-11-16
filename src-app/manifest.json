@@ -2534,6 +2534,102 @@
    "orig": "DC",
    "use": "defineICloudUnsupportedScreen",
    "originalBytes": 356
+  },
+  {
+   "orig": "iO",
+   "use": "defineS06ValueItem"
+  },
+  {
+   "orig": "LO",
+   "use": "defineS06UnknownValue"
+  },
+  {
+   "orig": "mO",
+   "use": "defineS06CheckboxValue"
+  },
+  {
+   "orig": "dO",
+   "use": "defineS06FileValue"
+  },
+  {
+   "orig": "fO",
+   "use": "defineS06FolderValue"
+  },
+  {
+   "orig": "uO",
+   "use": "defineS06DateValue"
+  },
+  {
+   "orig": "pO",
+   "use": "defineS06DateTimeValue"
+  },
+  {
+   "orig": "hO",
+   "use": "defineS06DailyNoteDateValue"
+  },
+  {
+   "orig": "SO",
+   "use": "defineS06NumberValue"
+  },
+  {
+   "orig": "OO",
+   "use": "defineS06TagValueSuggest"
+  },
+  {
+   "orig": "DI",
+   "use": "defineS06FilteredFileSuggest"
+  },
+  {
+   "orig": "TI",
+   "use": "defineS06MarkdownFileSuggest"
+  },
+  {
+   "orig": "PI",
+   "use": "defineS06FolderSuggest"
+  },
+  {
+   "orig": "FO",
+   "use": "defineS06ChangeTypeModal"
+  },
+  {
+   "orig": "aO",
+   "use": "defineS06TextValue",
+   "originalBytes": 1721
+  },
+  {
+   "orig": "sO",
+   "use": "defineS06MultiTextValue",
+   "originalBytes": 1211
+  },
+  {
+   "orig": "lO",
+   "use": "defineS06TagsValue",
+   "originalBytes": 1294
+  },
+  {
+   "orig": "cO",
+   "use": "defineS06AliasesValue",
+   "originalBytes": 767
+  },
+  {
+   "orig": "gO",
+   "use": "defineS06PropertyKeyValue",
+   "originalBytes": 384
+  },
+  {
+   "orig": "vO",
+   "use": "defineS06TypeCombobox",
+   "originalBytes": 303
+  },
+  {
+   "orig": "XI",
+   "use": "defineS06MultiSelect",
+   "originalBytes": 6415
+  },
+  {
+   "orig": "MI",
+   "use": "defineS06Combobox",
+   "originalBytes": 5512
   }
  ],
  "host": {
@@ -3250,6 +3346,78 @@
    "expr": "__basaltOwn.s06ComparePathLength",
    "sha1": "10a54413e282244fd112dfc25b920d11c1d4ffd8",
    "originalBytes": 49
+  },
+  {
+   "orig": "rO",
+   "expr": "__basaltOwn.s06PropertyOptionText(__basaltHost)",
+   "sha1": "83eaca695d398d5b6c18b4e52882e3a11faa8aef",
+   "originalBytes": 297
+  },
+  {
+   "orig": "yO",
+   "expr": "__basaltOwn.s06PropertyOptionPropertyName(__basaltHost)",
+   "sha1": "0ae89a6264b979b4e326f27d58bfcd169cd3d920",
+   "originalBytes": 188
+  },
+  {
+   "orig": "bO",
+   "expr": "__basaltOwn.s06PropertyOptionAliases(__basaltHost)",
+   "sha1": "4a9da8b69f50194f8b63a124fc0e18a78f5e9462",
+   "originalBytes": 208
+  },
+  {
+   "orig": "wO",
+   "expr": "__basaltOwn.s06PropertyOptionTags(__basaltHost)",
+   "sha1": "17c630f325fd65070c00896a3d1ea42024901054",
+   "originalBytes": 196
+  },
+  {
+   "orig": "kO",
+   "expr": "__basaltOwn.s06PropertyOptionFolder(__basaltHost)",
+   "sha1": "14da60069a39869bac0ae942ede7432d578d3d8c",
+   "originalBytes": 182
+  },
+  {
+   "orig": "CO",
+   "expr": "__basaltOwn.s06PropertyOptionFile(__basaltHost)",
+   "sha1": "f398196acf117b1fecaa5dfd28506a5a39bf5c9c",
+   "originalBytes": 176
+  },
+  {
+   "orig": "EO",
+   "expr": "__basaltOwn.s06PropertyOptionDate(__basaltHost)",
+   "sha1": "858d20b1ee776dd52a7ef5793f854dc17be96792",
+   "originalBytes": 179
+  },
+  {
+   "orig": "MO",
+   "expr": "__basaltOwn.s06PropertyOptionDatetime(__basaltHost)",
+   "sha1": "b484cded7c6d343dedfbb9fdd55d99d2c4cd4985",
+   "originalBytes": 184
+  },
+  {
+   "orig": "xO",
+   "expr": "__basaltOwn.s06PropertyOptionNumber(__basaltHost)",
+   "sha1": "6a0d48865c6ad15ef4677f6cf0a24932302d1ee3",
+   "originalBytes": 167
+  },
+  {
+   "orig": "TO",
+   "expr": "__basaltOwn.s06PropertyOptionCheckbox(__basaltHost)",
+   "sha1": "09f3acad7084b0653758c042ef24f59623d2933e",
+   "originalBytes": 177
+  },
+  {
+   "orig": "PO",
+   "expr": "__basaltOwn.s06PropertyOptionMultitext(__basaltHost)",
+   "sha1": "aa4eb4f9b595848af59fa333d3e879ad85410311",
+   "originalBytes": 184
+  },
+  {
+   "orig": "IO",
+   "expr": "__basaltOwn.s06PropertyOptionUnknownDescriptor(__basaltHost)",
+   "sha1": "99baa6211fe0adbc985770ee7ebd377141554f7c",
+   "originalBytes": 157
   }
  ],
  "methods": [
@@ -4255,7 +4423,7 @@
    "originalBytes": 26549
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,re",
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,_g,Pl,Ll",
  "patches": [
   {
    "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",

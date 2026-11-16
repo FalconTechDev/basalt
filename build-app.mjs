@@ -181,7 +181,12 @@ export function applyOwn(srcText, wasm, tmpPath) {
   }
 
   // 2) the block with the own modules
-  const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind}}));` : "";
+  // envBind names are exposed through getters so a call to env() only resolves the
+  // names actually read — several bound names are declared later in the bundle and
+  // would throw a TDZ ReferenceError if the whole object were evaluated eagerly.
+  const bind = manifest.envBind
+    ? `__basaltOwn.bindEnv(()=>({${manifest.envBind.split(",").map((n) => { const [k, v] = n.split(":"); return `get ${k}(){return ${v || k}}`; }).join(",")}}));`
+    : "";
   const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");
   const block = `${BEGIN}${code}var __basaltHost={${host}};${bind}${END}`;
   const bi = out.indexOf(BEGIN);
