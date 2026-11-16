@@ -2899,6 +2899,11 @@
       "orig": "YG",
       "use": "s08FormulaSuggester",
       "originalBytes": 3536
+    },
+    {
+      "orig": "Tte",
+      "use": "s17CreateApp",
+      "originalBytes": 9820
     }
   ],
   "host": {
@@ -3407,6 +3412,45 @@
     "createEl": "createEl",
     "createFragment": "createFragment",
     "FolderPathSuggestTab": "AI",
+    "s16Em": "Em",
+    "s16ApiVersion": "gte",
+    "s16TreeCollapsible": "QL",
+    "s16TreePusher": "JH",
+    "s16NavTooltipDelay": "lv",
+    "s16TagPaneView": "bee",
+    "s16UniqueNoteSettingsTab": "xee",
+    "s16ManageWorkspacesModal": "Oee",
+    "s16WorkspaceSuggestModal": "Fee",
+    "s16QuickActionModal": "dte",
+    "s16CommandSuggest": "l8",
+    "s16FontSuggest": "qee",
+    "s16DevBuild": "Hf",
+    "s16License": "Hw",
+    "s16ReviewApi": "Om",
+    "s16TabAbout": "N7",
+    "s16TabEditor": "rte",
+    "s16TabFiles": "ute",
+    "s16TabAppearance": "tte",
+    "s16TabHotkeys": "C0",
+    "s16TabPlugins": "mte",
+    "s16TabCommunity": "ite",
+    "s16MobileTab": "fte",
+    "s16FeedbackBanner": "lte",
+    "s16SlidePanes": "Dl",
+    "s04CapacitorCore": "km",
+    "s17EmbedRegistry": "aJ",
+    "s17ViewRegistry": "p0",
+    "s17Commands": "Y6",
+    "s17HotkeyManager": "zb",
+    "s17DragManager": "xP",
+    "s17AppDom": "wte",
+    "s17CustomCss": "Ib",
+    "s17ShareReceiver": "t4",
+    "s17RenderContext": "vW",
+    "s17Cli": "CA",
+    "s17SplashScreen": "Am",
+    "s17SetBasaltDebug": "(v)=>(iD=v)",
+    "s17SetTouchCancel": "(fn)=>(Oc=fn)",
     "s10DiffMatchPatch": "dA",
     "s10DiffOp": "XD",
     "s10IsEditable": "yg",
@@ -3499,33 +3543,7 @@
     "wW": "wW",
     "xL": "xL",
     "xW": "xW",
-    "zV": "zV",
-    "s16Em": "Em",
-    "s16ApiVersion": "gte",
-    "s16TreeCollapsible": "QL",
-    "s16TreePusher": "JH",
-    "s16NavTooltipDelay": "lv",
-    "s16TagPaneView": "bee",
-    "s16UniqueNoteSettingsTab": "xee",
-    "s16ManageWorkspacesModal": "Oee",
-    "s16WorkspaceSuggestModal": "Fee",
-    "s16QuickActionModal": "dte",
-    "s16CommandSuggest": "l8",
-    "s16FontSuggest": "qee",
-    "s16DevBuild": "Hf",
-    "s16License": "Hw",
-    "s16ReviewApi": "Om",
-    "s16TabAbout": "N7",
-    "s16TabEditor": "rte",
-    "s16TabFiles": "ute",
-    "s16TabAppearance": "tte",
-    "s16TabHotkeys": "C0",
-    "s16TabPlugins": "mte",
-    "s16TabCommunity": "ite",
-    "s16MobileTab": "fte",
-    "s16FeedbackBanner": "lte",
-    "s16SlidePanes": "Dl",
-    "s04CapacitorCore": "km"
+    "zV": "zV"
   },
   "declarators": [
     {
@@ -4275,6 +4293,30 @@
       "expr": "__basaltOwn.s10LineEndFactory(__basaltHost)",
       "sha1": "95b683fa91a0430ac0269f2291efc3a916badc57",
       "originalBytes": 402
+    },
+    {
+      "orig": "Ete",
+      "expr": "__basaltOwn.s17IframeAllowlist",
+      "sha1": "d22f29d1915d4f3c6ce41ef2169f5871f6b5f5a1",
+      "originalBytes": 134
+    },
+    {
+      "orig": "Mte",
+      "expr": "__basaltOwn.s17IframeSandbox",
+      "sha1": "456f329d638150bcd4e3283093a5f7640d4f8e7a",
+      "originalBytes": 120
+    },
+    {
+      "orig": "Ste",
+      "expr": "__basaltOwn.s17EmulateMobileKey",
+      "sha1": "21fa85ed5da327380abac809d8bd782a21f91069",
+      "originalBytes": 15
+    },
+    {
+      "orig": "xte",
+      "expr": "__basaltOwn.s17DebugModeKey",
+      "sha1": "f3b0239d8cbb94110d575ca2a4dc902631620e41",
+      "originalBytes": 11
     }
   ],
   "methods": [
