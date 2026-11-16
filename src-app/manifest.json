@@ -1374,6 +1374,11 @@
   {
    "orig": "ED",
    "use": "s05MobileVaultList"
+  },
+  {
+   "orig": "fT",
+   "use": "s05ParseCache",
+   "originalBytes": 2766
   }
  ],
  "classes": [
@@ -2528,6 +2533,21 @@
   {
    "orig": "TD",
    "use": "defineMobileVaultSelect"
+  },
+  {
+   "orig": "BD",
+   "use": "defineTitlebar",
+   "originalBytes": 2964
+  },
+  {
+   "orig": "_D",
+   "use": "defineFilesDrawer",
+   "originalBytes": 2025
+  },
+  {
+   "orig": "GD",
+   "use": "defineInfoDrawer",
+   "originalBytes": 1425
   }
  ],
  "host": {
@@ -3173,6 +3193,12 @@
    "expr": "__basaltOwn.s05CommunityPluginStats",
    "sha1": "869711740f0bcd67356d75a2c2eb304c67d63cc1",
    "originalBytes": 44
+  },
+  {
+   "orig": "DD",
+   "expr": "__basaltOwn.s05VaultProfile(__basaltHost)",
+   "sha1": "839a294d0209d71fefa024a243b235687605a26f",
+   "originalBytes": 2427
   }
  ],
  "methods": [
@@ -4178,7 +4204,7 @@
    "originalBytes": 26549
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb",
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv",
  "patches": [
   {
    "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
