@@ -7,7 +7,7 @@
 // "register-cli") exactly as before.
 
 import { inherit } from "./inherit.js";
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 import { account, acctUserInfo, acctSignOut, acctValidateBusinessKey } from "./account.js";
 
 const aboutEnv = () => hostEnv();

@@ -2,7 +2,7 @@
 // update/install/uninstall actions, search and the automatic-update-check toggle. The plugin
 // browser (M0) and donate dialog (S0) are still the inherited classes, reached through bindEnv.
 import { inherit } from "./inherit.js";
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 import { containsAllWords, renderMatches } from "./search-simple.js";
 
 /** Adds `cls` to `el` while `fn` runs (the inherited "is-loading" / "mod-loading" overlays). */

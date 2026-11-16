@@ -3,7 +3,7 @@
 // font manager and ribbon dialogs are still inherited classes reached through bindEnv; the
 // icon-file decoding helpers below are own code.
 import { inherit } from "./inherit.js";
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 import { lastSegment, extensionOf } from "./path.js";
 import { ownBuffer, stringFromCodes, readInt32BE, readInt32LE } from "./misc.js";
 import { parseCommaList } from "./text.js";

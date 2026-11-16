@@ -2,7 +2,7 @@
 // spellcheck languages (Electron session), tab size and the Vim-mode confirmation flow.
 // The spellcheck dictionary dialog is included; the language-name table stays a host binding.
 import { inherit } from "./inherit.js";
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 import { stringCollator } from "./misc.js";
 
 export function defineSpellcheckDictionaryModal(host) {
