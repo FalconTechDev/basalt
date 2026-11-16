@@ -2320,6 +2320,38 @@
       "use": "s20ApplyLinkSuggestion",
       "host": true,
       "originalBytes": 1462
+    },
+    {
+      "orig": "b5",
+      "use": "s33ZIndexCompare",
+      "originalBytes": 42
+    },
+    {
+      "orig": "V5",
+      "use": "s33EdgeDirection",
+      "originalBytes": 213
+    },
+    {
+      "orig": "z5",
+      "use": "s33EdgeOutset",
+      "originalBytes": 142
+    },
+    {
+      "orig": "o8",
+      "use": "s33CanvasPreview",
+      "host": true,
+      "originalBytes": 910
+    },
+    {
+      "orig": "m8",
+      "use": "s33DailyNoteSuffix",
+      "originalBytes": 99
+    },
+    {
+      "orig": "g8",
+      "use": "s33ValidateDateFormat",
+      "host": true,
+      "originalBytes": 239
     }
   ],
   "classes": [
@@ -5060,6 +5092,66 @@
     {
       "orig": "X6",
       "use": "s31MobileNavbar"
+    },
+    {
+      "orig": "G5",
+      "use": "defineS33CanvasEdge",
+      "originalBytes": 8030
+    },
+    {
+      "orig": "P5",
+      "use": "defineS33CanvasFileNode",
+      "originalBytes": 7091
+    },
+    {
+      "orig": "R5",
+      "use": "defineS33CanvasGroupNode",
+      "originalBytes": 4310
+    },
+    {
+      "orig": "X5",
+      "use": "defineS33CanvasFileIndex",
+      "originalBytes": 1918
+    },
+    {
+      "orig": "a8",
+      "use": "defineS33CanvasEmbed",
+      "originalBytes": 853
+    },
+    {
+      "orig": "N8",
+      "use": "defineS33PathSuggest",
+      "originalBytes": 495
+    },
+    {
+      "orig": "r8",
+      "use": "defineS33CanvasView",
+      "originalBytes": 4070
+    },
+    {
+      "orig": "s8",
+      "use": "defineS33CanvasSettingsTab",
+      "originalBytes": 3259
+    },
+    {
+      "orig": "b8",
+      "use": "defineS33EditorStatusPlugin",
+      "originalBytes": 2350
+    },
+    {
+      "orig": "O8",
+      "use": "defineS33FileRecoveryPlugin",
+      "originalBytes": 8193
+    },
+    {
+      "orig": "F8",
+      "use": "defineS33RecoverySettingsTab",
+      "originalBytes": 1666
+    },
+    {
+      "orig": "R8",
+      "use": "defineS33RecoveryHistoryModal",
+      "originalBytes": 5098
     }
   ],
   "host": {
@@ -8163,6 +8255,120 @@
       "expr": "__basaltOwn.s20BidiMarks(__basaltHost)",
       "sha1": "4e08c7235577d9b96a4af054a714fce80684be14",
       "originalBytes": 117
+    },
+    {
+      "orig": "U5",
+      "expr": "__basaltOwn.s33EdgeEndRotation",
+      "sha1": "dd1b090c5c4c731c7fe4b94c7c36af9e95b4d6e8",
+      "originalBytes": 44
+    },
+    {
+      "orig": "W5",
+      "expr": "__basaltOwn.s33EdgeEndNone",
+      "sha1": "0bff1905a62874b4c14c4755e27adb3f8548d042",
+      "originalBytes": 6
+    },
+    {
+      "orig": "_5",
+      "expr": "__basaltOwn.s33EdgeEndArrow",
+      "sha1": "3fae4e538a641e310c345211a6eadec5230244a0",
+      "originalBytes": 7
+    },
+    {
+      "orig": "$5",
+      "expr": "__basaltOwn.s33CanvasViewType",
+      "sha1": "a45a640067b238c6ac8364a4f115c457e31c6e9f",
+      "originalBytes": 8
+    },
+    {
+      "orig": "Z5",
+      "expr": "__basaltOwn.s33CanvasExtension",
+      "sha1": "a45a640067b238c6ac8364a4f115c457e31c6e9f",
+      "originalBytes": 8
+    },
+    {
+      "orig": "d8",
+      "expr": "__basaltOwn.s33DefaultDateFormat",
+      "sha1": "75cfb5df5e81bdc9de577a6287f27a13d5bd61f5",
+      "originalBytes": 12
+    },
+    {
+      "orig": "L8",
+      "expr": "__basaltOwn.s33RecoveryDefaults",
+      "sha1": "b0c73f549ba090ea52f4ef696102da8dbad350a1",
+      "originalBytes": 30
+    },
+    {
+      "orig": "k5",
+      "expr": "__basaltOwn.s33InterfaceStrings()",
+      "sha1": "d2a102c51649bc1ad9fc621739e5aad2c089eb65",
+      "originalBytes": 12
+    },
+    {
+      "orig": "C5",
+      "expr": "__basaltOwn.s33CanvasStrings()",
+      "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
+      "originalBytes": 17
+    },
+    {
+      "orig": "B5",
+      "expr": "__basaltOwn.s33CanvasStrings()",
+      "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
+      "originalBytes": 17
+    },
+    {
+      "orig": "Y5",
+      "expr": "__basaltOwn.s33CanvasStrings()",
+      "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
+      "originalBytes": 17
+    },
+    {
+      "orig": "J5",
+      "expr": "__basaltOwn.s33CanvasStrings()",
+      "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
+      "originalBytes": 17
+    },
+    {
+      "orig": "f8",
+      "expr": "__basaltOwn.s33DailyNotesStrings()",
+      "sha1": "b7a393a5ba47ac1d023e0e27db944bac6c7a08b9",
+      "originalBytes": 21
+    },
+    {
+      "orig": "w8",
+      "expr": "__basaltOwn.s33FileExplorerStrings()",
+      "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
+      "originalBytes": 23
+    },
+    {
+      "orig": "A8",
+      "expr": "__basaltOwn.s33FileExplorerStrings()",
+      "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
+      "originalBytes": 23
+    },
+    {
+      "orig": "I8",
+      "expr": "__basaltOwn.s33FileRecoveryStrings()",
+      "sha1": "5046bf7b27becfc7c1cc703111d64e3cfc839477",
+      "originalBytes": 23
+    },
+    {
+      "orig": "x8",
+      "expr": "__basaltOwn.s33FileExplorerViewType",
+      "sha1": "9ef25e946b31fe4054ed7e931293d85254dfda1d",
+      "originalBytes": 15
+    },
+    {
+      "orig": "C8",
+      "expr": "__basaltOwn.s33NavFileEl",
+      "sha1": "c63753a159f9b323b9c54c10c273cb9d39d671c6",
+      "originalBytes": 183
+    },
+    {
+      "orig": "M8",
+      "expr": "__basaltOwn.s33NavFolderEl",
+      "sha1": "19e8fa166245d96b82eac7d0eff7590df79b6d07",
+      "originalBytes": 234
     }
   ],
   "methods": [
@@ -9168,7 +9374,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,Pl,Ll,s12cmDecoration:Vn,s12cmViewPlugin:ji,s12cmStateField:ke,s12cmStateEffect:We,s12cmFacet:me,s12cmEditorViewStatics:_o,s12cmRangeSet:lt,s12lezerTree:Nu,s12webpackRequire:n,s12capacitor:km,s12githubRaw:ty,s12reqObsidian:d,s12reqAutocomplete:l,s12reqCollab:h,s12reqCommands:a,s12reqLanguage:o,s12reqLint:p,s12reqSearch:s,s12reqState:e,s12reqView:t,s12reqLezerCommon:i,s12reqLezerLr:c,s12reqLezerHighlight:r,s12txHasEffect:VA,s12treePusherEl:JH,s12wikilinkPattern:fI,s12mdLinkPattern:pT,s12pathParentDir:By,s12sanitizeTitle:VJ,s12bookmarkUrlItem:R2,s12bookmarkEditModal:RJ,s12webviewerAddressBar:HJ,s12systemInfo:oD,s12graphOptions:TJ,s12svgIcon:T1,s12backlinksView:H6,s12defaults:it,s12widgetBase:FV,s12cmWidgetType:Rn,s12rangeSetBuilder:ct,s12measureIndent:_A,s12cmHighlightDecoField:xA,s12cmHighlightEffect:EA,s12rangeHasMatch:NA,s12rangeContainsMark:RA,s12cmStyleSpan:C6,s12embedChildBase:NV,s12fileSuggestBase:U2,s12syntaxClassProp:$d,s12isUrlLike:YC,s12mathReady:bz,s12renderMath:kz,s12recalcMath:xz,s12iframeEmbed:Pz,s12fetchBuffer:hy,s12mimeMap:du,s12headerLookup:qV,s12toBuffer:vu,s12nativeClipboard:Qf,s12pointerPos:Fl,s12dragPointer:Cg,s12pdfEmbed:YZ,s12basesEmbed:E$,s12imageFileEmbed:tJ,s12isImageDimension:zx,s12cmAnnotation:qe,s12applyIcon:tv,s12ariaTooltip:Mv,s12syntaxHighlight:Yz ,s12extMarkdown:jy,s12extCanvas:Uy,s12extImage:Vy,nF,iF,Iz,createEl,hT,Jl,Xz,eq,aP,_I,YI,d0,s29Require:n,s30Rn:Rn,s30FV:FV,s30Zx:zx,s30Fl:Fl,s30Cg:Cg,s30du:du,s30vu:vu,s30fu:fu,s30VJ:VJ,s30tJ:tJ,s30m6:m6,s30R2:R2,s30RJ:RJ,s30Qf:Qf,s30hy:hy,s30qV:qV,s30HJ:HJ,s30qJ:qJ,s30Pz:Pz,s30Az:Az,NV,FV,Rn,Vn,E$,YZ,sJ,tJ,d6,zx,JZ,Yz,pq,uq,bz,kz,xz,W2,hq,_A,_2,tp,VA,G2,EA,MA,K2,$2,$d,J2,SA,X2,Y2,Z2,a6,c6,ct,e6,i6,l6,s6,xA,NA,RA,Zd,AA,ji,H6,D,Gg",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,Pl,Ll,s12cmDecoration:Vn,s12cmViewPlugin:ji,s12cmStateField:ke,s12cmStateEffect:We,s12cmFacet:me,s12cmEditorViewStatics:_o,s12cmRangeSet:lt,s12lezerTree:Nu,s12webpackRequire:n,s12capacitor:km,s12githubRaw:ty,s12reqObsidian:d,s12reqAutocomplete:l,s12reqCollab:h,s12reqCommands:a,s12reqLanguage:o,s12reqLint:p,s12reqSearch:s,s12reqState:e,s12reqView:t,s12reqLezerCommon:i,s12reqLezerLr:c,s12reqLezerHighlight:r,s12txHasEffect:VA,s12treePusherEl:JH,s12wikilinkPattern:fI,s12mdLinkPattern:pT,s12pathParentDir:By,s12sanitizeTitle:VJ,s12bookmarkUrlItem:R2,s12bookmarkEditModal:RJ,s12webviewerAddressBar:HJ,s12systemInfo:oD,s12graphOptions:TJ,s12svgIcon:T1,s12backlinksView:H6,s12defaults:it,s12widgetBase:FV,s12cmWidgetType:Rn,s12rangeSetBuilder:ct,s12measureIndent:_A,s12cmHighlightDecoField:xA,s12cmHighlightEffect:EA,s12rangeHasMatch:NA,s12rangeContainsMark:RA,s12cmStyleSpan:C6,s12embedChildBase:NV,s12fileSuggestBase:U2,s12syntaxClassProp:$d,s12isUrlLike:YC,s12mathReady:bz,s12renderMath:kz,s12recalcMath:xz,s12iframeEmbed:Pz,s12fetchBuffer:hy,s12mimeMap:du,s12headerLookup:qV,s12toBuffer:vu,s12nativeClipboard:Qf,s12pointerPos:Fl,s12dragPointer:Cg,s12pdfEmbed:YZ,s12basesEmbed:E$,s12imageFileEmbed:tJ,s12isImageDimension:zx,s12cmAnnotation:qe,s12applyIcon:tv,s12ariaTooltip:Mv,s12syntaxHighlight:Yz ,s12extMarkdown:jy,s12extCanvas:Uy,s12extImage:Vy,nF,iF,Iz,createEl,hT,Jl,Xz,eq,aP,_I,YI,d0,s29Require:n,s30Rn:Rn,s30FV:FV,s30Zx:zx,s30Fl:Fl,s30Cg:Cg,s30du:du,s30vu:vu,s30fu:fu,s30VJ:VJ,s30tJ:tJ,s30m6:m6,s30R2:R2,s30RJ:RJ,s30Qf:Qf,s30hy:hy,s30qV:qV,s30HJ:HJ,s30qJ:qJ,s30Pz:Pz,s30Az:Az,NV,FV,Rn,Vn,E$,YZ,sJ,tJ,d6,zx,JZ,Yz,pq,uq,bz,kz,xz,W2,hq,_A,_2,tp,VA,G2,EA,MA,K2,$2,$d,J2,SA,X2,Y2,Z2,a6,c6,ct,e6,i6,l6,s6,xA,NA,RA,Zd,AA,ji,H6,D,Gg,Zw,y5,eJ,RI,Tc,lg,a8,N8,L8,F8,R8",
   "patches": [
     {
       "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
