@@ -3994,6 +3994,10 @@
       "orig": "x9",
       "use": "defineSlidesView",
       "originalBytes": 2468
+    },
+    {
+      "orig": "y5",
+      "use": "s32CanvasView"
     }
   ],
   "host": {
@@ -4701,7 +4705,30 @@
     "wW": "wW",
     "xL": "xL",
     "xW": "xW",
-    "zV": "zV"
+    "zV": "zV",
+    "s32UndoStack": "l5",
+    "s32PointIndex": "v5",
+    "s32BBoxItemIndex": "g5",
+    "s32Multimap": "hc",
+    "s32TextNode": "I5",
+    "s32LinkNode": "F5",
+    "s32DummyNode": "T5",
+    "s32InteractionLayer": "M5",
+    "s32CanvasSelection": "z3",
+    "s32CanvasMenu": "U3",
+    "s32MediaSuggest": "T3",
+    "s32UrlModal": "w5",
+    "s32CanvasHelp": "h3",
+    "s32EdgeSide": "V5",
+    "s32YouTubeRe": "Tz",
+    "s32EdgeEndNone": "W5",
+    "s32EdgeEndArrow": "_5",
+    "s32IsHttpUrl": "Xc",
+    "s32BufferFrom": "vu",
+    "s32ShowInFolder": "Yf",
+    "s32Scrollable": "ug",
+    "s32LongPressFx": "Il",
+    "s32SwallowEvent": "Eg"
   },
   "declarators": [
     {
