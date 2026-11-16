@@ -2674,6 +2674,10 @@
     {
       "orig": "z3",
       "use": "defineS13CanvasSelection"
+    },
+    {
+      "orig": "U3",
+      "use": "defineS13CanvasMenu"
     }
   ],
   "host": {
@@ -3227,7 +3231,11 @@
     "s13CardsGroupHeader": "m4",
     "s13CardsItem": "v4",
     "s13Thumbnailer": "s4",
-    "s13CanvasNode": "S5"
+    "s13CanvasNode": "S5",
+    "s13CanvasEdge": "G5",
+    "s13CanvasGroupNode": "R5",
+    "s13CanvasFileNode": "P5",
+    "s13CanvasImageSuggest": "D3"
   },
   "declarators": [
     {
