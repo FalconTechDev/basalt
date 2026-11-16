@@ -2455,6 +2455,14 @@
   {
    "orig": "fte",
    "use": "defineMobileToolbarTab"
+  },
+  {
+   "orig": "qee",
+   "use": "defineFontSuggest"
+  },
+  {
+   "orig": "zee",
+   "use": "defineFontListModal"
   }
  ],
  "host": {
@@ -2973,7 +2981,8 @@
   "s16ManageWorkspacesModal": "Oee",
   "s16WorkspaceSuggestModal": "Fee",
   "s16QuickActionModal": "dte",
-  "s16CommandSuggest": "l8"
+  "s16CommandSuggest": "l8",
+  "s16FontSuggest": "qee"
  },
  "declarators": [
   {
