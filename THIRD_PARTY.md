@@ -23,4 +23,9 @@
 | tslib helpers | bundled inside `src/app.js` | Apache-2.0 (Microsoft) |
 | pdf.js rules | bundled inside `src/app.js` | Apache-2.0 (Mozilla) |
 
+| CodeMirror 6 + Lezer | inside inherited `src/app.js` (editor) | MIT |
+| CodeMirror 5 modes (incl. `hypermd`) | inside inherited `src/app.js` (`CodeMirror.getMode`) | MIT |
+| diff-match-patch | inside inherited `src/app.js` (`dA`) | Apache-2.0 |
+| DOMPurify | inside inherited `src/app.js` (publish sanitizing) | Apache-2.0 / MPL-2.0 |
+
 Public plugin list used by the plugin catalog is read from a public GitHub repository at run time; plugins installed from it keep their own licenses.

@@ -1414,6 +1414,100 @@
       "orig": "jW",
       "use": "s08TypedParam",
       "originalBytes": 97
+    },
+    {
+      "orig": "mX",
+      "use": "s10XhrHasObsStatus"
+    },
+    {
+      "orig": "vX",
+      "use": "s10ResponseHasObsStatus"
+    },
+    {
+      "orig": "gX",
+      "use": "s10PromotePreloadStyles"
+    },
+    {
+      "orig": "LX",
+      "use": "s10ValidateFileName",
+      "host": true
+    },
+    {
+      "orig": "IX",
+      "use": "s10ShowErrorTooltip",
+      "host": true
+    },
+    {
+      "orig": "FX",
+      "use": "s10MergeText",
+      "host": true
+    },
+    {
+      "orig": "RX",
+      "use": "s10RenderDiffView",
+      "host": true
+    },
+    {
+      "orig": "TX",
+      "use": "s10FormulaIdentifier",
+      "host": true
+    },
+    {
+      "orig": "DX",
+      "use": "s10FormulaLinktext",
+      "host": true
+    },
+    {
+      "orig": "Q$",
+      "use": "s10RangeInTable",
+      "host": true
+    },
+    {
+      "orig": "g$",
+      "use": "s10FolderContains",
+      "host": true
+    },
+    {
+      "orig": "b$",
+      "use": "s10MovableFiles",
+      "host": true
+    },
+    {
+      "orig": "v$",
+      "use": "s10MoveFilesAndUpdateLinks",
+      "host": true
+    },
+    {
+      "orig": "B$",
+      "use": "s10ChangeByLineRange",
+      "host": true
+    },
+    {
+      "orig": "sZ",
+      "use": "s10VimModeSync",
+      "host": true
+    },
+    {
+      "orig": "lZ",
+      "use": "s10VimModeName"
+    },
+    {
+      "orig": "fZ",
+      "use": "s10ForwardDomEvent"
+    },
+    {
+      "orig": "M$",
+      "use": "s10IsEditableTarget",
+      "host": true
+    },
+    {
+      "orig": "mZ",
+      "use": "s10ForwardInputEvents"
+    },
+    {
+      "orig": "vZ",
+      "use": "s10MirrorStyles",
+      "host": true
     }
   ],
   "classes": [
@@ -3313,6 +3407,23 @@
     "createEl": "createEl",
     "createFragment": "createFragment",
     "FolderPathSuggestTab": "AI",
+    "s10DiffMatchPatch": "dA",
+    "s10DiffOp": "XD",
+    "s10IsEditable": "yg",
+    "s10FmMember": "WK",
+    "s10FmIndex": "UK",
+    "s10FmIdent": "QK",
+    "s10FmLiteral": "GK",
+    "s10FmCall": "jK",
+    "s10FmList": "YK",
+    "s10FoldService": "Rp",
+    "s10DefaultKeymap": "BR",
+    "s10StreamLanguage": "qd",
+    "s10StateEffect": "We",
+    "s10GetIndentUnit": "bp",
+    "s10IndentString": "wp",
+    "s10EnsureSyntaxTree": "rp",
+    "s10LastInsertPlugin": "P$",
     "$G": "$G",
     "$T": "$T",
     "AK": "AK",
@@ -3858,6 +3969,312 @@
       "expr": "__basaltOwn.s08RtInstance(__basaltHost)",
       "sha1": "20f34098568d8e72b0b27a52a64246505effc638",
       "originalBytes": 97
+    },
+    {
+      "orig": "cX",
+      "expr": "__basaltOwn.s10PublishPaneMinWidth",
+      "sha1": "d8e4bbea3af2e4861ad5a445aaec573e02f9aca2",
+      "originalBytes": 3
+    },
+    {
+      "orig": "uX",
+      "expr": "__basaltOwn.s10PublishPaneOffset",
+      "sha1": "fc074d501302eb2b93e2554793fcaf50b3bf7291",
+      "originalBytes": 2
+    },
+    {
+      "orig": "hX",
+      "expr": "__basaltOwn.s10BasaltCssName",
+      "sha1": "ec7be83c9695cac70c4657f0c4598c93b20a6450",
+      "originalBytes": 12
+    },
+    {
+      "orig": "pX",
+      "expr": "__basaltOwn.s10PublishCssName",
+      "sha1": "1f4621496db3247f49b51042a776fec45032024a",
+      "originalBytes": 13
+    },
+    {
+      "orig": "dX",
+      "expr": "__basaltOwn.s10PublishJsName",
+      "sha1": "5860ad8ed1ea24fc372cb1b8c459a8651305242e",
+      "originalBytes": 12
+    },
+    {
+      "orig": "fX",
+      "expr": "__basaltOwn.s10FaviconPattern",
+      "sha1": "6d03877fa18c87873d682d8e798c5f68fe2da1c0",
+      "originalBytes": 35
+    },
+    {
+      "orig": "VX",
+      "expr": "__basaltOwn.s10BasesViewType",
+      "sha1": "ff1ec5df3ac2aba2dd2958df9638a97174e29b0c",
+      "originalBytes": 7
+    },
+    {
+      "orig": "kX",
+      "expr": "__basaltOwn.s10FilterCompareOps",
+      "sha1": "614e6c5bd69d54c907be1a1a63775581e63cb020",
+      "originalBytes": 29
+    },
+    {
+      "orig": "CX",
+      "expr": "__basaltOwn.s10FilterOrderOps",
+      "sha1": "305fe6c60b93a5dcee52c505e916772c2b20bd2d",
+      "originalBytes": 19
+    },
+    {
+      "orig": "o$",
+      "expr": "__basaltOwn.s10WikiLinkChars",
+      "sha1": "ad67bc91f86678941a51a9a5dd0a777e04cea819",
+      "originalBytes": 42
+    },
+    {
+      "orig": "hZ",
+      "expr": "__basaltOwn.s10PopoutStyleVars",
+      "sha1": "7dc41798bff483b7f6914cafae7cf9cd7a719288",
+      "originalBytes": 37
+    },
+    {
+      "orig": "pZ",
+      "expr": "__basaltOwn.s10PopoutBodyClasses",
+      "sha1": "f88d21666bd28824eaeafac45c14e3d1f2041a87",
+      "originalBytes": 45
+    },
+    {
+      "orig": "dZ",
+      "expr": "__basaltOwn.s10ForwardedEvents",
+      "sha1": "bfb66c4640e722feb7bb71a2e00f0078d2d6adfc",
+      "originalBytes": 208
+    },
+    {
+      "orig": "V$",
+      "expr": "__basaltOwn.s10LinePrefix",
+      "sha1": "f9fb0336041b08b5720d1537ef0be554870fbd68",
+      "originalBytes": 9
+    },
+    {
+      "orig": "x$",
+      "expr": "__basaltOwn.s10UnboundEditorKeys",
+      "sha1": "3ca4c8759fd81ab2b2fdc596729aa104d7c5f60a",
+      "originalBytes": 107
+    },
+    {
+      "orig": "eZ",
+      "expr": "__basaltOwn.s10EditorExtensions",
+      "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+      "originalBytes": 2
+    },
+    {
+      "orig": "rZ",
+      "expr": "__basaltOwn.s10CmHistoryStore",
+      "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+      "originalBytes": 2
+    },
+    {
+      "orig": "wX",
+      "expr": "__basaltHost.t.plugins.bases",
+      "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+      "originalBytes": 16
+    },
+    {
+      "orig": "zX",
+      "expr": "__basaltHost.t.plugins.bases",
+      "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+      "originalBytes": 16
+    },
+    {
+      "orig": "_X",
+      "expr": "__basaltHost.t.plugins.bases",
+      "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+      "originalBytes": 16
+    },
+    {
+      "orig": "XX",
+      "expr": "__basaltHost.t.plugins.bases",
+      "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+      "originalBytes": 16
+    },
+    {
+      "orig": "JX",
+      "expr": "__basaltHost.t.plugins.bases",
+      "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+      "originalBytes": 16
+    },
+    {
+      "orig": "r$",
+      "expr": "__basaltHost.t.plugins.bases",
+      "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+      "originalBytes": 16
+    },
+    {
+      "orig": "w$",
+      "expr": "__basaltHost.t.plugins.bases",
+      "sha1": "6e01a96c9e8991a338d2fc2a7c6aa6081ab587b6",
+      "originalBytes": 16
+    },
+    {
+      "orig": "qX",
+      "expr": "__basaltHost.t.plugins.fileExplorer",
+      "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
+      "originalBytes": 23
+    },
+    {
+      "orig": "T$",
+      "expr": "__basaltOwn.s10FilteredKeymap(__basaltHost)",
+      "sha1": "1c066add42bd47140c4a8bb2b05669a1270c4b48",
+      "originalBytes": 46
+    },
+    {
+      "orig": "D$",
+      "expr": "__basaltOwn.s10IndentColumn(__basaltHost)",
+      "sha1": "64ad1996ea63f08c14911d4df206db139a24c222",
+      "originalBytes": 99
+    },
+    {
+      "orig": "A$",
+      "expr": "__basaltOwn.s10FoldIndent(__basaltHost)",
+      "sha1": "8a458323c84b3f4107d47f0e4be44c24bdc50ac5",
+      "originalBytes": 259
+    },
+    {
+      "orig": "P$",
+      "expr": "__basaltOwn.s10LastInsertPlugin(__basaltHost)",
+      "sha1": "5284351dfe28efa445f7a766d71657b6a1dcbf12",
+      "originalBytes": 46
+    },
+    {
+      "orig": "L$",
+      "expr": "__basaltOwn.s10DashInputHandler(__basaltHost)",
+      "sha1": "ab62f643a4e3707bf735d8e2571cb57175c3956d",
+      "originalBytes": 306
+    },
+    {
+      "orig": "O$",
+      "expr": "__basaltOwn.s10FoldHeading(__basaltHost)",
+      "sha1": "a903bed7dad7521ed15b1bfc442e082f2a208dab",
+      "originalBytes": 666
+    },
+    {
+      "orig": "F$",
+      "expr": "__basaltOwn.s10FoldFrontmatter(__basaltHost)",
+      "sha1": "bc755ae9e41b0b1c70116fccfe8e5bd31f3939d7",
+      "originalBytes": 250
+    },
+    {
+      "orig": "N$",
+      "expr": "__basaltOwn.s10CmdGoStart(__basaltHost)",
+      "sha1": "d7e9e4176b2c44dbc7f513f1c9ff6d12c8881cec",
+      "originalBytes": 102
+    },
+    {
+      "orig": "R$",
+      "expr": "__basaltOwn.s10CmdFoldAll(__basaltHost)",
+      "sha1": "d7e5434ab588b968c750c30eb98f6bcecf71741c",
+      "originalBytes": 257
+    },
+    {
+      "orig": "H$",
+      "expr": "__basaltOwn.s10CmdIndentMore(__basaltHost)",
+      "sha1": "41a6800eeafeeace139385b65bdc1079caefeec4",
+      "originalBytes": 274
+    },
+    {
+      "orig": "z$",
+      "expr": "__basaltOwn.s10CmdIndentLess(__basaltHost)",
+      "sha1": "29d75ba14f2ad8a49e090022313491f8abf22e26",
+      "originalBytes": 527
+    },
+    {
+      "orig": "q$",
+      "expr": "__basaltOwn.s10FieldSetEffect(__basaltHost)",
+      "sha1": "31041be5deb4e5ce0ba0b5c5db6fa99078526c95",
+      "originalBytes": 11
+    },
+    {
+      "orig": "j$",
+      "expr": "__basaltOwn.s10MakeCmFieldFactory(__basaltHost)",
+      "sha1": "96bbf410b915d9c4d2841d42d7040ac777cbd8cc",
+      "originalBytes": 197
+    },
+    {
+      "orig": "U$",
+      "expr": "__basaltOwn.s10EditorField(__basaltHost)",
+      "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
+      "originalBytes": 8
+    },
+    {
+      "orig": "W$",
+      "expr": "__basaltOwn.s10OwnerField(__basaltHost)",
+      "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
+      "originalBytes": 8
+    },
+    {
+      "orig": "G$",
+      "expr": "__basaltOwn.s10LivePreviewField(__basaltHost)",
+      "sha1": "2a6bdbff81b0ccfb37e79e43258cf5122b1333b5",
+      "originalBytes": 6
+    },
+    {
+      "orig": "_$",
+      "expr": "__basaltHost.cmOwnerField",
+      "sha1": "efb1bf87061f815fa1f16014a4bec70d97808b85",
+      "originalBytes": 2
+    },
+    {
+      "orig": "K$",
+      "expr": "__basaltOwn.s10MouseSelectionStyle(__basaltHost)",
+      "sha1": "2102467cd0aa446a40429eeccb1ee46eff527b9d",
+      "originalBytes": 447
+    },
+    {
+      "orig": "Y$",
+      "expr": "new __basaltHost.cmCompartmentClass()",
+      "sha1": "1cc63394d1365f279ba86d6bdbfcc6ef0588b5d6",
+      "originalBytes": 6
+    },
+    {
+      "orig": "nZ",
+      "expr": "new __basaltHost.cmCompartmentClass()",
+      "sha1": "1cc63394d1365f279ba86d6bdbfcc6ef0588b5d6",
+      "originalBytes": 6
+    },
+    {
+      "orig": "cZ",
+      "expr": "new __basaltHost.cmCompartmentClass()",
+      "sha1": "1cc63394d1365f279ba86d6bdbfcc6ef0588b5d6",
+      "originalBytes": 6
+    },
+    {
+      "orig": "tZ",
+      "expr": "__basaltOwn.s10CompartmentOf(Y$,eZ)",
+      "sha1": "5c38612ad2c6f7ff3b7034aad01882da6734868c",
+      "originalBytes": 9
+    },
+    {
+      "orig": "Z$",
+      "expr": "__basaltOwn.s10HypermdMode(__basaltHost)",
+      "sha1": "7114d8e2523b0137f504c569ed37a42acfe5ceed",
+      "originalBytes": 50
+    },
+    {
+      "orig": "J$",
+      "expr": "__basaltOwn.s10TableCellMode(__basaltHost)",
+      "sha1": "ba51e3da91c91e00c9115fa3df62311783c89036",
+      "originalBytes": 187
+    },
+    {
+      "orig": "X$",
+      "expr": "__basaltOwn.s10LineStartFactory(__basaltHost)",
+      "sha1": "d903f984886451a58cfb653531c78427262c9790",
+      "originalBytes": 611
+    },
+    {
+      "orig": "$$",
+      "expr": "__basaltOwn.s10LineEndFactory(__basaltHost)",
+      "sha1": "95b683fa91a0430ac0269f2291efc3a916badc57",
+      "originalBytes": 402
     }
   ],
   "methods": [
