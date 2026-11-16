@@ -1368,6 +1368,16 @@
    "orig": "CQ",
    "use": "s09GraphNodeDataFrom",
    "originalBytes": 86
+  },
+  {
+   "orig": "OQ",
+   "use": "s09PublishGraphData",
+   "originalBytes": 1086
+  },
+  {
+   "orig": "oX",
+   "use": "s09PublishResolveSub",
+   "originalBytes": 113
   }
  ],
  "classes": [
@@ -2687,6 +2697,96 @@
    "orig": "AQ",
    "use": "s09GraphRenderer",
    "originalBytes": 14173
+  },
+  {
+   "orig": "KY",
+   "use": "s09PublishSiteCache",
+   "originalBytes": 1893
+  },
+  {
+   "orig": "zY",
+   "use": "s09BasesToolbarButton",
+   "originalBytes": 721
+  },
+  {
+   "orig": "qY",
+   "use": "s09BasesDropdown",
+   "originalBytes": 948
+  },
+  {
+   "orig": "jY",
+   "use": "s09BasesMenu",
+   "originalBytes": 3833
+  },
+  {
+   "orig": "zQ",
+   "use": "s09PublishTreeItem",
+   "originalBytes": 343
+  },
+  {
+   "orig": "qQ",
+   "use": "s09PublishFileItem",
+   "originalBytes": 432
+  },
+  {
+   "orig": "jQ",
+   "use": "s09PublishFolderItem",
+   "originalBytes": 336
+  },
+  {
+   "orig": "UQ",
+   "use": "s09PublishTree",
+   "originalBytes": 1301
+  },
+  {
+   "orig": "WQ",
+   "use": "s09PublishOutlineItem",
+   "originalBytes": 505
+  },
+  {
+   "orig": "_Q",
+   "use": "s09PublishOutlineTree",
+   "originalBytes": 696
+  },
+  {
+   "orig": "GQ",
+   "use": "s09PublishOutlineView",
+   "originalBytes": 1328
+  },
+  {
+   "orig": "HQ",
+   "use": "s09PublishNavView",
+   "originalBytes": 1945
+  },
+  {
+   "orig": "KQ",
+   "use": "s09PublishModalBase",
+   "originalBytes": 857
+  },
+  {
+   "orig": "YQ",
+   "use": "s09PublishPasswordModal",
+   "originalBytes": 2089
+  },
+  {
+   "orig": "QQ",
+   "use": "s09PublishTagModal",
+   "originalBytes": 859
+  },
+  {
+   "orig": "IQ",
+   "use": "s09PublishGraphView",
+   "originalBytes": 3534
+  },
+  {
+   "orig": "aX",
+   "use": "s09PublishEmbedView",
+   "originalBytes": 5676
+  },
+  {
+   "orig": "sX",
+   "use": "s09PublishPageView",
+   "originalBytes": 2887
   }
  ],
  "host": {
@@ -3428,6 +3528,174 @@
    "expr": "__basaltOwn.s09LoadPixiScript",
    "sha1": "7e43fdddeaa8ae0b46caa27874d3f6280b68bea8",
    "originalBytes": 28
+  },
+  {
+   "orig": "YY",
+   "expr": "__basaltOwn.s09PubOptIndexFile",
+   "sha1": "ec314aa4773907b1ea256888bdc0eb9572a36e0f",
+   "originalBytes": 11
+  },
+  {
+   "orig": "QY",
+   "expr": "__basaltOwn.s09PubOptSiteName",
+   "sha1": "2a6716a1fd3f3ca83953a866848da548ae4a2b83",
+   "originalBytes": 10
+  },
+  {
+   "orig": "XY",
+   "expr": "__basaltOwn.s09PubOptLogo",
+   "sha1": "01338915e9c4e5672564060e13c0b816a51e6113",
+   "originalBytes": 6
+  },
+  {
+   "orig": "$Y",
+   "expr": "__basaltOwn.s09PubOptNoindex",
+   "sha1": "a15ce0d096ff1aa0c60b19702adba4049a16260a",
+   "originalBytes": 9
+  },
+  {
+   "orig": "ZY",
+   "expr": "__basaltOwn.s09PubOptDefaultTheme",
+   "sha1": "0ce51889c24f935ab5766e764504c73c31ca4103",
+   "originalBytes": 14
+  },
+  {
+   "orig": "JY",
+   "expr": "__basaltOwn.s09PubOptShowThemeToggle",
+   "sha1": "bc53ff4e0baf3eed26b0fc65619e9cd8eef9d1de",
+   "originalBytes": 17
+  },
+  {
+   "orig": "eQ",
+   "expr": "__basaltOwn.s09PubOptShowNavigation",
+   "sha1": "b1fc9074b4bf0b19cc1684725a6b75183fefd848",
+   "originalBytes": 16
+  },
+  {
+   "orig": "tQ",
+   "expr": "__basaltOwn.s09PubOptShowGraph",
+   "sha1": "aa7d871b0b197f36f134b3da03b9c9c285a9c0a3",
+   "originalBytes": 11
+  },
+  {
+   "orig": "nQ",
+   "expr": "__basaltOwn.s09PubOptShowOutline",
+   "sha1": "7a8a62f5aa1f75e80e79818fd3206a25147a8709",
+   "originalBytes": 13
+  },
+  {
+   "orig": "iQ",
+   "expr": "__basaltOwn.s09PubOptShowSearch",
+   "sha1": "da7275d5cb66afca9cd8b5c43f83d84ee4c09e5d",
+   "originalBytes": 12
+  },
+  {
+   "orig": "rQ",
+   "expr": "__basaltOwn.s09PubOptGoogleAnalytics",
+   "sha1": "3aca11f4c7274481d8d668034dc9e1e8c0fa19b6",
+   "originalBytes": 17
+  },
+  {
+   "orig": "oQ",
+   "expr": "__basaltOwn.s09PubOptHideTitle",
+   "sha1": "34914676f53a2004f447ea015a9ee72114474217",
+   "originalBytes": 11
+  },
+  {
+   "orig": "aQ",
+   "expr": "__basaltOwn.s09PubOptReadableLineLength",
+   "sha1": "35fe8ac5ec9847d7fd2fd7d5fb66dd5019bf322c",
+   "originalBytes": 20
+  },
+  {
+   "orig": "sQ",
+   "expr": "__basaltOwn.s09PubOptStrictLineBreaks",
+   "sha1": "685682d2e1f6ea97c56702972dfca8452d4db181",
+   "originalBytes": 18
+  },
+  {
+   "orig": "lQ",
+   "expr": "__basaltOwn.s09PubOptShowHoverPreview",
+   "sha1": "9b9e8c959756a07889411cb91706fb451850b1e5",
+   "originalBytes": 18
+  },
+  {
+   "orig": "cQ",
+   "expr": "__basaltOwn.s09PubOptShowBacklinks",
+   "sha1": "78c738427f55d56a147c95f217a83ce55215142c",
+   "originalBytes": 15
+  },
+  {
+   "orig": "uQ",
+   "expr": "__basaltOwn.s09PubOptSlidingWindowMode",
+   "sha1": "8bc6c72bb109e7fa2fa85b408b67719f6e6cfc1b",
+   "originalBytes": 19
+  },
+  {
+   "orig": "hQ",
+   "expr": "__basaltOwn.s09PubOptNavigationOrdering",
+   "sha1": "b1d4b2212554bd2bbbf091b8acebcbb06d8a9bae",
+   "originalBytes": 20
+  },
+  {
+   "orig": "pQ",
+   "expr": "__basaltOwn.s09PubOptNavigationHiddenItems",
+   "sha1": "813426f1070e5a06591c5808cc133311b96442b5",
+   "originalBytes": 23
+  },
+  {
+   "orig": "dQ",
+   "expr": "VY=__basaltOwn.s09PublishDefaults()",
+   "sha1": "6b1e0f0870152b2fb0465272bcd8cbe2607ef06d",
+   "originalBytes": 202
+  },
+  {
+   "orig": "XQ",
+   "expr": "__basaltOwn.s09PublishHiddenHovers",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "$Q",
+   "expr": "__basaltOwn.s09PublishActiveHovers",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "ZQ",
+   "expr": "__basaltOwn.s09PublishHoverTimer",
+   "sha1": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
+   "originalBytes": 1
+  },
+  {
+   "orig": "JQ",
+   "expr": "__basaltOwn.s09PublishHoverPoint",
+   "sha1": "2be88ca4242c76e8253ac62474851065032d6833",
+   "originalBytes": 4
+  },
+  {
+   "orig": "eX",
+   "expr": "function(e){__basaltOwn.s09PublishHoverClick(e)}",
+   "sha1": "e1d876351e1b8f939fed7783e48bc2a42f23e2da",
+   "originalBytes": 314
+  },
+  {
+   "orig": "tX",
+   "expr": "function(e){__basaltOwn.s09PublishHoverMove(e)}",
+   "sha1": "a8c642f92d6eaaed1e1c34e817ba708f198ed477",
+   "originalBytes": 51
+  },
+  {
+   "orig": "nX",
+   "expr": "function(){__basaltOwn.s09PublishHoverTick()}",
+   "sha1": "2375fce01eeef1a16e6aecb27b80976b8a365bf9",
+   "originalBytes": 369
+  },
+  {
+   "orig": "iX",
+   "expr": "function(){__basaltOwn.s09PublishHoverStart()}",
+   "sha1": "fd76505456e891513a8135deb62c402b799740a4",
+   "originalBytes": 191
   }
  ],
  "methods": [
@@ -4433,7 +4701,7 @@
    "originalBytes": 26549
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,EW,LW,MW,SW,bW,CW,OW,NW,AW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv",
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,EW,LW,MW,SW,bW,CW,OW,NW,AW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg",
  "patches": [
   {
    "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
