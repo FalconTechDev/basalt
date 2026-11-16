@@ -951,7 +951,7 @@ export function defineRandomNotePlugin(host) {
 // =====================================================================================================================
 
 // The worker source is built lazily so the unicode character classes come from the host bundle.
-function wordCountWorkerSource(host) {
+export function wordCountWorkerSource(host) {
   const letter = host.unicodeLetterSource.source;
   const word = host.unicodeWordSource.source;
   return "\nlet pattern = /(?:[0-9]+(?:(?:,|\\.)[0-9]+)*|[\\-'’\"" + letter + "஀-௿가-힣ꥠ-ꥼힰ-ퟆ])+|[" + word + "]/g;\n" +
@@ -959,7 +959,7 @@ function wordCountWorkerSource(host) {
     "self.onmessage = function (e) {\n\ttry {\n\t\tself.postMessage(countWords(e.data));\n\t} catch (e) {\n\t\tconsole.error('WordCount', e);\n\t}\n};\n";
 }
 
-function wordCountPattern(host) {
+export function wordCountPattern(host) {
   const letter = host.unicodeLetterSource.source;
   const word = host.unicodeWordSource.source;
   return new RegExp("(?:[0-9]+(?:(?:,|\\.)[0-9]+)*|[\\-''" + letter + "஀-௿가-힣ꥠ-ꥼힰ-ퟆ])+|[" + word + "]", "g");
