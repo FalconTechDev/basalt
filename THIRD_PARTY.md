@@ -14,5 +14,9 @@
 | Inter Variable (regular + italic) | `src/public/fonts/inter-variable*.woff2` | SIL Open Font License 1.1 |
 | Flow Circular | `src/public/fonts/flow-circular.woff2` | SIL Open Font License 1.1 (HYPD/flow-typeface) |
 | pdf.js viewer chrome styles | `src-css/01-pdf-viewer.css` | Apache-2.0 (Mozilla pdf.js), rewritten |
+| CodeMirror 6 + Lezer | inside inherited `src/app.js` (editor) | MIT |
+| CodeMirror 5 modes (incl. `hypermd`) | inside inherited `src/app.js` (`CodeMirror.getMode`) | MIT |
+| diff-match-patch | inside inherited `src/app.js` (`dA`) | Apache-2.0 |
+| DOMPurify | inside inherited `src/app.js` (publish sanitizing) | Apache-2.0 / MPL-2.0 |
 
 Public plugin list used by the plugin catalog is read from a public GitHub repository at run time; plugins installed from it keep their own licenses.
