@@ -1338,6 +1338,11 @@
    "orig": "Mb",
    "use": "s04SettlePromise",
    "originalBytes": 69
+  },
+  {
+   "orig": "Zg",
+   "use": "s04FormatMenuPlugin",
+   "originalBytes": 802
   }
  ],
  "classes": [
@@ -2483,18 +2488,23 @@
    "use": "s04PromiseSetClass",
    "originalBytes": 293
   },
-   {
-    "orig": "Ob",
-    "use": "s04ThemePicker"
-   },
-   {
-    "orig": "ib",
-    "use": "s04PromptModal"
-   },
-   {
-    "orig": "$k",
-    "use": "s04NumberComponent"
-   }
+  {
+   "orig": "Ob",
+   "use": "s04ThemePicker"
+  },
+  {
+   "orig": "ib",
+   "use": "s04PromptModal"
+  },
+  {
+   "orig": "$k",
+   "use": "s04NumberComponent"
+  },
+  {
+   "orig": "Xg",
+   "use": "s04MenuManager",
+   "originalBytes": 7820
+  }
  ],
  "host": {
   "Events": "VT",
@@ -3189,6 +3199,24 @@
    "expr": "__basaltOwn.s04NumberCompare",
    "sha1": "75f7a86e56cb1585dc8e2a687f73ac07250a6bda",
    "originalBytes": 25
+  },
+  {
+   "orig": "Fg",
+   "expr": "__basaltOwn.s04ModifierKeys",
+   "sha1": "4428b988a70c6f2f49de439a7e99ed216cdb7918",
+   "originalBytes": 35
+  },
+  {
+   "orig": "Qg",
+   "expr": "__basaltOwn.s04AcceleratorNames",
+   "sha1": "748fcc24d0198ed1e2bb2dca237c2c3ee970faba",
+   "originalBytes": 75
+  },
+  {
+   "orig": "Og",
+   "expr": "__basaltOwn.s04ModifierDisplayNames(jl)",
+   "sha1": "adb72b4ae6d3d11dc387315975caa10039aea8b0",
+   "originalBytes": 108
   }
  ],
  "methods": [
