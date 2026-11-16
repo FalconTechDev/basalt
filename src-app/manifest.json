@@ -2508,6 +2508,10 @@
    {
     "orig": "vk",
     "use": "s04CapacitorAdapter"
+   },
+   {
+    "orig": "pk",
+    "use": "s04CapacitorFs"
    }
  ],
  "host": {
@@ -3015,7 +3019,8 @@
   "anyMetadataRef": "xT",
   "createEl": "createEl",
   "createFragment": "createFragment",
-  "FolderPathSuggestTab": "AI"
+  "FolderPathSuggestTab": "AI",
+  "s04CapacitorCore": "km"
  },
  "declarators": [
   {
