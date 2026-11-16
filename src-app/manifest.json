@@ -1263,6 +1263,11 @@
    "orig": "Wv",
    "use": "withButtonLoading",
    "originalBytes": 298
+  },
+  {
+   "orig": "O9",
+   "use": "s15ScrollLoadMore",
+   "originalBytes": 138
   }
  ],
  "classes": [
@@ -2507,6 +2512,101 @@
    "orig": "f9",
    "use": "definePublishPlugin",
    "originalBytes": 14163
+  },
+  {
+   "orig": "P9",
+   "use": "defineSyncSettingsView",
+   "originalBytes": 11959
+  },
+  {
+   "orig": "I9",
+   "use": "defineSyncFileHistoryView",
+   "originalBytes": 10203
+  },
+  {
+   "orig": "F9",
+   "use": "defineSyncFileHistoryModal",
+   "originalBytes": 1162
+  },
+  {
+   "orig": "N9",
+   "use": "defineSyncDeletedFilesModal",
+   "originalBytes": 2921
+  },
+  {
+   "orig": "R9",
+   "use": "defineSyncUpgradeEncryptionModal",
+   "originalBytes": 633
+  },
+  {
+   "orig": "B9",
+   "use": "defineSyncMigrateVaultModal",
+   "originalBytes": 5035
+  },
+  {
+   "orig": "V9",
+   "use": "defineSyncCreateVaultModal",
+   "originalBytes": 3131
+  },
+  {
+   "orig": "H9",
+   "use": "defineSyncRemoteVaultsModal",
+   "originalBytes": 8354
+  },
+  {
+   "orig": "z9",
+   "use": "defineSyncLogModal",
+   "originalBytes": 2413
+  },
+  {
+   "orig": "q9",
+   "use": "defineSyncExcludedFoldersSuggest",
+   "originalBytes": 591
+  },
+  {
+   "orig": "j9",
+   "use": "defineSyncLargestFilesModal",
+   "originalBytes": 617
+  },
+  {
+   "orig": "U9",
+   "use": "defineSyncConnectVaultModal",
+   "originalBytes": 3819
+  },
+  {
+   "orig": "W9",
+   "use": "defineSyncRenameVaultModal",
+   "originalBytes": 537
+  },
+  {
+   "orig": "_9",
+   "use": "defineSyncManageSharingModal",
+   "originalBytes": 3555
+  },
+  {
+   "orig": "K9",
+   "use": "defineSyncChangesView",
+   "originalBytes": 5297
+  },
+  {
+   "orig": "k9",
+   "use": "defineSlashCommandPlugin",
+   "originalBytes": 484
+  },
+  {
+   "orig": "E9",
+   "use": "defineSlashCommandSuggest",
+   "originalBytes": 1563
+  },
+  {
+   "orig": "S9",
+   "use": "defineSlidesPlugin",
+   "originalBytes": 782
+  },
+  {
+   "orig": "x9",
+   "use": "defineSlidesView",
+   "originalBytes": 2468
   }
  ],
  "host": {
@@ -3176,6 +3276,36 @@
    "expr": "__basaltOwn.s15PublishAssets",
    "sha1": "bb34a7702f148105fc4716028cdaf9145b63f7ad",
    "originalBytes": 55
+  },
+  {
+   "orig": "L9",
+   "expr": "__basaltOwn.s15AvatarColorClasses",
+   "sha1": "83c9230ee597be017b517e6aded3f1399151be3b",
+   "originalBytes": 169
+  },
+  {
+   "orig": "A9",
+   "expr": "__basaltOwn.s15SyncHourMs",
+   "sha1": "afa31f8135d8e3a100e5f974ef67cdb5b50cbfff",
+   "originalBytes": 4
+  },
+  {
+   "orig": "C9",
+   "expr": "__basaltOwn.s15SlashCommandPattern",
+   "sha1": "09e390eef3edd19da22641e46189bd9acaf95601",
+   "originalBytes": 21
+  },
+  {
+   "orig": "M9",
+   "expr": "__basaltOwn.s15Env().Hv(\"/lib/reveal/reveal.js\")",
+   "sha1": "4933725e20cfdd13dc9ed83635463667d65db2f4",
+   "originalBytes": 27
+  },
+  {
+   "orig": "v9",
+   "expr": "__basaltOwn.QUICK_SWITCHER_DEFAULTS",
+   "sha1": "777739e8d43da61b10510e6fb5e015ceebc9c9ce",
+   "originalBytes": 60
   }
  ],
  "methods": [
