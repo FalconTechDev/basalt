@@ -68,7 +68,7 @@ export function defineS12HrWidget(host) {
   S12HrWidget = class extends Base {
     eq() { return true; }
     toDOM(view) {
-      const el = createDiv("hr cm-line");
+      const el = s12CreateDiv("hr cm-line");
       el.createEl("br");
       el.addEventListener("click", () => {
         const pos = view.posAtDOM(el);
@@ -374,7 +374,7 @@ export function defineS12ImageWidget(host) {
       if (framed) {
         el = iframe(framed);
       } else {
-        el = createDiv("image-embed");
+        el = s12CreateDiv("image-embed");
         el.tabIndex = -1;
         const wrapper = el.createDiv("image-wrapper");
         const img = wrapper.createEl("img");
@@ -424,7 +424,7 @@ export function defineS12InternalEmbedWidget(host) {
     }
     initDOM(view) {
       const app = this.app, sourcePath = this.sourcePath, href = this.href, title = this.title, depth = this.depth;
-      const el = this.containerEl = createDiv("internal-embed");
+      const el = this.containerEl = s12CreateDiv("internal-embed");
       el.tabIndex = -1;
       el.setAttr("src", href);
       const child = this.child = EmbedLoader.load({ app, linktext: href, sourcePath, containerEl: el, displayMode: false, showInline: true, depth });
@@ -491,7 +491,7 @@ export function defineS12CodeblockWidget(host) {
     }
     initDOM(view) {
       const app = this.app, editor = this.editor, lang = this.lang;
-      const el = this.containerEl = createDiv("cm-preview-code-block cm-embed-block cm-lang-" + lang);
+      const el = this.containerEl = s12CreateDiv("cm-preview-code-block cm-embed-block cm-lang-" + lang);
       el.tabIndex = -1;
       const pre = el.createEl("pre");
       const codeEl = pre.createEl("code", "language-" + lang);
@@ -560,7 +560,7 @@ export function defineS12CalloutBaseWidget(host) {
     }
     initDOM(view) {
       const app = this.app, editor = this.editor, text = this.text, clazz = this.clazz;
-      const el = this.containerEl = createDiv("cm-embed-block " + clazz);
+      const el = this.containerEl = s12CreateDiv("cm-embed-block " + clazz);
       el.tabIndex = -1;
       const rendered = el.createDiv("markdown-rendered");
       const tree = parseTree(text);
@@ -1017,11 +1017,11 @@ export function defineS12TaskLineDecoPlugin(host) {
 // =====================================================================================================================
 
 export function s12SearchHighlightPlugin() {
-  return viewPlugin()((view) => new S12SearchDecoPlugin(view), { decorations: (p) => p.decorations });
+  return viewPlugin().define((view) => new S12SearchDecoPlugin(view), { decorations: (p) => p.decorations });
 }
 
 export function s12TaskLinePlugin() {
-  return viewPlugin()((view) => new S12TaskLineDecoPlugin(view), { decorations: (p) => p.decorations });
+  return viewPlugin().define((view) => new S12TaskLineDecoPlugin(view), { decorations: (p) => p.decorations });
 }
 
 /** The mobile drag extension pair (mouse tracking + draggable-widget mousedown handling). */
@@ -1031,7 +1031,7 @@ export function s12MobileDragExtensions(host) {
   const annotation = host.mobileCursorAnnotation;
   const refresh = s12cmRefreshDispatch;
   return [
-    viewPlugin()((view) => {
+    viewPlugin().define((view) => {
       const opts = { capture: true };
       const onDown = (ev) => {
         if (0 !== ev.button) return;
@@ -1059,18 +1059,18 @@ export function s12MobileDragExtensions(host) {
       view.scrollDOM.addEventListener("mousedown", onDown, opts);
       return { destroy() { view.scrollDOM.removeEventListener("mousedown", onDown, opts); } };
     }),
-    e.s12cmEditorViewStatics().domEventHandlers({
-      focus: (view) => refresh(view),
-      blur: (view) => refresh(view),
-      mousedown(view, ev) {
-        if (0 === ev.button && (e.Bg.isModifier(ev, "Mod") || (!ev.shiftKey && !ev.altKey))) {
-          const target = ev.targetNode;
+    e.s12cmEditorViewStatics.domEventHandlers({
+      focus: (event, view) => refresh(view),
+      blur: (event, view) => refresh(view),
+      mousedown(event, view) {
+        if (0 === event.button && (e.Bg.isModifier(event, "Mod") || (!event.shiftKey && !event.altKey))) {
+          const target = event.targetNode;
           if (target.instanceOf(Element)) {
             const draggable = target.matchParent('[draggable="true"]');
             if (draggable) {
               draggable.setAttr("contenteditable", "false");
-              const orig = ev.preventDefault;
-              ev.preventDefault = function () { ev.preventDefault = orig; };
+              const orig = event.preventDefault;
+              event.preventDefault = function () { event.preventDefault = orig; };
               return true;
             }
           }

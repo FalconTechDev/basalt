@@ -12,7 +12,7 @@ const cmDecoration = () => env().s12cmDecoration;
 const cmStateField = () => env().s12cmStateField;
 const cmStateEffect = () => env().s12cmStateEffect;
 const debounce = () => env().debounce;
-const createDiv = () => env().createDiv;
+const s12CreateDiv = (...args) => env().createDiv(...args);
 
 // =====================================================================================================================
 // Secrets / storage keys
@@ -143,7 +143,7 @@ export function s12WebviewTagBlocklist() {
 let s12dropIndicatorEl = null;
 
 export function s12DropIndicatorElement() {
-  s12dropIndicatorEl = createDiv()("drop-indicator is-active");
+  s12dropIndicatorEl = s12CreateDiv("drop-indicator is-active");
   return s12dropIndicatorEl;
 }
 
@@ -214,7 +214,7 @@ let s12postprocessFx = null;
 
 /** Creates (once per call site) the state-effect type used to ask live preview to rebuild decorations. */
 export function s12CmPostprocessEffect() {
-  s12postprocessFx = cmStateEffect()();
+  s12postprocessFx = cmStateEffect().define();
   return s12postprocessFx;
 }
 
@@ -230,7 +230,7 @@ let s12mouseDownPlugin = null;
 
 /** The view plugin whose instance tracks whether the mouse button is held down. */
 export function s12CmMouseDownPlugin() {
-  s12mouseDownPlugin = env().s12cmViewPlugin()(() => ({ mousedown: false }));
+  s12mouseDownPlugin = env().s12cmViewPlugin.define(() => ({ mousedown: false }));
   return s12mouseDownPlugin;
 }
 
@@ -343,7 +343,7 @@ export function s12appendImageSizeText(linkText, size) {
 
 /** Live-preview extension factory: refreshes decorations whenever the properties post-processor changes. */
 export function s12PropertiesLivePreviewPlugin(plugin) {
-  return env().s12cmViewPlugin()((view) => {
+  return env().s12cmViewPlugin.define((view) => {
     const off = plugin.app.workspace.on("post-processor-change", () => s12cmRefreshDispatch(view));
     return { destroy() { off.e.offref(off); } };
   });
