@@ -1896,6 +1896,126 @@
       "orig": "O9",
       "use": "s15ScrollLoadMore",
       "originalBytes": 138
+    },
+    {
+      "orig": "RV",
+      "use": "s22HasSearch",
+      "originalBytes": 65
+    },
+    {
+      "orig": "BV",
+      "use": "s22FormattingMenu",
+      "originalBytes": 1964
+    },
+    {
+      "orig": "iz",
+      "use": "s22RenderMatchSpans",
+      "originalBytes": 326
+    },
+    {
+      "orig": "cz",
+      "use": "s22ParseMarkdownSections",
+      "originalBytes": 473
+    },
+    {
+      "orig": "pz",
+      "use": "s22LoadPdfJs",
+      "originalBytes": 176
+    },
+    {
+      "orig": "dz",
+      "use": "s22LoadPdfViewerJs",
+      "originalBytes": 216
+    },
+    {
+      "orig": "vz",
+      "use": "s22LoadMermaid",
+      "originalBytes": 168
+    },
+    {
+      "orig": "yz",
+      "use": "s22LoadPrism",
+      "originalBytes": 166
+    },
+    {
+      "orig": "wz",
+      "use": "s22LoadMathJax",
+      "originalBytes": 160
+    },
+    {
+      "orig": "kz",
+      "use": "s22RenderMath",
+      "originalBytes": 57
+    },
+    {
+      "orig": "xz",
+      "use": "s22ScheduleMathFlush",
+      "originalBytes": 92
+    },
+    {
+      "orig": "Az",
+      "use": "s22NormalizeEmbedUrl",
+      "originalBytes": 349
+    },
+    {
+      "orig": "Pz",
+      "use": "s22CreateEmbedFrame",
+      "originalBytes": 768
+    },
+    {
+      "orig": "Vz",
+      "use": "s22WorkerFromUrl",
+      "originalBytes": 237
+    },
+    {
+      "orig": "Hz",
+      "use": "s22CreateWorker",
+      "originalBytes": 241
+    },
+    {
+      "orig": "oq",
+      "use": "s22RenderCalloutIcon",
+      "originalBytes": 386
+    },
+    {
+      "orig": "vq",
+      "use": "s22RangesEqual",
+      "originalBytes": 122
+    },
+    {
+      "orig": "nq",
+      "use": "s22SameAttributes",
+      "originalBytes": 111
+    },
+    {
+      "orig": "jz",
+      "use": "s22FirstHeading",
+      "originalBytes": 78
+    },
+    {
+      "orig": "Uz",
+      "use": "s22NestedListItems",
+      "originalBytes": 117
+    },
+    {
+      "orig": "Rz",
+      "use": "s22CreateWeakMap",
+      "originalBytes": 50
+    },
+    {
+      "orig": "Yz",
+      "use": "s22RenderMermaidBlocks",
+      "originalBytes": 402
+    },
+    {
+      "orig": "$z",
+      "use": "s22CodeBlockText",
+      "originalBytes": 132
+    },
+    {
+      "orig": "cq",
+      "use": "s22InternalLinkHref",
+      "originalBytes": 102
     }
   ],
   "classes": [
@@ -3994,6 +4114,46 @@
       "orig": "x9",
       "use": "defineSlidesView",
       "originalBytes": 2468
+    },
+    {
+      "orig": "NV",
+      "use": "defineViewContainer",
+      "originalBytes": 385
+    },
+    {
+      "orig": "dq",
+      "use": "defineMarkdownEmbed",
+      "originalBytes": 1552
+    },
+    {
+      "orig": "mq",
+      "use": "defineQueryResults",
+      "originalBytes": 724
+    },
+    {
+      "orig": "gq",
+      "use": "defineTableCell",
+      "originalBytes": 6604
+    },
+    {
+      "orig": "bq",
+      "use": "defineTableWidget",
+      "originalBytes": 32312
+    },
+    {
+      "orig": "Oz",
+      "use": "defineWeakMapBox",
+      "originalBytes": 279
+    },
+    {
+      "orig": "Nz",
+      "use": "defineWeakMapFallback",
+      "originalBytes": 367
+    },
+    {
+      "orig": "Bz",
+      "use": "defineWorkerChannel",
+      "originalBytes": 387
     }
   ],
   "host": {
@@ -6135,6 +6295,258 @@
       "expr": "__basaltOwn.QUICK_SWITCHER_DEFAULTS",
       "sha1": "777739e8d43da61b10510e6fb5e015ceebc9c9ce",
       "originalBytes": 60
+    },
+    {
+      "orig": "jV",
+      "expr": "__basaltOwn.s22UnicodeLetterSource",
+      "sha1": "420562ed7bbb10ad5268cf06782a949c28cb6b17",
+      "originalBytes": 4108
+    },
+    {
+      "orig": "UV",
+      "expr": "__basaltOwn.s22UnicodeWordSource",
+      "sha1": "90f88a8fa932f9ab62f8c6315080a16b53967894",
+      "originalBytes": 151
+    },
+    {
+      "orig": "WV",
+      "expr": "__basaltOwn.s22WordCharSource",
+      "sha1": "6236fca0334d197ecbf763d7c2180e2617d82365",
+      "originalBytes": 490
+    },
+    {
+      "orig": "_V",
+      "expr": "__basaltOwn.s22WordCharRegex",
+      "sha1": "e0035cc61ddfd9a24f9f2952d631f4d2c17f598d",
+      "originalBytes": 30
+    },
+    {
+      "orig": "KV",
+      "expr": "__basaltOwn.s22NoopMatcher",
+      "sha1": "c5b41789931b82e69bf7839857e8257e2e8b3bb9",
+      "originalBytes": 12
+    },
+    {
+      "orig": "QV",
+      "expr": "__basaltOwn.s22SearchFields",
+      "sha1": "9fb749deb643c2cdaad1869ebff50dec9aa69382",
+      "originalBytes": 54
+    },
+    {
+      "orig": "tH",
+      "expr": "__basaltOwn.s22BlankObjectA",
+      "sha1": "bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f",
+      "originalBytes": 2
+    },
+    {
+      "orig": "nH",
+      "expr": "__basaltOwn.s22BlankObjectB",
+      "sha1": "bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f",
+      "originalBytes": 2
+    },
+    {
+      "orig": "sq",
+      "expr": "__basaltOwn.s22BlankObjectC",
+      "sha1": "bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f",
+      "originalBytes": 2
+    },
+    {
+      "orig": "MH",
+      "expr": "__basaltOwn.s22DefaultSortField",
+      "sha1": "778f52c2c9f61c1c6ef6aeab946c4228cd530857",
+      "originalBytes": 10
+    },
+    {
+      "orig": "LH",
+      "expr": "__basaltOwn.s22NewNoopMatcher()",
+      "sha1": "b22a68f8267d8a2b86ac2ee0a847f6c1758e7377",
+      "originalBytes": 6
+    },
+    {
+      "orig": "IH",
+      "expr": "__basaltOwn.s22NewNoopMatcher()",
+      "sha1": "b22a68f8267d8a2b86ac2ee0a847f6c1758e7377",
+      "originalBytes": 6
+    },
+    {
+      "orig": "HH",
+      "expr": "__basaltOwn.s22SortModePairs",
+      "sha1": "cab87a897afe613c7a20f831b555247d74a92979",
+      "originalBytes": 124
+    },
+    {
+      "orig": "zH",
+      "expr": "__basaltOwn.s22SortLabels()",
+      "sha1": "7b6392e30207216e3025395496ef3a2786fbc9a8",
+      "originalBytes": 364
+    },
+    {
+      "orig": "qH",
+      "expr": "__basaltOwn.s22SortComparators()",
+      "sha1": "f44d586c005c7e6b85f61545d323b99d95fe689f",
+      "originalBytes": 382
+    },
+    {
+      "orig": "nz",
+      "expr": "__basaltOwn.s22ParagraphBreak",
+      "sha1": "29396e2908118785b458d0e9e3b29c949d5a8226",
+      "originalBytes": 13
+    },
+    {
+      "orig": "_z",
+      "expr": "__basaltOwn.s22RenderFlags",
+      "sha1": "b51fe27b46d8a235b73a9e64c2565769d73c4a4c",
+      "originalBytes": 50
+    },
+    {
+      "orig": "Tz",
+      "expr": "__basaltOwn.s22YoutubeUrl",
+      "sha1": "60c5376c09e0c9813585b238d8a91bfe760420ac",
+      "originalBytes": 151
+    },
+    {
+      "orig": "Dz",
+      "expr": "__basaltOwn.s22TweetUrl",
+      "sha1": "9bf9bea5ad3e9b298039def774fe1d1c094ce15a",
+      "originalBytes": 61
+    },
+    {
+      "orig": "Wz",
+      "expr": "__basaltOwn.s22Nothing",
+      "sha1": "2be88ca4242c76e8253ac62474851065032d6833",
+      "originalBytes": 4
+    },
+    {
+      "orig": "Cz",
+      "expr": "__basaltOwn.s22MathJaxDeferred",
+      "sha1": "2be88ca4242c76e8253ac62474851065032d6833",
+      "originalBytes": 4
+    },
+    {
+      "orig": "Ez",
+      "expr": "__basaltOwn.s22MathJaxTimer",
+      "sha1": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
+      "originalBytes": 1
+    },
+    {
+      "orig": "Mz",
+      "expr": "__basaltOwn.s22MathJaxSheet",
+      "sha1": "2be88ca4242c76e8253ac62474851065032d6833",
+      "originalBytes": 4
+    },
+    {
+      "orig": "Fz",
+      "expr": "__basaltOwn.s22WeakKeySeed",
+      "sha1": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
+      "originalBytes": 1
+    },
+    {
+      "orig": "Lz",
+      "expr": "__basaltOwn.s22FrameBridgeSeen",
+      "sha1": "b1814bd47ff32986f5fe315dc99bfb33a92e84a5",
+      "originalBytes": 11
+    },
+    {
+      "orig": "Xz",
+      "expr": "__basaltOwn.s22MermaidTextMap",
+      "sha1": "46e96ccfcfbb4f4c05ed1f14a9ecd69852e8605f",
+      "originalBytes": 4
+    },
+    {
+      "orig": "eq",
+      "expr": "__basaltOwn.s22MathTextMap",
+      "sha1": "46e96ccfcfbb4f4c05ed1f14a9ecd69852e8605f",
+      "originalBytes": 4
+    },
+    {
+      "orig": "yq",
+      "expr": "__basaltOwn.s22TableUpdateAnnotation(qe)",
+      "sha1": "f1309fc8abb3ecea68ef650f1b171f36a68ef247",
+      "originalBytes": 11
+    },
+    {
+      "orig": "Sz",
+      "expr": "__basaltOwn.s22FlushMathStyles",
+      "sha1": "82a0cab9eab70198cf02f0370d5cff8501f892be",
+      "originalBytes": 178
+    },
+    {
+      "orig": "Qz",
+      "expr": "__basaltOwn.s22FindMermaid",
+      "sha1": "cc37890534d8b70d1530ec26e24a0da1fa04fa78",
+      "originalBytes": 148
+    },
+    {
+      "orig": "Zz",
+      "expr": "__basaltOwn.s22CodeLanguage",
+      "sha1": "ca1f003a4e2c2238e07ee19e1139efed424dd696",
+      "originalBytes": 106
+    },
+    {
+      "orig": "Jz",
+      "expr": "__basaltOwn.s22FindCodeBlock",
+      "sha1": "270bab77e47f7539f7d9b9b546b3415762db9ccf",
+      "originalBytes": 191
+    },
+    {
+      "orig": "tq",
+      "expr": "__basaltOwn.s22FindMath",
+      "sha1": "91129ef978179086dec3a76eb8be80d3a8064775",
+      "originalBytes": 201
+    },
+    {
+      "orig": "iq",
+      "expr": "__basaltOwn.s22FindInternalEmbed",
+      "sha1": "37e063f6dd7ba0451d1db959dabe392e7f19a19b",
+      "originalBytes": 194
+    },
+    {
+      "orig": "rq",
+      "expr": "__basaltOwn.s22FindImage",
+      "sha1": "bc7e9611e10abffac3fecd1859cc61c21cfdde33",
+      "originalBytes": 303
+    },
+    {
+      "orig": "Kz",
+      "expr": "__basaltOwn.s22RenderMermaidDiagram",
+      "sha1": "dceab885efcdaef4fa4173df8e75d600b092019b",
+      "originalBytes": 1562
+    },
+    {
+      "orig": "uz",
+      "expr": "__basaltOwn.s22LoadPdfLib()",
+      "sha1": "ee068b8d8a4422bd858f8b253cefb4c49d2c2cc0",
+      "originalBytes": 207
+    },
+    {
+      "orig": "hz",
+      "expr": "__basaltOwn.s22LoadPdfViewer()",
+      "sha1": "65e7dcbec30c1253311c1d1cc4a5a3e538766db5",
+      "originalBytes": 94
+    },
+    {
+      "orig": "fz",
+      "expr": "__basaltOwn.s22LoadCodeMirrorModes()",
+      "sha1": "e46be404345bc67db4d7b9ab18e4387fb6e23246",
+      "originalBytes": 34
+    },
+    {
+      "orig": "mz",
+      "expr": "__basaltOwn.s22LoadMermaidLib()",
+      "sha1": "2fd2ff5e3bc6c4180b7bd90355953538d822e1d8",
+      "originalBytes": 428
+    },
+    {
+      "orig": "gz",
+      "expr": "__basaltOwn.s22LoadPrismLib()",
+      "sha1": "b1a7904c097570c2c6476444edfe667513194d98",
+      "originalBytes": 97
+    },
+    {
+      "orig": "bz",
+      "expr": "__basaltOwn.s22LoadMathJaxLib()",
+      "sha1": "f29a38078cc8f3cba3ae7d10c3c26e556fbb8908",
+      "originalBytes": 470
     }
   ],
   "methods": [
@@ -7140,12 +7552,17 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,FV,Jl,createEl,Mg,sz,aq,Bl,Fl,Wc,Tv,wg,HA,_e,lc,qA,jA,zA,tP,FA,df,DL,nt,re,Cz,Ez,Mz,yq,AA,Cg,NV,hT",
   "patches": [
     {
       "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
       "find": "P5=function(e){function t(){var t=null!==e&&e.apply(this,arguments)||this;return t.filePath=\"\"",
       "replace": "P5=function(e){function t(){var t=Reflect.construct(e,arguments,this.constructor);return t.filePath=\"\""
+    },
+    {
+      "find": "function Iz(e){return/*own*/__basaltOwn.renderMatchRanges(e)}",
+      "replace": "function Iz(e){return/*own*/__basaltOwn.s22InstallFrameBridge(e)}",
+      "note": "s22: Iz is the iframe message bridge used by embed frames, not the match-range renderer"
     }
   ]
 }
