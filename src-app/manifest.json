@@ -2072,6 +2072,11 @@
       "use": "s06TagSuggestions",
       "host": true,
       "originalBytes": 406
+    },
+    {
+      "orig": "kte",
+      "use": "s36WindowChrome",
+      "originalBytes": 55245
     }
   ],
   "classes": [
@@ -4949,9 +4954,6 @@
     "createEl": "createEl",
     "createFragment": "createFragment",
     "FolderPathSuggestTab": "AI",
-    "s06Purify": "EL",
-    "s06PurifyConfig": "SL",
-    "s06MdLinkPattern": "pT",
     "s13ParseColor": "Vk",
     "s13SpatialIndex": "Y3",
     "s13BasesViewBase": "h$",
@@ -5152,6 +5154,9 @@
     "xL": "xL",
     "xW": "xW",
     "zV": "zV",
+    "s06Purify": "EL",
+    "s06PurifyConfig": "SL",
+    "s06MdLinkPattern": "pT",
     "s25FilterBuilder": "EX",
     "s25FilePathSuggest": "DI",
     "s25MultiTextComponent": "XI",
