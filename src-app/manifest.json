@@ -2666,6 +2666,10 @@
     {
       "orig": "a4",
       "use": "defineS13AudioRecorder"
+    },
+    {
+      "orig": "f4",
+      "use": "defineS13CardsView"
     }
   ],
   "host": {
@@ -3215,7 +3219,10 @@
     "s13OverlayPop": "qm",
     "s13IsMediaFile": "$y",
     "s13FilePickerModal": "n4",
-    "s13AudioConverter": "r4"
+    "s13AudioConverter": "r4",
+    "s13CardsGroupHeader": "m4",
+    "s13CardsItem": "v4",
+    "s13Thumbnailer": "s4"
   },
   "declarators": [
     {
