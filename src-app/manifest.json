@@ -1344,11 +1344,11 @@
    "use": "s04FormatMenuPlugin",
    "originalBytes": 802
   },
-   {
-    "orig": "Gg",
-    "use": "s04HistoryNavButton",
-    "host": true
-   }
+  {
+   "orig": "Gg",
+   "use": "s04HistoryNavButton",
+   "host": true
+  }
  ],
  "classes": [
   {
@@ -2510,14 +2510,14 @@
    "use": "s04MenuManager",
    "originalBytes": 7820
   },
-   {
-    "orig": "vk",
-    "use": "s04CapacitorAdapter"
-   },
-   {
-    "orig": "pk",
-    "use": "s04CapacitorFs"
-   }
+  {
+   "orig": "vk",
+   "use": "s04CapacitorAdapter"
+  },
+  {
+   "orig": "pk",
+   "use": "s04CapacitorFs"
+  }
  ],
  "host": {
   "Events": "VT",
@@ -3231,6 +3231,12 @@
    "expr": "__basaltOwn.s04ModifierDisplayNames(jl)",
    "sha1": "adb72b4ae6d3d11dc387315975caa10039aea8b0",
    "originalBytes": 108
+  },
+  {
+   "orig": "PC",
+   "expr": "__basaltOwn.s04AppSettingDefaults",
+   "sha1": "624706302e5beaa2d44ed1e941ae3f233e347843",
+   "originalBytes": 1635
   }
  ],
  "methods": [
