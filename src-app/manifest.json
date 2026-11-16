@@ -1263,6 +1263,26 @@
       "orig": "Wv",
       "use": "withButtonLoading",
       "originalBytes": 298
+    },
+    {
+      "orig": "gZ",
+      "use": "s11TrackWindowFocus"
+    },
+    {
+      "orig": "yZ",
+      "use": "s11InstallEnhance"
+    },
+    {
+      "orig": "bZ",
+      "use": "s11AttachElectron"
+    },
+    {
+      "orig": "jZ",
+      "use": "s11TextLayerOffset"
+    },
+    {
+      "orig": "UZ",
+      "use": "s11TextLayerNode"
     }
   ],
   "classes": [
@@ -2387,6 +2407,74 @@
       "orig": "DC",
       "use": "defineICloudUnsupportedScreen",
       "originalBytes": 356
+    },
+    {
+      "orig": "MZ",
+      "use": "s11AudioView"
+    },
+    {
+      "orig": "xZ",
+      "use": "s11ImageView"
+    },
+    {
+      "orig": "XZ",
+      "use": "s11VideoView"
+    },
+    {
+      "orig": "eJ",
+      "use": "s11MediaEmbed"
+    },
+    {
+      "orig": "tJ",
+      "use": "s11ImageEmbed"
+    },
+    {
+      "orig": "nJ",
+      "use": "s11AudioEmbed"
+    },
+    {
+      "orig": "iJ",
+      "use": "s11VideoEmbed"
+    },
+    {
+      "orig": "BZ",
+      "use": "s11PdfPasswordPrompt"
+    },
+    {
+      "orig": "LZ",
+      "use": "s11PdfFindBar"
+    },
+    {
+      "orig": "OZ",
+      "use": "s11PdfLocalization"
+    },
+    {
+      "orig": "HZ",
+      "use": "s11PdfToolbar"
+    },
+    {
+      "orig": "FZ",
+      "use": "s11PdfOutlineItem"
+    },
+    {
+      "orig": "NZ",
+      "use": "s11PdfOutlineTree"
+    },
+    {
+      "orig": "_Z",
+      "use": "s11PdfViewerComponent"
+    },
+    {
+      "orig": "GZ",
+      "use": "s11PdfLazyViewer"
+    },
+    {
+      "orig": "KZ",
+      "use": "s11PdfView"
+    },
+    {
+      "orig": "YZ",
+      "use": "s11PdfEmbedView"
     }
   ],
   "host": {
@@ -3008,6 +3096,78 @@
       "expr": "[\"accentColor\",\"theme\",\"cssTheme\",\"enabledCssSnippets\",\"showViewHeader\",\"showRibbon\",\"nativeMenus\",\"translucency\",\"textFontFamily\",\"interfaceFontFamily\",\"monospaceFontFamily\",\"baseFontSize\",\"baseFontSizeAction\",\"slidingSidebar\",\"floatingNavigation\",\"autoFullScreen\"]",
       "sha1": "ca78b22bc3a5de13984e7804174301faa0b4a19e",
       "originalBytes": 3376
+    },
+    {
+      "orig": "EZ",
+      "expr": "__basaltOwn.s11ViewTypeAudio",
+      "sha1": "2b297080ad056455eb68f1e35358dcb6b17d2a14",
+      "originalBytes": 7
+    },
+    {
+      "orig": "SZ",
+      "expr": "__basaltOwn.s11ViewTypeImage",
+      "sha1": "40bdc6275db02603c661a3da266ef662618d0d91",
+      "originalBytes": 7
+    },
+    {
+      "orig": "QZ",
+      "expr": "__basaltOwn.s11ViewTypeVideo",
+      "sha1": "b53c54f0a814aab43d7729f68732b181b86b7f3c",
+      "originalBytes": 7
+    },
+    {
+      "orig": "TZ",
+      "expr": "__basaltOwn.s11PdfViewerConfig",
+      "sha1": "a7484ef7237bbeccb4e394959167515e66280d42",
+      "originalBytes": 480
+    },
+    {
+      "orig": "PZ",
+      "expr": "__basaltOwn.s11PdfSearchSettingsKey",
+      "sha1": "b99d91d7d4c8886aa2a1efadc01c9b34861069b8",
+      "originalBytes": 23
+    },
+    {
+      "orig": "qZ",
+      "expr": "__basaltOwn.s11PdfIsThemedKey",
+      "sha1": "67b315d406259a4fab51e6886f79128c60675375",
+      "originalBytes": 17
+    },
+    {
+      "orig": "DZ",
+      "expr": "__basaltOwn.s11PdfStrings()",
+      "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+      "originalBytes": 6
+    },
+    {
+      "orig": "AZ",
+      "expr": "__basaltOwn.s11SearchStrings()",
+      "sha1": "b4154efdcf48fd241f859327be778a43a9c38620",
+      "originalBytes": 17
+    },
+    {
+      "orig": "IZ",
+      "expr": "__basaltOwn.s11PdfStrings()",
+      "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+      "originalBytes": 6
+    },
+    {
+      "orig": "RZ",
+      "expr": "__basaltOwn.s11PdfStrings()",
+      "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+      "originalBytes": 6
+    },
+    {
+      "orig": "VZ",
+      "expr": "__basaltOwn.s11PdfStrings()",
+      "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+      "originalBytes": 6
+    },
+    {
+      "orig": "zZ",
+      "expr": "__basaltOwn.s11PdfStrings()",
+      "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+      "originalBytes": 6
     }
   ],
   "methods": [
@@ -4013,7 +4173,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,fZ,cg,Kc,Dc,Ac,xc,JL,eI,dq,iP,NT,AQ,wQ,Qy,kQ,PQ,XL,gJ,vj,BD,dz,Kl,WZ,Mv,kv,Cv,Ic,RT,cc,qp,jp,BH,wb,VH,DT,Pc,Ly,xy,Ny,createSpan,yg,eJ,tJ,nJ,iJ,kZ,wZ,GZ,_Z,HZ,LZ,BZ,NZ,FZ,OZ,YZ,lJ,TJ,DJ,AJ,LJ,OJ,xJ,kJ,EJ,mJ,HJ,zJ,qJ,rJ,oJ,aJ,uJ,hq,tO,nP,Jo,lz,mZ,vZ,pv,VA",
   "patches": [
     {
       "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
