@@ -1896,6 +1896,10 @@
       "orig": "O9",
       "use": "s15ScrollLoadMore",
       "originalBytes": 138
+    },
+    {
+      "orig": "K6",
+      "use": "s31CommandCallback"
     }
   ],
   "classes": [
@@ -3994,6 +3998,66 @@
       "orig": "x9",
       "use": "defineSlidesView",
       "originalBytes": 2468
+    },
+    {
+      "orig": "m6",
+      "use": "s31InternalEmbedWidget"
+    },
+    {
+      "orig": "v6",
+      "use": "s31CodeBlockWidget"
+    },
+    {
+      "orig": "g6",
+      "use": "s31EmbedBlockWidget"
+    },
+    {
+      "orig": "y6",
+      "use": "s31CalloutWidget"
+    },
+    {
+      "orig": "b6",
+      "use": "s31MathWidget"
+    },
+    {
+      "orig": "k6",
+      "use": "s31HtmlEmbedWidget"
+    },
+    {
+      "orig": "C6",
+      "use": "s31EmptyWidget"
+    },
+    {
+      "orig": "M6",
+      "use": "s31FoldDecorations"
+    },
+    {
+      "orig": "S6",
+      "use": "s31SelectionDecorations"
+    },
+    {
+      "orig": "x6",
+      "use": "s31TaskDecorations"
+    },
+    {
+      "orig": "F6",
+      "use": "s31CalloutTypeSuggest"
+    },
+    {
+      "orig": "V6",
+      "use": "s31BacklinkPlugin"
+    },
+    {
+      "orig": "q6",
+      "use": "s31BacklinksSettingTab"
+    },
+    {
+      "orig": "Q6",
+      "use": "s31NoteFoldStore"
+    },
+    {
+      "orig": "X6",
+      "use": "s31MobileNavbar"
     }
   ],
   "host": {
@@ -6135,6 +6199,66 @@
       "expr": "__basaltOwn.QUICK_SWITCHER_DEFAULTS",
       "sha1": "777739e8d43da61b10510e6fb5e015ceebc9c9ce",
       "originalBytes": 60
+    },
+    {
+      "orig": "w6",
+      "expr": "__basaltOwn.s31HtmlTagBlocklist",
+      "sha1": "c9a2d71417d6409a4fc91db4cac732a22cab6f59",
+      "originalBytes": 59
+    },
+    {
+      "orig": "E6",
+      "expr": "__basaltOwn.s31EmptyWidgetSide()",
+      "sha1": "1c61d33b89d83faa69f4e947823a0b148628a271",
+      "originalBytes": 34
+    },
+    {
+      "orig": "D6",
+      "expr": "__basaltOwn.s31PostProcessRefresh",
+      "sha1": "0e5266f284afc45695da955b5e4857f7496b3fe5",
+      "originalBytes": 88
+    },
+    {
+      "orig": "A6",
+      "expr": "__basaltOwn.s31EditorExtensions()",
+      "sha1": "0a01740e2841587dff31da26ce7830ce1033724b",
+      "originalBytes": 1240
+    },
+    {
+      "orig": "P6",
+      "expr": "__basaltOwn.s31PostProcessorPlugin",
+      "sha1": "f997c8aa151a81f8368526e006b363f85e9d3acd",
+      "originalBytes": 164
+    },
+    {
+      "orig": "L6",
+      "expr": "__basaltOwn.s31SelectionField()",
+      "sha1": "5a6ad21c096b771b820a84fbb7d18e607e9a7ab7",
+      "originalBytes": 90
+    },
+    {
+      "orig": "I6",
+      "expr": "__basaltOwn.s31TaskField()",
+      "sha1": "a48a5f6030b376211dd0f960c894305abad4be9b",
+      "originalBytes": 90
+    },
+    {
+      "orig": "B6",
+      "expr": "__basaltOwn.s31BacklinkViewType",
+      "sha1": "5594d7c9589a1c18d34d3cb33e0ece77b620f16c",
+      "originalBytes": 10
+    },
+    {
+      "orig": "U6",
+      "expr": "__basaltOwn.s31MarkdownViewType",
+      "sha1": "5d9a0e7b2580ae488fcb648203e2771f6ccc2c33",
+      "originalBytes": 10
+    },
+    {
+      "orig": "_6",
+      "expr": "__basaltOwn.s31PrintModalCommand()",
+      "sha1": "28bd8570ec5b7ba24194b5626ab8efb009d46867",
+      "originalBytes": 20
     }
   ],
   "methods": [
@@ -7140,7 +7264,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,NV,FV,Rn,Vn,E$,YZ,sJ,tJ,d6,zx,Xz,JZ,Yz,pq,uq,bz,kz,xz,W2,hq,_A,_2,tp,VA,G2,EA,MA,K2,$2,$d,J2,SA,X2,Y2,Z2,a6,aP,c6,ct,e6,i6,l6,s6,xA,NA,RA,Zd,AA,ji,H6,D,Gg",
   "patches": [
     {
       "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
