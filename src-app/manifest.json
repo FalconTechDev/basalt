@@ -2475,6 +2475,11 @@
   {
    "orig": "vte",
    "use": "defineSettingsModal"
+  },
+  {
+   "orig": "hee",
+   "use": "defineSyncSocket",
+   "originalBytes": 8969
   }
  ],
  "host": {
@@ -3335,6 +3340,12 @@
    "expr": "__basaltOwn.s16SystemFontList",
    "sha1": "67266d07995d8f05b07d94ef54305d65d25bbe96",
    "originalBytes": 1680
+  },
+  {
+   "orig": "eee",
+   "use": "s16CloseCodes",
+   "sha1": "44873d15410efd96edf5586cb435ce82738e3abe",
+   "originalBytes": 364
   }
  ],
  "methods": [
