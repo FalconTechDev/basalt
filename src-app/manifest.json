@@ -2463,6 +2463,14 @@
   {
    "orig": "zee",
    "use": "defineFontListModal"
+  },
+  {
+   "orig": "ete",
+   "use": "defineRibbonConfigModal"
+  },
+  {
+   "orig": "lte",
+   "use": "defineFeedbackBanner"
   }
  ],
  "host": {
@@ -2982,7 +2990,10 @@
   "s16WorkspaceSuggestModal": "Fee",
   "s16QuickActionModal": "dte",
   "s16CommandSuggest": "l8",
-  "s16FontSuggest": "qee"
+  "s16FontSuggest": "qee",
+  "s16DevBuild": "Hf",
+  "s16License": "Hw",
+  "s16ReviewApi": "Om"
  },
  "declarators": [
   {
