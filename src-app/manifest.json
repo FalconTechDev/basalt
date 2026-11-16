@@ -2539,6 +2539,81 @@
    "orig": "z4",
    "use": "defineS13ColumnWidth",
    "originalBytes": 245
+  },
+  {
+   "orig": "q4",
+   "use": "defineS13TableRow",
+   "originalBytes": 329
+  },
+  {
+   "orig": "U4",
+   "use": "defineS13TableGroup",
+   "originalBytes": 659
+  },
+  {
+   "orig": "W4",
+   "use": "defineS13HeaderRow",
+   "originalBytes": 295
+  },
+  {
+   "orig": "G4",
+   "use": "defineS13EntryRow",
+   "originalBytes": 294
+  },
+  {
+   "orig": "Y4",
+   "use": "defineS13SummaryRow",
+   "originalBytes": 555
+  },
+  {
+   "orig": "_4",
+   "use": "defineS13HeaderCell",
+   "originalBytes": 4038
+  },
+  {
+   "orig": "K4",
+   "use": "defineS13BodyCell",
+   "originalBytes": 436
+  },
+  {
+   "orig": "Q4",
+   "use": "defineS13SummaryCell",
+   "originalBytes": 1141
+  },
+  {
+   "orig": "g4",
+   "use": "defineS13CardsProperty",
+   "originalBytes": 416
+  },
+  {
+   "orig": "v4",
+   "use": "defineS13CardsItem",
+   "originalBytes": 2856
+  },
+  {
+   "orig": "A4",
+   "use": "defineS13ListProperty",
+   "originalBytes": 430
+  },
+  {
+   "orig": "T4",
+   "use": "defineS13ListGroup",
+   "originalBytes": 1384
+  },
+  {
+   "orig": "D4",
+   "use": "defineS13ListItem",
+   "originalBytes": 1779
+  },
+  {
+   "orig": "x4",
+   "use": "defineS13ListView",
+   "originalBytes": 3968
+  },
+  {
+   "orig": "R4",
+   "use": "defineS13PasteData",
+   "originalBytes": 1568
   }
  ],
  "host": {
@@ -3048,7 +3123,24 @@
   "createFragment": "createFragment",
   "FolderPathSuggestTab": "AI",
   "s13ParseColor": "Vk",
-  "s13SpatialIndex": "Y3"
+  "s13SpatialIndex": "Y3",
+  "s13BasesViewBase": "h$",
+  "s13ReconcileCells": "yy",
+  "s13PropValueRenderer": "m$",
+  "s13PropEditorRenderer": "d$",
+  "s13BasesValueEmpty": "bW",
+  "s13BasesValueList": "SW",
+  "s13BasesValueText": "CW",
+  "s13BasesValueBlank": "AW",
+  "s13BasesFileValue": "NW",
+  "s13BasesLinkValue": "BW",
+  "s13BasesValueClass": "gW",
+  "s13SummaryValues": "ZK",
+  "s13BasesMenu": "jY",
+  "s13PropActionsMenu": "QX",
+  "s13IsGroupable": "kY",
+  "s13SummaryMenuController": "L4",
+  "s13CreateSpan": "createSpan"
  },
  "declarators": [
   {
@@ -3366,6 +3458,12 @@
    "expr": "__basaltHost.s13SpatialIndex",
    "sha1": "0f937a8557a071544a23761aa102db6d41c67963",
    "originalBytes": 2
+  },
+  {
+   "orig": "j4",
+   "expr": "__basaltOwn.s13BasesCellBase",
+   "sha1": "5c8e9a87c248bab4799732dec76af64242c6b5f2",
+   "originalBytes": 99
   }
  ],
  "methods": [
