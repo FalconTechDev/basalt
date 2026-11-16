@@ -2447,6 +2447,14 @@
   {
    "orig": "Fee",
    "use": "defineWorkspaceSuggestModal"
+  },
+  {
+   "orig": "dte",
+   "use": "defineQuickActionSuggest"
+  },
+  {
+   "orig": "fte",
+   "use": "defineMobileToolbarTab"
   }
  ],
  "host": {
@@ -2963,7 +2971,9 @@
   "s16TagPaneView": "bee",
   "s16UniqueNoteSettingsTab": "xee",
   "s16ManageWorkspacesModal": "Oee",
-  "s16WorkspaceSuggestModal": "Fee"
+  "s16WorkspaceSuggestModal": "Fee",
+  "s16QuickActionModal": "dte",
+  "s16CommandSuggest": "l8"
  },
  "declarators": [
   {
