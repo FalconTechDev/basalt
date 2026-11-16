@@ -45,4 +45,8 @@
 | d3 | inside `src/app.js` (graph/canvas helpers) | ISC |
 | Fuse.js | inside `src/app.js` (search ranking) | Apache-2.0 |
 
+| DOMPurify 3.0.1 (HTML sanitizer inside `src/app.js`) | `src/app.js` application scope | Apache-2.0 OR MPL-2.0 |
+| Turndown (HTML → Markdown inside `src/app.js`) | `src/app.js` application scope | MIT |
+| CodeMirror 6 packages (`@codemirror/state`, `-view`, `-commands`, `-language`, Lezer; inside `src/app.js`) | `src/app.js` application scope | MIT |
+
 Public plugin list used by the plugin catalog is read from a public GitHub repository at run time; plugins installed from it keep their own licenses.

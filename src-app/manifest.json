@@ -1925,6 +1925,153 @@
       "orig": "VJ",
       "use": "s28TitleToFileName",
       "originalBytes": 119
+    },
+    {
+      "orig": "iP",
+      "use": "s06Pos",
+      "originalBytes": 56
+    },
+    {
+      "orig": "oP",
+      "use": "s06PosEq",
+      "originalBytes": 53
+    },
+    {
+      "orig": "rP",
+      "use": "s06PosAdd",
+      "originalBytes": 47
+    },
+    {
+      "orig": "IA",
+      "use": "s06PosToOffset",
+      "originalBytes": 177
+    },
+    {
+      "orig": "OA",
+      "use": "s06OffsetToPos",
+      "originalBytes": 98
+    },
+    {
+      "orig": "_A",
+      "use": "s06QuotePrefixWidth",
+      "originalBytes": 159
+    },
+    {
+      "orig": "jL",
+      "use": "s06SetPath",
+      "originalBytes": 254
+    },
+    {
+      "orig": "yI",
+      "use": "s06MergeDeep",
+      "originalBytes": 277
+    },
+    {
+      "orig": "vI",
+      "use": "s06UpdateFrontmatter",
+      "originalBytes": 249
+    },
+    {
+      "orig": "bI",
+      "use": "s06ParseFrontmatter",
+      "originalBytes": 124
+    },
+    {
+      "orig": "kI",
+      "use": "s06WithFrontmatter",
+      "originalBytes": 70
+    },
+    {
+      "orig": "wI",
+      "use": "s06FrontmatterBlock",
+      "originalBytes": 113
+    },
+    {
+      "orig": "mP",
+      "use": "s06IsHeaderRow",
+      "originalBytes": 309
+    },
+    {
+      "orig": "uP",
+      "use": "s06OffsetsToPositions",
+      "originalBytes": 192
+    },
+    {
+      "orig": "vP",
+      "use": "s06Colspan",
+      "originalBytes": 114
+    },
+    {
+      "orig": "gP",
+      "use": "s06ColspanRepeat",
+      "originalBytes": 40
+    },
+    {
+      "orig": "qA",
+      "use": "s06EscapeTableCell",
+      "originalBytes": 387
+    },
+    {
+      "orig": "jA",
+      "use": "s06UnescapeTableCell",
+      "originalBytes": 556
+    },
+    {
+      "orig": "GI",
+      "use": "s06MatchBasenameFirst",
+      "originalBytes": 108
+    },
+    {
+      "orig": "kP",
+      "use": "s06HasIosFilesDrop",
+      "originalBytes": 139
+    },
+    {
+      "orig": "RI",
+      "use": "s06LinkTarget",
+      "originalBytes": 276
+    },
+    {
+      "orig": "$I",
+      "use": "s06HasMetadataEditor",
+      "host": true,
+      "originalBytes": 111
+    },
+    {
+      "orig": "JI",
+      "use": "s06ActivePropertiesEditor",
+      "host": true,
+      "originalBytes": 208
+    },
+    {
+      "orig": "xL",
+      "use": "s06SanitizeHtml",
+      "host": true,
+      "originalBytes": 64
+    },
+    {
+      "orig": "TL",
+      "use": "s06DropLinkTexts",
+      "host": true,
+      "originalBytes": 681
+    },
+    {
+      "orig": "WL",
+      "use": "s06RewriteLink",
+      "host": true,
+      "originalBytes": 529
+    },
+    {
+      "orig": "gI",
+      "use": "s06LinkChangeFor",
+      "host": true,
+      "originalBytes": 478
+    },
+    {
+      "orig": "QI",
+      "use": "s06TagSuggestions",
+      "host": true,
+      "originalBytes": 406
     }
   ],
   "classes": [
@@ -4198,6 +4345,102 @@
       "orig": "qJ",
       "use": "s28WebViewerFindBar",
       "originalBytes": 1253
+    },
+    {
+      "orig": "iO",
+      "use": "defineS06ValueItem"
+    },
+    {
+      "orig": "LO",
+      "use": "defineS06UnknownValue"
+    },
+    {
+      "orig": "mO",
+      "use": "defineS06CheckboxValue"
+    },
+    {
+      "orig": "dO",
+      "use": "defineS06FileValue"
+    },
+    {
+      "orig": "fO",
+      "use": "defineS06FolderValue"
+    },
+    {
+      "orig": "uO",
+      "use": "defineS06DateValue"
+    },
+    {
+      "orig": "pO",
+      "use": "defineS06DateTimeValue"
+    },
+    {
+      "orig": "hO",
+      "use": "defineS06DailyNoteDateValue"
+    },
+    {
+      "orig": "SO",
+      "use": "defineS06NumberValue"
+    },
+    {
+      "orig": "OO",
+      "use": "defineS06TagValueSuggest"
+    },
+    {
+      "orig": "DI",
+      "use": "defineS06FilteredFileSuggest"
+    },
+    {
+      "orig": "TI",
+      "use": "defineS06MarkdownFileSuggest"
+    },
+    {
+      "orig": "PI",
+      "use": "defineS06FolderSuggest"
+    },
+    {
+      "orig": "FO",
+      "use": "defineS06ChangeTypeModal"
+    },
+    {
+      "orig": "aO",
+      "use": "defineS06TextValue",
+      "originalBytes": 1721
+    },
+    {
+      "orig": "sO",
+      "use": "defineS06MultiTextValue",
+      "originalBytes": 1211
+    },
+    {
+      "orig": "lO",
+      "use": "defineS06TagsValue",
+      "originalBytes": 1294
+    },
+    {
+      "orig": "cO",
+      "use": "defineS06AliasesValue",
+      "originalBytes": 767
+    },
+    {
+      "orig": "gO",
+      "use": "defineS06PropertyKeyValue",
+      "originalBytes": 384
+    },
+    {
+      "orig": "vO",
+      "use": "defineS06TypeCombobox",
+      "originalBytes": 303
+    },
+    {
+      "orig": "XI",
+      "use": "defineS06MultiSelect",
+      "originalBytes": 6415
+    },
+    {
+      "orig": "MI",
+      "use": "defineS06Combobox",
+      "originalBytes": 5512
     }
   ],
   "host": {
@@ -4706,6 +4949,9 @@
     "createEl": "createEl",
     "createFragment": "createFragment",
     "FolderPathSuggestTab": "AI",
+    "s06Purify": "EL",
+    "s06PurifyConfig": "SL",
+    "s06MdLinkPattern": "pT",
     "s13ParseColor": "Vk",
     "s13SpatialIndex": "Y3",
     "s13BasesViewBase": "h$",
@@ -6443,6 +6689,170 @@
       "expr": "__basaltOwn.s28BookmarkStrings(__basaltHost)",
       "sha1": "cf2fd143b0abc4b77438af8ca5925c12cbe93861",
       "originalBytes": 20
+    },
+    {
+      "orig": "WA",
+      "expr": "__basaltOwn.s06BlockquoteRe",
+      "sha1": "616a7f86764868615ccde3a4d4c1b50ae07fc098",
+      "originalBytes": 16
+    },
+    {
+      "orig": "XA",
+      "expr": "__basaltOwn.s06FootnoteRefRe",
+      "sha1": "4ee7b1a7f853ac357f854511b210db0a61f31c28",
+      "originalBytes": 8
+    },
+    {
+      "orig": "aP",
+      "expr": "__basaltOwn.s06ListMarkerRe",
+      "sha1": "8faa41167dbec08acc3580f5cf00ff434a0b782b",
+      "originalBytes": 48
+    },
+    {
+      "orig": "sP",
+      "expr": "__basaltOwn.s06HeadingRe",
+      "sha1": "bff3c942624abb77b14ec705dcfa98b835b83ebe",
+      "originalBytes": 25
+    },
+    {
+      "orig": "FL",
+      "expr": "__basaltOwn.s06DateTimeRe",
+      "sha1": "fef389f561b94ed24ef9076f1d56fa743193c1bb",
+      "originalBytes": 40
+    },
+    {
+      "orig": "OL",
+      "expr": "__basaltOwn.s06DateRe",
+      "sha1": "4a8adca03f2fac2d8eac49bb427976e77ceb1525",
+      "originalBytes": 24
+    },
+    {
+      "orig": "IL",
+      "expr": "__basaltOwn.s06DateTimeFormats",
+      "sha1": "da8d9880cc476fb87e14290718ec93ee60bb867b",
+      "originalBytes": 87
+    },
+    {
+      "orig": "LL",
+      "expr": "__basaltOwn.s06DateFormats",
+      "sha1": "0ad2748c5aca8ef05fea8cccc8bbfa28812ba84b",
+      "originalBytes": 14
+    },
+    {
+      "orig": "DL",
+      "expr": "__basaltOwn.s06CommentPrefix",
+      "sha1": "11b1e9735b8024a9c63a554fe1724ec639188c34",
+      "originalBytes": 23
+    },
+    {
+      "orig": "KI",
+      "expr": "__basaltOwn.s06TagRe",
+      "sha1": "94bee48dc8f241a96d04d4994b3d4b490fa93b45",
+      "originalBytes": 75
+    },
+    {
+      "orig": "fI",
+      "expr": "__basaltOwn.s06WikiLinkRe",
+      "sha1": "6ddff9279f4752742b258947d550d553a6dc230d",
+      "originalBytes": 30
+    },
+    {
+      "orig": "lP",
+      "expr": "__basaltOwn.s06CjkBrackets",
+      "sha1": "80acd742c4351fd226032e3371fdd1ee6cebee4e",
+      "originalBytes": 153
+    },
+    {
+      "orig": "fP",
+      "expr": "{left:\":--\",right:\"--:\",center:\":-:\"}"
+    },
+    {
+      "orig": "VI",
+      "expr": "{type:\"none\",matches:null,score:0}"
+    },
+    {
+      "orig": "BI",
+      "expr": "__basaltOwn.s06CompareScoreDesc",
+      "sha1": "f5738ea14c6f7ae5011fc13a6755c5a61ba5e86e",
+      "originalBytes": 37
+    },
+    {
+      "orig": "VL",
+      "expr": "__basaltOwn.s06ComparePathLength",
+      "sha1": "10a54413e282244fd112dfc25b920d11c1d4ffd8",
+      "originalBytes": 49
+    },
+    {
+      "orig": "rO",
+      "expr": "__basaltOwn.s06PropertyOptionText(__basaltHost)",
+      "sha1": "83eaca695d398d5b6c18b4e52882e3a11faa8aef",
+      "originalBytes": 297
+    },
+    {
+      "orig": "yO",
+      "expr": "__basaltOwn.s06PropertyOptionPropertyName(__basaltHost)",
+      "sha1": "0ae89a6264b979b4e326f27d58bfcd169cd3d920",
+      "originalBytes": 188
+    },
+    {
+      "orig": "bO",
+      "expr": "__basaltOwn.s06PropertyOptionAliases(__basaltHost)",
+      "sha1": "4a9da8b69f50194f8b63a124fc0e18a78f5e9462",
+      "originalBytes": 208
+    },
+    {
+      "orig": "wO",
+      "expr": "__basaltOwn.s06PropertyOptionTags(__basaltHost)",
+      "sha1": "17c630f325fd65070c00896a3d1ea42024901054",
+      "originalBytes": 196
+    },
+    {
+      "orig": "kO",
+      "expr": "__basaltOwn.s06PropertyOptionFolder(__basaltHost)",
+      "sha1": "14da60069a39869bac0ae942ede7432d578d3d8c",
+      "originalBytes": 182
+    },
+    {
+      "orig": "CO",
+      "expr": "__basaltOwn.s06PropertyOptionFile(__basaltHost)",
+      "sha1": "f398196acf117b1fecaa5dfd28506a5a39bf5c9c",
+      "originalBytes": 176
+    },
+    {
+      "orig": "EO",
+      "expr": "__basaltOwn.s06PropertyOptionDate(__basaltHost)",
+      "sha1": "858d20b1ee776dd52a7ef5793f854dc17be96792",
+      "originalBytes": 179
+    },
+    {
+      "orig": "MO",
+      "expr": "__basaltOwn.s06PropertyOptionDatetime(__basaltHost)",
+      "sha1": "b484cded7c6d343dedfbb9fdd55d99d2c4cd4985",
+      "originalBytes": 184
+    },
+    {
+      "orig": "xO",
+      "expr": "__basaltOwn.s06PropertyOptionNumber(__basaltHost)",
+      "sha1": "6a0d48865c6ad15ef4677f6cf0a24932302d1ee3",
+      "originalBytes": 167
+    },
+    {
+      "orig": "TO",
+      "expr": "__basaltOwn.s06PropertyOptionCheckbox(__basaltHost)",
+      "sha1": "09f3acad7084b0653758c042ef24f59623d2933e",
+      "originalBytes": 177
+    },
+    {
+      "orig": "PO",
+      "expr": "__basaltOwn.s06PropertyOptionMultitext(__basaltHost)",
+      "sha1": "aa4eb4f9b595848af59fa333d3e879ad85410311",
+      "originalBytes": 184
+    },
+    {
+      "orig": "IO",
+      "expr": "__basaltOwn.s06PropertyOptionUnknownDescriptor(__basaltHost)",
+      "sha1": "99baa6211fe0adbc985770ee7ebd377141554f7c",
+      "originalBytes": 157
     }
   ],
   "methods": [
@@ -7448,7 +7858,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,Pl,Ll",
   "patches": [
     {
       "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
