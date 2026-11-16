@@ -137,6 +137,7 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
 * `MetadataCache`'s remaining host-mapped helpers and a few plugin-manager internals are still inherited.
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
 
+
 # src/app.js rewrite: progress
 
 Branch `app-rewrite-big` (worktree `basalt-wt-big`). Own code lives in `src-app/` and is spliced into the inherited bundle by
@@ -154,6 +155,16 @@ Own readable source: 761 KB in `src-app/*.js` (comments included).
 What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
 bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
 library, not by rewriting it by hand. The share of the application-specific part is therefore larger than 6.9 %, but the number is
+
+| functions (leaf helpers, search, timing, transitions, tooltips) | 166 | 20.4 KB |
+| classes / objects | 63 | 130.3 KB |
+| **total** | | **150.7 KB = 4.1 % of the 3688.9 KB bundle** |
+
+Own readable source: 283 KB in `src-app/*.js` (32 modules, comments included).
+
+What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
+bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
+library, not by rewriting it by hand. The share of the application-specific part is therefore larger than 4.1 %, but the number is
 kept on the full bundle so it cannot flatter itself.
 
 ## Mechanism (new in this branch)
@@ -204,6 +215,7 @@ kept on the full bundle so it cannot flatter itself.
 | palette.js | the quick switcher and command palette: the file/alias/unresolved/bookmark suggest modal (recent files on empty query, basename-first matching, Tab folder completion, create-new-file CTA), the command modal (pinned + recent ordering, hotkey hints, pin flair, last-100 recents in localStorage), both settings tabs (pin list with search suggest and drag reorder) and both plugins; plus `InstanceSettingTab`, the settings-tab base the internal plugins share |
 | file-explorer.js | the "file-explorer" view (kept for compatibility; `src/basalt-files.js` swaps its leaf to the "Files" panel on every layout change, same as before): `FileExplorerView` + `FileExplorerTree`, the file/folder rows (drag source, contenteditable rename, unsupported-file tags, tooltips, hover-link events), the header (new note / folder, sort menu, auto-reveal, collapse-all), clipboard copy/cut/paste (`basalt/files`), drag & drop into folders with auto-expand, rename validation, vault event sync, context menus and the plugin (commands, reveal-in-folder, hover source). Helpers: promise queue, item->file map, clipboard entry extraction, move/copy-into-folder |
 | notes-utils.js | the small core plugins: templates (`TemplatesPlugin` + `TemplateSuggestModal` + settings tab; `{{title}}`/`{{date}}`/`{{time}}` substitution, frontmatter split into the metadata editor, CLI `templates`/`template:read`/`template:insert`), daily notes (`DailyNotesPlugin` + settings tab; format/folder/template options, create-from-template, prev/next navigation, `daily` protocol + `daily:*` CLI, startup path/template helpers), random note and word count (status-bar segments fed by a Web Worker with the stock word regex, `wordcount` CLI, mobile file info). Helpers: frontmatter bounds, template splitter, pane-type check, format validation |
+
 | path.js, text.js, misc.js, frontmatter.js, search.js | the 143 leaf functions of the previous round |
 
 Behaviour changes (all bug fixes, nothing observable in normal use): the leaf history list is trimmed at 20 entries (the inherited
@@ -268,3 +280,50 @@ node tools/ws-diff.mjs base.json new.json           # (same for tools/api-scenar
   edge `G5`, selection `z3`, menu `U3`, the Canvas class `y5` (~62 KB), view `r8`, embed `a8`,
   settings `s8`, geometry helpers `L3`/`O3`/`A3`/`E3`/`P3`/`I3` and misc `D5`/`dg`/`M$`/`Cg`/`TT`.
 * Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
+
+  other agent's branch), drag manager (`xP`), the markdown view and its siblings (`W6`, preview, properties, outline, backlinks,
+  search UI, canvas glue), `Editor` wrapper (`cP`, `iZ`).
+* Bundled libraries (CodeMirror, Lezer, yaml, moment, tslib) are third-party and are not rewritten.
+
+---
+
+## Branch `rewrite-settings-sync` (worktree `basalt-wt-settings-sync`)
+
+Area: settings tabs, theme/plugin browsers, account/licence, sync/publish clients, update checker, branding audit.
+Numbers (`node tools/own-stats.mjs`, cumulative over all branches): **267.1 KB = 7.24 % of the bundle** replaced,
+own readable source 540.9 KB.
+
+### Replaced in this branch
+
+| module (src-app) | replaces |
+| --- | --- |
+| secrets.js | the whole keychain/secrets cluster: `SecretStorage` + desktop/mobile backends, secret chooser/edit/picker modals, encryption-info modal, `KeychainTab` (storage keys `secrets`, `secrets-encrypted`, `secrets-meta`, `secrets-encryption-warning-dismissed` unchanged) |
+| account.js | account/licence/vault/publish API client (`/login`, `/subscription/*`, `/vault*`, `/publish/*` — wire formats identical), `LoginModal`, `LicenseModal` (neutral Basalt branding, `https://github.com/FalconTechDev/basalt` links) |
+| about.js | About/general settings tab: version, update IPC flow (`update`, `check-update`, `disable-update`, `insider-build`, `cli`), language, help, account/licence buttons, advanced |
+| tab-hotkeys.js | hotkeys settings tab `C0`: search, shortcut/status filters, default vs user keys, conflicts, add/delete/restore/customize, `hotkeys.json` persistence |
+| tab-files.js | files-and-links tab `ute`: startup file, new-note/attachment locations, link format, wikilinks, trash, ignore-filters modal, custom config folder, URI callbacks |
+| tab-editor.js | editor tab `rte`: view/edit modes, readable line length, properties, folding, line numbers, spellcheck + dictionary modal, auto-pairing, tabs, HTML conversion, vim confirm flow |
+| tab-appearance.js | appearance tab `tte`: base theme, accent colour, theme/snippet managers, interface options, fonts, zoom, native menus, frame style, custom icon (png/ico/icns decode + trim), translucency, GPU toggle |
+| tab-plugins.js | core plugins tab `mte` |
+| tab-community.js | community plugins tab `ite` (restricted-mode flow, per-plugin settings/hotkeys/donate/uninstall) |
+| community.js | community modal base `y0` (search, sort, installed-only, detail pane, swipe nav, render queue), plugin browser `M0` (10k+ plugin feed, manifests, versions.json compat pick, install/update/enable/disable/uninstall, share link `basalt://show-plugin`), theme browser `D0` (1k+ theme feed, screenshots, install/use/update/uninstall), donate dialog `S0`. Feeds stay `obsidianmd/obsidian-releases` (required wire compat) |
+| vault-crypto.js | vault crypto: scrypt key, HKDF keyhash (v0/v2/v3), AES-GCM payload, AES-SIV deterministic codec, `obsidian://` callback parser — byte-compatible with inherited impl (cross-decrypt verified) |
+| sync-screens.js | sync onboarding screen stack `oC`..`DC` (25 classes): start/intro/create-vault/setup/encryption/features/auth-choice/vault-list/sign-in/sign-up/verify/method-select/iCloud/Android-perms screens. Same DOM classes, i18n keys, navigation, account+vault API calls. Dead controller IIFE inside `AC` replaced by the synced-keys array it evaluated to |
+
+### Runtime-verified
+
+settings tabs (about, hotkeys, files, editor, appearance, core/community plugins) render localized rows with 0 exceptions;
+community plugin browser lists 10 375 plugins with working detail pane; theme browser lists 1 005 themes.
+`build-app.mjs --check` clean after every change.
+
+### Not done in this area
+
+* **Publish plugin UI**: wire layer own (`account.js` `/publish/*` endpoints). The plugin itself
+  (`u9`/`h9`, `https://publish.basalt.md`, classes `V7`..`$9` + plugin `f9`, ~3.68-3.82 MB,
+  ~142 KB minified, 44 classes) is still inherited — site list, create flow, slug setup,
+  site settings, nav/share management, share-code accept. Basalt's data sync itself is the
+  own git engine (`src/vault-sync.js`, `src/basalt-git.js`); no Obsidian chunk-sync
+  worker/crypto exists in this bundle. Sync onboarding screens are now own (`sync-screens.js`,
+  verified: full `app-smoke.mjs` passes with 0 exceptions on the rebuilt bundle).
+* Remaining inherited bits reachable through bindEnv: theme/font/ribbon dialogs (`A0`→now own `D0`, `ete`, `zee`),
+  markdown render pipeline for READMEs (`Zx`,`Kx`,`xL`,`eb`), HTTP layer `cy`.

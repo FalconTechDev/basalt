@@ -4,7 +4,7 @@
 import { debounceCall } from "./timing.js";
 import { parentPath, lastSegment } from "./path.js";
 
-const MANIFEST_FILE = "manifest.json";
+const PLUGIN_MANIFEST_FILE = "manifest.json";
 const MAIN_FILE = "main.js";
 const STYLES_FILE = "styles.css";
 const UPDATE_CHECK_INTERVAL = 432e5; // deprecation re-check, 12 h
@@ -128,7 +128,7 @@ export function defineCommunityPlugins(host_) {
     const listed = await adapter.list(folder);
     for (const dir of listed.folders) {
       try {
-        const manifestPath = dir + "/" + MANIFEST_FILE;
+        const manifestPath = dir + "/" + PLUGIN_MANIFEST_FILE;
         if (!(await adapter.exists(manifestPath))) continue;
         const manifest = JSON.parse(await adapter.read(manifestPath));
         if (!manifest.id) continue;
@@ -145,7 +145,7 @@ export function defineCommunityPlugins(host_) {
   CommunityPlugins.prototype.loadManifest = async function (dir) {
     const adapter = this.app.vault.adapter;
     try {
-      const manifestPath = dir + "/" + MANIFEST_FILE;
+      const manifestPath = dir + "/" + PLUGIN_MANIFEST_FILE;
       if (!(await adapter.exists(manifestPath))) return;
       const manifest = JSON.parse(await adapter.read(manifestPath));
       if (!manifest.id) return;
@@ -396,7 +396,7 @@ export function defineCommunityPlugins(host_) {
     notice.containerEl.addClass("is-loading");
     let manifestText = null;
     try {
-      manifestText = await host.request(releaseUrl(repo, tag, MANIFEST_FILE)).text;
+      manifestText = await host.request(releaseUrl(repo, tag, PLUGIN_MANIFEST_FILE)).text;
       const remote = JSON.parse(manifestText);
       if (!(remote.id && remote.id === id)) {
         notice.containerEl.removeClass("is-loading");
@@ -417,7 +417,7 @@ export function defineCommunityPlugins(host_) {
     const dir = folder + "/" + id;
     if (!(await vault.exists(dir))) await vault.createFolder(dir);
     const adapter = vault.adapter;
-    await adapter.write(dir + "/" + MANIFEST_FILE, manifestText);
+    await adapter.write(dir + "/" + PLUGIN_MANIFEST_FILE, manifestText);
     try {
       const mainText = await host.request(releaseUrl(repo, tag, MAIN_FILE)).text;
       await adapter.write(dir + "/" + MAIN_FILE, mainText.replace(SOURCEMAP_RE, "") + SOURCEMAP_MARKER);
@@ -469,7 +469,7 @@ export function defineCommunityPlugins(host_) {
       const current = manifest.version;
       if (!current) continue;
       try {
-        const remote = await host.request(rawUrl(entry.repo, MANIFEST_FILE)).json;
+        const remote = await host.request(rawUrl(entry.repo, PLUGIN_MANIFEST_FILE)).json;
         if (!(remote && remote.id && remote.id === id)) continue;
         const latest = await latestCompatibleVersion(entry.repo, remote);
         if (latest && host.semverCompare(current, latest)) {

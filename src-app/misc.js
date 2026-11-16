@@ -378,3 +378,6 @@ export function focusWhenShown(el, callback) {
   if (el.isShown()) callback();
   else el.onNodeInserted(callback, true);
 }
+
+/** Locale-aware "sort" comparator used for user-visible name lists. */
+export const stringCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });

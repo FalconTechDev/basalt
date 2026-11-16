@@ -1064,6 +1064,205 @@
       "orig": "nP",
       "use": "livePreviewProperties",
       "host": true
+    },
+    {
+      "orig": "gw",
+      "use": "acctRequest",
+      "originalBytes": 315
+    },
+    {
+      "orig": "yw",
+      "use": "acctSignup",
+      "originalBytes": 159
+    },
+    {
+      "orig": "bw",
+      "use": "acctForgetPassword",
+      "originalBytes": 150
+    },
+    {
+      "orig": "ww",
+      "use": "acctResendConfirmation",
+      "originalBytes": 149
+    },
+    {
+      "orig": "kw",
+      "use": "acctAuthToken",
+      "originalBytes": 279
+    },
+    {
+      "orig": "Cw",
+      "use": "acctSignupMobileSync",
+      "originalBytes": 148
+    },
+    {
+      "orig": "Ew",
+      "use": "acctSignIn",
+      "originalBytes": 297
+    },
+    {
+      "orig": "Mw",
+      "use": "acctSignOut",
+      "originalBytes": 358
+    },
+    {
+      "orig": "Sw",
+      "use": "acctUserInfo",
+      "originalBytes": 456
+    },
+    {
+      "orig": "xw",
+      "use": "acctValidateBusinessKey",
+      "originalBytes": 459
+    },
+    {
+      "orig": "Tw",
+      "use": "acctVaultRegions",
+      "originalBytes": 197
+    },
+    {
+      "orig": "Dw",
+      "use": "acctNormalizeVault",
+      "originalBytes": 71
+    },
+    {
+      "orig": "Aw",
+      "use": "acctListVaults",
+      "originalBytes": 260
+    },
+    {
+      "orig": "Pw",
+      "use": "acctCreateVault",
+      "originalBytes": 258
+    },
+    {
+      "orig": "Lw",
+      "use": "acctMigrateVault",
+      "originalBytes": 122
+    },
+    {
+      "orig": "Iw",
+      "use": "acctRenameVault",
+      "originalBytes": 75
+    },
+    {
+      "orig": "Ow",
+      "use": "acctRemoveVaultShare",
+      "originalBytes": 86
+    },
+    {
+      "orig": "Fw",
+      "use": "acctVaultAccess",
+      "originalBytes": 110
+    },
+    {
+      "orig": "Nw",
+      "use": "acctDeletePublishSite",
+      "originalBytes": 67
+    },
+    {
+      "orig": "Rw",
+      "use": "acctInvitePublishShare",
+      "originalBytes": 83
+    },
+    {
+      "orig": "Bw",
+      "use": "acctRemovePublishShare",
+      "originalBytes": 87
+    },
+    {
+      "orig": "Vw",
+      "use": "acctListSubscriptions",
+      "originalBytes": 57
+    },
+    {
+      "orig": "Bm",
+      "use": "saveConfigDirPreference"
+    },
+    {
+      "orig": "iw",
+      "use": "importAesGcmKey",
+      "originalBytes": 72
+    },
+    {
+      "orig": "rw",
+      "use": "aesGcmEncrypt",
+      "originalBytes": 376
+    },
+    {
+      "orig": "ow",
+      "use": "aesGcmDecrypt",
+      "originalBytes": 342
+    },
+    {
+      "orig": "lw",
+      "use": "deriveScryptKey",
+      "originalBytes": 499
+    },
+    {
+      "orig": "cw",
+      "use": "initCipher",
+      "originalBytes": 240
+    },
+    {
+      "orig": "uw",
+      "use": "deriveKeyHash",
+      "originalBytes": 646
+    },
+    {
+      "orig": "wk",
+      "use": "deriveVaultKeyhash",
+      "originalBytes": 195
+    },
+    {
+      "orig": "bk",
+      "use": "randomSaltHex",
+      "originalBytes": 64
+    },
+    {
+      "orig": "Ek",
+      "use": "parseCallbackUrl",
+      "originalBytes": 618
+    },
+    {
+      "orig": "Tf",
+      "use": "sha256",
+      "originalBytes": 138
+    },
+    {
+      "orig": "wf",
+      "use": "utf8Bytes",
+      "originalBytes": 54
+    },
+    {
+      "orig": "kf",
+      "use": "utf8String",
+      "originalBytes": 65
+    },
+    {
+      "orig": "Cf",
+      "use": "decodeBase64",
+      "originalBytes": 120
+    },
+    {
+      "orig": "Ef",
+      "use": "encodeBase64",
+      "originalBytes": 44
+    },
+    {
+      "orig": "Mf",
+      "use": "encodeBase64",
+      "originalBytes": 120
+    },
+    {
+      "orig": "rC",
+      "use": "renderFormattedDescription",
+      "originalBytes": 277
+    },
+    {
+      "orig": "Wv",
+      "use": "withButtonLoading",
+      "originalBytes": 298
     }
   ],
   "classes": [
@@ -1911,6 +2110,283 @@
     {
       "orig": "uZ",
       "use": "defineTableCellEditor"
+    },
+    {
+      "orig": "W1",
+      "use": "defineCallout"
+    },
+    {
+      "orig": "Q1",
+      "use": "defineSecretChooser"
+    },
+    {
+      "orig": "Y1",
+      "use": "defineSecretEditModal"
+    },
+    {
+      "orig": "X1",
+      "use": "defineEncryptionInfoModal"
+    },
+    {
+      "orig": "$1",
+      "use": "defineSecretPickerModal"
+    },
+    {
+      "orig": "Z1",
+      "use": "defineSecretComponent"
+    },
+    {
+      "orig": "K1",
+      "use": "defineKeychainTab"
+    },
+    {
+      "orig": "i0",
+      "use": "defineSecretStorageBase"
+    },
+    {
+      "orig": "r0",
+      "use": "defineDesktopSecretStore"
+    },
+    {
+      "orig": "o0",
+      "use": "defineMobileSecretStore"
+    },
+    {
+      "orig": "a0",
+      "use": "defineSecretStorage"
+    },
+    {
+      "orig": "vw",
+      "use": "defineAccountError",
+      "originalBytes": 157
+    },
+    {
+      "orig": "R7",
+      "use": "defineLoginModal"
+    },
+    {
+      "orig": "B7",
+      "use": "defineLicenseModal"
+    },
+    {
+      "orig": "N7",
+      "use": "defineAboutTab"
+    },
+    {
+      "orig": "C0",
+      "use": "defineHotkeysTab"
+    },
+    {
+      "orig": "mte",
+      "use": "defineCorePluginsTab"
+    },
+    {
+      "orig": "ite",
+      "use": "defineCommunityPluginsTab"
+    },
+    {
+      "orig": "xI",
+      "use": "defineFilePathSuggest"
+    },
+    {
+      "orig": "AI",
+      "use": "defineFolderPathSuggest"
+    },
+    {
+      "orig": "hte",
+      "use": "defineIgnoreFiltersModal"
+    },
+    {
+      "orig": "ute",
+      "use": "defineFilesLinksTab"
+    },
+    {
+      "orig": "ote",
+      "use": "defineSpellcheckDictionaryModal"
+    },
+    {
+      "orig": "rte",
+      "use": "defineEditorTab"
+    },
+    {
+      "orig": "tte",
+      "use": "defineAppearanceTab"
+    },
+    {
+      "orig": "y0",
+      "use": "defineCommunityModal"
+    },
+    {
+      "orig": "M0",
+      "use": "definePluginBrowserModal"
+    },
+    {
+      "orig": "D0",
+      "use": "defineThemeBrowserModal"
+    },
+    {
+      "orig": "S0",
+      "use": "defineDonateModal"
+    },
+    {
+      "orig": "qb",
+      "use": "defineSivError",
+      "originalBytes": 122
+    },
+    {
+      "orig": "Wb",
+      "use": "defineBlock",
+      "originalBytes": 425
+    },
+    {
+      "orig": "Kb",
+      "use": "defineCtrCipher",
+      "originalBytes": 620
+    },
+    {
+      "orig": "Qb",
+      "use": "defineCbcMacCipher",
+      "originalBytes": 771
+    },
+    {
+      "orig": "$b",
+      "use": "defineCmac",
+      "originalBytes": 1592
+    },
+    {
+      "orig": "Zb",
+      "use": "defineSiv",
+      "originalBytes": 1897
+    },
+    {
+      "orig": "hw",
+      "use": "defineCipherV0",
+      "originalBytes": 1226
+    },
+    {
+      "orig": "pw",
+      "use": "defineCipherV23",
+      "originalBytes": 1680
+    },
+    {
+      "orig": "oC",
+      "use": "defineSyncScreenBase",
+      "originalBytes": 511
+    },
+    {
+      "orig": "aC",
+      "use": "defineSyncField",
+      "originalBytes": 667
+    },
+    {
+      "orig": "sC",
+      "use": "defineSyncRadioGroup",
+      "originalBytes": 686
+    },
+    {
+      "orig": "lC",
+      "use": "defineSyncRadioOption",
+      "originalBytes": 332
+    },
+    {
+      "orig": "cC",
+      "use": "defineSyncStartScreen",
+      "originalBytes": 810
+    },
+    {
+      "orig": "uC",
+      "use": "defineSyncIntroScreen",
+      "originalBytes": 500
+    },
+    {
+      "orig": "hC",
+      "use": "defineCreateVaultScreen",
+      "originalBytes": 2106
+    },
+    {
+      "orig": "pC",
+      "use": "defineSyncSetupScreen",
+      "originalBytes": 1194
+    },
+    {
+      "orig": "dC",
+      "use": "defineEncryptionScreen",
+      "originalBytes": 2097
+    },
+    {
+      "orig": "fC",
+      "use": "defineSyncSettingsScreen",
+      "originalBytes": 2259
+    },
+    {
+      "orig": "mC",
+      "use": "defineAuthChoiceScreen",
+      "originalBytes": 409
+    },
+    {
+      "orig": "vC",
+      "use": "defineRemoteVaultOptionsScreen",
+      "originalBytes": 984
+    },
+    {
+      "orig": "gC",
+      "use": "defineVaultListScreen",
+      "originalBytes": 1395
+    },
+    {
+      "orig": "yC",
+      "use": "defineSignInScreen",
+      "originalBytes": 2506
+    },
+    {
+      "orig": "bC",
+      "use": "defineForgotPasswordScreen",
+      "originalBytes": 1260
+    },
+    {
+      "orig": "wC",
+      "use": "defineSyncMethodScreen",
+      "originalBytes": 2595
+    },
+    {
+      "orig": "kC",
+      "use": "defineConnectMethodScreen",
+      "originalBytes": 2037
+    },
+    {
+      "orig": "CC",
+      "use": "defineOtherSyncScreen",
+      "originalBytes": 510
+    },
+    {
+      "orig": "EC",
+      "use": "defineEmailEntryScreen",
+      "originalBytes": 699
+    },
+    {
+      "orig": "MC",
+      "use": "defineSignupScreen",
+      "originalBytes": 1464
+    },
+    {
+      "orig": "SC",
+      "use": "defineEmailVerificationScreen",
+      "originalBytes": 1119
+    },
+    {
+      "orig": "xC",
+      "use": "defineICloudMissingScreen",
+      "originalBytes": 319
+    },
+    {
+      "orig": "TC",
+      "use": "defineStoragePermissionScreen",
+      "originalBytes": 1022
+    },
+    {
+      "orig": "DC",
+      "use": "defineICloudUnsupportedScreen",
+      "originalBytes": 356
     }
   ],
   "host": {
@@ -2048,6 +2524,27 @@
     "isWindows": "Ul",
     "isLinux": "Wl",
     "isSafari": "_l",
+    "ButtonModal": "nb",
+    "Callout": "W1",
+    "SecretChooser": "Q1",
+    "SecretEditModal": "Y1",
+    "EncryptionInfoModal": "X1",
+    "SecretPickerModal": "$1",
+    "SecretComponent": "Z1",
+    "KeychainTab": "K1",
+    "SecretStorageBase": "i0",
+    "DesktopSecretStore": "r0",
+    "MobileSecretStore": "o0",
+    "SecretStorage": "a0",
+    "keychainI18n": "gm.setting.keychain",
+    "secureStoreNative": "U1",
+    "LoginModal": "R7",
+    "LicenseModal": "B7",
+    "SlowStartupCheck": "I7",
+    "FilePathSuggest": "xI",
+    "FolderPathSuggest": "PI",
+    "IgnoreFiltersModal": "hte",
+    "SpellcheckDictionaryModal": "ote",
     "sanitizeHtml": "xL",
     "setCollapsed": "KL",
     "PreviewLinkHandlers": "lq",
@@ -2309,7 +2806,6 @@
     "hasMetadataEditor": "$I",
     "isAttachmentExtension": "$y",
     "FolderSuggest": "AI",
-    "FolderPathSuggest": "PI",
     "MarkdownFileSuggest": "TI",
     "unicodeLetterSource": "jV",
     "unicodeWordSource": "UV",
@@ -2397,7 +2893,8 @@
     "LinkQueue": "wb",
     "anyMetadataRef": "xT",
     "createEl": "createEl",
-    "createFragment": "createFragment"
+    "createFragment": "createFragment",
+    "FolderPathSuggestTab": "AI"
   },
   "declarators": [
     {
@@ -2489,6 +2986,28 @@
       "expr": "__basaltOwn.wholeWordPattern",
       "sha1": "547fbb074252747b1f93c3bfcf7218f10903ae61",
       "originalBytes": 197
+    },
+    {
+      "orig": "Hw",
+      "expr": "__basaltOwn.account",
+      "sha1": "170efdfd595fe70440769009d25d66032b34f359",
+      "originalBytes": 474
+    },
+    {
+      "orig": "aw",
+      "expr": "32768"
+    },
+    {
+      "orig": "sw",
+      "expr": "{N:32768,r:8,p:1,maxmem:67108864}",
+      "sha1": "bccf82dc240e31d5fede024da785f0af6e8fcdbf",
+      "originalBytes": 30
+    },
+    {
+      "orig": "AC",
+      "expr": "[\"accentColor\",\"theme\",\"cssTheme\",\"enabledCssSnippets\",\"showViewHeader\",\"showRibbon\",\"nativeMenus\",\"translucency\",\"textFontFamily\",\"interfaceFontFamily\",\"monospaceFontFamily\",\"baseFontSize\",\"baseFontSizeAction\",\"slidingSidebar\",\"floatingNavigation\",\"autoFullScreen\"]",
+      "sha1": "ca78b22bc3a5de13984e7804174301faa0b4a19e",
+      "originalBytes": 3376
     }
   ],
   "methods": [
@@ -3494,7 +4013,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD",
   "patches": [
     {
       "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",

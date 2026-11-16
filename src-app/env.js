@@ -10,3 +10,5 @@ export function bindEnv(t) { thunk = t; }
 
 /** The current host environment object. */
 export function env() { return thunk(); }
+/** The late-bound host values for any own module (alias used by the settings and sync modules). */
+export const hostEnv = env;
