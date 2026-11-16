@@ -12,8 +12,8 @@ import { makeTreePusher, collapsibleTreeItem, walkTree, treeDropPosition, update
 import { searchViewClasses } from "./search-view.js";
 import { fileClass } from "./vault.js";
 import { binaryFind, randomHex } from "./misc.js";
-import { displayName, withoutMd, parseLinktext } from "./path.js";
-import { linkSafeHeading, firstHeadingText } from "./text.js";
+import { displayName, withoutMd, parseLinktext , firstHeadingText } from "./path.js";
+import { linkSafeHeading } from "./text.js";
 
 // Classes defined by the factories below, visible to each other regardless of factory order.
 const bookmarks = {};

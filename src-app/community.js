@@ -4,7 +4,7 @@
 // plugin/theme install goes through app.plugins / app.customCss so manifests, versions.json checks
 // and vault layout stay identical to the inherited implementation.
 import { inherit } from "./inherit.js";
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 import { debounceCall } from "./timing.js";
 import { runTransition, cancelTransition } from "./animation.js";
 import { containsAllWords, renderMatches } from "./search-simple.js";

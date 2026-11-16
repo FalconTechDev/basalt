@@ -45,6 +45,19 @@ function findMethod(init, name) {
   return null;
 }
 
+/** Base class-IIFE text with its already-replaced prototype methods rewritten to their __basaltOwn wrappers. */
+function classInitWithMethodWrappers(baseSrc, init, methods) {
+  let text = baseSrc.slice(init.start, init.end);
+  const reps = [];
+  for (const m of methods) {
+    const node = findMethod(init, m.name);
+    if (node) reps.push({ start: node.start - init.start, end: node.end - init.start, text: `__basaltOwn.${m.use}` });
+  }
+  reps.sort((a, b) => b.start - a.start);
+  for (const r of reps) text = text.slice(0, r.start) + r.text + text.slice(r.end);
+  return text;
+}
+
 export function readManifest() {
   return JSON.parse(fs.readFileSync(path.join(srcDir, "manifest.json"), "utf8"));
 }
@@ -113,6 +126,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
   const sha = (t) => crypto.createHash("sha1").update(t).digest("hex");
   const declInit = new Map();
   for (const n of b.body) if (n.type === "VariableDeclaration") for (const d of n.declarations) if (d.init) declInit.set(d.id.name, d.init);
+  const classOrigs = new Set((manifest.classes || []).map((e) => e.orig));
   let manifestChanged = false;
   const spans = [];
   for (const e of manifest.declarators || []) {
@@ -121,6 +135,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
     spans.push({ node: init, orig: e.orig, entry: e, replacement: e.expr, label: e.orig });
   }
   for (const e of manifest.methods || []) {
+    if (classOrigs.has(e.class)) continue;
     const init = declInit.get(e.class);
     if (!init) throw new Error(`manifest: no top-level var ${e.class}`);
     const node = findMethod(init, e.name);
@@ -144,6 +159,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
   const vdecl = new Map();
   for (const n of b.body) if (n.type === "VariableDeclaration") for (const d of n.declarations) if (d.id.type === "Identifier") vdecl.set(d.id.name, d);
   let baseDecls = null;
+  let baseDeclNodes = null;
   for (const e of manifest.classes || []) {
     if (!exported.has(e.use)) throw new Error(`manifest: class ${e.orig} -> ${e.use} is not exported by src-app`);
     const d = vdecl.get(e.orig);
@@ -155,10 +171,23 @@ export function applyOwn(srcText, wasm, tmpPath) {
         const bf = path.join(path.dirname(tmpPath), `basalt-app-base-decls-${manifest.base}.js`);
         fs.writeFileSync(bf, base.src);
         baseDecls = new Map();
+        baseDeclNodes = new Map();
         const bb = loadBundle(bf);
-        for (const n of bb.body) if (n.type === "VariableDeclaration") for (const x of n.declarations) if (x.id.type === "Identifier" && x.init) baseDecls.set(x.id.name, base.src.slice(x.init.start, x.init.end));
+        for (const n of bb.body) if (n.type === "VariableDeclaration") for (const x of n.declarations) if (x.id.type === "Identifier" && x.init) {
+          baseDecls.set(x.id.name, base.src.slice(x.init.start, x.init.end));
+          baseDeclNodes.set(x.id.name, x.init);
+        }
       }
-      if (text !== baseDecls.get(e.orig)) throw new Error(`manifest: class ${e.orig} differs from base ${manifest.base}; refusing to replace it`);
+      let expected = classInitWithMethodWrappers(base.src, baseDeclNodes.get(e.orig), (manifest.methods || []).filter((m) => m.class === e.orig));
+      // textual patches may also touch the inside of a class init (e.g. constructor helper fixes);
+      // the find text is anchored at the declarator, so test it against "orig=" + init
+      for (const p of manifest.patches || []) {
+        const anchored = e.orig + "=" + expected;
+        const at = anchored.indexOf(p.find);
+        if (at === 0 && anchored.indexOf(p.find, 1) < 0) expected = anchored.slice(0, at) + p.replace + anchored.slice(at + p.find.length);
+        expected = expected.startsWith(e.orig + "=") ? expected.slice(e.orig.length + 1) : expected;
+      }
+      if (text !== expected) throw new Error(`manifest: class ${e.orig} differs from base ${manifest.base}; refusing to replace it`);
       replaced += text.length;
       e.originalBytes = text.length;
     }
@@ -176,12 +205,24 @@ export function applyOwn(srcText, wasm, tmpPath) {
   for (const p of manifest.patches || []) {
     if (out.includes(p.replace)) continue;
     const at = out.indexOf(p.find);
+    // both texts gone: the patched region itself was replaced by own code, nothing left to patch
+    if (at < 0 && !out.includes(p.find)) continue;
     if (at < 0 || out.indexOf(p.find, at + 1) >= 0) throw new Error(`manifest.patches: "${p.note || p.find.slice(0, 40)}" must match exactly once`);
     out = out.slice(0, at) + p.replace + out.slice(at + p.find.length);
   }
 
   // 2) the block with the own modules
-  const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind}}));` : "";
+  // envBind entries are `name` or `alias:orig`; each becomes a lazy getter so
+  // reading one bound value never forces evaluation of the others (some are
+  // only defined late in bundle init).
+  const bind = manifest.envBind
+    ? `__basaltOwn.bindEnv(()=>({${manifest.envBind.split(",").map((t) => {
+        const i = t.indexOf(":");
+        const alias = i >= 0 ? t.slice(0, i).trim() : t.trim();
+        const orig = i >= 0 ? t.slice(i + 1).trim() : alias;
+        return `get ${alias}(){return ${orig}},set ${alias}(v){${orig}=v}`;
+      }).join(",")}}));`
+    : "";
   const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");
   const block = `${BEGIN}${code}var __basaltHost={${host}};${bind}${END}`;
   const bi = out.indexOf(BEGIN);

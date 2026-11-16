@@ -2,7 +2,7 @@
 // uses: default open action, new-note / attachment locations, link format, trash options, excluded
 // files and the advanced section (config folder, URI callbacks, reindex).
 import { inherit } from "./inherit.js";
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 import { prepareQuery, fuzzyMatchJs } from "./search.js";
 import { withoutExtension } from "./path.js";
 import { sortHitsByScore } from "./misc.js";

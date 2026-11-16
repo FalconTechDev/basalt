@@ -14,5 +14,35 @@
 | Inter Variable (regular + italic) | `src/public/fonts/inter-variable*.woff2` | SIL Open Font License 1.1 |
 | Flow Circular | `src/public/fonts/flow-circular.woff2` | SIL Open Font License 1.1 (HYPD/flow-typeface) |
 | pdf.js viewer chrome styles | `src-css/01-pdf-viewer.css` | Apache-2.0 (Mozilla pdf.js), rewritten |
+| CodeMirror 5 + addons (incl. vim mode, dialogs, search) | bundled inside `src/app.js` | MIT (Marijn Haverbeke / CodeMirror contributors) |
+| CodeMirror 6 + @codemirror/* (state, view, commands, autocomplete, language, search) | bundled inside `src/app.js` | MIT (Marijn Haverbeke / CodeMirror contributors) |
+| Lezer + @lezer/* (parser, common, highlight, markdown) | bundled inside `src/app.js` | MIT (Marijn Haverbeke / CodeMirror contributors) |
+| HyperMD-style markdown inline helpers | bundled inside `src/app.js` | MIT (the-simian / HyperMD contributors) |
+| moment.js | bundled inside `src/app.js` | MIT (Tim Wood, Iskren Chernev, Moment.js contributors) |
+| yaml (eemeli) | bundled inside `src/app.js` | ISC (Eemeli Aro) |
+| tslib helpers | bundled inside `src/app.js` | Apache-2.0 (Microsoft) |
+| pdf.js rules | bundled inside `src/app.js` | Apache-2.0 (Mozilla) |
+
+| CodeMirror 6 + Lezer | inside inherited `src/app.js` (editor) | MIT |
+| CodeMirror 5 modes (incl. `hypermd`) | inside inherited `src/app.js` (`CodeMirror.getMode`) | MIT |
+| diff-match-patch | inside inherited `src/app.js` (`dA`) | Apache-2.0 |
+| DOMPurify | inside inherited `src/app.js` (publish sanitizing) | Apache-2.0 / MPL-2.0 |
+
+| tslib (`__awaiter` helper, webpack module 9547 inside `src/app.js`) | `src/app.js` | 0BSD |
+
+| CodeMirror 5 + addons (vim, search, dialog, markdown mode) | `src/lib/codemirror/` | MIT |
+| CodeMirror 6 / @codemirror/* and @lezer/* (state, view, language, incremental parser) | inside `src/app.js` | MIT |
+| Lezer parser runtime (stack, mixed stream, node props, style tables) | inside `src/app.js` | MIT |
+| moment.js | inside `src/app.js`, `src/lib/moment.min.js` | MIT |
+| yaml (eemeli) | inside `src/app.js` | ISC |
+| tslib helpers (`__awaiter`, `__generator`) | inside `src/app.js` | 0BSD |
+| i18next | `src/lib/i18next.min.js` | MIT |
+| PIXI.js 7.2.4 | `src/lib/pixi.min.js` | MIT |
+| Mermaid | `src/lib/mermaid.min.js` | MIT |
+| Prism | `src/lib/prism.min.js` | MIT |
+| Turndown | `src/lib/turndown.js` | MIT |
+| Mozilla Readability | `src/lib/readability.js` | Apache-2.0 |
+| d3 | inside `src/app.js` (graph/canvas helpers) | ISC |
+| Fuse.js | inside `src/app.js` (search ranking) | Apache-2.0 |
 
 Public plugin list used by the plugin catalog is read from a public GitHub repository at run time; plugins installed from it keep their own licenses.

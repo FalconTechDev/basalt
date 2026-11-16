@@ -3,7 +3,7 @@
 // rules and account/vault API calls. API helpers live in account.js / vault-crypto.js;
 // platform bits (Android filesystem picker, Capacitor App plugin) arrive via hostEnv.
 
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 import { inherit } from "./inherit.js";
 import { account, AccountError, acctCreateVault, acctForgetPassword, acctListVaults, acctResendConfirmation, acctSignIn, acctSignOut, acctSignup, acctSignupMobileSync, acctVaultRegions } from "./account.js";
 import { deriveVaultKeyhash, randomSaltHex, renderFormattedDescription, SYNCABLE_FEATURE_TYPES, MEDIA_FEATURE_TYPES } from "./vault-crypto.js";
