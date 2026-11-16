@@ -189,7 +189,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
         const i = t.indexOf(":");
         const alias = i >= 0 ? t.slice(0, i).trim() : t.trim();
         const orig = i >= 0 ? t.slice(i + 1).trim() : alias;
-        return `get ${alias}(){return ${orig}}`;
+        return `get ${alias}(){return ${orig}},set ${alias}(v){${orig}=v}`;
       }).join(",")}}));`
     : "";
   const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");

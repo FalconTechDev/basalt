@@ -1379,6 +1379,16 @@
    "orig": "fT",
    "use": "s05ParseCache",
    "originalBytes": 2766
+  },
+  {
+   "orig": "NT",
+   "use": "s05ExtractSubpath",
+   "originalBytes": 1180
+  },
+  {
+   "orig": "HD",
+   "use": "s05WheelScroll",
+   "originalBytes": 154
   }
  ],
  "classes": [
@@ -3209,6 +3219,54 @@
    "expr": "{\"views\":0,\"deferredViews\":0}",
    "sha1": "317391a7f215ee8654a042a265b9e8fc939cacb1",
    "originalBytes": 25
+  },
+  {
+   "orig": "kD",
+   "expr": "false",
+   "sha1": "229db9bc4ef680cb90e1ef2793d6c761a444884f",
+   "originalBytes": 2
+  },
+  {
+   "orig": "iD",
+   "expr": "false",
+   "sha1": "229db9bc4ef680cb90e1ef2793d6c761a444884f",
+   "originalBytes": 2
+  },
+  {
+   "orig": "aD",
+   "expr": "Array()",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "gD",
+   "expr": "Array()",
+   "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
+   "originalBytes": 2
+  },
+  {
+   "orig": "lD",
+   "expr": "{\"key\":\"\",\"children\":{},\"duration\":0}",
+   "sha1": "89d95355cc24f5bfb3309b4f6744e211f20350ab",
+   "originalBytes": 31
+  },
+  {
+   "orig": "PD",
+   "expr": "{\"duration\":140,\"fn\":\"var(--anim-motion-swing)\"}",
+   "sha1": "2afbf8f67c411789fcf1c1b4b015234f286025ae",
+   "originalBytes": 44
+  },
+  {
+   "orig": "hA",
+   "expr": "new RegExp(\"\\\\W\")",
+   "sha1": "fda7c88d4f15b114eaf64f1e77adf10db3bd034b",
+   "originalBytes": 4
+  },
+  {
+   "orig": "gA",
+   "expr": "window[\"moment\"]",
+   "sha1": "83e1d33bdf8a029d91b0fc7ef8ba7fb07ef6b0be",
+   "originalBytes": 13
   }
  ],
  "methods": [

@@ -114,3 +114,83 @@ export function s05ParseCache(markdownText, stripOriginal) {
   if (Object.keys(cache.blocks).length === 0) delete cache.blocks;
   return cache;
 }
+
+// Extract the editable region for a `file#subpath` target: for a block quote
+// or list it returns the un-indented inner text; for a heading it keeps the
+// heading line in `heading`; for a footnote it strips the marker and re-joins
+// continuation lines. Returns {before, after, indent, heading, content}.
+export function s05ExtractSubpath(text, cache, section, editable = false) {
+  let before = "";
+  let after = "";
+  let indent = "";
+  let heading = "";
+  let content = "";
+  if (section.type === "block" && section.list) {
+    const deepest = (cache, item) => {
+      const items = cache.listItems;
+      if (!items) return item;
+      const index = items.indexOf(item);
+      if (index === -1) return item;
+      const seen = new Set();
+      seen.add(item.position.start.line);
+      let deepestItem = item;
+      for (let i = index + 1; i < items.length; i++) {
+        const next = items[i];
+        if (!seen.has(next.parent)) break;
+        seen.add(next.position.start.line);
+        deepestItem = next;
+      }
+      return deepestItem;
+    };
+    const last = deepest(cache, section.list);
+    const span = {
+      start: section.list.position.start.offset - section.list.position.start.col,
+      end: last.position.end.offset,
+    };
+    const start = span.start;
+    const end = span.end;
+    before = text.substring(0, start);
+    after = text.substring(end);
+    const dedent = (block) => {
+      const lines = block.split("\n");
+      const firstIndent = lines[0].match(/^\s*/)[0];
+      const width = firstIndent.replace(/\t/g, "    ").length;
+      if (width > 0) {
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          let col = 0;
+          let cut = 0;
+          while (cut < line.length && col < width) {
+            col += line.charAt(cut) === "\t" ? 4 : 1;
+            cut++;
+          }
+          lines[i] = line.substr(cut);
+        }
+      }
+      return { indent: firstIndent, text: lines.join("\n") };
+    };
+    const block = dedent(text.substring(start, end));
+    content = block.text;
+    indent = block.indent;
+  } else {
+    const start = section.start.offset;
+    const end = section.end ? section.end.offset : text.length;
+    let contentStart = start;
+    if (editable && section.type === "heading") {
+      contentStart = section.current.position.end.offset + 1;
+      heading = text.substring(start, contentStart);
+    }
+    before = text.substring(0, start);
+    after = text.substring(end);
+    content = text.substring(contentStart, end);
+  }
+  if (section.type === "footnote") {
+    const marker = content.match(/^\[\^[^\]]+\]:\s*/);
+    if (marker) {
+      before += marker[0];
+      content = content.slice(marker[0].length);
+    }
+    content = content.replace(/\n( {4}|\t)/g, "\n");
+  }
+  return { before, after, indent, heading, content };
+}

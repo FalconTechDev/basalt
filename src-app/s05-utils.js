@@ -344,3 +344,16 @@ export function s05TitlebarDoubleClick(element) {
     });
   });
 }
+
+// Wheel events over a horizontally scrollable element: translate vertical
+// wheel delta into horizontal scrolling.
+export function s05WheelScroll(event) {
+  if (!event.deltaY) return;
+  const target = event.currentTarget;
+  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+    target.scrollLeft += event.deltaX;
+  } else {
+    target.scrollLeft += event.deltaY;
+  }
+  event.preventDefault();
+}
