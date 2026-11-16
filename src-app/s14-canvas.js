@@ -158,10 +158,15 @@ export function s14ByZIndex(a, b) { return a.zIndex - b.zIndex; }
 // Group node (R5)
 // =====================================================================================================================
 
-const S14_EDGE_END_NONE = "none";
-const S14_EDGE_END_ARROW = "arrow";
-const S14_EDGE_ROTATION = { top: "180", bottom: "0", left: "90", right: "270" };
+export const S14_EDGE_END_NONE = "none";
+export const S14_EDGE_END_ARROW = "arrow";
+export const S14_EDGE_ROTATION = { top: "180", bottom: "0", left: "90", right: "270" };
 const S14_COLOR_VAR = /^(\d+)$/;
+
+/** View-type id under which the canvas view registers (was `$5`). */
+export const S14_CANVAS_VIEW_TYPE = "canvas";
+/** File extension handled by the canvas plugin (was `Z5`). */
+export const S14_CANVAS_EXTENSION = "canvas";
 
 /** "group" canvas node: editable label plus optional background image with cover/contain/repeat. */
 export function defineCanvasGroupNode(host) {

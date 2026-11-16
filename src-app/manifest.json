@@ -6187,6 +6187,66 @@
    "expr": "__basaltOwn.QUICK_SWITCHER_DEFAULTS",
    "sha1": "777739e8d43da61b10510e6fb5e015ceebc9c9ce",
    "originalBytes": 60
+  },
+  {
+   "orig": "U5",
+   "expr": "__basaltOwn.S14_EDGE_ROTATION",
+   "sha1": "dd1b090c5c4c731c7fe4b94c7c36af9e95b4d6e8",
+   "originalBytes": 44
+  },
+  {
+   "orig": "W5",
+   "expr": "__basaltOwn.S14_EDGE_END_NONE",
+   "sha1": "0bff1905a62874b4c14c4755e27adb3f8548d042",
+   "originalBytes": 6
+  },
+  {
+   "orig": "_5",
+   "expr": "__basaltOwn.S14_EDGE_END_ARROW",
+   "sha1": "3fae4e538a641e310c345211a6eadec5230244a0",
+   "originalBytes": 7
+  },
+  {
+   "orig": "$5",
+   "expr": "__basaltOwn.S14_CANVAS_VIEW_TYPE",
+   "sha1": "a45a640067b238c6ac8364a4f115c457e31c6e9f",
+   "originalBytes": 8
+  },
+  {
+   "orig": "Z5",
+   "expr": "__basaltOwn.S14_CANVAS_EXTENSION",
+   "sha1": "a45a640067b238c6ac8364a4f115c457e31c6e9f",
+   "originalBytes": 8
+  },
+  {
+   "orig": "k5",
+   "expr": "__basaltHost.t.interface",
+   "sha1": "d2a102c51649bc1ad9fc621739e5aad2c089eb65",
+   "originalBytes": 12
+  },
+  {
+   "orig": "C5",
+   "expr": "__basaltHost.t.plugins.canvas",
+   "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
+   "originalBytes": 17
+  },
+  {
+   "orig": "B5",
+   "expr": "__basaltHost.t.plugins.canvas",
+   "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
+   "originalBytes": 17
+  },
+  {
+   "orig": "Y5",
+   "expr": "__basaltHost.t.plugins.canvas",
+   "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
+   "originalBytes": 17
+  },
+  {
+   "orig": "J5",
+   "expr": "__basaltHost.t.plugins.canvas",
+   "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
+   "originalBytes": 17
   }
  ],
  "methods": [
