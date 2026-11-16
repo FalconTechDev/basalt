@@ -2403,6 +2403,22 @@
    "orig": "DC",
    "use": "defineICloudUnsupportedScreen",
    "originalBytes": 356
+  },
+  {
+   "orig": "Y9",
+   "use": "defineNavItemBase"
+  },
+  {
+   "orig": "Q9",
+   "use": "defineNavFolder"
+  },
+  {
+   "orig": "X9",
+   "use": "defineNavMoreButton"
+  },
+  {
+   "orig": "$9",
+   "use": "defineSyncNavFile"
   }
  ],
  "host": {
@@ -2912,7 +2928,10 @@
   "createFragment": "createFragment",
   "FolderPathSuggestTab": "AI",
   "s16Em": "Em",
-  "s16ApiVersion": "gte"
+  "s16ApiVersion": "gte",
+  "s16TreeCollapsible": "QL",
+  "s16TreePusher": "JH",
+  "s16NavTooltipDelay": "lv"
  },
  "declarators": [
   {
