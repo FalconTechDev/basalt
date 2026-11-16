@@ -8,9 +8,9 @@
 import { env } from "./env.js";
 import { s12CalloutTypeLabels, s12CalloutTypeNames, s12cmMousePluginInstance, s12cmPostprocessFxRef, s12cmRefreshDispatch, s12appendImageSizeText, s12CmTransparentMark, s12CmUnderlineMark, s12CmListBulletMark, s12CmListNumberMark } from "./s12-consts.js";
 
-const E = () => env();
-const deco = () => E().s12cmDecoration;
-const viewPlugin = () => E().s12cmViewPlugin;
+const LPENV = () => env();
+const deco = () => LPENV().s12cmDecoration;
+const viewPlugin = () => LPENV().s12cmViewPlugin;
 
 // Module-level slots filled by the class factories below (each factory runs at the original
 // declaration position, so parents always exist before children).
@@ -54,7 +54,7 @@ function s12tags() {
 // =====================================================================================================================
 
 export function defineS12BlockquoteBorderWidget(host) {
-  const Base = E().s12cmWidgetType;
+  const Base = LPENV().s12cmWidgetType;
   S12BlockquoteBorderWidget = class extends Base {
     toDOM() {
       return createSpan({ cls: "cm-blockquote-border cm-transparent", text: ">" });
@@ -64,7 +64,7 @@ export function defineS12BlockquoteBorderWidget(host) {
 }
 
 export function defineS12HrWidget(host) {
-  const Base = E().s12cmWidgetType;
+  const Base = LPENV().s12cmWidgetType;
   S12HrWidget = class extends Base {
     eq() { return true; }
     toDOM(view) {
@@ -85,8 +85,8 @@ export function defineS12HrWidget(host) {
 }
 
 export function defineS12TaskCheckboxWidget(host) {
-  const Base = E().s12cmWidgetType;
-  const isAndroid = E().Yl.isAndroidApp;
+  const Base = LPENV().s12cmWidgetType;
+  const isAndroid = LPENV().Yl.isAndroidApp;
   S12TaskCheckboxWidget = class extends Base {
     constructor(content) { super(); this.content = content; }
     eq(other) { return other.content === this.content; }
@@ -133,7 +133,7 @@ export function defineS12TaskCheckboxWidget(host) {
 }
 
 export function defineS12StyleSpanWidget(host) {
-  const Base = E().s12cmWidgetType;
+  const Base = LPENV().s12cmWidgetType;
   S12StyleSpanWidget = class extends Base {
     constructor(styles) { super(); this.styles = styles; }
     eq(other) { return this.styles === other.styles; }
@@ -144,9 +144,9 @@ export function defineS12StyleSpanWidget(host) {
 }
 
 export function defineS12CodeFlairWidget(host) {
-  const Base = E().s12cmWidgetType;
-  const gm = E().gm, fb = E().fb;
-  const applyIcon = E().s12applyIcon, ariaTip = E().s12ariaTooltip;
+  const Base = LPENV().s12cmWidgetType;
+  const gm = LPENV().gm, fb = LPENV().fb;
+  const applyIcon = LPENV().s12applyIcon, ariaTip = LPENV().s12ariaTooltip;
   S12CodeFlairWidget = class extends Base {
     constructor(lang, code) { super(); this.lang = lang; this.code = code; }
     eq(other) { return other.lang === this.lang && other.code === this.code; }
@@ -167,7 +167,7 @@ export function defineS12CodeFlairWidget(host) {
 }
 
 export function defineS12EmptyWidgetType(host) {
-  const Base = E().s12cmWidgetType;
+  const Base = LPENV().s12cmWidgetType;
   S12EmptyWidgetType = class extends Base {
     toDOM() { return createSpan(); }
     ignoreEvent() { return true; }
@@ -181,8 +181,8 @@ export function defineS12EmptyWidgetType(host) {
 // =====================================================================================================================
 
 export function defineS12MathWidget(host) {
-  const Base = E().s12widgetBase;
-  const ready = E().s12mathReady, render = E().s12renderMath, recalc = E().s12recalcMath;
+  const Base = LPENV().s12widgetBase;
+  const ready = LPENV().s12mathReady, render = LPENV().s12renderMath, recalc = LPENV().s12recalcMath;
   S12MathWidget = class extends Base {
     constructor(math, block) { super(); this.math = math; this.block = block; }
     get noReuse() { return true; }
@@ -216,7 +216,7 @@ export function defineS12MathWidget(host) {
 }
 
 export function defineS12HtmlWidget(host) {
-  const Base = E().s12widgetBase;
+  const Base = LPENV().s12widgetBase;
   const sanitize = host.sanitizeHtml;
   S12HtmlWidget = class extends Base {
     constructor(app, editor, html, block) {
@@ -240,8 +240,8 @@ export function defineS12HtmlWidget(host) {
 }
 
 /** Shared "copy image / swap file / reset size / delete / resize" behaviour for image embeds. */
-export function s12imageContextMenu(widget, view, containerEl, imgEl, wrapperEl, host) {
-  const e = E();
+export function s12imageContextMenu(widget, view, containerEl, imgEl, wrapperEl) {
+  const e = LPENV();
   const { Ug, gm, Yl, electron, fb, MT } = e;
   wrapperEl.addEventListener("contextmenu", (ev) => {
     const menu = Ug.forEvent(ev);
@@ -308,7 +308,7 @@ export function s12imageContextMenu(widget, view, containerEl, imgEl, wrapperEl,
         .setIcon("lucide-trash-2").onClick(async () => {
           const start = widget.start, end = widget.end;
           if (await app.fileManager.promptForDeletion(dest)) {
-            view.dispatch({ userEvent: "select.pointer", selection: host.cmSelection.cursor(start),
+            view.dispatch({ userEvent: "select.pointer", selection: LPENV().pe.cursor(start),
               changes: [{ from: start, to: end, insert: "" }] });
           }
         }));
@@ -360,11 +360,11 @@ export function s12imageContextMenu(widget, view, containerEl, imgEl, wrapperEl,
 }
 
 export function defineS12ImageWidget(host) {
-  const Base = E().s12widgetBase;
+  const Base = LPENV().s12widgetBase;
   const normalize = host.normalizeEmbedUrl;
-  const iframe = E().s12iframeEmbed;
+  const iframe = LPENV().s12iframeEmbed;
   const isDim = host.isImageDimension;
-  const lastSegment = E().nu;
+  const lastSegment = LPENV().nu;
   S12ImageWidget = class extends Base {
     constructor(url, title) { super(); this.url = url; this.title = title; }
     get noReuse() { return true; }
@@ -381,7 +381,7 @@ export function defineS12ImageWidget(host) {
         img.src = this.url;
         this.imageEl = img;
         this.applyTitle(this.title);
-        s12imageContextMenu(this, view, el, img, wrapper, host);
+        s12imageContextMenu(this, view, el, img, wrapper);
       }
       this.addEditButton(view, el);
       this.resizeWidget(view, el);
@@ -413,10 +413,10 @@ export function defineS12ImageWidget(host) {
 }
 
 export function defineS12InternalEmbedWidget(host) {
-  const Base = E().s12embedChildBase;
+  const Base = LPENV().s12embedChildBase;
   const EmbedLoader = host.EmbedLoader;
   const isDim = host.isImageDimension;
-  const pdfEmbed = E().s12pdfEmbed, basesEmbed = E().s12basesEmbed, imageFileEmbed = E().s12imageFileEmbed;
+  const pdfEmbed = LPENV().s12pdfEmbed, basesEmbed = LPENV().s12basesEmbed, imageFileEmbed = LPENV().s12imageFileEmbed;
   S12InternalEmbedWidget = class extends Base {
     constructor(app, editor, sourcePath, href, title, depth) {
       super(app, editor);
@@ -478,7 +478,7 @@ export function defineS12InternalEmbedWidget(host) {
 }
 
 export function defineS12CodeblockWidget(host) {
-  const Base = E().s12embedChildBase;
+  const Base = LPENV().s12embedChildBase;
   const codeTexts = host.codeTexts;
   const queryEmbed = host.queryEmbed;
   const renderer = host.MarkdownPreviewRenderer;
@@ -497,7 +497,7 @@ export function defineS12CodeblockWidget(host) {
       const codeEl = pre.createEl("code", "language-" + lang);
       codeTexts.set(codeEl, this.code);
       if ("mermaid" === lang) {
-        E().s12syntaxHighlight(el.contentDOM, [codeEl]);
+        LPENV().s12syntaxHighlight(el.contentDOM, [codeEl]);
       } else if ("query" === lang) {
         this.addChild(queryEmbed(app, this.code, pre, editor.path));
       } else if (renderer.codeBlockPostProcessors.hasOwnProperty(lang)) {
@@ -529,7 +529,7 @@ export function defineS12CodeblockWidget(host) {
           });
         } catch (err) {
           console.error(err);
-          new E().fb(E().gm.interface.copy_failed());
+          new LPENV().fb(LPENV().gm.interface.copy_failed());
         }
       }
       return el;
@@ -544,10 +544,10 @@ export function defineS12CodeblockWidget(host) {
 // =====================================================================================================================
 
 export function defineS12CalloutBaseWidget(host) {
-  const Base = E().s12embedChildBase;
+  const Base = LPENV().s12embedChildBase;
   const parseTree = host.markdownTree;
   const frontmatter = host.treeFrontmatter;
-  const checklist = E().jC;
+  const checklist = LPENV().jC;
   const sanitize = host.sanitizeHtml;
   const toHtml = host.treeToHtml;
   const preview = host.MarkdownPreviewView;
@@ -597,8 +597,8 @@ export function defineS12CalloutBaseWidget(host) {
 }
 
 export function defineS12CalloutWidget(host) {
-  const measure = E().s12measureIndent;
-  const gm = E().gm, Menu = E().Ug, widgetBase = E().s12widgetBase;
+  const measure = LPENV().s12measureIndent;
+  const gm = LPENV().gm, Menu = LPENV().Ug, widgetBase = LPENV().s12widgetBase;
   const toggleBox = host.MarkdownRenderer;
   const labels = s12CalloutTypeLabels;
   S12CalloutWidget = class extends S12CalloutBaseWidget {
@@ -689,7 +689,7 @@ export function defineS12CalloutWidget(host) {
 /** The "other callout type" fuzzy suggest used by the callout context menu. */
 export function defineS12CalloutOtherSuggest(host) {
   const Base = host.FuzzySuggestModal;
-  const gm = E().gm;
+  const gm = LPENV().gm;
   S12CalloutOtherSuggest = class extends Base {
     constructor(app, onSubmit) {
       super(app);
@@ -720,8 +720,8 @@ export function defineS12CalloutOtherSuggest(host) {
 
 /** File-embed suggest used by the image context menu "swap file" action. */
 export function defineS12NoteComposerSuggest(host) {
-  const Base = E().s12fileSuggestBase;
-  const gm = E().gm;
+  const Base = LPENV().s12fileSuggestBase;
+  const gm = LPENV().gm;
   S12NoteComposerSuggest = class extends Base {
     constructor(app, onChoose) {
       super(app);
@@ -756,7 +756,7 @@ export function defineS12NoteComposerSuggest(host) {
 // =====================================================================================================================
 
 export function defineS12BaseDecoPlugin(host) {
-  const txHas = E().s12txHasEffect;
+  const txHas = LPENV().s12txHasEffect;
   const syntaxTree = host.cmSyntaxTree;
   S12BaseDecoPlugin = class {
     constructor(view) {
@@ -784,13 +784,13 @@ export function defineS12BaseDecoPlugin(host) {
 export function defineS12SearchDecoPlugin(host) {
   const sel = host.cmSelection;
   const syntaxTree = host.cmSyntaxTree;
-  const prop = E().s12syntaxClassProp;
+  const prop = LPENV().s12syntaxClassProp;
   const listPattern = host.listLinePattern;
-  const builder = E().s12rangeSetBuilder;
-  const hlField = E().s12cmHighlightDecoField;
-  const rangeHas = E().s12rangeHasMatch, rangeHasMark = E().s12rangeContainsMark;
+  const builder = LPENV().s12rangeSetBuilder;
+  const hlField = LPENV().s12cmHighlightDecoField;
+  const rangeHas = LPENV().s12rangeHasMatch, rangeHasMark = LPENV().s12rangeContainsMark;
   const cache = host.highlightCache;
-  const isUrlLike = E().s12isUrlLike;
+  const isUrlLike = LPENV().s12isUrlLike;
   const mousePlugin = () => s12cmMousePluginInstance();
   S12SearchDecoPlugin = class extends S12BaseDecoPlugin {
     update(update) {
@@ -988,7 +988,7 @@ function s12quoteDecoRef() {
 export function defineS12TaskLineDecoPlugin(host) {
   const syntaxClasses = host.livePreviewSyntaxClasses;
   const listPattern = host.listLinePattern;
-  const builder = E().s12rangeSetBuilder;
+  const builder = LPENV().s12rangeSetBuilder;
   S12TaskLineDecoPlugin = class extends S12BaseDecoPlugin {
     buildDeco(view) {
       if (!this.tree.length) return deco().none;
@@ -1026,7 +1026,7 @@ export function s12TaskLinePlugin() {
 
 /** The mobile drag extension pair (mouse tracking + draggable-widget mousedown handling). */
 export function s12MobileDragExtensions(host) {
-  const e = E();
+  const e = LPENV();
   const mousePlugin = () => s12cmMousePluginInstance();
   const annotation = host.mobileCursorAnnotation;
   const refresh = s12cmRefreshDispatch;
