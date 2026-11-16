@@ -1913,6 +1913,16 @@
    "orig": "O9",
    "use": "s15ScrollLoadMore",
    "originalBytes": 138
+  },
+  {
+   "orig": "m8",
+   "use": "s14DailyNoteRelPath",
+   "originalBytes": 99
+  },
+  {
+   "orig": "g8",
+   "use": "s14ValidateDateFormat",
+   "originalBytes": 239
   }
  ],
  "classes": [
@@ -4039,6 +4049,14 @@
    "orig": "x9",
    "use": "defineSlidesView",
    "originalBytes": 2468
+  },
+  {
+   "orig": "L7",
+   "use": "defineStartupStat"
+  },
+  {
+   "orig": "I7",
+   "use": "defineStartupTimeModal"
   }
  ],
  "host": {
@@ -6247,6 +6265,18 @@
    "expr": "__basaltHost.t.plugins.canvas",
    "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
    "originalBytes": 17
+  },
+  {
+   "orig": "d8",
+   "expr": "__basaltOwn.S14_DEFAULT_DATE_FORMAT",
+   "sha1": "75cfb5df5e81bdc9de577a6287f27a13d5bd61f5",
+   "originalBytes": 12
+  },
+  {
+   "orig": "f8",
+   "expr": "__basaltHost.t.plugins.dailyNotes",
+   "sha1": "b7a393a5ba47ac1d023e0e27db944bac6c7a08b9",
+   "originalBytes": 21
   }
  ],
  "methods": [
@@ -7252,7 +7282,7 @@
    "originalBytes": 26549
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9",
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,uD,rD",
  "patches": [
   {
    "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
