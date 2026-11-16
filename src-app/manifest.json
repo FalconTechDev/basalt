@@ -1307,11 +1307,6 @@
    "host": true
   },
   {
-   "orig": "M$",
-   "use": "s10IsEditableTarget",
-   "host": true
-  },
-  {
    "orig": "Q$",
    "use": "s10RangeInTable",
    "host": true
@@ -1350,17 +1345,17 @@
    "use": "s10ForwardDomEvent"
   },
   {
+   "orig": "M$",
+   "use": "s10IsEditableTarget",
+   "host": true
+  },
+  {
    "orig": "mZ",
    "use": "s10ForwardInputEvents"
   },
   {
    "orig": "vZ",
    "use": "s10MirrorStyles",
-   "host": true
-  },
-  {
-   "orig": "Q$",
-   "use": "s10RangeInTable",
    "host": true
   }
  ],
