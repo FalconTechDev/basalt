@@ -1891,6 +1891,11 @@
       "orig": "oX",
       "use": "s09PublishResolveSub",
       "originalBytes": 113
+    },
+    {
+      "orig": "O9",
+      "use": "s15ScrollLoadMore",
+      "originalBytes": 138
     }
   ],
   "classes": [
@@ -3774,6 +3779,221 @@
       "orig": "sX",
       "use": "s09PublishPageView",
       "originalBytes": 2887
+    },
+    {
+      "orig": "q7",
+      "use": "definePublishPathSuggest",
+      "originalBytes": 287
+    },
+    {
+      "orig": "j7",
+      "use": "definePublishSection",
+      "originalBytes": 238
+    },
+    {
+      "orig": "U7",
+      "use": "definePublishOfflineSection",
+      "originalBytes": 135
+    },
+    {
+      "orig": "W7",
+      "use": "definePublishLoginSection",
+      "originalBytes": 620
+    },
+    {
+      "orig": "_7",
+      "use": "definePublishManageSitesSection",
+      "originalBytes": 5524
+    },
+    {
+      "orig": "G7",
+      "use": "definePublishSiteOptionsSection",
+      "originalBytes": 7156
+    },
+    {
+      "orig": "K7",
+      "use": "definePublishSiteFiltersSection",
+      "originalBytes": 1649
+    },
+    {
+      "orig": "Y7",
+      "use": "definePublishTreeItemBase",
+      "originalBytes": 431
+    },
+    {
+      "orig": "X7",
+      "use": "definePublishFileItem",
+      "originalBytes": 3426
+    },
+    {
+      "orig": "$7",
+      "use": "definePublishFolderItem",
+      "originalBytes": 1452
+    },
+    {
+      "orig": "Z7",
+      "use": "definePublishTreeSection",
+      "originalBytes": 2799
+    },
+    {
+      "orig": "J7",
+      "use": "definePublishReviewSection",
+      "originalBytes": 4840
+    },
+    {
+      "orig": "e9",
+      "use": "definePublishUploadSection",
+      "originalBytes": 3732
+    },
+    {
+      "orig": "t9",
+      "use": "definePublishEditSlugSection",
+      "originalBytes": 1555
+    },
+    {
+      "orig": "n9",
+      "use": "definePublishPasswordsSection",
+      "originalBytes": 1584
+    },
+    {
+      "orig": "i9",
+      "use": "definePublishAddPasswordSection",
+      "originalBytes": 1632
+    },
+    {
+      "orig": "r9",
+      "use": "definePublishCustomDomainSection",
+      "originalBytes": 1786
+    },
+    {
+      "orig": "o9",
+      "use": "definePublishShareModal",
+      "originalBytes": 2509
+    },
+    {
+      "orig": "a9",
+      "use": "definePublishCompareModal",
+      "originalBytes": 1170
+    },
+    {
+      "orig": "s9",
+      "use": "definePublishConfirmModal",
+      "originalBytes": 699
+    },
+    {
+      "orig": "l9",
+      "use": "definePublishIncludedFoldersModal",
+      "originalBytes": 612
+    },
+    {
+      "orig": "c9",
+      "use": "definePublishExcludedFoldersModal",
+      "originalBytes": 651
+    },
+    {
+      "orig": "p9",
+      "use": "definePublishRequestErrorClass",
+      "originalBytes": 155
+    },
+    {
+      "orig": "f9",
+      "use": "definePublishPlugin",
+      "originalBytes": 14163
+    },
+    {
+      "orig": "P9",
+      "use": "defineSyncSettingsView",
+      "originalBytes": 11959
+    },
+    {
+      "orig": "I9",
+      "use": "defineSyncFileHistoryView",
+      "originalBytes": 10203
+    },
+    {
+      "orig": "F9",
+      "use": "defineSyncFileHistoryModal",
+      "originalBytes": 1162
+    },
+    {
+      "orig": "N9",
+      "use": "defineSyncDeletedFilesModal",
+      "originalBytes": 2921
+    },
+    {
+      "orig": "R9",
+      "use": "defineSyncUpgradeEncryptionModal",
+      "originalBytes": 633
+    },
+    {
+      "orig": "B9",
+      "use": "defineSyncMigrateVaultModal",
+      "originalBytes": 5035
+    },
+    {
+      "orig": "V9",
+      "use": "defineSyncCreateVaultModal",
+      "originalBytes": 3131
+    },
+    {
+      "orig": "H9",
+      "use": "defineSyncRemoteVaultsModal",
+      "originalBytes": 8354
+    },
+    {
+      "orig": "z9",
+      "use": "defineSyncLogModal",
+      "originalBytes": 2413
+    },
+    {
+      "orig": "q9",
+      "use": "defineSyncExcludedFoldersSuggest",
+      "originalBytes": 591
+    },
+    {
+      "orig": "j9",
+      "use": "defineSyncLargestFilesModal",
+      "originalBytes": 617
+    },
+    {
+      "orig": "U9",
+      "use": "defineSyncConnectVaultModal",
+      "originalBytes": 3819
+    },
+    {
+      "orig": "W9",
+      "use": "defineSyncRenameVaultModal",
+      "originalBytes": 537
+    },
+    {
+      "orig": "_9",
+      "use": "defineSyncManageSharingModal",
+      "originalBytes": 3555
+    },
+    {
+      "orig": "K9",
+      "use": "defineSyncChangesView",
+      "originalBytes": 5297
+    },
+    {
+      "orig": "k9",
+      "use": "defineSlashCommandPlugin",
+      "originalBytes": 484
+    },
+    {
+      "orig": "E9",
+      "use": "defineSlashCommandSuggest",
+      "originalBytes": 1563
+    },
+    {
+      "orig": "S9",
+      "use": "defineSlidesPlugin",
+      "originalBytes": 782
+    },
+    {
+      "orig": "x9",
+      "use": "defineSlidesView",
+      "originalBytes": 2468
     }
   ],
   "host": {
@@ -5837,6 +6057,84 @@
       "expr": "function(){__basaltOwn.s09PublishHoverStart()}",
       "sha1": "fd76505456e891513a8135deb62c402b799740a4",
       "originalBytes": 191
+    },
+    {
+      "orig": "Q7",
+      "expr": "__basaltOwn.s15PublishItemSort",
+      "sha1": "308ac3af0d81794f4af75140d89b372f6b6d07ae",
+      "originalBytes": 124
+    },
+    {
+      "orig": "u9",
+      "expr": "__basaltOwn.s15Env().gm.plugins.publish",
+      "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
+      "originalBytes": 18
+    },
+    {
+      "orig": "T9",
+      "expr": "__basaltOwn.s15Env().gm.plugins.sync",
+      "sha1": "2cb35f6768d475d28ffbccfc2c43fa33fca71a9a",
+      "originalBytes": 15
+    },
+    {
+      "orig": "G9",
+      "expr": "__basaltOwn.s15Env().gm.plugins.sync",
+      "sha1": "2cb35f6768d475d28ffbccfc2c43fa33fca71a9a",
+      "originalBytes": 15
+    },
+    {
+      "orig": "D9",
+      "expr": "__basaltOwn.s15Env().gm.plugins.publish",
+      "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
+      "originalBytes": 18
+    },
+    {
+      "orig": "m9",
+      "expr": "__basaltOwn.s15Env().gm.plugins.quickSwitcher",
+      "sha1": "a66b1d230f3eb1f0e71b8f91b08b691f5c410082",
+      "originalBytes": 24
+    },
+    {
+      "orig": "h9",
+      "expr": "__basaltOwn.s15PublishUrl",
+      "sha1": "a590a2c81292877011d80d2461e2391703e43d31",
+      "originalBytes": 27
+    },
+    {
+      "orig": "d9",
+      "expr": "__basaltOwn.s15PublishAssets",
+      "sha1": "bb34a7702f148105fc4716028cdaf9145b63f7ad",
+      "originalBytes": 55
+    },
+    {
+      "orig": "L9",
+      "expr": "__basaltOwn.s15AvatarColorClasses",
+      "sha1": "83c9230ee597be017b517e6aded3f1399151be3b",
+      "originalBytes": 169
+    },
+    {
+      "orig": "A9",
+      "expr": "__basaltOwn.s15SyncHourMs",
+      "sha1": "afa31f8135d8e3a100e5f974ef67cdb5b50cbfff",
+      "originalBytes": 4
+    },
+    {
+      "orig": "C9",
+      "expr": "__basaltOwn.s15SlashCommandPattern",
+      "sha1": "09e390eef3edd19da22641e46189bd9acaf95601",
+      "originalBytes": 21
+    },
+    {
+      "orig": "M9",
+      "expr": "__basaltOwn.s15Env().Hv(\"/lib/reveal/reveal.js\")",
+      "sha1": "4933725e20cfdd13dc9ed83635463667d65db2f4",
+      "originalBytes": 27
+    },
+    {
+      "orig": "v9",
+      "expr": "__basaltOwn.QUICK_SWITCHER_DEFAULTS",
+      "sha1": "777739e8d43da61b10510e6fb5e015ceebc9c9ce",
+      "originalBytes": 60
     }
   ],
   "methods": [
@@ -6842,7 +7140,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9",
   "patches": [
     {
       "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",

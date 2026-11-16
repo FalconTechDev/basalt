@@ -25,7 +25,7 @@ import { makeHotkey } from "./text.js";
 // Classes produced by the factories below, visible to each other regardless of factory order.
 const palette = {};
 
-const QUICK_SWITCHER_DEFAULTS = { showExistingOnly: false, showAttachments: true, showAllFileTypes: false };
+export const QUICK_SWITCHER_DEFAULTS = { showExistingOnly: false, showAttachments: true, showAllFileTypes: false };
 const RECENT_COMMANDS_KEY = "recent-commands";
 const RECENT_COMMANDS_LIMIT = 100;
 

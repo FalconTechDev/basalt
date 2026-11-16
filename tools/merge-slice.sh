@@ -10,6 +10,7 @@ for f in $U; do
   case "$f" in
     src-app/manifest.json) node tools/merge-manifest.mjs | head -1 | cut -c1-80 ;;
     src/app.js) git checkout --ours src/app.js ;;
+    build-app.mjs) git checkout --ours build-app.mjs ;;  # every slice re-did the envBind getters; main has the superset
     docs/*.md|THIRD_PARTY.md) node tools/keep-both.mjs "$f" ;;
     *) echo "MANUAL CONFLICT: $f"; exit 2 ;;
   esac
