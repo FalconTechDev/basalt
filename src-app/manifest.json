@@ -1710,6 +1710,71 @@
    "orig": "Rz",
    "use": "s07weakMapFactory",
    "originalBytes": 50
+  },
+  {
+   "orig": "Hz",
+   "use": "s07workerScript",
+   "originalBytes": 241
+  },
+  {
+   "orig": "Vz",
+   "use": "s07workerFromScript",
+   "originalBytes": 237
+  },
+  {
+   "orig": "$z",
+   "use": "s07mermaidCodeText",
+   "originalBytes": 132
+  },
+  {
+   "orig": "nq",
+   "use": "s07attrsMatch",
+   "originalBytes": 111
+  },
+  {
+   "orig": "cq",
+   "use": "s07linkHrefFor",
+   "originalBytes": 102
+  },
+  {
+   "orig": "xz",
+   "use": "s07scheduleMathJaxFlush",
+   "originalBytes": 92
+  },
+  {
+   "orig": "kz",
+   "use": "s07texToHtml",
+   "originalBytes": 57
+  },
+  {
+   "orig": "Yz",
+   "use": "s07renderMermaidDiagrams",
+   "originalBytes": 402
+  },
+  {
+   "orig": "wz",
+   "use": "s07loadMathJax",
+   "originalBytes": 160
+  },
+  {
+   "orig": "vz",
+   "use": "s07loadMermaid",
+   "originalBytes": 168
+  },
+  {
+   "orig": "yz",
+   "use": "s07loadPrism",
+   "originalBytes": 166
+  },
+  {
+   "orig": "pz",
+   "use": "s07loadPdfJs",
+   "originalBytes": 176
+  },
+  {
+   "orig": "dz",
+   "use": "s07loadPdfViewer",
+   "originalBytes": 216
   }
  ],
  "classes": [
@@ -5028,6 +5093,108 @@
    "expr": "__basaltOwn.s07searchResultKeys",
    "sha1": "9fb749deb643c2cdaad1869ebff50dec9aa69382",
    "originalBytes": 54
+  },
+  {
+   "orig": "bz",
+   "expr": "__basaltOwn.s07mathJaxLoader()",
+   "sha1": "f29a38078cc8f3cba3ae7d10c3c26e556fbb8908",
+   "originalBytes": 470
+  },
+  {
+   "orig": "mz",
+   "expr": "__basaltOwn.s07mermaidLoader()",
+   "sha1": "2fd2ff5e3bc6c4180b7bd90355953538d822e1d8",
+   "originalBytes": 428
+  },
+  {
+   "orig": "uz",
+   "expr": "__basaltOwn.s07pdfJsLoader()",
+   "sha1": "ee068b8d8a4422bd858f8b253cefb4c49d2c2cc0",
+   "originalBytes": 207
+  },
+  {
+   "orig": "gz",
+   "expr": "__basaltOwn.s07prismLoader()",
+   "sha1": "b1a7904c097570c2c6476444edfe667513194d98",
+   "originalBytes": 97
+  },
+  {
+   "orig": "hz",
+   "expr": "__basaltOwn.s07pdfViewerLoader()",
+   "sha1": "65e7dcbec30c1253311c1d1cc4a5a3e538766db5",
+   "originalBytes": 94
+  },
+  {
+   "orig": "fz",
+   "expr": "__basaltOwn.s07cmModesLoader()",
+   "sha1": "e46be404345bc67db4d7b9ab18e4387fb6e23246",
+   "originalBytes": 34
+  },
+  {
+   "orig": "Bz",
+   "expr": "__basaltOwn.s07workerBridge()",
+   "sha1": "55b535ad283f6263f1436d90e1ee407fc775dd6a",
+   "originalBytes": 387
+  },
+  {
+   "orig": "Sz",
+   "expr": "__basaltOwn.s07flushMathJax",
+   "sha1": "82a0cab9eab70198cf02f0370d5cff8501f892be",
+   "originalBytes": 178
+  },
+  {
+   "orig": "Kz",
+   "expr": "__basaltOwn.s07renderMermaidDiagram",
+   "sha1": "dceab885efcdaef4fa4173df8e75d600b092019b",
+   "originalBytes": 1562
+  },
+  {
+   "orig": "Qz",
+   "expr": "__basaltOwn.s07mermaidElementFor",
+   "sha1": "cc37890534d8b70d1530ec26e24a0da1fa04fa78",
+   "originalBytes": 148
+  },
+  {
+   "orig": "Zz",
+   "expr": "__basaltOwn.s07highlightedLang",
+   "sha1": "ca1f003a4e2c2238e07ee19e1139efed424dd696",
+   "originalBytes": 106
+  },
+  {
+   "orig": "tq",
+   "expr": "__basaltOwn.s07mathElementFor",
+   "sha1": "91129ef978179086dec3a76eb8be80d3a8064775",
+   "originalBytes": 201
+  },
+  {
+   "orig": "iq",
+   "expr": "__basaltOwn.s07internalEmbedFor",
+   "sha1": "37e063f6dd7ba0451d1db959dabe392e7f19a19b",
+   "originalBytes": 194
+  },
+  {
+   "orig": "Jz",
+   "expr": "__basaltOwn.s07highlightedCodeFor",
+   "sha1": "270bab77e47f7539f7d9b9b546b3415762db9ccf",
+   "originalBytes": 191
+  },
+  {
+   "orig": "rq",
+   "expr": "__basaltOwn.s07imageFor",
+   "sha1": "bc7e9611e10abffac3fecd1859cc61c21cfdde33",
+   "originalBytes": 303
+  },
+  {
+   "orig": "Xz",
+   "expr": "__basaltOwn.s07newEmbedCache()",
+   "sha1": "46e96ccfcfbb4f4c05ed1f14a9ecd69852e8605f",
+   "originalBytes": 4
+  },
+  {
+   "orig": "eq",
+   "expr": "__basaltOwn.s07newEmbedCache()",
+   "sha1": "46e96ccfcfbb4f4c05ed1f14a9ecd69852e8605f",
+   "originalBytes": 4
   }
  ],
  "methods": [
@@ -6033,7 +6200,7 @@
    "originalBytes": 26549
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,nF,iF,Iz,createEl,ub,$x,oT,hT",
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,nF,iF,Iz,createEl,ub,$x,oT,hT,Hv,Jl,ajaxPromise,Xz,eq",
  "patches": [
   {
    "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
