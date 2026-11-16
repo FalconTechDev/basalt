@@ -2678,6 +2678,10 @@
     {
       "orig": "U3",
       "use": "defineS13CanvasMenu"
+    },
+    {
+      "orig": "Z4",
+      "use": "defineS13BasesPlugin"
     }
   ],
   "host": {
@@ -3235,7 +3239,25 @@
     "s13CanvasEdge": "G5",
     "s13CanvasGroupNode": "R5",
     "s13CanvasFileNode": "P5",
-    "s13CanvasImageSuggest": "D3"
+    "s13CanvasImageSuggest": "D3",
+    "s13BaseFileView": "HX",
+    "s13BasesTableView": "H4",
+    "s13BaseFileModel": "EY",
+    "s13QuerySession": "iY",
+    "s13QueryItem": "oY",
+    "s13QueryTable": "u$",
+    "s13FilterOps": "uY",
+    "s13NewItemContext": "FY",
+    "s13TableExport": "bA",
+    "s13ValueNone": "bW",
+    "s13ComparePaths": "ub",
+    "s13BasesEmbed": "C$",
+    "s13BasesEmbedView": "E$",
+    "s13MarkdownEmbed": "zz",
+    "s13FolderClass": "ZT",
+    "s13CardsView": "f4",
+    "s13ListView": "x4",
+    "s13ViewSwitcher": "J4"
   },
   "declarators": [
     {
