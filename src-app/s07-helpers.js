@@ -292,3 +292,82 @@ export const s07loadedWindows = new WeakSet();
 
 /** Mermaid flowchart defaults applied on top of the library defaults. */
 export const s07mermaidFlowConfig = { progressiveRender: true, asyncParse: true, listBullet: true };
+
+// ---------- embed value + section-tree helpers ----------
+
+/**
+ * Fill `el` with an embed attribute value: unwraps single quotes, JSON-decodes
+ * double-quoted strings, renders inline `<svg` markup at icon size, otherwise
+ * sets the plain text.
+ */
+export function s07embedAttrValue(el, raw) {
+  let value = raw;
+  if (value.startsWith("'") && value.endsWith("'")) {
+    value = value.substring(1, value.length - 1).replace(/\'/g, "'");
+  } else if (value.startsWith('"')) {
+    try {
+      const parsed = JSON.parse(value);
+      if (String.isString(parsed)) value = parsed;
+    } catch (e) {}
+  }
+  if (value.startsWith("<svg")) {
+    const node = env().xL(value).firstChild;
+    if (node && node.instanceOf(SVGSVGElement)) {
+      node.setAttrs({ width: 16, height: 16, fill: "currentColor", stroke: "currentColor" });
+      el.empty();
+      el.appendChild(node);
+    }
+  } else {
+    env().tv(el, value);
+  }
+}
+
+/** Call `cb` for every `<li>` that contains a nested `<ul>`/`<ol>`. */
+export function s07forEachNestedItem(root, cb) {
+  const items = root.findAll("li");
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const nested = item.findAll("ul, ol");
+    if (nested && nested.length > 0) cb(item);
+  }
+}
+
+/** Call `cb` with the first child when it is a heading element. */
+export function s07ifFirstHeading(el, cb) {
+  const first = el.firstChild;
+  if (first && first.instanceOf(HTMLHeadingElement)) cb(first);
+}
+
+/** Invoke every function in `fns` with the given arguments. */
+export function s07callAll(fns, ...args) {
+  if (!fns) return;
+  for (let i = 0; i < fns.length; i++) fns[i].apply(fns, args);
+}
+
+/** Invoke the `_handlers[type]` listeners of a non-DOM event target. */
+export function s07emitStored(target, type, ...args) {
+  const list = target._handlers?.[type];
+  if (!list) return;
+  for (let i = 0; i < list.length; i++) list[i].apply(list, args);
+}
+
+/** Leading list marker text of a line ("- ", "1. ", "> - [ ] "), or null. */
+export function s07leadingListMarker(text) {
+  const m = env().aP.exec(text);
+  return m && m[0] ? m[0] : null;
+}
+
+/** Indentation prefix a continued list item should get at `offset`. */
+export function s07listMarkerIndent(doc, offset) {
+  const m = doc.lineAt(offset).text.match(env().aP);
+  if (!m) return "";
+  const quote = m[1] ?? "";
+  const marker = m[3] ?? "";
+  return quote + " ".repeat(marker.length);
+}
+
+/** Structural equality of two RangeSets of possibly different lengths. */
+export function s07rangeSetsEqual(a, b) {
+  if (a.length === b.length) return a.eq(b);
+  return a.length < b.length ? b.slice(0, a.length).eq(a) : a.slice(0, b.length).eq(b);
+}
