@@ -2419,6 +2419,14 @@
   {
    "orig": "$9",
    "use": "defineSyncNavFile"
+  },
+  {
+   "orig": "Z9",
+   "use": "defineBackoff"
+  },
+  {
+   "orig": "dee",
+   "use": "defineTagPanePlugin"
   }
  ],
  "host": {
@@ -2931,7 +2939,8 @@
   "s16ApiVersion": "gte",
   "s16TreeCollapsible": "QL",
   "s16TreePusher": "JH",
-  "s16NavTooltipDelay": "lv"
+  "s16NavTooltipDelay": "lv",
+  "s16TagPaneView": "bee"
  },
  "declarators": [
   {
