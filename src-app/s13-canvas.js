@@ -8,6 +8,8 @@ import { s13ResizeOrigin, s13MatchSpans } from "./s13-geom.js";
 
 const s13CDiv = (...args) => env().createDiv(...args);
 
+let S13CanvasSelection = null;
+
 /**
  * The dashed selection rectangle drawn around the current canvas selection, with eight
  * resize handles. Dragging a handle resizes every selected node proportionally, honouring
@@ -224,6 +226,7 @@ export function defineS13CanvasSelection(host) {
     this.selectionEl.remove();
   };
 
+  S13CanvasSelection = CanvasSelection;
   return CanvasSelection;
 }
 

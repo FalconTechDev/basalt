@@ -22,6 +22,7 @@ let S13BodyCell = null;
 let S13SummaryCell = null;
 let S13SummaryRow = null;
 let S13CardsProperty = null;
+let S13CardsItem = null;
 let S13ListProperty = null;
 let S13ListItem = null;
 let S13ListGroup = null;

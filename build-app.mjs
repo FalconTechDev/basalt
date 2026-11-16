@@ -181,7 +181,11 @@ export function applyOwn(srcText, wasm, tmpPath) {
   }
 
   // 2) the block with the own modules
-  const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind}}));` : "";
+  // env values are exposed through getters so the thunk never evaluates names that are not bound yet
+  // (e.g. `electronWindow`, which only exists after attachElectron runs during app init)
+  const bind = manifest.envBind
+    ? `__basaltOwn.bindEnv(()=>({${manifest.envBind.split(",").map((e) => { const [k, v] = e.split(":"); return `get ${k}(){return ${v || k}}`; }).join(",")}}));`
+    : "";
   const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");
   const block = `${BEGIN}${code}var __basaltHost={${host}};${bind}${END}`;
   const bi = out.indexOf(BEGIN);
