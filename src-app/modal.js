@@ -1,5 +1,6 @@
 // Modal: the dialog base class of the plugin API (title, content area, close button, backdrop, Escape, focus handling).
 import { runTransition, cancelTransition } from "./animation.js";
+import { inherit } from "./inherit.js";
 
 /** Remembers what had focus / selection in `win` so that closing the dialog can give it back. */
 function captureSelection(win) {
@@ -181,4 +182,54 @@ export function defineModal(host) {
   Modal.prototype.setDimBackground = function (dim) { this.dimBackground = dim; return this; };
 
   return Modal;
+}
+
+/** DialogModal: Modal plus a button container row (addButton / addCheckbox / addCancelButton).
+ *  Base of the confirm/prompt dialogs; `nb` in the original bundle. */
+export function defineDialogModal(host) {
+  function DialogModal(app) {
+    const self = host.Modal.call(this, app) || this;
+    self.buttonContainerEl = null;
+    self.containerEl.addClass("mod-confirmation");
+    self.buttonContainerEl = self.modalEl.createDiv("modal-button-container");
+    return self;
+  }
+  inherit(DialogModal, host.Modal);
+
+  const proto = DialogModal.prototype;
+
+  proto.addCheckbox = function (label, onToggle) {
+    this.buttonContainerEl.createEl("label", { cls: "mod-checkbox" }, (el) => {
+      el.createEl("input", { attr: { tabindex: -1 }, type: "checkbox" })
+        .addEventListener("click", onToggle);
+      el.appendText(label);
+    });
+    return this;
+  };
+
+  proto.addButton = function (cls, text, onClick) {
+    const self = this;
+    const classes = Array.isArray(cls) ? cls : [cls];
+    const button = this.buttonContainerEl.createEl("button", { cls: classes.join(" "), text });
+    button.addEventListener("click", (event) => {
+      (async () => {
+        try {
+          button.addClass("mod-loading");
+          const result = await onClick(event);
+          if (!result) self.close();
+        } finally {
+          button.removeClass("mod-loading");
+        }
+      })();
+    });
+    return this;
+  };
+
+  proto.addCancelButton = function (onCancel) {
+    return this.addButton("mod-cancel", host.t.dialogue.buttonCancel(), () => { if (onCancel) onCancel(); });
+  };
+
+  proto.onClose = function () { host.hideTooltip(); };
+
+  return DialogModal;
 }

@@ -3,7 +3,7 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 const stage = (n) => JSON.parse(execSync(`git show :${n}:src-app/manifest.json`, { maxBuffer: 1e9 }).toString());
 const a = stage(2), b = stage(3);
-const idOf = { entries: (e) => e.orig, classes: (e) => e.orig, declarators: (e) => e.orig, methods: (e) => `${e.class}.${e.name}` };
+const idOf = { entries: (e) => e.orig, classes: (e) => e.orig, declarators: (e) => e.orig, patches: (e) => e.find, methods: (e) => `${e.class}.${e.name}` };
 const out = { ...a };
 const report = [];
 for (const k of Object.keys({ ...a, ...b })) {

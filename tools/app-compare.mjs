@@ -162,6 +162,8 @@ const S = {
   Ny: (r) => [new FakeEl(), r.pick(["", "foo bar", "FooBar baz", "日本語"]) + r.str(5), r.pick([null, undefined, [], rangesOf(r)]), r.int(-3, 3)],
   Fy: (r) => [new FakeEl(), r.pick(["", "foo bar", "FooBar baz"]) + r.str(5), r.pick([null, undefined, { matches: rangesOf(r) }, { matches: [] }]), r.int(-3, 3)],
   FT: (r) => [cacheOf(r), r.pick(["#", "A", "A#B", "^b1", "^B1", "^xy", "^nope", "[^f1]", "[^f9]", "A#Sub", "##A", "", "a#b#c", "a b", "C #1", "x#y", "[x](y)"])],
+  Yc: (r) => [r.pick(["", "x", "notaurl", "http://a/b?x=1", "a b", "ftp://h/p", "://", "HTTP://X.Y", "a:b", "1", null, undefined, 5, "mailto:a@b.c", "https://"])],
+  Ec: (r) => [r.str(10)],
 };
 
 const ok = (a, b) => util.isDeepStrictEqual(a, b);

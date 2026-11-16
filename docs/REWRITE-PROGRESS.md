@@ -1,6 +1,8 @@
 # src/app.js rewrite: progress
 
 Branch `rewrite-core` (worktree `basalt-wt-core`). Own code lives in `src-app/` and is spliced into the inherited bundle by
+
+Branch `rewrite-editor` (worktree `basalt-wt-editor`). Own code lives in `src-app/` and is spliced into the inherited bundle by
 `build-app.mjs`; the manifest `src-app/manifest.json` says what is replaced. Numbers come from `node tools/own-stats.mjs`
 (bytes of the ORIGINAL text of every replaced function / class, divided by the size of the base bundle).
 
@@ -12,6 +14,12 @@ Branch `rewrite-core` (worktree `basalt-wt-core`). Own code lives in `src-app/` 
 | **total** | | **292.0 KB = 7.92 % of the 3688.9 KB bundle** |
 
 Own readable source: 568.2 KB in `src-app/*.js` (comments included).
+
+| functions (leaf helpers, search, timing, transitions, tooltips, clipboard/url) | 173 | 21.8 KB |
+| classes / objects | 70 | 148.5 KB |
+| **total** | | **170.4 KB = 4.6 % of the 3688.9 KB bundle** |
+
+Own readable source: 374 KB in `src-app/*.js` (37 files, comments included).
 
 What the percentage means: about 240 KB of the bundle are third-party package modules and most of the 2.9 MB of `var` statements are
 bundled libraries (CodeMirror 6, Lezer, yaml, moment, tslib, ...). Those are not "application code"; they go away by dropping the
@@ -35,6 +43,17 @@ kept on the full bundle so it cannot flatter itself.
 
 | module (src-app) | replaces |
 | --- | --- |
+| markdown-render.js | `MarkdownRenderChild` (`zz`), `MarkdownPreviewSection` (`qz`), the preview link/hover handlers (`lq`), `MarkdownRenderer` (`hq`, statics `render`/`renderMarkdown`/`postProcess`/`toggleCheckbox` included); `misc.js` also gained `isUrl` (`Yc`) and `copyText` (`Ec`) |
+| document-search.js | the reading-view find bar (`lz`: scope keys, match count, highlight ranges, prev/next) |
+| preview-view.js | `MarkdownPreviewView` (`fq`: reading-mode settings classes, find bar wiring, ephemeral scroll/selection state, touch double-tap mode toggle, copy/context-menu keys) |
+| markdown-extras.js | reading-mode helpers: unresolved-link marking (`uq`), query-block embed (`pq`), embed depth lookup (`JZ`), properties-editor getter (`eO`), `EmbedLoader` (`sJ`); `misc.js` gained `focusWhenShown` (`gg`). `build-app.mjs` entries may now opt into `"host": true` to receive `__basaltHost` as a trailing argument |
+| markdown-view.js | `MarkdownView` (`W6`: mode switching source/preview, inline title, properties editor + backlinks pane wiring, view state, scroll sync, fold persistence, pane menu, frontmatter css classes); `j6` edit mode, `tO` metadata editor, `z6` backlinks and `G6` print modal remain inherited via the host table |
+| modal.js (+defineDialogModal), print-modal.js | `DialogModal` (`nb`: button-container base of the confirm/prompt dialogs) and `PrintToPdfModal` (`G6`: export-to-PDF settings dialog, hidden print window, electron print IPC) |
+| edit-mode.js | `MarkdownEditMode` (`j6`): source edit mode — reparents title/properties/backlinks into the editor sizer, ephemeral cursor/scroll/property-match state, search-match highlighting, fold info incl. properties block, live-preview properties extension hook, backlinks bottom padding |
+| edit-mode-base.js | `EditModeBase` (`aZ`): markdown edit-mode base over CodeMirror — scroll DOM layout, fractional-line scroll math, in-editor search, Enter/Tab list keymaps, dynamic CM extensions (line numbers, indent guides, folding, pairing) |
+| editor-api.js | `Editor` (`cP`): public editor API — setLine, processLines, heading/blockquote/bullet/number/check-list toggles, callout/codeblock/math insertion, list-aware newline continuation, CJK bracket expansion |
+| properties-editor.js | `MetadataEditor` (`tO`), `PropertyRow` (`nO`), `PropertyKeySuggest` (`AO`): frontmatter/properties UI — rows with type widgets, key suggest, vim-style nav, multi-select, clipboard (`basalt/properties` + YAML), collapse, drag reorder, invalid-frontmatter error state |
+| preview-renderer.js | `MarkdownPreviewRenderer` (`Gz`): section parse (sync + worker), section recycling, progressive virtualization, measurement, delegated DOM events (links, tags, footnotes, checkboxes, heading/list collapse indicators, media), search-highlight rectangles, scroll line mapping (`getScroll`/`applyScroll`), fold state export/import, mobile image viewer pinch/pan |
 | events.js, timing.js | `Events`, `Component`, `debounce` |
 | keymap.js | `Scope`, the dynamic-parent scope of the workspace, `Keymap` |
 | commands.js | the command registry (`app.commands`), `HotkeyManager` |

@@ -343,3 +343,38 @@ export function sortHitsByScore(hits) { hits.sort((a, b) => b.match.score - a.ma
 export function shiftRanges(ranges, by) {
   if (ranges) for (const r of ranges) { r[0] += by; r[1] += by; }
 }
+
+// ---------- clipboard / urls ----------
+
+/** True when `value` parses as an absolute URL. */
+export function isUrl(value) {
+  if (!value) return false;
+  try { new URL(value); } catch (e) { return false; }
+  return true;
+}
+
+/** Copies `text` to the clipboard (execCommand fallback where the async API is missing). */
+export function copyText(text) {
+  if (navigator.clipboard && navigator.permissions) {
+    navigator.clipboard.writeText(text);
+  } else {
+    const area = activeDocument.createElement("textarea");
+    area.value = text;
+    area.style.top = "0";
+    area.style.left = "0";
+    area.style.position = "fixed";
+    activeDocument.body.appendChild(area);
+    try {
+      area.focus({ preventScroll: true });
+      area.select();
+      activeDocument.execCommand("copy");
+    } catch (e) {}
+    activeDocument.body.removeChild(area);
+  }
+}
+
+/** Runs `callback` now when `el` is already laid out, otherwise once it is inserted (and shown). */
+export function focusWhenShown(el, callback) {
+  if (el.isShown()) callback();
+  else el.onNodeInserted(callback, true);
+}

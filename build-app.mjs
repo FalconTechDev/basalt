@@ -97,7 +97,8 @@ export function applyOwn(srcText, wasm, tmpPath) {
     if (!n) throw new Error(`manifest: no top-level function ${e.orig} in src/app.js`);
     if (!n.params.every((p) => p.type === "Identifier")) throw new Error(`manifest: ${e.orig} has non-trivial parameters`);
     const params = n.params.map((p) => p.name).join(",");
-    const wrapper = `function ${e.orig}(${params}){return/*own*/__basaltOwn.${e.use}(${params})}`;
+    const args = e.host ? [params, "__basaltHost"].filter(Boolean).join(",") : params;
+    const wrapper = `function ${e.orig}(${params}){return/*own*/__basaltOwn.${e.use}(${args})}`;
     const text = srcText.slice(n.start, n.end);
     const wrapped = /^function [^(]+\([^)]*\)\{return\/\*own\*\/\__basaltOwn\./.test(text);
     if (!wrapped) {
