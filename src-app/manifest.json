@@ -2670,6 +2670,10 @@
     {
       "orig": "f4",
       "use": "defineS13CardsView"
+    },
+    {
+      "orig": "z3",
+      "use": "defineS13CanvasSelection"
     }
   ],
   "host": {
@@ -3222,7 +3226,8 @@
     "s13AudioConverter": "r4",
     "s13CardsGroupHeader": "m4",
     "s13CardsItem": "v4",
-    "s13Thumbnailer": "s4"
+    "s13Thumbnailer": "s4",
+    "s13CanvasNode": "S5"
   },
   "declarators": [
     {
