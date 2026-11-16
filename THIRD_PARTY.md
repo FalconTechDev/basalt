@@ -28,4 +28,6 @@
 | diff-match-patch | inside inherited `src/app.js` (`dA`) | Apache-2.0 |
 | DOMPurify | inside inherited `src/app.js` (publish sanitizing) | Apache-2.0 / MPL-2.0 |
 
+| tslib (`__awaiter` helper, webpack module 9547 inside `src/app.js`) | `src/app.js` | 0BSD |
+
 Public plugin list used by the plugin catalog is read from a public GitHub repository at run time; plugins installed from it keep their own licenses.
