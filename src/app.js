@@ -28683,7 +28683,7 @@ function defineWorkspacesPlugin(host) {
     this.activeWorkspace = data.active || "";
     const self = this;
 
-    plugin.registerCliHandler("workspaces", WORKSPACE_CLI_LIST, {
+    plugin.registerCliHandler("workspaces", "List saved workspaces", {
       total: { description: "Return workspace count" },
     }, (args) => {
       const names = Object.keys(self.workspaces);
