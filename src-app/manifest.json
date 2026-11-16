@@ -2646,6 +2646,26 @@
     {
       "orig": "e4",
       "use": "defineS13QuickActions"
+    },
+    {
+      "orig": "$6",
+      "use": "defineS13MobileTabItem"
+    },
+    {
+      "orig": "Z6",
+      "use": "defineS13TabSwitcher"
+    },
+    {
+      "orig": "J6",
+      "use": "defineS13MobileToolbar"
+    },
+    {
+      "orig": "t4",
+      "use": "defineS13ShareIntent"
+    },
+    {
+      "orig": "a4",
+      "use": "defineS13AudioRecorder"
     }
   ],
   "host": {
@@ -3184,7 +3204,18 @@
     "s13FormulaParseError": "RK",
     "s13ErrorValue": "yW",
     "s13NumberValue": "EW",
-    "s13NumberFormat": "wm"
+    "s13NumberFormat": "wm",
+    "s13CapacitorModule": "km",
+    "s13CapacitorDirectory": "Bb",
+    "s13IsIos": "Mm",
+    "s13KeepAwake": "Rm",
+    "s13PlatformOs": "zl",
+    "s13EaseStandard": "Tl",
+    "s13OverlayPush": "zm",
+    "s13OverlayPop": "qm",
+    "s13IsMediaFile": "$y",
+    "s13FilePickerModal": "n4",
+    "s13AudioConverter": "r4"
   },
   "declarators": [
     {
