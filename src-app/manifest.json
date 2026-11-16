@@ -1263,6 +1263,100 @@
    "orig": "Wv",
    "use": "withButtonLoading",
    "originalBytes": 298
+  },
+  {
+   "orig": "mX",
+   "use": "s10XhrHasObsStatus"
+  },
+  {
+   "orig": "vX",
+   "use": "s10ResponseHasObsStatus"
+  },
+  {
+   "orig": "gX",
+   "use": "s10PromotePreloadStyles"
+  },
+  {
+   "orig": "LX",
+   "use": "s10ValidateFileName",
+   "host": true
+  },
+  {
+   "orig": "IX",
+   "use": "s10ShowErrorTooltip",
+   "host": true
+  },
+  {
+   "orig": "FX",
+   "use": "s10MergeText",
+   "host": true
+  },
+  {
+   "orig": "RX",
+   "use": "s10RenderDiffView",
+   "host": true
+  },
+  {
+   "orig": "TX",
+   "use": "s10FormulaIdentifier",
+   "host": true
+  },
+  {
+   "orig": "DX",
+   "use": "s10FormulaLinktext",
+   "host": true
+  },
+  {
+   "orig": "M$",
+   "use": "s10IsEditableTarget",
+   "host": true
+  },
+  {
+   "orig": "Q$",
+   "use": "s10RangeInTable",
+   "host": true
+  },
+  {
+   "orig": "g$",
+   "use": "s10FolderContains",
+   "host": true
+  },
+  {
+   "orig": "b$",
+   "use": "s10MovableFiles",
+   "host": true
+  },
+  {
+   "orig": "v$",
+   "use": "s10MoveFilesAndUpdateLinks",
+   "host": true
+  },
+  {
+   "orig": "B$",
+   "use": "s10ChangeByLineRange",
+   "host": true
+  },
+  {
+   "orig": "sZ",
+   "use": "s10VimModeSync",
+   "host": true
+  },
+  {
+   "orig": "lZ",
+   "use": "s10VimModeName"
+  },
+  {
+   "orig": "fZ",
+   "use": "s10ForwardDomEvent"
+  },
+  {
+   "orig": "mZ",
+   "use": "s10ForwardInputEvents"
+  },
+  {
+   "orig": "vZ",
+   "use": "s10MirrorStyles",
+   "host": true
   }
  ],
  "classes": [
@@ -2894,7 +2988,24 @@
   "anyMetadataRef": "xT",
   "createEl": "createEl",
   "createFragment": "createFragment",
-  "FolderPathSuggestTab": "AI"
+  "FolderPathSuggestTab": "AI",
+  "s10DiffMatchPatch": "dA",
+  "s10DiffOp": "XD",
+  "s10IsEditable": "yg",
+  "s10FmMember": "WK",
+  "s10FmIndex": "UK",
+  "s10FmIdent": "QK",
+  "s10FmLiteral": "GK",
+  "s10FmCall": "jK",
+  "s10FmList": "YK",
+  "s10FoldService": "Rp",
+  "s10DefaultKeymap": "BR",
+  "s10StreamLanguage": "qd",
+  "s10StateEffect": "We",
+  "s10GetIndentUnit": "bp",
+  "s10IndentString": "wp",
+  "s10EnsureSyntaxTree": "rp",
+  "s10LastInsertPlugin": "P$"
  },
  "declarators": [
   {
