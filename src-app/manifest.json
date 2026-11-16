@@ -1896,6 +1896,11 @@
       "orig": "O9",
       "use": "s15ScrollLoadMore",
       "originalBytes": 138
+    },
+    {
+      "orig": "kte",
+      "use": "s36WindowChrome",
+      "originalBytes": 55245
     }
   ],
   "classes": [
