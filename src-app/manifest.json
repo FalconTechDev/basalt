@@ -1343,7 +1343,12 @@
    "orig": "Zg",
    "use": "s04FormatMenuPlugin",
    "originalBytes": 802
-  }
+  },
+   {
+    "orig": "Gg",
+    "use": "s04HistoryNavButton",
+    "host": true
+   }
  ],
  "classes": [
   {
