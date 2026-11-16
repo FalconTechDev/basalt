@@ -2387,6 +2387,11 @@
       "orig": "DC",
       "use": "defineICloudUnsupportedScreen",
       "originalBytes": 356
+    },
+    {
+      "orig": "Tte",
+      "use": "s17CreateApp",
+      "originalBytes": 9820
     }
   ],
   "host": {
@@ -2894,7 +2899,20 @@
     "anyMetadataRef": "xT",
     "createEl": "createEl",
     "createFragment": "createFragment",
-    "FolderPathSuggestTab": "AI"
+    "FolderPathSuggestTab": "AI",
+    "s17EmbedRegistry": "aJ",
+    "s17ViewRegistry": "p0",
+    "s17Commands": "Y6",
+    "s17HotkeyManager": "zb",
+    "s17DragManager": "xP",
+    "s17AppDom": "wte",
+    "s17CustomCss": "Ib",
+    "s17ShareReceiver": "t4",
+    "s17RenderContext": "vW",
+    "s17Cli": "CA",
+    "s17SplashScreen": "Am",
+    "s17SetBasaltDebug": "(v)=>(iD=v)",
+    "s17SetTouchCancel": "(fn)=>(Oc=fn)"
   },
   "declarators": [
     {
@@ -3008,6 +3026,30 @@
       "expr": "[\"accentColor\",\"theme\",\"cssTheme\",\"enabledCssSnippets\",\"showViewHeader\",\"showRibbon\",\"nativeMenus\",\"translucency\",\"textFontFamily\",\"interfaceFontFamily\",\"monospaceFontFamily\",\"baseFontSize\",\"baseFontSizeAction\",\"slidingSidebar\",\"floatingNavigation\",\"autoFullScreen\"]",
       "sha1": "ca78b22bc3a5de13984e7804174301faa0b4a19e",
       "originalBytes": 3376
+    },
+    {
+      "orig": "Ete",
+      "expr": "__basaltOwn.s17IframeAllowlist",
+      "sha1": "d22f29d1915d4f3c6ce41ef2169f5871f6b5f5a1",
+      "originalBytes": 134
+    },
+    {
+      "orig": "Mte",
+      "expr": "__basaltOwn.s17IframeSandbox",
+      "sha1": "456f329d638150bcd4e3283093a5f7640d4f8e7a",
+      "originalBytes": 120
+    },
+    {
+      "orig": "Ste",
+      "expr": "__basaltOwn.s17EmulateMobileKey",
+      "sha1": "21fa85ed5da327380abac809d8bd782a21f91069",
+      "originalBytes": 15
+    },
+    {
+      "orig": "xte",
+      "expr": "__basaltOwn.s17DebugModeKey",
+      "sha1": "f3b0239d8cbb94110d575ca2a4dc902631620e41",
+      "originalBytes": 11
     }
   ],
   "methods": [
