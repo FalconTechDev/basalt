@@ -3343,9 +3343,9 @@
   },
   {
    "orig": "eee",
-   "use": "s16CloseCodes",
    "sha1": "44873d15410efd96edf5586cb435ce82738e3abe",
-   "originalBytes": 364
+   "originalBytes": 364,
+   "expr": "__basaltOwn.s16CloseCodes"
   }
  ],
  "methods": [
