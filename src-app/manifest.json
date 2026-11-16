@@ -3994,6 +3994,111 @@
       "orig": "x9",
       "use": "defineSlidesView",
       "originalBytes": 2468
+    },
+    {
+      "orig": "AX",
+      "use": "defineS25FilterMenu",
+      "originalBytes": 2030
+    },
+    {
+      "orig": "PX",
+      "use": "defineS25FormulaSuggester",
+      "originalBytes": 581
+    },
+    {
+      "orig": "HX",
+      "use": "defineS25BasesView",
+      "originalBytes": 3262
+    },
+    {
+      "orig": "jX",
+      "use": "defineS25NewItemButton",
+      "originalBytes": 2978
+    },
+    {
+      "orig": "UX",
+      "use": "defineS25FormulaEditor",
+      "originalBytes": 1291
+    },
+    {
+      "orig": "WX",
+      "use": "defineS25ToolbarPage",
+      "originalBytes": 218
+    },
+    {
+      "orig": "GX",
+      "use": "defineS25PropertiesMenu",
+      "originalBytes": 1902
+    },
+    {
+      "orig": "KX",
+      "use": "defineS25PropertyListPage",
+      "originalBytes": 5777
+    },
+    {
+      "orig": "YX",
+      "use": "defineS25PropertyEditPage",
+      "originalBytes": 881
+    },
+    {
+      "orig": "QX",
+      "use": "defineS25PropertyForm",
+      "originalBytes": 2934
+    },
+    {
+      "orig": "$X",
+      "use": "defineS25ResultsMenu",
+      "originalBytes": 2805
+    },
+    {
+      "orig": "ZX",
+      "use": "defineS25SearchMenu",
+      "originalBytes": 1447
+    },
+    {
+      "orig": "e$",
+      "use": "defineS25SortMenu",
+      "originalBytes": 3210
+    },
+    {
+      "orig": "t$",
+      "use": "defineS25SortRowBase",
+      "originalBytes": 1963
+    },
+    {
+      "orig": "n$",
+      "use": "defineS25SortRow",
+      "originalBytes": 553
+    },
+    {
+      "orig": "i$",
+      "use": "defineS25GroupRow",
+      "originalBytes": 363
+    },
+    {
+      "orig": "a$",
+      "use": "defineS25ViewChooser",
+      "originalBytes": 2313
+    },
+    {
+      "orig": "s$",
+      "use": "defineS25ViewsMenu",
+      "originalBytes": 1807
+    },
+    {
+      "orig": "l$",
+      "use": "defineS25ViewConfigPage",
+      "originalBytes": 6971
+    },
+    {
+      "orig": "c$",
+      "use": "defineS25GroupEntries",
+      "originalBytes": 143
+    },
+    {
+      "orig": "u$",
+      "use": "defineS25QueryData",
+      "originalBytes": 3105
     }
   ],
   "host": {
@@ -4701,7 +4806,23 @@
     "wW": "wW",
     "xL": "xL",
     "xW": "xW",
-    "zV": "zV"
+    "zV": "zV",
+    "s25FilterBuilder": "EX",
+    "s25FilePathSuggest": "DI",
+    "s25MultiTextComponent": "XI",
+    "s25FormulaSuggester": "PX",
+    "s25PropForm": "QX",
+    "s25PropListPage": "KX",
+    "s25PropEditPage": "YX",
+    "s25GroupRow": "i$",
+    "s25SortRow": "n$",
+    "s25SortRowBase": "t$",
+    "s25GroupSet": "c$",
+    "s25ViewChooser": "a$",
+    "s25ViewConfigPage": "l$",
+    "s25FacetOf": "Ja",
+    "s25PlaceholderExtension": "Ua",
+    "s25LinkChange": "WL"
   },
   "declarators": [
     {
