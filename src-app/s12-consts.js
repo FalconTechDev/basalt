@@ -223,6 +223,9 @@ export function s12cmRefreshDispatch(view) {
   view.dom.win.setTimeout(() => view.dispatch({ effects: s12postprocessFx.of() }), 10);
 }
 
+/** The live-preview refresh effect instance created by the G2 declarator (null until then). */
+export function s12cmPostprocessFxRef() { return s12postprocessFx; }
+
 let s12mouseDownPlugin = null;
 
 /** The view plugin whose instance tracks whether the mouse button is held down. */
@@ -230,6 +233,9 @@ export function s12CmMouseDownPlugin() {
   s12mouseDownPlugin = env().s12cmViewPlugin()(() => ({ mousedown: false }));
   return s12mouseDownPlugin;
 }
+
+/** The shared mouse-down plugin instance (same object the K2 declarator installed). */
+export function s12cmMousePluginInstance() { return s12mouseDownPlugin; }
 
 export function s12cmEmptyReplace() { return cmDecoration().replace({}); }
 export function s12CmUnderlineMark() {
@@ -312,8 +318,8 @@ export function s12runCommandCallback(cmd) {
  * Rewrites a markdown image/embed link so its size annotation matches `size`.
  * Handles both ![[wiki]] and ![alt](url) forms; a trailing "|WxH" segment is replaced or appended.
  */
-export function s12appendImageSizeText(linkText, size, host) {
-  const isImageDimension = host.isImageDimension;
+export function s12appendImageSizeText(linkText, size) {
+  const isImageDimension = env().s12isImageDimension;
   const appendSize = (text) => {
     if (!text || isImageDimension(text)) return size === undefined ? "" : String(size);
     const suffix = size === undefined ? "" : "|".concat(size);
