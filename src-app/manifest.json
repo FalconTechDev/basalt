@@ -3364,6 +3364,14 @@
   {
    "orig": "NV",
    "use": "defineEmbedSectionBase"
+  },
+  {
+   "orig": "FV",
+   "use": "defineEmbedWidget"
+  },
+  {
+   "orig": "mq",
+   "use": "defineQueryEmbedView"
   }
  ],
  "host": {
@@ -3570,6 +3578,7 @@
   "subpathToPos": "FT",
   "subpathContent": "NT",
   "EmbedCursorBase": "FV",
+  "EmbedWidgetBase": "Rn",
   "DialogModal": "nb",
   "printModalText": "gm.editor.printModal",
   "electronBridge": "If",
