@@ -6,12 +6,12 @@
 // values (the base switches to localhost in dev builds), read through hostEnv().
 
 import { inherit } from "./inherit.js";
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 
 const accountEnv = () => hostEnv();
 
 // Server replies are plain JSON objects; a body with an `error` field is a failure.
-class AccountError extends Error {
+export class AccountError extends Error {
   constructor(response) {
     super(response.error);
     this.response = response;

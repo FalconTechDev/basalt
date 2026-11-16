@@ -12,6 +12,7 @@
 import { lastSegment, parentPath, isHiddenPath, baseName, withoutExtension, extensionOf, joinNameExt, collapseSlashes, plainSpaces, normalizePath, linkPath } from "./path.js";
 import { linkSafeHeading } from "./text.js";
 import { ownBuffer, statFromNode } from "./misc.js";
+import { env } from "./env.js";
 
 const vaultEnv = env;
 

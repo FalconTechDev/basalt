@@ -2,7 +2,7 @@
 // a gear button that opens the plugin's own settings tab and a hotkey button that jumps to the
 // hotkeys tab filtered by the plugin's command prefix.
 import { inherit } from "./inherit.js";
-import { hostEnv } from "./vault.js";
+import { hostEnv } from "./env.js";
 import { containsAllWords, renderMatches } from "./search-simple.js";
 import { stringCollator } from "./misc.js";
 

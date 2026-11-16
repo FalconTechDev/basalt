@@ -1364,6 +1364,56 @@
       "use": "s16CheckApiVersion",
       "host": true,
       "originalBytes": 33
+    },
+    {
+      "orig": "zW",
+      "use": "s08JsToValue",
+      "originalBytes": 383
+    },
+    {
+      "orig": "ZW",
+      "use": "s08KeyGlob",
+      "originalBytes": 158
+    },
+    {
+      "orig": "WU",
+      "use": "s08ShallowClone",
+      "originalBytes": 127
+    },
+    {
+      "orig": "QG",
+      "use": "s08ChildArray",
+      "originalBytes": 96
+    },
+    {
+      "orig": "ZG",
+      "use": "s08FormulaValue",
+      "originalBytes": 122
+    },
+    {
+      "orig": "Jq",
+      "use": "s08TagRange",
+      "originalBytes": 381
+    },
+    {
+      "orig": "WW",
+      "use": "s08VariadicParam",
+      "originalBytes": 111
+    },
+    {
+      "orig": "UW",
+      "use": "s08OptionalParam",
+      "originalBytes": 109
+    },
+    {
+      "orig": "_W",
+      "use": "s08CustomWidgetParam",
+      "originalBytes": 114
+    },
+    {
+      "orig": "jW",
+      "use": "s08TypedParam",
+      "originalBytes": 97
     }
   ],
   "classes": [
@@ -2610,6 +2660,151 @@
       "orig": "hee",
       "use": "defineSyncSocket",
       "originalBytes": 8969
+    },
+    {
+      "orig": "gW",
+      "use": "s08AnyValue",
+      "originalBytes": 701
+    },
+    {
+      "orig": "wW",
+      "use": "s08Value",
+      "originalBytes": 92
+    },
+    {
+      "orig": "kW",
+      "use": "s08ScalarValue",
+      "originalBytes": 334
+    },
+    {
+      "orig": "CW",
+      "use": "s08StringValue",
+      "originalBytes": 461
+    },
+    {
+      "orig": "bW",
+      "use": "s08NullValue",
+      "originalBytes": 357
+    },
+    {
+      "orig": "EW",
+      "use": "s08NumberValue",
+      "originalBytes": 255
+    },
+    {
+      "orig": "MW",
+      "use": "s08BooleanValue",
+      "originalBytes": 305
+    },
+    {
+      "orig": "SW",
+      "use": "s08ListValue",
+      "originalBytes": 4283
+    },
+    {
+      "orig": "TW",
+      "use": "s08TagValue",
+      "originalBytes": 404
+    },
+    {
+      "orig": "DW",
+      "use": "s08TagsValue",
+      "originalBytes": 254
+    },
+    {
+      "orig": "AW",
+      "use": "s08ObjectValue",
+      "originalBytes": 1624
+    },
+    {
+      "orig": "PW",
+      "use": "s08RegExpValue",
+      "originalBytes": 234
+    },
+    {
+      "orig": "LW",
+      "use": "s08DateValue",
+      "originalBytes": 2077
+    },
+    {
+      "orig": "IW",
+      "use": "s08RelativeDateValue",
+      "originalBytes": 257
+    },
+    {
+      "orig": "OW",
+      "use": "s08DurationValue",
+      "originalBytes": 3163
+    },
+    {
+      "orig": "FW",
+      "use": "s08IconValue",
+      "originalBytes": 229
+    },
+    {
+      "orig": "NW",
+      "use": "s08FileValue",
+      "originalBytes": 2735
+    },
+    {
+      "orig": "RW",
+      "use": "s08UrlValue",
+      "originalBytes": 319
+    },
+    {
+      "orig": "BW",
+      "use": "s08LinkValue",
+      "originalBytes": 1223
+    },
+    {
+      "orig": "VW",
+      "use": "s08ImageValue",
+      "originalBytes": 596
+    },
+    {
+      "orig": "yW",
+      "use": "s08ErrorValue",
+      "originalBytes": 665
+    },
+    {
+      "orig": "YW",
+      "use": "s08FuncRegistry",
+      "originalBytes": 986
+    },
+    {
+      "orig": "GW",
+      "use": "s08FormulaFunc",
+      "originalBytes": 369
+    },
+    {
+      "orig": "KW",
+      "use": "s08FormulaMethod",
+      "originalBytes": 408
+    },
+    {
+      "orig": "XW",
+      "use": "s08SelfFunc",
+      "originalBytes": 192
+    },
+    {
+      "orig": "sW",
+      "use": "s08TableResolver",
+      "originalBytes": 190
+    },
+    {
+      "orig": "vW",
+      "use": "s08LinkRenderer",
+      "originalBytes": 2069
+    },
+    {
+      "orig": "vj",
+      "use": "s08SearchBarBase",
+      "originalBytes": 2882
+    },
+    {
+      "orig": "YG",
+      "use": "s08FormulaSuggester",
+      "originalBytes": 3536
     }
   ],
   "host": {
@@ -3118,6 +3313,82 @@
     "createEl": "createEl",
     "createFragment": "createFragment",
     "FolderPathSuggestTab": "AI",
+    "$G": "$G",
+    "$T": "$T",
+    "AK": "AK",
+    "AW": "AW",
+    "BW": "BW",
+    "Bg": "Bg",
+    "CU": "CU",
+    "CW": "CW",
+    "DK": "DK",
+    "DW": "DW",
+    "ET": "ET",
+    "EU": "EU",
+    "EW": "EW",
+    "Fb": "Fb",
+    "GG": "GG",
+    "GW": "GW",
+    "HV": "HV",
+    "IK": "IK",
+    "Ic": "Ic",
+    "KG": "KG",
+    "Kx": "Kx",
+    "LW": "LW",
+    "Lc": "Lc",
+    "Lv": "Lv",
+    "MW": "MW",
+    "Mv": "Mv",
+    "NW": "NW",
+    "Ng": "Ng",
+    "QW": "QW",
+    "Qc": "Qc",
+    "RG": "RG",
+    "RK": "RK",
+    "RW": "RW",
+    "Rb": "Rb",
+    "SW": "SW",
+    "TU": "TU",
+    "TW": "TW",
+    "Ug": "Ug",
+    "Vy": "Vy",
+    "XG": "XG",
+    "YC": "YC",
+    "Yc": "Yc",
+    "Yl": "Yl",
+    "Zx": "Zx",
+    "_G": "_G",
+    "_o": "_o",
+    "ac": "ac",
+    "bW": "bW",
+    "createDiv": "createDiv",
+    "ej": "ej",
+    "ev": "ev",
+    "fb": "fb",
+    "gW": "gW",
+    "gm": "gm",
+    "hu": "hu",
+    "iT": "iT",
+    "kW": "kW",
+    "kv": "kv",
+    "nE": "nE",
+    "np": "np",
+    "o_": "o_",
+    "pe": "pe",
+    "qV": "qV",
+    "rt": "rt",
+    "s08app": "app",
+    "sv": "sv",
+    "tU": "tU",
+    "tW": "tW",
+    "tv": "tv",
+    "uW": "uW",
+    "ub": "ub",
+    "vc": "vc",
+    "wW": "wW",
+    "xL": "xL",
+    "xW": "xW",
+    "zV": "zV",
     "s16Em": "Em",
     "s16ApiVersion": "gte",
     "s16TreeCollapsible": "QL",
@@ -3575,6 +3846,18 @@
       "sha1": "44873d15410efd96edf5586cb435ce82738e3abe",
       "originalBytes": 364,
       "expr": "__basaltOwn.s16CloseCodes"
+    },
+    {
+      "orig": "HW",
+      "expr": "__basaltOwn.s08MarkdownValue(__basaltHost)&&__basaltOwn.s08HtmlValue(__basaltHost)",
+      "sha1": "e6f9f48ca26c171d8c6511907f537f780a5a40e9",
+      "originalBytes": 500
+    },
+    {
+      "orig": "yG",
+      "expr": "__basaltOwn.s08RtInstance(__basaltHost)",
+      "sha1": "20f34098568d8e72b0b27a52a64246505effc638",
+      "originalBytes": 97
     }
   ],
   "methods": [
@@ -4580,7 +4863,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej",
   "patches": [
     {
       "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
