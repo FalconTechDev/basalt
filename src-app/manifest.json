@@ -2471,6 +2471,10 @@
   {
    "orig": "lte",
    "use": "defineFeedbackBanner"
+  },
+  {
+   "orig": "vte",
+   "use": "defineSettingsModal"
   }
  ],
  "host": {
@@ -2993,7 +2997,17 @@
   "s16FontSuggest": "qee",
   "s16DevBuild": "Hf",
   "s16License": "Hw",
-  "s16ReviewApi": "Om"
+  "s16ReviewApi": "Om",
+  "s16TabAbout": "N7",
+  "s16TabEditor": "rte",
+  "s16TabFiles": "ute",
+  "s16TabAppearance": "tte",
+  "s16TabHotkeys": "C0",
+  "s16TabPlugins": "mte",
+  "s16TabCommunity": "ite",
+  "s16MobileTab": "fte",
+  "s16FeedbackBanner": "lte",
+  "s16SlidePanes": "Dl"
  },
  "declarators": [
   {
