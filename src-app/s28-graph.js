@@ -853,7 +853,7 @@ class GraphEngine {
     const queries = [];
     const requiredInputs = {};
     for (const raw of rawQueries) {
-      let query = new env().BH(this.app, raw.query, false);
+      let query = new (env().BH)(this.app, raw.query, false);
       if (!query.matcher) query = null;
       if (query) {
         queries.push({ query, color: raw.color });
@@ -867,7 +867,7 @@ class GraphEngine {
       return this.render();
     }
     const fileFilter = (this.fileFilter = {});
-    const queue = (this.queue = new env().wb({
+    const queue = (this.queue = new (env().wb)({
       onStart: () => this.filterOptions.startSearch(),
       onStop: () => {
         this.render();

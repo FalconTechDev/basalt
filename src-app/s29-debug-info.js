@@ -24,7 +24,7 @@ export function defineDebugInfoModal(host) {
     self.setInfoText();
     self.addButton("mod-secondary", i18n().labelCopy(), () => {
       env().Ec(infoTextEl.value);
-      new env().fb(i18n().copied({ item: i18n().labelDebugInfo() }));
+      new (env().fb)(i18n().copied({ item: i18n().labelDebugInfo() }));
     });
     if (env().Yl.isDesktop && env().Yl.isDesktopApp) {
       self.addButton("", i18n().helpScreen.labelSandboxVault(), () => {

@@ -706,7 +706,7 @@ export function s09FormulaText() {
   FormulaText.prototype.toString = function () { return this.text; };
   FormulaText.prototype.test = function (ctx) { return this.formula.test(ctx); };
   FormulaText.prototype.getValue = function (ctx) {
-    try { return this.formula.getValue(ctx); } catch (e) { return new env().yW(e); }
+    try { return this.formula.getValue(ctx); } catch (e) { return new (env().yW)(e); }
   };
   return FormulaText;
 }

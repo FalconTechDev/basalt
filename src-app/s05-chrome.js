@@ -409,21 +409,21 @@ export function defineMobileDrawer(host) {
               const rest = 1 - progress;
               if (velocityX * direction > width / 2) {
                 const duration = SWIPE_DURATION * rest;
-                env().yl(drawer, new env().dl({ duration, fn: "ease-out" }).addProp("transform", "translateX(" + -rest * travel + "px)", "translateX(0)", ""));
-                env().yl(backdrop, new env().dl({ duration, fn: "ease-out" }).addProp("opacity", String(progress), "1", ""));
+                env().yl(drawer, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", "translateX(" + -rest * travel + "px)", "translateX(0)", ""));
+                env().yl(backdrop, new (env().dl)({ duration, fn: "ease-out" }).addProp("opacity", String(progress), "1", ""));
                 if (sliding) {
-                  env().yl(rootSplit, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + travel + "px)"));
-                  env().yl(navbar, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + travel + "px)"));
+                  env().yl(rootSplit, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + travel + "px)"));
+                  env().yl(navbar, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + travel + "px)"));
                 }
               } else {
                 self.collapsed = true;
                 self.onCollapse();
                 const duration = SWIPE_DURATION * progress;
-                env().yl(drawer, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + -travel + "px)", ""), () => drawer.hide());
-                env().yl(backdrop, new env().dl({ duration, fn: "ease-out" }).addProp("opacity", null, "0"), () => backdrop.detach());
+                env().yl(drawer, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + -travel + "px)", ""), () => drawer.hide());
+                env().yl(backdrop, new (env().dl)({ duration, fn: "ease-out" }).addProp("opacity", null, "0"), () => backdrop.detach());
                 if (sliding) {
-                  env().yl(rootSplit, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0px)", ""));
-                  env().yl(navbar, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0px)", ""));
+                  env().yl(rootSplit, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0px)", ""));
+                  env().yl(navbar, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0px)", ""));
                 }
               }
             },
@@ -457,21 +457,21 @@ export function defineMobileDrawer(host) {
               const rest = 1 - progress;
               if (-velocityX * direction < width / 2) {
                 const duration = SWIPE_DURATION * progress;
-                env().yl(drawer, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0)", ""));
-                env().yl(backdrop, new env().dl({ duration, fn: "ease-out" }).addProp("opacity", null, "1", ""));
+                env().yl(drawer, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0)", ""));
+                env().yl(backdrop, new (env().dl)({ duration, fn: "ease-out" }).addProp("opacity", null, "1", ""));
                 if (sliding) {
-                  env().yl(rootSplit, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + travel + "px)"));
-                  env().yl(navbar, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + travel + "px)"));
+                  env().yl(rootSplit, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + travel + "px)"));
+                  env().yl(navbar, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(" + travel + "px)"));
                 }
               } else {
                 self.collapsed = true;
                 self.onCollapse();
                 const duration = SWIPE_DURATION * rest;
-                env().yl(drawer, new env().dl({ duration, fn: "ease-out" }).addProp("transform", "translateX(" + -progress * travel + "px)", "translateX(" + -travel + "px)", ""), () => drawer.hide());
-                env().yl(backdrop, new env().dl({ duration, fn: "ease-out" }).addProp("opacity", String(rest), "0"), () => backdrop.detach());
+                env().yl(drawer, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", "translateX(" + -progress * travel + "px)", "translateX(" + -travel + "px)", ""), () => drawer.hide());
+                env().yl(backdrop, new (env().dl)({ duration, fn: "ease-out" }).addProp("opacity", String(rest), "0"), () => backdrop.detach());
                 if (sliding) {
-                  env().yl(rootSplit, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0px)", ""));
-                  env().yl(navbar, new env().dl({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0px)", ""));
+                  env().yl(rootSplit, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0px)", ""));
+                  env().yl(navbar, new (env().dl)({ duration, fn: "ease-out" }).addProp("transform", null, "translateX(0px)", ""));
                 }
               }
             },
@@ -587,11 +587,11 @@ export function defineMobileDrawer(host) {
         const navbar = this.app.mobileNavbar.containerEl;
         const duration = SWIPE_DURATION;
         const travel = drawer.offsetWidth * (this.side === "left" ? -1 : 1);
-        env().yl(backdrop, new env().dl({ duration, fn: "linear" }).addProp("opacity", "0", "1", ""));
-        env().yl(drawer, new env().dl({ duration }).addProp("transform", "translateX(" + travel + "px)", "translateX(0)", ""));
+        env().yl(backdrop, new (env().dl)({ duration, fn: "linear" }).addProp("opacity", "0", "1", ""));
+        env().yl(drawer, new (env().dl)({ duration }).addProp("transform", "translateX(" + travel + "px)", "translateX(0)", ""));
         if (env().Yl.isPhone && this.app.vault.getConfig("slidingSidebar")) {
-          env().yl(rootSplit, new env().dl({ duration }).addProp("transform", null, "translateX(" + -travel + "px)"));
-          env().yl(navbar, new env().dl({ duration }).addProp("transform", null, "translateX(" + -travel + "px)"));
+          env().yl(rootSplit, new (env().dl)({ duration }).addProp("transform", null, "translateX(" + -travel + "px)"));
+          env().yl(navbar, new (env().dl)({ duration }).addProp("transform", null, "translateX(" + -travel + "px)"));
         }
       }
     }
@@ -621,11 +621,11 @@ export function defineMobileDrawer(host) {
       const navbar = this.app.mobileNavbar.containerEl;
       const duration = SWIPE_DURATION;
       const travel = drawer.offsetWidth * (this.side === "left" ? -1 : 1);
-      env().yl(drawer, new env().dl({ duration }).addProp("transform", "translateX(0px)", "translateX(" + travel + "px)", ""), () => drawer.hide());
-      env().yl(backdrop, new env().dl({ duration }).addProp("opacity", "1", "0"), () => backdrop.detach());
+      env().yl(drawer, new (env().dl)({ duration }).addProp("transform", "translateX(0px)", "translateX(" + travel + "px)", ""), () => drawer.hide());
+      env().yl(backdrop, new (env().dl)({ duration }).addProp("opacity", "1", "0"), () => backdrop.detach());
       if (env().Yl.isPhone && this.app.vault.getConfig("slidingSidebar")) {
-        env().yl(rootSplit, new env().dl({ duration }).addProp("transform", null, "translateX(0px)", ""));
-        env().yl(navbar, new env().dl({ duration }).addProp("transform", null, "translateX(0px)", ""));
+        env().yl(rootSplit, new (env().dl)({ duration }).addProp("transform", null, "translateX(0px)", ""));
+        env().yl(navbar, new (env().dl)({ duration }).addProp("transform", null, "translateX(0px)", ""));
       } else {
         rootSplit.style.transform = "";
         navbar.style.transform = "";

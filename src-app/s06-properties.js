@@ -1031,7 +1031,7 @@ function buildS06MultiTextValue(host) {
     self.valueSet = new Set(value);
     const app = ctx.app, onChange = ctx.onChange, sourcePath = ctx.sourcePath;
     const setupInput = (inputEl, commit) => {
-      new env().DO(ctx, inputEl, (text, immediate) => commit(text, true),
+      new (env().DO)(ctx, inputEl, (text, immediate) => commit(text, true),
         (item) => item.type !== "text" || !self.valueSet.has(item.text));
     };
     const MultiSelect = s06PropClass("multiSelect", host, buildS06MultiSelect);
@@ -1164,7 +1164,7 @@ export function s06PropertyOptionText(host) {
     render: (el, value, ctx) => {
       const widget = s06PropClass("textValue", host, buildS06TextValue)(ctx, el);
       widget.setValue(String(value != null ? value : ""));
-      new env().DO(ctx, widget.inputEl, (text, evt) => {
+      new (env().DO)(ctx, widget.inputEl, (text, evt) => {
         evt.preventDefault();
         widget.setValue(text);
         ctx.onChange(text);

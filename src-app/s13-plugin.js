@@ -373,7 +373,7 @@ export function defineS13BasesPlugin(host) {
 
     registerView(viewId, registration) {
       if (Object.hasOwn(this.registrations, viewId)) {
-        new env().fb(ti().msgErrorRegisterView({ viewId }));
+        new (env().fb)(ti().msgErrorRegisterView({ viewId }));
         return;
       }
       this.registrations[viewId] = registration;
