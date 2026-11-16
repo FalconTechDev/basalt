@@ -2435,6 +2435,18 @@
   {
    "orig": "xee",
    "use": "defineUniqueNoteSettingsTab"
+  },
+  {
+   "orig": "Iee",
+   "use": "defineWorkspacesPlugin"
+  },
+  {
+   "orig": "Oee",
+   "use": "defineManageWorkspacesModal"
+  },
+  {
+   "orig": "Fee",
+   "use": "defineWorkspaceSuggestModal"
   }
  ],
  "host": {
@@ -2949,7 +2961,9 @@
   "s16TreePusher": "JH",
   "s16NavTooltipDelay": "lv",
   "s16TagPaneView": "bee",
-  "s16UniqueNoteSettingsTab": "xee"
+  "s16UniqueNoteSettingsTab": "xee",
+  "s16ManageWorkspacesModal": "Oee",
+  "s16WorkspaceSuggestModal": "Fee"
  },
  "declarators": [
   {
