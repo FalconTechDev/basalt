@@ -17,9 +17,10 @@ const initText = new Map();
 for (const n of bb.body) if (n.type === "VariableDeclaration") for (const d of n.declarations) if (d.id.type === "Identifier" && d.init) initText.set(d.id.name, d.init.end - d.init.start);
 
 let fn = 0, fnBytes = 0, cls = 0, clsBytes = 0, meth = 0, methBytes = 0;
+const classOrigs = new Set((manifest.classes || []).map((e) => e.orig));
 for (const e of manifest.entries) { const t = base.fn(e.orig); if (t) { fn++; fnBytes += t.length; } }
 for (const e of manifest.classes || []) { cls++; clsBytes += initText.get(e.orig) || 0; }
-for (const e of manifest.methods || []) { meth++; methBytes += e.originalBytes || 0; }
+for (const e of manifest.methods || []) { if (classOrigs.has(e.class)) continue; meth++; methBytes += e.originalBytes || 0; }
 const total = base.src.length;
 const replaced = fnBytes + clsBytes + methBytes;
 let own = 0;

@@ -45,6 +45,19 @@ function findMethod(init, name) {
   return null;
 }
 
+/** Base class-IIFE text with its already-replaced prototype methods rewritten to their __basaltOwn wrappers. */
+function classInitWithMethodWrappers(baseSrc, init, methods) {
+  let text = baseSrc.slice(init.start, init.end);
+  const reps = [];
+  for (const m of methods) {
+    const node = findMethod(init, m.name);
+    if (node) reps.push({ start: node.start - init.start, end: node.end - init.start, text: `__basaltOwn.${m.use}` });
+  }
+  reps.sort((a, b) => b.start - a.start);
+  for (const r of reps) text = text.slice(0, r.start) + r.text + text.slice(r.end);
+  return text;
+}
+
 export function readManifest() {
   return JSON.parse(fs.readFileSync(path.join(srcDir, "manifest.json"), "utf8"));
 }
@@ -113,6 +126,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
   const sha = (t) => crypto.createHash("sha1").update(t).digest("hex");
   const declInit = new Map();
   for (const n of b.body) if (n.type === "VariableDeclaration") for (const d of n.declarations) if (d.init) declInit.set(d.id.name, d.init);
+  const classOrigs = new Set((manifest.classes || []).map((e) => e.orig));
   let manifestChanged = false;
   const spans = [];
   for (const e of manifest.declarators || []) {
@@ -121,6 +135,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
     spans.push({ node: init, orig: e.orig, entry: e, replacement: e.expr, label: e.orig });
   }
   for (const e of manifest.methods || []) {
+    if (classOrigs.has(e.class)) continue;
     const init = declInit.get(e.class);
     if (!init) throw new Error(`manifest: no top-level var ${e.class}`);
     const node = findMethod(init, e.name);
@@ -144,6 +159,7 @@ export function applyOwn(srcText, wasm, tmpPath) {
   const vdecl = new Map();
   for (const n of b.body) if (n.type === "VariableDeclaration") for (const d of n.declarations) if (d.id.type === "Identifier") vdecl.set(d.id.name, d);
   let baseDecls = null;
+  let baseDeclNodes = null;
   for (const e of manifest.classes || []) {
     if (!exported.has(e.use)) throw new Error(`manifest: class ${e.orig} -> ${e.use} is not exported by src-app`);
     const d = vdecl.get(e.orig);
@@ -155,10 +171,16 @@ export function applyOwn(srcText, wasm, tmpPath) {
         const bf = path.join(path.dirname(tmpPath), `basalt-app-base-decls-${manifest.base}.js`);
         fs.writeFileSync(bf, base.src);
         baseDecls = new Map();
+        baseDeclNodes = new Map();
         const bb = loadBundle(bf);
-        for (const n of bb.body) if (n.type === "VariableDeclaration") for (const x of n.declarations) if (x.id.type === "Identifier" && x.init) baseDecls.set(x.id.name, base.src.slice(x.init.start, x.init.end));
+        for (const n of bb.body) if (n.type === "VariableDeclaration") for (const x of n.declarations) if (x.id.type === "Identifier" && x.init) {
+          baseDecls.set(x.id.name, base.src.slice(x.init.start, x.init.end));
+          baseDeclNodes.set(x.id.name, x.init);
+        }
       }
-      if (text !== baseDecls.get(e.orig)) throw new Error(`manifest: class ${e.orig} differs from base ${manifest.base}; refusing to replace it`);
+      let expected = baseDecls.get(e.orig);
+      if (text !== expected) expected = classInitWithMethodWrappers(base.src, baseDeclNodes.get(e.orig), (manifest.methods || []).filter((m) => m.class === e.orig));
+      if (text !== expected) throw new Error(`manifest: class ${e.orig} differs from base ${manifest.base}; refusing to replace it`);
       replaced += text.length;
       e.originalBytes = text.length;
     }
@@ -181,7 +203,9 @@ export function applyOwn(srcText, wasm, tmpPath) {
   }
 
   // 2) the block with the own modules
-  const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind}}));` : "";
+  // every binding is a getter: a name is only read when an own module asks for it, so names that are defined later (or only on some platforms) never throw at load
+  const envGetters = (manifest.envBind || "").split(",").filter(Boolean).map((t) => { const i = t.indexOf(":"); return i < 0 ? `get ${t}(){return ${t}}` : `get ${t.slice(0, i)}(){return ${t.slice(i + 1)}}`; }).join(",");
+  const bind = envGetters ? `__basaltOwn.bindEnv(()=>({${envGetters}}));` : "";
   const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");
   const block = `${BEGIN}${code}var __basaltHost={${host}};${bind}${END}`;
   const bi = out.indexOf(BEGIN);
