@@ -2504,7 +2504,11 @@
    "orig": "Xg",
    "use": "s04MenuManager",
    "originalBytes": 7820
-  }
+  },
+   {
+    "orig": "vk",
+    "use": "s04CapacitorAdapter"
+   }
  ],
  "host": {
   "Events": "VT",
