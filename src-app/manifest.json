@@ -2482,7 +2482,19 @@
    "orig": "Eb",
    "use": "s04PromiseSetClass",
    "originalBytes": 293
-  }
+  },
+   {
+    "orig": "Ob",
+    "use": "s04ThemePicker"
+   },
+   {
+    "orig": "ib",
+    "use": "s04PromptModal"
+   },
+   {
+    "orig": "$k",
+    "use": "s04NumberComponent"
+   }
  ],
  "host": {
   "Events": "VT",
