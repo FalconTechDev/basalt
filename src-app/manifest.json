@@ -1357,6 +1357,11 @@
    "orig": "vZ",
    "use": "s10MirrorStyles",
    "host": true
+  },
+  {
+   "orig": "Q$",
+   "use": "s10RangeInTable",
+   "host": true
   }
  ],
  "classes": [
@@ -3269,6 +3274,162 @@
    "expr": "__basaltHost.t.plugins.fileExplorer",
    "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
    "originalBytes": 23
+  },
+  {
+   "orig": "T$",
+   "expr": "__basaltOwn.s10FilteredKeymap(__basaltHost)",
+   "sha1": "1c066add42bd47140c4a8bb2b05669a1270c4b48",
+   "originalBytes": 46
+  },
+  {
+   "orig": "D$",
+   "expr": "__basaltOwn.s10IndentColumn(__basaltHost)",
+   "sha1": "64ad1996ea63f08c14911d4df206db139a24c222",
+   "originalBytes": 99
+  },
+  {
+   "orig": "A$",
+   "expr": "__basaltOwn.s10FoldIndent(__basaltHost)",
+   "sha1": "8a458323c84b3f4107d47f0e4be44c24bdc50ac5",
+   "originalBytes": 259
+  },
+  {
+   "orig": "P$",
+   "expr": "__basaltOwn.s10LastInsertPlugin(__basaltHost)",
+   "sha1": "5284351dfe28efa445f7a766d71657b6a1dcbf12",
+   "originalBytes": 46
+  },
+  {
+   "orig": "L$",
+   "expr": "__basaltOwn.s10DashInputHandler(__basaltHost)",
+   "sha1": "ab62f643a4e3707bf735d8e2571cb57175c3956d",
+   "originalBytes": 306
+  },
+  {
+   "orig": "O$",
+   "expr": "__basaltOwn.s10FoldHeading(__basaltHost)",
+   "sha1": "a903bed7dad7521ed15b1bfc442e082f2a208dab",
+   "originalBytes": 666
+  },
+  {
+   "orig": "F$",
+   "expr": "__basaltOwn.s10FoldFrontmatter(__basaltHost)",
+   "sha1": "bc755ae9e41b0b1c70116fccfe8e5bd31f3939d7",
+   "originalBytes": 250
+  },
+  {
+   "orig": "N$",
+   "expr": "__basaltOwn.s10CmdGoStart(__basaltHost)",
+   "sha1": "d7e9e4176b2c44dbc7f513f1c9ff6d12c8881cec",
+   "originalBytes": 102
+  },
+  {
+   "orig": "R$",
+   "expr": "__basaltOwn.s10CmdFoldAll(__basaltHost)",
+   "sha1": "d7e5434ab588b968c750c30eb98f6bcecf71741c",
+   "originalBytes": 257
+  },
+  {
+   "orig": "H$",
+   "expr": "__basaltOwn.s10CmdIndentMore(__basaltHost)",
+   "sha1": "41a6800eeafeeace139385b65bdc1079caefeec4",
+   "originalBytes": 274
+  },
+  {
+   "orig": "z$",
+   "expr": "__basaltOwn.s10CmdIndentLess(__basaltHost)",
+   "sha1": "29d75ba14f2ad8a49e090022313491f8abf22e26",
+   "originalBytes": 527
+  },
+  {
+   "orig": "q$",
+   "expr": "__basaltOwn.s10FieldSetEffect(__basaltHost)",
+   "sha1": "31041be5deb4e5ce0ba0b5c5db6fa99078526c95",
+   "originalBytes": 11
+  },
+  {
+   "orig": "j$",
+   "expr": "__basaltOwn.s10MakeCmFieldFactory(__basaltHost)",
+   "sha1": "96bbf410b915d9c4d2841d42d7040ac777cbd8cc",
+   "originalBytes": 197
+  },
+  {
+   "orig": "U$",
+   "expr": "__basaltOwn.s10EditorField(__basaltHost)",
+   "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
+   "originalBytes": 8
+  },
+  {
+   "orig": "W$",
+   "expr": "__basaltOwn.s10OwnerField(__basaltHost)",
+   "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
+   "originalBytes": 8
+  },
+  {
+   "orig": "G$",
+   "expr": "__basaltOwn.s10LivePreviewField(__basaltHost)",
+   "sha1": "2a6bdbff81b0ccfb37e79e43258cf5122b1333b5",
+   "originalBytes": 6
+  },
+  {
+   "orig": "_$",
+   "expr": "__basaltHost.cmOwnerField",
+   "sha1": "efb1bf87061f815fa1f16014a4bec70d97808b85",
+   "originalBytes": 2
+  },
+  {
+   "orig": "K$",
+   "expr": "__basaltOwn.s10MouseSelectionStyle(__basaltHost)",
+   "sha1": "2102467cd0aa446a40429eeccb1ee46eff527b9d",
+   "originalBytes": 447
+  },
+  {
+   "orig": "Y$",
+   "expr": "new __basaltHost.cmCompartmentClass()",
+   "sha1": "1cc63394d1365f279ba86d6bdbfcc6ef0588b5d6",
+   "originalBytes": 6
+  },
+  {
+   "orig": "nZ",
+   "expr": "new __basaltHost.cmCompartmentClass()",
+   "sha1": "1cc63394d1365f279ba86d6bdbfcc6ef0588b5d6",
+   "originalBytes": 6
+  },
+  {
+   "orig": "cZ",
+   "expr": "new __basaltHost.cmCompartmentClass()",
+   "sha1": "1cc63394d1365f279ba86d6bdbfcc6ef0588b5d6",
+   "originalBytes": 6
+  },
+  {
+   "orig": "tZ",
+   "expr": "__basaltOwn.s10CompartmentOf(Y$,eZ)",
+   "sha1": "5c38612ad2c6f7ff3b7034aad01882da6734868c",
+   "originalBytes": 9
+  },
+  {
+   "orig": "Z$",
+   "expr": "__basaltOwn.s10HypermdMode(__basaltHost)",
+   "sha1": "7114d8e2523b0137f504c569ed37a42acfe5ceed",
+   "originalBytes": 50
+  },
+  {
+   "orig": "J$",
+   "expr": "__basaltOwn.s10TableCellMode(__basaltHost)",
+   "sha1": "ba51e3da91c91e00c9115fa3df62311783c89036",
+   "originalBytes": 187
+  },
+  {
+   "orig": "X$",
+   "expr": "__basaltOwn.s10LineStartFactory(__basaltHost)",
+   "sha1": "d903f984886451a58cfb653531c78427262c9790",
+   "originalBytes": 611
+  },
+  {
+   "orig": "$$",
+   "expr": "__basaltOwn.s10LineEndFactory(__basaltHost)",
+   "sha1": "95b683fa91a0430ac0269f2291efc3a916badc57",
+   "originalBytes": 402
   }
  ],
  "methods": [
