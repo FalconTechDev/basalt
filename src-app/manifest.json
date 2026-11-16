@@ -2427,6 +2427,14 @@
   {
    "orig": "dee",
    "use": "defineTagPanePlugin"
+  },
+  {
+   "orig": "See",
+   "use": "defineUniqueNotePlugin"
+  },
+  {
+   "orig": "xee",
+   "use": "defineUniqueNoteSettingsTab"
   }
  ],
  "host": {
@@ -2940,7 +2948,8 @@
   "s16TreeCollapsible": "QL",
   "s16TreePusher": "JH",
   "s16NavTooltipDelay": "lv",
-  "s16TagPaneView": "bee"
+  "s16TagPaneView": "bee",
+  "s16UniqueNoteSettingsTab": "xee"
  },
  "declarators": [
   {

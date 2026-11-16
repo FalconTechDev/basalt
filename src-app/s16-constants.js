@@ -39,6 +39,9 @@ export const s16ApiVersion = "1.12.7";
 /** Minimum installer version that may apply an update without a manual download. */
 export const s16InstallerMinVersion = "28.2.3";
 
+/** Default timestamp format for unique-note file names. */
+export const s16UniqueNoteFormat = "YYYYMMDDHHmm";
+
 /** i18n keys of the built-in colour themes, in picker order. */
 export const s16ThemeList = [
   { id: "basalt", nameI18n: "dark-theme" },
