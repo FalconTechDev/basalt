@@ -50,3 +50,6 @@
 | CodeMirror 6 packages (`@codemirror/state`, `-view`, `-commands`, `-language`, Lezer; inside `src/app.js`) | `src/app.js` application scope | MIT |
 
 Public plugin list used by the plugin catalog is read from a public GitHub repository at run time; plugins installed from it keep their own licenses.
+| CodeMirror 6, Lezer, @codemirror/* language & lint packages | bundled editor modules in `src/app.js` (webpack module namespaces; consumed via `src-app` env bindings) | MIT |
+| tslib helpers (`__awaiter`, `__generator`, `__spreadArray`, ...) | `src/app.js` bundle helpers | Apache-2.0 |
+| moment, yaml, pdf.js, capacitor bridges | bundled vendor modules in `src/app.js` / `src/lib` | respective upstream licenses (MIT / Apache-2.0) |
