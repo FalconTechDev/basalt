@@ -181,7 +181,12 @@ export function applyOwn(srcText, wasm, tmpPath) {
   }
 
   // 2) the block with the own modules
-  const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind}}));` : "";
+  // envBind entries are emitted as getters so late-bound (let/const) application
+  // names are only read when own code actually accesses them, never during init.
+  const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind.split(",").map((e) => {
+    const i = e.indexOf(":");
+    return i >= 0 ? `get ${e.slice(0, i)}(){return ${e.slice(i + 1)}}` : `get ${e}(){return ${e}}`;
+  }).join(",")}}));` : "";
   const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");
   const block = `${BEGIN}${code}var __basaltHost={${host}};${bind}${END}`;
   const bi = out.indexOf(BEGIN);

@@ -283,7 +283,7 @@ export function wsRegisterUriHook() {
     const name = action.action;
     if (name) {
       if (handlers.has(name)) handlers.get(name)(action);
-      else new env().fb(env().gm.interface.msgInvalidUriAction({ action: name }));
+      else new (env().fb)(env().gm.interface.msgInvalidUriAction({ action: name }));
     }
   };
   const previous = window.OBS_ACT;
@@ -607,7 +607,7 @@ export async function wsOpenLinkText(linktext, sourcePath, direction, newLeaf) {
 }
 
 export function wsCreateLeafInParent(parent, index) {
-  const newLeaf = new env().jD(this.app);
+  const newLeaf = new (env().jD)(this.app);
   if (parent.children.length > 0) newLeaf.setDimension(100 / parent.children.length);
   parent.insertChild(index, newLeaf);
   this.setActiveLeaf(newLeaf);
@@ -1042,8 +1042,8 @@ export async function wsDeserializeLayout(data, sidebar) {
   if (data.type === "mobile-drawer") {
     if (!Yl.isMobile) return null;
     let drawer;
-    if (sidebar === "left") drawer = new env()._D(this, data.id);
-    else if (sidebar === "right") drawer = new env().GD(this, data.id);
+    if (sidebar === "left") drawer = new (env()._D)(this, data.id);
+    else if (sidebar === "right") drawer = new (env().GD)(this, data.id);
     await fill(drawer);
     drawer.currentTab = data.currentTab;
     drawer.recomputeChildrenDimensions();
@@ -1186,8 +1186,8 @@ export function wsUpdateLayout() {
   const queue = this.layoutItemQueue;
   while (queue.length > 0) queue.pop().recomputeChildrenDimensions();
   if (this.rootSplit.children.length === 0) {
-    const leaf = new env().jD(this.app);
-    const tabs = new env().zD(this);
+    const leaf = new (env().jD)(this.app);
+    const tabs = new (env().zD)(this);
     if (this.lastTabGroupStacked) tabs.setStacked(true);
     tabs.insertChild(0, leaf);
     this.rootSplit.insertChild(0, tabs);

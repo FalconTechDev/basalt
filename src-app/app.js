@@ -343,7 +343,7 @@ export function appRegisterQuitHook() {
     const workspace = self.workspace;
     if (!workspace) return;
     workspace.requestSaveLayout.run();
-    const blocker = new env().Eb();
+    const blocker = new (env().Eb)();
     self.workspace.trigger("quit", blocker);
     if (blocker.isEmpty()) return;
     event.preventDefault();

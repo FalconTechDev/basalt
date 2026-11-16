@@ -688,7 +688,7 @@ export function s11PdfOutlineTree() {
     const label = title
       ? env().gm.pdf.actionCopySectionLinkTitle({ title: env().gc(title, 40) })
       : env().gm.pdf.actionCopySectionLink();
-    new env().Ug().addItem((menuItem) => menuItem.setTitle(label).setIcon("lucide-copy")
+    new (env().Ug)().addItem((menuItem) => menuItem.setTitle(label).setIcon("lucide-copy")
       .onClick(() => evt.view.navigator.clipboard.writeText(link))).showAtMouseEvent(evt);
   };
   proto.toggleAllTreeItems = function () {
@@ -927,7 +927,7 @@ export function s11PdfViewerComponent(host) {
       wrapper.style.setProperty("--annotation-color", `${r}, ${g}, ${b}`);
     }
     layer.append(wrapper);
-    env().yl(wrapper, new env().dl({ duration: 200, fn: "cubic-bezier(0.34, 1.56, 0.64, 1)" })
+    env().yl(wrapper, new (env().dl)({ duration: 200, fn: "cubic-bezier(0.34, 1.56, 0.64, 1)" })
       .addProp("transform", "translate(-50%, -1px) scale(0.97)", "translate(-50%, 0) scale(1)", ""));
     const viewerRect = this.pdfViewer.dom.viewerContainerEl.getBoundingClientRect();
     const popupRect = wrapper.getBoundingClientRect();
@@ -940,7 +940,7 @@ export function s11PdfViewerComponent(host) {
     if (!this.activeAnnotationPopupEl) return;
     const el = this.activeAnnotationPopupEl;
     this.activeAnnotationPopupEl = null;
-    env().yl(el, new env().dl({ duration: 200, fn: "cubic-bezier(0.34, 1.56, 0.64, 1)" })
+    env().yl(el, new (env().dl)({ duration: 200, fn: "cubic-bezier(0.34, 1.56, 0.64, 1)" })
       .addProp("transform", "translate(-50%, 0) scale(1)", "translate(-50%, -1px) scale(0.9)")
       .addProp("opacity", "1", "0"), () => el.detach());
   };
