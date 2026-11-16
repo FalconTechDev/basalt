@@ -27,7 +27,7 @@ async function s04FsCall(promise) {
 }
 
 /** Uint8Array/ArrayBuffer -> base64 (was `Ef`/`Mf`). */
-function s04BytesToBase64(bytes) {
+function s04FsBytesToBase64(bytes) {
   const view = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
   let binary = "";
   for (let i = 0; i < view.byteLength; i++) binary += String.fromCharCode(view[i]);
@@ -86,9 +86,9 @@ export function s04CapacitorFs(host) {
       const dir = this.dir;
       if (data.byteLength < S04_FS_CHUNK) {
         if (append) {
-          await env().Dm.appendFile({ directory: dir, path, data: s04BytesToBase64(data) });
+          await env().Dm.appendFile({ directory: dir, path, data: s04FsBytesToBase64(data) });
         } else {
-          await env().Dm.writeFile({ directory: dir, path, data: s04BytesToBase64(data) });
+          await env().Dm.writeFile({ directory: dir, path, data: s04FsBytesToBase64(data) });
         }
         return;
       }
@@ -98,7 +98,7 @@ export function s04CapacitorFs(host) {
         while (offset < data.byteLength) {
           const length = Math.min(S04_FS_APPEND_CHUNK, data.byteLength - offset);
           const chunk = new Uint8Array(data, offset, length);
-          await env().Dm.appendFile({ directory: dir, path, data: s04BytesToBase64(chunk) });
+          await env().Dm.appendFile({ directory: dir, path, data: s04FsBytesToBase64(chunk) });
           offset += length;
         }
       } catch (error) {
