@@ -171,6 +171,14 @@ export function applyOwn(srcText, wasm, tmpPath) {
     if (!j.text.includes("/*own*/") && !j.isOwn && !fresh.includes(j.orig) && !j.wrapper.startsWith("__basaltOwn.")) fresh.push(j.orig);
   }
 
+  // 1c) textual patches for inherited code that has to cooperate with own ES6 classes (manifest.patches: {find, replace, note})
+  for (const p of manifest.patches || []) {
+    if (out.includes(p.replace)) continue;
+    const at = out.indexOf(p.find);
+    if (at < 0 || out.indexOf(p.find, at + 1) >= 0) throw new Error(`manifest.patches: "${p.note || p.find.slice(0, 40)}" must match exactly once`);
+    out = out.slice(0, at) + p.replace + out.slice(at + p.find.length);
+  }
+
   // 2) the block with the own modules
   const bind = manifest.envBind ? `__basaltOwn.bindEnv(()=>({${manifest.envBind}}));` : "";
   const host = Object.entries(manifest.host || {}).map(([k, v]) => `get ${k}(){return ${v}}`).join(",");
