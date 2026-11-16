@@ -2101,6 +2101,21 @@
     {
       "orig": "d6",
       "use": "s12ImageContextMenuEntry"
+    },
+    {
+      "orig": "jZ",
+      "use": "s27TextOffsetAt",
+      "originalBytes": 172
+    },
+    {
+      "orig": "UZ",
+      "use": "s27TextLayerNodeAt",
+      "originalBytes": 243
+    },
+    {
+      "orig": "$Z",
+      "use": "s27ShowEmbedError",
+      "originalBytes": 107
     }
   ],
   "classes": [
@@ -4564,6 +4579,86 @@
     {
       "orig": "B0",
       "use": "defineS12RecentFiles"
+    },
+    {
+      "orig": "BZ",
+      "use": "s27PdfPasswordDialogClass",
+      "originalBytes": 1552
+    },
+    {
+      "orig": "HZ",
+      "use": "s27PdfToolbarClass",
+      "originalBytes": 5723
+    },
+    {
+      "orig": "_Z",
+      "use": "s27PdfViewerClass",
+      "originalBytes": 18298
+    },
+    {
+      "orig": "GZ",
+      "use": "s27PdfComponentClass",
+      "originalBytes": 1041
+    },
+    {
+      "orig": "KZ",
+      "use": "s27PdfViewClass",
+      "originalBytes": 1502
+    },
+    {
+      "orig": "YZ",
+      "use": "s27PdfEmbedClass",
+      "originalBytes": 1180
+    },
+    {
+      "orig": "XZ",
+      "use": "s27VideoViewClass",
+      "originalBytes": 658
+    },
+    {
+      "orig": "eJ",
+      "use": "s27MediaEmbedClass",
+      "originalBytes": 255
+    },
+    {
+      "orig": "tJ",
+      "use": "s27ImageEmbedClass",
+      "originalBytes": 216
+    },
+    {
+      "orig": "nJ",
+      "use": "s27AudioEmbedClass",
+      "originalBytes": 216
+    },
+    {
+      "orig": "iJ",
+      "use": "s27VideoEmbedClass",
+      "originalBytes": 216
+    },
+    {
+      "orig": "rJ",
+      "use": "s27FileEmbedClass",
+      "originalBytes": 671
+    },
+    {
+      "orig": "oJ",
+      "use": "s27FallbackEmbedClass",
+      "originalBytes": 1410
+    },
+    {
+      "orig": "aJ",
+      "use": "s27EmbedRegistryClass",
+      "originalBytes": 1193
+    },
+    {
+      "orig": "lJ",
+      "use": "s27MarkdownEmbedClass",
+      "originalBytes": 10032
+    },
+    {
+      "orig": "dJ",
+      "use": "defineS27GlobalSearchPlugin",
+      "originalBytes": 5366
     }
   ],
   "host": {
@@ -5272,6 +5367,19 @@
     "xL": "xL",
     "xW": "xW",
     "zV": "zV",
+    "s27PdfLib": "pdfjsLib",
+    "s27PdfViewerNs": "pdfjsViewer",
+    "s27PdfConfig": "TZ",
+    "s27PdfL10n": "OZ",
+    "s27LoadPdfViewer": "pz",
+    "s27PdfFindBar": "LZ",
+    "s27PdfOutline": "NZ",
+    "s27PreserveScroll": "cg",
+    "s27StopMedia": "Kc",
+    "s27DisplayModeEmbed": "dq",
+    "s27PdfEmbed": "YZ",
+    "s27SearchViewType": "fJ",
+    "s27SearchView": "mJ",
     "s12cmTreeIterate": "Nu.prototype.iterate",
     "s12cmEdgeMarkAlt": "$2",
     "s06Purify": "EL",
@@ -7392,6 +7500,60 @@
       "expr": "__basaltOwn.s12MobileDragExtensions(__basaltHost)",
       "sha1": "0a01740e2841587dff31da26ce7830ce1033724b",
       "originalBytes": 1240
+    },
+    {
+      "orig": "RZ",
+      "expr": "__basaltOwn.s27PdfI18n()",
+      "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+      "originalBytes": 6
+    },
+    {
+      "orig": "VZ",
+      "expr": "__basaltOwn.s27PdfI18n()",
+      "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+      "originalBytes": 6
+    },
+    {
+      "orig": "zZ",
+      "expr": "__basaltOwn.s27PdfI18n()",
+      "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
+      "originalBytes": 6
+    },
+    {
+      "orig": "qZ",
+      "expr": "__basaltOwn.s27PdfStorageKey",
+      "sha1": "67b315d406259a4fab51e6886f79128c60675375",
+      "originalBytes": 17
+    },
+    {
+      "orig": "QZ",
+      "expr": "__basaltOwn.s27VideoViewType",
+      "sha1": "b53c54f0a814aab43d7729f68732b181b86b7f3c",
+      "originalBytes": 7
+    },
+    {
+      "orig": "ZZ",
+      "expr": "__basaltOwn.s27EmbedDepths",
+      "sha1": "53a9b0a3c30baac2eec4c403e29d5c0b1c41a10c",
+      "originalBytes": 11
+    },
+    {
+      "orig": "cJ",
+      "expr": "__basaltOwn.s27SearchI18n()",
+      "sha1": "b4154efdcf48fd241f859327be778a43a9c38620",
+      "originalBytes": 17
+    },
+    {
+      "orig": "pJ",
+      "expr": "__basaltOwn.s27SearchI18n()",
+      "sha1": "b4154efdcf48fd241f859327be778a43a9c38620",
+      "originalBytes": 17
+    },
+    {
+      "orig": "uJ",
+      "expr": "__basaltOwn.s27SearchOperatorSuggestions()",
+      "sha1": "c649d22d1573bd639331db5750c478fbf7a83150",
+      "originalBytes": 639
     }
   ],
   "methods": [
