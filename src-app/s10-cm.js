@@ -85,7 +85,9 @@ function s10FoldFrontmatterProvider(host, e, t, n) {
   const i = e.doc.lineAt(t);
   if (i.text !== "---") return;
   for (let r = i.number - 1; r > 0; r--) if (e.doc.line(r).text.trim()) return;
-  for (let o = e.doc.lines, a = i.number + 1; a <= o && e.doc.line(a).text !== "---";) a++;
+  let o = e.doc.lines;
+  let a = i.number + 1;
+  while (a <= o && e.doc.line(a).text !== "---") a++;
   if (!(a > o)) return { from: t, to: e.doc.line(a).to };
 }
 
