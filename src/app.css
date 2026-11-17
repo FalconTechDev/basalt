@@ -9258,10 +9258,10 @@ body.is-tablet .workspace-drawer.mod-left .workspace-drawer-inner{
     cursor:var(--cursor)
 }
 .pdf-sidebar-container img.thumbnailImage{
-    border:1px solid transparent;
-    max-width:unset;
     width:var(--thumbnail-width);
-    height:var(--thumbnail-height)
+    height:var(--thumbnail-height);
+    max-width:unset;
+    border:1px solid transparent
 }
 .pdf-findbar input[type="checkbox"]{
     display:none;
@@ -9313,17 +9313,16 @@ body.is-tablet .workspace-drawer.mod-left .workspace-drawer-inner{
 }
 .release-notes-view .is-readable-line-width{
     max-width:var(--file-line-width);
-    margin-left:auto;
-    margin-right:auto
+    margin-inline:auto
 }
 .publish-changes-info button{
-    margin-inline-end:0;
-    margin-inline-start:var(--size-4-2)
+    margin-inline-start:var(--size-4-2);
+    margin-inline-end:0
 }
 .sync-history-content .setting-item-info .setting-item-name{
     overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap
+    white-space:nowrap;
+    text-overflow:ellipsis
 }
 .sync-history-preview img{
     max-width:100%
@@ -9332,10 +9331,10 @@ body.is-tablet .workspace-drawer.mod-left .workspace-drawer-inner{
     display:none
 }
 button.sync-history-button{
-    box-shadow:none;
     margin:var(--size-4-1) 0 var(--size-4-2);
     min-height:var(--input-height);
-    background-color:var(--background-secondary)
+    background-color:var(--background-secondary);
+    box-shadow:none
 }
 .webviewer-content webview{
     flex-grow:1;
@@ -9363,8 +9362,8 @@ body.is-frameless .modal-container,body.is-frameless .suggestion-bg{
     font-size:var(--font-ui-medium)
 }
 .modal.mod-plugin-debug .startup-value{
-    overflow:hidden;
     width:50%;
+    overflow:hidden;
     white-space:nowrap;
     text-overflow:ellipsis;
     text-align:end;
@@ -9377,18 +9376,18 @@ body.is-frameless .modal-container,body.is-frameless .suggestion-bg{
     display:none
 }
 .setting-group .setting-item{
+    padding:var(--size-4-4) 0;
+    margin-bottom:0;
     border:none;
     border-top:var(--border-width) solid var(--background-modifier-border);
     border-radius:0;
-    padding:var(--size-4-4) 0;
-    margin-bottom:0;
     background-color:transparent
 }
 .setting-group .setting-item-heading{
-    flex-wrap:wrap;
     padding:0 var(--size-4-4);
     margin-bottom:var(--size-4-4);
-    background-color:transparent
+    background-color:transparent;
+    flex-wrap:wrap
 }
 .setting-item + div > .setting-item-heading,.setting-item + .setting-item-heading{
     margin-top:0.75em
@@ -9399,8 +9398,8 @@ body.is-frameless .modal-container,body.is-frameless .suggestion-bg{
 .setting-item-heading .setting-item-description{
     flex-basis:100%;
     padding-top:0;
-    font-weight:var(--font-normal);
-    font-size:var(--font-ui-small)
+    font-size:var(--font-ui-small);
+    font-weight:var(--font-normal)
 }
 .vertical-tab-content h1,.vertical-tab-content h2,.vertical-tab-content h3,.vertical-tab-content h4{
     padding:0 var(--size-4-4);
@@ -9422,8 +9421,8 @@ body.is-frameless .modal-container,body.is-frameless .suggestion-bg{
 .setting-hotkey-icon .svg-icon{
     width:16px;
     height:16px;
-    stroke-width:2px;
-    opacity:0.6
+    opacity:0.6;
+    stroke-width:2px
 }
 @media (hover:hover){
     .setting-hotkey-icon:hover .svg-icon{
@@ -9505,8 +9504,8 @@ body.is-frameless .modal-container,body.is-frameless .suggestion-bg{
     display:none
 }
 .workspace > .workspace-leaf,.workspace > .workspace-split{
-    height:100%;
-    width:100%
+    width:100%;
+    height:100%
 }
 .workspace-split.mod-root > .workspace-leaf-resize-handle{
     display:none
@@ -9532,44 +9531,44 @@ body.is-frameless .modal-container,body.is-frameless .suggestion-bg{
 h1,.markdown-rendered h1{
     --font-weight:var(--h1-weight);
     font-variant:var(--h1-variant);
-    line-height:var(--h1-line-height);
-    font-size:var(--h1-size);
-    font-weight:var(--font-weight);
-    font-style:var(--h1-style);
     font-family:var(--h1-font);
+    font-size:var(--h1-size);
+    font-style:var(--h1-style);
+    font-weight:var(--font-weight);
+    line-height:var(--h1-line-height);
     letter-spacing:var(--h1-letter-spacing);
     color:var(--h1-color)
 }
 h2,.markdown-rendered h2{
     --font-weight:var(--h2-weight);
     font-variant:var(--h2-variant);
-    line-height:var(--h2-line-height);
-    font-size:var(--h2-size);
-    font-weight:var(--font-weight);
-    font-style:var(--h2-style);
     font-family:var(--h2-font);
+    font-size:var(--h2-size);
+    font-style:var(--h2-style);
+    font-weight:var(--font-weight);
+    line-height:var(--h2-line-height);
     letter-spacing:var(--h2-letter-spacing);
     color:var(--h2-color)
 }
 h3,.markdown-rendered h3{
     --font-weight:var(--h3-weight);
     font-variant:var(--h3-variant);
-    line-height:var(--h3-line-height);
-    font-size:var(--h3-size);
-    font-weight:var(--font-weight);
-    font-style:var(--h3-style);
     font-family:var(--h3-font);
+    font-size:var(--h3-size);
+    font-style:var(--h3-style);
+    font-weight:var(--font-weight);
+    line-height:var(--h3-line-height);
     letter-spacing:var(--h3-letter-spacing);
     color:var(--h3-color)
 }
 h4,.markdown-rendered h4{
     --font-weight:var(--h4-weight);
     font-variant:var(--h4-variant);
-    line-height:var(--h4-line-height);
-    font-size:var(--h4-size);
-    font-weight:var(--font-weight);
-    font-style:var(--h4-style);
     font-family:var(--h4-font);
+    font-size:var(--h4-size);
+    font-style:var(--h4-style);
+    font-weight:var(--font-weight);
+    line-height:var(--h4-line-height);
     letter-spacing:var(--h4-letter-spacing);
     color:var(--h4-color)
 }
@@ -9640,8 +9639,8 @@ ul > li.task-list-item > p > .task-list-item-checkbox,ul > li.task-list-item > .
     height:6px;
     max-width:100%;
     margin-bottom:4px;
-    border-radius:0px;
     border:0;
+    border-radius:0;
     -webkit-writing-mode:horizontal-tb;
     writing-mode:horizontal-tb;
     vertical-align:-0.2rem;
