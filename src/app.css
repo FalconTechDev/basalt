@@ -7151,40 +7151,48 @@ div.image-embed .image-resize-corner::after{
     line-height:0
 }
 .button-container{
-    margin-top:20px
+    margin-top:var(--size-4-5)
 }
 button{
-    --text-color:var(--text-normal);
+    --text-color:var(--text-muted);
+    box-sizing:border-box;
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    border-radius:var(--button-radius);
-    border:0;
-    padding:var(--size-4-1) var(--size-4-3);
     height:var(--input-height);
+    padding:var(--size-4-1) var(--size-4-3);
+    border-radius:var(--button-radius);
     outline:none;
     color:var(--text-color);
+    font-family:inherit;
     font-size:var(--font-ui-small);
     font-weight:var(--input-font-weight);
-    font-family:inherit;
-    user-select:none;
     white-space:nowrap;
     cursor:var(--cursor);
+    user-select:none;
     -webkit-app-region:no-drag;
-    corner-shape:var(--button-corner-shape)
+    corner-shape:var(--button-corner-shape);
+    transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),border-color var(--bs-dur-fast) var(--bs-ease-standard),color var(--bs-dur-fast) var(--bs-ease-standard)
+}
+button:not(.clickable-icon){
+    border:var(--bs-hairline) solid var(--background-modifier-border);
+    background-color:transparent;
+    box-shadow:none
 }
 @media (hover:hover){
     button:hover{
-        box-shadow:var(--input-shadow-hover);
-        background-color:var(--interactive-hover)
+        --text-color:var(--text-normal);
+        border-color:var(--background-modifier-border-hover);
+        background-color:var(--background-modifier-hover)
     }
 }
 button:focus-visible{
-    box-shadow:0 0 0 3px var(--background-modifier-border-focus)
+    outline:var(--focus-ring-outline);
+    outline-offset:var(--size-2-1)
 }
 button[disabled],button[aria-disabled="true"],button[disabled="true"]{
     cursor:not-allowed;
-    opacity:0.7
+    opacity:0.45
 }
 button.mod-loading{
     position:relative;
@@ -7206,7 +7214,7 @@ button.mod-loading::after{
     border-top-color:var(--text-color);
     border-radius:50%;
     content:'';
-    animation:spin 1s ease infinite
+    animation:spin 1s linear infinite
 }
 @media (forced-colors:active){
     button{
@@ -7214,7 +7222,7 @@ button.mod-loading::after{
     }
 }
 button.mod-cta{
-    --text-color:var(--text-on-accent);
+    --text-color:var(--bs-on-accent);
     background-color:var(--interactive-accent)
 }
 @media (hover:hover){
@@ -7222,11 +7230,15 @@ button.mod-cta{
         background-color:var(--interactive-accent-hover)
     }
 }
+button.mod-cta:active{
+    background-color:var(--bs-accent-press)
+}
 button.mod-cta:focus-visible{
-    box-shadow:0 0 0 3px var(--background-modifier-border-focus)
+    outline:var(--focus-ring-outline);
+    outline-offset:var(--size-2-1)
 }
 button.mod-warning{
-    --text-color:var(--text-on-accent);
+    --text-color:var(--bs-on-accent);
     background-color:var(--background-modifier-error)
 }
 @media (hover:hover){
@@ -7302,7 +7314,7 @@ input[type='date']::-webkit-datetime-edit-month-field:active,input[type='datetim
     cursor:text
 }
 input[type='range']::-webkit-slider-runnable-track{
-    height:6px;
+    height:calc(var(--slider-track-height) * 2);
     -webkit-appearance:none
 }
 input[type='range']::-webkit-slider-thumb{
@@ -7310,19 +7322,18 @@ input[type='range']::-webkit-slider-thumb{
     top:var(--slider-thumb-y);
     height:var(--slider-thumb-height);
     width:var(--slider-thumb-width);
-    border-radius:var(--slider-thumb-radius);
     border:var(--slider-thumb-border-width) solid var(--slider-thumb-border-color);
-    box-shadow:0 1px 1px 0px rgba(0,0,0,0.05),0 2px 2px 0px rgba(0,0,0,0.1);
+    border-radius:var(--slider-thumb-radius);
+    box-shadow:var(--shadow-xs);
+    background:var(--interactive-accent);
     -webkit-appearance:none;
     cursor:default;
-    background:#FFF;
-    transition:all 0.1s linear
+    transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),border-color var(--bs-dur-fast) var(--bs-ease-standard),box-shadow var(--bs-dur-fast) var(--bs-ease-standard)
 }
 input[type='range']::-webkit-slider-thumb:hover,input[type='range']::-webkit-slider-thumb:active{
     border-color:var(--background-modifier-border-focus);
-    box-shadow:0 1px 2px 0px rgba(0,0,0,0.1),0 2px 3px 0px rgba(0,0,0,0.2);
-    background:white;
-    transition:all 0.1s linear
+    box-shadow:var(--shadow-s);
+    background:var(--interactive-accent-hover)
 }
 input[type="color"]::-webkit-color-swatch-wrapper{
     padding:2px
