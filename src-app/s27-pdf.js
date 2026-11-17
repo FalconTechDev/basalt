@@ -309,7 +309,7 @@ function buildS27PdfViewer(host) {
 
     const app = this.app;
     const opts = this.opts;
-    const eventBus = new viewerNs().EventBus();
+    const eventBus = new (viewerNs().EventBus)();
     const loadingEl = this.loadingEl = this.containerEl.doc.body.createDiv();
     loadingEl.setCssStyles({ position: "fixed", opacity: "0", zIndex: "-9999" });
     const pdfContainerEl = loadingEl.createDiv("pdf-container");

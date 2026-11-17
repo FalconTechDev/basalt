@@ -211,7 +211,7 @@ export function defineCli(host) {
     formatDiff(oldText, newText, oldLabel, newLabel) {
       if (!oldText.endsWith("\n")) oldText += "\n";
       if (!newText.endsWith("\n")) newText += "\n";
-      const differ = new env_().dA();
+      const differ = new (env_().dA)();
       const diffs = differ.diff_lineMode(oldText, newText);
       differ.diff_cleanupSemantic(diffs);
       const XD = env_().XD;

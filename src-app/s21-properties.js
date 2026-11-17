@@ -732,7 +732,7 @@ function s21Build(host) {
     self.suggestionFilter = suggestionFilter;
     self.instructionsEl = createDiv("prompt-instructions");
     self.sourcePath = ctx.sourcePath;
-    self.manager = new s21Env().WI(ctx.app, () => ctx.sourcePath);
+    self.manager = new (s21Env().WI)(ctx.app, () => ctx.sourcePath);
     self.suggestEl.addClass("mod-property-value");
     self.suggestEl.setAttr("data-property-key", ctx.key.toLowerCase());
     self.scope.register(["Shift"], "Enter", (event) => {
@@ -845,7 +845,7 @@ function s21Build(host) {
         if (query.startsWith("[[")) {
           let runnable = this.manager.runnable;
           if (runnable) runnable.cancel();
-          runnable = this.manager.runnable = new s21Env().bb();
+          runnable = this.manager.runnable = new (s21Env().bb)();
           let offset;
           const selection = this.inputEl.win.getSelection();
           if (selection && selection.rangeCount > 0) offset = selection.getRangeAt(0).startOffset;
@@ -896,7 +896,7 @@ function s21Build(host) {
   /** [[link]] suggestions in the editor, driven by the shared link suggestion manager. */
   function WikilinkSuggest(app) {
     const self = host.EditorSuggest.call(this, app) || this;
-    self.suggestManager = new s21Env().WI(app, () => {
+    self.suggestManager = new (s21Env().WI)(app, () => {
       const context = self.context;
       const file = context && context.file;
       return file && file.path != null ? file.path : "";
@@ -943,7 +943,7 @@ function s21Build(host) {
       return (async () => {
         let runnable = this.suggestManager.runnable;
         if (runnable) runnable.cancel();
-        runnable = this.suggestManager.runnable = new s21Env().bb();
+        runnable = this.suggestManager.runnable = new (s21Env().bb)();
         const query = context.query.trim();
         const result = await this.suggestManager.getSuggestionsAsync(runnable, query);
         if (!result || runnable.isCancelled()) return null;

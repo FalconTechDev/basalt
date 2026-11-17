@@ -386,7 +386,7 @@ function buildSyncClasses() {
               .setTooltip(syncT().tooltipPurgeRemote())
               .onClick(async () => {
                 await sync.purge();
-                new SE().fb(syncT().msgPurgeComplete());
+                new (SE().fb)(syncT().msgPurgeComplete());
                 await refreshSize();
               }),
           );
@@ -419,7 +419,7 @@ function buildSyncClasses() {
               .onClick(async () => {
                 const info = await this.gatherSyncSystemInfo();
                 await navigator.clipboard.writeText(info);
-                new SE().fb(SE().gm.interface.copied_generic());
+                new (SE().fb)(SE().gm.interface.copied_generic());
               }),
           )
           .addButton((btn) =>
@@ -555,7 +555,7 @@ function buildSyncClasses() {
       });
       div.createEl("button", { text: syncT().buttonLogIn() }, (btn) => {
         btn.addEventListener("click", () => {
-          new SE().R7(this.app).setCloseCallback(() => this.display()).open();
+          new (SE().R7)(this.app).setCloseCallback(() => this.display()).open();
         });
       });
     });
@@ -672,7 +672,7 @@ function buildSyncClasses() {
       const selected = this.checkboxes
         .filter((box) => box.checkboxEl.checked)
         .map((box) => box.historyItem);
-      const progress = new SE().fb(syncT().msgRestoring() + ` (0/${selected.length})`, 0);
+      const progress = new (SE().fb)(syncT().msgRestoring() + ` (0/${selected.length})`, 0);
       let succeeded = 0;
       let done = 0;
       for (const item of selected) {
@@ -692,7 +692,7 @@ function buildSyncClasses() {
         progress.setMessage(syncT().msgRestoring() + ` (${done}/${selected.length})`);
       }
       setTimeout(() => progress.hide(), 4000);
-      new SE().fb(syncT().msgRestoringComplete({ succeeded, failed: selected.length - succeeded }));
+      new (SE().fb)(syncT().msgRestoringComplete({ succeeded, failed: selected.length - succeeded }));
     });
     this.addCancelButton();
     return self;
@@ -921,12 +921,12 @@ function buildSyncClasses() {
       const sub = this.plugin.on("status-change", () => {
         if (this.plugin.getStatus() === "synced") {
           this.plugin.offref(sub);
-          new SE().fb(syncT().msgVaultMigrationCompleted());
+          new (SE().fb)(syncT().msgVaultMigrationCompleted());
         }
       });
       this.plugin.setPause(false);
       this.close();
-      new SE().fb(syncT().msgVaultMigrationStarted());
+      new (SE().fb)(syncT().msgVaultMigrationStarted());
     } catch (err) {
       errorEl.setText(err.message);
       errorEl.show();
@@ -1068,7 +1068,7 @@ function buildSyncClasses() {
       this.ctaButtonEl.removeClass("mod-loading");
     }
     this.close();
-    new SE().fb(syncT().msgSuccessfullyCreatedVault({ name: vaultName }));
+    new (SE().fb)(syncT().msgSuccessfullyCreatedVault({ name: vaultName }));
     this.plugin.openChooseRemoteVaultModal();
     return true;
   };
@@ -1296,7 +1296,7 @@ function buildSyncClasses() {
                 try {
                   await SE().Uv(this.contentEl, () => acctRemoveVaultShare(account.token, self.vaultId, share.uid));
                 } catch (err) {
-                  new SE().fb(err.message);
+                  new (SE().fb)(err.message);
                 }
                 await self.loadShareItems();
               });
@@ -1320,7 +1320,7 @@ function buildSyncClasses() {
   ManageSharingModal.prototype.inviteToVault = async function (email) {
     email = email.trim();
     if (email === "" || !email.includes("@")) {
-      new SE().fb(pubT().errorEmailMustBeValid());
+      new (SE().fb)(pubT().errorEmailMustBeValid());
       return;
     }
     const emailInput = this.emailTextComponent.inputEl;
@@ -1332,7 +1332,7 @@ function buildSyncClasses() {
         acctInviteVaultShare(account.token, this.vaultId, email),
       );
     } catch (err) {
-      new SE().fb(err.message);
+      new (SE().fb)(err.message);
       return;
     } finally {
       emailInput.ariaDisabled = undefined;
@@ -1437,7 +1437,7 @@ function buildSyncClasses() {
       text += "\n";
     }
     copyTextToClipboard(text);
-    new SE().fb(syncT().msgSuccessfullyCopiedSyncLog());
+    new (SE().fb)(syncT().msgSuccessfullyCopiedSyncLog());
   };
 
   // -- H9: remote vault list -------------------------------------------------------
@@ -1544,10 +1544,10 @@ function buildSyncClasses() {
                       confirm.close();
                       try {
                         await acctRequest("/vault/delete", { token: account.token, vault_uid: vault.id });
-                        new SE().fb(syncT().msgRemoteVaultDeleted({ name: vault.name }));
+                        new (SE().fb)(syncT().msgRemoteVaultDeleted({ name: vault.name }));
                         this.open();
                       } catch (err) {
-                        new SE().fb(err.message);
+                        new (SE().fb)(err.message);
                       } finally {
                         this.onOpen();
                       }
@@ -1566,7 +1566,7 @@ function buildSyncClasses() {
                 try {
                   await acctRenameVault(account.token, vault.id, newName);
                 } catch (err) {
-                  new SE().fb(err.message);
+                  new (SE().fb)(err.message);
                   return;
                 } finally {
                   this.stopLoading();
@@ -1709,7 +1709,7 @@ function buildSyncClasses() {
     try {
       await SE().mD(this.contentEl, () => acctRemoveVaultShare(account.token, vaultId, shareUid));
     } catch (err) {
-      new SE().fb(err.message);
+      new (SE().fb)(err.message);
       return;
     }
     if (this.plugin.getRemoteVaultId() === vaultId) {
@@ -1793,12 +1793,12 @@ function buildSyncClasses() {
           .setButtonText(syncT().labelRestoreThisVersion())
           .onClick(async () => {
             if (this.activeItem === this.items[0][0]) {
-              new SE().fb(syncT().msgAlreadyLatestVersion());
+              new (SE().fb)(syncT().msgAlreadyLatestVersion());
               return;
             }
             const related = this.filepath !== this.activeItem.path ? this.filepath : "";
             await this.plugin.restoreVersion(this.activeItem.uid, related);
-            new SE().fb(syncT().msgRestoredVersion({ time: window.moment(this.activeItem.ts).fromNow() }));
+            new (SE().fb)(syncT().msgRestoredVersion({ time: window.moment(this.activeItem.ts).fromNow() }));
             this.close();
           });
       });
@@ -1878,7 +1878,7 @@ function buildSyncClasses() {
         copyButton.buttonEl.removeAttribute("disabled");
         copyButton.onClick(() => {
           copyTextToClipboard(content);
-          new SE().fb(SE().gm.interface.copied({ context: "generic" }));
+          new (SE().fb)(SE().gm.interface.copied({ context: "generic" }));
         });
       } else {
         if (SE().Vy.includes(ext)) {
@@ -2009,7 +2009,7 @@ function buildSyncClasses() {
     try {
       result = await this.plugin.getHistory(path, before);
     } catch (err) {
-      new SE().fb(syncT().labelUnableToRetrieve());
+      new (SE().fb)(syncT().labelUnableToRetrieve());
       this.listEl.append(loadMoreButton);
       return;
     }
@@ -2223,10 +2223,10 @@ function buildSyncClasses() {
       getNodeId: (node) => (node instanceof SE().$9 ? node.id : ""),
     });
     const groups = (self.groups = {
-      today: new SE().Q9(self.tree, "today", syncT().labelToday()),
-      yesterday: new SE().Q9(self.tree, "yesterday", syncT().labelYesterday()),
-      week: new SE().Q9(self.tree, "week", syncT().labelThisWeek()),
-      older: new SE().Q9(self.tree, "older", syncT().labelOlder()),
+      today: new (SE().Q9)(self.tree, "today", syncT().labelToday()),
+      yesterday: new (SE().Q9)(self.tree, "yesterday", syncT().labelYesterday()),
+      week: new (SE().Q9)(self.tree, "week", syncT().labelThisWeek()),
+      older: new (SE().Q9)(self.tree, "older", syncT().labelOlder()),
     });
     self.tree.root.vChildren.setChildren([groups.today, groups.yesterday, groups.week, groups.older]);
     groups.older.setCollapsed(true, false);
@@ -2316,7 +2316,7 @@ function buildSyncClasses() {
     }
     if (recent.older.length > 100) {
       const hidden = recent.older.length - 100;
-      const more = new SE().X9(this, groups.older, hidden);
+      const more = new (SE().X9)(this, groups.older, hidden);
       groups.older.addChild(more);
     }
     groups.older.setFlair(recent.older.length);
@@ -2330,7 +2330,7 @@ function buildSyncClasses() {
   SyncChangesView.prototype.addItemToGroup = function (file, group) {
     let item = this.fileItems[file.path];
     if (!item) {
-      item = this.fileItems[file.path] = new SE().$9(this, file);
+      item = this.fileItems[file.path] = new (SE().$9)(this, file);
     } else {
       item.sFile = file;
     }

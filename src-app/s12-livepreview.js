@@ -529,7 +529,7 @@ export function defineS12CodeblockWidget(host) {
           });
         } catch (err) {
           console.error(err);
-          new LPENV().fb(LPENV().gm.interface.copy_failed());
+          new (LPENV().fb)(LPENV().gm.interface.copy_failed());
         }
       }
       return el;

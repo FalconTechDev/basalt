@@ -243,7 +243,7 @@ function buildPublishClasses(host) {
   };
   PublishFileItem.prototype.onContextMenu = async function (event) {
     event.preventDefault();
-    const menu = new E().Ug();
+    const menu = new (E().Ug)();
     const diff = this.diff;
     const type = diff.type;
     const path = diff.path;
@@ -650,7 +650,7 @@ function buildPublishClasses(host) {
     const modal = this.parentModal;
     const app = modal.app;
     const plugin = modal.plugin;
-    const runnable = this.runnable = new E().bb({
+    const runnable = this.runnable = new (E().bb)({
       onStop: async () => {
         this.doneButton.removeClass("mod-warning");
         this.doneButton.setText(s15pub().buttonDone());
@@ -1079,7 +1079,7 @@ function buildPublishClasses(host) {
     new host.Setting(container).setName(s15pub().optionHomePageFile()).setDesc(s15pub().optionHomePageFileDescription())
       .addText((text) => {
         text.setPlaceholder(s15pub().optionHomePageFilePlaceholder()).setValue(read(K("YY"))).onChange((v) => { changed[K("YY")] = v; });
-        new E().TI(app, text.inputEl);
+        new (E().TI)(app, text.inputEl);
       });
     new host.Setting(container).setName(s15pub().optionLogo()).setDesc(s15pub().optionLogoDescription())
       .addText((text) => {
