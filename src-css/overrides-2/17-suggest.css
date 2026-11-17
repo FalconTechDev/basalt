@@ -1,24 +1,24 @@
 /* suggest (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* suggestion-bg */
+/* suggestion backdrop: a full-window click-catcher behind the popup */
 .suggestion-bg {
-  display: none;
   position: fixed;
   top: 0;
   inset-inline-start: 0;
   z-index: var(--layer-popover);
+  display: none;
   width: 100%;
   height: 100%;
   background-color: var(--background-modifier-cover);
 }
 
-/* suggestion */
+/* the suggestion list scrolls inside its own padded box */
 .suggestion {
   overflow-y: auto;
   padding: var(--size-2-3);
 }
 
-/* suggestion-empty */
+/* empty state: a faint single line centred in the popup */
 .suggestion-empty-suggestion {
   color: var(--text-faint);
 }
@@ -30,7 +30,7 @@
   text-align: center;
 }
 
-/* suggestion-item */
+/* suggestion items: padded rows that wrap their label text */
 .suggestion-item {
   padding: var(--size-2-3) var(--size-4-3);
   border-radius: var(--radius-s);
@@ -39,17 +39,19 @@
   corner-shape: var(--corner-shape);
 }
 
+/* complex items (commands with arguments) stack a wrapped note under the
+   title row and shrink the action label */
 .suggestion-item.mod-complex .suggestion-note {
   flex-basis: 100%;
-  overflow-wrap: break-word;
   width: 100%;
+  overflow-wrap: break-word;
   font-size: 0.8em;
   color: var(--text-muted);
 }
 
 .suggestion-item.mod-complex .suggestion-action {
-  font-size: var(--font-ui-smaller);
   font-family: var(--font-interface);
+  font-size: var(--font-ui-smaller);
   color: var(--interactive-accent);
 }
 
