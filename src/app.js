@@ -26797,15 +26797,17 @@ function ng03CreateAvatar(item, sync) {
 // ---------------------------------------------------------------------------
 
 function ng03DefineSyncSettingsView(host) {
-  function SyncSettingsView(app, sync) {
-    const self = host.SettingTab.call(this, app, app.setting) || this;
+  function SyncSettingsView(app, sync, wrapper) {
+    const self = host.PluginInstanceSettingTab
+      ? host.PluginInstanceSettingTab.call(this, app, wrapper || sync) || this
+      : host.SettingTab.call(this, app, app.setting) || this;
     self.sync = sync;
     self.plugin = sync;
     self.id = "sync";
     self.name = (env().gm.plugins.sync && env().gm.plugins.sync.name) ? env().gm.plugins.sync.name() : "Sync";
     return self;
   }
-  inherit(SyncSettingsView, host.SettingTab);
+  inherit(SyncSettingsView, host.PluginInstanceSettingTab || host.SettingTab);
   const proto = SyncSettingsView.prototype;
 
   proto.displayInitializing = function () {
@@ -29255,7 +29257,7 @@ function ng03SyncPlugin(host) {
     this.plugin = plugin;
     plugin.registerStatusBarItem();
     const SyncSettingsView = ng03DefineSyncSettingsView(host);
-    this.settingTab = new SyncSettingsView(app, this);
+    this.settingTab = new SyncSettingsView(app, this, plugin);
     const ChangesView = ng03DefineSyncChangesView(host);
     plugin.registerViewType("sync", (leaf) => new ChangesView(leaf));
   };

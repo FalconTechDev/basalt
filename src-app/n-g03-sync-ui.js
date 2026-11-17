@@ -111,15 +111,17 @@ function ng03CreateAvatar(item, sync) {
 // ---------------------------------------------------------------------------
 
 export function ng03DefineSyncSettingsView(host) {
-  function SyncSettingsView(app, sync) {
-    const self = host.SettingTab.call(this, app, app.setting) || this;
+  function SyncSettingsView(app, sync, wrapper) {
+    const self = host.PluginInstanceSettingTab
+      ? host.PluginInstanceSettingTab.call(this, app, wrapper || sync) || this
+      : host.SettingTab.call(this, app, app.setting) || this;
     self.sync = sync;
     self.plugin = sync;
     self.id = "sync";
     self.name = (env().gm.plugins.sync && env().gm.plugins.sync.name) ? env().gm.plugins.sync.name() : "Sync";
     return self;
   }
-  inherit(SyncSettingsView, host.SettingTab);
+  inherit(SyncSettingsView, host.PluginInstanceSettingTab || host.SettingTab);
   const proto = SyncSettingsView.prototype;
 
   proto.displayInitializing = function () {

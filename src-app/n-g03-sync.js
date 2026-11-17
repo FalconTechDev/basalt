@@ -556,7 +556,7 @@ export function ng03SyncPlugin(host) {
     this.plugin = plugin;
     plugin.registerStatusBarItem();
     const SyncSettingsView = ng03DefineSyncSettingsView(host);
-    this.settingTab = new SyncSettingsView(app, this);
+    this.settingTab = new SyncSettingsView(app, this, plugin);
     const ChangesView = ng03DefineSyncChangesView(host);
     plugin.registerViewType("sync", (leaf) => new ChangesView(leaf));
   };
