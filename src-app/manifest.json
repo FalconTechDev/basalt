@@ -1894,7 +1894,7 @@
     },
     {
       "orig": "O9",
-      "use": "s15ScrollLoadMore",
+      "use": "ng03ScrollLoadMore",
       "originalBytes": 138
     },
     {
@@ -3507,122 +3507,122 @@
     },
     {
       "orig": "oC",
-      "use": "defineSyncScreenBase",
+      "use": "ng03DefineSyncScreenBase",
       "originalBytes": 511
     },
     {
       "orig": "aC",
-      "use": "defineSyncField",
+      "use": "ng03DefineSyncField",
       "originalBytes": 667
     },
     {
       "orig": "sC",
-      "use": "defineSyncRadioGroup",
+      "use": "ng03DefineSyncRadioGroup",
       "originalBytes": 686
     },
     {
       "orig": "lC",
-      "use": "defineSyncRadioOption",
+      "use": "ng03DefineSyncRadioOption",
       "originalBytes": 332
     },
     {
       "orig": "cC",
-      "use": "defineSyncStartScreen",
+      "use": "ng03DefineSyncStartScreen",
       "originalBytes": 810
     },
     {
       "orig": "uC",
-      "use": "defineSyncIntroScreen",
+      "use": "ng03DefineSyncIntroScreen",
       "originalBytes": 500
     },
     {
       "orig": "hC",
-      "use": "defineCreateVaultScreen",
+      "use": "ng03DefineCreateVaultScreen",
       "originalBytes": 2106
     },
     {
       "orig": "pC",
-      "use": "defineSyncSetupScreen",
+      "use": "ng03DefineSyncSetupScreen",
       "originalBytes": 1194
     },
     {
       "orig": "dC",
-      "use": "defineEncryptionScreen",
+      "use": "ng03DefineEncryptionScreen",
       "originalBytes": 2097
     },
     {
       "orig": "fC",
-      "use": "defineSyncSettingsScreen",
+      "use": "ng03DefineSyncSettingsScreen",
       "originalBytes": 2259
     },
     {
       "orig": "mC",
-      "use": "defineAuthChoiceScreen",
+      "use": "ng03DefineAuthChoiceScreen",
       "originalBytes": 409
     },
     {
       "orig": "vC",
-      "use": "defineRemoteVaultOptionsScreen",
+      "use": "ng03DefineRemoteVaultOptionsScreen",
       "originalBytes": 984
     },
     {
       "orig": "gC",
-      "use": "defineVaultListScreen",
+      "use": "ng03DefineVaultListScreen",
       "originalBytes": 1395
     },
     {
       "orig": "yC",
-      "use": "defineSignInScreen",
+      "use": "ng03DefineSignInScreen",
       "originalBytes": 2506
     },
     {
       "orig": "bC",
-      "use": "defineForgotPasswordScreen",
+      "use": "ng03DefineForgotPasswordScreen",
       "originalBytes": 1260
     },
     {
       "orig": "wC",
-      "use": "defineSyncMethodScreen",
+      "use": "ng03DefineSyncMethodScreen",
       "originalBytes": 2595
     },
     {
       "orig": "kC",
-      "use": "defineConnectMethodScreen",
+      "use": "ng03DefineConnectMethodScreen",
       "originalBytes": 2037
     },
     {
       "orig": "CC",
-      "use": "defineOtherSyncScreen",
+      "use": "ng03DefineOtherSyncScreen",
       "originalBytes": 510
     },
     {
       "orig": "EC",
-      "use": "defineEmailEntryScreen",
+      "use": "ng03DefineEmailEntryScreen",
       "originalBytes": 699
     },
     {
       "orig": "MC",
-      "use": "defineSignupScreen",
+      "use": "ng03DefineSignupScreen",
       "originalBytes": 1464
     },
     {
       "orig": "SC",
-      "use": "defineEmailVerificationScreen",
+      "use": "ng03DefineEmailVerificationScreen",
       "originalBytes": 1119
     },
     {
       "orig": "xC",
-      "use": "defineICloudMissingScreen",
+      "use": "ng03DefineICloudMissingScreen",
       "originalBytes": 319
     },
     {
       "orig": "TC",
-      "use": "defineStoragePermissionScreen",
+      "use": "ng03DefineStoragePermissionScreen",
       "originalBytes": 1022
     },
     {
       "orig": "DC",
-      "use": "defineICloudUnsupportedScreen",
+      "use": "ng03DefineICloudUnsupportedScreen",
       "originalBytes": 356
     },
     {
@@ -4506,77 +4506,77 @@
     },
     {
       "orig": "P9",
-      "use": "defineSyncSettingsView",
+      "use": "ng03DefineSyncSettingsView",
       "originalBytes": 11959
     },
     {
       "orig": "I9",
-      "use": "defineSyncFileHistoryView",
+      "use": "ng03DefineSyncFileHistoryView",
       "originalBytes": 10203
     },
     {
       "orig": "F9",
-      "use": "defineSyncFileHistoryModal",
+      "use": "ng03DefineSyncFileHistoryModal",
       "originalBytes": 1162
     },
     {
       "orig": "N9",
-      "use": "defineSyncDeletedFilesModal",
+      "use": "ng03DefineSyncDeletedFilesModal",
       "originalBytes": 2921
     },
     {
       "orig": "R9",
-      "use": "defineSyncUpgradeEncryptionModal",
+      "use": "ng03DefineSyncUpgradeEncryptionModal",
       "originalBytes": 633
     },
     {
       "orig": "B9",
-      "use": "defineSyncMigrateVaultModal",
+      "use": "ng03DefineSyncMigrateVaultModal",
       "originalBytes": 5035
     },
     {
       "orig": "V9",
-      "use": "defineSyncCreateVaultModal",
+      "use": "ng03DefineSyncCreateVaultModal",
       "originalBytes": 3131
     },
     {
       "orig": "H9",
-      "use": "defineSyncRemoteVaultsModal",
+      "use": "ng03DefineSyncRemoteVaultsModal",
       "originalBytes": 8354
     },
     {
       "orig": "z9",
-      "use": "defineSyncLogModal",
+      "use": "ng03DefineSyncLogModal",
       "originalBytes": 2413
     },
     {
       "orig": "q9",
-      "use": "defineSyncExcludedFoldersSuggest",
+      "use": "ng03DefineSyncExcludedFoldersSuggest",
       "originalBytes": 591
     },
     {
       "orig": "j9",
-      "use": "defineSyncLargestFilesModal",
+      "use": "ng03DefineSyncLargestFilesModal",
       "originalBytes": 617
     },
     {
       "orig": "U9",
-      "use": "defineSyncConnectVaultModal",
+      "use": "ng03DefineSyncConnectVaultModal",
       "originalBytes": 3819
     },
     {
       "orig": "W9",
-      "use": "defineSyncRenameVaultModal",
+      "use": "ng03DefineSyncRenameVaultModal",
       "originalBytes": 537
     },
     {
       "orig": "_9",
-      "use": "defineSyncManageSharingModal",
+      "use": "ng03DefineSyncManageSharingModal",
       "originalBytes": 3555
     },
     {
       "orig": "K9",
-      "use": "defineSyncChangesView",
+      "use": "ng03DefineSyncChangesView",
       "originalBytes": 5297
     },
     {
@@ -5576,7 +5576,7 @@
     },
     {
       "orig": "uee",
-      "use": "s35SyncPlugin",
+      "use": "ng03SyncPlugin",
       "originalBytes": 44658
     },
     {
@@ -6992,8 +6992,8 @@
     {
       "orig": "tZ",
       "expr": "__basaltOwn.ng09CompartmentOf(Y$,eZ)",
-      "sha1": "5c38612ad2c6f7ff3b7034aad01882da6734868c",
-      "originalBytes": 9
+      "sha1": "970d9ddb16ab0aa5965d0cc09a0d610f514bdbd8",
+      "originalBytes": 35
     },
     {
       "orig": "rZ",
@@ -7052,98 +7052,98 @@
     {
       "orig": "T$",
       "expr": "__basaltOwn.ng09FilteredKeymap(__basaltHost)",
-      "sha1": "1c066add42bd47140c4a8bb2b05669a1270c4b48",
-      "originalBytes": 46
+      "sha1": "a85ac96d74c3bbc31f2f4eb31c607f288a020a2f",
+      "originalBytes": 43
     },
     {
       "orig": "D$",
       "expr": "__basaltOwn.ng09IndentColumn(__basaltHost)",
-      "sha1": "64ad1996ea63f08c14911d4df206db139a24c222",
-      "originalBytes": 99
+      "sha1": "8ec2ced36ef082dbc339cf6f77b65ffc4304869d",
+      "originalBytes": 41
     },
     {
       "orig": "A$",
       "expr": "__basaltOwn.ng09FoldIndent(__basaltHost)",
-      "sha1": "8a458323c84b3f4107d47f0e4be44c24bdc50ac5",
-      "originalBytes": 259
+      "sha1": "cf82997931521efd06d84ddfdac66bd9c92e775c",
+      "originalBytes": 39
     },
     {
       "orig": "P$",
       "expr": "__basaltOwn.ng09LastInsertPlugin(__basaltHost)",
-      "sha1": "5284351dfe28efa445f7a766d71657b6a1dcbf12",
-      "originalBytes": 46
+      "sha1": "199362a2db15bc61733673a45233212de9e6aec4",
+      "originalBytes": 45
     },
     {
       "orig": "L$",
       "expr": "__basaltOwn.ng09DashInputHandler(__basaltHost)",
-      "sha1": "ab62f643a4e3707bf735d8e2571cb57175c3956d",
-      "originalBytes": 306
+      "sha1": "41190b81b9fb58c49914227184ba8570509af44b",
+      "originalBytes": 45
     },
     {
       "orig": "O$",
       "expr": "__basaltOwn.ng09FoldHeading(__basaltHost)",
-      "sha1": "a903bed7dad7521ed15b1bfc442e082f2a208dab",
-      "originalBytes": 666
+      "sha1": "b8de9d89eb4dbedd233029d10145b65510eb2daa",
+      "originalBytes": 40
     },
     {
       "orig": "F$",
       "expr": "__basaltOwn.ng09FoldFrontmatter(__basaltHost)",
-      "sha1": "bc755ae9e41b0b1c70116fccfe8e5bd31f3939d7",
-      "originalBytes": 250
+      "sha1": "428c0026dab6144ccda58a2c12564ff0e369877b",
+      "originalBytes": 44
     },
     {
       "orig": "N$",
       "expr": "__basaltOwn.ng09CmdGoStart(__basaltHost)",
-      "sha1": "d7e9e4176b2c44dbc7f513f1c9ff6d12c8881cec",
-      "originalBytes": 102
+      "sha1": "8f83b16988120a3aeb10424d25c30f39907b590b",
+      "originalBytes": 39
     },
     {
       "orig": "R$",
       "expr": "__basaltOwn.ng09CmdFoldAll(__basaltHost)",
-      "sha1": "d7e5434ab588b968c750c30eb98f6bcecf71741c",
-      "originalBytes": 257
+      "sha1": "5475ebb8ed836a2280ddfd0752c4893b6cdf29ac",
+      "originalBytes": 39
     },
     {
       "orig": "H$",
       "expr": "__basaltOwn.ng09CmdIndentMore(__basaltHost)",
-      "sha1": "41a6800eeafeeace139385b65bdc1079caefeec4",
-      "originalBytes": 274
+      "sha1": "5a00ea252ae8c895cb3bd2d6e1e87c6212958749",
+      "originalBytes": 42
     },
     {
       "orig": "z$",
       "expr": "__basaltOwn.ng09CmdIndentLess(__basaltHost)",
-      "sha1": "29d75ba14f2ad8a49e090022313491f8abf22e26",
-      "originalBytes": 527
+      "sha1": "6962a92000901d2b2ad275a6b5056e57c0bc7664",
+      "originalBytes": 42
     },
     {
       "orig": "q$",
       "expr": "__basaltOwn.ng09FieldSetEffect(__basaltHost)",
-      "sha1": "31041be5deb4e5ce0ba0b5c5db6fa99078526c95",
-      "originalBytes": 11
+      "sha1": "a7dfc12ba79cca26d8a3c1699847a0b4295aed13",
+      "originalBytes": 43
     },
     {
       "orig": "j$",
       "expr": "__basaltOwn.ng09MakeCmFieldFactory(__basaltHost)",
-      "sha1": "96bbf410b915d9c4d2841d42d7040ac777cbd8cc",
-      "originalBytes": 197
+      "sha1": "f4b64fac7e40e6a8988c26e2d86d99165a4a1e2e",
+      "originalBytes": 47
     },
     {
       "orig": "U$",
       "expr": "__basaltOwn.ng09EditorField(__basaltHost)",
-      "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
-      "originalBytes": 8
+      "sha1": "43ff6817d4ec31c34c5fef394df99028cff28f0d",
+      "originalBytes": 40
     },
     {
       "orig": "W$",
       "expr": "__basaltOwn.ng09OwnerField(__basaltHost)",
-      "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
-      "originalBytes": 8
+      "sha1": "56cb239cc286b6de350c75498b8e82bc92dc5081",
+      "originalBytes": 39
     },
     {
       "orig": "G$",
       "expr": "__basaltOwn.ng09LivePreviewField(__basaltHost)",
-      "sha1": "2a6bdbff81b0ccfb37e79e43258cf5122b1333b5",
-      "originalBytes": 6
+      "sha1": "9480b37ca31acf2176ee9b779feeb7a3baa2cae4",
+      "originalBytes": 45
     },
     {
       "orig": "_$",
@@ -7154,8 +7154,8 @@
     {
       "orig": "K$",
       "expr": "__basaltOwn.ng09MouseSelectionStyle(__basaltHost)",
-      "sha1": "2102467cd0aa446a40429eeccb1ee46eff527b9d",
-      "originalBytes": 447
+      "sha1": "aa3c2efcf24489d75798352624b68d12da7c72b8",
+      "originalBytes": 48
     },
     {
       "orig": "Y$",
@@ -7178,26 +7178,26 @@
     {
       "orig": "Z$",
       "expr": "__basaltOwn.ng09HypermdMode(__basaltHost)",
-      "sha1": "7114d8e2523b0137f504c569ed37a42acfe5ceed",
-      "originalBytes": 50
+      "sha1": "7a09931eee52a3364a2289dc80591c6ce2bc6594",
+      "originalBytes": 40
     },
     {
       "orig": "J$",
       "expr": "__basaltOwn.ng09TableCellMode(__basaltHost)",
-      "sha1": "ba51e3da91c91e00c9115fa3df62311783c89036",
-      "originalBytes": 187
+      "sha1": "b7785de64ac8fb80bf1462ebe2f524e56a086be6",
+      "originalBytes": 42
     },
     {
       "orig": "X$",
       "expr": "__basaltOwn.ng09LineStartFactory(__basaltHost)",
-      "sha1": "d903f984886451a58cfb653531c78427262c9790",
-      "originalBytes": 611
+      "sha1": "5454e62aa906c3c084b4394535689e6dca98d669",
+      "originalBytes": 45
     },
     {
       "orig": "$$",
       "expr": "__basaltOwn.ng09LineEndFactory(__basaltHost)",
-      "sha1": "95b683fa91a0430ac0269f2291efc3a916badc57",
-      "originalBytes": 402
+      "sha1": "cc05c9ea70cb83ce10281da14b0d0987369611a0",
+      "originalBytes": 43
     },
     {
       "orig": "Ete",
@@ -7855,15 +7855,15 @@
     },
     {
       "orig": "L9",
-      "expr": "__basaltOwn.s15AvatarColorClasses",
-      "sha1": "83c9230ee597be017b517e6aded3f1399151be3b",
-      "originalBytes": 169
+      "expr": "__basaltOwn.ng03AvatarColorClasses",
+      "sha1": "7e94375210d92d9a011e707bafd12a612dcbe703",
+      "originalBytes": 33
     },
     {
       "orig": "A9",
-      "expr": "__basaltOwn.s15SyncHourMs",
-      "sha1": "afa31f8135d8e3a100e5f974ef67cdb5b50cbfff",
-      "originalBytes": 4
+      "expr": "__basaltOwn.ng03SyncHourMs",
+      "sha1": "f85a33a383b707e57f64ca74813330cb36f3937b",
+      "originalBytes": 25
     },
     {
       "orig": "C9",
@@ -7886,37 +7886,37 @@
     {
       "orig": "Dq",
       "expr": "__basaltOwn.ng09ListIndentPlugin(__basaltHost)",
-      "sha1": "116f65ebc9d7663abd850c2982cdff5d7d5dd2f4",
-      "originalBytes": 90
+      "sha1": "5ab5cb4099ced14773b0eecb12573d539f76387b",
+      "originalBytes": 45
     },
     {
       "orig": "Eq",
       "expr": "__basaltOwn.ng09BreakPattern",
-      "sha1": "345220fd7d046fb9d9115cd43521b2b09d3c7c5a",
-      "originalBytes": 51
+      "sha1": "c66bdbace33fb8e4fc7fdcc72710e72159970188",
+      "originalBytes": 27
     },
     {
       "orig": "fj",
       "expr": "__basaltOwn.ng09WrapPairInput(__basaltHost)",
-      "sha1": "4b07c5f0961584a13b7317dc752726c18889fc57",
-      "originalBytes": 604
+      "sha1": "5c0ebea279cb0ba52e42db4405a8e4902721ab00",
+      "originalBytes": 42
     },
     {
       "orig": "dj",
       "expr": "__basaltOwn.ng09WrapPairChars",
-      "sha1": "9271a2cbe7aad586ebfcf4a322d5ae41142062f0",
-      "originalBytes": 17
+      "sha1": "bd128b5a0b7a588249dc3bc1987d6ef7e0360072",
+      "originalBytes": 28
     },
     {
       "orig": "aj",
       "expr": "__basaltOwn.ng09SearchMatchMark(__basaltHost)",
-      "sha1": "422da6cd2b7d6683f294ca821d9ba8937e8e0222",
-      "originalBytes": 48
+      "sha1": "ec44efcffbd5481225c76b4c301b7d142ebf43f7",
+      "originalBytes": 44
     },
     {
       "orig": "mj",
       "expr": "__basaltOwn.ng09SearchMatchClass",
-      "sha1": "471d032451e957fe7d1d47551ef4a147e4d0ba28",
+      "sha1": "d380e50af32962dbe839e33b0a2dae79094de300",
       "originalBytes": 31
     },
     {
