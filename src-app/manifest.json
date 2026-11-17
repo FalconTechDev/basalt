@@ -5246,21 +5246,6 @@
       "originalBytes": 32312
     },
     {
-      "orig": "Oz",
-      "use": "defineWeakMapBox",
-      "originalBytes": 279
-    },
-    {
-      "orig": "Nz",
-      "use": "defineWeakMapFallback",
-      "originalBytes": 367
-    },
-    {
-      "orig": "Bz",
-      "use": "defineWorkerChannel",
-      "originalBytes": 387
-    },
-    {
       "orig": "bX",
       "use": "s24PublishSite"
     },
