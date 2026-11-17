@@ -2,104 +2,64 @@
 
 /* ---------- dialog tokens ---------- */
 
+/* pdf dialog chrome follows the app theme: basalt tokens already flip per theme,
+   so no light-dark() pairs or csstools fallbacks are needed here */
 .dialog {
-  --dialog-bg-color: light-dark(white, #1c1b22);
-  --dialog-border-color: light-dark(white, #1c1b22);
-  --dialog-shadow: 0 2px 14px 0 light-dark(rgba(58, 57, 68, 0.2), #15141a);
-  --text-primary-color: light-dark(#15141a, #fbfbfe);
-  --text-secondary-color: light-dark(#5b5b66, #cfcfd8);
+  --dialog-bg-color: var(--background-primary);
+  --dialog-border-color: var(--background-modifier-border-hover);
+  --dialog-shadow: var(--shadow-s);
+  --text-primary-color: var(--text-normal);
+  --text-secondary-color: var(--text-muted);
   --hover-filter: brightness(0.9);
-  --link-fg-color: light-dark(#0060df, #0df);
-  --link-hover-fg-color: light-dark(#0250bb, #80ebff);
-  --separator-color: light-dark(#f0f0f4, #52525e);
-  --textarea-border-color: #8f8f9d;
-  --textarea-bg-color: light-dark(white, #42414d);
+  --link-fg-color: var(--link-color);
+  --link-hover-fg-color: var(--link-color-hover);
+  --separator-color: var(--background-modifier-border);
+  --textarea-border-color: var(--background-modifier-border-hover);
+  --textarea-bg-color: var(--background-modifier-form-field);
   --textarea-fg-color: var(--text-secondary-color);
-  --radio-bg-color: light-dark(#f0f0f4, #2b2a33);
-  --radio-checked-bg-color: light-dark(#fbfbfe, #15141a);
-  --radio-border-color: #8f8f9d;
-  --radio-checked-border-color: light-dark(#0060df, #0df);
-  --button-secondary-bg-color: light-dark(rgba(21, 20, 26, 0.07), rgba(251, 251, 254, 0.07));
+  --radio-bg-color: var(--background-modifier-form-field);
+  --radio-checked-bg-color: var(--background-primary);
+  --radio-border-color: var(--background-modifier-border-hover);
+  --radio-checked-border-color: var(--interactive-accent);
+  /* secondary buttons: quiet warm tint, deepening on press/hover */
+  --button-secondary-bg-color: rgba(var(--mono-rgb-100), 0.07);
   --button-secondary-fg-color: var(--text-primary-color);
   --button-secondary-border-color: var(--button-secondary-bg-color);
-  --button-secondary-active-bg-color: light-dark(rgba(21, 20, 26, 0.21), rgba(251, 251, 254, 0.21));
+  --button-secondary-active-bg-color: rgba(var(--mono-rgb-100), 0.21);
   --button-secondary-active-fg-color: var(--button-secondary-fg-color);
   --button-secondary-active-border-color: var(--button-secondary-bg-color);
-  --button-secondary-hover-bg-color: light-dark(rgba(21, 20, 26, 0.14), rgba(251, 251, 254, 0.14));
+  --button-secondary-hover-bg-color: rgba(var(--mono-rgb-100), 0.14);
   --button-secondary-hover-fg-color: var(--button-secondary-fg-color);
   --button-secondary-hover-border-color: var(--button-secondary-hover-bg-color);
   --button-secondary-disabled-bg-color: var(--button-secondary-bg-color);
   --button-secondary-disabled-border-color: var( --button-secondary-border-color );
   --button-secondary-disabled-fg-color: var(--button-secondary-fg-color);
-  --button-primary-bg-color: light-dark(#0060df, #0df);
-  --button-primary-fg-color: light-dark(#fbfbfe, #15141a);
+  /* primary buttons: copper accent with the on-accent label colour */
+  --button-primary-bg-color: var(--interactive-accent);
+  --button-primary-fg-color: var(--bs-on-accent);
   --button-primary-border-color: var(--button-primary-bg-color);
-  --button-primary-active-bg-color: light-dark(#054096, #aaf2ff);
+  --button-primary-active-bg-color: var(--bs-accent-press);
   --button-primary-active-fg-color: var(--button-primary-fg-color);
   --button-primary-active-border-color: var(--button-primary-active-bg-color);
-  --button-primary-hover-bg-color: light-dark(#0250bb, #80ebff);
+  --button-primary-hover-bg-color: var(--interactive-accent-hover);
   --button-primary-hover-fg-color: var(--button-primary-fg-color);
   --button-primary-hover-border-color: var(--button-primary-hover-bg-color);
   --button-primary-disabled-bg-color: var(--button-primary-bg-color);
   --button-primary-disabled-border-color: var(--button-primary-border-color);
   --button-primary-disabled-fg-color: var(--button-primary-fg-color);
   --button-disabled-opacity: 0.4;
-  --input-text-bg-color: light-dark(white, #42414d);
+  --input-text-bg-color: var(--background-modifier-form-field);
   --input-text-fg-color: var(--text-primary-color);
-  border-radius: 4px;
-  border: 1px solid var(--dialog-border-color);
-  padding: 12px 16px;
+  border-radius: var(--radius-l);
+  border: var(--border-width) solid var(--dialog-border-color);
+  padding: var(--size-4-3) var(--size-4-4);
   box-shadow: var(--dialog-shadow);
   font: message-box;
-  font-size: 13px;
-  font-weight: 400;
+  font-size: var(--font-ui-small);
+  font-weight: var(--font-normal);
   line-height: 150%;
   color: var(--text-primary-color);
   background: var(--dialog-bg-color);
-}
-
-/* compiled light-dark() fallbacks for engines without color-scheme support */
-.dialog * {
-  --csstools-light-dark-toggle--33: var(--csstools-color-scheme--dark) rgba(58, 57, 68, 0.2);
-  --dialog-shadow: 0 2px 14px 0 var(--csstools-light-dark-toggle--33, #15141a);
-  --csstools-light-dark-toggle--34: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.07);
-  --button-secondary-bg-color: var(--csstools-light-dark-toggle--34, rgba(251, 251, 254, 0.07));
-  --csstools-light-dark-toggle--35: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.21);
-  --button-secondary-active-bg-color: var(--csstools-light-dark-toggle--35, rgba(251, 251, 254, 0.21));
-  --csstools-light-dark-toggle--36: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.14);
-  --button-secondary-hover-bg-color: var(--csstools-light-dark-toggle--36, rgba(251, 251, 254, 0.14));
-  --csstools-light-dark-toggle--4: var(--csstools-color-scheme--dark) white;
-  --dialog-bg-color: var(--csstools-light-dark-toggle--4, #1c1b22);
-  --csstools-light-dark-toggle--5: var(--csstools-color-scheme--dark) white;
-  --dialog-border-color: var(--csstools-light-dark-toggle--5, #1c1b22);
-  --csstools-light-dark-toggle--6: var(--csstools-color-scheme--dark) #15141a;
-  --text-primary-color: var(--csstools-light-dark-toggle--6, #fbfbfe);
-  --csstools-light-dark-toggle--7: var(--csstools-color-scheme--dark) #5b5b66;
-  --text-secondary-color: var(--csstools-light-dark-toggle--7, #cfcfd8);
-  --csstools-light-dark-toggle--8: var(--csstools-color-scheme--dark) #0060df;
-  --link-fg-color: var(--csstools-light-dark-toggle--8, #0df);
-  --csstools-light-dark-toggle--9: var(--csstools-color-scheme--dark) #0250bb;
-  --link-hover-fg-color: var(--csstools-light-dark-toggle--9, #80ebff);
-  --csstools-light-dark-toggle--10: var(--csstools-color-scheme--dark) #f0f0f4;
-  --separator-color: var(--csstools-light-dark-toggle--10, #52525e);
-  --csstools-light-dark-toggle--11: var(--csstools-color-scheme--dark) white;
-  --textarea-bg-color: var(--csstools-light-dark-toggle--11, #42414d);
-  --csstools-light-dark-toggle--12: var(--csstools-color-scheme--dark) #f0f0f4;
-  --radio-bg-color: var(--csstools-light-dark-toggle--12, #2b2a33);
-  --csstools-light-dark-toggle--13: var(--csstools-color-scheme--dark) #fbfbfe;
-  --radio-checked-bg-color: var(--csstools-light-dark-toggle--13, #15141a);
-  --csstools-light-dark-toggle--14: var(--csstools-color-scheme--dark) #0060df;
-  --radio-checked-border-color: var(--csstools-light-dark-toggle--14, #0df);
-  --csstools-light-dark-toggle--15: var(--csstools-color-scheme--dark) #0060df;
-  --button-primary-bg-color: var(--csstools-light-dark-toggle--15, #0df);
-  --csstools-light-dark-toggle--16: var(--csstools-color-scheme--dark) #fbfbfe;
-  --button-primary-fg-color: var(--csstools-light-dark-toggle--16, #15141a);
-  --csstools-light-dark-toggle--17: var(--csstools-color-scheme--dark) #054096;
-  --button-primary-active-bg-color: var(--csstools-light-dark-toggle--17, #aaf2ff);
-  --csstools-light-dark-toggle--18: var(--csstools-color-scheme--dark) #0250bb;
-  --button-primary-hover-bg-color: var(--csstools-light-dark-toggle--18, #80ebff);
-  --csstools-light-dark-toggle--19: var(--csstools-color-scheme--dark) white;
-  --input-text-bg-color: var(--csstools-light-dark-toggle--19, #42414d);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -216,9 +176,9 @@
 
 /* plain dialog buttons share one chrome; icon buttons are excluded */
 .dialog .mainContainer button:not(.toggle-button):not(.closeButton):not(.clearInputButton) {
-  border-radius: 4px;
-  border: 1px solid;
-  padding: 4px 16px;
+  border-radius: var(--input-radius);
+  border: var(--border-width) solid;
+  padding: var(--size-4-1) var(--size-4-4);
   width: auto;
   height: 32px;
   font: menu;
@@ -249,11 +209,11 @@
 }
 
 .dialog .mainContainer textarea {
-  padding: 8px;
+  padding: var(--size-4-2);
   margin: 0;
   box-sizing: border-box;
-  border-radius: 4px;
-  border: 1px solid var(--textarea-border-color);
+  border-radius: var(--input-radius);
+  border: var(--border-width) solid var(--textarea-border-color);
   font: inherit;
   color: var(--textarea-fg-color);
   background: var(--textarea-bg-color);
@@ -1347,7 +1307,7 @@
   inset-inline-end: var(--size-4-1);
   display: block;
   position: absolute;
-  border-radius: 3px;
+  border-radius: var(--radius-m);
   padding: var(--size-2-1) var(--size-4-1);
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
