@@ -143,7 +143,9 @@ export function s17CreateApp(host) {
       platform.isDesktop = false;
       platform.hasPhysicalKeyboard = false;
       bodyEl.addClass("emulate-mobile");
-      if (platform.isMobile) {
+    }
+    if (platform.isMobile) {
+      {
         let mobileTapEl = null;
         bodyEl.on("mouseover", mobileTapSelector, (event, target) => {
           if (host.pointerEntered(event, target) && !host.isTouchSyntheticMouse(event)) {
@@ -207,9 +209,8 @@ export function s17CreateApp(host) {
           true
         );
       }
-    }
 
-    if (window.frameDom) window.frameDom.titleBarEl.hide();
+      if (window.frameDom) window.frameDom.titleBarEl.hide();
 
     const tabletQuery = window.matchMedia("(min-width: 600px) and (min-height: 600px)");
     const updateDeviceClass = () => {
@@ -220,7 +221,8 @@ export function s17CreateApp(host) {
       document.body.toggleClass("is-phone", platform.isPhone);
     };
     tabletQuery.addEventListener("change", host.debounce(updateDeviceClass, 10));
-    updateDeviceClass();
+      updateDeviceClass();
+    }
 
     const keyboard = host.keyboard;
     if (keyboard) keyboard.hasPhysicalKeyboard().then((result) => { platform.hasPhysicalKeyboard = result.hasPhysicalKeyboard; });
