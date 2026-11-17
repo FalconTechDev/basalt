@@ -6277,6 +6277,186 @@
    "expr": "__basaltHost.t.plugins.dailyNotes",
    "sha1": "b7a393a5ba47ac1d023e0e27db944bac6c7a08b9",
    "originalBytes": 21
+  },
+  {
+   "orig": "x8",
+   "expr": "__basaltOwn.S14_FILE_EXPLORER_PLUGIN_ID",
+   "sha1": "9ef25e946b31fe4054ed7e931293d85254dfda1d",
+   "originalBytes": 15
+  },
+  {
+   "orig": "c7",
+   "expr": "__basaltOwn.S14_OUTLINE_PLUGIN_ID",
+   "sha1": "dba8a94996ca133f67ea410c623dba2c780b3dd5",
+   "originalBytes": 9
+  },
+  {
+   "orig": "n7",
+   "expr": "__basaltOwn.S14_OUTGOING_LINK_PLUGIN_ID",
+   "sha1": "e65a0011094ad22e46b384e46a454a1cd17c6bb4",
+   "originalBytes": 15
+  },
+  {
+   "orig": "V8",
+   "expr": "__basaltOwn.S14_FOOTNOTES_PLUGIN_ID",
+   "sha1": "44ee3de6a498674b2c0c12ec28d34cd8b68ac1ae",
+   "originalBytes": 11
+  },
+  {
+   "orig": "g7",
+   "expr": "__basaltOwn.S14_ALL_PROPERTIES_VIEW_TYPE",
+   "sha1": "ea095ef63d46e8013d0263142d854da62a37a270",
+   "originalBytes": 16
+  },
+  {
+   "orig": "y7",
+   "expr": "__basaltOwn.S14_FILE_PROPERTIES_VIEW_TYPE",
+   "sha1": "427c02538799e0915827cfc216e9b50e350ee589",
+   "originalBytes": 17
+  },
+  {
+   "orig": "W8",
+   "expr": "__basaltOwn.S14_RE_INLINE_FIELD",
+   "sha1": "ea850a68d2f3eeeed6e02bc1da0686d3940a8596",
+   "originalBytes": 23
+  },
+  {
+   "orig": "_8",
+   "expr": "__basaltOwn.S14_RE_INLINE_HIGHLIGHT",
+   "sha1": "c8c4e43512703fdfb205f26f63bd57fa99653808",
+   "originalBytes": 19
+  },
+  {
+   "orig": "G8",
+   "expr": "__basaltOwn.S14_RE_BLOCK_REF",
+   "sha1": "cbcff5b3dc7ce1a346bf2ba962251e48cddca815",
+   "originalBytes": 17
+  },
+  {
+   "orig": "K8",
+   "expr": "__basaltOwn.S14_RE_HASHTAG",
+   "sha1": "796e8eca94070dbe79e10fe5a9600179d0148ebc",
+   "originalBytes": 77
+  },
+  {
+   "orig": "Y8",
+   "expr": "__basaltOwn.S14_RE_TAG_LINK",
+   "sha1": "09cd2bab66639ab4daa0d3d7eba8daa9a7dbbbbc",
+   "originalBytes": 26
+  },
+  {
+   "orig": "Q8",
+   "expr": "__basaltOwn.S14_RE_TODO",
+   "sha1": "8c288cd322ccd80128e85abdcf39d97bda7b3434",
+   "originalBytes": 30
+  },
+  {
+   "orig": "L8",
+   "expr": "__basaltOwn.S14_FILE_RECOVERY_DEFAULTS",
+   "sha1": "b0c73f549ba090ea52f4ef696102da8dbad350a1",
+   "originalBytes": 30
+  },
+  {
+   "orig": "b7",
+   "expr": "__basaltOwn.S14_PROPERTIES_SORT_MODES",
+   "sha1": "9f37d4c684c2c4404339a895f84b3057246c77a3",
+   "originalBytes": 73
+  },
+  {
+   "orig": "w7",
+   "expr": "__basaltOwn.s14PropertiesSortLabels()",
+   "sha1": "65b62c00cef89016a779da28cbe0f0996f584849",
+   "originalBytes": 173
+  },
+  {
+   "orig": "C8",
+   "expr": "__basaltOwn.s14NavFileTemplate()",
+   "sha1": "c63753a159f9b323b9c54c10c273cb9d39d671c6",
+   "originalBytes": 183
+  },
+  {
+   "orig": "M8",
+   "expr": "__basaltOwn.s14NavFolderTemplate()",
+   "sha1": "19e8fa166245d96b82eac7d0eff7590df79b6d07",
+   "originalBytes": 234
+  },
+  {
+   "orig": "s7",
+   "expr": "__basaltOwn.s14OutgoingLinkGroup",
+   "sha1": "fab28de34ec2d6728ca20046dd44638469207b69",
+   "originalBytes": 198
+  },
+  {
+   "orig": "l7",
+   "expr": "__basaltOwn.s14OutgoingLinkItem",
+   "sha1": "5d0d42b6e35c26d3084cc43d2154a33408d1256c",
+   "originalBytes": 1421
+  },
+  {
+   "orig": "w8",
+   "expr": "__basaltHost.t.plugins.fileExplorer",
+   "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
+   "originalBytes": 23
+  },
+  {
+   "orig": "v7",
+   "expr": "__basaltHost.t.plugins.properties",
+   "sha1": "c36396d05361e4c6d8872ab2d34878d7b3467c80",
+   "originalBytes": 21
+  },
+  {
+   "orig": "i7",
+   "expr": "__basaltHost.t.plugins.outgoingLinks",
+   "sha1": "7f65295c4979d6dbae9fd1b5cb6f7a955e924cb9",
+   "originalBytes": 24
+  },
+  {
+   "orig": "$8",
+   "expr": "__basaltHost.t.plugins.noteComposer",
+   "sha1": "5144af23952150c879038a93462bda2ef5a82eb2",
+   "originalBytes": 23
+  },
+  {
+   "orig": "B8",
+   "expr": "__basaltHost.t.plugins.footnotesPane",
+   "sha1": "076b1f229fd50c5d444fe05ce28042a5d6c760e5",
+   "originalBytes": 24
+  },
+  {
+   "orig": "I8",
+   "expr": "__basaltHost.t.plugins.fileRecovery",
+   "sha1": "5046bf7b27becfc7c1cc703111d64e3cfc839477",
+   "originalBytes": 23
+  },
+  {
+   "orig": "j8",
+   "expr": "__basaltHost.t.plugins.markdownFormatImporter",
+   "sha1": "70087ada1bf468f6947d54437aad34cbbf48bf28",
+   "originalBytes": 33
+  },
+  {
+   "orig": "O7",
+   "expr": "__basaltHost.t.setting.about",
+   "sha1": "2d35aac331855c2f556111b7c3eaf596d0af5900",
+   "originalBytes": 16
+  },
+  {
+   "orig": "F7",
+   "expr": "__basaltHost.t.setting.account",
+   "sha1": "e8719e6032b657efe010b989661321aba6e5491f",
+   "originalBytes": 18
+  },
+  {
+   "orig": "H7",
+   "expr": "__basaltHost.t.plugins.publish",
+   "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
+   "originalBytes": 18
+  },
+  {
+   "orig": "S7",
+   "expr": "__basaltHost.t.plugins.publish",
+   "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
+   "originalBytes": 18
   }
  ],
  "methods": [
@@ -7282,7 +7462,7 @@
    "originalBytes": 26549
   }
  ],
- "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,uD,rD",
+ "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,uD,rD,UH,JH,Sg,Lc",
  "patches": [
   {
    "note": "canvas FileNode (P5) is an ES5 subclass of the own ES6 EditableNode",
