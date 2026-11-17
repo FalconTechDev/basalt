@@ -16,7 +16,7 @@ import { setElementTooltip } from "./tooltip.js";
 import { s05HeadingText } from "./s05-utils.js";
 import { linkSafeHeading, endWithBlankLine } from "./text.js";
 import { renderMatches } from "./search-simple.js";
-import { searchClasses } from "./search-query.js";
+import { searchClasses } from "./n-g11-query.js";
 import { walkTree, treeDropPosition, updateTreeDropIndicator, makeTreePusher, collapsibleTreeItem } from "./tree.js";
 import { setDragPlainData } from "./drag.js";
 import { headingAtPosition } from "./bookmarks.js";

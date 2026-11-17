@@ -13,7 +13,7 @@ import { utf8String } from "./vault-crypto.js";
 import { frontmatterEntry } from "./frontmatter.js";
 import { contentHash } from "./metadata-helpers.js";
 import { markItemCollapsed } from "./tree.js";
-import { toggleElementVisibility } from "./search-view.js";
+import { toggleElementVisibility } from "./n-g11-view.js";
 import { setElementTooltip } from "./tooltip.js";
 
 const E = () => env();
