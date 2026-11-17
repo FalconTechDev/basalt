@@ -5853,7 +5853,7 @@
     "cmFoldIndent": "A$",
     "cmFoldFrontmatter": "F$",
     "cmAutoPair": "DA",
-    "cmClearCacheEffect": "Tq",
+    "cmClearCacheEffect": "Tq.clearCache",
     "EditModeBase": "aZ",
     "propertiesExtensionFactory": "nP",
     "cmFoldEffect": "qp",
