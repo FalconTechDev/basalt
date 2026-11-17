@@ -23199,7 +23199,27 @@ function ng02CanvasView(host) {
         addButton(g4, "lucide-help-circle", ti.labelCanvasHelp(), () => new host.s32CanvasHelp(this).open());
       }
       this.updateHistoryUI();
+      this.syncReadonlyUi();
       wrapperEl.appendChild(controlsEl);
+    }
+
+    // ---------- options / readonly ----------
+
+    setReadonly(readonly) {
+      if (this.readonly === readonly) return;
+      this.readonly = readonly;
+      this.wrapperEl.toggleClass("mod-readonly", readonly);
+      this.syncReadonlyUi();
+      this.menu.render(true);
+    }
+
+    syncReadonlyUi() {
+      const btn = this.quickSettingsButton && this.quickSettingsButton.querySelector("button");
+      if (btn) {
+        const ti = s13CanvasI18n();
+        env().tv(btn, this.readonly ? "lucide-settings" : "lucide-lock");
+        env().Mv(btn, this.readonly ? ti.labelDisableReadonly() : ti.labelCanvasSettings());
+      }
     }
 
     // ---------- lifecycle ----------
@@ -23380,8 +23400,7 @@ function ng02CanvasView(host) {
       if (!r || r.width <= 0 || r.height <= 0) return;
       const bw = Math.max(bounds.maxX - bounds.minX, 1e-6);
       const bh = Math.max(bounds.maxY - bounds.minY, 1e-6);
-      let fit = Math.min(r.width / (1.1 * bw), r.height / (1.1 * bh));
-      fit = ng02Clamp(fit, Math.pow(2, NG02_ZOOM_MIN), Math.pow(2, NG02_ZOOM_MAX));
+      const fit = Math.min(r.width / (1.1 * bw), r.height / (1.1 * bh));
       this.tZoom = Math.log2(fit);
       const c = boxCenter(bounds);
       this.tx = c.x;
@@ -23442,7 +23461,7 @@ function ng02CanvasView(host) {
     }
 
     nudgeSelection(keyEvent, direction) {
-      const nodes = [...this.selection].filter((n) => this.nodes.has(n));
+      const nodes = [...this.selection].filter((n) => this._nodeItem(n));
       if (nodes.length === 0) return;
       const spacing = this.gridSpacing * (keyEvent.shiftKey ? 5 : 1);
       const deltas = {
@@ -23453,16 +23472,17 @@ function ng02CanvasView(host) {
       if (!d) return;
       for (const node of nodes) node.moveTo({ x: node.x + d.x, y: node.y + d.y });
       if (this.options.snapToGrid) {
+        const snapSpacing = this.gridSpacing;
         const b = boxUnion(nodes.map((n) => n.getBBox()));
-        const rx = Math.round(b.minX % spacing);
-        const ry = Math.round(b.minY % spacing);
+        const rx = Math.round(b.minX % snapSpacing);
+        const ry = Math.round(b.minY % snapSpacing);
         let sx = 0;
         let sy = 0;
         if (direction === "left") sx = -rx;
-        else if (direction === "right") sx = rx > 0 ? spacing - rx : -rx;
+        else if (direction === "right") sx = rx > 0 ? snapSpacing - rx : -rx;
         else if (direction === "up") sy = -ry;
         else if (direction === "down") {
-          if (ry > 0) sx += spacing;
+          if (ry > 0) sx += snapSpacing;
           else sy = -ry;
         }
         if (sx || sy) for (const node of nodes) node.moveTo({ x: node.x + sx, y: node.y + sy });
@@ -23505,6 +23525,7 @@ function ng02CanvasView(host) {
         }
         const amount = 1 - ease;
         const tZoom = this.screenshotting ? this.tZoom : ng02Clamp(this.tZoom, NG02_ZOOM_MIN, NG02_ZOOM_MAX);
+        if (tZoom !== this.tZoom) this.tZoom = tZoom;
         const zoomDelta = tZoom - this.zoom;
         if (!isFinite(zoomDelta)) {
           this.zoom = 0;
@@ -23564,15 +23585,15 @@ function ng02CanvasView(host) {
 
       // 2. moved items -> spatial index refresh
       for (const item of this.moved) {
-        if (this.nodes.has(item)) {
+        if (this._nodeItem(item)) {
           for (const edge of this.getEdgesForNode(item)) this.moved.add(edge);
         }
       }
       for (const item of [...this.moved]) {
-        if (this.nodes.has(item)) {
+        if (this._nodeItem(item)) {
           this.nodeIndex.remove(item);
           this.nodeIndex.insert(item);
-        } else if (this.edges.has(item)) {
+        } else if (this._edgeItem(item)) {
           this.edgeIndex.remove(item);
           this.edgeIndex.insert(item);
         }
@@ -23772,8 +23793,8 @@ function ng02CanvasView(host) {
     getSelectionData(selection) {
       if (!selection) selection = this.selection;
       const items = [...selection].sort((a, b) => a.zIndex - b.zIndex);
-      const nodeSet = new Set(items.filter((i) => this.nodes.has(i)));
-      const edgeSet = new Set(items.filter((i) => this.edges.has(i)));
+      const nodeSet = new Set(items.filter((i) => this._nodeItem(i)));
+      const edgeSet = new Set(items.filter((i) => this._edgeItem(i)));
       for (const node of nodeSet) {
         for (const edge of this.getEdgesForNode(node)) {
           if (nodeSet.has(edge.from.node) && nodeSet.has(edge.to.node)) edgeSet.add(edge);
@@ -23901,6 +23922,9 @@ function ng02CanvasView(host) {
       return this.edgeFrom.getArray(node).concat(this.edgeTo.getArray(node));
     }
 
+    _nodeItem(item) { return item != null && this.nodes.get(item.id) === item; }
+    _edgeItem(item) { return item != null && this.edges.get(item.id) === item; }
+
     // ---------- selection ----------
 
     updateSelection(mutate) {
@@ -23956,8 +23980,8 @@ function ng02CanvasView(host) {
     deleteSelection() {
       if (this.readonly) return;
       for (const item of [...this.selection]) {
-        if (this.edges.has(item)) this.removeEdge(item);
-        else if (this.nodes.has(item)) this.removeNode(item);
+        if (this._edgeItem(item)) this.removeEdge(item);
+        else if (this._nodeItem(item)) this.removeNode(item);
       }
       this.deselectAll();
       this.requestSave();
@@ -24178,8 +24202,8 @@ function ng02CanvasView(host) {
       if (this.selection.size === 0) return;
       this.handleCopy(e);
       for (const item of [...this.selection]) {
-        if (this.edges.has(item)) this.removeEdge(item);
-        else if (this.nodes.has(item)) this.removeNode(item);
+        if (this._edgeItem(item)) this.removeEdge(item);
+        else if (this._nodeItem(item)) this.removeNode(item);
       }
       this.deselectAll();
       this.requestSave();
@@ -25066,7 +25090,7 @@ function ng02InstallInput(proto, host) {
 
     const selected = [...this.selection];
     const groups = selected.filter((n) => n instanceof host.s13CanvasGroupNode);
-    const dragNodes = new Set(selected.filter((n) => this.nodes.has(n)));
+    const dragNodes = new Set(selected.filter((n) => this._nodeItem(n)));
     for (const g of groups) {
       for (const n of this.getContainingNodes(g.getBBox())) {
         if (n !== g) dragNodes.add(n);

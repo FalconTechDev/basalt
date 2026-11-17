@@ -428,7 +428,7 @@ function ng02InstallInput(proto, host) {
 
     const selected = [...this.selection];
     const groups = selected.filter((n) => n instanceof host.s13CanvasGroupNode);
-    const dragNodes = new Set(selected.filter((n) => this.nodes.has(n)));
+    const dragNodes = new Set(selected.filter((n) => this._nodeItem(n)));
     for (const g of groups) {
       for (const n of this.getContainingNodes(g.getBBox())) {
         if (n !== g) dragNodes.add(n);
