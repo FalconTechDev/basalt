@@ -11,7 +11,7 @@ import { hostEnv } from "./env.js";
 import { debounceCall } from "./timing.js";
 import { runTransition } from "./animation.js";
 import { ellipsize, intOrNull } from "./text.js";
-import { isEditableNode } from "./tree.js";
+import { ng15IsEditableNode } from "./n-g15-tree.js";
 
 /** i18n table the inherited neighbours (ym, xK) still read through the RZ/VZ/zZ aliases. */
 export function s27PdfI18n() { return hostEnv().gm.pdf; }
@@ -966,7 +966,7 @@ function buildS27PdfView(host) {
     const viewer = self.viewer = self.addChild(new (s27PdfClass(host, "component", () => buildS27PdfComponent(host)))(self.app, self.contentEl, { removePageBorders: host.Platform.isMobile }));
     const scope = self.scope = viewer.scope;
     const guard = (fn) => (evt) => {
-      if (isEditableNode(evt.targetNode)) return;
+      if (ng15IsEditableNode(evt.targetNode)) return;
       const pdfViewer = viewer.child?.pdfViewer?.pdfViewer;
       if (pdfViewer) {
         const scale = pdfViewer.currentScaleValue;

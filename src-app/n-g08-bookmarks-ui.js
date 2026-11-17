@@ -1,7 +1,7 @@
 // g08 clean-room: BookmarksView (sidebar tree) and BookmarksPlugin (commands, menus, CLI, persistence).
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
-import { walkTree, treeDropPosition, updateTreeDropIndicator } from "./tree.js";
+import { ng15WalkTree, ng15TreeDropPosition, ng15UpdateTreeDropIndicator } from "./n-g15-tree.js";
 import { fileClass } from "./vault.js";
 import { binaryFind, randomHex } from "./misc.js";
 import { displayName, firstHeadingText, parseLinktext } from "./path.js";
@@ -121,7 +121,7 @@ export function ng08DefineBookmarksView(host) {
   proto.refreshActiveState = function () {
     const file = this.app.workspace.getActiveFile && this.app.workspace.getActiveFile();
     const activePath = file && file.path;
-    walkTree(this.tree.root, (dom) => {
+    ng15WalkTree(this.tree.root, (dom) => {
       if (!this.isItem(dom)) return;
       const item = dom.item;
       const active = item.type === "file" && !item.subpath && item.path === activePath;
@@ -185,8 +185,8 @@ export function ng08DefineBookmarksView(host) {
     const self = this;
     const plugin = this.plugin;
     self.app.dragManager.handleDrop(contentEl, (event, dragInfo, isOver) => {
-      const pos = treeDropPosition(event, self.tree);
-      const indicator = updateTreeDropIndicator(self.tree, pos, dragInfo.items || [], isOver);
+      const pos = ng15TreeDropPosition(event, self.tree);
+      const indicator = ng15UpdateTreeDropIndicator(self.tree, pos, dragInfo.items || [], isOver);
       if (!isOver) {
         if (pos) {
           const parentItem = pos.parentNode && pos.parentNode.item ? pos.parentNode.item : null;

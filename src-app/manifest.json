@@ -782,97 +782,97 @@
     },
     {
       "orig": "GH",
-      "use": "walkTree",
+      "use": "ng15WalkTree",
       "originalBytes": 158
     },
     {
       "orig": "WH",
-      "use": "hasChildList",
+      "use": "ng15HasChildList",
       "originalBytes": 55
     },
     {
       "orig": "KH",
-      "use": "treeRange",
+      "use": "ng15TreeRange",
       "originalBytes": 248
     },
     {
       "orig": "QH",
-      "use": "nextVisibleTreeItem",
+      "use": "ng15NextVisibleTreeItem",
       "originalBytes": 234
     },
     {
       "orig": "$H",
-      "use": "prevVisibleTreeItem",
+      "use": "ng15PrevVisibleTreeItem",
       "originalBytes": 173
     },
     {
       "orig": "ZH",
-      "use": "lastVisibleTreeItem",
+      "use": "ng15LastVisibleTreeItem",
       "originalBytes": 276
     },
     {
       "orig": "XH",
-      "use": "prevTreeSibling",
+      "use": "ng15PrevTreeSibling",
       "originalBytes": 88
     },
     {
       "orig": "YH",
-      "use": "nextTreeSibling",
+      "use": "ng15NextTreeSibling",
       "originalBytes": 94
     },
     {
       "orig": "_H",
-      "use": "treeAncestorPath",
+      "use": "ng15TreeAncestorPath",
       "originalBytes": 119
     },
     {
       "orig": "Cl",
-      "use": "mountChildren",
+      "use": "ng15MountChildren",
       "originalBytes": 310
     },
     {
       "orig": "KL",
-      "use": "markItemCollapsed",
+      "use": "ng15MarkItemCollapsed",
       "originalBytes": 115
     },
     {
       "orig": "JH",
-      "use": "makeTreePusher",
+      "use": "ng15MakeTreePusher",
       "originalBytes": 109
     },
     {
       "orig": "Vv",
-      "use": "offsetBox",
+      "use": "ng15OffsetBox",
       "originalBytes": 333
     },
     {
       "orig": "wl",
-      "use": "animateCollapse",
+      "use": "ng15AnimateCollapse",
       "originalBytes": 274
     },
     {
       "orig": "bl",
-      "use": "expandFromZero",
+      "use": "ng15ExpandFromZero",
       "originalBytes": 274
     },
     {
       "orig": "ml",
-      "use": "boxMetrics",
+      "use": "ng15BoxMetrics",
       "originalBytes": 196
     },
     {
       "orig": "yg",
-      "use": "isEditableNode",
+      "use": "ng15IsEditableNode",
       "originalBytes": 108
     },
     {
       "orig": "Vg",
-      "use": "syntheticKeyEvent",
+      "use": "ng15SyntheticKeyEvent",
       "originalBytes": 294
     },
     {
       "orig": "QL",
-      "use": "collapsibleTreeItem",
+      "use": "ng15CollapsibleTreeItem",
       "originalBytes": 1246
     },
     {
@@ -1016,11 +1016,11 @@
     },
     {
       "orig": "c2",
-      "use": "treeDropPosition"
+      "use": "ng15TreeDropPosition"
     },
     {
       "orig": "f2",
-      "use": "updateTreeDropIndicator"
+      "use": "ng15UpdateTreeDropIndicator"
     },
     {
       "orig": "Yc",
@@ -2819,27 +2819,27 @@
     },
     {
       "orig": "UH",
-      "use": "defineTreeChildren",
+      "use": "ng15DefineTreeChildren",
       "originalBytes": 800
     },
     {
       "orig": "YL",
-      "use": "defineTreeItem",
+      "use": "ng15DefineTreeItem",
       "originalBytes": 626
     },
     {
       "orig": "s2",
-      "use": "defineTreeRoot",
+      "use": "ng15DefineTreeRoot",
       "originalBytes": 210
     },
     {
       "orig": "tz",
-      "use": "defineInfinityScroll",
+      "use": "ng15DefineInfinityScroll",
       "originalBytes": 6613
     },
     {
       "orig": "l2",
-      "use": "defineTree",
+      "use": "ng15DefineTree",
       "originalBytes": 7238
     },
     {
@@ -3106,27 +3106,27 @@
     },
     {
       "orig": "T8",
-      "use": "defineFileExplorerTree"
+      "use": "ng15DefineFileExplorerTree"
     },
     {
       "orig": "k8",
-      "use": "defineFileExplorerItemBase"
+      "use": "ng15DefineFileExplorerItemBase"
     },
     {
       "orig": "E8",
-      "use": "defineFileItem"
+      "use": "ng15DefineFileItem"
     },
     {
       "orig": "S8",
-      "use": "defineFolderItem"
+      "use": "ng15DefineFolderItem"
     },
     {
       "orig": "D8",
-      "use": "defineFileExplorerView"
+      "use": "ng15DefineFileExplorerView"
     },
     {
       "orig": "P8",
-      "use": "defineFileExplorerPlugin"
+      "use": "ng15DefineFileExplorerPlugin"
     },
     {
       "orig": "wee",
@@ -5853,7 +5853,7 @@
     "cmFoldIndent": "A$",
     "cmFoldFrontmatter": "F$",
     "cmAutoPair": "DA",
-    "cmClearCacheEffect": "Tq.clearCache",
+    "cmClearCacheEffect": "Tq",
     "EditModeBase": "aZ",
     "propertiesExtensionFactory": "nP",
     "cmFoldEffect": "qp",
@@ -6519,9 +6519,9 @@
     },
     {
       "orig": "ez",
-      "expr": "__basaltOwn.walkTreeAll",
-      "sha1": "9abe299f3b1e24c01475f20b716ccb41ecd2b78a",
-      "originalBytes": 136
+      "expr": "__basaltOwn.ng15WalkTreeAll",
+      "sha1": "36a1dc7383f85fc93def4bf2619d6c148c7a816f",
+      "originalBytes": 23
     },
     {
       "orig": "iH",

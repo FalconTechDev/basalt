@@ -2,7 +2,7 @@
 // commands, menus, persistence and opening logic.
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
-import { makeTreePusher, collapsibleTreeItem, walkTree, treeDropPosition, updateTreeDropIndicator } from "./tree.js";
+import { ng15MakeTreePusher, ng15CollapsibleTreeItem, ng15WalkTree, ng15TreeDropPosition, ng15UpdateTreeDropIndicator } from "./n-g15-tree.js";
 import { fileClass } from "./vault.js";
 import { binaryFind, randomHex } from "./misc.js";
 import { displayName, withoutMd, parseLinktext, firstHeadingText } from "./path.js";
@@ -176,7 +176,7 @@ export function ng08DefineBookmarkItemBase(host) {
     self.view = view;
     self.tree = tree;
     self.item = item;
-    self.pusherEl = makeTreePusher();
+    self.pusherEl = ng15MakeTreePusher();
     self.info = { height: 0, width: 0, childLeft: 0, childLeftPadding: 0, childTop: 0, computed: false, queued: false, hidden: false, next: false };
     self.selfEl.addClass("bookmark");
     self.titleEl = self.innerEl.createEl("span", { cls: "tree-item-inner-text" });
@@ -389,7 +389,7 @@ export function ng08DefineBookmarkLeafItem(host) {
 /** Collapsible group rows with recursive children. */
 export function ng08DefineBookmarkGroupItem(host) {
   const ItemBase = ng08Bm.BookmarkItemBase;
-  const CollapsibleBase = collapsibleTreeItem(ItemBase);
+  const CollapsibleBase = ng15CollapsibleTreeItem(ItemBase);
 
   function BookmarkGroupItem(view, tree, item) {
     const self = CollapsibleBase.call(this, view, tree, item) || this;
