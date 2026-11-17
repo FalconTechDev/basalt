@@ -3899,104 +3899,104 @@
     },
     {
       "orig": "m4",
-      "use": "defineS13CardsGroupHeader",
+      "use": "ng06CardsGroupHeader",
       "originalBytes": 235
     },
     {
       "orig": "z4",
-      "use": "defineS13ColumnWidth",
+      "use": "ng06DefineColumnWidth",
       "originalBytes": 245
     },
     {
       "orig": "q4",
-      "use": "defineS13TableRow",
+      "use": "ng06DefineTableRow",
       "originalBytes": 329
     },
     {
       "orig": "U4",
-      "use": "defineS13TableGroup",
+      "use": "ng06DefineTableGroup",
       "originalBytes": 659
     },
     {
       "orig": "W4",
-      "use": "defineS13HeaderRow",
+      "use": "ng06DefineHeaderRow",
       "originalBytes": 295
     },
     {
       "orig": "G4",
-      "use": "defineS13EntryRow",
+      "use": "ng06DefineEntryRow",
       "originalBytes": 294
     },
     {
       "orig": "Y4",
-      "use": "defineS13SummaryRow",
+      "use": "ng06DefineSummaryRow",
       "originalBytes": 555
     },
     {
       "orig": "_4",
-      "use": "defineS13HeaderCell",
+      "use": "ng06DefineHeaderCell",
       "originalBytes": 4038
     },
     {
       "orig": "K4",
-      "use": "defineS13BodyCell",
+      "use": "ng06DefineBodyCell",
       "originalBytes": 436
     },
     {
       "orig": "Q4",
-      "use": "defineS13SummaryCell",
+      "use": "ng06DefineSummaryCell",
       "originalBytes": 1141
     },
     {
       "orig": "g4",
-      "use": "defineS13CardsProperty",
+      "use": "ng06CardsProperty",
       "originalBytes": 416
     },
     {
       "orig": "v4",
-      "use": "defineS13CardsItem",
+      "use": "ng06CardsItem",
       "originalBytes": 2856
     },
     {
       "orig": "A4",
-      "use": "defineS13ListProperty",
+      "use": "ng06ListProperty",
       "originalBytes": 430
     },
     {
       "orig": "T4",
-      "use": "defineS13ListGroup",
+      "use": "ng06ListGroup",
       "originalBytes": 1384
     },
     {
       "orig": "D4",
-      "use": "defineS13ListItem",
+      "use": "ng06ListItem",
       "originalBytes": 1779
     },
     {
       "orig": "x4",
-      "use": "defineS13ListView",
+      "use": "ng06ListView",
       "originalBytes": 3968
     },
     {
       "orig": "R4",
-      "use": "defineS13PasteData",
+      "use": "ng06DefinePasteData",
       "originalBytes": 1568
     },
     {
       "orig": "J4",
-      "use": "defineS13ViewSwitcherModal"
+      "use": "ng06ViewSwitcherModal"
     },
     {
       "orig": "L4",
-      "use": "defineS13SummaryMenu"
+      "use": "ng06SummaryMenu"
     },
     {
       "orig": "I4",
-      "use": "defineS13SummaryFormulaListPage"
+      "use": "ng06SummaryFormulaListPage"
     },
     {
       "orig": "O4",
-      "use": "defineS13SummaryFormulaPage"
+      "use": "ng06SummaryFormulaPage"
     },
     {
       "orig": "n4",
@@ -4036,7 +4036,7 @@
     },
     {
       "orig": "f4",
-      "use": "defineS13CardsView"
+      "use": "ng06CardsView"
     },
     {
       "orig": "z3",
@@ -4048,7 +4048,7 @@
     },
     {
       "orig": "Z4",
-      "use": "defineS13BasesPlugin"
+      "use": "ng06BasesPlugin"
     },
     {
       "orig": "CA",
@@ -4611,107 +4611,107 @@
     },
     {
       "orig": "AX",
-      "use": "defineS25FilterMenu",
+      "use": "ng06FilterMenu",
       "originalBytes": 2030
     },
     {
       "orig": "PX",
-      "use": "defineS25FormulaSuggester",
+      "use": "ng06FormulaSuggester",
       "originalBytes": 581
     },
     {
       "orig": "HX",
-      "use": "defineS25BasesView",
+      "use": "ng06BasesFileView",
       "originalBytes": 3262
     },
     {
       "orig": "jX",
-      "use": "defineS25NewItemButton",
+      "use": "ng06NewItemButton",
       "originalBytes": 2978
     },
     {
       "orig": "UX",
-      "use": "defineS25FormulaEditor",
+      "use": "ng06FormulaEditor",
       "originalBytes": 1291
     },
     {
       "orig": "WX",
-      "use": "defineS25ToolbarPage",
+      "use": "ng06ToolbarPage",
       "originalBytes": 218
     },
     {
       "orig": "GX",
-      "use": "defineS25PropertiesMenu",
+      "use": "ng06PropertiesMenu",
       "originalBytes": 1902
     },
     {
       "orig": "KX",
-      "use": "defineS25PropertyListPage",
+      "use": "ng06PropertyListPage",
       "originalBytes": 5777
     },
     {
       "orig": "YX",
-      "use": "defineS25PropertyEditPage",
+      "use": "ng06PropertyEditPage",
       "originalBytes": 881
     },
     {
       "orig": "QX",
-      "use": "defineS25PropertyForm",
+      "use": "ng06PropertyForm",
       "originalBytes": 2934
     },
     {
       "orig": "$X",
-      "use": "defineS25ResultsMenu",
+      "use": "ng06ResultsMenu",
       "originalBytes": 2805
     },
     {
       "orig": "ZX",
-      "use": "defineS25SearchMenu",
+      "use": "ng06SearchMenu",
       "originalBytes": 1447
     },
     {
       "orig": "e$",
-      "use": "defineS25SortMenu",
+      "use": "ng06SortMenu",
       "originalBytes": 3210
     },
     {
       "orig": "t$",
-      "use": "defineS25SortRowBase",
+      "use": "ng06SortRowBase",
       "originalBytes": 1963
     },
     {
       "orig": "n$",
-      "use": "defineS25SortRow",
+      "use": "ng06SortRow",
       "originalBytes": 553
     },
     {
       "orig": "i$",
-      "use": "defineS25GroupRow",
+      "use": "ng06GroupRow",
       "originalBytes": 363
     },
     {
       "orig": "a$",
-      "use": "defineS25ViewChooser",
+      "use": "ng06ViewChooser",
       "originalBytes": 2313
     },
     {
       "orig": "s$",
-      "use": "defineS25ViewsMenu",
+      "use": "ng06ViewsMenu",
       "originalBytes": 1807
     },
     {
       "orig": "l$",
-      "use": "defineS25ViewConfigPage",
+      "use": "ng06ViewConfigPage",
       "originalBytes": 6971
     },
     {
       "orig": "c$",
-      "use": "defineS25GroupEntries",
+      "use": "ng06DefineGroupEntries",
       "originalBytes": 143
     },
     {
       "orig": "u$",
-      "use": "defineS25QueryData",
+      "use": "ng06DefineQueryData",
       "originalBytes": 3105
     },
     {
@@ -5401,7 +5401,7 @@
     },
     {
       "orig": "C$",
-      "use": "s26BasesController",
+      "use": "ng06BasesController",
       "originalBytes": 11496
     },
     {
@@ -5431,7 +5431,7 @@
     },
     {
       "orig": "k$",
-      "use": "s26BasesEvents",
+      "use": "ng06BasesEvents",
       "originalBytes": 0
     },
     {
@@ -6408,6 +6408,7 @@
     "s13EntryRow": "G4",
     "s13HeaderRow": "W4",
     "s13SummaryRow": "Y4",
+    "s13SummaryCell": "Q4",
     "s13HeaderCell": "_4",
     "s13BodyCell": "K4",
     "s13ColumnWidth": "z4",
@@ -6424,7 +6425,30 @@
     "OutgoingLinkView": "o7",
     "AllPropertiesView": "E7",
     "FilePropertiesView": "M7",
-    "s91FormatMarks": "uf"
+    "s91FormatMarks": "uf",
+    "s13TableRow": "q4",
+    "s13BasesCellBase": "j4",
+    "s13CardsProperty": "g4",
+    "s13ListProperty": "A4",
+    "s13ListGroup": "T4",
+    "s13ListItem": "D4",
+    "s13BasesEvents": "k$",
+    "s13BasesController": "C$",
+    "s13BasesPlugin": "Z4",
+    "s25ViewsMenu": "s$",
+    "s25ResultsMenu": "$X",
+    "s25SearchMenu": "ZX",
+    "s25NewItemButton": "jX",
+    "s25FilterMenu": "AX",
+    "s25PropertiesMenu": "GX",
+    "s25SortMenu": "e$",
+    "s25FormulaEditor": "UX",
+    "s25QueryData": "u$",
+    "s25GroupEntries": "c$",
+    "s09BasesToolbarButton": "zY",
+    "s09BasesDropdown": "qY",
+    "s13QueryData": "u$",
+    "s13GroupSet": "c$"
   },
   "declarators": [
     {
@@ -7405,9 +7429,9 @@
     },
     {
       "orig": "j4",
-      "expr": "__basaltOwn.s13BasesCellBase",
-      "sha1": "5c8e9a87c248bab4799732dec76af64242c6b5f2",
-      "originalBytes": 99
+      "expr": "__basaltOwn.ng06CellBase",
+      "sha1": "0c53c85ab40bba5db389c9710c8493ec622da7a0",
+      "originalBytes": 28
     },
     {
       "orig": "eA",
@@ -9774,7 +9798,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,Pl,Ll,s12cmDecoration:Vn,s12cmViewPlugin:ji,s12cmStateField:ke,s12cmStateEffect:We,s12cmFacet:me,s12cmEditorViewStatics:_o,s12cmRangeSet:lt,s12lezerTree:Nu,s12webpackRequire:n,s12capacitor:km,s12githubRaw:ty,s12reqObsidian:d,s12reqAutocomplete:l,s12reqCollab:h,s12reqCommands:a,s12reqLanguage:o,s12reqLint:p,s12reqSearch:s,s12reqState:e,s12reqView:t,s12reqLezerCommon:i,s12reqLezerLr:c,s12reqLezerHighlight:r,s12txHasEffect:VA,s12treePusherEl:JH,s12wikilinkPattern:fI,s12mdLinkPattern:pT,s12pathParentDir:By,s12sanitizeTitle:VJ,s12bookmarkUrlItem:R2,s12bookmarkEditModal:RJ,s12webviewerAddressBar:HJ,s12systemInfo:oD,s12graphOptions:TJ,s12svgIcon:T1,s12backlinksView:H6,s12defaults:it,s12widgetBase:FV,s12cmWidgetType:Rn,s12rangeSetBuilder:ct,s12measureIndent:_A,s12cmHighlightDecoField:xA,s12cmHighlightEffect:EA,s12rangeHasMatch:NA,s12rangeContainsMark:RA,s12cmStyleSpan:C6,s12embedChildBase:NV,s12fileSuggestBase:U2,s12syntaxClassProp:$d,s12isUrlLike:YC,s12mathReady:bz,s12renderMath:kz,s12recalcMath:xz,s12iframeEmbed:Pz,s12fetchBuffer:hy,s12mimeMap:du,s12headerLookup:qV,s12toBuffer:vu,s12nativeClipboard:Qf,s12pointerPos:Fl,s12dragPointer:Cg,s12pdfEmbed:YZ,s12basesEmbed:E$,s12imageFileEmbed:tJ,s12isImageDimension:zx,s12cmAnnotation:qe,s12applyIcon:tv,s12ariaTooltip:Mv,s12syntaxHighlight:Yz,s12extMarkdown:jy,s12extCanvas:Uy,s12extImage:Vy,nF,iF,Iz,createEl,hT,Jl,Xz,eq,aP,_I,YI,d0,s29Require:n,s30Rn:Rn,s30FV:FV,s30Zx:zx,s30Fl:Fl,s30Cg:Cg,s30du:du,s30vu:vu,s30fu:fu,s30VJ:VJ,s30tJ:tJ,s30m6:m6,s30R2:R2,s30RJ:RJ,s30Qf:Qf,s30hy:hy,s30qV:qV,s30HJ:HJ,s30qJ:qJ,s30Pz:Pz,s30Az:Az,NV,FV,Rn,Vn,E$,YZ,sJ,tJ,d6,zx,JZ,Yz,pq,uq,bz,kz,xz,W2,hq,_A,_2,tp,VA,G2,EA,MA,K2,$2,$d,J2,SA,X2,Y2,Z2,a6,c6,ct,e6,i6,l6,s6,xA,NA,RA,Zd,AA,ji,H6,D,Gg,Zw,y5,eJ,RI,Tc,lg,a8,N8,L8,F8,R8,pT,Zc,Qc,UI,WI,VI,BI,uP,LL,IL,tO,electronWindow:window.electronWindow,electron:window.electron,fZ,cg,Kc,dq,iP,AQ,wQ,Qy,kQ,PQ,BD,dz,WZ,Cv,Ic,RT,qp,jp,VH,Pc,Ly,xy,Ny,createSpan,yg,nJ,iJ,kZ,wZ,GZ,_Z,HZ,LZ,BZ,NZ,FZ,OZ,lJ,TJ,DJ,AJ,LJ,OJ,xJ,kJ,EJ,mJ,HJ,zJ,qJ,rJ,oJ,aJ,uJ,nP,lz,mZ,vZ,pv,MJ,Rk,SJ,Pv,Mg,sz,aq,Bl,Fl,Wc,Tv,wg,HA,_e,lc,qA,jA,zA,tP,FA,df,DL,nt,Cz,Ez,Mz,yq,Cg,Cy,ky,Ey,WY,GY,ML,u,KW,Ja,Ua,EY,DY,k$,s$,$X,e$,AX,GX,ZX,jX,d$,f$,m$,C$,P$,L$,PI,UH,YL,Z9,gk,hee,ib,lee,see,yk,U7,W7,_7,G7,K7,J7,e9,t9,n9,i9,r9,dD,Sw,Nw,Bw,gw,p9,uD,rD,JH,Sg,Lc,Gc,BQ,T7,A7,D7,P7,V8,z8,X8,o7,xT,n7,nm,jg,R0,Sv,tE,oP,Cc,rg,Hm,Rg,B0,P0,f0,BX,OX,pI,dI,wJ,fz,ry,$q,AR,Bq,Fq,Gp,Gq,Hq,Jq,Kq,LR,Nd,Nq,Oq,PF,PR,Qp,Qq,Rq,SR,TF,UR,Uq,Vd,Vq,W$,Wq,Xq,Yq,Zq,aN,eP,jq,ne,oN,qq,tj,uB,yB,yp,zq,Lu,ff,mf ,s12syntaxHighlight:Yz ,s91require:Lf ",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,Pl,Ll,s12cmDecoration:Vn,s12cmViewPlugin:ji,s12cmStateField:ke,s12cmStateEffect:We,s12cmFacet:me,s12cmEditorViewStatics:_o,s12cmRangeSet:lt,s12lezerTree:Nu,s12webpackRequire:n,s12capacitor:km,s12githubRaw:ty,s12reqObsidian:d,s12reqAutocomplete:l,s12reqCollab:h,s12reqCommands:a,s12reqLanguage:o,s12reqLint:p,s12reqSearch:s,s12reqState:e,s12reqView:t,s12reqLezerCommon:i,s12reqLezerLr:c,s12reqLezerHighlight:r,s12txHasEffect:VA,s12treePusherEl:JH,s12wikilinkPattern:fI,s12mdLinkPattern:pT,s12pathParentDir:By,s12sanitizeTitle:VJ,s12bookmarkUrlItem:R2,s12bookmarkEditModal:RJ,s12webviewerAddressBar:HJ,s12systemInfo:oD,s12graphOptions:TJ,s12svgIcon:T1,s12backlinksView:H6,s12defaults:it,s12widgetBase:FV,s12cmWidgetType:Rn,s12rangeSetBuilder:ct,s12measureIndent:_A,s12cmHighlightDecoField:xA,s12cmHighlightEffect:EA,s12rangeHasMatch:NA,s12rangeContainsMark:RA,s12cmStyleSpan:C6,s12embedChildBase:NV,s12fileSuggestBase:U2,s12syntaxClassProp:$d,s12isUrlLike:YC,s12mathReady:bz,s12renderMath:kz,s12recalcMath:xz,s12iframeEmbed:Pz,s12fetchBuffer:hy,s12mimeMap:du,s12headerLookup:qV,s12toBuffer:vu,s12nativeClipboard:Qf,s12pointerPos:Fl,s12dragPointer:Cg,s12pdfEmbed:YZ,s12basesEmbed:E$,s12imageFileEmbed:tJ,s12isImageDimension:zx,s12cmAnnotation:qe,s12applyIcon:tv,s12ariaTooltip:Mv,s12syntaxHighlight:Yz,s12extMarkdown:jy,s12extCanvas:Uy,s12extImage:Vy,nF,iF,Iz,createEl,hT,Jl,Xz,eq,aP,_I,YI,d0,s29Require:n,s30Rn:Rn,s30FV:FV,s30Zx:zx,s30Fl:Fl,s30Cg:Cg,s30du:du,s30vu:vu,s30fu:fu,s30VJ:VJ,s30tJ:tJ,s30m6:m6,s30R2:R2,s30RJ:RJ,s30Qf:Qf,s30hy:hy,s30qV:qV,s30HJ:HJ,s30qJ:qJ,s30Pz:Pz,s30Az:Az,NV,FV,Rn,Vn,E$,YZ,sJ,tJ,d6,zx,JZ,Yz,pq,uq,bz,kz,xz,W2,hq,_A,_2,tp,VA,G2,EA,MA,K2,$2,$d,J2,SA,X2,Y2,Z2,a6,c6,ct,e6,i6,l6,s6,xA,NA,RA,Zd,AA,ji,H6,D,Gg,Zw,y5,eJ,RI,Tc,lg,a8,N8,L8,F8,R8,pT,Zc,Qc,UI,WI,VI,BI,uP,LL,IL,tO,electronWindow:window.electronWindow,electron:window.electron,fZ,cg,Kc,dq,iP,AQ,wQ,Qy,kQ,PQ,BD,dz,WZ,Cv,Ic,RT,qp,jp,VH,Pc,Ly,xy,Ny,createSpan,yg,nJ,iJ,kZ,wZ,GZ,_Z,HZ,LZ,BZ,NZ,FZ,OZ,lJ,TJ,DJ,AJ,LJ,OJ,xJ,kJ,EJ,mJ,HJ,zJ,qJ,rJ,oJ,aJ,uJ,nP,lz,mZ,vZ,pv,MJ,Rk,SJ,Pv,Mg,sz,aq,Bl,Fl,Wc,Tv,wg,HA,_e,lc,qA,jA,zA,tP,FA,df,DL,nt,Cz,Ez,Mz,yq,Cg,Cy,ky,Ey,WY,GY,ML,u,KW,Ja,Ua,EY,DY,k$,s$,$X,e$,AX,GX,ZX,jX,d$,f$,m$,C$,P$,L$,PI,UH,YL,Z9,gk,hee,ib,lee,see,yk,U7,W7,_7,G7,K7,J7,e9,t9,n9,i9,r9,dD,Sw,Nw,Bw,gw,p9,uD,rD,JH,Sg,Lc,Gc,BQ,T7,A7,D7,P7,V8,z8,X8,o7,xT,n7,nm,jg,R0,Sv,tE,oP,Cc,rg,Hm,Rg,B0,P0,f0,BX,OX,pI,dI,wJ,fz,ry,$q,AR,Bq,Fq,Gp,Gq,Hq,Jq,Kq,LR,Nd,Nq,Oq,PF,PR,Qp,Qq,Rq,SR,TF,UR,Uq,Vd,Vq,W$,Wq,Xq,Yq,Zq,aN,eP,jq,ne,oN,qq,tj,uB,yB,yp,zq,Lu,ff,mf ,s12syntaxHighlight:Yz ,s91require:Lf ,zY,qY,jY,UX,$K,zz,u$,oY,JK,HX,CY,RW",
   "patches": [
     {
       "find": "function Iz(e){return/*own*/__basaltOwn.renderMatchRanges(e)}",
