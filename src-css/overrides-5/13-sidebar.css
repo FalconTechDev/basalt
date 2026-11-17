@@ -7,16 +7,16 @@
 
 .tree-item-self.is-being-dragged-over {
   color: var(--nav-item-color-highlighted);
-  background: hsla(var(--interactive-accent-hsl), 0.1);
+  background: var(--background-modifier-active-hover);
 }
 
 .tree-item-self.has-active-menu {
-  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+  box-shadow: 0 0 0 var(--bs-focus-width) var(--background-modifier-border-focus);
 }
 
 .tree-item-self.is-being-renamed {
   flex-grow: 1;
-  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+  box-shadow: 0 0 0 var(--bs-focus-width) var(--background-modifier-border-focus);
   white-space: normal;
 }
 
@@ -24,13 +24,15 @@ body:not(.is-grabbing) .tree-item-self.is-active:hover,
 .tree-item-self.is-active {
   color: var(--nav-item-color-active);
   font-weight: var(--nav-item-weight-active);
-  background-color: var(--nav-item-background-active);
+  background-color: var(--bs-accent-soft);
+  box-shadow: inset var(--bs-focus-width) 0 0 var(--interactive-accent);
 }
 
 body:not(.is-grabbing) .tree-item-self.is-selected:hover,
 .tree-item-self.is-selected {
   color: var(--nav-item-color-selected);
-  background-color: var(--nav-item-background-selected);
+  background-color: var(--bs-accent-soft);
+  box-shadow: inset var(--bs-focus-width) 0 0 var(--interactive-accent);
 }
 
 body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover,
@@ -53,7 +55,7 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover,
 
 .nav-folder.is-being-dragged-over {
   border-radius: var(--radius-s);
-  background: hsla(var(--interactive-accent-hsl), 0.1);
+  background: var(--background-modifier-active-hover);
 }
 
 .file-tree .tree-item-inner {
@@ -66,7 +68,7 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover,
 .search-input-container input {
   display: block;
   width: 100%;
-  padding-inline-start: 36px;
+  padding-inline-start: var(--size-4-9);
 }
 
 @media (hover: hover) {
