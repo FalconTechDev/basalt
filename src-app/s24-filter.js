@@ -259,7 +259,7 @@ function s24buildFilterStatement(host) {
     env().Mv(self.leftInputWarningEl, env().gm.properties.labelTypeMismatchWarningGeneric());
     env().tv(self.leftInputWarningEl, "lucide-alert-triangle");
 
-    self.operatorComponent = new env().MI(app, exprEl)
+    self.operatorComponent = new (env().MI)(app, exprEl)
       .onOpen(onFocusIn)
       .onClose(onFocusOut)
       .onSelect(() => {
@@ -612,6 +612,7 @@ function s24buildFilterStatement(host) {
     const lhsId = this.getLeftInputValue();
     if (!lhsId) return "";
     const op = this.operatorComponent.value;
+    if (!op) return "";
     const fn = this.getFunction(op.funcName);
     const lhsRef = s09PropertyToRef(lhsId);
     if (fn) {

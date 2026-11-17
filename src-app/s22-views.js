@@ -111,8 +111,8 @@ export function defineQueryResults(host) {
     self.app = app;
     self.query = query;
     self.sourcePath = sourcePath;
-    self.dom = new env().sz(app, containerEl, env().gm.plugins.search.labelNoMatches());
-    self.queue = new env().aq(app, self.dom);
+    self.dom = new (env().sz)(app, containerEl, env().gm.plugins.search.labelNoMatches());
+    self.queue = new (env().aq)(app, self.dom);
     self.addChild(self.queue);
     return self;
   }
@@ -124,7 +124,7 @@ export function defineQueryResults(host) {
     const sourcePath = this.sourcePath;
     dom.emptyResults();
     try {
-      const query = new env().BH(app, this.query.replace(/\r?\n/g, " "), false);
+      const query = new (env().BH)(app, this.query.replace(/\r?\n/g, " "), false);
       if (!query.matcher) return;
       this.searchQuery = query;
       const job = this.queue.start();

@@ -1162,7 +1162,7 @@ export function s06PropertyOptionText(host) {
     icon: "lucide-text",
     validate: (v) => typeof v === "string",
     render: (el, value, ctx) => {
-      const widget = s06PropClass("textValue", host, buildS06TextValue)(ctx, el);
+      const widget = new (s06PropClass("textValue", host, buildS06TextValue))(ctx, el);
       widget.setValue(String(value != null ? value : ""));
       new (env().DO)(ctx, widget.inputEl, (text, evt) => {
         evt.preventDefault();
