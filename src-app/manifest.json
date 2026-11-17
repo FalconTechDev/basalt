@@ -7412,26 +7412,26 @@
     {
       "orig": "eA",
       "expr": "__basaltOwn.ng01CommunityPluginsUrl",
-      "sha1": "31b47de3731fcdc0256f24f25d758f938e0e299b",
-      "originalBytes": 59
+      "sha1": "9e7272271f89ce037f32f46a4bcb736a2f2117a6",
+      "originalBytes": 34
     },
     {
       "orig": "nA",
       "expr": "__basaltOwn.ng01CommunityPluginStatsUrl",
-      "sha1": "eb1d3004df3189f4daf90ce0fa1372cd69a1ede6",
-      "originalBytes": 64
+      "sha1": "996d5f3764275b48f84cd0ce5ef818c05f24ac19",
+      "originalBytes": 38
     },
     {
       "orig": "tA",
       "expr": "__basaltOwn.ng01CommunityPlugins",
-      "sha1": "268441f5f19ae024bb89bbd323010ddc0466f3db",
-      "originalBytes": 258
+      "sha1": "475f4e4db16ddc4dfd2c3b5a486b2057a9b5c4b3",
+      "originalBytes": 31
     },
     {
       "orig": "iA",
       "expr": "__basaltOwn.ng01CommunityPluginStats",
-      "sha1": "869711740f0bcd67356d75a2c2eb304c67d63cc1",
-      "originalBytes": 44
+      "sha1": "56757f71d7d317cf60bd621c175eb76731b3a1b6",
+      "originalBytes": 35
     },
     {
       "orig": "DD",
