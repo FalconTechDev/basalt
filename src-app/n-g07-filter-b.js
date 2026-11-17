@@ -82,7 +82,7 @@ function ng07BuildGroup() {
     if (!this.listEl) return;
     this.listEl.empty ? this.listEl.empty() : (this.listEl.innerHTML = "");
     for (const child of this.children) {
-      child.render && child.render();
+      if (!child.containerEl && child.render) child.render();
       const row = document.createElement("div");
       row.className = "filter-row";
       row.appendChild(child.containerEl);

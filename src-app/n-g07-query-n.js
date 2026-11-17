@@ -19,7 +19,7 @@ function ng07AppFiles(app) {
 }
 function ng07Frontmatter(app, file) {
   try {
-    const cache = app && app.metadataCache ? app.metadataCache : env().SZ;
+    const cache = app && app.metadataCache ? app.metadataCache : (env().app && env().app.metadataCache);
     const fm = cache && typeof cache.getFileCache === "function" ? cache.getFileCache(file) : null;
     return (fm && fm.frontmatter) || {};
   } catch (e) { return {}; }
@@ -69,7 +69,7 @@ function ng07BuildThisFile() {
     this.app = app;
     this.file = file;
     this.entry = entry || null;
-    this._fileValue = new (env().HV)(app, file);
+    this._fileValue = new (env().NW)(app, file);
   }
   ThisFileValue.prototype.toString = function () { return this.file ? this.file.path : ""; };
   ThisFileValue.prototype.objectAccess = function (key) { return this._fileValue.objectAccess(key); };

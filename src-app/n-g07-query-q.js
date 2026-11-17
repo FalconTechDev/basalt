@@ -41,9 +41,9 @@ export function s09ValueToDisplay(app, value, fileCtx) {
   const e = env();
   if (value === null || value === undefined || value instanceof e.bW) return null;
   if (value instanceof e.EW || value instanceof e.NW || value instanceof e.MW) return value.data;
-  if (value instanceof e.LW || value instanceof e.IW) return value.printDate ? value.printDate() : String(value);
+  if (value instanceof e.LW || value instanceof s08RelativeDateValue(ng07Host)) return value.printDate ? value.printDate() : String(value);
   if (value instanceof e.OW) return value.getMilliseconds ? value.getMilliseconds() : String(value);
-  if (value instanceof e.FW) { // link
+  if (value instanceof e.BW) { // link
     const target = value.resolve ? value.resolve() : value.target || value.data;
     return value.display ? `[[${target}|${value.display}]]` : `[[${target}]]`;
   }
@@ -147,10 +147,10 @@ export function s09DefaultValueForWidget(widget) {
   const e = env();
   switch (widget) {
     case "number": return new e.EW(0);
-    case "text": case "multitext": case "url": return new e.jW("");
+    case "text": case "multitext": case "url": return new e.CW("");
     case "checkbox": case "boolean": return new e.MW(false);
     case "date": case "datetime": return new e.LW(0);
-    case "list": case "tags": return new e.PW([]);
+    case "list": case "tags": return new e.SW([]);
     case "file": return new e.NW(null);
     case "link": return new e.BW(null, null, "");
     default: return e.bW.value;
@@ -160,18 +160,94 @@ export function s09DefaultValueForWidget(widget) {
 // ------------------------------------------------------- PropertySuggest
 
 function ng07BuildPropSuggest() {
-  function PropertySuggest(controller, inputEl) {
+  function PropertySuggest(controller, containerEl) {
     this.controller = controller;
-    this.inputEl = inputEl;
     this.app = controller && controller.app;
-    this.items = [];
+    this.containerEl = containerEl;
+    this.value = "";
+    this.filter = null;
+    this.onSelectCb = null;
+    this.onOpenCb = null;
+    this.onCloseCb = null;
+    this.placeholder = "";
+    this.clearable = false;
+    this._open = false;
+    this._build();
   }
-  PropertySuggest.prototype.getSuggestions = function (query) {
-    const q = String(query || "").toLowerCase();
-    const props = (this.controller && this.controller.properties) || [];
-    return props.filter((p) => !q || String(p).toLowerCase().includes(q));
+  PropertySuggest.prototype._build = function () {
+    const wrap = document.createElement("div");
+    wrap.className = "bases-property-suggest";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "metadata-property-value";
+    wrap.appendChild(input);
+    const list = document.createElement("div");
+    list.className = "bases-property-suggest-list suggest-container";
+    list.style.display = "none";
+    wrap.appendChild(list);
+    if (this.containerEl) this.containerEl.appendChild(wrap);
+    this.inputEl = input;
+    this.listEl = list;
+    this.buttonEl = wrap;
+    this.iconEl = document.createElement("div");
+    this.iconEl.className = "bases-property-suggest-icon";
+    wrap.appendChild(this.iconEl);
+    input.addEventListener("input", () => { this.value = input.value; this._show(); });
+    input.addEventListener("focus", () => this._show());
+    input.addEventListener("blur", () => setTimeout(() => this._hide(), 150));
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { const first = list.querySelector(".suggest-item"); if (first) first.click(); e.preventDefault(); }
+      if (e.key === "Escape") this._hide();
+    });
   };
-  PropertySuggest.prototype.show = function () {};
+  PropertySuggest.prototype._items = function () {
+    let props = [];
+    try { props = this.controller && typeof this.controller.getProperties === "function" ? this.controller.getProperties() : []; } catch (e) { props = []; }
+    const q = String(this.value || "").toLowerCase();
+    return props.filter((id) => {
+      if (this.filter && !this.filter(id)) return false;
+      if (!q) return true;
+      return String(id).toLowerCase().includes(q) || s09PropertyToRef(id).toLowerCase().includes(q);
+    });
+  };
+  PropertySuggest.prototype._show = function () {
+    const items = this._items();
+    this.listEl.innerHTML = "";
+    for (const id of items.slice(0, 50)) {
+      const el = document.createElement("div");
+      el.className = "suggest-item";
+      el.textContent = s09PropertyToRef(id);
+      el.addEventListener("mousedown", (e) => { e.preventDefault(); this._pick(id); });
+      this.listEl.appendChild(el);
+    }
+    this.listEl.style.display = items.length ? "" : "none";
+    if (items.length && !this._open) { this._open = true; if (this.onOpenCb) this.onOpenCb(); }
+  };
+  PropertySuggest.prototype._hide = function () {
+    this.listEl.style.display = "none";
+    if (this._open) { this._open = false; if (this.onCloseCb) this.onCloseCb(); }
+  };
+  PropertySuggest.prototype._pick = function (id) {
+    this.value = id;
+    if (this.inputEl) this.inputEl.value = s09PropertyToRef(id);
+    this._hide();
+    if (this.onSelectCb) this.onSelectCb({ value: id });
+  };
+  PropertySuggest.prototype.setPlaceholder = function (p) { this.placeholder = p || ""; if (this.inputEl) this.inputEl.placeholder = this.placeholder; return this; };
+  PropertySuggest.prototype.filterProperties = function (fn) { this.filter = typeof fn === "function" ? fn : null; return this; };
+  PropertySuggest.prototype.setClearable = function (v) { this.clearable = !!v; return this; };
+  PropertySuggest.prototype.setValueById = function (id) {
+    this.value = String(id || "");
+    if (this.inputEl) this.inputEl.value = this.value ? s09PropertyToRef(this.value) : "";
+    return this;
+  };
+  PropertySuggest.prototype.setValue = function (v) { return this.setValueById(v); };
+  PropertySuggest.prototype.getValue = function () { return this.value; };
+  PropertySuggest.prototype.onSelect = function (cb) { this.onSelectCb = cb; return this; };
+  PropertySuggest.prototype.onOpen = function (cb) { this.onOpenCb = cb; return this; };
+  PropertySuggest.prototype.onClose = function (cb) { this.onCloseCb = cb; return this; };
+  PropertySuggest.prototype.hide = function () { this._hide(); };
+  PropertySuggest.prototype.focus = function () { if (this.inputEl) this.inputEl.focus(); return this; };
   return PropertySuggest;
 }
 export function s09PropertySuggest(host) { ng07H(host); return ng07QryOnceQ("PropertySuggest", ng07BuildPropSuggest); }

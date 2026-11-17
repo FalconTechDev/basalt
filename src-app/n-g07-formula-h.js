@@ -73,12 +73,12 @@ export function s09FormulaEditorExtensions() {
   } catch (err) { /* noop */ }
   try {
     if (e.s12reqAutocomplete && e.s12reqAutocomplete.autocompletion) {
-      const suggester = new (env().YG)(ng07MinimalCtx());
+      const suggester = new (s08FormulaSuggester(ng07Host))(ng07MinimalCtx());
       exts.push(e.s12reqAutocomplete.autocompletion({ override: [(ctx) => suggester.getCompletions(ctx)] }));
     }
   } catch (err) { /* noop */ }
   try {
-    const syntax = new (env().AK ? s09FormulaSyntaxClass() : Object)();
+    const syntax = new (s09FormulaSyntaxClass())();
     if (syntax && syntax.extensions) exts.push(...syntax.extensions);
   } catch (err) { /* noop */ }
   return exts;

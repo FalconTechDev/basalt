@@ -58,6 +58,12 @@ export function s08FuncRegistry(host) { ng07H(host); return ng07OnceJ("FuncRegis
 /** Shared registry instance used by the clean-room formula evaluator. */
 export const ng07FuncRegistry = new (ng07BuildFuncRegistry())();
 
+// Built-in zero-arg globals.
+ng07FuncRegistry.addGlobal("now", () => new Date());
+ng07FuncRegistry.addGlobal("today", () => {
+  const d = new Date(); d.setHours(0, 0, 0, 0); return d;
+});
+
 // ----------------------------------------------------------- FormulaFunc
 
 function ng07BuildFormulaFunc() {

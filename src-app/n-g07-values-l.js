@@ -12,46 +12,43 @@ function ng07BuildSearchBarBase() {
   function SearchBarBase(containerEl) {
     this.containerEl = containerEl;
     this.scope = null;
-    const doc = containerEl && containerEl.doc ? containerEl.doc : document;
-    const root = doc.createElement("div");
-    root.className = "document-search-container";
+    const ScopeCtor = env().Ng;
+    this.scope = ScopeCtor ? new ScopeCtor() : { register() {} };
+    const doc = (containerEl && containerEl.doc) || document;
+    this.searchContainerEl = doc.createElement("div");
+    this.searchContainerEl.className = "document-search";
     const inputWrap = doc.createElement("div");
     inputWrap.className = "search-input-container";
     this.searchInputEl = doc.createElement("input");
     this.searchInputEl.className = "document-search-input";
-    this.searchInputEl.placeholder = "Search";
-    this.replaceInputEl = doc.createElement("input");
-    this.replaceInputEl.className = "document-search-input";
+    this.searchInputEl.type = "text";
     inputWrap.appendChild(this.searchInputEl);
-    inputWrap.appendChild(this.replaceInputEl);
     this.countEl = doc.createElement("div");
     this.countEl.className = "document-search-count";
-    const buttons = doc.createElement("div");
-    buttons.className = "document-search-buttons";
-    const mk = (cls, title, fn) => {
+    this.searchButtonContainerEl = doc.createElement("div");
+    this.searchButtonContainerEl.className = "document-search-buttons";
+    const mk = (icon, title, fn) => {
       const b = doc.createElement("button");
-      b.className = cls + " text-icon-button";
+      b.className = "clickable-icon text-icon-button";
       b.title = title;
-      b.addEventListener("click", fn);
-      buttons.appendChild(b);
+      b.addEventListener("click", (e) => { e.preventDefault(); fn(); });
+      this.searchButtonContainerEl.appendChild(b);
       return b;
     };
-    mk("document-search-previous", "Previous", () => this.findPrevious());
-    mk("document-search-next", "Next", () => this.findNext());
-    mk("document-search-close", "Close", () => this.hide());
-    root.appendChild(inputWrap);
-    root.appendChild(this.countEl);
-    root.appendChild(buttons);
-    if (containerEl) containerEl.appendChild(root);
+    mk("chevron-up", "Previous", () => this.findPrevious());
+    mk("chevron-down", "Next", () => this.findNext());
+    mk("x", "Close", () => this.hide());
+    this.searchContainerEl.appendChild(inputWrap);
+    this.searchContainerEl.appendChild(this.countEl);
+    this.searchContainerEl.appendChild(this.searchButtonContainerEl);
     this.searchInputEl.addEventListener("input", () => this.onSearchInput());
     this.searchInputEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") { e.preventDefault(); e.shiftKey ? this.onShiftEnter() : this.onEnter(); }
+      if (e.key === "Enter") { e.preventDefault(); e.shiftKey ? this.findPrevious() : this.findNext(); }
       else if (e.key === "Escape") { e.preventDefault(); this.hide(); }
-      else if (e.key === "Tab") this.goToNextInput(e);
     });
   }
   SearchBarBase.prototype.getQuery = function () {
-    return { query: this.searchInputEl.value, replace: this.replaceInputEl ? this.replaceInputEl.value : "" };
+    return this.searchInputEl ? this.searchInputEl.value : "";
   };
   SearchBarBase.prototype.onSearchInput = function () { /* host hooks may override */ };
   SearchBarBase.prototype.findNext = function () { return this.findNextOrReplace(false); };
@@ -67,10 +64,8 @@ function ng07BuildSearchBarBase() {
     inputs[(i + 1) % inputs.length].focus();
   };
   SearchBarBase.prototype.hide = function () {
-    if (this.containerEl && this.containerEl.parentNode) {
-      const root = this.containerEl.querySelector(".document-search-container");
-      if (root) root.remove();
-    }
+    if (this.searchContainerEl && this.searchContainerEl.detach) this.searchContainerEl.detach();
+    else if (this.searchContainerEl && this.searchContainerEl.parentNode) this.searchContainerEl.parentNode.removeChild(this.searchContainerEl);
   };
   return SearchBarBase;
 }

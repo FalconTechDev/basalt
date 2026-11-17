@@ -8,11 +8,9 @@ function ng07FilOnceS(key, build) { return (ng07FilClsS[key] ??= build()); }
 
 function ng07CmpOps() { return ["==", "!=", "<", "<=", ">", ">="]; }
 function ng07FuncOps() {
-  const e = env();
-  const reg = e.YW && e.YW.instance ? e.YW.instance : null;
   const out = [];
-  if (reg && reg.getAllGlobal) {
-    try { for (const f of reg.getAllGlobal()) if (f && f.name) out.push(f.name); } catch (err) { /* noop */ }
+  if (ng07FuncRegistry && ng07FuncRegistry.getAllGlobal) {
+    try { for (const f of ng07FuncRegistry.getAllGlobal()) if (f && f.name) out.push(f.name); } catch (err) { /* noop */ }
   }
   return out;
 }

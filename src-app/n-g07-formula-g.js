@@ -25,8 +25,16 @@ export function s09TreeToParsed(node, text) {
 
 function ng07BuildFormulaText() {
   function FormulaText(text) {
-    this.text = text === undefined || text === null ? "" : String(text);
-    this.parsed = s09ParseFormula(this.text);
+    if (text && typeof text === "object" && text.parsed && typeof text.parsed === "object") {
+      this.parsed = text.parsed;
+      this.text = text.parsed.rawValue !== undefined ? String(text.parsed.rawValue) : "";
+    } else if (text && typeof text === "object" && typeof text.type === "string") {
+      this.parsed = text;
+      this.text = text.rawValue !== undefined ? String(text.rawValue) : "";
+    } else {
+      this.text = text === undefined || text === null ? "" : String(text);
+      this.parsed = s09ParseFormula(this.text);
+    }
     this.formula = s09FormulaNode(ng07Host).fromParsedResult(this.parsed);
   }
   FormulaText.prototype.toString = function () { return this.text; };

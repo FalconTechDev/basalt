@@ -87,6 +87,10 @@ export function s09DeserializeFilter(data) {
   if (data === null || data === undefined) return null;
   if (typeof data === "string") return new (s09RuleFilter(ng07Host))(data);
   if (typeof data === "object" && !Array.isArray(data)) {
+    // parsed formula JSON -> rule filter
+    if (typeof data.type === "string" && !("and" in data) && !("or" in data) && !("not" in data)) {
+      return new (s09RuleFilter(ng07Host))(data);
+    }
     const keys = Object.keys(data);
     if (keys.length === 1) {
       const k = keys[0];

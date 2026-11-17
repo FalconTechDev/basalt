@@ -46,11 +46,19 @@ export function s09FilterBase(host) { ng07H(host); return ng07QryOnceI("FilterBa
 function ng07BuildRuleFilter() {
   function RuleFilter(formulaText) {
     s09FilterBase(ng07Host).call(this);
-    this.rule = formulaText instanceof env().DK ? formulaText : new (env().DK)(formulaText === undefined ? "" : String(formulaText));
+    if (formulaText instanceof env().DK) this.rule = formulaText;
+    else if (formulaText && typeof formulaText === "object" && typeof formulaText.type === "string") {
+      this.rule = new (env().DK)({ parsed: formulaText });
+    } else {
+      this.rule = new (env().DK)(formulaText === undefined ? "" : String(formulaText));
+    }
   }
   inherit(RuleFilter, s09FilterBase(ng07Host));
   RuleFilter.prototype.type = "rule";
-  RuleFilter.prototype.serialize = function () { return this.rule.toString(); };
+  RuleFilter.prototype.serialize = function () {
+    const p = this.rule && this.rule.parsed;
+    return p && typeof p === "object" ? p : { type: "empty" };
+  };
   RuleFilter.prototype.test = function (ctx) { return this.rule.test(ctx); };
   RuleFilter.prototype.hasError = function () { return this.rule.formula instanceof env().RK; };
   RuleFilter.prototype.optimize = function () { return this; };

@@ -12,10 +12,17 @@ function ng07RegisterWidgets() {
   if (ng07WidgetByClass.size) return;
   const e = env();
   const pairs = [
-    [e.EW, "number"], [e.jW, "text"], [e.NW, "boolean"], [e.LW, "date"],
-    [e.MW, "checkbox"], [e.gW, "multitext"], [e.AW, "tags"], [e.PW, "list"],
-    [e.xW, "file"], [e.OW, "object"], [e.DW, "url"], [e.VW, "duration"],
-    [e.FW, "link"], [e.yW, "error"], [e.bW, "null"], [e.SW, "list"],
+    [e.EW, "number"], [e.CW, "text"], [e.MW, "boolean"], [e.LW, "date"],
+    [e.SW, "list"], [e.AW, "tags"], [e.DW, "tags"], [e.OW, "object"],
+    [e.BW, "link"], [e.yW, "error"], [e.bW, "null"], [e.NW, "file"],
+    [e.PW, "regexp"], [s08TagValue(ng07Host), "tag"],
+    [s08RelativeDateValue(ng07Host), "date"], [s08IconValue(ng07Host), "icon"],
+    [s08UrlValue(ng07Host), "url"], [s08ImageValue(ng07Host), "image"],
+    [s08DurationValue(ng07Host), "duration"], [s08LinkValue(ng07Host), "link"],
+    [s08FileValue(ng07Host), "file"], [s08ObjectValue(ng07Host), "object"],
+    [s08ListValue(ng07Host), "list"], [s08StringValue(ng07Host), "text"],
+    [s08NumberValue(ng07Host), "number"], [s08BooleanValue(ng07Host), "checkbox"],
+    [s08NullValue(ng07Host), "null"], [s08DateValue(ng07Host), "date"],
   ];
   for (const [cls, name] of pairs) if (cls) ng07WidgetByClass.set(cls, name);
 }
@@ -56,8 +63,7 @@ export function s09PropertyToRef(id) {
 export function s09IsCustomProperty(property, query) {
   const pid = typeof property === "string" ? property : property && property.propertyId;
   if (!pid || !String(pid).startsWith("note.")) return false;
-  const fileProps = s09FileProperties();
-  if (fileProps.includes(pid)) return false;
+  if (s09FileProperties.includes(pid)) return false;
   if (query) {
     const cfg = query.properties && query.properties[pid];
     if (cfg && cfg.type === "aliases") return false;

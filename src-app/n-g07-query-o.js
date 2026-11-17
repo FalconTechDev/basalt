@@ -2,6 +2,9 @@
 import { env } from "./env.js";
 import { inherit } from "./inherit.js";
 
+const ng07ClsO = {};
+function ng07OnceO(key, build) { return (ng07ClsO[key] ??= build()); }
+
 // ------------------------------------------------------------- FileContext
 
 function ng07BuildFileCtx() {
@@ -11,8 +14,8 @@ function ng07BuildFileCtx() {
     this.file = file;
     this.formulas = (ctx && ctx.formulas) || {};
     this.frontmatter = ng07Frontmatter(this.app, file);
-    this.note = new (env().OW)(this.frontmatter);
-    this.implicit = new (env().HV)(this.app, file);
+    this.note = new (env().AW)(this.frontmatter);
+    this.implicit = new (env().NW)(this.app, file);
     this.fileValue = this.implicit;
     this.formulaResults = new (s09FormulaResults(ng07Host))(this, this.formulas);
     this._formulaValue = new (s09FormulasValue(ng07Host))(this.formulaResults);
@@ -41,7 +44,7 @@ function ng07BuildFileCtx() {
     // frontmatter property, case-insensitive
     for (const k of Object.keys(this.frontmatter || {})) {
       if (k.toLowerCase() === lower) {
-        return env().OW.getInsensitive ? env().OW.getInsensitive(this.frontmatter, k) : env().bW.value;
+        try { return this.note.objectAccess(k); } catch (e) { return env().bW.value; }
       }
     }
     return env().bW.value;
@@ -67,7 +70,7 @@ function ng07BuildFileCtx() {
   FileContext.prototype.getFile = function () { return this.file; };
   return FileContext;
 }
-export function s09FileContext(host) { ng07H(host); return ng07OnceN("FileContext", ng07BuildFileCtx); }
+export function s09FileContext(host) { ng07H(host); return ng07OnceO("FileContext", ng07BuildFileCtx); }
 
 // --------------------------------------------------------------- EvalContext
 
@@ -88,9 +91,9 @@ function ng07BuildEvalCtx() {
     if (lower === "formula") value = this._formulaValue;
     else if (lower === "file" || lower === "this") {
       const file = this.app && this.app.workspace ? this.app.workspace.getActiveFile() : null;
-      value = file ? new (env().HV)(this.app, file) : env().bW.value;
+      value = file ? new (env().NW)(this.app, file) : env().bW.value;
     } else if (lower === "note") {
-      value = new (env().OW)({});
+      value = new (env().AW)({});
     } else {
       // custom property default — Null unless declared
       value = env().bW.value;
@@ -112,4 +115,4 @@ function ng07BuildEvalCtx() {
   };
   return EvalContext;
 }
-export function s09EvalContext(host) { ng07H(host); return ng07OnceN("EvalContext", ng07BuildEvalCtx); }
+export function s09EvalContext(host) { ng07H(host); return ng07OnceO("EvalContext", ng07BuildEvalCtx); }

@@ -23,7 +23,7 @@ function ng07DefaultViewName() {
 
 function ng07BuildQuery() {
   function Query() {
-    this.views = [];
+    this.views = new Ng07IdList();
     this.filters = null;
     this.formulas = {};
     this.summaryFormulas = {};
@@ -122,7 +122,10 @@ function ng07BuildQuery() {
   Query.prototype.clone = function () {
     return Query.parse(this.getSerializable());
   };
-  Query.prototype.getViewConfig = function (name) { return this.views.find((v) => v.name === name) || null; };
+  Query.prototype.getViewConfig = function (name) {
+    if (!name) return this.views[0] || null;
+    return this.views.find((v) => v.name === name) || null;
+  };
 
   Query.prototype.getPropertyConfig = function (id) {
     if (!this.properties[id]) this.properties[id] = new (s09PropertyConfig(ng07Host))(this, id);
