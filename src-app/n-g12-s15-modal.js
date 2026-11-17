@@ -467,7 +467,7 @@ export function ng12mPublishSiteFiltersSection(host) {
 
 // ------------------------------------------------------------------ change trees
 let ng12mTreeItemBaseCache = null;
-function ng12mTreeItemBaseClass(host) {
+function ng12mPublishTreeItemBaseClass(host) {
   if (!ng12mTreeItemBaseCache) {
     const Base = ng12mPublishSection(host);
     class Ng12TreeItemBase {
@@ -494,7 +494,7 @@ function ng12mTreeItemBaseClass(host) {
   return ng12mTreeItemBaseCache;
 }
 export function ng12mPublishTreeItemBase(host) {
-  return ng12mTreeItemBaseClass(host);
+  return ng12mPublishTreeItemBaseClass(host);
 }
 
 let ng12mFileItemClass = null;

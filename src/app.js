@@ -24987,12 +24987,61 @@ function ng12PublishPlugin(host) {
           return ok;
         },
       });
+      this.commandSpecs = [
+        {
+          id: "publish:view-changes",
+          name: this.name + ": " + ng12T("actionPublishChanges", "Publish changes"),
+          icon: "lucide-send",
+          callback: () => self.openPublishChanges(),
+        },
+        {
+          id: "publish:publish-file",
+          name: this.name + ": " + ng12T("actionPublishFile", "Publish file"),
+          icon: "lucide-send",
+          checkCallback: (checking) => {
+            const file = self.app.workspace.getActiveFile();
+            const ok = !!self.siteId && !!file && self.isFileSupported(file) && self.getPublishFlag(file) !== false;
+            if (!checking && ok) self.uploadFile(file);
+            return ok;
+          },
+        },
+        {
+          id: "publish:open-in-live-site",
+          name: this.name + ": " + ng12T("labelOpenInLiveSite", "Open in live site"),
+          icon: "lucide-globe",
+          checkCallback: (checking) => {
+            const file = self.app.workspace.getActiveFile();
+            const ok = !!self.siteId && !!file && self.isFileSupported(file) && self.getPublishFlag(file) !== false;
+            if (!checking && ok) {
+              self.getCurrentSlug().then((slug) => {
+                window.open(ng12PublishUrl + "/" + slug + "/" + formEncodePath(withoutMd(file.path)));
+              });
+            }
+            return ok;
+          },
+        },
+      ];
+    }
+
+    ensureCommands() {
+      try {
+        const commands = this.app && this.app.commands && this.app.commands.commands;
+        if (!commands || !this.commandSpecs) return;
+        for (const spec of this.commandSpecs) {
+          if (!commands[spec.id]) this.app.commands.addCommand(spec);
+        }
+      } catch (e) {}
     }
 
     async onEnable(app, plugin) {
       await this.loadData();
       this.registerCli(app, plugin);
       this.registerFileMenu(plugin);
+      this.ensureCommands();
+      const self = this;
+      setTimeout(() => self.ensureCommands(), 0);
+      setTimeout(() => self.ensureCommands(), 1500);
+      setTimeout(() => self.ensureCommands(), 5000);
     }
 
     onDisable() {
@@ -25905,7 +25954,7 @@ function ng12mPublishSiteFiltersSection(host) {
 
 // ------------------------------------------------------------------ change trees
 let ng12mTreeItemBaseCache = null;
-function ng12mTreeItemBaseClass(host) {
+function ng12mPublishTreeItemBaseClass(host) {
   if (!ng12mTreeItemBaseCache) {
     const Base = ng12mPublishSection(host);
     class Ng12TreeItemBase {
@@ -25932,7 +25981,7 @@ function ng12mTreeItemBaseClass(host) {
   return ng12mTreeItemBaseCache;
 }
 function ng12mPublishTreeItemBase(host) {
-  return ng12mTreeItemBaseClass(host);
+  return ng12mPublishTreeItemBaseClass(host);
 }
 
 let ng12mFileItemClass = null;
@@ -71893,7 +71942,7 @@ function defineS25ToolbarPage(host) {
  * with its own filter builder and a badge counting active filters.
  */
 function defineS25FilterMenu(host) {
-  const Dropdown = s09BasesDropdown();
+  const Dropdown = ng12BasesDropdown();
   const Conjunction = s09ConjunctionFilter();
   const FilterBuilder = () => host.s25FilterBuilder;
   function FilterMenu(view, plugin) {
@@ -71980,7 +72029,7 @@ function defineS25PropertiesMenu(host) {
     self.app = app;
     self.queryController = controller;
     self.query = controller.query;
-    self.toolbarItem = new (s09BasesDropdown())(app, parentEl, s25BasesStrings().labelProperties(), "list")
+    self.toolbarItem = new (ng12BasesDropdown())(app, parentEl, s25BasesStrings().labelProperties(), "list")
       .onOpen(() => self.onOpen())
       .onClose(() => self.onClose());
     self.toolbarItem.addClass("bases-toolbar-properties-menu");
@@ -72410,7 +72459,7 @@ function defineS25PropertyForm(host) {
  * "show all" reset row and the view's extra actions plus copy/export CSV.
  */
 function defineS25ResultsMenu(host) {
-  const Dropdown = s09BasesDropdown();
+  const Dropdown = ng12BasesDropdown();
   const NumberField = s04NumberComponent(host);
   function ResultsMenu(app, parentEl) {
     const self = this;
@@ -72535,7 +72584,7 @@ function defineS25SortMenu(host) {
     this.query = null;
     this.viewConfig = null;
     this.currentSort = [];
-    this.toolbarItem = new (s09BasesDropdown())(app, parentEl, s25BasesStrings().labelSort(), "lucide-arrow-up-down");
+    this.toolbarItem = new (ng12BasesDropdown())(app, parentEl, s25BasesStrings().labelSort(), "lucide-arrow-up-down");
     this.toolbarItem.addClass("bases-toolbar-sort-menu");
     this.toolbarItem.onOpen(() => self.onOpen());
     this.flairEl = this.toolbarItem.button.buttonEl.createSpan({ cls: "flair toolbar-badge" });
@@ -73337,7 +73386,7 @@ function defineS25NewItemButton(host) {
 function defineS25SearchMenu(host) {
   const Component = env().jm;
   const Scope = env().Ng;
-  const ToolbarButton = s09BasesToolbarButton();
+  const ToolbarButton = ng12BasesToolbarButton();
   const SearchComponent = host.SearchComponent;
   function SearchMenu(app, queryController, buttonParent, searchBarEl) {
     const self = Component.call(this) || this;
@@ -73494,7 +73543,7 @@ function defineS25ViewChooser(host) {
  */
 function defineS25ViewsMenu(host) {
   const Component = env().jm;
-  const Dropdown = s09BasesDropdown();
+  const Dropdown = ng12BasesDropdown();
   function ViewsMenu(app, queryController, parentEl) {
     const self = Component.call(this) || this;
     self.query = null;
@@ -89919,6 +89968,7 @@ function defineOutlinePlugin(host) {
 //   f7  PagePreviewPlugin      -> definePagePreviewPlugin
 //   m7  PagePreviewSettingTab  -> definePagePreviewSettingTab (base: instance setting tab)
 
+
 const PLUGIN_ID = "page-preview";
 const pagePreviewT = (host) => host.t.plugins.pagePreview;
 
@@ -90009,7 +90059,7 @@ function definePagePreviewPlugin(host) {
       else if (this.app.workspace.hoverLinkSources.hasOwnProperty(source)) {
         requireMod = this.app.workspace.hoverLinkSources[source].defaultMod;
       }
-      s09PublishHoverMove(event);
+      ng12PublishHoverMove(event);
       if (requireMod && !host.Keymap.isModifier(event, "Mod")) {
         if (!targetEl) return;
         const doc = event.doc;

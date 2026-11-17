@@ -8,7 +8,7 @@
 
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
-import { ng12PublishHoverMove as s09PublishHoverMove } from "./n-g12-s09-core.js";
+import { ng12PublishHoverMove } from "./n-g12-s09-core.js";
 import { s04ModifierDisplayNames } from "./s04-menu.js";
 
 const PLUGIN_ID = "page-preview";
@@ -101,7 +101,7 @@ export function definePagePreviewPlugin(host) {
       else if (this.app.workspace.hoverLinkSources.hasOwnProperty(source)) {
         requireMod = this.app.workspace.hoverLinkSources[source].defaultMod;
       }
-      s09PublishHoverMove(event);
+      ng12PublishHoverMove(event);
       if (requireMod && !host.Keymap.isModifier(event, "Mod")) {
         if (!targetEl) return;
         const doc = event.doc;

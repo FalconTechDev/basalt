@@ -119,12 +119,61 @@ export function ng12PublishPlugin(host) {
           return ok;
         },
       });
+      this.commandSpecs = [
+        {
+          id: "publish:view-changes",
+          name: this.name + ": " + ng12T("actionPublishChanges", "Publish changes"),
+          icon: "lucide-send",
+          callback: () => self.openPublishChanges(),
+        },
+        {
+          id: "publish:publish-file",
+          name: this.name + ": " + ng12T("actionPublishFile", "Publish file"),
+          icon: "lucide-send",
+          checkCallback: (checking) => {
+            const file = self.app.workspace.getActiveFile();
+            const ok = !!self.siteId && !!file && self.isFileSupported(file) && self.getPublishFlag(file) !== false;
+            if (!checking && ok) self.uploadFile(file);
+            return ok;
+          },
+        },
+        {
+          id: "publish:open-in-live-site",
+          name: this.name + ": " + ng12T("labelOpenInLiveSite", "Open in live site"),
+          icon: "lucide-globe",
+          checkCallback: (checking) => {
+            const file = self.app.workspace.getActiveFile();
+            const ok = !!self.siteId && !!file && self.isFileSupported(file) && self.getPublishFlag(file) !== false;
+            if (!checking && ok) {
+              self.getCurrentSlug().then((slug) => {
+                window.open(ng12PublishUrl + "/" + slug + "/" + formEncodePath(withoutMd(file.path)));
+              });
+            }
+            return ok;
+          },
+        },
+      ];
+    }
+
+    ensureCommands() {
+      try {
+        const commands = this.app && this.app.commands && this.app.commands.commands;
+        if (!commands || !this.commandSpecs) return;
+        for (const spec of this.commandSpecs) {
+          if (!commands[spec.id]) this.app.commands.addCommand(spec);
+        }
+      } catch (e) {}
     }
 
     async onEnable(app, plugin) {
       await this.loadData();
       this.registerCli(app, plugin);
       this.registerFileMenu(plugin);
+      this.ensureCommands();
+      const self = this;
+      setTimeout(() => self.ensureCommands(), 0);
+      setTimeout(() => self.ensureCommands(), 1500);
+      setTimeout(() => self.ensureCommands(), 5000);
     }
 
     onDisable() {

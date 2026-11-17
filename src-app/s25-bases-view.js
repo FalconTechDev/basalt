@@ -12,7 +12,7 @@ import { parseLinktext, plainHeading, linkSafeHeading, uniqueName } from "./text
 import { prepareQuery, fuzzyMatchJs } from "./search.js";
 import { debounceCall } from "./timing.js";
 import { s09FiltersToFrontmatter, s09Query, s09View, s09FileContext } from "./s09-query.js";
-import { ng12BasesToolbarButton as s09BasesToolbarButton, ng12BasesDropdown as s09BasesDropdown } from "./n-g12-s09-widgets.js";
+import { ng12BasesToolbarButton, ng12BasesDropdown } from "./n-g12-s09-widgets.js";
 import { s25ViewNameChars, s25ViewNamePattern, s25BasesViewType, s25Div, s25Icon } from "./s25-bases-toolbar.js";
 
 const s25Strings = () => env().gm.plugins.bases;
@@ -284,7 +284,7 @@ export function defineS25NewItemButton(host) {
 export function defineS25SearchMenu(host) {
   const Component = env().jm;
   const Scope = env().Ng;
-  const ToolbarButton = s09BasesToolbarButton();
+  const ToolbarButton = ng12BasesToolbarButton();
   const SearchComponent = host.SearchComponent;
   function SearchMenu(app, queryController, buttonParent, searchBarEl) {
     const self = Component.call(this) || this;
@@ -441,7 +441,7 @@ export function defineS25ViewChooser(host) {
  */
 export function defineS25ViewsMenu(host) {
   const Component = env().jm;
-  const Dropdown = s09BasesDropdown();
+  const Dropdown = ng12BasesDropdown();
   function ViewsMenu(app, queryController, parentEl) {
     const self = Component.call(this) || this;
     self.query = null;
