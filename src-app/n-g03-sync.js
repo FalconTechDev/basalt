@@ -1496,8 +1496,8 @@ export function ng03SyncPlugin(host) {
     new FileHistoryView(this.app, this, path).open();
   };
 
-  proto.showDeletedFiles = function (useHistoryView) {
-    const server = this.server;
+  proto.showDeletedFiles = async function (useHistoryView) {
+    const server = await this.getServer();
     if (!server) { this.openSettings(); return; }
     const self = this;
     server.listDeleted().then((items) => {
@@ -1534,8 +1534,9 @@ export function ng03SyncPlugin(host) {
     new FileHistoryModal(this.app, this, items, ti.labelSettingFiles ? ti.labelSettingFiles() : "Setting files").open();
   };
 
-  proto.showSyncLog = function () {
-    if (!this.vaultId || !this.server) { this.openSettings(); return; }
+  proto.showSyncLog = async function () {
+    const server = await this.getServer();
+    if (!this.vaultId || !server) { this.openSettings(); return; }
     const SyncLogModal = ng03DefineSyncLogModal(host);
     new SyncLogModal(this.app, this).open();
   };

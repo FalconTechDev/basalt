@@ -27128,7 +27128,7 @@ function ng03DefineSyncFileHistoryModal(host) {
       const row = this.listEl.createDiv("list-item mod-selectable tappable");
       const part = row.createDiv("list-item-part mod-extended");
       const title = part.createDiv("list-item-part title");
-      title.setText(baseName(item.path));
+      title.setText(withoutMd(item.path));
       const meta = part.createDiv("list-item-part multiline");
       let text = "";
       if (item.device) text += "[" + item.device + "] ";
@@ -27209,7 +27209,7 @@ function ng03DefineSyncDeletedFilesModal(host) {
       const checkbox = row.createEl("input", { type: "checkbox" });
       checkbox.checked = this.selected.has(item.path);
       const part = row.createDiv("list-item-part mod-extended");
-      part.createDiv("list-item-part title").setText(baseName(item.path));
+      part.createDiv("list-item-part title").setText(withoutMd(item.path));
       const meta = part.createDiv("list-item-part multiline");
       let text = "";
       if (item.device) text += "[" + item.device + "] ";
@@ -28348,7 +28348,7 @@ function ng03DefineSyncFileHistoryView(host) {
       const when = first.ts < Date.now() - 86400000 ? ng03Llll(first.ts) : ng03FromNow(first.ts);
       info.createDiv("sync-history-list-item-title").setText(when);
       const sub = [];
-      if (first.relatedpath) sub.push(ng03Ti().labelFileRenamedFromTo ? ng03Ti().labelFileRenamedFromTo({ from: baseName(first.relatedpath), to: baseName(first.path) }) : "renamed");
+      if (first.relatedpath) sub.push(ng03Ti().labelFileRenamedFromTo ? ng03Ti().labelFileRenamedFromTo({ from: withoutMd(first.relatedpath), to: withoutMd(first.path) }) : "renamed");
       else if (first.deleted) sub.push(ng03Ti().labelFileDeleted ? ng03Ti().labelFileDeleted() : "deleted");
       else if ((first.size || 0) === 0) sub.push(ng03Ti().labelEmptyFile ? ng03Ti().labelEmptyFile() : "empty");
       else sub.push((ng03Ti().labelRevision ? ng03Ti().labelRevision({ count: group.items.length }) : group.items.length + " revisions") + (first.device ? " " + (ng03Ti().labelViaDevice ? ng03Ti().labelViaDevice({ device: first.device }) : "via " + first.device) : ""));
@@ -28379,7 +28379,7 @@ function ng03DefineSyncFileHistoryView(host) {
     const titlebar = pane.createDiv("modal-setting-titlebar");
     const ext = extensionOf(this.filepath);
     const isMd = ng03ExtHas(host0Markdown(), ext) || ext === "md";
-    titlebar.createDiv("modal-setting-title").setText(isMd ? baseName(this.filepath) : this.filepath);
+    titlebar.createDiv("modal-setting-title").setText(isMd ? withoutMd(this.filepath) : this.filepath);
     const actions = titlebar.createDiv("modal-setting-action-buttons");
 
     if (item.relatedpath) {
@@ -30197,8 +30197,8 @@ function ng03SyncPlugin(host) {
     new FileHistoryView(this.app, this, path).open();
   };
 
-  proto.showDeletedFiles = function (useHistoryView) {
-    const server = this.server;
+  proto.showDeletedFiles = async function (useHistoryView) {
+    const server = await this.getServer();
     if (!server) { this.openSettings(); return; }
     const self = this;
     server.listDeleted().then((items) => {
@@ -30235,8 +30235,9 @@ function ng03SyncPlugin(host) {
     new FileHistoryModal(this.app, this, items, ti.labelSettingFiles ? ti.labelSettingFiles() : "Setting files").open();
   };
 
-  proto.showSyncLog = function () {
-    if (!this.vaultId || !this.server) { this.openSettings(); return; }
+  proto.showSyncLog = async function () {
+    const server = await this.getServer();
+    if (!this.vaultId || !server) { this.openSettings(); return; }
     const SyncLogModal = ng03DefineSyncLogModal(host);
     new SyncLogModal(this.app, this).open();
   };
