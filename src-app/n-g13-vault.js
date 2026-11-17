@@ -213,6 +213,7 @@ export function createVault(EventsClass) {
     this.requestSaveConfig = debounceCall(() => this.saveConfig(), 1000);
     this.reloadConfig = debounceCall(() => this.reloadConfigNow(), 500);
     if (adapter && typeof adapter.watch === "function") {
+      adapter._hiddenAllow = (rel) => rel.indexOf(this.configDir + "/") === 0;
       adapter.watch((event, ...args) => this.onChange(event, ...args));
     }
     this.setupConfig();
@@ -976,6 +977,9 @@ export function createFileSystemAdapter() {
     this.files = {};
     this.handlers = [];
     this.watchers = new Map();
+    this._pendingRel = new Set();
+    this._flushScheduled = false;
+    this._hiddenAllow = null;
     this.promise = Promise.resolve();
     this.fs = ng13NodeRequire("fs");
     this.path = ng13NodeRequire("path");
@@ -1465,9 +1469,23 @@ export function createFileSystemAdapter() {
     let rel = String(filename).replace(/\\/g, "/");
     if (watchedDir) rel = watchedDir === "" ? rel : watchedDir + "/" + rel;
     rel = rel.replace(/\/+/g, "/");
+    // Dot-directories (.basalt cache, .trash) are never modelled; their
+    // constant writes are what flooded the reconcile queue. Config files
+    // inside the config dir stay allowed so external edits still reload.
+    if (isHiddenPath(rel) && !(this._hiddenAllow && this._hiddenAllow(rel))) return;
+    // Coalesce bursts: cache writes under hidden dirs fire dozens of events per
+    // save; queueing one reconcile per event starves real reads behind the flood.
+    this._pendingRel.add(rel);
+    if (this._flushScheduled) return;
+    this._flushScheduled = true;
     setTimeout(() => {
-      this.queue(() => this._reconcile(this._normalize(rel))).catch(() => {});
-    }, 0);
+      this._flushScheduled = false;
+      const pending = Array.from(this._pendingRel);
+      this._pendingRel.clear();
+      for (const p of pending) {
+        this.queue(() => this._reconcile(this._normalize(p))).catch(() => {});
+      }
+    }, 50);
   };
 
   proto.listAll = async function () {
