@@ -14,7 +14,7 @@ import { uniqueName, parsePropertyId, propertyId } from "./text.js";
 import { prepareQuery, fuzzyMatchJs } from "./search.js";
 import { debounceCall } from "./timing.js";
 import { s09IsCustomProperty, s09PropertyToRef, s09FormulaEditorExtensions, s09PropertySuggest, s09ConjunctionFilter } from "./s09-query.js";
-import { s09BasesDropdown } from "./s09-publish.js";
+import { ng12BasesDropdown } from "./n-g12-s09-widgets.js";
 import { s09IsIdentifierName } from "./s09-formula.js";
 import { s08FormulaValue, s08FormulaSuggester } from "./s08-values.js";
 import { s04NumberComponent } from "./s04-modals.js";
@@ -73,7 +73,7 @@ export function defineS25ToolbarPage(host) {
  * with its own filter builder and a badge counting active filters.
  */
 export function defineS25FilterMenu(host) {
-  const Dropdown = s09BasesDropdown();
+  const Dropdown = ng12BasesDropdown();
   const Conjunction = s09ConjunctionFilter();
   const FilterBuilder = () => host.s25FilterBuilder;
   function FilterMenu(view, plugin) {
@@ -160,7 +160,7 @@ export function defineS25PropertiesMenu(host) {
     self.app = app;
     self.queryController = controller;
     self.query = controller.query;
-    self.toolbarItem = new (s09BasesDropdown())(app, parentEl, s25BasesStrings().labelProperties(), "list")
+    self.toolbarItem = new (ng12BasesDropdown())(app, parentEl, s25BasesStrings().labelProperties(), "list")
       .onOpen(() => self.onOpen())
       .onClose(() => self.onClose());
     self.toolbarItem.addClass("bases-toolbar-properties-menu");
@@ -590,7 +590,7 @@ export function defineS25PropertyForm(host) {
  * "show all" reset row and the view's extra actions plus copy/export CSV.
  */
 export function defineS25ResultsMenu(host) {
-  const Dropdown = s09BasesDropdown();
+  const Dropdown = ng12BasesDropdown();
   const NumberField = s04NumberComponent(host);
   function ResultsMenu(app, parentEl) {
     const self = this;
@@ -715,7 +715,7 @@ export function defineS25SortMenu(host) {
     this.query = null;
     this.viewConfig = null;
     this.currentSort = [];
-    this.toolbarItem = new (s09BasesDropdown())(app, parentEl, s25BasesStrings().labelSort(), "lucide-arrow-up-down");
+    this.toolbarItem = new (ng12BasesDropdown())(app, parentEl, s25BasesStrings().labelSort(), "lucide-arrow-up-down");
     this.toolbarItem.addClass("bases-toolbar-sort-menu");
     this.toolbarItem.onOpen(() => self.onOpen());
     this.flairEl = this.toolbarItem.button.buttonEl.createSpan({ cls: "flair toolbar-badge" });
