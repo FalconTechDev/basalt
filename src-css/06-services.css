@@ -116,7 +116,7 @@
 /* dismiss button straddles the card's top-inline-end corner */
 .feedback-banner-dismiss-button {
   position: absolute;
-  top: -8px;
+  top: calc(var(--size-4-2) * -1);
   inset-inline-end: var(--size-4-2);
   padding: var(--size-4-2) var(--size-4-1);
   font-weight: var(--font-semibold);
@@ -446,7 +446,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
 
 .sync-exclude-folder-remove {
   visibility: hidden;
-  margin-inline-end: 6px;
+  margin-inline-end: var(--size-2-3);
 }
 
 .sync-exclude-folder:hover .sync-exclude-folder-remove {

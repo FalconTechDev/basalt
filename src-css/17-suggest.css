@@ -84,11 +84,11 @@
 
 /* spacing between trailing hotkey/flair badges */
 .suggestion-item.mod-complex .suggestion-hotkey:not(:last-child) {
-  margin-inline-start: 10px;
+  margin-inline-start: var(--size-4-2);
 }
 
 .suggestion-item.mod-complex .suggestion-flair:not(:last-child) {
-  margin-inline-start: 6px;
+  margin-inline-start: var(--size-2-3);
 }
 
 .suggestion-item.mod-complex .suggestion-icon .suggestion-flair {

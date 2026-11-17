@@ -711,7 +711,7 @@ body.is-frameless .modal {
 
 /* styled scrollbars inset the close button */
 body.styled-scrollbars .modal-close-button {
-  inset-inline-end: 12px;
+  inset-inline-end: var(--size-4-3);
 }
 
 .modal-title {
@@ -830,7 +830,7 @@ body.styled-scrollbars .modal-close-button {
 }
 
 .modal .checkbox-container.is-enabled:active:after {
-  left: -4px;
+  left: calc(var(--size-4-1) * -1);
 }
 
 .modal .checkbox-container:active:after {
