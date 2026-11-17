@@ -8290,18 +8290,6 @@
       "originalBytes": 11
     },
     {
-      "orig": "Oz",
-      "expr": "__basaltOwn.s07weakMapBox",
-      "sha1": "b3c421267771a18ec44cdcb7cc3cd895fef4fbb9",
-      "originalBytes": 279
-    },
-    {
-      "orig": "Nz",
-      "expr": "__basaltOwn.s07weakMapPolyfill",
-      "sha1": "0b90710b3296e78bfc13ae894c0300b291ab2d99",
-      "originalBytes": 367
-    },
-    {
       "orig": "HH",
       "expr": "__basaltOwn.s07sortOrderPairs",
       "sha1": "cab87a897afe613c7a20f831b555247d74a92979",
@@ -8372,12 +8360,6 @@
       "expr": "__basaltOwn.s07cmModesLoader()",
       "sha1": "e46be404345bc67db4d7b9ab18e4387fb6e23246",
       "originalBytes": 34
-    },
-    {
-      "orig": "Bz",
-      "expr": "__basaltOwn.s07workerBridge()",
-      "sha1": "55b535ad283f6263f1436d90e1ee407fc775dd6a",
-      "originalBytes": 387
     },
     {
       "orig": "Sz",
