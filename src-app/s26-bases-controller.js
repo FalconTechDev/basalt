@@ -367,10 +367,11 @@ export function s26BasesController(host) {
           if (runnable.runnable.isCancelled()) return;
           if (!container.isShown()) await new Promise((resolve) => container.onNodeInserted(resolve, true));
           if (ctx.local && ctx.local.file === file) {
-            if (!done) {
-              done = true;
+            if (done) {
               if (ctx.localUsed) { this.runQuery(ctx.regenerateLocal()); return; }
-            } else if (ctx.localUsed) { this.runQuery(ctx.regenerateLocal()); return; }
+            } else {
+              done = true;
+            }
           }
           this.removeResult(file);
           if (this.app.metadataCache.isUserIgnored(file.path)) continue;

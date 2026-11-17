@@ -5318,6 +5318,11 @@
       "originalBytes": 0
     },
     {
+      "orig": "H4",
+      "use": "defineS50BasesTableView",
+      "originalBytes": 26360
+    },
+    {
       "orig": "H8",
       "use": "defineFootnoteItem",
       "originalBytes": 1577
@@ -6282,6 +6287,14 @@
     "subpathContent": "NT",
     "EmbedCursorBase": "FV",
     "EmbedWidgetBase": "Rn",
+    "s13TableGroup": "U4",
+    "s13EntryRow": "G4",
+    "s13HeaderRow": "W4",
+    "s13SummaryRow": "Y4",
+    "s13HeaderCell": "_4",
+    "s13BodyCell": "K4",
+    "s13ColumnWidth": "z4",
+    "s13PasteData": "R4",
     "s14ParseColor": "Vk",
     "s14ImageSize": "Tc",
     "s14MediaEmbedBase": "eJ",
