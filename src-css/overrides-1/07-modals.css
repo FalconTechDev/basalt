@@ -1,12 +1,12 @@
 /* modals (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* is-frameless */
+/* frameless windows: modals must not become drag regions */
 body.is-frameless .modal-container,
 body.is-frameless .suggestion-bg {
   -webkit-app-region: initial;
 }
 
-/* modal */
+/* plugin debug modal lists startup timings as label/value rows */
 .modal.mod-plugin-debug .startup-stat-list,
 .modal.mod-plugin-debug .startup-timing-list {
   display: flex;
@@ -23,15 +23,15 @@ body.is-frameless .suggestion-bg {
 }
 
 .modal.mod-plugin-debug .startup-value {
-  overflow: hidden;
   width: 50%;
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   text-align: end;
   font-variant-numeric: tabular-nums;
 }
 
-/* setting-group */
+/* setting groups stack with wide gaps; empty groups disappear */
 .setting-group + .setting-group {
   margin-top: var(--size-4-6);
 }
@@ -41,22 +41,22 @@ body.is-frameless .suggestion-bg {
 }
 
 .setting-group .setting-item {
+  padding: var(--size-4-4) 0;
+  margin-bottom: 0;
   border: none;
   border-top: var(--border-width) solid var(--background-modifier-border);
   border-radius: 0;
-  padding: var(--size-4-4) 0;
-  margin-bottom: 0;
   background-color: transparent;
 }
 
 .setting-group .setting-item-heading {
-  flex-wrap: wrap;
   padding: 0 var(--size-4-4);
   margin-bottom: var(--size-4-4);
   background-color: transparent;
+  flex-wrap: wrap;
 }
 
-/* setting-item */
+/* headings inside a group read as section titles */
 .setting-item + div > .setting-item-heading,
 .setting-item + .setting-item-heading {
   margin-top: 0.75em;
@@ -69,11 +69,11 @@ body.is-frameless .suggestion-bg {
 .setting-item-heading .setting-item-description {
   flex-basis: 100%;
   padding-top: 0;
-  font-weight: var(--font-normal);
   font-size: var(--font-ui-small);
+  font-weight: var(--font-normal);
 }
 
-/* vertical-tab */
+/* vertical tabs: headings share the settings group look */
 .vertical-tab-content h1,
 .vertical-tab-content h2,
 .vertical-tab-content h3,
@@ -89,7 +89,7 @@ body.is-frameless .suggestion-bg {
   margin-top: var(--size-4-6);
 }
 
-/* setting-item */
+/* vertical control stacks its children */
 .setting-item-control.mod-vertical {
   flex-direction: column;
 }
@@ -99,12 +99,12 @@ body.is-frameless .suggestion-bg {
   margin-inline-end: 0;
 }
 
-/* setting-hotkey */
+/* hotkey icons dim until hovered */
 .setting-hotkey-icon .svg-icon {
   width: 16px;
   height: 16px;
-  stroke-width: 2px;
   opacity: 0.6;
+  stroke-width: 2px;
 }
 
 @media (hover: hover) {
@@ -113,14 +113,14 @@ body.is-frameless .suggestion-bg {
   }
 }
 
-/* modal */
+/* image lightbox hugs the picture */
 .modal.mod-image-lightbox {
   max-width: 90vw;
   max-height: 90vh;
   padding: 0;
 }
 
-/* mod-community */
+/* community modal sidebar: icon column stays compact */
 .mod-community-modal .modal-sidebar .setting-item-info {
   flex-grow: 0;
   margin: 0;
@@ -133,7 +133,7 @@ body.is-frameless .suggestion-bg {
   color: var(--text-normal);
 }
 
-/* community-item */
+/* community item placeholder centres its icon */
 .community-item-screenshot .placeholder-icon {
   display: flex;
   align-items: center;
@@ -147,19 +147,19 @@ body.is-frameless .suggestion-bg {
   color: var(--text-faint);
 }
 
-/* modal-container */
+/* while the modal window is dragged its contents go inert */
 .modal-container.is-being-dragged .prompt,
 .modal-container.is-being-dragged .modal {
   pointer-events: none;
   opacity: 0.25;
 }
 
-/* modal */
+/* sidebar-layout modals put content beside the sidebar */
 .modal.mod-sidebar-layout .modal-content {
   display: flex;
 }
 
-/* vertical-tab */
+/* community plugins tab hides redundant row icons */
 .vertical-tab-header-group-items[data-section="community-plugins"] .vertical-tab-nav-item-icon {
   display: none;
 }
@@ -169,23 +169,23 @@ body.is-frameless .suggestion-bg {
   font-weight: var(--font-semibold);
 }
 
-/* modal */
+/* bookmark modal inputs fill their control cell */
 .modal.mod-bookmark .setting-item-control input {
   width: 100%;
 }
 
-/* setting-item */
+/* search settings hide the redundant description line */
 .setting-item.mod-search-setting .setting-item-info {
   display: none;
 }
 
-/* modal */
+/* publish modal reserves space for its action bar */
 .modal.mod-publish .modal-content {
   margin-bottom: calc(var(--input-height) + var(--size-4-8));
   border-top: var(--border-width) solid var(--background-modifier-border);
 }
 
-/* search-params */
+/* search-params items align info and control rows */
 .search-params .setting-item .setting-item-info {
   display: flex;
   align-items: center;

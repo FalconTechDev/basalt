@@ -1,5 +1,6 @@
 /* tokens (late): rules of this component that have to stay after rules of components further down the build order. */
 
+/* forced-colors mode swaps accent rings and pdf viewer chrome for system colors */
 @media screen and (forced-colors: active) {
   :root {
     --focus-ring-color: CanvasText;
