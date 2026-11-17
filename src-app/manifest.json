@@ -2557,11 +2557,11 @@
     },
     {
       "orig": "qD",
-      "use": "defineLeafHistory"
+      "use": "ng04LeafHistory"
     },
     {
       "orig": "jD",
-      "use": "defineWorkspaceLeaf"
+      "use": "ng04WorkspaceLeaf"
     },
     {
       "orig": "Ng",
@@ -5611,7 +5611,7 @@
     },
     {
       "orig": "H0",
-      "use": "s48Workspace",
+      "use": "ng04S48Workspace",
       "originalBytes": 34792
     },
     {
