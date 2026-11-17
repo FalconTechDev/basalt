@@ -21987,10 +21987,12 @@ const BacklinkComponentProto = {
   },
   _applySearchFilter() {
     for (const dom of [this.backlinkDom, this.unlinkedDom]) {
+      const kept = [];
       for (const item of dom.vChildren.children) {
-        const keep = this.passSearchFilter(item.file, item.content);
-        item.el.toggle(keep);
+        if (this.passSearchFilter(item.file, item.content)) kept.push(item);
+        else item.el.detach();
       }
+      for (const item of kept) dom.childrenEl.appendChild(item.el);
     }
     this._syncSectionStates();
   },
