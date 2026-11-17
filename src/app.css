@@ -1304,7 +1304,7 @@ body{
     --background-modifier-form-field:var(--color-base-00);
     --background-modifier-form-field-hover:var(--background-modifier-form-field);
     --background-modifier-hover:rgba(var(--mono-rgb-100),0.067);
-    --background-modifier-message:rgba(20,16,13,0.92);
+    --background-modifier-message:rgba(20,16,13,0.96);
     --background-modifier-success:var(--color-green);
     --background-modifier-success-rgb:var(--color-green-rgb);
     --background-primary:var(--color-base-00);
@@ -1467,7 +1467,7 @@ body{
     --dialog-max-height:85vh;
     --dialog-max-width:80vw;
     --dialog-width:560px;
-    --drag-ghost-background:rgba(0,0,0,0.85);
+    --drag-ghost-background:var(--background-modifier-message);
     --drag-ghost-text-color:#fff;
     --dropdown-background-blend-mode:hard-light;
     --dropdown-background-position:var(--inset-end) var(--dropdown-icon-inset) top 50%,0 0;
@@ -3857,8 +3857,10 @@ body.is-grabbing iframe:not(.is-controlled),body.is-grabbing webview{
     position:fixed;
     z-index:var(--layer-dragged-item);
     padding:var(--size-2-3) var(--size-4-2);
-    border-radius:var(--radius-s);
-    box-shadow:0 2px 8px var(--background-modifier-box-shadow);
+    border:var(--bs-hairline) solid var(--bs-accent);
+    border-radius:var(--radius-m);
+    corner-shape:var(--corner-shape);
+    box-shadow:var(--shadow-s);
     max-width:300px;
     font-size:var(--font-ui-small);
     font-weight:var(--font-medium);
@@ -3877,8 +3879,9 @@ body.is-grabbing iframe:not(.is-controlled),body.is-grabbing webview{
 .drag-reorder-ghost{
     position:fixed;
     z-index:var(--layer-dragged-item);
-    border-radius:var(--radius-s);
-    box-shadow:0 2px 8px var(--background-modifier-box-shadow);
+    border:var(--bs-hairline) solid var(--background-modifier-border-hover);
+    border-radius:var(--radius-m);
+    box-shadow:var(--shadow-s);
     background-color:var(--background-primary);
     pointer-events:none;
     corner-shape:var(--corner-shape)
@@ -3919,9 +3922,9 @@ body.is-grabbing iframe:not(.is-controlled),body.is-grabbing webview{
     right:0;
     bottom:0;
     visibility:visible;
-    border-radius:5px;
+    border-radius:var(--radius-l);
     content:' ';
-    background-color:hsla(var(--interactive-accent-hsl),0.3)
+    background-color:color-mix(in srgb,var(--bs-accent) 30%,transparent)
 }
 .mod-macos.is-popout-window{
     --frame-left-space:80px
@@ -3955,7 +3958,7 @@ body.is-frameless > .app-container ~ *{
     flex:1 0 0;
     overflow:hidden;
     height:100%;
-    transition:padding-left 100ms ease-in
+    transition:padding-left var(--bs-dur-fast) var(--bs-ease-standard)
 }
 .is-translucent .workspace{
     background-color:transparent
@@ -3999,7 +4002,7 @@ body.is-frameless > .app-container ~ *{
     height:100%;
     width:100%;
     content:' ';
-    background-color:hsla(var(--interactive-accent-hsl),0.25);
+    background-color:var(--bs-accent-soft);
     pointer-events:none
 }
 .workspace-leaf-resize-handle{
@@ -4010,7 +4013,7 @@ body.is-frameless > .app-container ~ *{
     border-width:var(--divider-width);
     margin:0;
     background-color:transparent;
-    transition:background-color 200ms ease-in-out,border-color 200ms ease-in-out,opacity 200ms ease-in-out;
+    transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),border-color var(--bs-dur-fast) var(--bs-ease-standard),opacity var(--bs-dur-fast) var(--bs-ease-standard);
     -webkit-app-region:no-drag
 }
 @media (hover:hover){
@@ -4043,7 +4046,7 @@ body.is-frameless > .app-container ~ *{
     pointer-events:none;
     will-change:transform,width,height;
     transform:translate(0,0);
-    transition:all 100ms ease-in-out
+    transition:all var(--bs-dur-fast) var(--bs-ease-standard)
 }
 .workspace-drop-overlay:before{
     position:absolute;
@@ -4054,10 +4057,9 @@ body.is-frameless > .app-container ~ *{
     width:calc(100% - 6px);
     height:calc(100% - 6px);
     margin:auto;
-    border-radius:var(--radius-m);
-    content:' ';
-    background-color:var(--interactive-accent);
-    opacity:0.5
+    border-radius:var(--radius-s);
+    box-shadow:inset 0 0 0 var(--bs-focus-width) var(--bs-accent);
+    content:' '
 }
 .workspace-fake-target-container{
     visibility:hidden;
@@ -4072,7 +4074,7 @@ body.is-frameless > .app-container ~ *{
     background-color:var(--background-primary)
 }
 .workspace-sidedock-empty-state{
-    padding:20px 30px;
+    padding:var(--size-4-5) var(--size-4-8);
     font-size:var(--font-ui-small)
 }
 body > .workspace-split{
@@ -5298,7 +5300,7 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
 .pane-empty{
     margin:var(--size-4-2) auto;
     padding:var(--size-4-6) var(--size-4-4);
-    color:var(--text-faint);
+    color:var(--text-muted);
     font-size:var(--font-ui-small);
     text-align:center
 }
@@ -10631,9 +10633,9 @@ body.is-tablet .mobile-navbar{
     --icon-size:var(--icon-xs);
     --icon-stroke:var(--icon-xs-stroke-width);
     --metadata-padding:0;
-    --metadata-divider-width:1px;
+    --metadata-divider-width:var(--bs-hairline);
     --metadata-divider-color-hover:var(--metadata-divider-color);
-    --metadata-property-radius:0px
+    --metadata-property-radius:var(--radius-s)
 }
 .workspace-drawer .nav-buttons-container{
     flex-wrap:nowrap
@@ -12889,7 +12891,7 @@ input.prompt-input{
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:20px;
+    padding:var(--size-4-5);
     font-size:var(--popover-font-size);
     color:var(--text-muted)
 }
@@ -12903,7 +12905,7 @@ input.prompt-input{
     padding-top:max(var(--size-4-2),var(--safe-area-inset-top));
     padding-bottom:calc(max(var(--safe-area-inset-bottom),var(--size-4-4)) - var(--keyboard-height));
     background-color:var(--mobile-sidebar-background);
-    transition:width ease-out 150ms
+    transition:width var(--bs-dur-normal) var(--bs-ease-standard)
 }
 .workspace-drawer-header-name-text{
     overflow:hidden;
@@ -14361,7 +14363,7 @@ input.prompt-input:hover,input.prompt-input:focus,input.prompt-input:focus-visib
     margin-inline-start:-5px;
     border-inline-end:5px solid transparent;
     border-inline-start:5px solid transparent;
-    border-top:5px solid rgba(0,0,0,0.9);
+    border-top:5px solid var(--background-primary);
     border-bottom:5px solid transparent;
     font-size:0;
     line-height:0;
@@ -15635,7 +15637,7 @@ body.is-mobile .app-container{
     height:100%;
     background-color:var(--background-modifier-cover);
     opacity:1;
-    transition:opacity ease-out 150ms
+    transition:opacity var(--bs-dur-normal) var(--bs-ease-standard)
 }
 .workspace-drawer-ribbon{
     position:absolute;
@@ -15645,7 +15647,8 @@ body.is-mobile .app-container{
     height:100%;
     width:var(--ribbon-width);
     padding:var(--safe-area-inset-top) 0 var(--safe-area-inset-bottom);
-    border-inline-end:var(--border-width) solid var(--background-modifier-border)
+    border-inline-end:var(--divider-width) solid var(--divider-color);
+    background-color:var(--ribbon-background)
 }
 .workspace-drawer-header-icon{
     --icon-size:var(--icon-l);
@@ -15676,7 +15679,7 @@ body.is-mobile .app-container{
     opacity:1;
     scrollbar-gutter:stable;
     background-color:var(--interactive-normal);
-    transition:max-height 0.3s cubic-bezier(0.175,0.885,0.32,1.1),opacity 0.15s ease
+    transition:max-height var(--bs-dur-normal) var(--anim-motion-swing),opacity var(--bs-dur-fast) var(--bs-ease-standard)
 }
 .workspace-drawer-tab-select{
     --icon-color:var(--text-faint);
@@ -16850,7 +16853,7 @@ body.is-mobile .app-container{
     max-height:0;
     pointer-events:none;
     opacity:0;
-    transition:max-height 0.1s cubic-bezier(0.175,0.885,0.32,1.1),opacity 0.15s ease
+    transition:max-height var(--bs-dur-fast) var(--bs-ease-standard),opacity var(--bs-dur-instant) var(--bs-ease-standard)
 }
 .workspace-drawer .nav-buttons-container .nav-action-button{
     z-index:1;
@@ -17258,7 +17261,7 @@ body.is-mobile .app-container{
     padding:var(--size-4-2)
 }
 .workspace-drawer-active-tab-content .view-content{
-    padding-top:4px;
+    padding-top:var(--size-4-1);
     height:100%
 }
 .workspace-drawer .nav-header{

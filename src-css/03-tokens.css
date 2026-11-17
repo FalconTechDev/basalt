@@ -111,7 +111,7 @@ body {
   --background-modifier-form-field: var(--color-base-00);
   --background-modifier-form-field-hover: var(--background-modifier-form-field);
   --background-modifier-hover: rgba(var(--mono-rgb-100), 0.067);
-  --background-modifier-message: rgba(20, 16, 13, 0.92);
+  --background-modifier-message: rgba(20, 16, 13, 0.96);
   --background-modifier-success: var(--color-green);
   --background-modifier-success-rgb: var(--color-green-rgb);
   --background-primary: var(--color-base-00);
@@ -311,7 +311,7 @@ body {
   --dialog-max-width: 80vw;
   --dialog-width: 560px;
 
-  --drag-ghost-background: rgba(0, 0, 0, 0.85);
+  --drag-ghost-background: var(--background-modifier-message);
   --drag-ghost-text-color: #fff;
 
   /* ---------- dropdowns ---------- */
