@@ -617,7 +617,7 @@ export function ng09ListIndentClass(host) {
           continue;
         }
         const size = this.markerSize(view, line, marker);
-        builder.add(line.from, line.to, this.lineDeco(size));
+        builder.add(line.from, line.from, this.lineDeco(size));
       }
       // entries for lines outside the viewport stay cached: markerSize keys
       // them by line text so neighbours are reused on scroll.

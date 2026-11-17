@@ -12,7 +12,7 @@ import { formEncodePath } from "./text.js";
 import { utf8String } from "./vault-crypto.js";
 import { frontmatterEntry } from "./frontmatter.js";
 import { contentHash } from "./metadata-helpers.js";
-import { markItemCollapsed } from "./tree.js";
+import { ng15MarkItemCollapsed } from "./n-g15-tree.js";
 import { toggleElementVisibility } from "./n-g11-view.js";
 import { setElementTooltip } from "./tooltip.js";
 
@@ -326,7 +326,7 @@ function buildPublishClasses(host) {
   PublishTreeSection.prototype.setCollapsed = async function (collapsed, animate) {
     if (this.collapsed === collapsed) return;
     this.collapsed = collapsed;
-    markItemCollapsed(this.sectionEl, collapsed);
+    ng15MarkItemCollapsed(this.sectionEl, collapsed);
     await toggleElementVisibility(this.childrenEl, collapsed, animate);
   };
   PublishTreeSection.prototype.collapseAll = function () {

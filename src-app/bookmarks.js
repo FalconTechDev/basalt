@@ -8,7 +8,7 @@
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
 import { setElementTooltip } from "./tooltip.js";
-import { makeTreePusher, collapsibleTreeItem, walkTree, treeDropPosition, updateTreeDropIndicator } from "./tree.js";
+import { ng15MakeTreePusher, ng15CollapsibleTreeItem, ng15WalkTree, ng15TreeDropPosition, ng15UpdateTreeDropIndicator } from "./n-g15-tree.js";
 import { searchViewClasses } from "./n-g11-view.js";
 import { fileClass } from "./vault.js";
 import { binaryFind, randomHex } from "./misc.js";
@@ -669,12 +669,12 @@ export function defineBookmarkLeafItem(host) {
 export function defineBookmarkGroupItem(host) {
   bindHost(host);
   const ItemBase = bookmarks.Item;
-  const GroupBase = collapsibleTreeItem(ItemBase);
+  const GroupBase = ng15CollapsibleTreeItem(ItemBase);
 
   function BookmarkGroupItem(view, tree, item) {
     const self = GroupBase.call(this, view, tree) || this;
     self.vChildren = new host.TreeChildren(self);
-    self.pusherEl = makeTreePusher();
+    self.pusherEl = ng15MakeTreePusher();
     self.view = view;
     self.item = item;
     self.setCollapsible(true);
@@ -785,14 +785,14 @@ export function defineBookmarksView(host) {
   };
 
   proto.onFileCreate = function (file) {
-    walkTree(this.tree.root, (item) => {
+    ng15WalkTree(this.tree.root, (item) => {
       if ((item.item.type !== "file" && item.item.type !== "folder") || item.item.path !== file.path) return;
       item.update();
     });
   };
 
   proto.onFileDelete = function (file) {
-    walkTree(this.tree.root, (item) => {
+    ng15WalkTree(this.tree.root, (item) => {
       if ((item.item.type !== "file" && item.item.type !== "folder") || item.item.path !== file.path) return;
       item.update();
     });
@@ -833,10 +833,10 @@ export function defineBookmarksView(host) {
     const self = this;
     const dropEffect = "move";
     this.app.dragManager.handleDrop(this.containerEl, (event, data, isOver) => {
-      const pos = treeDropPosition(event, self.tree);
+      const pos = ng15TreeDropPosition(event, self.tree);
       let dragItems = [];
       if (data.source === "bookmarks" && data.type === "bookmarks") dragItems = data.items;
-      const indicator = updateTreeDropIndicator(self.tree, pos, dragItems, isOver);
+      const indicator = ng15UpdateTreeDropIndicator(self.tree, pos, dragItems, isOver);
       if (!pos) return null;
       let effect = dropEffect;
       if (!isOver) {
@@ -912,7 +912,7 @@ export function defineBookmarksView(host) {
   };
 
   proto.onFileOpen = function (file) {
-    walkTree(this.root, (dom) => {
+    ng15WalkTree(this.root, (dom) => {
       if (dom.item.type === "file") {
         const active = file && dom.item.path === file.path && !dom.item.subpath;
         dom.setActive(active);

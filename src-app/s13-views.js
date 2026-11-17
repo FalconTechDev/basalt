@@ -3,7 +3,7 @@
 import { env } from "./env.js";
 import { inherit } from "./inherit.js";
 import { floatOr, longPropertyId } from "./text.js";
-import { offsetBox } from "./tree.js";
+import { ng15OffsetBox } from "./n-g15-tree.js";
 import { s13ScrollWatch, s13VisibleRect, s13PaddingBox } from "./s13-geom.js";
 import { s13ViewCards, s13BasesI18n, s13BasesCardsI18n } from "./s13-consts.js";
 
@@ -168,7 +168,7 @@ export function defineS13CardsView(host) {
     }
     const activeEl = containerEl.doc.activeElement;
     if (containerEl.contains(activeEl) && containerEl !== activeEl) {
-      const box = offsetBox(activeEl, containerEl);
+      const box = ng15OffsetBox(activeEl, containerEl);
       if (box.top < viewport.top) viewport.top = box.top;
       const bottom = box.top + activeEl.offsetHeight;
       if (bottom > viewport.bottom) viewport.bottom = bottom;

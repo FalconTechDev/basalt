@@ -1,7 +1,7 @@
 // s16 slice: the "rate the app" feedback banner shown at the bottom of the window on
 // mobile/desktop once the vault is old enough and big enough to have an opinion.
 import { runTransition } from "./animation.js";
-import { animateCollapse } from "./tree.js";
+import { ng15AnimateCollapse } from "./n-g15-tree.js";
 import { s16MobileFeedbackFlag } from "./s16-constants.js";
 
 const MIN_VAULT_AGE_MS = 15552e6; // ~180 days
@@ -54,7 +54,7 @@ export function defineFeedbackBanner(host) {
     runTransition(bannerEl, new host.Transition({ duration: 150, fn: "cubic-bezier(0.45,0.05,0.55,0.95)" })
       .addProp("transform", "", "scale(0.01)", ""), () => null);
     await host.sleep(70);
-    await animateCollapse(this.containerEl);
+    await ng15AnimateCollapse(this.containerEl);
     this.containerEl.hide();
   };
 

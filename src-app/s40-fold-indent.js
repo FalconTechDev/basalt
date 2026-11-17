@@ -12,7 +12,7 @@
 // drawSelection/layer internals (cursor blink rate, secondary-selection layer),
 // covered by the CodeMirror 6 entry in THIRD_PARTY.md.
 import { inherit, methods } from "./inherit.js";
-import { markItemCollapsed } from "./tree.js";
+import { ng15MarkItemCollapsed } from "./n-g15-tree.js";
 
 /** Leftmost range of `ranges` overlapping [from, to], or null (was EV). */
 function s40FirstFolded(ranges, from, to) {
@@ -50,7 +50,7 @@ export function s40FoldIndicator(host) {
     toDOM(view) {
       const el = host.createDiv("cm-fold-indicator");
       const icon = el.createDiv("collapse-indicator collapse-icon");
-      markItemCollapsed(el, this.folded);
+      ng15MarkItemCollapsed(el, this.folded);
       host.setIcon(icon, "right-triangle");
       el.addEventListener("mousedown", (e) => e.preventDefault());
       el.addEventListener("click", (e) => {

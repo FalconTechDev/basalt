@@ -6,7 +6,7 @@ import { env } from "./env.js";
 import { linesOf, longPropertyId } from "./text.js";
 import { withoutExtension, extensionOf, lastSegment } from "./path.js";
 import { flattenUniqueFiles } from "./bookmarks.js";
-import { isEditableNode } from "./tree.js";
+import { ng15IsEditableNode } from "./n-g15-tree.js";
 import { s10ForwardedEvents, s10PopoutStyleVars, s10PopoutBodyClasses } from "./s10-consts.js";
 
 // True when an XHR/fetch-style response carries the publish "obs-status" marker.
@@ -238,7 +238,7 @@ export function s10FormulaLinktext(e, host) {
 
 // True when the node sits inside an editable metadata/title region.
 export function s10IsEditableTarget(e, host) {
-  if (isEditableNode(e)) return true;
+  if (ng15IsEditableNode(e)) return true;
   if (e.instanceOf(Element)) {
     if (e.closest(".metadata-container")) return true;
     if (e.closest(".inline-title")) return true;
