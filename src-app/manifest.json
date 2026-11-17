@@ -5318,7 +5318,7 @@
     },
     {
       "orig": "y5",
-      "use": "s32CanvasView"
+      "use": "ng02CanvasView"
     },
     {
       "orig": "MZ",
