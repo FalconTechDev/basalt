@@ -1,4 +1,4 @@
-/* canvas: infinite canvas — nodes, edges, selection, controls, minimap */
+/* canvas board: viewport states, nodes, edges, selection and floating chrome. */
 
 /* ---------- wrapper states ---------- */
 
@@ -50,7 +50,7 @@
 }
 
 .canvas-card-menu .canvas-card-menu-button svg {
-  fill: var(--background-primary);
+  fill: var(--background-secondary);
 }
 
 .theme-dark .canvas-card-menu .canvas-card-menu-button svg {
@@ -62,13 +62,13 @@
 }
 
 .canvas-card-menu .canvas-card-menu-button.mod-draggable svg {
-  transition: 90ms transform ease-out;
+  transition: transform var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 @media (hover: hover) {
   .canvas-card-menu .canvas-card-menu-button.mod-draggable:hover svg {
-    filter: drop-shadow(0px 6px 2px rgba(0, 0, 0, 0.1));
-    transform: translateY(-6px) scale(var(--direction), 1);
+    filter: drop-shadow(0 var(--size-2-2) var(--size-4-2) var(--background-modifier-box-shadow));
+    transform: translateY(calc(-1 * var(--size-4-2))) scale(var(--direction), 1);
   }
 }
 
@@ -92,12 +92,12 @@
 
 /* labels glide to new positions while the canvas animates (non-iOS) */
 body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
-  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform var(--bs-dur-slow) var(--bs-ease-emphasized);
 }
 
 .canvas-node-label svg {
   position: relative;
-  top: 2px;
+  top: var(--size-2-1);
   margin-right: var(--size-4-1);
 }
 
@@ -150,7 +150,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
 
 .canvas-node.is-selected .canvas-node-container,
 .canvas-node.is-focused .canvas-node-container {
-  border-color: var(--color-accent);
+  border-color: var(--bs-accent);
   box-shadow: var(--shadow-stationary), var(--shadow-border-accent);
 }
 
@@ -162,7 +162,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
 /* themed nodes take their colour for border and inset ring */
 .canvas-node.is-themed .canvas-node-container {
   border-color: rgba(var(--canvas-color), 0.7);
-  box-shadow: inset 0 0 0 1px rgba(var(--canvas-color), 0.7), var(--shadow-stationary);
+  box-shadow: inset 0 0 0 var(--bs-hairline) rgba(var(--canvas-color), 0.7), var(--shadow-stationary);
 }
 
 .canvas-node.is-selected.is-themed .canvas-node-container,
@@ -189,7 +189,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-node-label {
 /* ---------- group labels ---------- */
 
 body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
-  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform var(--bs-dur-slow) var(--bs-ease-emphasized);
 }
 
 .canvas-wrapper:not(.mod-readonly) .canvas-group-label:active {
@@ -230,7 +230,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
 .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view::after {
   display: block;
   flex: 1 1 0;
-  min-height: min(calc(var(--canvas-node-height) * 0.1 - 3px), var(--size-4-4));
+  min-height: min(calc(var(--canvas-node-height) * 0.1 - var(--size-2-2)), var(--size-4-4));
   max-height: var(--size-4-4);
   content: " ";
 }
@@ -264,22 +264,22 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
 /* ---------- connection points ---------- */
 
 .canvas-node-connection-point[data-side='top'] {
-  top: 1px;
+  top: var(--bs-hairline);
   left: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
 }
 
 .canvas-node-connection-point[data-side='right'] {
-  right: 1px;
+  right: var(--bs-hairline);
   top: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
 }
 
 .canvas-node-connection-point[data-side='bottom'] {
-  bottom: 1px;
+  bottom: var(--bs-hairline);
   left: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
 }
 
 .canvas-node-connection-point[data-side='left'] {
-  left: 1px;
+  left: var(--bs-hairline);
   top: calc(50% - var(--resizer-size) * var(--zoom-multiplier) / 2);
 }
 
@@ -290,24 +290,24 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   left: 0;
   top: 0;
   border-radius: 50%;
-  border: 3px solid var(--background-modifier-border);
+  border: var(--bs-focus-width) solid var(--background-modifier-border-hover);
   box-sizing: border-box;
   height: calc(var(--resizer-size) * var(--zoom-multiplier));
   width: calc(var(--resizer-size) * var(--zoom-multiplier));
   content: ' ';
-  background-color: var(--color-accent);
+  background-color: var(--bs-accent);
   opacity: 0;
 }
 
 /* ---------- alignment snaps ---------- */
 
 .canvas-snaps line {
-  stroke-width: 1px;
-  stroke: var(--color-accent);
+  stroke-width: var(--bs-hairline);
+  stroke: var(--bs-accent);
 }
 
 .canvas-snaps circle {
-  fill: var(--color-accent);
+  fill: var(--bs-accent);
 }
 
 /* ---------- edges ---------- */
@@ -315,20 +315,20 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
 /* visible stroke scales with zoom */
 .canvas-edges path.canvas-display-path {
   pointer-events: none;
-  stroke-width: calc(2px * var(--zoom-multiplier));
+  stroke-width: calc(var(--bs-focus-width) * var(--zoom-multiplier));
   stroke: rgb(var(--canvas-color));
   fill: none;
-  transition: stroke-width 100ms ease-out;
+  transition: stroke-width var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 /* fat transparent stroke is the actual hit target */
 .canvas-edges path.canvas-interaction-path {
   pointer-events: stroke;
-  stroke-width: calc(24px * var(--zoom-multiplier));
+  stroke-width: calc(var(--size-4-6) * var(--zoom-multiplier));
   stroke-linecap: round;
   stroke: transparent;
   fill: none;
-  transition: stroke 100ms ease-out;
+  transition: stroke var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 .canvas-wrapper:not(.mod-readonly) .canvas-edges path.canvas-interaction-path {
@@ -344,7 +344,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
   stroke: rgb(var(--canvas-color));
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1px;
+  stroke-width: var(--bs-hairline);
   fill: rgb(var(--canvas-color));
   transform-box: fill-box;
   transform: scale(var(--zoom-multiplier));
@@ -354,7 +354,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
 /* hovered/focused edges thicken */
 .canvas-edges g.is-focused path.canvas-display-path,
 .canvas:not(.is-connecting) .canvas-edges g:hover path.canvas-display-path {
-  stroke-width: calc(5.5px * var(--zoom-multiplier));
+  stroke-width: calc((var(--bs-focus-width) + var(--size-4-1)) * var(--zoom-multiplier));
 }
 
 .canvas-edges g.is-focused path.canvas-interaction-path,
@@ -364,7 +364,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
 
 @media (hover: hover) {
   .canvas-color-picker-item.canvas-color-picker-custom:not(.is-active):hover {
-    box-shadow: 0 0 0 2px var(--background-modifier-border-hover);
+    box-shadow: 0 0 0 var(--bs-focus-width) var(--background-modifier-border-hover);
   }
 }
 
@@ -383,7 +383,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
 /* ---------- minimap ---------- */
 
 .canvas-minimap rect {
-  stroke-width: 5px;
+  stroke-width: var(--size-4-1);
   stroke: var(--background-modifier-border);
   fill: var(--background-modifier-border);
   fill-opacity: 0.65;
@@ -396,7 +396,7 @@ body:not(.is-ios) .canvas-wrapper.mod-animating .canvas-group-label {
 }
 
 .canvas-minimap path {
-  stroke: #c0c0c0;
+  stroke: rgb(var(--canvas-color));
   fill: none;
 }
 

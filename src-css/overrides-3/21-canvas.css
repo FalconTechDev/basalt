@@ -1,6 +1,6 @@
-/* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
+/* canvas late rules: drag states, selection, snaps, embeds and the empty-state hint. */
 
-/* dragging states get the grabbing cursor */
+/* pointer cursors follow the active drag gesture */
 .canvas-wrapper.is-dragging,
 .canvas-mover:active,
 .canvas-node.is-dummy {
@@ -16,8 +16,8 @@
 .canvas-selection {
   position: absolute;
   z-index: -1;
-  border: 2px solid var(--color-accent);
-  background-color: hsla(var(--color-accent-hsl), 0.1);
+  border: var(--bs-focus-width) solid var(--bs-accent);
+  background-color: var(--bs-accent-soft);
   pointer-events: none;
 }
 
@@ -86,11 +86,11 @@
   max-width: 70vw;
   padding: var(--size-4-4) var(--size-4-6);
   border-radius: var(--radius-m);
-  color: var(--color-accent);
+  color: var(--text-accent);
   font-size: var(--font-ui-large);
   line-height: var(--line-height-normal);
   text-align: center;
-  background: hsla(var(--color-accent-hsl), 0.1);
+  background: var(--bs-accent-soft);
   pointer-events: none;
   transform: translate(-50%, -50%);
 }

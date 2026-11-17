@@ -1,14 +1,15 @@
-/* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
+/* canvas late rules: card menu surface, control items, placeholders and empty embeds. */
 
-/* card menu, control items, node placeholder, empty embed */
 .canvas-card-menu {
   bottom: var(--size-4-4);
   left: 50%;
   align-items: stretch;
+  border: var(--bs-hairline) solid var(--background-modifier-border);
   border-radius: var(--radius-s);
-  box-shadow: var(--input-shadow);
-  background-color: var(--background-primary);
-  transform: translatex(-50%);
+  box-shadow: var(--raised-shadow);
+  background-color: var(--background-secondary);
+  clip-path: var(--bs-canvas-clip);
+  transform: translateX(-50%);
 }
 
 .canvas-control-item {
@@ -18,7 +19,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 0;
-  border-bottom: 1px solid var(--background-modifier-border);
+  border-bottom: var(--bs-hairline) solid var(--background-modifier-border);
   box-shadow: none;
   height: auto;
   padding: var(--size-4-2);
@@ -26,7 +27,7 @@
   font-size: inherit;
   color: var(--text-muted);
   cursor: var(--cursor);
-  background-color: var(--background-primary);
+  background-color: var(--background-secondary);
 }
 
 .canvas-node-placeholder {
