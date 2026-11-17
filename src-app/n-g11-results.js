@@ -34,6 +34,9 @@ export function ng11CountSearchMatches(match) {
   if (!match) return 0;
   let count = 0;
   for (const key of NG11_RESULT_KEYS) count += (match[key] || []).length;
+  for (const key of Object.keys(match)) {
+    if (key.startsWith("canvas-") && Array.isArray(match[key])) count += match[key].length;
+  }
   count += (match.properties || []).length;
   return count;
 }
@@ -173,7 +176,7 @@ export async function* ng11BatchedIteration(iterable, options = {}) {
   const beforePause = options.beforePause;
   let last = performance.now();
   let count = 0;
-  for (const item of iterable) {
+  for await (const item of iterable) {
     yield item;
     count++;
     const now = performance.now();
@@ -626,8 +629,9 @@ methods(SearchFileResult, {
           const ranges = this.result["canvas-" + node.id];
           if (!ranges || !ranges.length) continue;
           const text = node.text || "";
-          for (const r of ranges) {
-            const m = new C.SearchMatchResult(this, text, null, r[0], r[1], [r]);
+          const pseudo = { result: { content: ranges }, extraContext: this.extraContext };
+          for (const w of ng11MatchWindows(pseudo, text)) {
+            const m = new C.SearchMatchResult(this, text, null, w.start, w.end, w.matches);
             m.mutateEState = (eState) => { eState.match.nodeId = node.id; };
             this._addChild(m);
           }

@@ -9,11 +9,50 @@ import { ng11CompareSearchText } from "./n-g11-results.js";
 import { lastSegment } from "./path.js";
 
 let ng11PluginHost = null;
-function PLH() { return ng11PluginHost; }
+function PLH() { return ng11PluginHost || env(); }
+
+/** The search i18n table, resolved lazily (manifest declarators evaluate before env/host bind). */
+function ng11SearchT() {
+  if (ng11PluginHost) return ng11PluginHost.t.plugins.search;
+  const g = env().gm;
+  return g && g.plugins ? g.plugins.search : null;
+}
+
+/** i18n table proxy that forwards to the real table whenever it becomes available. */
+function ng11SearchI18nProxy() {
+  return new Proxy(function () {}, {
+    get(o, k) {
+      if (k === Symbol.toPrimitive) return undefined;
+      const t = ng11SearchT();
+      const v = t ? t[k] : undefined;
+      return typeof v === "function" ? v.bind(t) : v;
+    },
+    has(o, k) { const t = ng11SearchT(); return !!t && k in t; },
+    ownKeys() { const t = ng11SearchT(); return t ? Reflect.ownKeys(t) : []; },
+    getOwnPropertyDescriptor(o, k) {
+      const t = ng11SearchT();
+      return t ? Object.getOwnPropertyDescriptor(t, k) : undefined;
+    },
+  });
+}
+
+const NG11_SUGGEST_META = [
+  ["path", "path:", "labelPathOptionDescription"],
+  ["file", "file:", "labelFileNameOptionDescription"],
+  ["tag", "tag:", "labelTagOptionDescription"],
+  ["line", "line:()", "labelLineOptionDescription"],
+  ["section", "section:()", "labelSectionOptionDescription"],
+  ["property", "[]", "labelPropertyOptionDescription"],
+];
 
 // Contract aliases (manifest `use` / declarator names for s27-search.js).
-export const s27SearchI18n = () => PLH().t.plugins.search;
-export const s27SearchOperatorSuggestions = () => ng11SearchOperatorSuggestions(PLH());
+export const s27SearchI18n = () => ng11SearchI18nProxy();
+export const s27SearchOperatorSuggestions = () => NG11_SUGGEST_META.map(([name, token, label]) => ({
+  type: "operator",
+  name,
+  token,
+  infoTextI18n: () => { const t = ng11SearchT(); return t ? t[label]() : ""; },
+}));
 export const defineS27GlobalSearchPlugin = (host) => ng11DefineS27GlobalSearchPlugin(host);
 
 function ng11EscapeQueryForQuotes(text) {
@@ -161,8 +200,13 @@ methods(GlobalSearchPlugin, {
             for (const r of contentRanges) {
               if (out.length >= limit) break;
               const line = content.slice(0, r[0]).split("\n").length;
-              const text = content.split("\n")[line - 1] || "";
-              out.push(withContext ? { file: file.path, line, text: text.trim() } : file.path);
+              const lines = content.split("\n");
+              const text = lines[line - 1] || "";
+              const lineStart = lines.slice(0, line - 1).join("\n").length + (line > 1 ? 1 : 0);
+              const lineMatches = contentRanges
+                .filter((m) => m[0] < lineStart + text.length + 1 && m[1] > lineStart)
+                .map((m) => [Math.max(0, m[0] - lineStart), Math.min(text.length + 1, m[1] - lineStart)]);
+              out.push(withContext ? { file: file.path, line, text: text.trim(), matches: lineMatches } : file.path);
             }
           }
         } else {

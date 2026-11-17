@@ -12,7 +12,6 @@ import { ng11SearchClasses,ng11DefineSearchQuery } from "./n-g11-query.js";
 import { ng11WholeWordPattern } from "./n-g11-matchers.js";
 import { lastSegment,extensionOf } from "./path.js";
 
-const LPV = ng11SearchViewClasses;
 function ng11EnsurePaneClasses(host) {
   ng11PaneHost = host;
   ng11DefineSearchQuery(host);
@@ -65,7 +64,7 @@ function LinkPaneView(leaf) {
 // ---- shared section chrome --------------------------------------------------------------------------
 
 /** One collapsible pane section: header row (.tree-item-self.is-clickable) + body el. */
-function ng11MakeSection(pane, label, countEl) {
+function ng11MakeSection(pane, label, countEl, onToggle) {
   const header = pane.createDiv("tree-item-self is-clickable");
   header.addClass("search-section-header");
   const icon = header.createDiv("tree-item-icon collapse-icon");
@@ -89,6 +88,7 @@ function ng11MakeSection(pane, label, countEl) {
     e.preventDefault();
     e.stopPropagation();
     section.setCollapsed(!section.collapsed, true);
+    if (onToggle) onToggle(section.collapsed);
   });
   return section;
 }
@@ -96,7 +96,8 @@ function ng11MakeSection(pane, label, countEl) {
 // ---- BacklinkComponent ------------------------------------------------------------------------------
 
 function BacklinkComponent(app, containerEl, scrollParent) {
-  const self = LPH().Component.call(this, app) || this;
+  const self = LPH().Component.call(this) || this;
+  self.app = app;
   self.containerEl = containerEl;
   self.scrollParent = scrollParent || containerEl;
   self.collapseAll = false;
@@ -158,11 +159,11 @@ const BacklinkComponentProto = {
     this.searchRowEl = searchRow;
 
     // two sections
-    this.linkedSection = ng11MakeSection(pane, t.labelLinkedMentions(), null);
-    this.backlinkDom = new LPV.SearchResults(app, this.linkedSection.body.createDiv({ cls: "search-result-container" }), t.labelNoBacklinks(), this.scrollParent);
+    this.linkedSection = ng11MakeSection(pane, t.labelLinkedMentions(), null, (c) => this.setBacklinkCollapsed(c, true));
+    this.backlinkDom = new ng11SearchViewClasses.SearchResults(app, this.linkedSection.body.createDiv({ cls: "search-result-container" }), t.labelNoBacklinks(), this.scrollParent);
     this.linkedSection.body.show();
-    this.unlinkedSection = ng11MakeSection(pane, t.labelUnlinkedMentions(), null);
-    this.unlinkedDom = new LPV.SearchResults(app, this.unlinkedSection.body.createDiv({ cls: "search-result-container" }), t.labelNoUnlinkedMentions(), this.scrollParent);
+    this.unlinkedSection = ng11MakeSection(pane, t.labelUnlinkedMentions(), null, (c) => this.setUnlinkedCollapsed(c, true));
+    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body.createDiv({ cls: "search-result-container" }), t.labelNoUnlinkedMentions(), this.scrollParent);
     this.unlinkedSection.body.show();
     this.linkedSection.setCollapsed(this.backlinkCollapsed, false);
     this.unlinkedSection.setCollapsed(this.unlinkedCollapsed, false);
@@ -210,6 +211,22 @@ const BacklinkComponentProto = {
     }
     if (typeof state.backlinkCollapsed === "boolean") { this.backlinkCollapsed = state.backlinkCollapsed; this.linkedSection.setCollapsed(state.backlinkCollapsed, false); }
     if (typeof state.unlinkedCollapsed === "boolean") { this.unlinkedCollapsed = state.unlinkedCollapsed; this.unlinkedSection.setCollapsed(state.unlinkedCollapsed, false); }
+  },
+  setBacklinkCollapsed(v, animate) {
+    if (this.backlinkCollapsed === v) return;
+    this.backlinkCollapsed = v;
+    this.linkedSection.setCollapsed(v, animate);
+    if (v) { this._backlinkQueue && this._backlinkQueue.cancel(); this.linkedSection.flair.setText(""); }
+    else this.recomputeBacklink(this.file);
+    this.app.workspace.requestSaveLayout();
+  },
+  setUnlinkedCollapsed(v, animate) {
+    if (this.unlinkedCollapsed === v) return;
+    this.unlinkedCollapsed = v;
+    this.unlinkedSection.setCollapsed(v, animate);
+    if (v) { this._unlinkedQueue && this._unlinkedQueue.cancel(); this.unlinkedSection.flair.setText(""); }
+    else this.recomputeUnlinked(this.file);
+    this.app.workspace.requestSaveLayout();
   },
   setCollapseAll(v) {
     if (this.collapseAll === v) return;
@@ -259,7 +276,7 @@ const BacklinkComponentProto = {
     try {
       this._searchQueryObj = new ng11SearchClasses.SearchQuery(this.app, query, false);
     } catch (e) {
-      new LPH().Notice(e.message || String(e));
+      new (LPH().Notice)(e.message || String(e));
       this._searchQueryObj = null;
     }
     this._applySearchFilter();
@@ -312,7 +329,7 @@ const BacklinkComponentProto = {
     });
     candidates.sort(ng11SortOrderComparator(dom.sortOrder));
     if (!candidates.length) { this.linkedSection.flair.setText("0"); return; }
-    const queue = new LPV.FileQueue({
+    const queue = new ng11SearchViewClasses.FileQueue({
       onStart: () => dom.startLoader(),
       onStop: () => { dom.stopLoader(); this.linkedSection.flair.setText(String(dom.getMatchCount())); },
     });
@@ -426,7 +443,7 @@ const BacklinkComponentProto = {
     const candidates = app.vault.getMarkdownFiles()
       .filter((f) => f !== file && !app.metadataCache.isUserIgnored(f.path));
     candidates.sort((a, b) => ng11SearchSortOrders[dom.sortOrder](a, b));
-    const queue = new LPV.FileQueue({
+    const queue = new ng11SearchViewClasses.FileQueue({
       onStart: () => dom.startLoader(),
       onStop: () => { dom.stopLoader(); this.unlinkedSection.flair.setText(String(dom.getMatchCount())); },
     });
@@ -443,7 +460,7 @@ const BacklinkComponentProto = {
             const item = dom.addResult(f, { content: ranges }, content, true);
             item.separateMatches = true;
             item.onChildRender = (child) => {
-              if (!(child instanceof LPV.SearchMatchResult)) return;
+              if (!(child instanceof ng11SearchViewClasses.SearchMatchResult)) return;
               child.onMatchRender = (range, el) => self._addReplaceButton(child, el, f, content);
             };
             item.invalidate();
@@ -522,7 +539,8 @@ function BacklinkView(leaf) {
 // ---- OutgoingLinkComponent -----------------------------------------------------------------------------
 
 function OutgoingLinkComponent(app, containerEl, scrollParent) {
-  const self = LPH().Component.call(this, app) || this;
+  const self = LPH().Component.call(this) || this;
+  self.app = app;
   self.containerEl = containerEl;
   self.scrollParent = scrollParent || containerEl;
   self.showSearch = false;
@@ -546,7 +564,7 @@ const OutgoingLinkComponentProto = {
     this.paneEl = pane;
 
     // Links section
-    this.linksSection = ng11MakeSection(pane, t.labelLinks(), null);
+    this.linksSection = ng11MakeSection(pane, t.labelLinks(), null, (c) => this.setLinksCollapsed(c, true));
     const linksBody = this.linksSection.body;
     linksBody.addClass("search-result-container");
     this.linksListEl = linksBody.createDiv();
@@ -556,8 +574,8 @@ const OutgoingLinkComponentProto = {
     this.linksSection.setCollapsed(this.linksCollapsed, false);
 
     // Unlinked mentions section
-    this.unlinkedSection = ng11MakeSection(pane, t.labelUnlinkedMentions(), null);
-    this.unlinkedDom = new LPV.SearchResults(app, this.unlinkedSection.body.createDiv({ cls: "search-result-container" }), t.labelUnlinkedMentions(), this.scrollParent);
+    this.unlinkedSection = ng11MakeSection(pane, t.labelUnlinkedMentions(), null, (c) => this.setUnlinkedCollapsed(c, true));
+    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body.createDiv({ cls: "search-result-container" }), t.labelUnlinkedMentions(), this.scrollParent);
     this.unlinkedSection.body.show();
     this.unlinkedSection.setCollapsed(this.unlinkedCollapsed, false);
   },
@@ -565,12 +583,16 @@ const OutgoingLinkComponentProto = {
     if (this.linksCollapsed === v) return;
     this.linksCollapsed = v;
     this.linksSection.setCollapsed(v, animate);
+    if (v) { this._linksQueue && this._linksQueue.cancel(); }
+    else this.recomputeLinks(this.file);
     this.app.workspace.requestSaveLayout();
   },
   setUnlinkedCollapsed(v, animate) {
     if (this.unlinkedCollapsed === v) return;
     this.unlinkedCollapsed = v;
     this.unlinkedSection.setCollapsed(v, animate);
+    if (v) { this._unlinksQueue && this._unlinksQueue.cancel(); this.unlinkedSection.flair.setText(""); }
+    else this.recomputeUnlinked(this.file);
     this.app.workspace.requestSaveLayout();
   },
   getState() {
@@ -694,17 +716,16 @@ const OutgoingLinkComponentProto = {
       for (const mention of mentions) {
         const src = ng11WholeWordPattern(mention.text, host);
         if (!src) continue;
-        const re = new RegExp(src, "y");
-        let offset = frontmatterEnd - (src.startsWith("(?:") ? 1 : 0);
-        while (offset < content.length) {
-          re.lastIndex = Math.max(0, offset);
-          const m = re.exec(content);
-          if (!m) break;
+        const re = new RegExp(src, "gi");
+        re.lastIndex = frontmatterEnd;
+        let m;
+        while ((m = re.exec(content))) {
+          if (!m[0]) { re.lastIndex++; continue; }
           const s = m.index + (m[1] ? m[0].indexOf(m[1]) : 0);
           const e = s + (m[1] ? m[1].length : m[0].length);
-          offset = m.index + Math.max(1, m[0].length);
           if (blocked.some(([bs, be]) => s >= bs && e <= be)) continue;
           rows.push({ start: s, end: e, mention });
+          if (m.index === re.lastIndex) re.lastIndex++;
         }
       }
       rows.sort((a, b) => a.start - b.start);
@@ -714,7 +735,7 @@ const OutgoingLinkComponentProto = {
       item._rendered = true;
       item.setCollapsible(true);
       for (const row of rows) {
-        const child = new LPV.SearchMatchResult(item, content, cache, row.start, row.end, [[row.start, row.end]]);
+        const child = new ng11SearchViewClasses.SearchMatchResult(item, content, cache, row.start, row.end, [[row.start, row.end]]);
         child.el.addClass("outgoing-unlinked-match");
         this.unlinkedDomInfo.set(child, row);
         child.onMatchRender = (range, el) => this._addDestinationButtons(child, el, row, file, content);

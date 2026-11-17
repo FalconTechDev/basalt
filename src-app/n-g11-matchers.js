@@ -509,7 +509,7 @@ methods(TagMatcher, {
     if (cache && cache.tags) {
       const re = source ? ng11CachedRegExp(source, true) : null;
       for (const tag of cache.tags) {
-        const name = "#" + tag.tag;
+        const name = "#" + String(tag.tag || "").replace(/^#+/, "");
         let hit = false;
         if (source) {
           re.lastIndex = 0;
@@ -704,7 +704,8 @@ methods(TaskMatcher, {
     const out = [];
     for (const item of cache.listItems) {
       if (!item.task) continue;
-      const done = !!item.task.completed;
+      const t = item.task;
+      const done = typeof t === "string" ? /[xX]/.test(t) : !!(t && t.completed);
       if (this.completed !== undefined && done !== this.completed) continue;
       const s = item.position.start.offset, e = item.position.end.offset;
       out.push([content.slice(s, e), s]);

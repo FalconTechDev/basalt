@@ -38,11 +38,11 @@ export const defineSearchFileResult = (host) => host && (V.SearchFileResult = (V
 export const defineSearchResults = (host) => ng11DefineSearchResultsView(host);
 
 // resolved lazily through results.js factories (avoid circular init order issues)
-import { ng11DefineSearchMatchResult as ng11ResMatch,ng11DefineSearchPropertyResult as ng11ResProp,ng11DefineSearchFileResult as ng11ResFile,ng11DefineSearchResults as ng11ResResults } from "./n-g11-results.js";
-function ng11LazyMatchResult(host) { return ng11ResMatch(host); }
-function ng11LazyPropResult(host) { return ng11ResProp(host); }
-function ng11LazyFileResult(host) { return ng11ResFile(host); }
-function ng11DefineSearchResultsView(host) { return ng11ResResults(host); }
+import { ng11DefineSearchMatchResult,ng11DefineSearchPropertyResult,ng11DefineSearchFileResult,ng11DefineSearchResults } from "./n-g11-results.js";
+function ng11LazyMatchResult(host) { return ng11DefineSearchMatchResult(host); }
+function ng11LazyPropResult(host) { return ng11DefineSearchPropertyResult(host); }
+function ng11LazyFileResult(host) { return ng11DefineSearchFileResult(host); }
+function ng11DefineSearchResultsView(host) { return ng11DefineSearchResults(host); }
 
 // ---- recent searches ----------------------------------------------------------------------------
 
@@ -98,14 +98,10 @@ function ng11FuzzyScore(text, query) {
 }
 
 function SearchSuggest(app, inputEl, showHistory = true) {
-  const self = VH().PopoverSuggest.call(this, app, inputEl) || this;
+  const self = VH().AbstractInputSuggest.call(this, app, inputEl) || this;
   self.inputEl = inputEl;
   self.showHistory = !!showHistory;
-  self.scope = app.scope;
-  inputEl.addEventListener("input", () => self.onInputChange());
-  inputEl.addEventListener("focus", () => self.onInputChange());
-  inputEl.addEventListener("blur", () => setTimeout(() => self.close(), 200));
-  self.suggestionContainerEl && self.suggestionContainerEl.addClass("mod-search-suggestion");
+  self.suggestEl.addClass("mod-search-suggestion");
   return self;
 }
 
@@ -115,30 +111,29 @@ SearchSuggest.attach = function (app, inputEl, showHistory = true) {
 };
 SearchSuggest.showOnce = function (app, inputEl, showHistory = true) {
   const s = new SearchSuggest(app, inputEl, showHistory);
-  s.open();
+  s.onInputChange();
   return s;
 };
 
 const SearchSuggestProto = {
   onInputChange() {
-    const input = this.inputEl;
+    const input = this.textInputEl;
     const caret = input.selectionStart != null ? input.selectionStart : input.value.length;
+    const selEnd = input.selectionEnd != null ? input.selectionEnd : caret;
     const value = input.value;
     // only active with collapsed caret at end-of-value or before a space
-    if (caret !== (input.selectionEnd != null ? input.selectionEnd : caret)) { this.close(); return; }
-    const before = value.slice(0, caret);
-    if (caret < value.length && !/\s/.test(value[caret])) { this.close(); return; }
-    this._caret = caret;
+    const ok = caret === selEnd && (caret === value.length || /\s/.test(value[caret]));
+    this._caret = ok ? caret : -1;
     this._value = value;
-    this.open(value);
-    const width = Math.max(input.getBoundingClientRect().width, 300);
-    if (this.suggestionContainerEl) this.suggestionContainerEl.style.minWidth = width + "px";
+    if (!ok) { this.close(); return; }
+    const result = this.getSuggestions(value);
+    if (Array.isArray(result)) this.showSuggestions(result);
   },
   getSuggestions(query) {
     const app = this.app;
     const host = VH();
     const value = this._value != null ? this._value : (this.inputEl ? this.inputEl.value : "");
-    const caret = this._caret != null ? this._caret : value.length;
+    const caret = this._caret != null && this._caret >= 0 ? this._caret : value.length;
     const before = value.slice(0, caret);
     const tokens = ng11TokenizeQuery(before);
     let matcher = null;
@@ -160,7 +155,8 @@ const SearchSuggestProto = {
         if (valueIdx >= 0 && topIdx > valueIdx) return out;
         // property key completion
         const needle = ctx.token.type === "bracket" ? "" : ctx.token.content;
-        const props = app.metadataTypeManager.getAllProperties().map((p) => p.name);
+        const rawProps = app.metadataTypeManager.getAllProperties();
+        const props = (Array.isArray(rawProps) ? rawProps : Object.values(rawProps || {})).map((p) => (p && p.name) || p);
         const scored = [];
         for (const name of props) {
           const s = ng11FuzzyScore(name, needle);
@@ -259,7 +255,7 @@ const SearchSuggestProto = {
     if (!item || item.type === "group") return false;
     const input = this.inputEl;
     const value = this._value != null ? this._value : input.value;
-    const caret = this._caret != null ? this._caret : value.length;
+    const caret = this._caret != null && this._caret >= 0 ? this._caret : value.length;
     const before = value.slice(0, caret);
     const after = value.slice(caret);
     const host = VH();
@@ -334,23 +330,18 @@ const CopyResultsModalProto = {
     const ta = box.createEl("textarea", { cls: "copy-search-result-textarea" });
     ta.value = this._buildText();
     ta.rows = 10;
-    const mkSetting = (name, desc, control) => {
-      const setting = new VH().Setting(contentEl).setName(name).setDesc(desc).addControl(control);
-      return setting;
-    };
     const t2 = VH().t.plugins.search;
-    mkSetting(t2.optionShowPath(), t2.optionShowPathDescription(), new VH().ToggleComponent((c) => {
+    new (VH().Setting)(contentEl).setName(t2.optionShowPath()).setDesc(t2.optionShowPathDescription()).addToggle((c) => {
       c.setValue(this.options.showFullPath).onChange((v) => { this.options.showFullPath = v; ta.value = this._buildText(); });
-    }));
-    const linkDD = new VH().DropdownComponent((c) => {
+    });
+    new (VH().Setting)(contentEl).setName(t2.optionLinkStyle()).setDesc(t2.optionLinkStyleDescription()).addDropdown((c) => {
       c.addOption("none", t2.optionChoiceLinkStyleNone())
         .addOption("wikilink", t2.optionChoiceLinkStyleWikilink())
         .addOption("markdown", t2.optionChoiceLinkStyleMarkdownLink())
         .setValue(this.options.linkStyle)
         .onChange((v) => { this.options.linkStyle = v; ta.value = this._buildText(); });
     });
-    mkSetting(t2.optionLinkStyle(), t2.optionLinkStyleDescription(), linkDD);
-    const listDD = new VH().DropdownComponent((c) => {
+    new (VH().Setting)(contentEl).setName(t2.optionListPrefix()).setDesc(t2.optionListPrefixDescription()).addDropdown((c) => {
       c.addOption("none", t2.optionChoiceListStyleNone())
         .addOption("-", t2.optionChoiceListStyleDash())
         .addOption("*", t2.optionChoiceListStyleAsterisk())
@@ -358,11 +349,10 @@ const CopyResultsModalProto = {
         .setValue(this.options.listStyle)
         .onChange((v) => { this.options.listStyle = v; ta.value = this._buildText(); });
     });
-    mkSetting(t2.optionListPrefix(), t2.optionListPrefixDescription(), listDD);
     const btns = contentEl.createDiv("modal-button-container");
     btns.createEl("button", { cls: "mod-cta", text: t2.buttonCopyResults() }).addEventListener("click", async () => {
       await ng11CopyTextToClipboard(ta.value);
-      new VH().Notice(t2.msgSuccessfullyCopied());
+      new (VH().Notice)(t2.msgSuccessfullyCopied());
     });
     btns.createEl("button", { text: VH().t.dialogue.buttonDone() }).addEventListener("click", () => this.close());
     this._saveOptions = () => {
@@ -395,7 +385,8 @@ const CopyResultsModalProto = {
 // ---- SearchQueueComponent -----------------------------------------------------------------------------
 
 function SearchQueueComponent(app, dom) {
-  const self = VH().Component.call(this, app) || this;
+  const self = VH().Component.call(this) || this;
+  self.app = app;
   self.dom = dom;
   self.queue = null;
   return self;
@@ -464,7 +455,7 @@ function SearchView(leaf) {
   self.dom = new V.SearchResults(app, containerEl.createDiv({ cls: "search-result-container mod-global-search" }), ng11SearchStrings().labelNoMatches(), containerEl);
 
   const row = containerEl.createDiv("search-row");
-  self.searchComponent = new VH().SearchComponent(row);
+  self.searchComponent = new (VH().SearchComponent)(row);
   self.searchComponent.inputEl.addClass("global-search-input-container");
   setElementTooltip(self.searchComponent.inputEl, ng11SearchStrings().promptStartSearch());
   self.searchComponent.setPlaceholder(ng11SearchStrings().promptStartSearch());
@@ -483,7 +474,7 @@ function SearchView(leaf) {
     if (e.key === "Enter" && !e.isComposing) {
       e.preventDefault();
       self.startSearch();
-      if (VH().Platform && VH().Platform.isMobile && !VH().Platform.hasPhysicalKeyboard) VH().blurAndClearSelection(self.searchComponent.inputEl);
+      if (VH().Platform && VH().Platform.isMobile && !VH().Platform.hasPhysicalKeyboard) VH().blurAndClearSelection();
     }
   });
   if (VH().Platform && VH().Platform.isMobile) {
@@ -519,24 +510,22 @@ function SearchView(leaf) {
   VH().setIcon(moreIcon, "lucide-more-horizontal");
   moreIcon.addEventListener("click", (e) => self.onResultCountMenu(e));
 
-  const sortDD = new VH().DropdownComponent((c) => {
-    for (const group of ng11SearchSortGroups) {
-      for (const key of group) c.addOption(key, ng11SearchSortLabel(key));
-    }
-    c.setValue(self.sortOrder).onChange((v) => self.setSortOrder(v));
-  });
   self.sortDropdownEl = self.resultsInfoEl.createDiv();
-  sortDD.selectEl && self.sortDropdownEl.appendChild(sortDD.selectEl);
+  const sortDD = new (VH().DropdownComponent)(self.sortDropdownEl);
+  for (const group of ng11SearchSortGroups) {
+    for (const key of group) sortDD.addOption(key, ng11SearchSortLabel(key));
+  }
+  sortDD.setValue(self.sortOrder).onChange((v) => self.setSortOrder(v));
 
   self.queueComponent = new V.SearchQueueComponent ? new V.SearchQueueComponent(app, self.dom) : null;
-  self.scope = new VH().Scope(app.scope);
-  self.scope.register(["Enter", "Mod+Enter"], self.onActivateKey.bind(self));
-  self.scope.register(["ArrowDown"], self.onArrowDown.bind(self));
-  self.scope.register(["ArrowUp"], self.onArrowUp.bind(self));
-  self.scope.register(["ArrowLeft"], self.onArrowLeft.bind(self));
-  self.scope.register(["ArrowRight"], self.onArrowRight.bind(self));
-  self.scope.register(["Shift-ArrowUp"], self.onShiftArrowUp.bind(self));
-  self.scope.register(["Shift-ArrowDown"], self.onShiftArrowDown.bind(self));
+  self.scope = new (VH().Scope)(app.scope);
+  self.scope.register([], "Enter", self.onActivateKey.bind(self));
+  self.scope.register([], "ArrowDown", self.onArrowDown.bind(self));
+  self.scope.register([], "ArrowUp", self.onArrowUp.bind(self));
+  self.scope.register([], "ArrowLeft", self.onArrowLeft.bind(self));
+  self.scope.register([], "ArrowRight", self.onArrowRight.bind(self));
+  self.scope.register(["Shift"], "ArrowUp", self.onShiftArrowUp.bind(self));
+  self.scope.register(["Shift"], "ArrowDown", self.onShiftArrowDown.bind(self));
   app.keymap.pushScope(self.scope);
   self.register(() => app.keymap.popScope(self.scope));
 
@@ -548,7 +537,7 @@ function SearchView(leaf) {
 }
 const SearchViewProto = {
   _addToggleSetting(parent, name, get, set) {
-    const setting = new VH().Setting(parent).setName(name);
+    const setting = new (VH().Setting)(parent).setName(name);
     setting.controlEl.addClass("mod-toggle");
     setting.addToggle((c) => c.setValue(get()).onChange((v) => set(v)));
   },
@@ -745,7 +734,7 @@ const SearchViewProto = {
   onResultCountMenu(event) {
     event.preventDefault();
     event.stopPropagation();
-    const menu = new VH().Menu().addSections(["action"]);
+    const menu = new (VH().Menu)().addSections(["action"]);
     this.app.workspace.trigger("search:results-menu", menu, this);
     menu.addItem((item) => item
       .setIcon("lucide-copy")
@@ -767,7 +756,7 @@ const SearchViewProto = {
   },
   onArrowDown(event) {
     if (this._arrowSkip(event)) return;
-    VH().blurAndClearSelection(this.searchComponent.inputEl);
+    VH().blurAndClearSelection();
     this.dom.changeFocusedItem("forwards");
   },
   onArrowUp(event) {
@@ -827,7 +816,7 @@ export function ng11DefineSearchQueueComponent(host) {
 export function ng11DefineSearchSuggest(host) {
   ng11ViewHost = host;
   if (!SearchSuggest.prototype.getSuggestions) {
-    inherit(SearchSuggest, host.PopoverSuggest);
+    inherit(SearchSuggest, host.AbstractInputSuggest);
     methods(SearchSuggest, SearchSuggestProto);
     SearchSuggest.prototype.onChooseSuggestion = SearchSuggest.prototype.selectSuggestion;
   }
@@ -844,7 +833,7 @@ export function ng11DefineSearchView(host) {
 }
 function ng11EnsureViewClasses(host) {
   ng11ViewHost = host;
-  ng11ResMatch(host); ng11ResProp(host); ng11ResFile(host); ng11ResResults(host);
+  ng11DefineSearchMatchResult(host); ng11DefineSearchPropertyResult(host); ng11DefineSearchFileResult(host); ng11DefineSearchResults(host);
   ng11DefineFileQueue(host);
   ng11DefineSearchQuery(host);
   ng11DefineSearchQueueComponent(host);
