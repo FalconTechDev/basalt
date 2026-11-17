@@ -6627,7 +6627,7 @@ body:not(.is-fullscreen) .status-bar{
     display:none
 }
 .graph-color-button-container{
-    margin-bottom:10px;
+    margin-bottom:var(--size-4-2);
     text-align:center
 }
 .graph-color-button-container button{
@@ -6635,7 +6635,7 @@ body:not(.is-fullscreen) .status-bar{
     width:100%
 }
 .graph-control-section.mod-color-groups .tree-item-children.is-grabbing .graph-color-groups-container{
-    padding-bottom:40px
+    padding-bottom:var(--size-4-10)
 }
 .graph-control-section.mod-display .setting-item:not(.mod-slider):last-child .setting-item-info{
     display:none
@@ -9911,7 +9911,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
     width:100%
 }
 .graph-color-group.drag-ghost input[type='color']{
-    margin-inline-start:6px
+    margin-inline-start:var(--size-2-3)
 }
 .graph-control-section:last-child .tree-item-children{
     padding-bottom:var(--size-4-4)
@@ -10924,9 +10924,9 @@ h1:hover .collapse-indicator,h2:hover .collapse-indicator,h3:hover .collapse-ind
     width:var(--graph-controls-width);
     overflow:auto;
     padding:0;
-    border-radius:var(--menu-radius);
-    background-color:var(--menu-background);
-    corner-shape:var(--menu-corner-shape)
+    border-radius:var(--radius-m);
+    background-color:var(--background-secondary);
+    corner-shape:var(--corner-shape)
 }
 .graph-controls-button{
     display:none;
@@ -10947,11 +10947,11 @@ h1:hover .collapse-indicator,h2:hover .collapse-indicator,h3:hover .collapse-ind
     position:relative;
     display:flex;
     align-items:center;
-    padding:0 0 6px 0;
-    transition:top 200ms ease-in-out
+    padding:0 0 var(--size-2-3) 0;
+    transition:top var(--bs-dur-normal) var(--bs-ease-standard)
 }
 .graph-color-group input[type="color"]{
-    margin:0 2px 0 6px
+    margin:0 var(--size-2-1) 0 var(--size-2-3)
 }
 .markdown-reading-view.is-searching,.markdown-source-view.is-replacing,.markdown-source-view.is-searching{
     flex-direction:column-reverse
@@ -14515,7 +14515,7 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover,.tree-item-self.is
 }
 .graph-controls:not(.is-close){
     max-height:calc(100% - var(--size-4-4));
-    border:var(--menu-border-width) solid var(--menu-border-color);
+    border:var(--bs-hairline) solid var(--background-modifier-border);
     box-shadow:var(--shadow-s)
 }
 .callout-content .callout{
@@ -15297,7 +15297,14 @@ input[type="radio"]:checked{
     padding:var(--size-2-2)
 }
 .graph-controls-button.mod-reset{
-    inset-inline-end:36px
+    inset-inline-end:var(--size-4-9)
+}
+.graph-controls-button:hover,.graph-controls-button:active{
+    background-color:var(--background-modifier-hover);
+    color:var(--text-normal)
+}
+.graph-controls-button:active{
+    color:var(--interactive-accent)
 }
 @media (hover:hover){
     .metadata-property-icon:hover .svg-icon{
