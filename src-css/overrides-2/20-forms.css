@@ -1,30 +1,30 @@
-/* forms (late): rules of this component that have to stay after rules of components further down the build order. */
+/* forms (late): controls and field chrome that must win over later component layers. */
 
-/* card */
+/* ---------- combobox label ---------- */
 
-/* combobox-button */
 .combobox-button .combobox-button-label {
-  overflow: hidden;
   margin-inline-end: auto;
-  text-overflow: ellipsis;
+  overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-/* text-icon */
+/* ---------- icon-and-text buttons ---------- */
+
 .text-icon-button {
   display: inline-flex;
-  overflow: hidden;
   align-items: center;
   gap: var(--size-2-2);
-  border-radius: var(--button-radius);
+  overflow: hidden;
   padding: var(--size-2-2);
+  border-radius: var(--button-radius);
   color: var(--text-muted);
+  font-family: inherit;
   font-size: var(--font-ui-small);
   font-weight: var(--input-font-weight);
-  font-family: inherit;
-  user-select: none;
   white-space: nowrap;
   cursor: var(--cursor);
+  user-select: none;
   -webkit-app-region: no-drag;
   corner-shape: var(--corner-shape);
 }
@@ -59,7 +59,7 @@
   }
 }
 
-/* input-button */
+/* ---------- text fields ---------- */
 
 textarea,
 .multi-select-container,
@@ -71,9 +71,9 @@ input[type='search'],
 input[type='email'],
 input[type='password'],
 input[type='number'] {
+  padding: var(--input-padding);
   border: var(--input-border-width) solid var(--background-modifier-border);
   border-radius: var(--input-radius);
-  padding: var(--input-padding);
   outline: none;
   color: var(--text-normal);
   font-family: inherit;
@@ -84,8 +84,8 @@ input[type='number'] {
 }
 
 textarea {
-  border-radius: var(--textarea-radius, var(--input-radius));
   padding: var(--textarea-padding, var(--input-padding));
+  border-radius: var(--textarea-radius, var(--input-radius));
   line-height: var(--line-height-tight);
 }
 
@@ -95,37 +95,39 @@ input[type='datetime-local'] {
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- specialised inputs ---------- */
+
 input[type='range'] {
   width: 100px;
   height: var(--slider-track-height);
-  border-radius: var(--slider-track-height);
   padding: 0;
+  border-radius: var(--slider-track-height);
   outline: none;
-  -webkit-appearance: none;
   background-color: var(--slider-track-background);
+  -webkit-appearance: none;
 }
 
 input[type="color"] {
   width: calc(var(--swatch-width) + 4px);
-  border: none;
   padding: 0;
-  -webkit-appearance: none;
+  border: none;
   background-color: transparent;
   cursor: var(--cursor);
+  -webkit-appearance: none;
 }
 
-/* mod-warning */
+/* ---------- warnings and removable pills ---------- */
+
 .mod-warning {
   color: var(--text-error);
 }
 
-/* multi-select */
 .multi-select-pill-remove-button {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
   display: flex;
   align-items: center;
-  margin-inline-end: min(var(--size-2-3),var(--pill-padding-x));
+  margin-inline-end: min(var(--size-2-3), var(--pill-padding-x));
   border-radius: var(--radius-s);
   color: var(--pill-color-remove);
   cursor: var(--cursor);
