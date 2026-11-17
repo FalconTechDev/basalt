@@ -1,6 +1,6 @@
 /* code (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* token */
+/* entity tokens (links, references inside code) offer an explanatory hover */
 .token.entity {
   cursor: help;
 }

@@ -13460,17 +13460,17 @@ div.image-embed .image-resize-corner{
 }
 @media (hover:hover){
     .formula-editor:hover{
-        border-color:var(--background-modifier-border-hover);
-        transition:box-shadow var(--anim-duration-fast) ease-in-out,border var(--anim-duration-fast) ease-in-out
+        transition:box-shadow var(--anim-duration-fast) ease-in-out,border var(--anim-duration-fast) ease-in-out;
+        border-color:var(--background-modifier-border-hover)
     }
 }
 .formula-editor:active,.formula-editor:focus,.formula-editor:focus-within{
-    border-color:var(--background-modifier-border-focus);
-    transition:box-shadow 0.15s ease-in-out,border 0.15s ease-in-out
+    transition:box-shadow 0.15s ease-in-out,border 0.15s ease-in-out;
+    border-color:var(--background-modifier-border-focus)
 }
 .bases-rendered-value input[disabled=true]{
-    min-height:0;
-    pointer-events:none
+    pointer-events:none;
+    min-height:0
 }
 .bases-toolbar-menu-container .search-input-container input[type=search]{
     border:0;
@@ -13486,15 +13486,15 @@ div.image-embed .image-resize-corner{
     padding-bottom:var(--size-2-3)
 }
 .bases-toolbar-items .suggestion-group[data-group="actions"]{
-    border-top:var(--border-width) solid var(--background-modifier-border);
-    padding:var(--size-4-1)
+    padding:var(--size-4-1);
+    border-top:var(--border-width) solid var(--background-modifier-border)
 }
 .bases-toolbar-menu .modal-header{
     display:none
 }
 .bases-toolbar-menu-form .input-group-header{
-    align-items:center;
     display:flex;
+    align-items:center;
     gap:var(--size-4-2);
     font-size:var(--font-ui-small);
     font-weight:var(--font-semibold)
@@ -13518,10 +13518,10 @@ div.image-embed .image-resize-corner{
     cursor:var(--cursor)
 }
 .bases-search-row .search-input-container{
-    flex-grow:1;
     display:flex;
     align-items:center;
-    gap:var(--size-4-1)
+    gap:var(--size-4-1);
+    flex-grow:1
 }
 .bases-search-row .search-input-container input{
     flex:1;
@@ -13535,9 +13535,9 @@ div.image-embed .image-resize-corner{
     flex-shrink:0
 }
 .bases-query-container .filter-group .filter-group-statements{
-    gap:var(--size-2-3);
     display:flex;
     flex-direction:column;
+    gap:var(--size-2-3);
     width:100%
 }
 .bases-query-container .filter-row{
@@ -13547,17 +13547,17 @@ div.image-embed .image-resize-corner{
 }
 .bases-query-container .filter-row .filter-statement{
     display:flex;
+    flex-direction:column;
     row-gap:var(--size-4-1);
-    flex-grow:1;
-    flex-direction:column
+    flex-grow:1
 }
 .bases-query-container .filter-rhs-container{
     display:flex;
     align-items:center
 }
 .bases-table-container input[type='text']:hover,.bases-table-container input[type='date']:hover,.bases-table-container input[type='datetime-local']:hover,.bases-table-container input[type='number']:hover,.bases-table-container .multi-select-container:hover,.bases-table-container input[type='text']:active,.bases-table-container input[type='date']:active,.bases-table-container input[type='datetime-local']:active,.bases-table-container input[type='number']:active,.bases-table-container .multi-select-container:active,.bases-table-container input[type='text']:focus,.bases-table-container input[type='date']:focus,.bases-table-container input[type='datetime-local']:focus,.bases-table-container input[type='number']:focus,.bases-table-container .multi-select-container:focus{
-    box-shadow:none;
-    border:none
+    border:none;
+    box-shadow:none
 }
 .bases-thead .bases-td{
     align-items:center;
@@ -13583,10 +13583,10 @@ body.mod-rtl .bases-table-header-resizer{
     border:none
 }
 .is-phone .bases-toolbar-menu-container input[type=search]{
+    background-color:var(--background-modifier-form-field);
     border:0;
     border-radius:var(--radius-xl);
-    box-shadow:none;
-    background-color:var(--background-modifier-form-field)
+    box-shadow:none
 }
 .is-mobile .document-search input,.is-mobile .document-replace input{
     flex-grow:1
