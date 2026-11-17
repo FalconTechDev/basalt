@@ -9698,12 +9698,11 @@ ul > li.task-list-item > p > .task-list-item-checkbox,ul > li.task-list-item > .
 }
 .workspace-tab-header-container{
     display:flex;
-    flex:0 0 auto;
     position:relative;
+    flex:0 0 auto;
     height:var(--header-height);
+    padding-inline:var(--size-4-2);
     border-bottom:var(--tab-outline-width) solid var(--tab-outline-color);
-    padding-left:var(--size-4-2);
-    padding-right:var(--size-4-2);
     background-color:var(--tab-container-background)
 }
 .workspace-tab-header-container-inner{
@@ -9718,8 +9717,8 @@ ul > li.task-list-item > p > .task-list-item-checkbox,ul > li.task-list-item > .
     padding:1px 15px 0
 }
 .workspace-tab-header-inner-icon{
-    flex:0 0 auto;
-    display:flex
+    display:flex;
+    flex:0 0 auto
 }
 body.is-focused .workspace-tab-header-container .workspace-tab-header{
     color:var(--tab-text-color-focused)
@@ -9745,14 +9744,14 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
     flex:1 0 0
 }
 .workspace-tab-header-inner{
-    align-items:center;
     display:flex;
+    align-items:center;
     gap:var(--size-2-1);
     overflow:hidden;
-    height:100%;
     width:100%;
-    border-radius:var(--tab-radius);
+    height:100%;
     padding:0 8px;
+    border-radius:var(--tab-radius);
     corner-shape:var(--corner-shape)
 }
 .workspace-tab-header-inner .workspace-tab-header-inner-icon{
@@ -9799,14 +9798,14 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
 }
 .mod-left-split .workspace-tab-header-container .workspace-tab-header-container-inner,.mod-right-split .workspace-tab-header-container .workspace-tab-header-container-inner{
     gap:3px;
-    padding:1px 0 7px;
-    margin:6px 0 0 0
+    margin:6px 0 0;
+    padding:1px 0 7px
 }
 .mod-left-split .workspace-tab-header-container .workspace-tab-header,.mod-right-split .workspace-tab-header-container .workspace-tab-header{
-    box-shadow:none;
-    padding:0;
     margin:0;
+    padding:0;
     border-radius:var(--radius-s);
+    box-shadow:none;
     background-color:transparent;
     corner-shape:var(--corner-shape)
 }
@@ -9838,7 +9837,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
     display:flex;
     justify-content:center;
     height:calc(var(--header-height) - 1px);
-    padding:var(--size-4-2) 0 7px 0;
+    padding:var(--size-4-2) 0 7px;
     -webkit-app-region:no-drag
 }
 .sidebar-toggle-button .sidebar-toggle-icon-inner{
@@ -9877,8 +9876,8 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
 }
 .suggestion-item.mod-complex .suggestion-hotkey{
     padding:2px 6px;
-    font-size:var(--font-ui-smaller);
-    font-family:var(--font-interface)
+    font-family:var(--font-interface);
+    font-size:var(--font-ui-smaller)
 }
 .graph-color-group.drag-ghost input[type='text']{
     width:100%
@@ -9911,9 +9910,9 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
     padding:6px 8px;
     height:auto;
     box-shadow:none;
-    color:var(--text-muted);
-    font-size:var(--font-ui-smaller);
     font-family:var(--font-interface);
+    font-size:var(--font-ui-smaller);
+    color:var(--text-muted);
     background-color:transparent
 }
 .markdown-preview-view .markdown-embed .markdown-preview-view{
@@ -9950,26 +9949,26 @@ input[type=checkbox].metadata-input-checkbox{
     display:none
 }
 select,.combobox-button,.dropdown{
+    box-sizing:border-box;
     height:var(--input-height);
     max-width:100%;
-    box-sizing:border-box;
-    box-shadow:var(--input-shadow);
     margin:0;
+    padding:var(--dropdown-padding);
     border:0;
     border-radius:var(--input-radius);
-    padding:var(--dropdown-padding);
-    font-size:var(--font-ui-small);
+    box-shadow:var(--input-shadow);
     font-family:inherit;
+    font-size:var(--font-ui-small);
     font-weight:var(--input-font-weight);
     line-height:var(--line-height-tight);
     color:var(--text-normal);
-    -webkit-appearance:none;
-    appearance:none;
     background-color:var(--dropdown-background);
     background-repeat:no-repeat,repeat;
     background-position:var(--dropdown-background-position);
     background-size:var(--dropdown-background-size);
     background-blend-mode:hard-light;
+    appearance:none;
+    -webkit-appearance:none;
     -webkit-app-region:no-drag;
     corner-shape:var(--corner-shape)
 }
@@ -10012,9 +10011,9 @@ select:focus-visible,.combobox-button:focus-visible,.dropdown:focus-visible{
 .canvas-controls{
     inset-inline-end:var(--size-4-2);
     top:var(--size-4-2);
-    gap:var(--size-4-2);
     display:flex;
-    flex-direction:column
+    flex-direction:column;
+    gap:var(--size-4-2)
 }
 .canvas-empty-embed-action-list{
     display:flex;
@@ -10086,15 +10085,15 @@ select:focus-visible,.combobox-button:focus-visible,.dropdown:focus-visible{
 }
 .bases-query-container .filter-row .filter-operator{
     align-self:stretch;
-    border-width:0 1px;
     max-width:33%;
-    height:auto
+    height:auto;
+    border-width:0 1px
 }
 .bases-query-container .filter-expression .filter-row-actions{
     display:flex;
-    padding:var(--size-2-1);
+    height:var(--input-height);
     margin-inline-start:auto;
-    height:var(--input-height)
+    padding:var(--size-2-1)
 }
 .bases-query-container .filter-rhs-container .metadata-link-inner{
     width:auto
@@ -10104,10 +10103,10 @@ select:focus-visible,.combobox-button:focus-visible,.dropdown:focus-visible{
     padding:var(--size-4-1) 0 var(--size-4-2)
 }
 .is-grouped .bases-cards-container .bases-cards-group{
-    padding:0 0 var(--size-4-4) 0;
-    border-color:var(--background-modifier-border);
-    border-width:0 0 1px 0;
-    border-style:solid
+    padding:0 0 var(--size-4-4);
+    border-width:0 0 1px;
+    border-style:solid;
+    border-color:var(--background-modifier-border)
 }
 .bases-list-item .bases-list-item-properties.nested{
     padding-inline-start:var(--list-indent)
