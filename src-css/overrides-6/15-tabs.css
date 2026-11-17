@@ -4,9 +4,9 @@
 .metadata-property-value .clickable-icon {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
-  margin-inline-end: 2px;
-  margin-inline-start: -4px;
-  padding: 4px;
+  margin-inline-end: var(--size-2-1);
+  margin-inline-start: calc(var(--size-4-1) * -1);
+  padding: var(--size-4-1);
 }
 
 .view-header-reload-button {

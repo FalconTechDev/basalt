@@ -912,7 +912,7 @@ body {
   --tab-stacked-font-weight: 400;
   --tab-stacked-header-width: var(--header-height);
   --tab-stacked-pane-width: 700px;
-  --tab-stacked-shadow: -8px 0 8px 0 rgba(0, 0, 0, 0.05);
+  --tab-stacked-shadow: -8px 0 12px var(--background-modifier-box-shadow);
   --tab-stacked-text-align: start;
   --tab-stacked-text-transform: rotate(0deg);
   --tab-stacked-text-writing-mode: vertical-lr;
@@ -1093,6 +1093,7 @@ body {
 
   --bs-focus-width: 2px;
   --bs-hairline: 1px;
+  --bs-on-error: #ffffff;
 }
 
 /* ---------- shared theme bits ---------- */

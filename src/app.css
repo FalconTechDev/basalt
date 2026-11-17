@@ -1940,7 +1940,7 @@ body{
     --tab-stacked-font-weight:400;
     --tab-stacked-header-width:var(--header-height);
     --tab-stacked-pane-width:700px;
-    --tab-stacked-shadow:-8px 0 8px 0 rgba(0,0,0,0.05);
+    --tab-stacked-shadow:-8px 0 12px var(--background-modifier-box-shadow);
     --tab-stacked-text-align:start;
     --tab-stacked-text-transform:rotate(0deg);
     --tab-stacked-text-writing-mode:vertical-lr;
@@ -2089,7 +2089,8 @@ body{
     --bs-ease-standard:cubic-bezier(0.2,0,0,1);
     --bs-ease-emphasized:cubic-bezier(0.3,0,0.2,1);
     --bs-focus-width:2px;
-    --bs-hairline:1px
+    --bs-hairline:1px;
+    --bs-on-error:#ffffff
 }
 .theme-light,.theme-dark{
     --dropdown-background:var(--interactive-normal);
@@ -5540,7 +5541,7 @@ body.is-ios .markdown-source-view.mod-cm6 .cm-editor:not(.cm-focused) .cm-underl
     margin:var(--size-4-3) var(--size-4-2)
 }
 .app-container.mod-loading .view-header .loader-spinner svg{
-    animation:spin 0.9s ease infinite
+    animation:spin calc(var(--bs-dur-slow) * 2.5) var(--bs-ease-standard) infinite
 }
 .horizontal-main-container{
     display:flex;
@@ -5553,10 +5554,10 @@ body.is-frameless.in-progress .titlebar,body.is-frameless:not(.is-hidden-framele
     height:var(--titlebar-height)
 }
 body.is-frameless.in-progress:not(.is-maximized) .titlebar,body.is-frameless:not(.is-hidden-frameless, .is-fullscreen):not(.is-maximized) .titlebar{
-    padding-top:2px
+    padding-top:var(--size-2-1)
 }
 body.is-frameless.is-hidden-frameless .titlebar{
-    height:calc(var(--header-height) - 1px)
+    height:calc(var(--header-height) - var(--bs-hairline))
 }
 .is-fullscreen .titlebar{
     display:none
@@ -5619,7 +5620,7 @@ body.is-focused .sidebar-toggle-button,body.is-focused .workspace-tabs.mod-top{
     top:0
 }
 .mod-macos .titlebar-button-container{
-    top:8px
+    top:var(--size-4-2)
 }
 .titlebar-button-container.mod-left{
     left:0
@@ -5673,8 +5674,8 @@ body.is-frameless.in-progress .titlebar{
         background-color:var(--background-modifier-error)
     }
     .mod-linux .titlebar-button.mod-close:hover .svg-icon,.mod-windows .titlebar-button.mod-close:hover .svg-icon{
-        fill:white;
-        stroke:white
+        fill:var(--bs-on-error);
+        stroke:var(--bs-on-error)
     }
 }
 .titlebar-button.mod-logo{
@@ -5761,7 +5762,7 @@ body.is-frameless.in-progress .titlebar{
 .workspace-ribbon.mod-left.is-collapsed{
     border-right-color:var(--divider-color);
     background-color:var(--ribbon-background-collapsed);
-    transition:background-color 250ms 95ms ease-in-out
+    transition:background-color var(--bs-dur-normal) var(--bs-dur-instant) var(--bs-ease-standard)
 }
 .workspace-ribbon.mod-right{
     display:none
@@ -5831,7 +5832,7 @@ body:not(.show-ribbon) .workspace-ribbon,body:not(.show-ribbon) .side-dock-ribbo
 }
 .view-header-title-parent .view-header-breadcrumb{
     overflow:hidden;
-    padding:2px 4px;
+    padding:var(--size-2-1) var(--size-4-1);
     border-radius:var(--radius-s);
     text-overflow:ellipsis
 }
@@ -5846,7 +5847,7 @@ body:not(.show-ribbon) .workspace-ribbon,body:not(.show-ribbon) .side-dock-ribbo
     }
 }
 .view-header-title-parent .view-header-breadcrumb-separator{
-    padding:2px 1px;
+    padding:var(--size-2-1) var(--bs-hairline);
     color:var(--text-faint)
 }
 .view-header-title{
@@ -5857,7 +5858,7 @@ body:not(.show-ribbon) .workspace-ribbon,body:not(.show-ribbon) .side-dock-ribbo
     color:var(--text-muted);
     text-overflow:ellipsis;
     white-space:pre;
-    scroll-padding-inline-end:20px
+    scroll-padding-inline-end:var(--size-4-5)
 }
 .view-header-title:focus-within{
     overflow:auto;
@@ -5980,7 +5981,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header.is-highlig
     background-color:transparent
 }
 .workspace-tab-header.is-before-active .workspace-tab-header-inner{
-    border-bottom-right-radius:10px
+    border-bottom-right-radius:var(--radius-xl)
 }
 body:not(.is-grabbing):not(.is-fullscreen) .workspace-tabs.mod-top .workspace-tab-header-spacer{
     -webkit-app-region:drag
@@ -6000,7 +6001,7 @@ body:not(.is-grabbing):not(.is-fullscreen).is-hidden-frameless .mod-top .workspa
 .workspace-tab-header-new-tab{
     padding:var(--size-4-2) 0 var(--size-2-3);
     margin-inline-end:var(--size-4-3);
-    margin-inline-start:-4px
+    margin-inline-start:calc(var(--size-4-1) * -1)
 }
 .workspace-tab-header-tab-list{
     margin-inline-end:var(--size-4-1);
@@ -6022,11 +6023,11 @@ body:not(.is-grabbing):not(.is-fullscreen).is-hidden-frameless .mod-top .workspa
     color:var(--icon-color-focused)
 }
 .mod-left-split .workspace-tab-header-container .workspace-tab-header.has-active-menu,.mod-right-split .workspace-tab-header-container .workspace-tab-header.has-active-menu,.mod-left-split .workspace-tab-header-container .workspace-tab-header.is-active,.mod-right-split .workspace-tab-header-container .workspace-tab-header.is-active{
-    background-color:var(--background-modifier-hover)
+    background-color:var(--nav-item-background-selected)
 }
 @media (hover:hover){
     .mod-left-split .workspace-tab-header-container .workspace-tab-header.has-active-menu:hover,.mod-right-split .workspace-tab-header-container .workspace-tab-header.has-active-menu:hover,.mod-left-split .workspace-tab-header-container .workspace-tab-header.is-active:hover,.mod-right-split .workspace-tab-header-container .workspace-tab-header.is-active:hover{
-        background-color:var(--background-modifier-hover)
+        background-color:var(--nav-item-background-hover)
     }
 }
 .mod-left-split .workspace-tab-header-container .workspace-tab-header.has-active-menu .workspace-tab-header-inner-icon,.mod-right-split .workspace-tab-header-container .workspace-tab-header.has-active-menu .workspace-tab-header-inner-icon,.mod-left-split .workspace-tab-header-container .workspace-tab-header.is-active .workspace-tab-header-inner-icon,.mod-right-split .workspace-tab-header-container .workspace-tab-header.is-active .workspace-tab-header-inner-icon{
@@ -6051,8 +6052,8 @@ body:not(.is-grabbing):not(.is-fullscreen).is-hidden-frameless .mod-top .workspa
 .workspace .mod-root .workspace-tab-header-inner::after{
     position:absolute;
     inset-inline-end:-0.5px;
-    width:1px;
-    height:20px;
+    width:var(--bs-hairline);
+    height:var(--size-4-5);
     background-color:var(--tab-divider-color);
     content:''
 }
@@ -6257,7 +6258,7 @@ body:not(.is-fullscreen) .status-bar{
     display:inline-flex;
     align-items:center;
     border-radius:var(--radius-s);
-    padding:3px var(--size-2-2);
+    padding:var(--size-4-1) var(--size-2-2);
     line-height:1;
     corner-shape:var(--corner-shape)
 }
@@ -6301,7 +6302,7 @@ body:not(.is-fullscreen) .status-bar{
     background-color:var(--nav-item-background-selected)
 }
 .workspace-drawer-tab-options:not(.is-collapsed) .workspace-drawer-tab-options-list .workspace-tab-header{
-    animation:slideIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275) backwards
+    animation:slideIn var(--bs-dur-normal) var(--anim-motion-jumpy) backwards
 }
 .workspace-drawer-tab-options:not(.is-collapsed) .workspace-drawer-tab-options-list .workspace-tab-header:nth-child(1){
     animation-delay:0s
@@ -9680,9 +9681,9 @@ ul > li.task-list-item > p > .task-list-item-checkbox,ul > li.task-list-item > .
     padding:0 var(--size-2-2)
 }
 .titlebar-button-container .mod-back .svg-icon,.titlebar-button-container .mod-forward .svg-icon{
-    width:14px;
-    height:14px;
-    stroke-width:2.25px
+    width:var(--icon-xs);
+    height:var(--icon-xs);
+    stroke-width:var(--icon-xs-stroke-width)
 }
 @media (hover:hover){
     .titlebar-button-container .mod-back:hover,.titlebar-button-container .mod-forward:hover{
@@ -9699,10 +9700,10 @@ ul > li.task-list-item > p > .task-list-item-checkbox,ul > li.task-list-item > .
 .mod-linux .titlebar-button,.mod-windows .titlebar-button{
     display:flex;
     align-items:center;
-    padding:0 16px
+    padding:0 var(--size-4-4)
 }
 .mod-linux .titlebar-button.mod-logo,.mod-windows .titlebar-button.mod-logo{
-    padding:4px 8px
+    padding:var(--size-4-1) var(--size-4-2)
 }
 .workspace-tabs > *{
     flex:1 0 0
@@ -9726,12 +9727,12 @@ ul > li.task-list-item > p > .task-list-item-checkbox,ul > li.task-list-item > .
     display:flex;
     flex:0 1 auto;
     overflow:auto;
-    margin:6px -5px calc(var(--tab-outline-width) * -1);
-    padding:1px 15px 0;
+    margin:var(--size-2-3) calc(var(--size-4-1) * -1) calc(var(--tab-outline-width) * -1);
+    padding:var(--bs-hairline) var(--size-4-4) 0;
     -webkit-app-region:drag
 }
 .mod-root .workspace-tab-header-container-inner{
-    padding:1px 15px 0
+    padding:var(--bs-hairline) var(--size-4-4) 0
 }
 .workspace-tab-header-inner-icon{
     display:flex;
@@ -9743,7 +9744,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
 .workspace-tab-header-container .workspace-tab-header{
     display:flex;
     position:relative;
-    padding:1px 4px 3.5px;
+    padding:var(--bs-hairline) var(--size-4-1) var(--size-4-1);
     border-radius:var(--tab-radius-active);
     color:var(--tab-text-color);
     text-align:center;
@@ -9767,7 +9768,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
     overflow:hidden;
     width:100%;
     height:100%;
-    padding:0 8px;
+    padding:0 var(--size-4-2);
     border-radius:var(--tab-radius);
     corner-shape:var(--corner-shape)
 }
@@ -9783,8 +9784,8 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
 }
 .mod-root .workspace-tab-header-inner{
     padding-top:0;
-    padding-inline-end:3px;
-    padding-inline-start:6px;
+    padding-inline-end:var(--size-2-2);
+    padding-inline-start:var(--size-2-3);
     padding-bottom:0
 }
 .workspace-tab-header-inner-title{
@@ -9814,9 +9815,9 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
     flex-grow:1
 }
 .mod-left-split .workspace-tab-header-container .workspace-tab-header-container-inner,.mod-right-split .workspace-tab-header-container .workspace-tab-header-container-inner{
-    gap:3px;
-    margin:6px 0 0;
-    padding:1px 0 7px
+    gap:var(--size-4-1);
+    margin:var(--size-2-3) 0 0;
+    padding:var(--bs-hairline) 0 var(--size-4-2)
 }
 .mod-left-split .workspace-tab-header-container .workspace-tab-header,.mod-right-split .workspace-tab-header-container .workspace-tab-header{
     margin:0;
@@ -9833,7 +9834,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
     width:var(--tab-width);
     min-width:0;
     max-width:var(--tab-max-width);
-    padding:1px 3px 3.5px;
+    padding:var(--bs-hairline) var(--size-4-1) var(--size-4-1);
     -webkit-app-region:no-drag
 }
 .workspace .mod-root .workspace-tab-header.is-active .workspace-tab-header-inner-close-button svg{
@@ -9841,7 +9842,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
 }
 .workspace .mod-root .workspace-tab-header-inner-icon{
     display:flex;
-    padding-inline-end:4px
+    padding-inline-end:var(--size-4-1)
 }
 .workspace .mod-root .workspace-tab-header-inner-title{
     width:100%;
@@ -9853,8 +9854,8 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header{
     position:relative;
     display:flex;
     justify-content:center;
-    height:calc(var(--header-height) - 1px);
-    padding:var(--size-4-2) 0 7px;
+    height:calc(var(--header-height) - var(--bs-hairline));
+    padding:var(--size-4-2) 0 var(--size-4-2);
     -webkit-app-region:no-drag
 }
 .sidebar-toggle-button .sidebar-toggle-icon-inner{
@@ -15223,9 +15224,9 @@ input[type="radio"]:checked{
 .metadata-property-value .clickable-icon{
     --icon-size:var(--icon-xs);
     --icon-stroke:var(--icon-xs-stroke-width);
-    margin-inline-end:2px;
-    margin-inline-start:-4px;
-    padding:4px
+    margin-inline-end:var(--size-2-1);
+    margin-inline-start:calc(var(--size-4-1) * -1);
+    padding:var(--size-4-1)
 }
 .view-header-reload-button{
     --icon-size:var(--icon-s);
