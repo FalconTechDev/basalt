@@ -6,10 +6,10 @@
   width: 100%;
 }
 
-/* light theme tints the progress track darker so the accent bar reads */
+/* light theme keeps a dark warm track so the accent fill still reads */
 .theme-light .notice progress[value]::-webkit-progress-bar {
-  box-shadow: inset 0px 0px 0px 1px #363636;
-  background-color: #262626;
+  box-shadow: inset 0px 0px 0px 1px var(--color-base-70);
+  background-color: var(--color-base-100);
 }
 
 /* the track is an inset-bordered pill everywhere progress appears */
@@ -19,7 +19,7 @@
 .markdown-source-view.is-live-preview progress[value]::-webkit-progress-bar {
   overflow: hidden;
   box-shadow: inset 0px 0px 0px 1px var(--background-modifier-border);
-  border-radius: 6px;
+  border-radius: var(--radius-xl);
   background-color: var(--background-secondary);
 }
 
@@ -37,7 +37,7 @@
 /* side tooltips slide in from the right and centre vertically */
 .tooltip.mod-right,
 .tooltip.mod-left {
-  animation: pop-right 200ms forwards ease-in-out;
+  animation: pop-right var(--bs-dur-normal) var(--bs-ease-standard) forwards;
   transform: translateY(-50%);
 }
 
