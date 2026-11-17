@@ -11217,25 +11217,25 @@ h1:hover .collapse-indicator,h2:hover .collapse-indicator,h3:hover .collapse-ind
     line-height:var(--footnote-line-height)
 }
 .combobox-button .combobox-button-label{
-    overflow:hidden;
     margin-inline-end:auto;
-    text-overflow:ellipsis;
-    white-space:nowrap
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis
 }
 .text-icon-button{
     display:inline-flex;
-    overflow:hidden;
     align-items:center;
     gap:var(--size-2-2);
-    border-radius:var(--button-radius);
+    overflow:hidden;
     padding:var(--size-2-2);
+    border-radius:var(--button-radius);
     color:var(--text-muted);
+    font-family:inherit;
     font-size:var(--font-ui-small);
     font-weight:var(--input-font-weight);
-    font-family:inherit;
-    user-select:none;
     white-space:nowrap;
     cursor:var(--cursor);
+    user-select:none;
     -webkit-app-region:no-drag;
     corner-shape:var(--corner-shape)
 }
@@ -11263,9 +11263,9 @@ h1:hover .collapse-indicator,h2:hover .collapse-indicator,h3:hover .collapse-ind
     }
 }
 textarea,.multi-select-container,input.metadata-input-text,input[type='date'],input[type='datetime-local'],input[type='text'],input[type='search'],input[type='email'],input[type='password'],input[type='number']{
+    padding:var(--input-padding);
     border:var(--input-border-width) solid var(--background-modifier-border);
     border-radius:var(--input-radius);
-    padding:var(--input-padding);
     outline:none;
     color:var(--text-normal);
     font-family:inherit;
@@ -11275,8 +11275,8 @@ textarea,.multi-select-container,input.metadata-input-text,input[type='date'],in
     corner-shape:var(--input-corner-shape)
 }
 textarea{
-    border-radius:var(--textarea-radius,var(--input-radius));
     padding:var(--textarea-padding,var(--input-padding));
+    border-radius:var(--textarea-radius,var(--input-radius));
     line-height:var(--line-height-tight)
 }
 input[type='date'],input[type='datetime-local']{
@@ -11286,19 +11286,19 @@ input[type='date'],input[type='datetime-local']{
 input[type='range']{
     width:100px;
     height:var(--slider-track-height);
-    border-radius:var(--slider-track-height);
     padding:0;
+    border-radius:var(--slider-track-height);
     outline:none;
-    -webkit-appearance:none;
-    background-color:var(--slider-track-background)
+    background-color:var(--slider-track-background);
+    -webkit-appearance:none
 }
 input[type="color"]{
     width:calc(var(--swatch-width) + 4px);
-    border:none;
     padding:0;
-    -webkit-appearance:none;
+    border:none;
     background-color:transparent;
-    cursor:var(--cursor)
+    cursor:var(--cursor);
+    -webkit-appearance:none
 }
 .mod-warning{
     color:var(--text-error)
