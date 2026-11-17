@@ -1,0 +1,1 @@
+function nf(e){return e.length<=4096&&/[\u0590-\u05f4\u0600-\u06ff\u0700-\u08ac\ufb50-\ufdff]/.test(e)}

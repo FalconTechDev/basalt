@@ -1,0 +1,1 @@
+function pf(e,t){var n;e.moveTo(t,-1),e.node.parent&&!(null!==(n=e.node.type.prop(Zd))&&void 0!==n?n:"").contains("table")||e.moveTo(t,1)}

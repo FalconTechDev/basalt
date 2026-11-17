@@ -1,0 +1,1 @@
+function hf(e,t){for(var n=t.from,i=t.to;n<i&&/\s+/.test(e.sliceDoc(n,n+1));)n++;for(;i>n&&/\s+/.test(e.sliceDoc(i-1,i));)i--;return{from:n,to:i}}

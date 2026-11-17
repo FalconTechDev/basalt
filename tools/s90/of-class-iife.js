@@ -1,0 +1,1 @@
+of=me.define({combine:function(e){return e.some((function(e){return e}))}})
