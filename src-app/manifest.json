@@ -2379,6 +2379,10 @@
       "orig": "EV",
       "use": "s40FoldedRangeAt",
       "originalBytes": 105
+    },
+    {
+      "orig": "ym",
+      "use": "s65LocaleName"
     }
   ],
   "classes": [
