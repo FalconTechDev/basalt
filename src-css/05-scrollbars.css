@@ -1,4 +1,4 @@
-/* scrollbars: thin overlay scrollbars, hidden during screenshots */
+/* scrollbars: 12px overlay chrome, hidden during screenshots */
 
 /* the multi-select filter input never shows a scrollbar */
 .multi-select-input::-webkit-scrollbar {
@@ -13,8 +13,9 @@ body.styled-scrollbars ::-webkit-scrollbar {
   background-color: transparent;
 }
 
+/* track is a whisper of the mono tint; the thumb carries the visible part */
 body.styled-scrollbars ::-webkit-scrollbar-track {
-  background-color: transparent;
+  background-color: var(--scrollbar-bg);
 }
 
 /* the thumb is a padded pill: border-width insets it from the track edge */

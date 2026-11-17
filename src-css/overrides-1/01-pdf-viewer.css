@@ -2,13 +2,13 @@
 
 /* progress bar subline slides in with the bar */
 .progress-bar .progress-bar-subline {
-  transition: transform 150ms ease-in-out;
+  transition: transform var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 /* sidebar and viewer panes ease open/close together */
 .pdf-content-container .pdf-sidebar-container,
 .pdf-content-container .pdf-viewer-container {
-  transition-duration: 275ms;
+  transition-duration: var(--bs-dur-slow);
   transition-timing-function: var(--anim-motion-swing);
 }
 

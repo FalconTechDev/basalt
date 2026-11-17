@@ -30,7 +30,7 @@ body.is-mobile .app-container {
   padding: var(--size-4-1) 0;
   font-size: var(--font-ui-medium);
   color: var(--text-muted);
-  transition: transform 1000ms ease-in-out;
+  transition: transform var(--bs-dur-slow) var(--bs-ease-standard);
 }
 
 .mobile-option-setting-item-option-icon {
@@ -62,7 +62,7 @@ body.is-mobile .app-container {
   display: flex;
   align-items: center;
   gap: var(--size-4-1);
-  transition: opacity 0.1s ease-in-out;
+  transition: opacity var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 .mobile-tab-switcher-menu-button-chevron {

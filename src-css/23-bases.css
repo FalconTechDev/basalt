@@ -80,7 +80,7 @@ input {
   z-index: var(--layer-cover);
   content: '';
   pointer-events: none;
-  background: hsla(var(--interactive-accent-hsl), 0.1);
+  background: var(--bs-accent-soft);
 }
 
 .bases-formula-error .bases-formula-error-message {
@@ -95,7 +95,7 @@ input {
   border-width: var(--bases-embed-border-width);
   border-style: solid;
   border-color: var(--bases-embed-border-color);
-  border-radius: var(--bases-embed-radius);
+  border-radius: var(--bases-embed-border-radius);
   padding: var(--bases-embed-padding);
 }
 
