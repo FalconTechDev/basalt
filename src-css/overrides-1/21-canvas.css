@@ -1,22 +1,26 @@
 /* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* canvas-controls */
+/* ---------- canvas chrome ---------- */
+
+/* the floating control stack hugs the top-end corner */
 .canvas-controls {
   inset-inline-end: var(--size-4-2);
   top: var(--size-4-2);
-  gap: var(--size-4-2);
   display: flex;
   flex-direction: column;
+  gap: var(--size-4-2);
 }
 
-/* canvas-empty */
+/* ---------- empty state ---------- */
+
 .canvas-empty-embed-action-list {
   display: flex;
   flex-direction: column;
   gap: var(--size-4-3);
 }
 
-/* canvas-help */
+/* ---------- help overlay ---------- */
+
 .canvas-help {
   display: flex;
   flex-direction: column;

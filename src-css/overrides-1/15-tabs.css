@@ -1,17 +1,18 @@
 /* tabs (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* workspace-ribbon */
+/* ---------- window chrome that shares the tab layer ---------- */
+
+/* ribbon sits below the window header */
 .workspace-ribbon.mod-left {
   margin-top: var(--header-height);
 }
 
-/* input-right */
+/* the clickable affordance inside a right-side input */
 .input-right-decorator.clickable-icon {
   padding: var(--size-2-1) var(--size-2-2);
 }
 
 @media (hover: hover) {
-  /* status-bar */
   .status-bar-item.mod-clickable:hover {
     color: var(--text-normal);
     background-color: var(--background-modifier-hover);
@@ -23,7 +24,7 @@
   padding: 0 var(--size-2-2);
 }
 
-/* titlebar-button */
+/* back/forward glyphs in the title bar are chunkier than default icons */
 .titlebar-button-container .mod-back .svg-icon,
 .titlebar-button-container .mod-forward .svg-icon {
   width: 14px;
@@ -43,7 +44,7 @@
   }
 }
 
-/* mod-linux */
+/* linux/windows title-bar buttons fill the bar height */
 .mod-linux .titlebar-button-container,
 .mod-windows .titlebar-button-container {
   height: 100%;
@@ -61,33 +62,34 @@
   padding: 4px 8px;
 }
 
-/* workspace-tabs */
+/* ---------- tab strip layout ---------- */
+
 .workspace-tabs > * {
   flex: 1 0 0;
 }
 
-/* workspace-split */
 .workspace-split.mod-right-split .workspace-tabs {
   padding-inline-end: 0;
 }
 
-/* workspace-tabs */
 .workspace-tabs .workspace-leaf .view-content {
   height: 100%;
 }
 
-/* workspace-tab */
+/* ---------- tab header chrome ---------- */
+
+/* the bar that hosts the row of tab headers */
 .workspace-tab-header-container {
   display: flex;
-  flex: 0 0 auto;
   position: relative;
+  flex: 0 0 auto;
   height: var(--header-height);
+  padding-inline: var(--size-4-2);
   border-bottom: var(--tab-outline-width) solid var(--tab-outline-color);
-  padding-left: var(--size-4-2);
-  padding-right: var(--size-4-2);
   background-color: var(--tab-container-background);
 }
 
+/* scrollable inner row; draggable as window chrome */
 .workspace-tab-header-container-inner {
   display: flex;
   flex: 0 1 auto;
@@ -97,23 +99,20 @@
   -webkit-app-region: drag;
 }
 
-/* mod-root */
 .mod-root .workspace-tab-header-container-inner {
   padding: 1px 15px 0;
 }
 
-/* workspace-tab */
 .workspace-tab-header-inner-icon {
-  flex: 0 0 auto;
   display: flex;
+  flex: 0 0 auto;
 }
 
-/* is-focused */
 body.is-focused .workspace-tab-header-container .workspace-tab-header {
   color: var(--tab-text-color-focused);
 }
 
-/* workspace-tab */
+/* a single tab header */
 .workspace-tab-header-container .workspace-tab-header {
   display: flex;
   position: relative;
@@ -137,15 +136,16 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header {
   flex: 1 0 0;
 }
 
+/* contents of one tab: icon, title, status, close button */
 .workspace-tab-header-inner {
-  align-items: center;
   display: flex;
+  align-items: center;
   gap: var(--size-2-1);
   overflow: hidden;
-  height: 100%;
   width: 100%;
-  border-radius: var(--tab-radius);
+  height: 100%;
   padding: 0 8px;
+  border-radius: var(--tab-radius);
   corner-shape: var(--corner-shape);
 }
 
@@ -161,7 +161,6 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header {
   }
 }
 
-/* mod-root */
 .mod-root .workspace-tab-header-inner {
   padding-top: 0;
   padding-inline-end: 3px;
@@ -169,7 +168,6 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header {
   padding-bottom: 0;
 }
 
-/* workspace-tab */
 .workspace-tab-header-inner-title {
   flex: 1 1 auto;
   overflow: hidden;
@@ -201,25 +199,27 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header {
   flex-grow: 1;
 }
 
-/* mod-left */
+/* ---------- sidebar-style tab headers (left/right splits) ---------- */
+
 .mod-left-split .workspace-tab-header-container .workspace-tab-header-container-inner,
 .mod-right-split .workspace-tab-header-container .workspace-tab-header-container-inner {
   gap: 3px;
+  margin: 6px 0 0;
   padding: 1px 0 7px;
-  margin: 6px 0 0 0;
 }
 
 .mod-left-split .workspace-tab-header-container .workspace-tab-header,
 .mod-right-split .workspace-tab-header-container .workspace-tab-header {
-  box-shadow: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
   border-radius: var(--radius-s);
+  box-shadow: none;
   background-color: transparent;
   corner-shape: var(--corner-shape);
 }
 
-/* workspace */
+/* ---------- root-workspace tabs (the "chrome" tab style) ---------- */
+
 .workspace .mod-root .workspace-tab-header {
   container-type: inline-size;
   container-name: tab-header;
@@ -245,7 +245,8 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header {
   text-overflow: ellipsis;
 }
 
-/* sidebar-toggle */
+/* ---------- sidebar toggle ---------- */
+
 .sidebar-toggle-button {
   --icon-size: var(--icon-l);
   --icon-stroke: var(--icon-l-stroke-width);
@@ -253,7 +254,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header {
   display: flex;
   justify-content: center;
   height: calc(var(--header-height) - 1px);
-  padding: var(--size-4-2) 0 7px 0;
+  padding: var(--size-4-2) 0 7px;
   -webkit-app-region: no-drag;
 }
 
@@ -265,14 +266,15 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header {
   width: var(--sidebar-left-toggle-inner-width);
 }
 
-/* list-item */
+/* ---------- late fixes for pieces owned by later layers ---------- */
+
 .list-item-part.clickable-icon:hover,
 .list-item-part.clickable-icon:active {
   color: var(--icon-color-hover);
   background-color: var(--background-modifier-hover);
 }
 
-/* workspace-drawer */
+/* drawer tab options keep the active tab highlighted while not swiping */
 .workspace-drawer-tab-options:not(.has-swipe) .workspace-tab-header.is-active .workspace-tab-header-inner {
   background-color: var(--nav-item-background-hover);
 }
