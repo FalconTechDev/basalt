@@ -23,7 +23,7 @@
 .file-tree .tree-item-flair {
   padding: var(--size-2-1) var(--size-2-3);
   line-height: 1;
-  color: var(--text-on-accent);
+  color: var(--nav-tag-color);
 }
 
 @media (hover: hover) {

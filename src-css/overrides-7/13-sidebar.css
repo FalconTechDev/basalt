@@ -4,15 +4,15 @@
 .internal-query .search-result-container {
   overflow: auto;
   padding: var(--size-4-2);
-  max-height: 800px;
-  border: 1px solid var(--background-modifier-border);
+  max-height: calc(var(--size-4-16) * 12 + var(--size-4-8));
+  border: var(--border-width) solid var(--background-modifier-border);
   border-radius: var(--radius-m);
   background-color: var(--background-secondary);
 }
 
 .backlink-pane .search-result-container,
 .outgoing-link-pane .search-result-container {
-  padding: var(--size-4-1) 1px var(--size-4-4);
+  padding: var(--size-4-1) var(--bs-hairline) var(--size-4-4);
 }
 
 .backlink-pane > .tree-item-self,
