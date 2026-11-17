@@ -5322,6 +5322,86 @@
       "orig": "k$",
       "use": "s26BasesEvents",
       "originalBytes": 0
+    },
+    {
+      "orig": "H8",
+      "use": "defineFootnoteItem",
+      "originalBytes": 1577
+    },
+    {
+      "orig": "z8",
+      "use": "defineFootnotesView",
+      "originalBytes": 3116
+    },
+    {
+      "orig": "q8",
+      "use": "defineFootnotesPlugin",
+      "originalBytes": 560
+    },
+    {
+      "orig": "U8",
+      "use": "defineMarkdownImporterPlugin",
+      "originalBytes": 426
+    },
+    {
+      "orig": "X8",
+      "use": "defineImporterModal",
+      "originalBytes": 6931
+    },
+    {
+      "orig": "Z8",
+      "use": "defineNoteComposerPlugin",
+      "originalBytes": 3726
+    },
+    {
+      "orig": "J8",
+      "use": "defineMergeFileSuggest",
+      "originalBytes": 3045
+    },
+    {
+      "orig": "e7",
+      "use": "defineExtractFileSuggest",
+      "originalBytes": 2138
+    },
+    {
+      "orig": "t7",
+      "use": "defineNoteComposerSettingTab",
+      "originalBytes": 1236
+    },
+    {
+      "orig": "r7",
+      "use": "defineOutgoingLinksPlugin",
+      "originalBytes": 2269
+    },
+    {
+      "orig": "h7",
+      "use": "defineOutlineTreeItem",
+      "originalBytes": 1004
+    },
+    {
+      "orig": "p7",
+      "use": "defineOutlinePlugin",
+      "originalBytes": 2840
+    },
+    {
+      "orig": "d7",
+      "use": "defineOutlineView",
+      "originalBytes": 9259
+    },
+    {
+      "orig": "f7",
+      "use": "definePagePreviewPlugin",
+      "originalBytes": 2307
+    },
+    {
+      "orig": "m7",
+      "use": "definePagePreviewSettingTab",
+      "originalBytes": 612
+    },
+    {
+      "orig": "k7",
+      "use": "definePropertiesPlugin",
+      "originalBytes": 3383
     }
   ],
   "host": {
@@ -6030,6 +6110,10 @@
     "xL": "xL",
     "xW": "xW",
     "zV": "zV",
+    "LinkPaneView": "gJ",
+    "OutgoingLinkView": "o7",
+    "AllPropertiesView": "E7",
+    "FilePropertiesView": "M7",
     "Titlebar": "BD",
     "makeHotkey": "Fb",
     "s27PdfLib": "pdfjsLib",
@@ -8708,6 +8792,126 @@
       "expr": "__basaltOwn.s26IosEditorExtensions()",
       "sha1": "47d2049cc8f66a543e7c8806fbd82567630b0c24",
       "originalBytes": 7
+    },
+    {
+      "orig": "s7",
+      "expr": "null",
+      "sha1": "fab28de34ec2d6728ca20046dd44638469207b69",
+      "originalBytes": 198
+    },
+    {
+      "orig": "l7",
+      "expr": "null",
+      "sha1": "5d0d42b6e35c26d3084cc43d2154a33408d1256c",
+      "originalBytes": 1421
+    },
+    {
+      "orig": "V8",
+      "expr": "null",
+      "sha1": "44ee3de6a498674b2c0c12ec28d34cd8b68ac1ae",
+      "originalBytes": 11
+    },
+    {
+      "orig": "n7",
+      "expr": "null",
+      "sha1": "e65a0011094ad22e46b384e46a454a1cd17c6bb4",
+      "originalBytes": 15
+    },
+    {
+      "orig": "c7",
+      "expr": "null",
+      "sha1": "dba8a94996ca133f67ea410c623dba2c780b3dd5",
+      "originalBytes": 9
+    },
+    {
+      "orig": "W8",
+      "expr": "null",
+      "sha1": "ea850a68d2f3eeeed6e02bc1da0686d3940a8596",
+      "originalBytes": 23
+    },
+    {
+      "orig": "_8",
+      "expr": "null",
+      "sha1": "c8c4e43512703fdfb205f26f63bd57fa99653808",
+      "originalBytes": 19
+    },
+    {
+      "orig": "G8",
+      "expr": "null",
+      "sha1": "cbcff5b3dc7ce1a346bf2ba962251e48cddca815",
+      "originalBytes": 17
+    },
+    {
+      "orig": "K8",
+      "expr": "null",
+      "sha1": "796e8eca94070dbe79e10fe5a9600179d0148ebc",
+      "originalBytes": 77
+    },
+    {
+      "orig": "Y8",
+      "expr": "null",
+      "sha1": "09cd2bab66639ab4daa0d3d7eba8daa9a7dbbbbc",
+      "originalBytes": 26
+    },
+    {
+      "orig": "Q8",
+      "expr": "null",
+      "sha1": "8c288cd322ccd80128e85abdcf39d97bda7b3434",
+      "originalBytes": 30
+    },
+    {
+      "orig": "B8",
+      "expr": "__basaltHost.t.plugins.footnotesPane",
+      "sha1": "076b1f229fd50c5d444fe05ce28042a5d6c760e5",
+      "originalBytes": 24
+    },
+    {
+      "orig": "j8",
+      "expr": "__basaltHost.t.plugins.markdownFormatImporter",
+      "sha1": "70087ada1bf468f6947d54437aad34cbbf48bf28",
+      "originalBytes": 33
+    },
+    {
+      "orig": "$8",
+      "expr": "__basaltHost.t.plugins.noteComposer",
+      "sha1": "5144af23952150c879038a93462bda2ef5a82eb2",
+      "originalBytes": 23
+    },
+    {
+      "orig": "i7",
+      "expr": "__basaltHost.t.plugins.outgoingLinks",
+      "sha1": "7f65295c4979d6dbae9fd1b5cb6f7a955e924cb9",
+      "originalBytes": 24
+    },
+    {
+      "orig": "v7",
+      "expr": "__basaltHost.t.plugins.properties",
+      "sha1": "c36396d05361e4c6d8872ab2d34878d7b3467c80",
+      "originalBytes": 21
+    },
+    {
+      "orig": "g7",
+      "expr": "__basaltOwn.s34ViewTypeAllProperties",
+      "sha1": "ea095ef63d46e8013d0263142d854da62a37a270",
+      "originalBytes": 16
+    },
+    {
+      "orig": "y7",
+      "expr": "__basaltOwn.s34ViewTypeFileProperties",
+      "sha1": "427c02538799e0915827cfc216e9b50e350ee589",
+      "originalBytes": 17
+    },
+    {
+      "orig": "b7",
+      "expr": "__basaltOwn.s34PropertySortOrders",
+      "sha1": "9f37d4c684c2c4404339a895f84b3057246c77a3",
+      "originalBytes": 73
+    },
+    {
+      "orig": "w7",
+      "expr": "__basaltOwn.s34PropertySortLabels(__basaltHost.t.plugins.properties)",
+      "sha1": "65b62c00cef89016a779da28cbe0f0996f584849",
+      "originalBytes": 173
     }
   ],
   "methods": [
