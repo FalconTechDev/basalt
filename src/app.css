@@ -12553,23 +12553,24 @@ input.prompt-input{
 .menu-separator{
     height:0;
     margin:var(--size-2-3) calc(var(--size-2-3) * -1);
-    border-bottom:var(--border-width) solid var(--background-modifier-border)
+    border-bottom:var(--border-width) solid var(--divider-color)
 }
 .menu-item-desc{
     padding-top:var(--size-4-1);
     color:var(--text-faint);
-    font-size:0.8em
+    font-size:var(--font-smallest)
 }
 .menu-item{
     display:flex;
     align-items:center;
     gap:var(--size-4-2);
-    padding:var(--size-4-1) var(--size-4-2);
+    padding:var(--size-2-3) var(--size-4-2);
     border-radius:var(--radius-s);
     corner-shape:var(--corner-shape);
     font-size:var(--font-ui-small);
     white-space:nowrap;
-    cursor:var(--cursor)
+    cursor:var(--cursor);
+    transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),box-shadow var(--bs-dur-fast) var(--bs-ease-standard),color var(--bs-dur-fast) var(--bs-ease-standard)
 }
 .menu-item.is-warning:not(.is-disabled){
     color:var(--text-error)
@@ -14306,7 +14307,17 @@ input.prompt-input:hover,input.prompt-input:focus,input.prompt-input:focus-visib
     cursor:default
 }
 .menu-item-icon .mod-submenu{
-    color:var(--text-faint)
+    color:var(--icon-color)
+}
+.menu-item:not(.is-label):not(.is-disabled):hover{
+    background-color:var(--background-modifier-hover)
+}
+.menu-item:not(.is-label):not(.is-disabled).selected{
+    background-color:var(--bs-accent-soft);
+    box-shadow:inset 2px 0 0 var(--interactive-accent)
+}
+.menu-item.is-warning:not(.is-label):not(.is-disabled).selected{
+    box-shadow:inset 2px 0 0 var(--text-error)
 }
 .message.mod-success{
     color:var(--text-on-accent);

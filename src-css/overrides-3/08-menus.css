@@ -40,14 +40,14 @@
 .menu-separator {
   height: 0;
   margin: var(--size-2-3) calc(var(--size-2-3) * -1);
-  border-bottom: var(--border-width) solid var(--background-modifier-border);
+  border-bottom: var(--border-width) solid var(--divider-color);
 }
 
 /* secondary line under an item label */
 .menu-item-desc {
   padding-top: var(--size-4-1);
   color: var(--text-faint);
-  font-size: 0.8em;
+  font-size: var(--font-smallest);
 }
 
 /* single row: icon + label (+ optional description/checkmarks from elsewhere) */
@@ -55,12 +55,15 @@
   display: flex;
   align-items: center;
   gap: var(--size-4-2);
-  padding: var(--size-4-1) var(--size-4-2);
+  padding: var(--size-2-3) var(--size-4-2);
   border-radius: var(--radius-s);
   corner-shape: var(--corner-shape);
   font-size: var(--font-ui-small);
   white-space: nowrap;
   cursor: var(--cursor);
+  transition: background-color var(--bs-dur-fast) var(--bs-ease-standard),
+    box-shadow var(--bs-dur-fast) var(--bs-ease-standard),
+    color var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 /* destructive-but-enabled items read as errors */
