@@ -2251,7 +2251,7 @@ body.styled-scrollbars ::-webkit-scrollbar{
     background-color:transparent
 }
 body.styled-scrollbars ::-webkit-scrollbar-track{
-    background-color:transparent
+    background-color:var(--scrollbar-bg)
 }
 body.styled-scrollbars ::-webkit-scrollbar-thumb{
     -webkit-border-radius:var(--scrollbar-radius);
@@ -7689,7 +7689,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     z-index:var(--layer-cover);
     content:'';
     pointer-events:none;
-    background:hsla(var(--interactive-accent-hsl),0.1)
+    background:var(--bs-accent-soft)
 }
 .bases-formula-error .bases-formula-error-message{
     overflow:hidden;
@@ -7700,7 +7700,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     border-width:var(--bases-embed-border-width);
     border-style:solid;
     border-color:var(--bases-embed-border-color);
-    border-radius:var(--bases-embed-radius);
+    border-radius:var(--bases-embed-border-radius);
     padding:var(--bases-embed-padding)
 }
 .workspace-leaf-content[data-type="markdown"] .block-language-base .bases-view:empty,.workspace-leaf-content[data-type="markdown"] .bases-embed .bases-view:empty{
