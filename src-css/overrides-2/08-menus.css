@@ -1,14 +1,14 @@
 /* menus (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* menu-separator */
+/* a label right after a separator keeps a little breathing room below it */
 .menu-separator + .menu-item.is-label {
   padding-bottom: var(--size-4-1);
 }
 
-/* menu */
+/* tab-list menus cap and ellipsize long item titles */
 .menu.mod-tab-list .menu-item-title {
-  overflow: hidden;
   max-width: 300px;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   vertical-align: bottom;

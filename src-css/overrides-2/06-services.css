@@ -1,6 +1,6 @@
 /* services (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* diff-line */
+/* sync diff lines tint changed text red on the left pane, green on the right */
 .diff-line.mod-left .diff-changed {
   background-color: rgba(var(--background-modifier-error-rgb), 0.4);
 }
@@ -9,13 +9,13 @@
   background-color: rgba(var(--background-modifier-success-rgb), 0.4);
 }
 
-/* file-recovery */
+/* file recovery list fills the pane and scrolls */
 .file-recovery-list-item-container {
-  overflow: auto;
   flex: 1 1 0;
+  overflow: auto;
 }
 
-/* publish-changes */
+/* publish changes: site switch row sits inline with the list */
 .publish-changes-switch-site {
   display: flex;
   flex-direction: row;
@@ -27,10 +27,10 @@
   font-size: var(--font-ui-small);
 }
 
-/* sync-history */
+/* sync history list fills the pane and scrolls */
 .sync-history-list-item-container {
-  overflow: auto;
   flex: 1 1 0;
+  overflow: auto;
 }
 
 .sync-history-content-container.mod-empty .sync-history-content-empty {
@@ -43,14 +43,13 @@
   margin-inline-end: var(--size-4-3);
 }
 
-/* sync-exclude */
 .sync-exclude-folder-name {
   flex-grow: 1;
 }
 
-/* sync-vault */
+/* shared-vault chooser stacks its actions in a column */
 .sync-vault-share-container {
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
