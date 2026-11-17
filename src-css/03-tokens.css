@@ -922,7 +922,7 @@ body {
   --tab-switcher-preview-radius: var(--radius-xl);
   --tab-switcher-preview-shadow: 0 0 0 1px rgba(var(--mono-rgb-100), 0.05);
   --tab-switcher-preview-shadow-active: 0 0 0 2px var(--color-accent);
-  --tab-text-color: var(--text-faint);
+  --tab-text-color: var(--text-muted);
   --tab-text-color-active: var(--text-muted);
   --tab-text-color-focused: var(--text-muted);
   --tab-text-color-focused-active: var(--text-muted);
@@ -1134,9 +1134,9 @@ body {
   --color-base-30: #cdbfae;
   --color-base-35: #c0ae97;
   --color-base-40: #96795a;
-  --color-base-50: #8a7b6c;
-  --color-base-60: #7a6a5c;
-  --color-base-70: #5c4f42;
+  --color-base-50: #655847;
+  --color-base-60: #5b4d40;
+  --color-base-70: #4f4235;
   --color-blue: #1f5fc9;
   --color-blue-rgb: 31, 95, 201;
   --color-cyan: #00a8a5;
@@ -1202,8 +1202,8 @@ body {
   --color-base-30: #332a22;
   --color-base-35: #3d3227;
   --color-base-40: #4f3d2c;
-  --color-base-50: #6e6154;
-  --color-base-60: #857763;
+  --color-base-50: #8a7b6c;
+  --color-base-60: #96836d;
   --color-base-70: #a79a8d;
   --color-blue: #5b9dff;
   --color-blue-rgb: 91, 157, 255;

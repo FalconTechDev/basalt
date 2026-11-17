@@ -83,13 +83,13 @@
     body.theme-light {
       --background-primary: #eee7db; --background-primary-alt: #e5ddcf; --background-secondary: #dcd2c3; --background-secondary-alt: #d1c6b5;
       --background-modifier-hover: rgba(107,68,41,.09); --background-modifier-border: #c3b4a0; --background-modifier-border-hover: #b3a18a; --background-modifier-active-hover: rgba(107,68,41,.16);
-      --divider-color: #c3b4a0; --text-normal: #2a211a; --text-muted: #62564a; --text-faint: #7d6e5f;
+      --divider-color: #c3b4a0; --text-normal: #2a211a; --text-muted: #5c4f42; --text-faint: #655847;
       --titlebar-background: #dcd2c3; --titlebar-background-focused: #d1c6b5; --tab-container-background: #dcd2c3; --ribbon-background: #dcd2c3; --modal-background: #eee7db;
     }
     body.theme-dark {
       --background-primary: #17130f; --background-primary-alt: #1b1612; --background-secondary: #0f0c0a; --background-secondary-alt: #0c0a09;
       --background-modifier-hover: rgba(176,122,82,.12); --background-modifier-border: #3a2f26; --background-modifier-border-hover: #4a3c30; --background-modifier-active-hover: rgba(176,122,82,.22);
-      --divider-color: #2f261f; --text-normal: #ece4db; --text-muted: #a79a8d; --text-faint: #7d7064;
+      --divider-color: #2f261f; --text-normal: #ece4db; --text-muted: #a79a8d; --text-faint: #8a7b6c;
       --titlebar-background: #0c0a09; --titlebar-background-focused: #14110f; --tab-container-background: #0c0a09; --ribbon-background: #0c0a09; --modal-background: #1b1612;
     }
     /* the shape language of Basalt, for every module: panels, cards and pop-ups are cut at two corners (--bs-clip), small controls and list rows have --bs-r */
@@ -159,14 +159,14 @@
     body.theme-dark { --accent-h: 27; --accent-s: 50%; --accent-l: 57%; }
     .modal.mod-settings {
       --background-primary: #e6dfd6; --background-secondary: #ddd3c7; --background-modifier-hover: #ebe3d8; --background-modifier-border: #cdbfae;
-      --divider-color: #cdbfae; --text-normal: #2a211a; --text-muted: #6e6154; --text-faint: #8a7b6c;
+      --divider-color: #cdbfae; --text-normal: #2a211a; --text-muted: #5c4f42; --text-faint: #655847;
       --settings-background: #dcd2c3; --modal-sidebar-background: #d1c6b5; --setting-items-background: #eee7db; --setting-items-radius: 0; --setting-items-border-width: 0px;
       --radius-s: 0; --radius-m: 0; --radius-l: 0;
       --bs-cut: 12px;
     }
     .theme-dark .modal.mod-settings {
       --background-primary: #14110f; --background-secondary: #0c0a09; --background-modifier-hover: #2b231d; --background-modifier-border: #3a2f26;
-      --divider-color: #2f261f; --text-normal: #ece4db; --text-muted: #a79a8d; --text-faint: #7d7064;
+      --divider-color: #2f261f; --text-normal: #ece4db; --text-muted: #a79a8d; --text-faint: #8a7b6c;
       --settings-background: #14110f; --modal-sidebar-background: #0c0a09; --setting-items-background: #221c18;
     }
     .modal.mod-settings { clip-path: polygon(var(--bs-cut) 0, 100% 0, 100% calc(100% - var(--bs-cut)), calc(100% - var(--bs-cut)) 100%, 0 100%, 0 var(--bs-cut)); border: 0; box-shadow: none; }
@@ -175,7 +175,7 @@
     }
     .modal.mod-settings .setting-item { border-color: var(--divider-color); }
     .modal.mod-settings .vertical-tab-header { border-inline-end-color: var(--divider-color); }
-    .modal.mod-settings .vertical-tab-header-group-title { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
+    .modal.mod-settings .vertical-tab-header-group-title { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
     .modal.mod-settings .vertical-tab-nav-item { border-radius: 0; position: relative; clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px); }
     .modal.mod-settings .vertical-tab-nav-item.is-active { background: var(--background-modifier-hover); color: var(--text-normal); box-shadow: inset 3px 0 0 var(--interactive-accent); }
     .modal.mod-settings .vertical-tab-nav-item.is-active .vertical-tab-nav-item-icon { color: var(--interactive-accent); }
