@@ -156,9 +156,9 @@ export function ng05BuildView(host) {
     this.viewer.then((child) => { if (child.findBar) child.findBar.showSearch(); });
   };
 
+  PdfView.VIEW_TYPE = "pdf";
   return PdfView;
 }
-PdfView.VIEW_TYPE = "pdf";
 
 /** `YZ` — the `![[document.pdf]]` embed. */
 export function ng05BuildEmbed(host) {

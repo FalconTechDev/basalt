@@ -21,6 +21,23 @@ export function ng05PdfToolbarClass(host) {
   return ng05PdfKitGet(host, "toolbar", () => ng05BuildToolbar(host));
 }
 export function ng05PdfViewerClass(host) {
+  // prefetch the pdf.js runtime once the window has loaded; earlier attempts
+  // would race the app's script loader against module MIME checks, and the
+  // loader caches its promise so a failed early attempt poisons every retry
+  const warm = () => {
+    try { Promise.resolve(host.s27LoadPdfViewer()).catch(() => {}); } catch (e) {}
+  };
+  // wait until the app reports ready: by then any CDP-driven shim is in place,
+  // and the script loader's cached promise is only created on first use
+  const poll = setInterval(() => {
+    try {
+      if (window.app && window.app.workspace && window.app.workspace.layoutReady) {
+        clearInterval(poll); clearTimeout(fallback); warm();
+      }
+    } catch (e) {}
+  }, 500);
+  const fallback = setTimeout(() => { clearInterval(poll); warm(); }, 20000);
+  if (typeof window === "undefined") { clearInterval(poll); clearTimeout(fallback); warm(); }
   return ng05PdfKitGet(host, "controller", () => ng05BuildController(host));
 }
 export function ng05PdfComponentClass(host) {
