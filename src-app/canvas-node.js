@@ -4,7 +4,7 @@
 // the edge class) live in the same module family; cross-references go through `canvas.*`.
 import { randomHex, boxOfRect, boxGrow, boxContains, rgbTripleToHex, pointOfEvent } from "./misc.js";
 import { parseLinktext } from "./path.js";
-import { copyTextToClipboard } from "./search-view.js";
+import { copyTextToClipboard } from "./n-g11-view.js";
 
 const cnCanvasT = (host) => host.t.plugins.canvas;
 
