@@ -8,12 +8,14 @@ import { ng04WsTree } from "./n-g04-ws-tree.js";
 import { ng04WsOps } from "./n-g04-ws-ops.js";
 import { parseCallbackUrl } from "./vault-crypto.js";
 import { closeAllMenus } from "./menu.js";
+let Ng04HostRef = null;
 
 /**
  * Workspace constructor (spec g04, part C): fields, listeners, ribbons,
  * toggle buttons, commands, protocol handlers, hover sources, CM patch.
  */
 export function ng04S48Workspace(host) {
+  Ng04HostRef = host;
   function Workspace(app, containerEl) {
     const self = host.Events.call(this) || this;
     self.app = app;
@@ -98,7 +100,7 @@ export function ng04S48Workspace(host) {
     self.leftSidebarToggleButtonEl = ng04MakeToggleButton(self, "left");
     self.rightSidebarToggleButtonEl = ng04MakeToggleButton(self, "right");
 
-    ng04WireListeners(self);
+    ng04WireListeners(self, host);
     ng04RegisterEventMenus(self);
     ng04RegisterCommands(self);
     ng04RegisterProtocolHandlers(self);
@@ -109,6 +111,9 @@ export function ng04S48Workspace(host) {
 
   inherit(Workspace, host.Events);
   Object.assign(Workspace.prototype, ng04WsTree(host), ng04WsOps(host));
+  // views are registered through the workspace by plugins written against it; the registry itself lives on the app
+  Workspace.prototype.registerView = function (type, creator) { return this.app.viewRegistry.registerView(type, creator); };
+  Workspace.prototype.unregisterView = function (type) { return this.app.viewRegistry.unregisterView(type); };
 
   Object.defineProperty(Workspace.prototype, "initialized", {
     get() { return !!this.rootSplit; },
@@ -145,7 +150,7 @@ function ng04MakeToggleButton(ws, side) {
   });
   el.addEventListener("contextmenu", (event) => {
     event.preventDefault();
-    const menu = new host.Menu().addSections(["", "action"]);
+    const menu = new Ng04HostRef.Menu().addSections(["", "action"]);
     const d = dock();
     if (d) {
       menu.addItem((item) => item
@@ -173,7 +178,8 @@ function host_setTooltip(el, text) { env().Sv(el, text); }
 
 // ---------- window / vault listeners ----------
 
-function ng04WireListeners(ws) {
+function ng04WireListeners(ws, host) {
+  Ng04HostRef = host;
   const app = ws.app;
   const win = window;
 
@@ -352,7 +358,7 @@ function ng04RegisterEventMenus(ws) {
 
   ws.on("file-menu", (menu, file, source, evt) => {
     menu.addItem((item) => item.setSection("info.copy").setTitle(T().interface.menu.copyPath()).setIcon("lucide-clipboard"));
-    const isFile = file instanceof host.TFile;
+    const isFile = file instanceof Ng04HostRef.TFile;
     if (isFile) {
       menu.addItem((item) => item
         .setSection("info.copy")
@@ -361,10 +367,10 @@ function ng04RegisterEventMenus(ws) {
         .onClick(() => app.copyObsidianUrl(file)));
       menu.addItem((item) => item
         .setSection("system")
-        .setTitle(host.Platform.isMobile ? T().plugins.openWithDefaultApp.actionOpenFileMobile() : T().plugins.openWithDefaultApp.actionOpenFile())
+        .setTitle(Ng04HostRef.Platform.isMobile ? T().plugins.openWithDefaultApp.actionOpenFileMobile() : T().plugins.openWithDefaultApp.actionOpenFile())
         .setIcon("lucide-arrow-up-right")
         .onClick(() => app.openWithDefaultApp(file.path)));
-      if (host.Platform.canPopoutWindow) {
+      if (Ng04HostRef.Platform.canPopoutWindow) {
         menu.addItem((item) => item
           .setSection("open")
           .setTitle(T().interface.menu.openInNewWindow())
@@ -386,20 +392,20 @@ function ng04RegisterEventMenus(ws) {
         .setIcon("lucide-vault")
         .onClick(() => {
           copyTextFlat(file.path);
-          new host.Notice(T().interface.copied({ item: "path" }));
+          new Ng04HostRef.Notice(T().interface.copied({ item: "path" }));
         }));
-      if (host.Platform.isDesktopApp && app.vault.adapter instanceof env().Eu) {
+      if (Ng04HostRef.Platform.isDesktopApp && app.vault.adapter instanceof env().Eu) {
         menu.addItem((item) => item
           .setSection("info.copy")
           .setTitle(T().interface.menu.copyFullPath())
           .setIcon("lucide-hard-drive")
           .onClick(() => {
             copyTextFlat(app.vault.adapter.getFullPath(file.path));
-            new host.Notice(T().interface.copied({ item: "path" }));
+            new Ng04HostRef.Notice(T().interface.copied({ item: "path" }));
           }));
         menu.addItem((item) => item
           .setSection("system")
-          .setTitle(host.Platform.isMacOS ? T().plugins.openWithDefaultApp.actionShowInFolderMac() : T().plugins.openWithDefaultApp.actionShowInFolder())
+          .setTitle(Ng04HostRef.Platform.isMacOS ? T().plugins.openWithDefaultApp.actionShowInFolderMac() : T().plugins.openWithDefaultApp.actionShowInFolder())
           .setIcon("lucide-folder-open")
           .onClick(() => app.showInFolder(file.path)));
       }
@@ -441,7 +447,7 @@ function ng04RegisterEventMenus(ws) {
   const editorMenu = (menu, editor, view) => {
     const line = editor.getLine(editor.getCursor().line);
     const heading = firstHeadingText(line);
-    if (heading && view instanceof host.MarkdownView) {
+    if (heading && view instanceof Ng04HostRef.MarkdownView) {
       menu.addItem((item) => item
         .setSection("action")
         .setTitle(T().interface.menu.renameHeading())
@@ -469,7 +475,7 @@ function ng04RegisterEventMenus(ws) {
     const promises = [];
     ws.iterateAllLeaves((leaf) => {
       const view = leaf.view;
-      if (view instanceof host.TextFileView && view.data !== view.lastSavedData) promises.push(view.save());
+      if (view instanceof Ng04HostRef.TextFileView && view.data !== view.lastSavedData) promises.push(view.save());
     });
     const adapter = app.vault.adapter;
     if (adapter && adapter.requestSave) {
@@ -491,7 +497,7 @@ function ng04RegisterCommands(ws) {
   const cmds = app.commands;
   const T = () => env().gm;
   const HK = (mods, key) => makeHotkey(mods, key);
-  const Mod = host.Platform.isMacOS ? "Meta" : "Ctrl";
+  const Mod = Ng04HostRef.Platform.isMacOS ? "Meta" : "Ctrl";
 
   const activeLeaf = () => ws.activeLeaf;
   const activeView = (cls) => {
@@ -500,7 +506,7 @@ function ng04RegisterCommands(ws) {
   };
   const parentTabs = () => {
     const leaf = ws.activeLeaf;
-    return leaf && leaf.parent instanceof host.WorkspaceTabs ? leaf.parent : null;
+    return leaf && leaf.parent instanceof Ng04HostRef.WorkspaceTabs ? leaf.parent : null;
   };
 
   const add = (cmd) => cmds.addCommand(cmd);
@@ -510,7 +516,7 @@ function ng04RegisterCommands(ws) {
     name: T().commands.saveFile(),
     hotkeys: [HK(["Mod"], "s")],
     checkCallback: (checking) => {
-      const view = activeView(host.TextFileView);
+      const view = activeView(Ng04HostRef.TextFileView);
       if (!view) return false;
       if (!checking) view.save();
       return true;
@@ -538,8 +544,8 @@ function ng04RegisterCommands(ws) {
     name: T().commands[nameKey](),
     hotkeys,
     editorCheckCallback: (checking, editor, view) => {
-      if (!editor || !(view instanceof host.MarkdownView)) return false;
-      if (needsPopout && !host.Platform.canPopoutWindow) return false;
+      if (!editor || !(view instanceof Ng04HostRef.MarkdownView)) return false;
+      if (needsPopout && !Ng04HostRef.Platform.canPopoutWindow) return false;
       const token = linkToken(editor);
       if (!checking) {
         if (token) view.editMode && view.editMode.triggerClickableToken && view.editMode.triggerClickableToken(token, paneType);
@@ -556,7 +562,7 @@ function ng04RegisterCommands(ws) {
     id: "editor:rename-heading",
     name: T().commands.renameHeading ? T().commands.renameHeading() : "Rename heading",
     editorCheckCallback: (checking, editor, view) => {
-      if (!editor || !(view instanceof host.MarkdownView)) return false;
+      if (!editor || !(view instanceof Ng04HostRef.MarkdownView)) return false;
       const line = editor.getLine(editor.getCursor().line);
       if (!firstHeadingText(line)) return false;
       if (!checking) {
@@ -572,7 +578,7 @@ function ng04RegisterCommands(ws) {
     name: T().commands.togglePin(),
     checkCallback: (checking) => {
       const leaf = ws.activeLeaf;
-      const ok = !!(leaf && leaf.view instanceof host.ItemView && !(leaf.view instanceof host.EmptyView));
+      const ok = !!(leaf && leaf.view instanceof Ng04HostRef.ItemView && !(leaf.view instanceof Ng04HostRef.EmptyView));
       if (ok && !checking) leaf.togglePinned();
       return ok;
     },
@@ -582,7 +588,7 @@ function ng04RegisterCommands(ws) {
     id: "editor:focus-" + dir,
     name: T().commands["navigateTab" + dir[0].toUpperCase() + dir.slice(1)] ? T().commands["navigateTab" + dir[0].toUpperCase() + dir.slice(1)]() : dir,
     checkCallback: (checking) => {
-      if (!host.Platform.canSplit) return false;
+      if (!Ng04HostRef.Platform.canSplit) return false;
       const leaf = ws.activeLeaf;
       if (!leaf) return false;
       if (!checking) {
@@ -595,12 +601,12 @@ function ng04RegisterCommands(ws) {
   ["top", "bottom", "left", "right"].forEach(focusDir);
 
   const splitAvail = (checking, direction, sidebarBan) => {
-    if (!host.Platform.canSplit) return false;
+    if (!Ng04HostRef.Platform.canSplit) return false;
     let leaf = ws.activeLeaf;
-    if (!leaf || !(leaf.view instanceof host.ItemView) || leaf.view instanceof host.EmptyView) return false;
+    if (!leaf || !(leaf.view instanceof Ng04HostRef.ItemView) || leaf.view instanceof Ng04HostRef.EmptyView) return false;
     if (sidebarBan && ws.isInSidebar(leaf)) {
       leaf = ws.getMostRecentLeaf();
-      if (!leaf || !(leaf.view instanceof host.ItemView) || leaf.view instanceof host.EmptyView) return false;
+      if (!leaf || !(leaf.view instanceof Ng04HostRef.ItemView) || leaf.view instanceof Ng04HostRef.EmptyView) return false;
     }
     if (!checking) ws.duplicateLeaf(leaf, direction);
     return true;
@@ -619,10 +625,10 @@ function ng04RegisterCommands(ws) {
     id: "workspace:toggle-stacked-tabs",
     name: T().commands.toggleStackedTabs(),
     checkCallback: (checking) => {
-      if (!host.Platform.canStackTabs) return false;
+      if (!Ng04HostRef.Platform.canStackTabs) return false;
       const leaf = ws.activeLeaf;
       const parent = leaf && leaf.parent;
-      if (!(parent instanceof host.WorkspaceTabs) || ws.isInSidebar(parent)) return false;
+      if (!(parent instanceof Ng04HostRef.WorkspaceTabs) || ws.isInSidebar(parent)) return false;
       if (!checking) parent.setStacked(!parent.isStacked);
       return true;
     },
@@ -632,13 +638,13 @@ function ng04RegisterCommands(ws) {
     name: T().commands.editFileTitle(),
     hotkeys: [HK([], "F2")],
     checkCallback: (checking) => {
-      const view = activeView(host.EditableFileView);
+      const view = activeView(Ng04HostRef.EditableFileView);
       if (!view) return false;
       if (!checking) ws.activeLeaf.setEphemeralState({ rename: "all" });
       return true;
     },
   });
-  const copyNotice = (text) => { copyTextFlat(text); new host.Notice(T().interface.copied({ item: text })); };
+  const copyNotice = (text) => { copyTextFlat(text); new Ng04HostRef.Notice(T().interface.copied({ item: text })); };
   add({
     id: "workspace:copy-path",
     name: T().commands.copyPath(),
@@ -655,7 +661,7 @@ function ng04RegisterCommands(ws) {
     checkCallback: (checking) => {
       const file = ws.getActiveFile();
       const adapter = app.vault.adapter;
-      if (!file || !host.Platform.isDesktopApp || !(adapter instanceof env().Eu)) return false;
+      if (!file || !Ng04HostRef.Platform.isDesktopApp || !(adapter instanceof env().Eu)) return false;
       if (!checking) copyNotice(adapter.getFullPath(file.path));
       return true;
     },
@@ -685,8 +691,8 @@ function ng04RegisterCommands(ws) {
     id: "workspace:export-pdf",
     name: T().commands.exportPdf(),
     checkCallback: (checking) => {
-      if (!host.Platform.canExportPdf) return false;
-      const view = activeView(host.MarkdownView);
+      if (!Ng04HostRef.Platform.canExportPdf) return false;
+      const view = activeView(Ng04HostRef.MarkdownView);
       if (!view || !view.printToPdf) return false;
       if (!checking) view.printToPdf();
       return true;
@@ -697,7 +703,7 @@ function ng04RegisterCommands(ws) {
     name: T().commands.openInNewWindow(),
     checkCallback: (checking) => {
       const leaf = ws.activeLeaf;
-      if (!host.Platform.canPopoutWindow || !leaf || !(leaf.view instanceof host.ItemView)) return false;
+      if (!Ng04HostRef.Platform.canPopoutWindow || !leaf || !(leaf.view instanceof Ng04HostRef.ItemView)) return false;
       if (!checking) ws.openPopoutLeaf().setViewState(leaf.getViewState(), { focus: true });
       return true;
     },
@@ -707,7 +713,7 @@ function ng04RegisterCommands(ws) {
     name: T().commands.moveToNewWindow(),
     checkCallback: (checking) => {
       const leaf = ws.activeLeaf;
-      if (!host.Platform.canPopoutWindow || !leaf || !(leaf.view instanceof host.ItemView)) return false;
+      if (!Ng04HostRef.Platform.canPopoutWindow || !leaf || !(leaf.view instanceof Ng04HostRef.ItemView)) return false;
       if (!checking) ws.moveLeafToPopout(leaf);
       return true;
     },
@@ -717,8 +723,8 @@ function ng04RegisterCommands(ws) {
     id: "workspace:" + (delta > 0 ? "next-tab" : "previous-tab"),
     name: T().commands[delta > 0 ? "goToNextTab" : "goToPrevTab"](),
     hotkeys: delta > 0
-      ? [HK(["Ctrl"], "Tab"), HK([host.Platform.isMacOS ? "Meta" : "Ctrl", "Shift"], "]"), HK(["Ctrl"], "PageDown")]
-      : [HK(["Ctrl", "Shift"], "Tab"), HK([host.Platform.isMacOS ? "Meta" : "Ctrl", "Shift"], "["), HK(["Ctrl"], "PageUp")],
+      ? [HK(["Ctrl"], "Tab"), HK([Ng04HostRef.Platform.isMacOS ? "Meta" : "Ctrl", "Shift"], "]"), HK(["Ctrl"], "PageDown")]
+      : [HK(["Ctrl", "Shift"], "Tab"), HK([Ng04HostRef.Platform.isMacOS ? "Meta" : "Ctrl", "Shift"], "["), HK(["Ctrl"], "PageUp")],
     checkCallback: (checking) => {
       const parent = parentTabs();
       if (!parent || parent.children.length === 0) return false;
@@ -739,7 +745,7 @@ function ng04RegisterCommands(ws) {
       name: T().commands.goToNthTab({ n }),
       hotkeys: [HK(["Mod"], String(n))],
       checkCallback: (checking) => {
-        if (host.Platform.isPhone) return false;
+        if (Ng04HostRef.Platform.isPhone) return false;
         const parent = parentTabs();
         if (!parent || parent.children.length < n) return false;
         if (!checking) {
@@ -773,9 +779,9 @@ function ng04RegisterCommands(ws) {
     checkCallback: (checking) => {
       const leaf = ws.getMostRecentLeaf();
       const parent = leaf && leaf.parent;
-      if (!(parent instanceof host.WorkspaceTabs)) return false;
+      if (!(parent instanceof Ng04HostRef.WorkspaceTabs)) return false;
       if (!checking) {
-        const nl = new host.WorkspaceLeaf(app);
+        const nl = new Ng04HostRef.WorkspaceLeaf(app);
         parent.insertChild(parent.children.length, nl);
         parent.selectTabIndex(parent.children.length - 1);
         ws.setActiveLeaf(nl, { focus: true });
@@ -787,7 +793,7 @@ function ng04RegisterCommands(ws) {
     id: "workspace:new-window",
     name: T().commands.newWindow(),
     checkCallback: (checking) => {
-      if (!host.Platform.canPopoutWindow) return false;
+      if (!Ng04HostRef.Platform.canPopoutWindow) return false;
       if (!checking) {
         const leaf = ws.openPopoutLeaf();
         ws.setActiveLeaf(leaf, { focus: true });
@@ -801,12 +807,12 @@ function ng04RegisterCommands(ws) {
     hotkeys: [HK(["Mod"], "w")],
     checkCallback: (checking) => {
       let leaf = ws.activeLeaf;
-      if (!leaf || !(leaf.view instanceof host.ItemView) || ws.isInSidebar(leaf)) {
+      if (!leaf || !(leaf.view instanceof Ng04HostRef.ItemView) || ws.isInSidebar(leaf)) {
         leaf = ws.getMostRecentLeaf();
       }
       if (!leaf) return false;
       if (!checking) {
-        if (!host.Platform.isPhone && leaf.pinned) leaf.setPinned(false);
+        if (!Ng04HostRef.Platform.isPhone && leaf.pinned) leaf.setPinned(false);
         leaf.detach();
       }
       return true;
@@ -817,7 +823,7 @@ function ng04RegisterCommands(ws) {
     name: T().commands.closeWindow ? T().commands.closeWindow() : "Close window",
     hotkeys: [HK(["Mod", "Shift"], "w")],
     checkCallback: (checking) => {
-      if (!host.Platform.canPopoutWindow || !env().activeWindow) return false;
+      if (!Ng04HostRef.Platform.canPopoutWindow || !env().activeWindow) return false;
       if (!checking) env().activeWindow.close();
       return true;
     },
@@ -841,7 +847,7 @@ function ng04RegisterCommands(ws) {
     checkCallback: (checking) => {
       const leaf = ws.activeLeaf;
       const parent = leaf && leaf.parent;
-      if (!host.Platform.canSplit || !(parent instanceof host.WorkspaceTabs) || ws.isInSidebar(parent)) return false;
+      if (!Ng04HostRef.Platform.canSplit || !(parent instanceof Ng04HostRef.WorkspaceTabs) || ws.isInSidebar(parent)) return false;
       const unpinned = parent.children.filter((c) => !c.pinned);
       if (!checking) unpinned.forEach((c) => c.detach());
       return unpinned.length > 0;
@@ -853,7 +859,7 @@ function ng04RegisterCommands(ws) {
     checkCallback: (checking) => {
       const leaf = ws.activeLeaf;
       const parent = leaf && leaf.parent;
-      if (!host.Platform.canSplit || !(parent instanceof host.WorkspaceTabs) || ws.isInSidebar(parent)) return false;
+      if (!Ng04HostRef.Platform.canSplit || !(parent instanceof Ng04HostRef.WorkspaceTabs) || ws.isInSidebar(parent)) return false;
       const others = parent.children.filter((c) => c !== leaf && !c.pinned);
       if (!checking) others.forEach((c) => c.detach());
       return others.length > 0;
@@ -863,7 +869,7 @@ function ng04RegisterCommands(ws) {
     id: "workspace:show-trash",
     name: T().commands.showTrash(),
     checkCallback: (checking) => {
-      if (!host.Platform.isDesktopApp || app.vault.getConfig("trashOption") !== "local") return false;
+      if (!Ng04HostRef.Platform.isDesktopApp || app.vault.getConfig("trashOption") !== "local") return false;
       if (!checking) app.showInFolder(".trash");
       return true;
     },
@@ -872,7 +878,7 @@ function ng04RegisterCommands(ws) {
 
 function ng04UndoClose(ws, entry) {
   ws.undoHistory.shift();
-  const leaf = new host.WorkspaceLeaf(ws.app, entry.leafId);
+  const leaf = new Ng04HostRef.WorkspaceLeaf(ws.app, entry.leafId);
   // find the recorded parent tab group
   let parent = null;
   let root = null;
@@ -887,7 +893,7 @@ function ng04UndoClose(ws, entry) {
   if (parent) {
     parent.insertChild(parent.children.length, leaf);
   } else {
-    const tabs = new host.WorkspaceTabs(ws);
+    const tabs = new Ng04HostRef.WorkspaceTabs(ws);
     tabs.insertChild(0, leaf);
     root.insertChild(root.children.length, tabs);
   }
@@ -909,9 +915,9 @@ function ng04RegisterProtocolHandlers(ws) {
     if (file) {
       const leaf = ws.getLeaf(s12leafTypeOrFalseLocal(e.paneType));
       leaf.openFile(file, { active: true, eState: subpath ? { subpath } : undefined });
-      new host.Notice(T().interface.msgOpenFileThroughUri());
+      new Ng04HostRef.Notice(T().interface.msgOpenFileThroughUri());
     } else {
-      new host.Notice(T().interface.msgFileNotFoundThroughUri());
+      new Ng04HostRef.Notice(T().interface.msgFileNotFoundThroughUri());
     }
   });
 
@@ -955,7 +961,7 @@ function ng04RegisterProtocolHandlers(ws) {
       }
       ws.handleXCallback(e, file);
     } catch (err) {
-      new host.Notice(String(err && err.message ? err.message : err));
+      new Ng04HostRef.Notice(String(err && err.message ? err.message : err));
     }
   });
 
@@ -1025,7 +1031,7 @@ function ng04RegisterProtocolHandlers(ws) {
       if (!ws.handleXCallback(e, file)) {
         const md = "[" + file.basename + "](" + app.getObsidianUrl(file) + ")";
         copyTextFlat(md);
-        new host.Notice(T().interface.copied({ item: "URL" }));
+        new Ng04HostRef.Notice(T().interface.copied({ item: "URL" }));
       }
     } else if (e["x-error"]) {
       const url = String(e["x-error"]);
@@ -1058,7 +1064,7 @@ function ng04HandleXCallback(ws, e, file) {
   if (!xSuccess || !file) return false;
   try {
     const params = { name: file.basename, url: app.getObsidianUrl(file) };
-    if (host.Platform.isDesktopApp && app.vault.adapter instanceof env().Eu) params.file = app.vault.adapter.getFullPath(file.path);
+    if (Ng04HostRef.Platform.isDesktopApp && app.vault.adapter instanceof env().Eu) params.file = app.vault.adapter.getFullPath(file.path);
     const sep = xSuccess.includes("?") ? "&" : "?";
     const qs = Object.keys(params).map((k) => k + "=" + encodeURIComponent(params[k])).join("&");
     const url = xSuccess + sep + qs;
@@ -1084,16 +1090,16 @@ function ng04RegisterHoverSources(ws) {
 // ---------- CodeMirror getMode patch ----------
 
 function ng04PatchCodeMirror(ws) {
-  if (!host.codeMirrorCompat || typeof host.codeMirrorCompat.getMode !== "function" || host.codeMirrorCompat.getMode.__ng04) return;
-  const original = host.codeMirrorCompat.getMode;
+  if (!Ng04HostRef.codeMirrorCompat || typeof Ng04HostRef.codeMirrorCompat.getMode !== "function" || Ng04HostRef.codeMirrorCompat.getMode.__ng04) return;
+  const original = Ng04HostRef.codeMirrorCompat.getMode;
   const wrapped = function (...args) {
     const mode = original.apply(this, args);
     const name = mode && (mode.name || (typeof mode === "string" ? mode : ""));
     if (!name || name === "null") {
-      host.codeMirrorCompat.getMode = original;
+      Ng04HostRef.codeMirrorCompat.getMode = original;
       env().fz && env().fz.then(() => {
         ws.iterateAllLeaves((leaf) => {
-          if (leaf.view instanceof host.MarkdownView && leaf.view.resetSyntaxHighlighting) {
+          if (leaf.view instanceof Ng04HostRef.MarkdownView && leaf.view.resetSyntaxHighlighting) {
             leaf.view.resetSyntaxHighlighting();
           }
         });
@@ -1102,5 +1108,5 @@ function ng04PatchCodeMirror(ws) {
     return mode;
   };
   wrapped.__ng04 = true;
-  host.codeMirrorCompat.getMode = wrapped;
+  Ng04HostRef.codeMirrorCompat.getMode = wrapped;
 }
