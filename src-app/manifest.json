@@ -7147,9 +7147,9 @@
     },
     {
       "orig": "tZ",
-      "expr": "__basaltOwn.s10CompartmentOf(Y$,eZ)",
-      "sha1": "5c38612ad2c6f7ff3b7034aad01882da6734868c",
-      "originalBytes": 9
+      "expr": "__basaltOwn.ng09CompartmentOf(Y$,eZ)",
+      "sha1": "970d9ddb16ab0aa5965d0cc09a0d610f514bdbd8",
+      "originalBytes": 35
     },
     {
       "orig": "Z$",

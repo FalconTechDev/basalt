@@ -308,11 +308,12 @@ export function ng03SyncPlugin(host) {
       this.preventSleep = !!record.preventSleep;
       this.conflictAction = record.conflictAction === "conflict" ? "conflict" : "merge";
       if (foreign) {
-        // foreign app data: keep credentials/settings, wipe sync state, force pause
+        // foreign app data: keep credentials/settings and the local scan
+        // state, wipe the remote side, force pause
         this.pause = true;
         this.version = 0;
         this.initial = true;
-        this.localFiles = {};
+        this.localFiles = record.local || {};
         this.serverFiles = {};
         this.newServerFiles = [];
       } else {
@@ -341,14 +342,9 @@ export function ng03SyncPlugin(host) {
     }
     this.dirty = false;
     await this.scanFiles();
-    // prune local records whose path no longer exists (dot paths exempt)
+    // empty vault on first sync: refuse to wipe the remote side
     const vault = this.app.vault;
-    for (const path in this.localFiles) {
-      if (ng03IsDotPath(path)) continue;
-      if (!vault.getAbstractFileByPath(path)) delete this.localFiles[path];
-    }
-    // empty vault: refuse to wipe the remote side
-    if (this.vaultId && vault.root && (!vault.root.children || vault.root.children.length === 0)) {
+    if (this.vaultId && this.initial && vault.root && (!vault.root.children || vault.root.children.length === 0)) {
       this.pause = true;
       this.setStatus("Error");
       this.log("Vault is empty. Resuming sync could delete all files on the remote vault. See https://github.com/FalconTechDev/basalt for details.", "", true);
