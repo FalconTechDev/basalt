@@ -49,6 +49,9 @@
 | Turndown (HTML → Markdown inside `src/app.js`) | `src/app.js` application scope | MIT |
 | CodeMirror 6 packages (`@codemirror/state`, `-view`, `-commands`, `-language`, Lezer; inside `src/app.js`) | `src/app.js` application scope | MIT |
 
+| @codemirror/lint + lint theme (diagnostics panel, gutter markers, tooltips) | inside `src/app.js` bundle (slice s11 items) | MIT |
+| @codemirror/merge rebase/change-set helpers (collab module) | inside `src/app.js` bundle (slice s11 items) | MIT |
+
 Public plugin list used by the plugin catalog is read from a public GitHub repository at run time; plugins installed from it keep their own licenses.
 | CodeMirror 6, Lezer, @codemirror/* language & lint packages | bundled editor modules in `src/app.js` (webpack module namespaces; consumed via `src-app` env bindings) | MIT |
 | tslib helpers (`__awaiter`, `__generator`, `__spreadArray`, ...) | `src/app.js` bundle helpers | Apache-2.0 |
