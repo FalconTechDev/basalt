@@ -225,7 +225,7 @@ body.is-frameless .modal {
   position: relative;
   bottom: 1px;
   border-radius: var(--radius-s);
-  padding: 0 3px 2px 3px;
+  padding: 0 var(--size-2-2) var(--size-2-1) var(--size-2-2);
   font-family: var(--font-monospace);
   font-size: var(--font-smaller);
   corner-shape: var(--corner-shape);
@@ -292,7 +292,7 @@ body.is-frameless .modal {
   display: flex;
   gap: var(--size-4-1);
   border-radius: var(--radius-s);
-  padding: 2px 4px 2px 8px;
+  padding: var(--size-2-1) var(--size-4-1) var(--size-2-1) var(--size-4-2);
   font-family: -apple-system, BlinkMacSystemFont, var(--font-monospace);
   font-size: var(--font-ui-small);
   white-space: nowrap;
@@ -371,7 +371,7 @@ body.is-frameless .modal {
 }
 
 .setting-font-list {
-  margin: 1.5em 0 0.75em 0;
+  margin: var(--size-4-6) 0 var(--size-4-3);
 }
 
 /* ---------- hotkey list modal ---------- */
@@ -588,7 +588,7 @@ body.is-frameless .modal {
 
 .community-item-desc {
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: var(--size-4-1);
   font-size: var(--font-ui-small);
   line-height: var(--line-height-tight);
 }
@@ -730,7 +730,7 @@ body.styled-scrollbars .modal-close-button {
 /* ---------- prompt inputs ---------- */
 
 .prompt-input-container {
-  --search-clear-button-size: 17px;
+  --search-clear-button-size: var(--size-4-4);
   display: flex;
   position: relative;
 }
@@ -780,14 +780,14 @@ body.styled-scrollbars .modal-close-button {
   position: absolute;
   left: 0;
   border-radius: var(--toggle-thumb-radius);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--background-modifier-box-shadow) 50%, transparent);
   width: var(--toggle-s-thumb-width);
   height: var(--toggle-s-thumb-height);
   margin: var(--toggle-s-border-width) 0 0 0;
   pointer-events: none;
   content: '';
   background-color: var(--toggle-thumb-color);
-  transition: transform 0.15s ease-in-out, width 0.1s ease-in-out 0.05s, height 0.1s ease-in-out 0.05s, margin-top 0.1s ease-in-out 0.05s, left 0.1s ease-in-out 0.05s, opacity 0.1s ease-in-out 0.05s;
+  transition: transform var(--bs-dur-fast) var(--bs-ease-standard), width var(--bs-dur-instant) var(--bs-ease-standard) var(--bs-dur-instant), height var(--bs-dur-instant) var(--bs-ease-standard) var(--bs-dur-instant), margin-top var(--bs-dur-instant) var(--bs-ease-standard) var(--bs-dur-instant), left var(--bs-dur-instant) var(--bs-ease-standard) var(--bs-dur-instant), opacity var(--bs-dur-instant) var(--bs-ease-standard) var(--bs-dur-instant);
   transform: translate3d(var(--toggle-s-border-width), 0, 0);
 }
 
@@ -810,6 +810,12 @@ body.styled-scrollbars .modal-close-button {
 /* modal toggles are the larger size */
 .modal .checkbox-container:focus-visible {
   outline: var(--toggle-border-width) solid var(--background-modifier-border-focus);
+}
+
+/* primary and danger actions inside dialogs get the wider chamfer */
+.modal button.mod-cta:not(.clickable-icon):not(.modal-close-button):not(.mod-raised),
+.modal button.mod-warning:not(.clickable-icon):not(.modal-close-button):not(.mod-raised) {
+  clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md));
 }
 
 .modal .checkbox-container:after {
