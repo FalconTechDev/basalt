@@ -1,16 +1,15 @@
-/* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
+/* canvas late rules: group selection, menu divider, control states and resizers. */
 
-/* group selection, card menu divider, control items, resizers in all directions */
 .canvas-selection.mod-group-selection {
-  border-width: 3px;
-  border-radius: 3px;
-  border-color: hsla(var(--color-accent-hsl), 0.3);
-  background-color: hsla(var(--color-accent-hsl), 0.03);
+  border-width: var(--divider-width-hover);
+  border-radius: var(--radius-m);
+  border-color: color-mix(in srgb, var(--bs-accent) 35%, transparent);
+  background-color: color-mix(in srgb, var(--bs-accent) 6%, transparent);
   pointer-events: initial;
 }
 
 .canvas-card-menu .canvas-card-menu-divider {
-  width: 1px;
+  width: var(--bs-hairline);
   background-color: var(--background-modifier-border);
 }
 
@@ -21,12 +20,13 @@
 @media (hover: hover) {
   .canvas-control-item:hover {
     color: var(--text-normal);
-    background-color: var(--interactive-hover);
+    background-color: var(--background-modifier-hover);
   }
 }
 
 .canvas-control-item.is-active {
-  color: var(--color-accent);
+  color: var(--text-accent);
+  background-color: var(--bs-accent-soft);
 }
 
 @media (hover: hover) {
@@ -40,7 +40,7 @@
 }
 
 .canvas-group-label[contenteditable="true"] {
-  box-shadow: 0 0 0 2px rgb(var(--canvas-color));
+  box-shadow: 0 0 0 var(--bs-focus-width) rgb(var(--canvas-color));
   color: var(--text-normal);
   text-overflow: initial;
   cursor: text;

@@ -1,9 +1,8 @@
-/* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
+/* canvas late rules: card menu buttons, selected labels and embed layout. */
 
-/* card menu button and node label/embed adjustments */
 .canvas-card-menu .canvas-card-menu-button {
-  --icon-size: var(--icon-xl);
-  --icon-stroke: var(--icon-xl-stroke-width);
+  --icon-size: var(--icon-l);
+  --icon-stroke: var(--icon-l-stroke-width);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,7 +14,8 @@
 
 @media (hover: hover) {
   .canvas-card-menu .canvas-card-menu-button:hover {
-    color: var(--color-accent);
+    color: var(--text-accent);
+    background-color: var(--background-modifier-hover);
   }
 }
 

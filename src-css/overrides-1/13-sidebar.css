@@ -1,6 +1,6 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* hotkey-style search input pads its icon buttons tighter */
+/* hotkey search keeps its icon buttons compact */
 .search-input-container.mod-hotkey .clickable-icon {
   padding: var(--size-2-1);
 }

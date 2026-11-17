@@ -102,9 +102,9 @@
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
   --metadata-padding: 0;
-  --metadata-divider-width: 1px;
+  --metadata-divider-width: var(--bs-hairline);
   --metadata-divider-color-hover: var(--metadata-divider-color);
-  --metadata-property-radius: 0px;
+  --metadata-property-radius: var(--radius-s);
 }
 
 /* drawer chrome: nav buttons stay on one line, header stacks title over switcher */

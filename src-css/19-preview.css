@@ -66,6 +66,10 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
 
 .markdown-rendered {
   tab-size: var(--indent-size);
+
+  /* reading-view tables get the basalt row-hover tint; editor tables keep theirs */
+  --table-row-background-hover: var(--background-modifier-hover);
+  --table-row-alt-background-hover: var(--background-modifier-hover);
 }
 
 .markdown-rendered.rtl {
@@ -289,7 +293,8 @@ body:not(.show-inline-title) .inline-title:not([data-level]) {
   color: var(--code-normal);
   font-family: var(--font-monospace);
   font-size: var(--code-size);
-  background-color: var(--code-background);
+  /* inline code sits on the quiet hover tint; fenced blocks keep --code-background */
+  background-color: var(--background-modifier-hover);
 }
 
 .markdown-rendered pre {
@@ -367,8 +372,8 @@ div.image-embed .image-resize-corner::after {
   display: block;
   inset-inline-end: 3px;
   bottom: 3px;
-  outline: 2px solid var(--color-accent);
-  border-radius: 2px;
+  outline: var(--bs-focus-width) solid var(--interactive-accent);
+  border-radius: var(--radius-m);
   height: 4px;
   width: 4px;
   content: " ";
@@ -642,7 +647,7 @@ div.image-embed .image-resize-corner::after {
   pointer-events: none;
   background-color: var(--list-marker-color);
   transform: var(--list-bullet-transform);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform var(--bs-dur-fast) var(--bs-ease-standard), box-shadow var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 .list-bullet::selection {
@@ -687,7 +692,7 @@ div.image-embed .image-resize-corner::after {
 .table-drag-target::after {
   position: absolute;
   inset: 0;
-  border-radius: 2px;
+  border-radius: var(--radius-m);
   content: "";
   background-color: var(--interactive-accent);
 }

@@ -16,14 +16,14 @@
   flex-direction: column;
   flex-basis: 250px;
   flex-shrink: 0;
-  border-inline-end: 1px solid var(--background-modifier-border);
+  border-inline-end: var(--border-width) solid var(--background-modifier-border);
 }
 
 .file-recovery-list-item-header {
   display: flex;
   padding: var(--size-4-2);
   border-radius: var(--radius-s);
-  transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+  transition: background-color var(--bs-dur-normal) var(--bs-ease-standard), color var(--bs-dur-normal) var(--bs-ease-standard);
 }
 
 .file-recovery-list-item-header .file-recovery-list-item-details {
@@ -54,7 +54,7 @@
   display: flex;
   align-items: center;
   padding: var(--size-4-2) 0;
-  border-bottom: 1px solid var(--background-modifier-border);
+  border-bottom: var(--border-width) solid var(--background-modifier-border);
   font-size: var(--font-ui-small);
   line-height: 1.1;
   color: var(--text-muted);
@@ -72,13 +72,13 @@
 .publish-changes-info {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--size-4-5);
 }
 
 /* collapse arrow and per-section action stay faint until needed */
 .publish-section-header-toggle-collapsed-button {
-  width: 9px;
-  height: 9px;
+  width: var(--size-4-2);
+  height: var(--size-4-2);
   margin-inline-end: var(--size-4-1);
   color: var(--text-faint);
 }
@@ -110,7 +110,7 @@
   flex-direction: column;
   flex-basis: 250px;
   flex-shrink: 0;
-  border-inline-end: 1px solid var(--background-modifier-border);
+  border-inline-end: var(--border-width) solid var(--background-modifier-border);
   background-color: var(--background-secondary);
 }
 

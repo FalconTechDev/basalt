@@ -6,7 +6,7 @@ import { env } from "./env.js";
 import { inherit } from "./inherit.js";
 import { ellipsize, floatOr, keyIgnoringCase, parsePropertyId } from "./text.js";
 import { moveItem } from "./misc.js";
-import { offsetBox, isEditableNode } from "./tree.js";
+import { ng15OffsetBox, ng15IsEditableNode } from "./n-g15-tree.js";
 import { s13VisibleRect, s13ScrollWatch } from "./s13-geom.js";
 import { s13CellRange, s13ExtendRange } from "./s13-spatial.js";
 import { s13ViewTable, s13BasesTableI18n } from "./s13-consts.js";
@@ -673,7 +673,7 @@ export function defineS50BasesTableView(host) {
       if (viewport.bottom > lastViewport.bottom) viewport.bottom += Math.min(viewport.bottom - lastViewport.bottom, marginY);
     }
     if (activeEl) {
-      const box = offsetBox(activeEl, containerEl);
+      const box = ng15OffsetBox(activeEl, containerEl);
       if (box.left < viewport.left) viewport.left = box.left;
       if (box.top < viewport.top) viewport.top = box.top;
       const right = box.left + activeEl.offsetWidth;
@@ -882,7 +882,7 @@ export function defineS50BasesTableView(host) {
 
   /** Paste: write the clipboard payload into the note properties covering the target range. */
   TableView.prototype.handlePaste = async function (e) {
-    if (e.defaultPrevented || isEditableNode(this.containerEl.doc.activeElement)) return;
+    if (e.defaultPrevented || ng15IsEditableNode(this.containerEl.doc.activeElement)) return;
     if (!this.activeCell) return;
     e.preventDefault();
     const paste = new host.s13PasteData(e.clipboardData, this.selection);
@@ -978,7 +978,7 @@ export function defineS50BasesTableView(host) {
       return;
     }
 
-    if (isEditableNode(e.targetNode)) return;
+    if (ng15IsEditableNode(e.targetNode)) return;
 
     // Mod+Shift+Arrow: grow the selection to the group/data edge in that direction.
     if (e.key === "ArrowDown" && host.Keymap.isModifier(e, "Mod") && e.shiftKey) {

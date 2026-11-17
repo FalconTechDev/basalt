@@ -40,13 +40,13 @@
 
 /* ---------- transient states ---------- */
 
-/* flash highlight fades out over 250ms */
+/* flash highlight fades out over a moderate beat */
 .is-flashing {
   border-radius: var(--radius-s);
   color: var(--text-normal);
   background-color: var(--text-highlight-bg) !important;
   mix-blend-mode: var(--highlight-mix-blend-mode);
-  transition: color 0.25s ease, background-color 0.25s ease;
+  transition: color var(--bs-dur-slow) var(--bs-ease-standard), background-color var(--bs-dur-slow) var(--bs-ease-standard);
 }
 
 /* garbled text (encoding fallback) renders in the display font */
@@ -72,14 +72,14 @@
   height: 3px;
   content: ' ';
   background-color: var(--interactive-accent);
-  animation: 1000ms ease-in-out 300ms infinite progress-bar;
+  animation: progress-bar calc(var(--bs-dur-slow) * 3) var(--bs-ease-standard) var(--bs-dur-normal) infinite;
 }
 
 /* translucent windows soften collapse icons and dividers */
 .is-translucent:not(.is-fullscreen) {
   --nav-collapse-icon-color: rgba(var(--mono-rgb-100), 0.3);
   --nav-collapse-icon-color-collapsed: rgba(var(--mono-rgb-100), 0.3);
-  --divider-color: rgba(0, 0, 0, 0.15);
+  --divider-color: color-mix(in srgb, var(--background-modifier-border) 55%, transparent);
 }
 
 /* ---------- RTL ---------- */
@@ -168,7 +168,7 @@
 }
 
 .u-small {
-  font-size: 0.8em;
+  font-size: var(--font-smallest);
 }
 
 /* ---------- misc ---------- */
@@ -184,7 +184,7 @@
   height: 10px;
   color: var(--nav-collapse-icon-color);
   stroke-width: 4px;
-  transition: transform 100ms ease-in-out;
+  transition: transform var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 .collapse-icon.is-collapsed svg.svg-icon {
@@ -234,7 +234,7 @@
   top: 0;
   left: var(--scroll-fade-offset-left);
   z-index: 1;
-  width: 30px;
+  width: var(--size-4-8);
   height: 100%;
   content: ' ';
   pointer-events: none;
@@ -245,7 +245,7 @@
   position: absolute;
   top: 0;
   right: var(--scroll-fade-offset-right);
-  width: 30px;
+  width: var(--size-4-8);
   height: 100%;
   content: ' ';
   pointer-events: none;

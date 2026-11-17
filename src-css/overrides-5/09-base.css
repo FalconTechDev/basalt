@@ -24,7 +24,7 @@
   }
 
   .follow-link-popover:hover {
-    background-color: #000000;
+    background-color: color-mix(in srgb, var(--background-modifier-message) 88%, #000);
   }
 
   .password-item:hover {

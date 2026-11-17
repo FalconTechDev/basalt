@@ -484,7 +484,7 @@ export function defineS12CodeblockWidget(host) {
   const renderer = host.MarkdownPreviewRenderer;
   const hex = host.randomHex;
   S12CodeblockWidget = class extends Base {
-    constructor(app, editor, code, lang) {
+    constructor(app, editor, lang, code) {
       super(app, editor);
       this.installed = false; this.rendered = false;
       this.lang = lang; this.code = code;
@@ -535,6 +535,9 @@ export function defineS12CodeblockWidget(host) {
       return el;
     }
     get estimatedHeight() { return 50; }
+  };
+  S12CodeblockWidget.canRenderLang = function (lang) {
+    return "mermaid" === lang || "query" === lang || renderer.codeBlockPostProcessors.hasOwnProperty(lang);
   };
   return S12CodeblockWidget;
 }

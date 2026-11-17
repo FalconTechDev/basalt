@@ -49,7 +49,7 @@
 /* small inline status pill */
 .message {
   display: inline-block;
-  padding: 6px 12px 6px 12px;
+  padding: var(--size-2-3) var(--size-4-3);
   border-radius: var(--radius-s);
   corner-shape: var(--corner-shape);
 }
@@ -99,21 +99,23 @@
 
 /* ---------- follow-link popover ---------- */
 
-/* tooltip under a followed link: dark chip above everything else */
+/* tooltip under a followed link: dark basalt plate above everything else */
 .follow-link-popover {
+  --bs-on-plate: #ece4db;
   top: calc(100%);
   z-index: var(--layer-tooltip);
   max-width: 300px;
-  padding: 5px 12px;
+  padding: var(--size-4-1) var(--size-4-3);
+  border: var(--bs-hairline) solid var(--background-modifier-border-hover);
   border-radius: var(--radius-m);
-  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
-  color: #ccc;
+  box-shadow: var(--shadow-xs);
+  color: var(--bs-on-plate);
   font-size: var(--font-ui-small);
-  line-height: 20px;
+  line-height: var(--size-4-5);
   text-align: center;
   white-space: pre-wrap;
-  background-color: rgba(0, 0, 0, 0.9);
-  transition: opacity var(--anim-duration-fast) ease-in-out, transform var(--anim-duration-fast) ease-in-out;
+  background-color: var(--background-modifier-message);
+  transition: opacity var(--bs-dur-fast) var(--bs-ease-standard), transform var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 /* ---------- drop indicator ---------- */
@@ -156,15 +158,15 @@
 /* footer strip with the popup actions */
 .popupMeta {
   --icon-size: var(--font-ui-small);
-  --icon-stroke: 2.5px;
+  --icon-stroke: var(--icon-xs-stroke-width);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--size-4-1);
   padding: var(--size-4-1) var(--size-4-2);
-  border-top: 1px solid var(--background-modifier-border);
-  border-bottom-right-radius: var(--radius-s);
-  border-bottom-left-radius: var(--radius-s);
+  border-top: var(--border-width) solid var(--background-modifier-border);
+  border-bottom-right-radius: var(--radius-m);
+  border-bottom-left-radius: var(--radius-m);
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
   background-color: var(--background-secondary);
@@ -173,8 +175,8 @@
 /* when the body is empty the footer becomes the whole popup */
 .popupContent:empty + .popupMeta {
   border-top: none;
-  border-top-right-radius: var(--radius-s);
-  border-top-left-radius: var(--radius-s);
+  border-top-right-radius: var(--radius-m);
+  border-top-left-radius: var(--radius-m);
   background-color: var(--background-primary);
 }
 
@@ -188,7 +190,7 @@
 .file-embed {
   display: flex;
   justify-content: center;
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-s);
   background-color: var(--background-primary-alt);
 }
 
@@ -196,7 +198,7 @@
 
 .internal-query {
   margin: 0;
-  border-top: 1px solid var(--background-modifier-border);
+  border-top: var(--border-width) solid var(--background-modifier-border);
 }
 
 /* ---------- base toolbar ---------- */
@@ -228,7 +230,7 @@
 
 .site-list-container {
   margin-bottom: var(--size-4-4);
-  border-top: 1px solid var(--background-modifier-border);
+  border-top: var(--border-width) solid var(--background-modifier-border);
 }
 
 /* ---------- password item ---------- */
@@ -251,7 +253,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--size-4-2) 0;
-  border-bottom: 1px solid var(--background-modifier-border);
+  border-bottom: var(--border-width) solid var(--background-modifier-border);
   line-height: 1.1;
 }
 
@@ -266,7 +268,7 @@
 
 /* trailing hint inside a suggestion row */
 .search-suggest-info-text {
-  margin-inline-start: 4px;
+  margin-inline-start: var(--size-4-1);
   color: var(--text-muted);
 }
 
@@ -274,7 +276,7 @@
 .search-suggest-icon {
   display: flex;
   align-items: center;
-  padding: 4px;
+  padding: var(--size-4-1);
   border-radius: var(--radius-s);
 }
 
@@ -302,8 +304,8 @@
 
 /* indented child count under a result group */
 .search-info-children {
-  margin: 1px 0;
-  padding-inline-start: 20px;
+  margin: var(--size-2-1) 0;
+  padding-inline-start: var(--size-4-5);
   border-inline-start: var(--border-width) solid var(--background-modifier-border);
 }
 
@@ -350,8 +352,8 @@
   width: 100vw;
   height: 100vh;
   border: none;
-  background-color: #191919;
-  transition: -webkit-transform 0.8s ease 0s;
+  background-color: var(--background-primary);
+  transition: -webkit-transform calc(var(--bs-dur-slow) * 2) var(--bs-ease-standard) 0s;
 }
 
 /* close button pinned to the top corner of the deck */
@@ -408,5 +410,5 @@
   color: var(--text-muted);
   font-size: var(--font-ui-small);
   background-color: var(--background-primary);
-  transition: background-color ease-in-out 150ms;
+  transition: background-color var(--bs-dur-fast) var(--bs-ease-standard);
 }

@@ -17,9 +17,9 @@ import { s05HeadingText } from "./s05-utils.js";
 import { linkSafeHeading, endWithBlankLine } from "./text.js";
 import { renderMatches } from "./search-simple.js";
 import { searchClasses } from "./n-g11-query.js";
-import { walkTree, treeDropPosition, updateTreeDropIndicator, makeTreePusher, collapsibleTreeItem } from "./tree.js";
-import { setDragPlainData } from "./drag.js";
-import { headingAtPosition } from "./bookmarks.js";
+import { ng15WalkTree, ng15TreeDropPosition, ng15UpdateTreeDropIndicator, ng15MakeTreePusher, ng15CollapsibleTreeItem } from "./n-g15-tree.js";
+import { ng08SetDragPlainData } from "./n-g08-drag.js";
+import { ng08HeadingAtPosition } from "./n-g08-bookmarks.js";
 
 const s34OutlineViewType = "outline";
 const outlineT = (host) => host.t.plugins.outline;
@@ -58,11 +58,11 @@ const outlineParts = {};
 
 /** One heading row of the outline tree. */
 export function defineOutlineTreeItem(host) {
-  const ItemBase = collapsibleTreeItem(host.TreeItem);
+  const ItemBase = ng15CollapsibleTreeItem(host.TreeItem);
 
   function OutlineTreeItem(view, tree, heading) {
     const self = ItemBase.call(this) || this;
-    self.pusherEl = makeTreePusher();
+    self.pusherEl = ng15MakeTreePusher();
     self.info = { height: 0, width: 0, childLeft: 0, childLeftPadding: 0, childTop: 0, computed: false, queued: false, hidden: false, next: false };
     self.vChildren = new host.TreeChildren(self);
     self.view = view;
@@ -151,8 +151,8 @@ export function defineOutlineView(host) {
     self.app.dragManager.handleDrop(contentEl, (event, dragInfo, isOver) => {
       if (dragInfo.source !== "outline" || dragInfo.type !== "heading" || dragInfo.file !== self.file) return;
       if (!self.tree.root.vChildren.hasChildren()) return;
-      const drop = treeDropPosition(event, self.tree);
-      const indicator = updateTreeDropIndicator(self.tree, drop, [], isOver);
+      const drop = ng15TreeDropPosition(event, self.tree);
+      const indicator = ng15UpdateTreeDropIndicator(self.tree, drop, [], isOver);
       if (!isOver) {
         (async () => {
           const cache = self.app.metadataCache.getFileCache(self.file);
@@ -276,13 +276,13 @@ export function defineOutlineView(host) {
     let result = null;
     if (view.getMode() === "preview") {
       const scroll = view.scroll;
-      walkTree(this.tree.root, (item) => {
+      ng15WalkTree(this.tree.root, (item) => {
         if (scroll >= item.heading.position.end.line) result = item;
       });
     } else if (view.file) {
       const selection = view.editor.listSelections().first();
-      const heading = headingAtPosition(this.app, view.file, selection.head);
-      walkTree(this.tree.root, (item) => {
+      const heading = ng08HeadingAtPosition(this.app, view.file, selection.head);
+      ng15WalkTree(this.tree.root, (item) => {
         if (item.heading === heading) {
           result = item;
           return true;
@@ -338,7 +338,7 @@ export function defineOutlineView(host) {
     const item = new outlineParts.OutlineTreeItem(this, this.tree, heading);
     this.app.dragManager.handleDrag(item.selfEl, (event) => {
       self.app.dragManager.updateSource([item.selfEl], "is-being-dragged");
-      setDragPlainData(event.dataTransfer, item.heading.heading);
+      ng08SetDragPlainData(event.dataTransfer, item.heading.heading);
       return {
         source: "outline",
         type: "heading",
@@ -414,7 +414,7 @@ export function defineOutlineView(host) {
     const query = this.searchQuery?.query ?? "";
     const queryChanged = query !== this.prevQuery;
     this.prevQuery = query;
-    walkTree(tree.root, (item) => {
+    ng15WalkTree(tree.root, (item) => {
       if (filtering) {
         const match = this.searchQuery.matchContent(item.heading.heading);
         if (match) {

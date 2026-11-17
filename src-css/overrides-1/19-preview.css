@@ -6,7 +6,7 @@
 .markdown-rendered .search-highlight > div {
   position: absolute;
   box-shadow: 0 0 0px 2px var(--text-normal);
-  border-radius: 2px;
+  border-radius: var(--radius-m);
   pointer-events: none;
   opacity: 0.3;
   mix-blend-mode: var(--highlight-mix-blend-mode);
@@ -26,8 +26,8 @@
   position: absolute;
   top: 0;
   inset-inline-end: 0;
-  margin: 6px;
-  padding: 6px 8px;
+  margin: var(--size-2-3);
+  padding: var(--size-2-3) var(--size-4-2);
   height: auto;
   box-shadow: none;
   font-family: var(--font-interface);
@@ -68,7 +68,7 @@ input[type=checkbox].metadata-input-checkbox {
   /* hovering the link itself fades its flair in */
   .metadata-link:hover .metadata-link-flair {
     opacity: var(--icon-opacity);
-    transition: 0.1s opacity 0.25s ease-in-out;
+    transition: opacity var(--bs-dur-fast) var(--bs-ease-standard) var(--bs-dur-normal);
   }
 
   /* hovering the value row hides the flair again */

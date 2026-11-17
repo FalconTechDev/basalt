@@ -14,7 +14,7 @@
 }
 
 .app-container.mod-loading .view-header .loader-spinner svg {
-  animation: spin 0.9s ease infinite;
+  animation: spin calc(var(--bs-dur-slow) * 2.5) var(--bs-ease-standard) infinite;
 }
 
 /* ---------- window frame ---------- */
@@ -35,11 +35,11 @@ body.is-frameless:not(.is-hidden-frameless, .is-fullscreen) .titlebar {
 
 body.is-frameless.in-progress:not(.is-maximized) .titlebar,
 body.is-frameless:not(.is-hidden-frameless, .is-fullscreen):not(.is-maximized) .titlebar {
-  padding-top: 2px;
+  padding-top: var(--size-2-1);
 }
 
 body.is-frameless.is-hidden-frameless .titlebar {
-  height: calc(var(--header-height) - 1px);
+  height: calc(var(--header-height) - var(--bs-hairline));
 }
 
 .is-fullscreen .titlebar {
@@ -123,7 +123,7 @@ body.is-focused .workspace-tabs.mod-top {
 }
 
 .mod-macos .titlebar-button-container {
-  top: 8px;
+  top: var(--size-4-2);
 }
 
 .titlebar-button-container.mod-left {
@@ -203,8 +203,8 @@ body.is-frameless.in-progress .titlebar {
 
   .mod-linux .titlebar-button.mod-close:hover .svg-icon,
   .mod-windows .titlebar-button.mod-close:hover .svg-icon {
-    fill: white;
-    stroke: white;
+    fill: var(--bs-on-error);
+    stroke: var(--bs-on-error);
   }
 }
 
@@ -325,7 +325,7 @@ body.is-frameless.in-progress .titlebar {
 .workspace-ribbon.mod-left.is-collapsed {
   border-right-color: var(--divider-color);
   background-color: var(--ribbon-background-collapsed);
-  transition: background-color 250ms 95ms ease-in-out;
+  transition: background-color var(--bs-dur-normal) var(--bs-dur-instant) var(--bs-ease-standard);
 }
 
 .workspace-ribbon.mod-right {
@@ -415,7 +415,7 @@ body:not(.show-ribbon) .side-dock-ribbon {
 
 .view-header-title-parent .view-header-breadcrumb {
   overflow: hidden;
-  padding: 2px 4px;
+  padding: var(--size-2-1) var(--size-4-1);
   border-radius: var(--radius-s);
   text-overflow: ellipsis;
 }
@@ -433,7 +433,7 @@ body:not(.show-ribbon) .side-dock-ribbon {
 }
 
 .view-header-title-parent .view-header-breadcrumb-separator {
-  padding: 2px 1px;
+  padding: var(--size-2-1) var(--bs-hairline);
   color: var(--text-faint);
 }
 
@@ -445,7 +445,7 @@ body:not(.show-ribbon) .side-dock-ribbon {
   color: var(--text-muted);
   text-overflow: ellipsis;
   white-space: pre;
-  scroll-padding-inline-end: 20px;
+  scroll-padding-inline-end: var(--size-4-5);
 }
 
 /* long titles scroll instead of clipping once focused */
@@ -622,7 +622,7 @@ body.is-focused .workspace-tab-header-container .workspace-tab-header.is-highlig
 }
 
 .workspace-tab-header.is-before-active .workspace-tab-header-inner {
-  border-bottom-right-radius: 10px;
+  border-bottom-right-radius: var(--radius-xl);
 }
 
 /* spacer + tab strip are the draggable titlebar region */
@@ -652,7 +652,7 @@ body:not(.is-grabbing):not(.is-fullscreen).is-hidden-frameless .mod-top .workspa
 .workspace-tab-header-new-tab {
   padding: var(--size-4-2) 0 var(--size-2-3);
   margin-inline-end: var(--size-4-3);
-  margin-inline-start: -4px;
+  margin-inline-start: calc(var(--size-4-1) * -1);
 }
 
 .workspace-tab-header-tab-list {
@@ -694,7 +694,7 @@ body:not(.is-grabbing):not(.is-fullscreen).is-hidden-frameless .mod-top .workspa
 .mod-right-split .workspace-tab-header-container .workspace-tab-header.has-active-menu,
 .mod-left-split .workspace-tab-header-container .workspace-tab-header.is-active,
 .mod-right-split .workspace-tab-header-container .workspace-tab-header.is-active {
-  background-color: var(--background-modifier-hover);
+  background-color: var(--nav-item-background-selected);
 }
 
 @media (hover: hover) {
@@ -702,7 +702,7 @@ body:not(.is-grabbing):not(.is-fullscreen).is-hidden-frameless .mod-top .workspa
   .mod-right-split .workspace-tab-header-container .workspace-tab-header.has-active-menu:hover,
   .mod-left-split .workspace-tab-header-container .workspace-tab-header.is-active:hover,
   .mod-right-split .workspace-tab-header-container .workspace-tab-header.is-active:hover {
-    background-color: var(--background-modifier-hover);
+    background-color: var(--nav-item-background-hover);
   }
 }
 
@@ -739,8 +739,8 @@ body:not(.is-grabbing):not(.is-fullscreen).is-hidden-frameless .mod-top .workspa
 .workspace .mod-root .workspace-tab-header-inner::after {
   position: absolute;
   inset-inline-end: -0.5px;
-  width: 1px;
-  height: 20px;
+  width: var(--bs-hairline);
+  height: var(--size-4-5);
   background-color: var(--tab-divider-color);
   content: '';
 }
@@ -1009,7 +1009,7 @@ body:not(.is-fullscreen) .status-bar {
   display: inline-flex;
   align-items: center;
   border-radius: var(--radius-s);
-  padding: 3px var(--size-2-2);
+  padding: var(--size-4-1) var(--size-2-2);
   line-height: 1;
   corner-shape: var(--corner-shape);
 }
@@ -1070,7 +1070,7 @@ body:not(.is-fullscreen) .status-bar {
 
 /* staggered slide-in for the options list */
 .workspace-drawer-tab-options:not(.is-collapsed) .workspace-drawer-tab-options-list .workspace-tab-header {
-  animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+  animation: slideIn var(--bs-dur-normal) var(--anim-motion-jumpy) backwards;
 }
 
 .workspace-drawer-tab-options:not(.is-collapsed) .workspace-drawer-tab-options-list .workspace-tab-header:nth-child(1) {

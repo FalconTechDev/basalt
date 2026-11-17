@@ -5,7 +5,7 @@
 
 import { methods } from "./inherit.js";
 import { env } from "./env.js";
-import { makeTreePusher,mountChildren,markItemCollapsed,nextVisibleTreeItem,prevVisibleTreeItem,lastVisibleTreeItem,animateCollapse,expandFromZero } from "./tree.js";
+import { ng15MakeTreePusher,ng15MountChildren,ng15MarkItemCollapsed,ng15NextVisibleTreeItem,ng15PrevVisibleTreeItem,ng15LastVisibleTreeItem,ng15AnimateCollapse,ng15ExpandFromZero } from "./n-g15-tree.js";
 import { debounceCall } from "./timing.js";
 import { lastSegment,extensionOf } from "./path.js";
 
@@ -140,11 +140,11 @@ export function ng11SortOrderComparator(order) {
 /** Hides or shows `el`, optionally animating the collapse/expand. */
 export async function ng11ToggleElementVisibility(el, hide, animate) {
   if (hide) {
-    if (animate) await animateCollapse(el);
+    if (animate) await ng15AnimateCollapse(el);
     el.hide();
   } else {
     el.show();
-    if (animate) await expandFromZero(el);
+    if (animate) await ng15ExpandFromZero(el);
   }
 }
 
@@ -484,7 +484,7 @@ function SearchFileResult(app, parentDom, file, result, content, showTitle = tru
   this.flairEl = this.selfEl.createDiv("tree-item-flair-outer").createSpan("tree-item-flair");
   this.childrenEl = this.el.createDiv("tree-item-children search-result-file-matches");
   this.vChildren = new (H().TreeChildren)(this);
-  this.pusherEl = makeTreePusher();
+  this.pusherEl = ng15MakeTreePusher();
 
   this._buildTitle();
   this._wireEvents();
@@ -581,8 +581,8 @@ methods(SearchFileResult, {
   setCollapse(collapsed, animate) {
     if (this.collapsed === collapsed) return;
     this.collapsed = collapsed;
-    markItemCollapsed(this.el, collapsed);
-    mountChildren(this.childrenEl, this.el, collapsed, animate).then(() => {
+    ng15MarkItemCollapsed(this.el, collapsed);
+    ng15MountChildren(this.childrenEl, this.el, collapsed, animate).then(() => {
       if (this.parentDom && this.parentDom.infinityScroll) this.parentDom.infinityScroll.invalidate(this, true);
     });
   },
@@ -674,7 +674,7 @@ function SearchResults(app, el, emptyText, scrollParent) {
   this.emptyStateEl = el.createDiv("search-empty-state");
   this.emptyStateEl.setText(emptyText || "");
   this.childrenEl = el.createDiv("search-results-children");
-  this.pusherEl = makeTreePusher();
+  this.pusherEl = ng15MakeTreePusher();
   this.info = ng11ItemInfo();
   this.coverEl = null;
 
@@ -758,14 +758,14 @@ methods(SearchResults, {
     const forwards = direction === "forwards";
     let next;
     if (!this.focusedItem || this.focusedItem.info.hidden) {
-      next = forwards ? nextVisibleTreeItem(this, true) : prevVisibleTreeItem(this, true);
+      next = forwards ? ng15NextVisibleTreeItem(this, true) : ng15PrevVisibleTreeItem(this, true);
       if (!next || next === this) {
-        next = forwards ? nextVisibleTreeItem(this.vChildren.first(), true) : lastVisibleTreeItem(this.vChildren.last(), true);
+        next = forwards ? ng15NextVisibleTreeItem(this.vChildren.first(), true) : ng15LastVisibleTreeItem(this.vChildren.last(), true);
       }
     } else {
-      next = forwards ? nextVisibleTreeItem(this.focusedItem, true) : prevVisibleTreeItem(this.focusedItem, true);
+      next = forwards ? ng15NextVisibleTreeItem(this.focusedItem, true) : ng15PrevVisibleTreeItem(this.focusedItem, true);
       if (!next || next === this) {
-        next = forwards ? nextVisibleTreeItem(this.vChildren.first(), true) : lastVisibleTreeItem(this.vChildren.last(), true);
+        next = forwards ? ng15NextVisibleTreeItem(this.vChildren.first(), true) : ng15LastVisibleTreeItem(this.vChildren.last(), true);
       }
     }
     if (next && next !== this) this.setFocusedItem(next);

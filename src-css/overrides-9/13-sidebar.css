@@ -64,7 +64,8 @@
 
 @media (hover: hover) {
   .tag-pane-tag.is-active:hover {
-    color: var(--text-on-accent);
-    background-color: var(--interactive-accent);
+    color: var(--text-normal);
+    background-color: var(--bs-accent-soft);
+    box-shadow: inset var(--bs-focus-width) 0 0 var(--interactive-accent);
   }
 }

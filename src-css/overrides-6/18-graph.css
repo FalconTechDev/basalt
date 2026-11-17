@@ -80,5 +80,16 @@
 }
 
 .graph-controls-button.mod-reset {
-  inset-inline-end: 36px;
+  inset-inline-end: var(--size-4-9);
+}
+
+/* ghost icon buttons: chromeless until hovered, then a quiet wash */
+.graph-controls-button:hover,
+.graph-controls-button:active {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.graph-controls-button:active {
+  color: var(--interactive-accent);
 }

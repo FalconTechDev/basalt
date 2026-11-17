@@ -9,14 +9,14 @@
 // separate, simpler classes the attachments dialog was built on.
 
 import { inherit } from "./inherit.js";
-import { collapsibleTreeItem } from "./tree.js";
+import { ng15CollapsibleTreeItem } from "./n-g15-tree.js";
 
 /**
  * Mixin factory: extends `Base` (already collapsible-aware) with a `children` list and a
  * `render()` that mounts the children's elements into `childrenEl`.
  */
 export function s20ChildrenMixin(Base) {
-  const Collapsible = collapsibleTreeItem(Base);
+  const Collapsible = ng15CollapsibleTreeItem(Base);
   function ChildrenItem() {
     const self = Collapsible.apply(this, arguments) || this;
     self.children = null;
@@ -38,7 +38,7 @@ export function s20ChildrenMixin(Base) {
 
 /** A collapsible tree item with no render behaviour of its own. */
 export function defineS20CollapsibleItem(host) {
-  const Base = collapsibleTreeItem(host.TreeItem);
+  const Base = ng15CollapsibleTreeItem(host.TreeItem);
   function CollapsibleItem() {
     return Base.apply(this, arguments) || this;
   }

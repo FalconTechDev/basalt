@@ -8,8 +8,8 @@
 
 .markdown-source-view.mod-cm6 .code-block-flair {
   position: absolute;
-  right: 6px;
-  top: 6px;
+  right: var(--size-4-2);
+  top: var(--size-4-2);
   z-index: 1;
   display: inline-block;
   padding: var(--size-4-1) var(--size-4-2);

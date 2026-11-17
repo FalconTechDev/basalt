@@ -10,7 +10,7 @@ import { prepareQuery, fuzzyMatchJs } from "./search.js";
 import { renderResults } from "./search-simple.js";
 import { s05NextFootnoteId } from "./s05-utils.js";
 import { s10FolderContains, s10MovableFiles, s10MoveFilesAndUpdateLinks } from "./s10-app.js";
-import { flattenUniqueFiles } from "./bookmarks.js";
+import { ng08FlattenUniqueFiles } from "./n-g08-bookmarks.js";
 
 const S29_FOOTNOTE_PREFIX = "[inline";
 
@@ -224,7 +224,7 @@ export function defineMoveFolderModal(host) {
   };
 
   proto.getItems = function () {
-    const movedFolders = flattenUniqueFiles(this.files).filter((file) => file instanceof host.TFolder);
+    const movedFolders = ng08FlattenUniqueFiles(this.files).filter((file) => file instanceof host.TFolder);
     const hasFolders = movedFolders.length > 0;
     const folders = [];
     for (const folder of this.app.vault.getAllFolders(true)) {

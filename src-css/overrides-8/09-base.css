@@ -2,7 +2,7 @@
 
 /* selected file-tree rows tinted by their status colour */
 .file-tree .mod-changed.is-selected {
-  background-color: hsla(var(--interactive-accent-hsl), 0.2);
+  background-color: var(--bs-accent-soft);
 }
 
 .file-tree .mod-new.is-selected {
