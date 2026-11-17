@@ -1,29 +1,28 @@
 /* sidebar (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* nav-header */
+/* nav header and the active state of its action buttons */
 .nav-header {
   padding: var(--size-4-2);
 }
 
-/* nav-buttons */
 .nav-buttons-container .nav-action-button.is-active {
   color: var(--icon-color-focused);
   background-color: var(--background-modifier-hover);
 }
 
-/* tree-item */
+/* tree item: base row plus its rename, drag and selection states */
 .tree-item-self {
-  align-items: baseline;
-  display: flex;
   position: relative;
-  border-radius: var(--nav-item-radius);
+  display: flex;
+  align-items: baseline;
   margin-bottom: var(--nav-item-margin-bottom);
   padding: var(--nav-item-padding);
+  border-radius: var(--nav-item-radius);
+  corner-shape: var(--corner-shape);
   color: var(--nav-item-color);
   font-size: var(--nav-item-size);
-  line-height: var(--line-height-tight);
   font-weight: var(--nav-item-weight);
-  corner-shape: var(--corner-shape);
+  line-height: var(--line-height-tight);
 }
 
 .tree-item-self.is-being-dragged-over .collapse-icon {
@@ -42,7 +41,6 @@
 }
 
 @media (hover: hover) {
-  /* is-grabbing */
   body:not(.is-grabbing) .tree-item-self.is-clickable:hover {
     color: var(--nav-item-color-hover);
     font-weight: var(--nav-item-weight-hover);
@@ -55,20 +53,20 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
   color: var(--text-on-accent);
 }
 
-/* tree-item */
+/* tree item extras: trailing flair, faint subtext and the indent guide */
 .tree-item-flair-outer {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  padding-inline-start: var(--size-4-1);
   margin-inline-start: auto;
+  padding-inline-start: var(--size-4-1);
 }
 
 .tree-item-flair {
   border-radius: var(--radius-s);
+  color: var(--text-faint);
   font-size: var(--font-ui-smaller);
   line-height: 1;
-  color: var(--text-faint);
 }
 
 @media (hover: hover) {
@@ -88,62 +86,45 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
   border-inline-start: var(--nav-indentation-guide-width) solid var(--nav-indentation-guide-color);
 }
 
-/* workspace-leaf */
-.workspace-leaf-content[data-type="pdf"] .view-content {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding: 0;
-}
-
-/* outgoing-link */
+/* backlink and outgoing-link panes share one scrollable body */
 .outgoing-link-pane {
   padding-top: var(--size-4-3);
 }
 
-/* backlink-pane */
 .backlink-pane {
   padding-top: var(--size-4-1);
 }
 
 .backlink-pane,
 .outgoing-link-pane {
-  overflow-y: auto;
   flex: 1 0 0;
+  overflow-y: auto;
   padding-inline-start: var(--size-4-3);
   padding-inline-end: var(--size-4-3);
   padding-bottom: max(var(--safe-area-inset-bottom), var(--size-4-8));
 }
 
-/* workspace-leaf */
-.workspace-leaf-content[data-type="bases"] .view-content {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding: 0;
-}
-
-.workspace-leaf-content[data-type=bookmarks] .view-content {
+/* bookmarks leaf content gets breathing room */
+.workspace-leaf-content[data-type="bookmarks"] .view-content {
   padding: var(--size-4-1) var(--size-4-3) var(--size-4-8);
 }
 
-/* nav-files */
+/* nav files list fills the remaining sidebar height and scrolls */
 .nav-files-container {
   flex-grow: 1;
-  overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--size-4-1) var(--size-4-3) var(--size-4-6) var(--size-4-3);
+  overflow-y: auto;
+  padding: var(--size-4-1) var(--size-4-3) var(--size-4-6);
   padding-bottom: max(var(--safe-area-inset-bottom), var(--size-4-6));
   scroll-padding-block: var(--size-4-2);
 }
 
-/* nav-file */
-
+/* file tag pill pinned to the end of a nav row */
 .nav-file-tag {
   align-self: center;
-  border-radius: var(--nav-tag-radius);
   margin-inline-start: auto;
   padding: 0 var(--size-4-1);
+  border-radius: var(--nav-tag-radius);
   color: var(--nav-tag-color);
   font-size: 9px;
   font-weight: var(--nav-tag-weight);
@@ -153,38 +134,36 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
   background-color: var(--nav-tag-background);
 }
 
+/* nav titles wrap anywhere instead of overflowing */
 .nav-file-title-content,
 .nav-folder-title-content {
   display: inline-block;
-  overflow-wrap: anywhere;
   overflow: hidden;
+  overflow-wrap: anywhere;
   white-space: var(--nav-item-white-space);
 }
 
-/* workspace-leaf */
-.workspace-leaf-content[data-type='outline'] .view-content {
+/* outline and properties leaves only need a top inset */
+.workspace-leaf-content[data-type="outline"] .view-content,
+.workspace-leaf-content[data-type="all-properties"] .view-content,
+.workspace-leaf-content[data-type="properties"] .view-content {
   padding-top: var(--size-4-1);
 }
 
-.workspace-leaf-content[data-type=all-properties] .view-content,
-.workspace-leaf-content[data-type=properties] .view-content {
-  padding-top: var(--size-4-1);
-}
-
-/* search-input */
+/* search input: clear button sits inside the field, suggest button at its edge */
 .search-input-clear-button {
   position: absolute;
-  top: 0px;
+  top: 0;
+  bottom: 0;
   inset-inline-end: 2px;
-  bottom: 0px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  border-radius: 50%;
-  height: var(--input-height);
+  justify-content: center;
   width: 28px;
+  height: var(--input-height);
   margin: auto;
-  padding: 0 0;
+  padding: 0;
+  border-radius: 50%;
   color: var(--search-clear-button-color);
   line-height: 0;
   text-align: center;
@@ -195,8 +174,8 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
 
 .search-input-suggest-button {
   position: absolute;
-  left: 0;
   top: 0;
+  left: 0;
   z-index: 10;
   padding: var(--size-4-1) var(--size-4-2);
   color: var(--text-faint);
@@ -204,7 +183,7 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
   opacity: 0;
 }
 
-/* search-result */
+/* search results: scrollable body plus the per-file match list */
 .search-result-container {
   position: relative;
   flex: 1 0 0;
@@ -213,29 +192,29 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
 
 .search-result-file-matches {
   overflow: hidden;
-  border-radius: var(--radius-s);
   margin: var(--size-4-1) 0 var(--size-4-2);
+  border-radius: var(--radius-s);
   box-shadow: 0 0 0 var(--border-width) var(--background-modifier-border);
+  color: var(--text-muted);
   font-size: var(--font-ui-smaller);
   line-height: var(--line-height-tight);
-  color: var(--text-muted);
   background-color: var(--search-result-background);
 }
 
 .search-result-file-match {
   position: relative;
-  padding: var(--size-4-2) var(--size-4-5) var(--size-4-2) var(--size-4-3);
   width: 100%;
+  padding: var(--size-4-2) var(--size-4-5) var(--size-4-2) var(--size-4-3);
   border-bottom: var(--border-width) solid var(--background-modifier-border);
   white-space: pre-wrap;
   cursor: var(--cursor);
 }
 
 .search-result-file-match-replace-button {
-  display: none;
   position: absolute;
   bottom: 5px;
   inset-inline-end: 24px;
+  display: none;
   height: auto;
   padding: var(--size-4-1) var(--size-4-2);
   color: var(--text-muted);
@@ -244,10 +223,10 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
 
 .search-result-hover-button {
   position: absolute;
-  display: flex;
   inset-inline-end: 2px;
-  border-radius: var(--radius-s);
+  display: flex;
   padding: 1px 3px;
+  border-radius: var(--radius-s);
   color: var(--text-faint);
 }
 
@@ -258,9 +237,9 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
 
 .search-result-file-match-destination-file {
   display: inline-flex;
+  padding: var(--size-2-2) var(--size-2-3);
   border-radius: var(--radius-s);
   box-shadow: var(--input-shadow);
-  padding: var(--size-2-2) var(--size-2-3);
   color: var(--text-muted);
   background-color: var(--interactive-normal);
 }
@@ -273,28 +252,30 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
   color: var(--text-faint);
 }
 
-/* search-results */
+/* results header row: count on the left, sort/filter controls on the right */
 .search-results-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: var(--border-width) solid var(--background-modifier-border);
-  margin: 0;
   min-width: 0;
+  margin: 0;
   padding: 0 var(--size-4-3) var(--size-4-2);
+  border-bottom: var(--border-width) solid var(--background-modifier-border);
   color: var(--text-muted);
   white-space: nowrap;
 }
 
-/* workspace-leaf */
-.workspace-leaf-content[data-type=sync] .view-content {
-  overflow: hidden;
+/* leaf views whose content fills the pane edge to edge */
+.workspace-leaf-content[data-type="pdf"] .view-content,
+.workspace-leaf-content[data-type="bases"] .view-content,
+.workspace-leaf-content[data-type="sync"] .view-content {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   padding: 0;
 }
 
-.workspace-leaf-content[data-type='canvas'] .view-content {
+.workspace-leaf-content[data-type="canvas"] .view-content {
   position: relative;
   padding: 0;
 }

@@ -1,34 +1,31 @@
 /* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* canvas-wrapper */
-.canvas-wrapper.is-dragging {
+/* dragging states get the grabbing cursor */
+.canvas-wrapper.is-dragging,
+.canvas-mover:active,
+.canvas-node.is-dummy {
   cursor: grabbing;
 }
 
-/* canvas-mover */
-.canvas-mover:active {
-  cursor: grabbing;
-}
-
-/* canvas */
+/* canvas children opt back into pointer events (the canvas itself swallows them) */
 .canvas > * {
   pointer-events: initial;
 }
 
-/* canvas-selection */
+/* selection rectangle: sits behind nodes, ignores the pointer */
 .canvas-selection {
   position: absolute;
   z-index: -1;
   border: 2px solid var(--color-accent);
-  pointer-events: none;
   background-color: hsla(var(--color-accent-hsl), 0.1);
+  pointer-events: none;
 }
 
 .canvas-selection.mod-node-highlight {
   border-radius: var(--radius-m);
 }
 
-/* canvas-node */
+/* zero-size layer that re-enables pointer events for node controls */
 .canvas-node-interaction-layer {
   position: absolute;
   width: 0;
@@ -40,16 +37,14 @@
   pointer-events: initial;
 }
 
-.canvas-node.is-dummy {
-  cursor: grabbing;
-}
-
+/* media embeds inside nodes never exceed the node width */
 .canvas-node-content.media-embed img:not([width]),
 .canvas-node-content.media-embed video,
 .canvas-node-content.media-embed audio {
   max-width: 100%;
 }
 
+/* connection point handle, scaled with the canvas zoom */
 .canvas-node-connection-point {
   position: absolute;
   width: calc(var(--resizer-size) * var(--zoom-multiplier));
@@ -58,26 +53,26 @@
   cursor: pointer;
 }
 
-/* canvas-snaps */
+/* snap guide overlay: full-size, click-through, slightly faded */
 .canvas-snaps {
   position: absolute;
   left: 0;
   top: 0;
-  overflow: visible;
   width: 100%;
   height: 100%;
+  overflow: visible;
   pointer-events: none;
   opacity: 0.6;
 }
 
-/* canvas-edges */
+/* edge layer: full-size, click-through except for the edges themselves */
 .canvas-edges {
   position: absolute;
   left: 0;
   top: 0;
-  overflow: visible;
   width: 100%;
   height: 100%;
+  overflow: visible;
   pointer-events: none;
 }
 
@@ -85,12 +80,12 @@
   pointer-events: initial;
 }
 
-/* canvas-placeholder */
+/* empty-canvas hint, centred on the viewport */
 .canvas-placeholder-message {
   position: absolute;
   max-width: 70vw;
-  border-radius: var(--radius-m);
   padding: var(--size-4-4) var(--size-4-6);
+  border-radius: var(--radius-m);
   color: var(--color-accent);
   font-size: var(--font-ui-large);
   line-height: var(--line-height-normal);

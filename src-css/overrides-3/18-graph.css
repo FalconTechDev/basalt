@@ -1,11 +1,11 @@
 /* graph (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* graph-controls */
+/* graph settings stack their slider rows vertically */
 .graph-controls .setting-item.mod-slider {
   flex-direction: column;
 }
 
-/* graph-control */
+/* the last control section does not need a bottom separator */
 .graph-control-section:last-child {
   border-bottom: none;
 }
