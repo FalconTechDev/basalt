@@ -1,6 +1,6 @@
-/* canvas (late): rules of this component that have to stay after rules of components further down the build order. */
+/* canvas late rules: dark card menu, group tinting and editing rings. */
 
-/* dark-theme card menu, group node colours, editing path labels */
+/* the card menu keeps the raised panel tone in the dark theme */
 .theme-dark .canvas-card-menu {
   background-color: var(--background-secondary);
 }
@@ -19,15 +19,15 @@
 
 .canvas-path-label.is-editing {
   border-color: rgb(var(--canvas-color));
-  box-shadow: var(--shadow-stationary), 0 0 0 calc(3px * var(--zoom-multiplier)) rgb(var(--canvas-color));
+  box-shadow: var(--shadow-stationary), 0 0 0 calc((var(--bs-focus-width) + var(--bs-hairline)) * var(--zoom-multiplier)) rgb(var(--canvas-color));
 }
 
 .canvas-color-picker-item.is-active {
-  box-shadow: 0 0 0 2px rgb(var(--canvas-color));
+  box-shadow: 0 0 0 var(--bs-focus-width) rgb(var(--canvas-color));
 }
 
 @media (hover: hover) {
   .canvas-color-picker-item:hover {
-    box-shadow: 0 0 0 2px rgb(var(--canvas-color));
+    box-shadow: 0 0 0 var(--bs-focus-width) rgb(var(--canvas-color));
   }
 }
