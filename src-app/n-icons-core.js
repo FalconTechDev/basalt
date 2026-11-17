@@ -7,12 +7,18 @@
 // drawing still resolve: they get the fallback glyph (chamfered square + ?).
 import { nIconsLucideNames } from "./n-icons-names.js";
 import { nIconsSetBasic } from "./n-icons-set-basic.js";
+import { nIconsSetIc3a } from "./n-icons-set-ic3a.js";
+import { nIconsSetIc3b } from "./n-icons-set-ic3b.js";
+import { nIconsSetIc3c } from "./n-icons-set-ic3c.js";
+import { nIconsSetIc3d } from "./n-icons-set-ic3d.js";
+import { nIconsSetIc3e } from "./n-icons-set-ic3e.js";
+import { nIconsSetIc3f } from "./n-icons-set-ic3f.js";
 
 // Piece registry: resolved lazily inside nIconsCollect (module order in the
 // flat own scope is alphabetical, so a top-level reference would hit TDZ).
 // Drawing agents append their piece module here.
 function nIconsPieces() {
-  return [nIconsSetBasic];
+  return [nIconsSetBasic, nIconsSetIc3a, nIconsSetIc3b, nIconsSetIc3c, nIconsSetIc3d, nIconsSetIc3e, nIconsSetIc3f];
 }
 
 // The 36 names of the inherited Qm table (app-specific glyphs). They keep
