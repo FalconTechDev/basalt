@@ -212,9 +212,7 @@ export function ng03SyncPlugin(host) {
   proto.getPause = function () { return this.pause; };
 
   proto._updateStatusBar = function () {
-    if (this._statusTimer) return;
-    this._statusTimer = setTimeout(() => {
-      this._statusTimer = null;
+    {
       const status = this.getStatus();
       const cls = status === "synced" ? "mod-success"
         : status === "syncing" ? "mod-spin"
@@ -230,7 +228,7 @@ export function ng03SyncPlugin(host) {
         this.statusBarSegmentEl.removeClass("mod-working", "mod-spin", "mod-success", "mod-error");
         this.statusBarSegmentEl.addClass(cls);
       }
-    }, 100);
+    }
   };
 
   // ---- persistence ------------------------------------------------------------
@@ -556,6 +554,7 @@ export function ng03SyncPlugin(host) {
   proto.init = function (app, plugin) {
     this.app = app;
     this.plugin = plugin;
+    plugin.registerStatusBarItem();
     const SyncSettingsView = ng03DefineSyncSettingsView(host);
     this.settingTab = new SyncSettingsView(app, this);
     const ChangesView = ng03DefineSyncChangesView(host);
