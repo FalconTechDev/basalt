@@ -10006,10 +10006,11 @@ select,.combobox-button,.dropdown{
     appearance:none;
     -webkit-appearance:none;
     -webkit-app-region:no-drag;
-    corner-shape:var(--corner-shape)
+    corner-shape:var(--corner-shape);
+    transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),box-shadow var(--bs-dur-fast) var(--bs-ease-standard)
 }
 select:focus-visible,.combobox-button:focus-visible,.dropdown:focus-visible{
-    box-shadow:0 0 0px 3px var(--background-modifier-border-focus);
+    box-shadow:var(--input-shadow),0 0 0 var(--input-border-width-focus) var(--background-modifier-border-focus);
     outline:none
 }
 @media (forced-colors:active){
@@ -10035,7 +10036,7 @@ select:focus-visible,.combobox-button:focus-visible,.dropdown:focus-visible{
     white-space:nowrap
 }
 .combobox-button.has-focus,.combobox-button:focus-visible{
-    box-shadow:0 0 0px 3px var(--background-modifier-border-focus);
+    box-shadow:var(--input-shadow),0 0 0 var(--input-border-width-focus) var(--background-modifier-border-focus);
     background-color:var(--metadata-label-background-active)
 }
 .combobox-button.mod-error{
@@ -14020,7 +14021,7 @@ input.metadata-property-key-input{
 }
 .text-icon-button.is-disabled{
     cursor:not-allowed;
-    opacity:0.7
+    opacity:0.45
 }
 @media (hover:hover){
     .text-icon-button.has-active-menu,.text-icon-button:hover{
@@ -14032,12 +14033,12 @@ input.metadata-property-key-input{
     textarea:hover,.multi-select-container:hover,input.metadata-input-text:hover,input[type='date']:hover,input[type='datetime-local']:hover,input[type='text']:hover,input[type='search']:hover,input[type='email']:hover,input[type='password']:hover,input[type='number']:hover{
         border-color:var(--background-modifier-border-hover);
         background-color:var(--background-modifier-form-field-hover);
-        transition:box-shadow var(--anim-duration-fast) ease-in-out,border var(--anim-duration-fast) ease-in-out
+        transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),border-color var(--bs-dur-fast) var(--bs-ease-standard),box-shadow var(--bs-dur-fast) var(--bs-ease-standard)
     }
 }
 textarea:active,.multi-select-container:active,input.metadata-input-text:active,input[type='date']:active,input[type='datetime-local']:active,input[type='text']:active,input[type='search']:active,input[type='email']:active,input[type='password']:active,input[type='number']:active,textarea:focus,.multi-select-container:focus,input.metadata-input-text:focus,input[type='date']:focus,input[type='datetime-local']:focus,input[type='text']:focus,input[type='search']:focus,input[type='email']:focus,input[type='password']:focus,input[type='number']:focus{
     border-color:var(--background-modifier-border-focus);
-    transition:box-shadow 0.15s ease-in-out,border 0.15s ease-in-out
+    transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),border-color var(--bs-dur-fast) var(--bs-ease-standard),box-shadow var(--bs-dur-fast) var(--bs-ease-standard)
 }
 textarea:active,.multi-select-container:active,input.metadata-input-text:active,input[type='date']:active,input[type='datetime-local']:active,input[type='text']:active,input[type='search']:active,input[type='email']:active,input[type='password']:active,input[type='number']:active,textarea:focus,.multi-select-container:focus,input.metadata-input-text:focus,input[type='date']:focus,input[type='datetime-local']:focus,input[type='text']:focus,input[type='search']:focus,input[type='email']:focus,input[type='password']:focus,input[type='number']:focus,textarea:focus-visible,.multi-select-container:focus-visible,input.metadata-input-text:focus-visible,input[type='date']:focus-visible,input[type='datetime-local']:focus-visible,input[type='text']:focus-visible,input[type='search']:focus-visible,input[type='email']:focus-visible,input[type='password']:focus-visible,input[type='number']:focus-visible{
     box-shadow:0 0 0 var(--input-border-width-focus) var(--background-modifier-border-focus)
@@ -14059,7 +14060,7 @@ input[type="radio"],input[type=checkbox]{
     height:var(--checkbox-size);
     -webkit-appearance:none;
     appearance:none;
-    transition:box-shadow 0.15s ease-in-out
+    transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),border-color var(--bs-dur-fast) var(--bs-ease-standard),box-shadow var(--bs-dur-fast) var(--bs-ease-standard)
 }
 input[type="radio"]{
     border-radius:50%
@@ -14678,7 +14679,7 @@ input[type="radio"]:hover,input[type=checkbox]:hover,input[type="radio"]:active,
     border-color:var(--checkbox-border-color-hover)
 }
 input[type="radio"]:focus-visible,input[type=checkbox]:focus-visible{
-    box-shadow:0 0 0 2px var(--background-modifier-border-focus)
+    box-shadow:0 0 0 var(--input-border-width-focus) var(--background-modifier-border-focus)
 }
 input[type="radio"]:checked,input[type=checkbox]:checked{
     border-color:var(--checkbox-color);

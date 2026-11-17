@@ -2,7 +2,9 @@
 
 /* ---------- dropdown-like controls ---------- */
 
-/* native selects, combobox buttons and dropdowns share one chrome */
+/* native selects, combobox buttons and dropdowns share one chrome:
+   field height, quiet inset edge from --input-shadow, chevron painted
+   into the trailing background layer */
 select,
 .combobox-button,
 .dropdown {
@@ -28,12 +30,18 @@ select,
   -webkit-appearance: none;
   -webkit-app-region: no-drag;
   corner-shape: var(--corner-shape);
+  transition:
+    background-color var(--bs-dur-fast) var(--bs-ease-standard),
+    box-shadow var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
+/* focus keeps the resting edge and adds the 2px focus ring outside it */
 select:focus-visible,
 .combobox-button:focus-visible,
 .dropdown:focus-visible {
-  box-shadow: 0 0 0px 3px var(--background-modifier-border-focus);
+  box-shadow:
+    var(--input-shadow),
+    0 0 0 var(--input-border-width-focus) var(--background-modifier-border-focus);
   outline: none;
 }
 
@@ -68,7 +76,9 @@ select:focus-visible,
 
 .combobox-button.has-focus,
 .combobox-button:focus-visible {
-  box-shadow: 0 0 0px 3px var(--background-modifier-border-focus);
+  box-shadow:
+    var(--input-shadow),
+    0 0 0 var(--input-border-width-focus) var(--background-modifier-border-focus);
   background-color: var(--metadata-label-background-active);
 }
 

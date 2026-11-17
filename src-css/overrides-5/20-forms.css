@@ -13,7 +13,7 @@ input[type=checkbox]:focus {
 
 input[type="radio"]:focus-visible,
 input[type=checkbox]:focus-visible {
-  box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
+  box-shadow: 0 0 0 var(--input-border-width-focus) var(--background-modifier-border-focus);
 }
 
 input[type="radio"]:checked,
