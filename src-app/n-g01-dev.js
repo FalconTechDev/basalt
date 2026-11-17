@@ -2,10 +2,10 @@
 // console/error capture, screenshot, mobile emulation, app control.
 import { ng01Clock, ng01Stamp, ng01WebContents, ng01IsFsAdapter } from "./n-g01-util.js";
 
-const CONSOLE_RING = 200;
-const ERROR_RING = 50;
-const TYPO_PROPS = ["color", "font-family", "font-size", "font-weight", "line-height", "text-align"];
-const CSS_DUMP_PROPS = ["display", "position", "width", "height", "margin", "padding", "color", "background-color", "font-family", "font-size", "font-weight", "border", "flex", "grid", "opacity", "visibility", "z-index"];
+const NG01_CONSOLE_RING = 200;
+const NG01_ERROR_RING = 50;
+const NG01_TYPO_PROPS = ["color", "font-family", "font-size", "font-weight", "line-height", "text-align"];
+const NG01_CSS_DUMP_PROPS = ["display", "position", "width", "height", "margin", "padding", "color", "background-color", "font-family", "font-size", "font-weight", "border", "flex", "grid", "opacity", "visibility", "z-index"];
 
 export function ng01RegisterDev(cli, host) {
   const app = cli.app;
@@ -16,6 +16,7 @@ export function ng01RegisterDev(cli, host) {
   const errorBuf = [];
   let debuggerAttached = false;
   let consoleCapturing = false;
+  let inspectDomainsEnabled = false;
 
   const pushBounded = (buf, entry, max) => {
     buf.push(entry);
@@ -36,7 +37,7 @@ export function ng01RegisterDev(cli, host) {
       }
       return a.description || a.type || "";
     });
-    pushBounded(consoleBuf, { ts: Date.now(), level, message: parts.join(" ") }, CONSOLE_RING);
+    pushBounded(consoleBuf, { ts: Date.now(), level, message: parts.join(" ") }, NG01_CONSOLE_RING);
   };
 
   const wc = () => ng01WebContents();
@@ -61,16 +62,27 @@ export function ng01RegisterDev(cli, host) {
     await sendCdp("Runtime.enable");
     await sendCdp("DOM.enable");
     await sendCdp("CSS.enable");
+    inspectDomainsEnabled = true;
     consoleCapturing = true;
+  };
+
+  const ensureInspectDomains = async () => {
+    await ensureDebugger();
+    if (!inspectDomainsEnabled) {
+      const dbg = wc().debugger;
+      await dbg.sendCommand("DOM.enable", {});
+      await dbg.sendCommand("CSS.enable", {});
+      inspectDomainsEnabled = true;
+    }
   };
 
   // window error + unhandledrejection capture (always on for desktop)
   window.addEventListener("error", (e) => {
-    pushBounded(errorBuf, { ts: Date.now(), message: e.message || "Unknown error", stack: e.error && e.error.stack ? e.error.stack : "" }, ERROR_RING);
+    pushBounded(errorBuf, { ts: Date.now(), message: e.message || "Unknown error", stack: e.error && e.error.stack ? e.error.stack : "" }, NG01_ERROR_RING);
   });
   window.addEventListener("unhandledrejection", (e) => {
     const reason = e.reason;
-    pushBounded(errorBuf, { ts: Date.now(), message: reason && reason.message ? reason.message : String(reason), stack: reason && reason.stack ? reason.stack : "" }, ERROR_RING);
+    pushBounded(errorBuf, { ts: Date.now(), message: reason && reason.message ? reason.message : String(reason), stack: reason && reason.stack ? reason.stack : "" }, NG01_ERROR_RING);
   });
 
   // ------------------------------------------------------------ app control
@@ -160,6 +172,7 @@ export function ng01RegisterDev(cli, host) {
       try { contents.debugger.detach(); } catch (e) {}
       debuggerAttached = false;
       consoleCapturing = false;
+      inspectDomainsEnabled = false;
       consoleBuf.length = 0;
       return "Debugger detached.";
     }
@@ -259,6 +272,7 @@ export function ng01RegisterDev(cli, host) {
     prop: { value: "<name>", description: "Only this property" },
   }, async (args) => {
     const selector = String(args.selector);
+    await ensureInspectDomains();
     const doc = await sendCdp("DOM.getDocument", { depth: 1 });
     let nodeId;
     try {
@@ -314,7 +328,7 @@ export function ng01RegisterDev(cli, host) {
         for (const entry of gRules) {
           const rule = entry.rule || {};
           const sels = (rule.selectorList && rule.selectorList.selectors || []).map((s) => s.text).join(", ");
-          const props = (rule.style && rule.style.cssProperties || []).filter((p) => TYPO_PROPS.includes(p.name));
+          const props = (rule.style && rule.style.cssProperties || []).filter((p) => NG01_TYPO_PROPS.includes(p.name));
           if (!props.length) continue;
           inhLines.push(`  ${sels || "(unknown)"}`);
           pushProps(props, "    ");
@@ -352,7 +366,7 @@ export function ng01RegisterDev(cli, host) {
         if (mode === "attr") { const v = el.getAttribute(attr); return v === null ? "(null)" : v; }
         if (mode === "css") {
           const cs = getComputedStyle(el);
-          return ${JSON.stringify(CSS_DUMP_PROPS)}.map((p) => p + ": " + cs.getPropertyValue(p)).join("\\n");
+          return ${JSON.stringify(NG01_CSS_DUMP_PROPS)}.map((p) => p + ": " + cs.getPropertyValue(p)).join("\\n");
         }
         if (mode === "text") return (el.textContent || "").trim();
         return inner ? el.innerHTML : el.outerHTML;
@@ -366,7 +380,7 @@ export function ng01RegisterDev(cli, host) {
       throw `Invalid selector: ${e.message || e}`;
     }
     const payload = result && result.result;
-    const value = payload && payload.result ? payload.result.value : null;
+    const value = payload && payload.value !== undefined ? payload.value : null;
     if (!value) throw "Invalid selector: evaluation failed";
     if (value.__error) throw `Invalid selector: ${value.__error}`;
     if (args.total !== undefined) return String(value.count);

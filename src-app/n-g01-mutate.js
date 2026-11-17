@@ -5,8 +5,6 @@ import { ng01UnescapeContent, ng01Stamp } from "./n-g01-util.js";
 import { frontmatterBounds } from "./notes-utils.js";
 import { applyTemplateVars } from "./notes-utils.js";
 
-const isFolder = (node) => node instanceof fileClass("TFolder");
-
 /** Unwraps a `vault.process`-style edit: reads, transforms, writes when changed. */
 async function ng01ProcessFile(vault, file, fn) {
   const text = await vault.cachedRead(file);
@@ -102,8 +100,9 @@ export function ng01RegisterMutate(cli, host) {
       dest = dir + file.name;
     }
     if (vault.getAbstractFileByPath(dest)) throw `"${dest}" already exists.`;
+    const from = file.path;
     await app.fileManager.renameFile(file, dest);
-    return `Moved: ${file.path} -> ${dest}`;
+    return `Moved: ${from} -> ${dest}`;
   });
 
   cli.registerHandler("rename", "Rename a file (keep folder)", {
@@ -117,8 +116,9 @@ export function ng01RegisterMutate(cli, host) {
     const parent = file.parent && file.parent.path && file.parent.path !== "/" ? file.parent.path + "/" : "";
     const dest = normalizePath(parent + newName);
     if (vault.getAbstractFileByPath(dest)) throw `"${dest}" already exists.`;
+    const from = file.path;
     await app.fileManager.renameFile(file, dest);
-    return `Renamed: ${file.path} -> ${dest}`;
+    return `Renamed: ${from} -> ${dest}`;
   });
 
   cli.registerHandler("delete", "Delete a file/folder", {

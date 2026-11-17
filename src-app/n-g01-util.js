@@ -3,8 +3,8 @@ import { env } from "./env.js";
 import { lastSegment, parentPath, baseName, extensionOf, withoutExtension, normalizePath } from "./path.js";
 
 /** Locale-aware collator used for every sorted listing (usage: sort, sensitivity: base, numeric). */
-export const ng01Collator = new Intl.Collator(undefined, { usage: "sort", sensitivity: baseSensitivity(), numeric: true });
-function baseSensitivity() { return "base"; }
+export const ng01Collator = new Intl.Collator(undefined, { usage: "sort", sensitivity: ng01BaseSensitivity(), numeric: true });
+function ng01BaseSensitivity() { return "base"; }
 
 export function ng01Compare(a, b) { return ng01Collator.compare(a, b); }
 

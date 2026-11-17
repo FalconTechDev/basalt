@@ -1,6 +1,15 @@
 // g01 clean-room: metadata CLI commands — aliases, tags, tasks, properties.
 import { frontmatterAliases, frontmatterTags } from "./frontmatter.js";
+import { frontmatterBounds } from "./notes-utils.js";
 import { ng01Collator, ng01Lines, ng01Kv } from "./n-g01-util.js";
+
+/** Live frontmatter object parsed from the file's current text (cache may lag writes). */
+async function ng01LiveFrontmatter(app, host, file) {
+  const text = await app.vault.cachedRead(file);
+  const bounds = frontmatterBounds(text);
+  if (!bounds.exists || !bounds.frontmatter) return null;
+  return host.parseYaml(bounds.frontmatter) || {};
+}
 
 function ng01FileCache(app, file) {
   return app.metadataCache.getFileCache(file) || {};
@@ -89,7 +98,10 @@ export function ng01RegisterMetaQueries(cli, host) {
       const out = rows.map((r) => (args.counts !== undefined ? { tag: r.tag, count: r.count } : { tag: r.tag }));
       return JSON.stringify(out, null, 2);
     }
-    if (args.counts !== undefined) return rows.map((r) => `${r.tag}\t${r.count}`).join("\n");
+    if (args.counts !== undefined) {
+      const sep = args.format === "csv" ? "," : "\t";
+      return rows.map((r) => `${r.tag}${sep}${r.count}`).join("\n");
+    }
     return rows.map((r) => r.tag).join("\n");
   };
 
@@ -265,7 +277,7 @@ export function ng01RegisterMetaQueries(cli, host) {
   }, async (args) => {
     if (args.file !== undefined || args.path !== undefined || args.active !== undefined) {
       const file = cli.tryResolveFile(args, true);
-      const fm = ng01FileCache(app, file).frontmatter;
+      const fm = await ng01LiveFrontmatter(app, host, file);
       if (!fm || Object.keys(fm).length === 0) return "No frontmatter found.";
       if (args.format === "json") return JSON.stringify(fm, null, 2);
       if (args.format === "tsv") {
@@ -307,9 +319,9 @@ export function ng01RegisterMetaQueries(cli, host) {
     file: { value: "<name>", description: "File name" },
     path: { value: "<path>", description: "File path" },
     active: { description: "Use the active file" },
-  }, (args) => {
+  }, async (args) => {
     const file = propTarget(args);
-    const fm = ng01FileCache(app, file).frontmatter;
+    const fm = await ng01LiveFrontmatter(app, host, file);
     const key = propName(fm, args.name);
     if (key === undefined) throw `Property "${args.name}" not found.`;
     const v = fm[key];

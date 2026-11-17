@@ -5,7 +5,7 @@ import { ng01CommunityPlugins } from "./n-g01-table.js";
 
 // request/rawFileUrl/pickCompatibleVersion are flat-scope helpers owned by community.js.
 
-const SORT = (a, b) => ng01Collator.compare(a, b);
+const ng01PluginSort = (a, b) => ng01Collator.compare(a, b);
 
 function ng01CoreInfo(app, id) {
   const wrapper = app.internalPlugins.getPluginById(id);
@@ -208,7 +208,7 @@ export function ng01RegisterPlugins(cli, host) {
     const css = app.customCss;
     const names = new Set(Object.keys(css.themes || {}));
     for (const n of css.oldThemes || []) names.add(n);
-    const sorted = Array.from(names).sort(SORT);
+    const sorted = Array.from(names).sort(ng01PluginSort);
     if (args.versions !== undefined) {
       return sorted.map((n) => {
         const t = css.themes[n];

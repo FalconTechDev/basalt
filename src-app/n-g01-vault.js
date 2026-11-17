@@ -2,8 +2,8 @@
 import { fileClass } from "./vault.js";
 import { ng01Collator, ng01Kv, ng01FolderPrefix, ng01InFolder, ng01IsFsAdapter } from "./n-g01-util.js";
 
-const TFolder = () => fileClass("TFolder");
-const isFolder = (node) => node instanceof TFolder();
+const ng01TFolder = () => fileClass("TFolder");
+const ng01IsFolder = (node) => node instanceof ng01TFolder();
 
 export function ng01RegisterVault(cli, host) {
   const app = cli.app;
@@ -16,7 +16,7 @@ export function ng01RegisterVault(cli, host) {
     let folders = 0;
     const walk = (node) => {
       for (const child of node.children || []) {
-        if (isFolder(child)) { folders++; walk(child); }
+        if (ng01IsFolder(child)) { folders++; walk(child); }
       }
     };
     walk(vault.getRoot());
@@ -65,13 +65,13 @@ export function ng01RegisterVault(cli, host) {
     if (args.folder !== undefined && args.folder !== "") {
       const found = app.vault.getAbstractFileByPath(ng01FolderPrefix(args.folder));
       if (!found) throw `Folder "${args.folder}" not found.`;
-      if (!isFolder(found)) throw `"${args.folder}" is not a folder.`;
+      if (!ng01IsFolder(found)) throw `"${args.folder}" is not a folder.`;
       start = found;
     }
     const out = [];
     const walk = (node) => {
       out.push(node.path === "/" ? "/" : node.path);
-      for (const child of node.children || []) if (isFolder(child)) walk(child);
+      for (const child of node.children || []) if (ng01IsFolder(child)) walk(child);
     };
     walk(start);
     if (args.total) return String(out.length);
@@ -101,11 +101,11 @@ export function ng01RegisterVault(cli, host) {
     const cleaned = String(args.path).replace(/\/+$/, "");
     const folder = app.vault.getAbstractFileByPath(cleaned === "" ? "/" : cleaned);
     if (!folder) throw `Folder "${args.path}" not found.`;
-    if (!isFolder(folder)) throw `"${args.path}" is not a folder.`;
+    if (!ng01IsFolder(folder)) throw `"${args.path}" is not a folder.`;
     let files = 0, folders = 0, size = 0;
     const walk = (node) => {
       for (const child of node.children || []) {
-        if (isFolder(child)) { folders++; walk(child); }
+        if (ng01IsFolder(child)) { folders++; walk(child); }
         else { files++; size += (child.stat && child.stat.size) || 0; }
       }
     };
