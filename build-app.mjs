@@ -145,15 +145,13 @@ export function applyOwn(srcText, wasm, tmpPath) {
   for (const sp of spans) {
     const text = srcText.slice(sp.node.start, sp.node.end);
     if (text === sp.replacement) continue;
-    // text already produced by a previous own build: it is ours, not inherited
-    // code, so the base-sha1 guard does not apply (same rule as classes below)
-    if (!text.startsWith("__basaltOwn.")) {
-      const hash = sha(text);
-      if (sp.entry.sha1 && sp.entry.sha1 !== hash) throw new Error(`manifest: ${sp.label} differs from the recorded original; refusing to replace it`);
-      if (!sp.entry.sha1) manifestChanged = true;
-      sp.entry.sha1 = hash;
-      sp.entry.originalBytes = text.length;
-    }
+    const hash = sha(text);
+    const wasOwn = /__basaltOwn./.test(text.slice(0, 120)); // an earlier own replacement of this span (the entry now points to a new export)
+    if (sp.entry.sha1 && sp.entry.sha1 !== hash && !wasOwn) throw new Error(`manifest: ${sp.label} differs from the recorded original; refusing to replace it`);
+    if (wasOwn) { jobs.push({ start: sp.node.start, end: sp.node.end, wrapper: sp.replacement, orig: sp.label, text, isOwn: true }); continue; }
+    if (!sp.entry.sha1) manifestChanged = true;
+    sp.entry.sha1 = hash;
+    sp.entry.originalBytes = text.length;
     replaced += text.length;
     fresh.push(sp.label);
     jobs.push({ start: sp.node.start, end: sp.node.end, wrapper: sp.replacement, orig: sp.label, text });

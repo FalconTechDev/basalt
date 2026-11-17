@@ -9,8 +9,8 @@ import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
 import { setElementTooltip } from "./tooltip.js";
 import { makeTreePusher, collapsibleTreeItem, walkTree, hasChildList } from "./tree.js";
-import { searchClasses } from "./search-query.js";
-import { compareSearchText } from "./search-view.js";
+import { searchClasses } from "./n-g11-query.js";
+import { compareSearchText } from "./n-g11-view.js";
 
 // Classes defined by the factories below, visible to each other regardless of factory order.
 const tagPane = {};

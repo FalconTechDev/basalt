@@ -8,7 +8,7 @@ import { inherit } from "./inherit.js";
 import { parsePropertyId } from "./text.js";
 import { propertyTypeDefaults } from "./metadata-types.js";
 import { idleOrTimeout } from "./metadata-helpers.js";
-import { preventMiddleClick } from "./search-view.js";
+import { preventMiddleClick } from "./n-g11-view.js";
 import { s13ScrollWatch, s13VisibleRect } from "./s13-geom.js";
 import { s13ViewList, s13PropBullet, s13PropMarkers, s13PropIndentProperties, s13PropSeparator, s13RowHeightDefault, s13BasesTableI18n, s13BasesListI18n } from "./s13-consts.js";
 
