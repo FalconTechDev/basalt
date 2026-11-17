@@ -1,6 +1,6 @@
 // g05 clean-room: the pdf password dialog and the pdf toolbar (sidebar toggle,
 // zoom controls, display options, page jump) that sit above the pdf.js pages.
-import { ng05PdfLib, ng05PdfStorageKey } from "./n-g05-pdf-util.js";
+import { ng05PdfLib, ng05PdfViewerNs, ng05PdfStorageKey } from "./n-g05-pdf-util.js";
 
 /** `BZ` — password prompt driven by the pdf.js event bus (passwordpromptopen). */
 export function ng05BuildPasswordDialog(host) {
@@ -104,7 +104,9 @@ export function ng05BuildToolbar(host) {
 
   proto.dispatch = function (type, data) {
     const bus = this.eventBus || (this.viewer && this.viewer.eventBus);
-    if (bus && bus.dispatch) bus.dispatch(type, data);
+    if (bus && bus.dispatch) {
+      bus.dispatch(type, data && typeof data === "object" ? Object.assign({ source: this }, data) : { source: this, value: data });
+    }
   };
 
   /** The pdf.js application object behind the controller (has .pdfViewer inner). */
@@ -170,7 +172,7 @@ export function ng05BuildToolbar(host) {
     const inner = this.innerViewer();
     const scaleValue = inner ? inner.currentScaleValue : "";
     const spreadMode = inner ? inner.spreadMode : -1;
-    const themed = !!localStorage.getItem(ng05PdfStorageKey);
+    const themed = !!this.app.loadLocalStorage(ng05PdfStorageKey);
     menu.addSections(["zoom", "spread", "appearance"]);
     menu.addItem((item) => item
       .setSection("zoom").setTitle(t.actionFitWidth())
@@ -183,21 +185,21 @@ export function ng05BuildToolbar(host) {
     menu.addItem((item) => item
       .setSection("spread").setTitle(t.labelSpreadSingle())
       .setChecked(spreadMode === 0)
-      .onClick(() => this.dispatch("switchspreadmode", 0)));
+      .onClick(() => this.dispatch("switchspreadmode", { mode: 0 })));
     menu.addItem((item) => item
       .setSection("spread").setTitle(t.labelSpreadOdd())
       .setChecked(spreadMode === 1)
-      .onClick(() => this.dispatch("switchspreadmode", 1)));
+      .onClick(() => this.dispatch("switchspreadmode", { mode: 1 })));
     menu.addItem((item) => item
       .setSection("spread").setTitle(t.labelSpreadEven())
       .setChecked(spreadMode === 2)
-      .onClick(() => this.dispatch("switchspreadmode", 2)));
+      .onClick(() => this.dispatch("switchspreadmode", { mode: 2 })));
     menu.addItem((item) => item
       .setSection("appearance").setTitle(t.labelAdaptToTheme())
       .setChecked(themed)
       .onClick(() => {
-        if (localStorage.getItem(ng05PdfStorageKey)) localStorage.removeItem(ng05PdfStorageKey);
-        else localStorage.setItem(ng05PdfStorageKey, "true");
+        if (this.app.loadLocalStorage(ng05PdfStorageKey)) this.app.saveLocalStorage(ng05PdfStorageKey, null);
+        else this.app.saveLocalStorage(ng05PdfStorageKey, "true");
         if (this.viewer && this.viewer.onCSSChange) this.viewer.onCSSChange();
       }));
   };
@@ -252,7 +254,7 @@ export function ng05BuildToolbar(host) {
   };
 
   proto.reset = function () {
-    const ns = host.s27PdfViewerNs;
+    const ns = ng05PdfViewerNs(host);
     this.pageNumber = 0;
     this.pageLabel = "";
     this.pagesCount = 0;
@@ -280,7 +282,7 @@ export function ng05BuildToolbar(host) {
         ? pdf.labelPageOfPages({ current: this.pageNumber, count: this.pagesCount })
         : pdf.labelOfPages({ count: this.pagesCount });
     }
-    const ns = host.s27PdfViewerNs;
+    const ns = ng05PdfViewerNs(host);
     if (this.zoomOutEl && ns) this.zoomOutEl.classList.toggle("mod-disabled", this.pageScale <= ns.MIN_SCALE);
     if (this.zoomInEl && ns) this.zoomInEl.classList.toggle("mod-disabled", this.pageScale >= ns.MAX_SCALE);
     if (this.prevPageEl) this.prevPageEl.classList.toggle("mod-disabled", this.pageNumber <= 1);

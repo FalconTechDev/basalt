@@ -7,7 +7,7 @@ import { debounceCall } from "./timing.js";
 import { ng05ParsePdfSubpath, ng05PdfViewerNs, ng05InnerViewer, ng05PdfStorageKey } from "./n-g05-pdf-util.js";
 import { ng05AttachInteract } from "./n-g05-pdf-interact.js";
 import { ng05BuildPasswordDialog, ng05BuildToolbar } from "./n-g05-pdf-dialog.js";
-import { ng05PdfKitGet } from "./n-g05-pdf-viewer.js";
+import { ng05PdfKitGet, ng05EnsurePdfJs, ng05EnsureWorkerBlob } from "./n-g05-pdf-viewer.js";
 
 /** ` _Z` — the viewer controller driving the bundled pdf.js viewer. */
 export function ng05BuildController(host) {
@@ -16,7 +16,7 @@ export function ng05BuildController(host) {
     this.scope = scope;
     this.containerEl = containerEl;
     this.opts = opts || {};
-    this.eventBus = new host.s27PdfViewerNs.EventBus();
+    this.eventBus = null; // created in load() once pdf.js is guaranteed loaded
     this.pdfViewer = null;        // the pdf.js application object
     this.toolbar = null;
     this.findBar = null;
@@ -38,8 +38,8 @@ export function ng05BuildController(host) {
   }
   const proto = PdfViewerController.prototype;
 
-  proto.on = function (name, cb) { this.eventBus._on(name, cb); };
-  proto.off = function (name, cb) { this.eventBus._off(name, cb); };
+  proto.on = function (name, cb) { if (this.eventBus) this.eventBus._on(name, cb); };
+  proto.off = function (name, cb) { if (this.eventBus) this.eventBus._off(name, cb); };
 
   proto.getPage = function (pageNumber) {
     const inner = ng05InnerViewer(this.pdfViewer);
@@ -47,7 +47,7 @@ export function ng05BuildController(host) {
   };
 
   proto.onResize = function () {
-    if (this.containerEl && this.containerEl.isShown && this.containerEl.isShown()) {
+    if (this.containerEl && this.containerEl.isShown && this.containerEl.isShown() && this.eventBus) {
       this.eventBus.dispatch("resize", { source: this });
     }
   };
@@ -63,9 +63,11 @@ export function ng05BuildController(host) {
     const app = this.pdfViewer;
     if (!app) return;
     const go = () => {
-      if (parsed.destJson && app.pdfLinkService && app.pdfDocument) {
-        try { app.pdfLinkService.goToDestination(JSON.parse(parsed.destJson)); }
-        catch (e) { console.error(e); }
+      if (app.pdfLinkService && app.pdfDocument) {
+        try {
+          if (parsed.simple && parsed.page !== null) app.pdfLinkService.goToPage(parsed.page);
+          else if (parsed.destJson) app.pdfLinkService.goToDestination(JSON.parse(parsed.destJson));
+        } catch (e) { console.error(e); }
       }
     };
     if (app.pdfLoadingTask) {
@@ -81,7 +83,7 @@ export function ng05BuildController(host) {
   proto.onCSSChange = function () {
     const app = this.pdfViewer;
     if (!app) return;
-    const themed = !!localStorage.getItem(ng05PdfStorageKey);
+    const themed = !!this.app.loadLocalStorage(ng05PdfStorageKey);
     const pdfContainerEl = this._dom && this._dom.containerEl;
     let background = null;
     let invert = false;
@@ -102,12 +104,26 @@ export function ng05BuildController(host) {
       await host.sleep(opts.initDelay);
       if (this._destroyed) return;
     }
-    await host.s27LoadPdfViewer();
+    // pdf.js arrives via the blob-URL warm-up; the host script loader is only
+    // a fallback — its module-script path can hang on this transport and a
+    // late re-import would clobber the namespace pdf.viewer already bound.
+    if (!(window.pdfjsLib && window.pdfjsViewer)) {
+      const ok = await ng05EnsurePdfJs(30000);
+      if (this._destroyed) return;
+      if (!ok) {
+        await Promise.race([
+          Promise.resolve(host.s27LoadPdfViewer()).catch(() => {}),
+          host.sleep(20000),
+        ]);
+      }
+    }
     if (this._destroyed) return;
     if (host.Platform.isMobile) host.s27PdfConfig.maxCanvasPixels = 5242880;
 
     const doc = this.containerEl.doc;
-    const viewerNs = host.s27PdfViewerNs;
+    const viewerNs = ng05PdfViewerNs(host);
+    if (!viewerNs) throw new Error("pdf.js failed to load");
+    this.eventBus = new viewerNs.EventBus();
 
     // hidden scaffold built off-view inside the document body
     const wrapper = this._wrapper = createDiv();
@@ -139,7 +155,7 @@ export function ng05BuildController(host) {
     // themed pages: remember the flag and feed the computed page background
     let pageBackground = null;
     let pageInvert = false;
-    if (localStorage.getItem(ng05PdfStorageKey)) {
+    if (this.app.loadLocalStorage(ng05PdfStorageKey)) {
       pdfContainerEl.addClass("mod-themed");
       pageBackground = getComputedStyle(pdfContainerEl).getPropertyValue("--pdf-page-background").trim();
       pageInvert = doc.body.classList.contains("theme-dark");
@@ -163,6 +179,16 @@ export function ng05BuildController(host) {
       pageBackground,
       pageInvert,
     });
+
+    // app:// serves no JS MIME type, so the configured "/lib/pdfjs/pdf.worker.min.js"
+    // can never load as a module worker (nor as the fake-worker import fallback —
+    // and that failure permanently poisons pdf.js for the page). Point the stored
+    // preference at a blob: URL of the worker module instead; open() copies
+    // AppOptions' preference-kind values onto GlobalWorkerOptions before
+    // getDocument, so this wins over baseConfig.workerSrc.
+    const workerBlob = await ng05EnsureWorkerBlob();
+    if (this._destroyed) return;
+    if (workerBlob && viewerNs.AppOptions) viewerNs.AppOptions.set("workerSrc", workerBlob);
 
     this.toolbar = new (ng05ToolbarCtor(host))(this.app, pdfContainerEl, this);
     this.findBar = new host.s27PdfFindBar(this.app, contentEl, this.eventBus, this.scope);
@@ -253,6 +279,10 @@ export function ng05BuildController(host) {
       this._pendingTextHighlight = null;
       this.highlightText(pageNumber, pending.range);
     }
+    const hl = this.subpathHighlight;
+    if (hl && hl.type === "text" && hl.page === pageNumber) {
+      this.highlightText(pageNumber, hl.range);
+    }
   };
 
   proto.onAnnotationLayerRendered = function (evt) {
@@ -261,6 +291,10 @@ export function ng05BuildController(host) {
     if (pending && pending.page === pageNumber) {
       this._pendingAnnotationHighlight = null;
       this.highlightAnnotation(pageNumber, pending.id);
+    }
+    const hl = this.subpathHighlight;
+    if (hl && hl.type === "annotation" && hl.page === pageNumber) {
+      this.highlightAnnotation(pageNumber, hl.id);
     }
   };
 

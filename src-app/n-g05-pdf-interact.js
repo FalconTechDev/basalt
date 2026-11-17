@@ -87,8 +87,9 @@ export function ng05AttachInteract(proto, host) {
     const div = pageView && pageView.div;
     if (!div || !div.dataset || !div.dataset.loaded || !range) return;
     const layer = pageView.textLayer;
-    const divs = layer && layer.textDivs;
-    const items = layer && layer.textContentItems;
+    const inner = layer && (layer.textLayer || layer);
+    const divs = inner && inner.textDivs;
+    const items = inner && inner.textContentItems;
     if (!divs || !items) return;
     const [[sDiv, sOff], [eDiv, eOff]] = range;
     if (!(sDiv >= 0 && eDiv < divs.length && sDiv <= eDiv)) return;

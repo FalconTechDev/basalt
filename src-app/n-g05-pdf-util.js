@@ -95,17 +95,44 @@ export function ng05ParsePdfSubpath(subpath) {
   return {
     query,
     page,
+    // plain "#page=N" links navigate to the top of the page; offset/zoom
+    // variants keep the explicit destination array
+    simple: offset === null && params.get("zoom") === null,
     destJson: JSON.stringify(dest),
     highlight,
     height: heightParam === null ? null : intOrNull(heightParam),
   };
 }
 
-/** pdf.js viewer namespace (pdfjsViewer) — read lazily through the host env. */
-export function ng05PdfViewerNs(host) { return host.s27PdfViewerNs || env().pdfjsViewer || globalThis.pdfjsViewer; }
+function ng05HostValue(host, key) {
+  try {
+    const h = host || hostEnv();
+    const v = h && h[key];
+    return v === undefined ? null : v;
+  } catch (e) { return null; }
+}
 
-/** pdf.js library namespace (pdfjsLib). */
-export function ng05PdfLib(host) { return host.s27PdfLib || env().pdfjsLib || globalThis.pdfjsLib; }
+/** pdf.js viewer namespace (pdfjsViewer) — the host getter throws a bare
+ *  ReferenceError while pdf.js is not loaded, so globalThis is probed first
+ *  and host access is guarded. */
+export function ng05PdfViewerNs(host) {
+  const g = globalThis.pdfjsViewer;
+  if (g) return g;
+  const v = ng05HostValue(host, "s27PdfViewerNs");
+  if (v) return v;
+  try { const e = env().pdfjsViewer; if (e) return e; } catch (err) { /* not a bundle name */ }
+  return undefined;
+}
+
+/** pdf.js library namespace (pdfjsLib) — same guarded access as above. */
+export function ng05PdfLib(host) {
+  const g = globalThis.pdfjsLib;
+  if (g) return g;
+  const v = ng05HostValue(host, "s27PdfLib");
+  if (v) return v;
+  try { const e = env().pdfjsLib; if (e) return e; } catch (err) { /* not a bundle name */ }
+  return undefined;
+}
 
 /** The inner PDFViewer of an app-level pdf.js viewer object, or null. */
 export function ng05InnerViewer(app) { return app && app.pdfViewer ? app.pdfViewer : null; }
