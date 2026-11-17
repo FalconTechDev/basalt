@@ -1,4 +1,4 @@
-/* sidebar: side panes — file explorer, search, backlinks, outline, tags */
+/* side panes: explorer, search, backlinks, outline and tags */
 
 /* ---------- empty states ---------- */
 
@@ -28,17 +28,17 @@
 }
 
 .search-input-container input:not(:placeholder-shown) {
-  padding-inline-end: 28px;
+  padding-inline-end: calc(var(--size-4-6) + var(--size-4-1));
 }
 
-/* global search reserves extra room for its extra buttons */
+/* global search keeps room for its extra actions */
 .global-search-input-container.search-input-container input:not(:placeholder-shown) {
-  padding-inline-end: 56px;
+  padding-inline-end: calc((var(--size-4-6) + var(--size-4-1)) * 2);
 }
 
-/* decorator (e.g. match count) shifts right of the clear button */
+/* the decorator moves past the clear action */
 .search-input-container input:not(:placeholder-shown) ~ .input-right-decorator {
-  inset-inline-end: calc(var(--input-icon-inset) + 28px);
+  inset-inline-end: calc(var(--input-icon-inset) + var(--size-4-6) + var(--size-4-1));
 }
 
 .search-input-clear-button ~ .document-search-count {
@@ -118,9 +118,9 @@
 
 .workspace-leaf-content[data-type="bases"] {
   --bases-table-container-border-width: 0;
-  --bases-table-container-border-radius: 0;
+  --bases-table-container-border-radius: var(--radius-s);
   --bases-table-cell-edge-padding: var(--size-4-1);
-  --bases-view-padding: 0 0 60px;
+  --bases-view-padding: 0 0 var(--size-4-16);
   --bases-header-padding-start: var(--size-4-2);
   --bases-header-padding-end: var(--size-4-2);
 }
@@ -183,7 +183,7 @@
   width: var(--search-icon-size);
   content: '';
   background-color: var(--search-icon-color);
-  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27><circle cx=%2711%27 cy=%2711%27 r=%278%27></circle><line x1=%2721%27 y1=%2721%27 x2=%2716.65%27 y2=%2716.65%27></line></svg>");
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27square%27 stroke-linejoin=%27miter%27><circle cx=%2711%27 cy=%2711%27 r=%278%27></circle><line x1=%2721%27 y1=%2721%27 x2=%2716.65%27 y2=%2716.65%27></line></svg>");
   -webkit-mask-repeat: no-repeat;
 }
 
@@ -205,13 +205,13 @@
   position: absolute;
   top: 0;
   width: 0;
-  height: 3px;
+  height: var(--divider-width-hover);
   content: ' ';
 }
 
 .search-result-container.is-loading:before {
   background-color: var(--interactive-accent);
-  animation: 1000ms ease-in-out 300ms infinite progress-bar;
+  animation: 1000ms var(--anim-motion-smooth) var(--anim-duration-moderate) infinite progress-bar;
 }
 
 .search-result {
@@ -225,18 +225,18 @@
 }
 
 .search-result-hover-button.mod-top {
-  top: 2px;
+  top: var(--size-2-1);
 }
 
 .search-result-hover-button.mod-bottom {
-  bottom: 2px;
+  bottom: var(--size-2-1);
 }
 
 @media (hover: hover) {
   .search-result-file-match:hover .search-result-file-match-destination-file:hover {
     box-shadow: var(--input-shadow-hover);
     color: var(--text-normal);
-    background-color: var(--interactive-hover);
+    background-color: var(--background-modifier-hover);
   }
 }
 
