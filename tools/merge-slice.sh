@@ -12,7 +12,7 @@ for f in $U; do
     src/app.js) git checkout --ours src/app.js ;;
     build-app.mjs) git checkout --ours build-app.mjs ;;  # every slice re-did the envBind getters; main has the superset
     docs/*.md|THIRD_PARTY.md) node tools/keep-both.mjs "$f" ;;
-    src-app/*.js) st=$(git status --porcelain -- "$f" | cut -c1-2); if [ "$st" = "UD" ]; then git rm -q -- "$f"; else echo "MANUAL CONFLICT: $f ($st)"; exit 2; fi ;;  # the clean-room branch deleted the old module
+    src-app/*.js) st=$(git status --porcelain -- "$f" | cut -c1-2); if [ "$st" = "UD" ] || [ "$st" = "DU" ]; then git rm -q -- "$f"; else echo "MANUAL CONFLICT: $f ($st)"; exit 2; fi ;;  # the clean-room branch deleted the old module
     *) echo "MANUAL CONFLICT: $f"; exit 2 ;;
   esac
 done
