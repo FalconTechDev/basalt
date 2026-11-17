@@ -8067,7 +8067,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     --canvas-controls-radius:var(--touch-radius-s);
     --canvas-controls-icon-size:var(--icon-l);
     --canvas-controls-icon-stroke:var(--icon-l-stroke-width);
-    --caret-color:var(--text-accent);
+    --caret-color:var(--text-normal);
     --clickable-icon-radius:var(--touch-size-m);
     --dropdown-padding-end:var(--size-4-8);
     --dropdown-padding-start:var(--size-4-4);
@@ -8087,7 +8087,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     --input-shadow-hover:none;
     --input-font-weight:var(--font-medium);
     --input-border-width:0px;
-    --input-radius:var(--touch-radius-m);
+    --input-radius:var(--radius-l);
     --input-padding:var(--size-4-1) var(--size-4-4);
     --input-icon-inset:var(--size-4-2);
     --interactive-normal:var(--background-secondary);
@@ -8102,7 +8102,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     --mobile-sidebar-background:var(--background-primary);
     --mobile-sidebar-radius:0;
     --modal-background:var(--background-primary);
-    --modal-radius:var(--touch-radius-xs);
+    --modal-radius:var(--radius-l);
     --navbar-bottom-offset:max(var(--safe-area-inset-bottom),var(--size-4-3));
     --navbar-height:80px;
     --navbar-radius:0;
@@ -8111,7 +8111,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     --nav-item-padding:var(--size-4-2) var(--size-4-2) var(--size-4-2) var(--size-4-6);
     --nav-item-margin-bottom:0;
     --nav-item-color:var(--text-normal);
-    --nav-item-radius:var(--touch-radius-xs);
+    --nav-item-radius:var(--radius-s);
     --nav-item-size:var(--font-ui-medium);
     --prompt-background:var(--background-secondary);
     --prompt-backdrop-filter:var(--blur-m);
@@ -8121,7 +8121,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     --search-icon-size:20px;
     --settings-background:var(--background-secondary);
     --setting-items-background:var(--background-primary);
-    --setting-items-radius:var(--touch-radius-xs);
+    --setting-items-radius:var(--radius-l);
     --setting-group-heading-color:var(--text-muted);
     --setting-group-heading-weight:var(--font-semibold);
     --setting-group-heading-size:var(--font-ui-small);
@@ -8137,7 +8137,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     --swatch-height:var(--touch-size-s);
     --swatch-width:var(--touch-size-s);
     --swatch-radius:var(--touch-size-s);
-    --textarea-radius:var(--touch-radius-xxs);
+    --textarea-radius:var(--radius-l);
     --textarea-padding:var(--size-4-3) var(--size-4-4);
     --toggle-width:52px;
     --toggle-radius:26px;
@@ -8155,10 +8155,7 @@ body:not(.show-inline-title) .bases-new-item-popover .inline-title{
     --bases-cards-scale:0.85
 }
 .is-mobile.theme-dark{
-    --color-base-00:#000;
-    --color-base-10:#111;
-    --color-base-20:#1e1e1e;
-    --tag-background:hsla(var(--interactive-accent-hsl),0.2);
+    --tag-background:var(--bs-accent-soft);
     --search-result-background:var(--background-secondary);
     --background-modifier-form-field:var(--background-modifier-border);
     --background-modifier-cover:rgba(0,0,0,0.35);
@@ -8222,7 +8219,7 @@ body:not(.is-mobile) .app-container{
     --nav-item-padding:var(--size-2-3) var(--size-4-2) var(--size-2-3) var(--size-4-6);
     --tab-font-size:var(--font-ui-smaller);
     --system-status-background:var(--titlebar-background);
-    --mobile-sidebar-radius:24px;
+    --mobile-sidebar-radius:var(--radius-xl);
     --toolbar-option-width:50px
 }
 .is-tablet.theme-dark{
@@ -8271,14 +8268,14 @@ select.mobile-tap,.combobox-button.mobile-tap,.dropdown.mobile-tap{
     background-color:var(--background-modifier-hover)
 }
 .is-mobile .clickable-icon{
-    transition:opacity 0.1s ease-in-out
+    transition:opacity var(--bs-dur-fast) var(--bs-ease-standard)
 }
 .is-mobile .combobox-button{
     --dropdown-padding:0 var(--size-4-4) 0 var(--size-4-4);
     gap:var(--size-4-2)
 }
 .is-mobile .tree-item-self{
-    transition:background-color 0.1s ease-in-out,color 0.1s ease-in-out
+    transition:background-color var(--bs-dur-fast) var(--bs-ease-standard),color var(--bs-dur-fast) var(--bs-ease-standard)
 }
 .is-mobile .metadata-container{
     transform:none
@@ -8287,11 +8284,11 @@ body:not(.is-mobile) input[type=range]:focus{
     box-shadow:none
 }
 body:not(.is-mobile) input[type=range]:focus::-webkit-slider-thumb{
-    box-shadow:0 1px 2px 0px rgba(0,0,0,0.05),0 2px 3px 0px rgba(0,0,0,0.2)
+    box-shadow:var(--shadow-xs)
 }
 body:not(.is-mobile) input[type=range]:focus-visible::-webkit-slider-thumb{
     border-color:var(--background-modifier-border-focus);
-    box-shadow:0 1px 2px 0px rgba(0,0,0,0.05),0 2px 3px 0px rgba(0,0,0,0.2),0 0 0px 2px var(--background-modifier-border-focus)
+    box-shadow:var(--shadow-xs),0 0 0 2px var(--background-modifier-border-focus)
 }
 body:not(.is-mobile) .modal-button-container .mod-secondary{
     margin-inline-end:auto
@@ -8513,7 +8510,7 @@ body.is-mobile .canvas-node-resizer{
     border:none
 }
 .is-phone .bases-toolbar-views-menu .suggestion-group[data-group="actions"] .suggestion-item,.is-phone .bases-toolbar-properties-menu .suggestion-group[data-group="actions"] .suggestion-item{
-    border-radius:var(--touch-radius-xxs)
+    border-radius:var(--radius-s)
 }
 .is-phone .bases-toolbar-items .suggestion-group[data-group="views"],.is-phone .bases-toolbar-items .suggestion-group[data-group="properties"]{
     padding-bottom:calc(var(--safe-area-inset-bottom) + var(--input-height) + var(--size-4-2))
@@ -8598,7 +8595,7 @@ body.is-mobile .canvas-node-resizer{
     content:' '
 }
 .mobile-onboarding-radio-option.is-selected .mobile-onboarding-radio-button::after{
-    background-color:white
+    background-color:var(--bs-on-accent)
 }
 .is-mobile .workspace-split.mod-root > .workspace-leaf:first-of-type .workspace-leaf-content,.is-mobile .workspace-split.mod-root > .workspace-leaf:last-of-type .workspace-leaf-content{
     border-radius:0
@@ -8731,8 +8728,8 @@ body.is-tablet .sidebar-toggle-button{
     position:relative;
     height:var(--touch-size-l);
     padding:0 var(--size-4-5);
-    border-radius:0;
-    transition:background-color 0.15s ease-in-out,color 0.15s ease-in-out
+    border-radius:var(--radius-s);
+    transition:background-color var(--bs-dur-normal) var(--bs-ease-standard),color var(--bs-dur-normal) var(--bs-ease-standard)
 }
 .is-phone .modal.mod-settings .vertical-tab-nav-item:last-child .vertical-tab-nav-item-chevron,.is-phone .modal.mod-settings .vertical-tab-nav-item:last-child .vertical-tab-nav-item-title{
     border-bottom:none
@@ -8849,8 +8846,8 @@ body.is-tablet .workspace-drawer.mod-left .workspace-drawer-inner{
     display:none!important
 }
 .is-phone .menu-group .menu-item.is-label + .menu-item:not(.is-label){
-    border-top-left-radius:var(--touch-radius-xxs);
-    border-top-right-radius:var(--touch-radius-xxs)
+    border-top-left-radius:var(--radius-s);
+    border-top-right-radius:var(--radius-s)
 }
 .is-phone .menu-group .menu-item{
     position:relative
@@ -8866,26 +8863,26 @@ body.is-tablet .workspace-drawer.mod-left .workspace-drawer-inner{
     background-color:var(--menu-divider-color)
 }
 .is-phone .menu-group .menu-item:first-child{
-    border-top-left-radius:var(--touch-radius-xxs);
-    border-top-right-radius:var(--touch-radius-xxs)
+    border-top-left-radius:var(--radius-s);
+    border-top-right-radius:var(--radius-s)
 }
 .is-phone .menu-group .menu-item:last-child{
-    border-bottom-left-radius:var(--touch-radius-xxs);
-    border-bottom-right-radius:var(--touch-radius-xxs)
+    border-bottom-left-radius:var(--radius-s);
+    border-bottom-right-radius:var(--radius-s)
 }
 .is-phone .menu-group .menu-item:last-child:after{
     display:none
 }
 .is-phone .menu-group .menu-item:only-child{
-    border-radius:var(--touch-radius-xl)
+    border-radius:var(--radius-m)
 }
 .is-phone .menu .suggestion-group .suggestion-item:first-child{
-    border-top-left-radius:var(--touch-radius-xxs);
-    border-top-right-radius:var(--touch-radius-xxs)
+    border-top-left-radius:var(--radius-s);
+    border-top-right-radius:var(--radius-s)
 }
 .is-phone .menu .suggestion-group .suggestion-item:last-child{
-    border-bottom-left-radius:var(--touch-radius-xxs);
-    border-bottom-right-radius:var(--touch-radius-xxs)
+    border-bottom-left-radius:var(--radius-s);
+    border-bottom-right-radius:var(--radius-s)
 }
 .is-phone .menu .suggestion-group .suggestion-item.mobile-tap:not(.is-disabled),.is-phone .menu-item.mobile-tap:not(.is-disabled){
     background-color:var(--interactive-hover)
@@ -8918,7 +8915,7 @@ body.is-tablet .workspace-drawer.mod-left .workspace-drawer-inner{
     --dialog-max-width:calc(100vw - var(--safe-area-inset-left) - var(--safe-area-inset-right) - var(--size-4-6));
     --dialog-width:100vw;
     --modal-width:100vw;
-    --modal-radius:var(--touch-radius-xs);
+    --modal-radius:var(--radius-l);
     --modal-max-height:calc(100vh - var(--safe-area-inset-top));
     --prompt-max-width:100vw
 }
