@@ -15,7 +15,7 @@
 // populated by the other canvas modules, exactly like the inherited code referenced the classes
 // by name. App-scope helpers come in through `host`; own helpers are imported directly.
 import { inherit } from "./inherit.js";
-import { randomHex, boxCenter, boxOfRect, boxUnion, boxGrow, sideMidpoint, bezierEdge, isLightColor, distance, suppressNextEvent } from "./misc.js";
+import { randomHex, boxCenter, boxOfRect, boxUnion, boxGrow, sideMidpoint, bezierEdge, isLightColor, distance, ng08SuppressNextEvent } from "./misc.js";
 import { newlinesBefore } from "./text.js";
 import { idleOrTimeout } from "./metadata-helpers.js";
 import { debounceCall } from "./timing.js";
@@ -659,7 +659,7 @@ export function defineCanvasFileNode(host) {
                     const content = section.content;
                     const target = section.file;
                     const id = (section.node.id = randomHex(6));
-                    const { blockEnd, addition } = blockRefInsertion(section, id);
+                    const { blockEnd, addition } = ng08BlockRefInsertion(section, id);
                     const text = content.slice(0, blockEnd) + addition + content.slice(blockEnd);
                     node.app.vault.modify(target, text);
                   }
@@ -1083,7 +1083,7 @@ export function defineCanvasEdge(host) {
         cancel: () => edge.update(from, to),
         cleanup: () => {
           canvas.canvasEl.removeClass("is-connecting");
-          suppressNextEvent(edge.lineGroupEl, "click");
+          ng08SuppressNextEvent(edge.lineGroupEl, "click");
         },
       });
     });

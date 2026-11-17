@@ -17,7 +17,7 @@ import { setElementTooltip } from "./tooltip.js";
 import { fileClass } from "./vault.js";
 import { lastSegment, fileLinkPath, targetText, withoutMd } from "./path.js";
 import { frontmatterAliases } from "./frontmatter.js";
-import { walkBookmarkItems } from "./bookmarks.js";
+import { ng08WalkBookmarkItems } from "./n-g08-bookmarks.js";
 import { prepareFuzzyFinder, prepareSimpleFinder, renderResults } from "./search-simple.js";
 import { sortHitsByScore, sortByOrder, shiftRanges } from "./misc.js";
 import { makeHotkey } from "./text.js";
@@ -264,7 +264,7 @@ export function defineQuickSwitcherModalBase(host) {
         const hit = match(path + bookmarksPlugin.getItemTitle(item));
         if (hit) results.push({ type: "bookmark", match: hit, item, bookmarkPath: path });
       };
-      walkBookmarkItems(bookmarksPlugin.items, (item, path) => {
+      ng08WalkBookmarkItems(bookmarksPlugin.items, (item, path) => {
         if (item.type !== "file" || item.subpath) {
           if (self.shouldShowNonFileBookmarks && item.type !== "group") addBookmark(item, path);
         } else {

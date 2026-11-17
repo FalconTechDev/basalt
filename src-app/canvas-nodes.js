@@ -447,7 +447,7 @@ export function defineCanvasEmptyEmbed(host) {
 // =====================================================================================================================
 
 export function defineRenamePromptModal(host) {
-  class RenamePromptModal extends bookmarks.ButtonModal {
+  class RenamePromptModal extends host.ButtonModal {
     constructor(app, initialValue) {
       super(app);
       this.title = host.t.dialogue.labelRenameFileGeneric();

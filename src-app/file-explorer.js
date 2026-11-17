@@ -14,7 +14,7 @@ import { debounceCall } from "./timing.js";
 import { makeTreePusher, markItemCollapsed, collapsibleTreeItem } from "./tree.js";
 import { fileClass } from "./vault.js";
 import { baseName, extensionOf, lastSegment, withoutExtension } from "./path.js";
-import { flattenUniqueFiles } from "./bookmarks.js";
+import { ng08FlattenUniqueFiles } from "./n-g08-bookmarks.js";
 import { sortOrderComparator, SEARCH_SORT_GROUPS } from "./n-g11-view.js";
 import { displayTooltip, hideTooltip, setElementTooltip } from "./tooltip.js";
 import { preventMiddleClick } from "./n-g11-view.js";
@@ -245,7 +245,7 @@ function canMoveInto(file, folder) {
 function movableFiles(files, folder) {
   const movable = [];
   for (const file of files) if (canMoveInto(file, folder)) movable.push(file);
-  return flattenUniqueFiles(movable);
+  return ng08FlattenUniqueFiles(movable);
 }
 
 // =====================================================================================================================
@@ -688,7 +688,7 @@ export function defineFileExplorerView(host) {
 
     if (selected.length > 1 && selected.some((item) => item.file === file)) {
       const files = selected.map((item) => item.file);
-      const unique = flattenUniqueFiles(files);
+      const unique = ng08FlattenUniqueFiles(files);
       const folderCount = unique.length;
       if (host.Platform.isPhone) {
         menu.addItem((item) => item.setSection("title").setIcon("lucide-files").setTitle(host.t.nouns.fileWithCount({ count: selected.length })).setIsLabel(true));
@@ -871,7 +871,7 @@ export function defineFileExplorerView(host) {
       if (focused instanceof explorer.FileItem) folder = focused.file.parent;
       else if (focused instanceof explorer.FolderItem) folder = focused.file;
     }
-    const items = flattenUniqueFiles(files.map((path) => this.app.vault.getAbstractFileByPath(path)).filter((file) => !!file));
+    const items = ng08FlattenUniqueFiles(files.map((path) => this.app.vault.getAbstractFileByPath(path)).filter((file) => !!file));
     if (items.length === 0) return;
     const placed = [];
     if (operation === "copy") {
@@ -903,7 +903,7 @@ export function defineFileExplorerView(host) {
   };
 
   proto.handleCopy = function (event) {
-    const paths = flattenUniqueFiles(this.tree.getSelectedItems().map((item) => item.file)).map((file) => file.path);
+    const paths = ng08FlattenUniqueFiles(this.tree.getSelectedItems().map((item) => item.file)).map((file) => file.path);
     if (paths.length > 0) {
       event.preventDefault();
       event.clipboardData.setData(CLIPBOARD_FILES_TYPE, JSON.stringify({ operation: "copy", paths }));
@@ -913,7 +913,7 @@ export function defineFileExplorerView(host) {
   proto.handleCut = function (event) {
     const items = (this.itemsBeingCut = this.tree.getSelectedItems());
     for (const item of items) item.selfEl.addClass("is-cut");
-    const paths = flattenUniqueFiles(items.map((item) => item.file)).map((file) => file.path);
+    const paths = ng08FlattenUniqueFiles(items.map((item) => item.file)).map((file) => file.path);
     if (paths.length > 0) {
       event.preventDefault();
       event.clipboardData.setData(CLIPBOARD_FILES_TYPE, JSON.stringify({ operation: "cut", paths }));

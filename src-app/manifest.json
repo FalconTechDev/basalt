@@ -667,27 +667,27 @@
     },
     {
       "orig": "wP",
-      "use": "setDragUriData",
+      "use": "ng08SetDragUriData",
       "originalBytes": 72
     },
     {
       "orig": "bP",
-      "use": "setDragPlainData",
+      "use": "ng08SetDragPlainData",
       "originalBytes": 43
     },
     {
       "orig": "SP",
-      "use": "applyDropEffect",
+      "use": "ng08ApplyDropEffect",
       "originalBytes": 158
     },
     {
       "orig": "Eg",
-      "use": "suppressNextEvent",
+      "use": "ng08SuppressNextEvent",
       "originalBytes": 239
     },
     {
       "orig": "TP",
-      "use": "setDragImage",
+      "use": "ng08SetDragImage",
       "originalBytes": 120
     },
     {
@@ -968,51 +968,51 @@
     },
     {
       "orig": "I2",
-      "use": "bookmarkItemForFile"
+      "use": "ng08BookmarkItemForFile"
     },
     {
       "orig": "O2",
-      "use": "bookmarkItemForFolder"
+      "use": "ng08BookmarkItemForFolder"
     },
     {
       "orig": "F2",
-      "use": "bookmarkGroupItem"
+      "use": "ng08BookmarkGroupItem"
     },
     {
       "orig": "N2",
-      "use": "bookmarkItemForGraph"
+      "use": "ng08BookmarkItemForGraph"
     },
     {
       "orig": "R2",
-      "use": "bookmarkItemForUrl"
+      "use": "ng08BookmarkItemForUrl"
     },
     {
       "orig": "B2",
-      "use": "bookmarkItemForSearch"
+      "use": "ng08BookmarkItemForSearch"
     },
     {
       "orig": "V2",
-      "use": "viewToBookmarkItem"
+      "use": "ng08ViewToBookmarkItem"
     },
     {
       "orig": "z2",
-      "use": "filesToBookmarkItems"
+      "use": "ng08FilesToBookmarkItems"
     },
     {
       "orig": "H2",
-      "use": "walkBookmarkItems"
+      "use": "ng08WalkBookmarkItems"
     },
     {
       "orig": "GA",
-      "use": "headingAtPosition"
+      "use": "ng08HeadingAtPosition"
     },
     {
       "orig": "KA",
-      "use": "blockRefInsertion"
+      "use": "ng08BlockRefInsertion"
     },
     {
       "orig": "y$",
-      "use": "flattenUniqueFiles"
+      "use": "ng08FlattenUniqueFiles"
     },
     {
       "orig": "c2",
@@ -1341,7 +1341,7 @@
     },
     {
       "orig": "Zg",
-      "use": "s04FormatMenuPlugin",
+      "use": "ng08S04FormatMenuPlugin",
       "originalBytes": 802
     },
     {
@@ -2757,7 +2757,7 @@
     },
     {
       "orig": "xP",
-      "use": "defineDragManager",
+      "use": "ng08DefineDragManager",
       "originalBytes": 5966
     },
     {
@@ -2804,7 +2804,7 @@
     },
     {
       "orig": "bb",
-      "use": "defineBookmarkRunnable",
+      "use": "ng08DefineBookmarkRunnable",
       "originalBytes": 582
     },
     {
@@ -3038,35 +3038,35 @@
     },
     {
       "orig": "nb",
-      "use": "defineButtonModal"
+      "use": "ng08DefineButtonModal"
     },
     {
       "orig": "RJ",
-      "use": "defineBookmarkEditModal"
+      "use": "ng08DefineBookmarkEditModal"
     },
     {
       "orig": "BJ",
-      "use": "defineBookmarkManyModal"
+      "use": "ng08DefineBookmarkManyModal"
     },
     {
       "orig": "i3",
-      "use": "defineBookmarkItemBase"
+      "use": "ng08DefineBookmarkItemBase"
     },
     {
       "orig": "o3",
-      "use": "defineBookmarkLeafItem"
+      "use": "ng08DefineBookmarkLeafItem"
     },
     {
       "orig": "r3",
-      "use": "defineBookmarkGroupItem"
+      "use": "ng08DefineBookmarkGroupItem"
     },
     {
       "orig": "a3",
-      "use": "defineBookmarksView"
+      "use": "ng08DefineBookmarksView"
     },
     {
       "orig": "l3",
-      "use": "defineBookmarksPlugin"
+      "use": "ng08DefineBookmarksPlugin"
     },
     {
       "orig": "Y0",
@@ -3659,7 +3659,7 @@
     },
     {
       "orig": "Xg",
-      "use": "s04MenuManager",
+      "use": "ng08DefineS04MenuManager",
       "originalBytes": 7820
     },
     {
@@ -6489,13 +6489,13 @@
     },
     {
       "orig": "MP",
-      "expr": "__basaltOwn.dragEffectMap",
+      "expr": "__basaltOwn.ng08DragEffectMap",
       "sha1": "f0a4c1f32d9933faae8531e80432a3bec18a42fa",
       "originalBytes": 170
     },
     {
       "orig": "EP",
-      "expr": "__basaltOwn.dragPixel",
+      "expr": "__basaltOwn.ng08DragPixel",
       "sha1": "1f088489658055a2b71dd274b9c080e721998b88",
       "originalBytes": 9
     },
@@ -6639,19 +6639,19 @@
     },
     {
       "orig": "Fg",
-      "expr": "__basaltOwn.s04ModifierKeys",
+      "expr": "__basaltOwn.ng08S04ModifierKeys",
       "sha1": "4428b988a70c6f2f49de439a7e99ed216cdb7918",
       "originalBytes": 35
     },
     {
       "orig": "Qg",
-      "expr": "__basaltOwn.s04AcceleratorNames",
+      "expr": "__basaltOwn.ng08S04AcceleratorNames",
       "sha1": "748fcc24d0198ed1e2bb2dca237c2c3ee970faba",
       "originalBytes": 75
     },
     {
       "orig": "Og",
-      "expr": "__basaltOwn.s04ModifierDisplayNames(jl)",
+      "expr": "__basaltOwn.ng08S04ModifierDisplayNames(jl)",
       "sha1": "adb72b4ae6d3d11dc387315975caa10039aea8b0",
       "originalBytes": 108
     },
