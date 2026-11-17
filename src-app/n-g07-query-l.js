@@ -20,8 +20,12 @@ export function s09DeserializeView(query, data, index) {
   const view = new (s09View(ng07Host))(query, type, name);
   if (raw.filters !== undefined) view.filters = s09DeserializeFilter(raw.filters) || view.filters;
   if (raw.groupBy !== undefined) view.groupBy = s09DeserializeFilter(raw.groupBy);
-  if (raw.order) view.setOrder(raw.order);
-  if (raw.sort) view.setSortProperty(raw.sort);
+  if (raw.order) view.setOrder(Array.isArray(raw.order) ? raw.order : [raw.order]);
+  if (raw.sort) {
+    if (typeof raw.sort === "string") view.setSortProperty(raw.sort, raw.sortDirection || "ASC");
+    else if (Array.isArray(raw.sort)) view.setSortProperty(raw.sort);
+    else view.setSortProperty([raw.sort]);
+  }
   if (raw.limit !== undefined) view.setLimit(raw.limit);
   if (raw.summaries && typeof raw.summaries === "object") {
     for (const [k, v] of Object.entries(raw.summaries)) {
@@ -65,8 +69,12 @@ function ng07BuildView() {
     if (this.sort && this.sort.length) return this.sort.map((s) => ({ property: s.property, direction: s.direction }));
     return [{ property: "file.name", direction: "ASC" }];
   };
-  View.prototype.setSortProperty = function (sort) {
-    this.sort = Array.isArray(sort) ? sort.map((s) => ({ property: s.property, direction: s.direction || "ASC" })) : null;
+  View.prototype.setSortProperty = function (sort, direction) {
+    if (typeof sort === "string") {
+      this.sort = [{ property: sort, direction: direction || "ASC" }];
+    } else {
+      this.sort = Array.isArray(sort) ? sort.map((s) => ({ property: s.property, direction: s.direction || "ASC" })) : null;
+    }
     if (this.query) this.query.save();
   };
   View.prototype.getLimit = function () { return this.limit || 0; };
