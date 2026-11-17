@@ -399,14 +399,13 @@ export function ng12PublishPlugin(host) {
       const remote = await this.apiList();
       this.isGuest = !remote.owner;
       const remoteFiles = remote.files || [];
-      const remoteByPath = {};
-      for (const f of remoteFiles) remoteByPath[f.path] = f;
-      const diffs = [];
+      const remoteDiffs = [];
+      const pendingRemote = {};
 
       for (const entry of remoteFiles) {
         const local = this.vault.getAbstractFileByPath(entry.path);
         if (!local || !(local instanceof host.TFile)) {
-          diffs.push({
+          remoteDiffs.push({
             path: entry.path,
             ctime: entry.ctime,
             mtime: entry.mtime,
@@ -414,11 +413,12 @@ export function ng12PublishPlugin(host) {
             type: "deleted",
             checked: false,
           });
+          pendingRemote[entry.path] = true;
           continue;
         }
         const flag = this.getPublishFlag(local);
         if (flag === false) {
-          diffs.push({
+          remoteDiffs.push({
             path: entry.path,
             ctime: entry.ctime,
             mtime: entry.mtime,
@@ -426,11 +426,12 @@ export function ng12PublishPlugin(host) {
             type: "deleted",
             checked: false,
           });
+          pendingRemote[entry.path] = true;
           continue;
         }
         const hash = await this.getHash(local);
         if (hash !== entry.hash) {
-          diffs.push({
+          remoteDiffs.push({
             path: entry.path,
             ctime: entry.ctime,
             mtime: entry.mtime,
@@ -438,8 +439,9 @@ export function ng12PublishPlugin(host) {
             type: "changed",
             checked: flag === true,
           });
+          pendingRemote[entry.path] = true;
         } else {
-          diffs.push({
+          remoteDiffs.push({
             path: entry.path,
             ctime: entry.ctime,
             mtime: entry.mtime,
@@ -451,6 +453,7 @@ export function ng12PublishPlugin(host) {
       }
 
       // vault walk: DFS from root, folders push children, pop order for files
+      const diffs = [];
       const stack = [this.vault.getRoot()];
       while (stack.length) {
         const node = stack.pop();
@@ -459,7 +462,7 @@ export function ng12PublishPlugin(host) {
         if (node instanceof host.TFolder) continue;
         if (!(node instanceof host.TFile)) continue;
         if (!this.isFileSupported(node)) continue;
-        if (remoteByPath[node.path]) continue;
+        if (pendingRemote[node.path]) continue;
         const flag = this.getPublishFlag(node);
         if (flag === false) continue;
         diffs.push({
@@ -471,7 +474,7 @@ export function ng12PublishPlugin(host) {
           checked: flag === true,
         });
       }
-      return diffs;
+      return diffs.concat(remoteDiffs);
     }
 
     // ------------------------------------------------------------ HTTP layer
