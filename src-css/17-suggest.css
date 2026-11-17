@@ -11,7 +11,7 @@
 
 /* selected secret rows get an accent wash */
 .suggestion-item.mod-complex.suggestion-secret-key.is-selected {
-  background-color: hsla(var(--color-accent-hsl), 0.15);
+  background-color: var(--bs-accent-soft);
 }
 
 .suggestion-item.mod-complex.suggestion-secret-key .flair {
@@ -30,6 +30,7 @@
 /* a combobox that lost input focus drops the selection highlight */
 .combobox:not(.has-input-focus) .suggestion-item.is-selected {
   background-color: transparent;
+  box-shadow: none;
 }
 
 /* inside CodeMirror autocomplete popups the flair hugs the icon edge */
@@ -69,7 +70,7 @@
 }
 
 .suggestion-item.mod-complex .suggestion-highlight {
-  font-weight: bold;
+  font-weight: var(--font-bold);
 }
 
 /* icon and aux columns never shrink; they centre themselves */
@@ -106,7 +107,7 @@
 
 /* search-result suggestions render slightly smaller */
 .suggestion-highlight {
-  font-weight: bold;
+  font-weight: var(--font-bold);
 }
 
 .search-suggest-item.suggestion-item {

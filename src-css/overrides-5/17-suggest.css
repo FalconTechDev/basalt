@@ -8,6 +8,8 @@
   z-index: var(--layer-notice);
   max-width: 500px;
   max-height: 300px;
+  /* same frame cut as the other floating surfaces */
+  clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md));
   background-color: var(--suggestion-background);
   backdrop-filter: var(--suggestion-backdrop-filter);
 }
