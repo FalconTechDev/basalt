@@ -1,14 +1,16 @@
 /* services (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* file-recovery */
+/* ---------- file recovery ---------- */
+
 .file-recovery-list {
-  overflow: auto;
-  flex-grow: 1;
-  flex-direction: column;
   display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
   padding: var(--size-4-3) var(--size-4-2);
 }
 
+/* fixed-width column holding the list, separated by a border */
 .file-recovery-list-container {
   display: flex;
   flex-direction: column;
@@ -30,6 +32,7 @@
   cursor: var(--cursor);
 }
 
+/* recovered content shown as a read-only monospace diff */
 .file-recovery-text {
   flex: 1 0 0;
   padding: var(--size-4-6);
@@ -40,17 +43,18 @@
   resize: none;
 }
 
-/* publish-change */
+/* ---------- publish ---------- */
+
 .publish-change-list {
-  padding: var(--size-4-2) 0 var(--size-4-2) 0;
+  padding: var(--size-4-2) 0;
 }
 
-/* publish-section */
+/* section header inside the publish view */
 .publish-section-header {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--background-modifier-border);
   padding: var(--size-4-2) 0;
+  border-bottom: 1px solid var(--background-modifier-border);
   font-size: var(--font-ui-small);
   line-height: 1.1;
   color: var(--text-muted);
@@ -59,23 +63,23 @@
 .publish-section-header-text {
   flex-grow: 1;
   font-size: var(--font-ui-medium);
-  line-height: var(--line-height-tight);
   font-weight: var(--font-medium);
+  line-height: var(--line-height-tight);
   color: var(--text-normal);
 }
 
-/* publish-changes */
+/* summary row above the change list */
 .publish-changes-info {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
 }
 
-/* publish-section */
+/* collapse arrow and per-section action stay faint until needed */
 .publish-section-header-toggle-collapsed-button {
-  margin-inline-end: var(--size-4-1);
   width: 9px;
   height: 9px;
+  margin-inline-end: var(--size-4-1);
   color: var(--text-faint);
 }
 
@@ -84,22 +88,23 @@
   color: var(--text-faint);
 }
 
-/* publish-changes */
-
-/* publish-upload */
+/* upload rows get a little breathing room */
 .publish-upload-item {
   position: relative;
   padding: var(--size-4-1) var(--size-4-2);
 }
 
-/* sync-status */
+/* ---------- sync status ---------- */
+
 .sync-status-icon {
   display: flex;
   align-items: center;
   cursor: var(--cursor);
 }
 
-/* sync-history */
+/* ---------- sync history ---------- */
+
+/* fixed-width list column beside the history detail */
 .sync-history-list-container {
   display: flex;
   flex-direction: column;
@@ -110,10 +115,10 @@
 }
 
 .sync-history-list {
-  overflow: auto;
   display: flex;
   flex: 0 1 auto;
   flex-direction: column;
+  overflow: auto;
   padding: var(--size-4-2) var(--size-4-2) 0;
 }
 
@@ -131,13 +136,14 @@
   cursor: var(--cursor);
 }
 
+/* detail pane takes the remaining width */
 .sync-history-content-container {
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  padding: 0;
-  height: auto;
   width: 0;
+  height: auto;
+  padding: 0;
   background-color: var(--background-primary);
 }
 
@@ -159,6 +165,7 @@
   font-weight: var(--bold-weight);
 }
 
+/* preview and diff panes share one scrollable text style */
 .sync-history-preview,
 .file-recovery-diff,
 .sync-history-diff {
@@ -170,26 +177,31 @@
   background-color: var(--background-primary);
 }
 
+/* the rendered preview uses the note font, not the UI font */
 .sync-history-preview {
   --cursor-link: default;
   font-family: var(--font-text);
   font-size: var(--font-text-size);
 }
 
+/* empty-state message centred in the detail pane */
 .sync-history-desc {
   flex-grow: 1;
-  overflow-wrap: break-word;
   padding: var(--size-4-6);
+  overflow-wrap: break-word;
   text-align: center;
 }
 
-/* sync-file */
+/* ---------- sync file browser ---------- */
+
+/* file tree capped to most of the modal height */
 .sync-file-tree-container {
   overflow: auto;
   max-height: calc(min(90vh, var(--modal-max-height)) - 250px);
 }
 
-/* webviewer-address */
+/* ---------- web viewer ---------- */
+
 .webviewer-address-container {
   padding: 0 var(--size-4-2);
 }
