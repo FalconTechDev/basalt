@@ -59,7 +59,7 @@ body.is-frameless .suggestion-bg {
 /* headings inside a group read as section titles */
 .setting-item + div > .setting-item-heading,
 .setting-item + .setting-item-heading {
-  margin-top: 0.75em;
+  margin-top: var(--size-4-3);
 }
 
 .setting-item.mod-cta {
@@ -95,16 +95,16 @@ body.is-frameless .suggestion-bg {
 }
 
 .setting-item-control.mod-vertical > *:not(:last-child) {
-  margin-bottom: 10px;
+  margin-bottom: var(--size-4-3);
   margin-inline-end: 0;
 }
 
 /* hotkey icons dim until hovered */
 .setting-hotkey-icon .svg-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--icon-s);
+  height: var(--icon-s);
   opacity: 0.6;
-  stroke-width: 2px;
+  stroke-width: var(--icon-s-stroke-width);
 }
 
 @media (hover: hover) {
@@ -129,7 +129,7 @@ body.is-frameless .suggestion-bg {
 .mod-community-modal .modal-sidebar button.clickable-icon {
   display: flex;
   align-items: center;
-  padding: 6px 10px;
+  padding: var(--size-2-3) var(--size-4-3);
   color: var(--text-normal);
 }
 
