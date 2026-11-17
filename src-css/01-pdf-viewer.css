@@ -1274,7 +1274,7 @@
 
 .pdf-content-container.sidebarResizing .pdf-sidebar-container,
 .pdf-content-container.sidebarResizing .pdf-viewer-container {
-  transition-duration: 0s;
+  transition-duration: var(--anim-duration-none);
 }
 
 .pdf-content-container.is-loading:before {

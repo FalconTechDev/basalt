@@ -100,7 +100,7 @@
   padding: 0 var(--size-4-2) var(--navbar-bottom-offset);
   border-radius: var(--navbar-radius);
   background-color: var(--background-primary);
-  transition: opacity 0.2s ease-in-out, margin-bottom 0.25s ease-in-out, transform 0.3s ease-out;
+  transition: opacity var(--bs-dur-normal) var(--bs-ease-standard), margin-bottom var(--bs-dur-slow) var(--bs-ease-standard), transform var(--bs-dur-slow) var(--bs-ease-standard);
 }
 
 .mobile-navbar-text {
@@ -130,7 +130,7 @@
   flex-grow: 1;
   width: var(--navbar-height);
   height: 100%;
-  transition: opacity 0.1s ease-in-out;
+  transition: opacity var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 .mobile-navbar-action-tabs {
