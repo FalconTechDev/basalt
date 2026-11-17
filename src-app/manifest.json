@@ -1894,7 +1894,7 @@
     },
     {
       "orig": "O9",
-      "use": "s15ScrollLoadMore",
+      "use": "ng03ScrollLoadMore",
       "originalBytes": 138
     },
     {
@@ -3507,122 +3507,122 @@
     },
     {
       "orig": "oC",
-      "use": "defineSyncScreenBase",
+      "use": "ng03DefineSyncScreenBase",
       "originalBytes": 511
     },
     {
       "orig": "aC",
-      "use": "defineSyncField",
+      "use": "ng03DefineSyncField",
       "originalBytes": 667
     },
     {
       "orig": "sC",
-      "use": "defineSyncRadioGroup",
+      "use": "ng03DefineSyncRadioGroup",
       "originalBytes": 686
     },
     {
       "orig": "lC",
-      "use": "defineSyncRadioOption",
+      "use": "ng03DefineSyncRadioOption",
       "originalBytes": 332
     },
     {
       "orig": "cC",
-      "use": "defineSyncStartScreen",
+      "use": "ng03DefineSyncStartScreen",
       "originalBytes": 810
     },
     {
       "orig": "uC",
-      "use": "defineSyncIntroScreen",
+      "use": "ng03DefineSyncIntroScreen",
       "originalBytes": 500
     },
     {
       "orig": "hC",
-      "use": "defineCreateVaultScreen",
+      "use": "ng03DefineCreateVaultScreen",
       "originalBytes": 2106
     },
     {
       "orig": "pC",
-      "use": "defineSyncSetupScreen",
+      "use": "ng03DefineSyncSetupScreen",
       "originalBytes": 1194
     },
     {
       "orig": "dC",
-      "use": "defineEncryptionScreen",
+      "use": "ng03DefineEncryptionScreen",
       "originalBytes": 2097
     },
     {
       "orig": "fC",
-      "use": "defineSyncSettingsScreen",
+      "use": "ng03DefineSyncSettingsScreen",
       "originalBytes": 2259
     },
     {
       "orig": "mC",
-      "use": "defineAuthChoiceScreen",
+      "use": "ng03DefineAuthChoiceScreen",
       "originalBytes": 409
     },
     {
       "orig": "vC",
-      "use": "defineRemoteVaultOptionsScreen",
+      "use": "ng03DefineRemoteVaultOptionsScreen",
       "originalBytes": 984
     },
     {
       "orig": "gC",
-      "use": "defineVaultListScreen",
+      "use": "ng03DefineVaultListScreen",
       "originalBytes": 1395
     },
     {
       "orig": "yC",
-      "use": "defineSignInScreen",
+      "use": "ng03DefineSignInScreen",
       "originalBytes": 2506
     },
     {
       "orig": "bC",
-      "use": "defineForgotPasswordScreen",
+      "use": "ng03DefineForgotPasswordScreen",
       "originalBytes": 1260
     },
     {
       "orig": "wC",
-      "use": "defineSyncMethodScreen",
+      "use": "ng03DefineSyncMethodScreen",
       "originalBytes": 2595
     },
     {
       "orig": "kC",
-      "use": "defineConnectMethodScreen",
+      "use": "ng03DefineConnectMethodScreen",
       "originalBytes": 2037
     },
     {
       "orig": "CC",
-      "use": "defineOtherSyncScreen",
+      "use": "ng03DefineOtherSyncScreen",
       "originalBytes": 510
     },
     {
       "orig": "EC",
-      "use": "defineEmailEntryScreen",
+      "use": "ng03DefineEmailEntryScreen",
       "originalBytes": 699
     },
     {
       "orig": "MC",
-      "use": "defineSignupScreen",
+      "use": "ng03DefineSignupScreen",
       "originalBytes": 1464
     },
     {
       "orig": "SC",
-      "use": "defineEmailVerificationScreen",
+      "use": "ng03DefineEmailVerificationScreen",
       "originalBytes": 1119
     },
     {
       "orig": "xC",
-      "use": "defineICloudMissingScreen",
+      "use": "ng03DefineICloudMissingScreen",
       "originalBytes": 319
     },
     {
       "orig": "TC",
-      "use": "defineStoragePermissionScreen",
+      "use": "ng03DefineStoragePermissionScreen",
       "originalBytes": 1022
     },
     {
       "orig": "DC",
-      "use": "defineICloudUnsupportedScreen",
+      "use": "ng03DefineICloudUnsupportedScreen",
       "originalBytes": 356
     },
     {
@@ -4506,77 +4506,77 @@
     },
     {
       "orig": "P9",
-      "use": "defineSyncSettingsView",
+      "use": "ng03DefineSyncSettingsView",
       "originalBytes": 11959
     },
     {
       "orig": "I9",
-      "use": "defineSyncFileHistoryView",
+      "use": "ng03DefineSyncFileHistoryView",
       "originalBytes": 10203
     },
     {
       "orig": "F9",
-      "use": "defineSyncFileHistoryModal",
+      "use": "ng03DefineSyncFileHistoryModal",
       "originalBytes": 1162
     },
     {
       "orig": "N9",
-      "use": "defineSyncDeletedFilesModal",
+      "use": "ng03DefineSyncDeletedFilesModal",
       "originalBytes": 2921
     },
     {
       "orig": "R9",
-      "use": "defineSyncUpgradeEncryptionModal",
+      "use": "ng03DefineSyncUpgradeEncryptionModal",
       "originalBytes": 633
     },
     {
       "orig": "B9",
-      "use": "defineSyncMigrateVaultModal",
+      "use": "ng03DefineSyncMigrateVaultModal",
       "originalBytes": 5035
     },
     {
       "orig": "V9",
-      "use": "defineSyncCreateVaultModal",
+      "use": "ng03DefineSyncCreateVaultModal",
       "originalBytes": 3131
     },
     {
       "orig": "H9",
-      "use": "defineSyncRemoteVaultsModal",
+      "use": "ng03DefineSyncRemoteVaultsModal",
       "originalBytes": 8354
     },
     {
       "orig": "z9",
-      "use": "defineSyncLogModal",
+      "use": "ng03DefineSyncLogModal",
       "originalBytes": 2413
     },
     {
       "orig": "q9",
-      "use": "defineSyncExcludedFoldersSuggest",
+      "use": "ng03DefineSyncExcludedFoldersSuggest",
       "originalBytes": 591
     },
     {
       "orig": "j9",
-      "use": "defineSyncLargestFilesModal",
+      "use": "ng03DefineSyncLargestFilesModal",
       "originalBytes": 617
     },
     {
       "orig": "U9",
-      "use": "defineSyncConnectVaultModal",
+      "use": "ng03DefineSyncConnectVaultModal",
       "originalBytes": 3819
     },
     {
       "orig": "W9",
-      "use": "defineSyncRenameVaultModal",
+      "use": "ng03DefineSyncRenameVaultModal",
       "originalBytes": 537
     },
     {
       "orig": "_9",
-      "use": "defineSyncManageSharingModal",
+      "use": "ng03DefineSyncManageSharingModal",
       "originalBytes": 3555
     },
     {
       "orig": "K9",
-      "use": "defineSyncChangesView",
+      "use": "ng03DefineSyncChangesView",
       "originalBytes": 5297
     },
     {
@@ -5576,7 +5576,7 @@
     },
     {
       "orig": "uee",
-      "use": "s35SyncPlugin",
+      "use": "ng03SyncPlugin",
       "originalBytes": 44658
     },
     {
@@ -7831,15 +7831,15 @@
     },
     {
       "orig": "L9",
-      "expr": "__basaltOwn.s15AvatarColorClasses",
-      "sha1": "83c9230ee597be017b517e6aded3f1399151be3b",
-      "originalBytes": 169
+      "expr": "__basaltOwn.ng03AvatarColorClasses",
+      "sha1": "7e94375210d92d9a011e707bafd12a612dcbe703",
+      "originalBytes": 33
     },
     {
       "orig": "A9",
-      "expr": "__basaltOwn.s15SyncHourMs",
-      "sha1": "afa31f8135d8e3a100e5f974ef67cdb5b50cbfff",
-      "originalBytes": 4
+      "expr": "__basaltOwn.ng03SyncHourMs",
+      "sha1": "f85a33a383b707e57f64ca74813330cb36f3937b",
+      "originalBytes": 25
     },
     {
       "orig": "C9",
