@@ -89,7 +89,7 @@
     body.theme-dark {
       --background-primary: #17130f; --background-primary-alt: #1b1612; --background-secondary: #0f0c0a; --background-secondary-alt: #0c0a09;
       --background-modifier-hover: rgba(176,122,82,.12); --background-modifier-border: #3a2f26; --background-modifier-border-hover: #4a3c30; --background-modifier-active-hover: rgba(176,122,82,.22);
-      --divider-color: #2f261f; --text-normal: #ece4db; --text-muted: #a79a8d; --text-faint: #8a7b6c;
+      --divider-color: #2f261f; --text-normal: #ece4db; --text-muted: #a79a8d; --text-faint: #8f8072;
       --titlebar-background: #0c0a09; --titlebar-background-focused: #14110f; --tab-container-background: #0c0a09; --ribbon-background: #0c0a09; --modal-background: #1b1612;
     }
     /* the shape language of Basalt, for every module: panels, cards and pop-ups are cut at two corners (--bs-clip), small controls and list rows have --bs-r */
@@ -166,7 +166,7 @@
     }
     .theme-dark .modal.mod-settings {
       --background-primary: #14110f; --background-secondary: #0c0a09; --background-modifier-hover: #2b231d; --background-modifier-border: #3a2f26;
-      --divider-color: #2f261f; --text-normal: #ece4db; --text-muted: #a79a8d; --text-faint: #8a7b6c;
+      --divider-color: #2f261f; --text-normal: #ece4db; --text-muted: #a79a8d; --text-faint: #8f8072;
       --settings-background: #14110f; --modal-sidebar-background: #0c0a09; --setting-items-background: #221c18;
     }
     .modal.mod-settings { clip-path: polygon(var(--bs-cut) 0, 100% 0, 100% calc(100% - var(--bs-cut)), calc(100% - var(--bs-cut)) 100%, 0 100%, 0 var(--bs-cut)); border: 0; box-shadow: none; }
