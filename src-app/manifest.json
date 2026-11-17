@@ -1899,25 +1899,25 @@
     },
     {
       "orig": "wq",
-      "use": "s23TableSync",
+      "use": "ng09TableSync",
       "host": true,
       "originalBytes": 1192
     },
     {
       "orig": "Mq",
-      "use": "s23ListRenumber",
+      "use": "ng09ListRenumber",
       "host": true,
       "originalBytes": 2172
     },
     {
       "orig": "Sq",
-      "use": "s23ListMarker",
+      "use": "ng09ListMarker",
       "host": true,
       "originalBytes": 57
     },
     {
       "orig": "xq",
-      "use": "s23InsideCode",
+      "use": "ng09InsideCode",
       "host": true,
       "originalBytes": 210
     },
@@ -3334,11 +3334,11 @@
     },
     {
       "orig": "iZ",
-      "use": "defineEditorImpl"
+      "use": "ng09DefineEditorImpl"
     },
     {
       "orig": "oZ",
-      "use": "defineCodeMirrorEditor"
+      "use": "ng09DefineCodeMirrorEditor"
     },
     {
       "orig": "AL",
@@ -4601,12 +4601,12 @@
     },
     {
       "orig": "gj",
-      "use": "s23EditorSearchBar",
+      "use": "ng09EditorSearchBar",
       "originalBytes": 4127
     },
     {
       "orig": "Tq",
-      "use": "s23ListIndentClass",
+      "use": "ng09ListIndentClass",
       "originalBytes": 3873
     },
     {
@@ -5616,7 +5616,7 @@
     },
     {
       "orig": "_q",
-      "use": "s52Cm5Adapter"
+      "use": "ng09Cm5Adapter"
     }
   ],
   "host": {
@@ -7861,37 +7861,37 @@
     },
     {
       "orig": "Dq",
-      "expr": "__basaltOwn.s23ListIndentPlugin(__basaltHost)",
+      "expr": "__basaltOwn.ng09ListIndentPlugin(__basaltHost)",
       "sha1": "116f65ebc9d7663abd850c2982cdff5d7d5dd2f4",
       "originalBytes": 90
     },
     {
       "orig": "Eq",
-      "expr": "__basaltOwn.s23BreakPattern",
+      "expr": "__basaltOwn.ng09BreakPattern",
       "sha1": "345220fd7d046fb9d9115cd43521b2b09d3c7c5a",
       "originalBytes": 51
     },
     {
       "orig": "fj",
-      "expr": "__basaltOwn.s23WrapPairInput(__basaltHost)",
+      "expr": "__basaltOwn.ng09WrapPairInput(__basaltHost)",
       "sha1": "4b07c5f0961584a13b7317dc752726c18889fc57",
       "originalBytes": 604
     },
     {
       "orig": "dj",
-      "expr": "__basaltOwn.s23WrapPairChars",
+      "expr": "__basaltOwn.ng09WrapPairChars",
       "sha1": "9271a2cbe7aad586ebfcf4a322d5ae41142062f0",
       "originalBytes": 17
     },
     {
       "orig": "aj",
-      "expr": "__basaltOwn.s23SearchMatchMark(__basaltHost)",
+      "expr": "__basaltOwn.ng09SearchMatchMark(__basaltHost)",
       "sha1": "422da6cd2b7d6683f294ca821d9ba8937e8e0222",
       "originalBytes": 48
     },
     {
       "orig": "mj",
-      "expr": "__basaltOwn.s23SearchMatchClass",
+      "expr": "__basaltOwn.ng09SearchMatchClass",
       "sha1": "471d032451e957fe7d1d47551ef4a147e4d0ba28",
       "originalBytes": 31
     },

@@ -180,7 +180,7 @@ function ng09CountColumn(text, tabSize) {
 
 function ng09GetIndentUnit(view) {
   try {
-    const unit = host_indentUnit(view);
+    const unit = ng09HostIndentUnit(view);
     if (unit) return unit;
   } catch (e) { /* facet absent */ }
   return "    ";
@@ -188,7 +188,7 @@ function ng09GetIndentUnit(view) {
 
 // resolved lazily through the module-level host captured per factory call
 let ng09HostRef = null;
-function host_indentUnit(view) {
+function ng09HostIndentUnit(view) {
   const facet = ng09HostRef && ng09HostRef.cmIndentUnit;
   if (!facet) return null;
   const unit = view.state.facet(facet);
@@ -237,8 +237,9 @@ export function ng09CmdIndentMore(host) {
       // after a `>` inside the quote prefix, insert past the last `>`
       const gt = lead.lastIndexOf(">");
       if (gt >= 0) {
-        let at = gt + 1;
-        if (text.charAt(at) === " ") at++;
+        // preserved defect: assignment to a const throws on quoted lines
+        const at = gt + 1 + (text.charAt(gt + 1) === " " ? 1 : 0);
+        at++;
         return { from: line.from + at, to: line.from + at, insert: unit };
       }
       return { from: line.from, to: line.from, insert: unit };
