@@ -2374,6 +2374,11 @@
       "orig": "RV",
       "use": "s22HasSearch",
       "originalBytes": 65
+    },
+    {
+      "orig": "EV",
+      "use": "s40FoldedRangeAt",
+      "originalBytes": 105
     }
   ],
   "classes": [
@@ -5467,6 +5472,16 @@
       "orig": "z7",
       "use": "s35PublishChangesModal",
       "originalBytes": 5627
+    },
+    {
+      "orig": "MV",
+      "use": "s40FoldIndicator",
+      "originalBytes": 669
+    },
+    {
+      "orig": "TV",
+      "use": "s40FoldViewPlugin",
+      "originalBytes": 719
     }
   ],
   "host": {
@@ -6175,6 +6190,8 @@
     "xL": "xL",
     "xW": "xW",
     "zV": "zV",
+    "Titlebar": "BD",
+    "makeHotkey": "Fb",
     "s27PdfLib": "pdfjsLib",
     "s27PdfViewerNs": "pdfjsViewer",
     "s27PdfConfig": "TZ",
@@ -6213,12 +6230,6 @@
     "s23FrontmatterEnd": "tP",
     "s23ScheduleFrame": "Cc",
     "s23RangeSetBuilder": "ct",
-    "LinkPaneView": "gJ",
-    "OutgoingLinkView": "o7",
-    "AllPropertiesView": "E7",
-    "FilePropertiesView": "M7",
-    "Titlebar": "BD",
-    "makeHotkey": "Fb",
     "s32UndoStack": "l5",
     "s32PointIndex": "v5",
     "s32BBoxItemIndex": "g5",
@@ -6257,7 +6268,12 @@
     "Ll": "Ll",
     "subpathContent": "NT",
     "EmbedCursorBase": "FV",
-    "EmbedWidgetBase": "Rn"
+    "EmbedWidgetBase": "Rn",
+    "s40cmLanguageFacet": "fp",
+    "LinkPaneView": "gJ",
+    "OutgoingLinkView": "o7",
+    "AllPropertiesView": "E7",
+    "FilePropertiesView": "M7"
   },
   "declarators": [
     {
@@ -9001,6 +9017,54 @@
       "expr": "__basaltHost.i18n.plugins.publish",
       "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
       "originalBytes": 18
+    },
+    {
+      "orig": "SV",
+      "expr": "__basaltOwn.s40FoldedDeco(__basaltHost)",
+      "sha1": "d498acf260fcc3312da6618c8b892eed1848608e",
+      "originalBytes": 30
+    },
+    {
+      "orig": "xV",
+      "expr": "__basaltOwn.s40FoldableDeco(__basaltHost)",
+      "sha1": "21bf5f5a7e9cab20a4e4e194e620f094d4a0388a",
+      "originalBytes": 30
+    },
+    {
+      "orig": "DV",
+      "expr": "__basaltOwn.s40FoldTransactionFilter(__basaltHost)",
+      "sha1": "7f4826fa0d785556bf63d427ddfd4e430128e173",
+      "originalBytes": 263
+    },
+    {
+      "orig": "AV",
+      "expr": "__basaltOwn.s40FoldDecorations(__basaltHost)",
+      "sha1": "2d58b88298688307155d1909d6e261df92135df1",
+      "originalBytes": 149
+    },
+    {
+      "orig": "PV",
+      "expr": "__basaltOwn.s40IndentMarkPlain(__basaltHost)",
+      "sha1": "087c3be34bae6277e532c96e8f7fb4f50b2ad74e",
+      "originalBytes": 28
+    },
+    {
+      "orig": "LV",
+      "expr": "__basaltOwn.s40IndentMarkActive(__basaltHost)",
+      "sha1": "b719655a56789945fd68521c8a258b0a0cc8f487",
+      "originalBytes": 45
+    },
+    {
+      "orig": "IV",
+      "expr": "__basaltOwn.s40IndentMarkSpacing(__basaltHost)",
+      "sha1": "6ad5765617c7c767ea401fcd83f9eb50a74b8586",
+      "originalBytes": 36
+    },
+    {
+      "orig": "OV",
+      "expr": "__basaltOwn.s40IndentGuides(__basaltHost)",
+      "sha1": "9fca539e7d2b7988b631341c874561b9daa4f8d3",
+      "originalBytes": 1296
     }
   ],
   "methods": [
