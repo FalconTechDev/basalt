@@ -1,9 +1,9 @@
 /* preview (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* markdown-preview */
+/* collapse indicators inside the rendered preview */
 .markdown-preview-view .collapse-indicator {
-  display: inline-flex;
   position: absolute;
+  display: inline-flex;
   user-select: none;
   cursor: var(--cursor);
 }
@@ -13,34 +13,34 @@
   padding: 0 6px;
 }
 
-/* callout */
+/* collapsible callouts show a pointer on their title */
 .callout.is-collapsible .callout-title {
   cursor: var(--cursor);
 }
 
-/* internal-embed */
+/* embeds that are not images render as block boxes */
 .internal-embed:not(.image-embed) {
   display: block;
 }
 
-/* image-embed */
+/* image embeds: wrapper is the positioning context for the resize handle */
 div.image-embed .image-wrapper {
-  display: flex;
   position: relative;
+  display: flex;
 }
 
 div.image-embed .image-resize-corner {
-  display: block;
   position: absolute;
   z-index: 1;
   bottom: -3px;
   inset-inline-end: -3px;
+  display: block;
   width: 30px;
   height: 30px;
   cursor: nwse-resize;
 }
 
-/* metadata-property */
+/* metadata property values: the multi-select control loses its field chrome */
 .metadata-property-value .multi-select-container {
   --background-modifier-form-field: transparent;
   --background-modifier-border: transparent;
@@ -48,6 +48,7 @@ div.image-embed .image-resize-corner {
   overflow: hidden;
 }
 
+/* tag-typed metadata pills reuse the tag colour variables */
 .metadata-property-value[data-property-type="tags"] .multi-select-pill {
   --pill-color: var(--tag-color);
   --pill-color-hover: var(--tag-color-hover);
@@ -71,7 +72,7 @@ div.image-embed .image-resize-corner {
   cursor: var(--cursor-link);
 }
 
-/* footnotes-view */
+/* footnote entries are separated by a divider */
 .footnotes-view .footnote-list-item {
   border-bottom: var(--footnote-divider-width) solid var(--footnote-divider-color);
 }

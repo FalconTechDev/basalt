@@ -1,38 +1,38 @@
 /* tooltips (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* notice-container */
+/* notice stack: fixed column of transient messages, clicks pass through the gaps */
 .notice-container {
-  z-index: var(--layer-notice);
   position: fixed;
   top: 22px;
   inset-inline-end: 0;
+  z-index: var(--layer-notice);
   overflow: hidden;
   padding: 10px;
   pointer-events: none;
 }
 
-/* notice */
+/* a single notice card */
 .notice {
   display: flex;
   flex-direction: column;
   gap: var(--size-4-2);
-  overflow-wrap: anywhere;
-  border-radius: var(--radius-m);
-  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
-  padding: 0.75em 1em 0.75em 1em;
   max-width: 300px;
   margin-bottom: 14px;
+  padding: 0.75em 1em;
+  border-radius: var(--radius-m);
+  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
   color: #FAFAFA;
   font-size: var(--font-ui-small);
   line-height: var(--line-height-tight);
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   word-break: break-word;
   background-color: var(--background-modifier-message);
   cursor: var(--cursor);
   pointer-events: auto;
 }
 
-/* notice-cta */
+/* call-to-action link inside a notice */
 .notice-cta {
   display: flex;
   align-items: center;
@@ -40,25 +40,25 @@
   white-space: nowrap;
 }
 
-/* tooltip */
+/* floating tooltip label */
 .tooltip {
-  left: 50%;
   position: fixed;
+  left: 50%;
   z-index: var(--layer-tooltip);
-  overflow-wrap: anywhere;
-  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
-  border-radius: var(--radius-s);
   max-width: 300px;
   padding: var(--size-4-1) var(--size-4-2);
+  border-radius: var(--radius-s);
+  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
   color: #FAFAFA;
   font-size: var(--font-ui-smaller);
   font-weight: var(--font-medium);
   line-height: var(--line-height-tight);
   text-align: center;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   word-break: normal;
   background-color: var(--background-modifier-message);
   pointer-events: none;
-  animation: pop-down 200ms forwards ease-in-out;
   transform: translateX(-50%);
+  animation: pop-down 200ms forwards ease-in-out;
 }
