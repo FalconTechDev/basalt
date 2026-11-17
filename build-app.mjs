@@ -178,8 +178,15 @@ export function applyOwn(srcText, wasm, tmpPath) {
           baseDeclNodes.set(x.id.name, x.init);
         }
       }
-      let expected = baseDecls.get(e.orig);
-      if (text !== expected) expected = classInitWithMethodWrappers(base.src, baseDeclNodes.get(e.orig), (manifest.methods || []).filter((m) => m.class === e.orig));
+      let expected = classInitWithMethodWrappers(base.src, baseDeclNodes.get(e.orig), (manifest.methods || []).filter((m) => m.class === e.orig));
+      // textual patches may also touch the inside of a class init (e.g. constructor helper fixes);
+      // the find text is anchored at the declarator, so test it against "orig=" + init
+      for (const p of manifest.patches || []) {
+        const anchored = e.orig + "=" + expected;
+        const at = anchored.indexOf(p.find);
+        if (at === 0 && anchored.indexOf(p.find, 1) < 0) expected = anchored.slice(0, at) + p.replace + anchored.slice(at + p.find.length);
+        expected = expected.startsWith(e.orig + "=") ? expected.slice(e.orig.length + 1) : expected;
+      }
       if (text !== expected) throw new Error(`manifest: class ${e.orig} differs from base ${manifest.base}; refusing to replace it`);
       replaced += text.length;
       e.originalBytes = text.length;
@@ -198,6 +205,8 @@ export function applyOwn(srcText, wasm, tmpPath) {
   for (const p of manifest.patches || []) {
     if (out.includes(p.replace)) continue;
     const at = out.indexOf(p.find);
+    // both texts gone: the patched region itself was replaced by own code, nothing left to patch
+    if (at < 0 && !out.includes(p.find)) continue;
     if (at < 0 || out.indexOf(p.find, at + 1) >= 0) throw new Error(`manifest.patches: "${p.note || p.find.slice(0, 40)}" must match exactly once`);
     out = out.slice(0, at) + p.replace + out.slice(at + p.find.length);
   }
