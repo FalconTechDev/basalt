@@ -1,24 +1,29 @@
 /* base (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* list-item */
+/* ---------- lists ---------- */
+
+/* empty slot inside a virtualised list: centred faint hint */
 .list-item.mod-empty {
-  padding: var(--size-4-4);
   margin: 0 auto;
+  padding: var(--size-4-4);
   color: var(--text-faint);
   font-size: var(--font-ui-small);
   text-align: center;
 }
 
+/* extended part of a list row may wrap anywhere */
 .list-item-part.mod-extended {
   flex-grow: 1;
   overflow-wrap: anywhere;
 }
 
-/* debug-textarea */
+/* ---------- debug textarea ---------- */
+
+/* fullscreen monospace dump used by the debug modal */
 .debug-textarea {
   width: 100%;
-  min-height: 50vh;
   height: 100%;
+  min-height: 50vh;
   max-height: 80vh;
   color: var(--text-normal);
   font-family: var(--font-monospace);
@@ -27,17 +32,21 @@
   resize: none;
 }
 
-/* error-container */
+/* ---------- error container ---------- */
+
+/* centred column for crash/fatal screens */
 .error-container {
-  align-items: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--size-4-6);
   padding: var(--size-4-4);
   text-align: center;
 }
 
-/* message */
+/* ---------- message ---------- */
+
+/* small inline status pill */
 .message {
   display: inline-block;
   padding: 6px 12px 6px 12px;
@@ -45,7 +54,9 @@
   corner-shape: var(--corner-shape);
 }
 
-/* multi-select */
+/* ---------- multi-select ---------- */
+
+/* pill field: wraps pills plus a free-text input inside one bordered box */
 .multi-select-container {
   display: inline-flex;
   flex-wrap: wrap;
@@ -59,14 +70,14 @@
 .multi-select-pill {
   --icon-size: var(--icon-xs);
   --icon-stroke: var(--icon-xs-stroke-width);
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--size-2-1);
-  position: relative;
+  max-width: calc(100% - var(--size-2-3) - 1ch);
+  padding: var(--pill-padding-y) 0;
   border: var(--pill-border-width) solid var(--pill-border-color);
   border-radius: var(--pill-radius);
-  padding: var(--pill-padding-y) 0;
-  max-width: calc(100% - var(--size-2-3) - 1ch);
   color: var(--pill-color);
   font-weight: var(--pill-weight);
   line-height: 1;
@@ -74,25 +85,28 @@
   cursor: var(--cursor);
 }
 
+/* borderless input that sizes itself to its content */
 .multi-select-input {
   min-width: 1ch;
   max-width: max-content;
   border: none;
-  font-family: var(--font-interface);
   color: var(--text-normal);
+  font-family: var(--font-interface);
   word-break: break-word;
-  cursor: text;
   background-color: inherit;
+  cursor: text;
 }
 
-/* follow-link */
+/* ---------- follow-link popover ---------- */
+
+/* tooltip under a followed link: dark chip above everything else */
 .follow-link-popover {
-  z-index: var(--layer-tooltip);
   top: calc(100%);
-  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
-  border-radius: var(--radius-m);
+  z-index: var(--layer-tooltip);
   max-width: 300px;
   padding: 5px 12px;
+  border-radius: var(--radius-m);
+  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
   color: #ccc;
   font-size: var(--font-ui-small);
   line-height: 20px;
@@ -102,7 +116,9 @@
   transition: opacity var(--anim-duration-fast) ease-in-out, transform var(--anim-duration-fast) ease-in-out;
 }
 
-/* drop-indicator */
+/* ---------- drop indicator ---------- */
+
+/* accent hairline marking a drop target */
 .drop-indicator {
   position: absolute;
   left: 0;
@@ -112,20 +128,22 @@
   pointer-events: none;
 }
 
-/* popup */
+/* ---------- pdf popup ---------- */
+
+/* container for the pdf.js link/annotation popup */
 .popup {
   display: flex;
   flex-direction: column;
   width: var(--pdf-popup-width);
-  -webkit-user-select: text;
-  user-select: text;
   white-space: normal;
   word-wrap: break-word;
   cursor: initial;
   pointer-events: auto;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
-/* popupContent */
+/* scrollable body of the popup */
 .popupContent {
   overflow: auto;
   max-height: 200px;
@@ -135,32 +153,33 @@
   text-align: start;
 }
 
-/* popupMeta */
+/* footer strip with the popup actions */
 .popupMeta {
   --icon-size: var(--font-ui-small);
   --icon-stroke: 2.5px;
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  display: flex;
   gap: var(--size-4-1);
-  border-top: 1px solid var(--background-modifier-border);
-  border-bottom-left-radius: var(--radius-s);
-  border-bottom-right-radius: var(--radius-s);
   padding: var(--size-4-1) var(--size-4-2);
+  border-top: 1px solid var(--background-modifier-border);
+  border-bottom-right-radius: var(--radius-s);
+  border-bottom-left-radius: var(--radius-s);
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
   background-color: var(--background-secondary);
 }
 
-/* popupContent */
+/* when the body is empty the footer becomes the whole popup */
 .popupContent:empty + .popupMeta {
   border-top: none;
-  border-top-left-radius: var(--radius-s);
   border-top-right-radius: var(--radius-s);
+  border-top-left-radius: var(--radius-s);
   background-color: var(--background-primary);
 }
 
-/* file-embed */
+/* ---------- file embed ---------- */
+
 .file-embed-icon {
   display: flex;
   color: var(--text-muted);
@@ -173,13 +192,16 @@
   background-color: var(--background-primary-alt);
 }
 
-/* internal-query */
+/* ---------- internal query ---------- */
+
 .internal-query {
   margin: 0;
   border-top: 1px solid var(--background-modifier-border);
 }
 
-/* base-toolbar */
+/* ---------- base toolbar ---------- */
+
+/* sort/filter row of a base: reuses input chrome but strips its shadow and metadata chrome */
 .base-toolbar-sort-item {
   --input-shadow: none;
   --icon-size: var(--icon-s);
@@ -191,59 +213,67 @@
   align-items: center;
   gap: var(--size-4-1);
   border-radius: var(--radius-s);
-  background-color: var(--menu-background);
   corner-shape: var(--corner-shape);
+  background-color: var(--menu-background);
 }
 
-/* upload-progress */
+/* ---------- upload progress ---------- */
+
 .upload-progress-container {
   overflow: auto;
   max-height: 60vh;
 }
 
-/* site-list */
+/* ---------- site list ---------- */
+
 .site-list-container {
-  border-top: 1px solid var(--background-modifier-border);
   margin-bottom: var(--size-4-4);
+  border-top: 1px solid var(--background-modifier-border);
 }
 
-/* password-item */
+/* ---------- password item ---------- */
+
 .password-item {
-  border-radius: var(--radius-s);
-  padding: var(--size-4-2) var(--size-4-4);
   margin: var(--size-4-1) 0;
+  padding: var(--size-4-2) var(--size-4-4);
+  border-radius: var(--radius-s);
 }
 
-/* tree-list */
+/* ---------- tree list ---------- */
+
 .tree-list {
   padding: var(--size-4-4) 0;
 }
 
+/* header row: title on the left, actions on the right */
 .tree-list-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--background-modifier-border);
   padding: var(--size-4-2) 0;
+  border-bottom: 1px solid var(--background-modifier-border);
   line-height: 1.1;
 }
 
 .tree-list-action {
-  align-items: center;
   display: flex;
+  align-items: center;
   color: var(--text-muted);
   font-size: var(--font-ui-small);
 }
 
-/* search-suggest */
+/* ---------- search suggest ---------- */
+
+/* trailing hint inside a suggestion row */
 .search-suggest-info-text {
   margin-inline-start: 4px;
   color: var(--text-muted);
 }
 
+/* icon well at the start of a suggestion row */
 .search-suggest-icon {
-  align-items: center;
   display: flex;
+  align-items: center;
   padding: 4px;
   border-radius: var(--radius-s);
 }
@@ -253,7 +283,9 @@
   border-radius: var(--radius-s);
 }
 
-/* search-empty */
+/* ---------- search states ---------- */
+
+/* "no results" line inside the search panel */
 .search-empty-state {
   margin: 0 0 var(--size-4-3);
   padding-inline-start: var(--size-4-2);
@@ -261,27 +293,31 @@
   font-size: var(--font-ui-small);
 }
 
-/* search-info */
+/* summary line above the result groups */
 .search-info-container {
   padding: var(--size-4-1) var(--size-4-4) var(--size-4-2);
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
 }
 
+/* indented child count under a result group */
 .search-info-children {
+  margin: 1px 0;
   padding-inline-start: 20px;
   border-inline-start: var(--border-width) solid var(--background-modifier-border);
-  margin: 1px 0;
 }
 
-/* copy-search */
+/* ---------- copy search ---------- */
+
 .copy-search-result-textarea {
   height: 300px;
   max-height: 20vh;
   resize: none;
 }
 
-/* search-row */
+/* ---------- search row ---------- */
+
+/* toolbar row above search results */
 .search-row {
   display: flex;
   gap: var(--size-4-1);
@@ -289,43 +325,48 @@
   margin: var(--size-4-3) var(--size-4-3) var(--size-4-2);
 }
 
-/* more-options */
+/* ---------- more options ---------- */
+
+/* circular badge that toggles extra result options */
 .more-options-icon {
   --icon-size: 10px;
   display: flex;
-  border-radius: 50%;
   margin-inline-start: var(--size-2-3);
   padding: 0.5px;
+  border-radius: 50%;
   color: var(--background-secondary);
   background-color: var(--icon-color);
   opacity: var(--icon-opacity);
 }
 
-/* slides-container */
+/* ---------- slides ---------- */
+
+/* fullscreen container hosting the slides deck */
 .slides-container {
   position: fixed;
   top: 0;
   inset-inline-start: 0;
   z-index: var(--layer-slides);
-  height: 100vh;
   width: 100vw;
+  height: 100vh;
   border: none;
   background-color: #191919;
   transition: -webkit-transform 0.8s ease 0s;
 }
 
-/* slides-close */
+/* close button pinned to the top corner of the deck */
 .slides-close-btn {
-  display: inline-block;
   position: absolute;
   top: calc(var(--safe-area-inset-top) + var(--size-4-2));
   inset-inline-end: var(--size-4-2);
   z-index: 1;
+  display: inline-block;
   color: var(--text-faint);
   cursor: var(--cursor);
 }
 
-/* vault-list */
+/* ---------- vault list ---------- */
+
 .vault-list-item-desc {
   color: var(--text-faint);
 }
@@ -335,27 +376,32 @@
   color: var(--text-muted);
 }
 
+/* vault row title: icon + name, single-line ellipsis */
 .vault-list-item-title {
-  align-items: center;
   display: flex;
+  align-items: center;
   gap: var(--size-4-2);
-  overflow: hidden;
-  margin-bottom: var(--size-4-1);
   min-width: 0;
+  margin-bottom: var(--size-4-1);
+  overflow: hidden;
   color: var(--text-muted);
-  user-select: none;
   white-space: nowrap;
   text-overflow: ellipsis;
+  user-select: none;
 }
 
-/* recent-changes */
+/* ---------- recent changes ---------- */
+
+/* scrollable file list of the recent-changes core plugin view */
 .recent-changes-container {
   overflow-y: auto;
   overflow-x: hidden;
   padding: var(--size-4-3) var(--size-4-3) var(--size-4-8);
 }
 
-/* pull-action */
+/* ---------- pull request action ---------- */
+
+/* floating action button anchored inside a pull-request view */
 .pull-action {
   position: absolute;
   z-index: var(--layer-popover);
