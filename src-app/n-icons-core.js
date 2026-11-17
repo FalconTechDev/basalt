@@ -23,6 +23,13 @@ import { nIconsSetIc1c } from "./n-icons-set-ic1c.js";
 import { nIconsSetIc1d } from "./n-icons-set-ic1d.js";
 import { nIconsSetIc1e } from "./n-icons-set-ic1e.js";
 
+import { nIconsSetIc3a } from "./n-icons-set-ic3a.js";
+import { nIconsSetIc3b } from "./n-icons-set-ic3b.js";
+import { nIconsSetIc3c } from "./n-icons-set-ic3c.js";
+import { nIconsSetIc3d } from "./n-icons-set-ic3d.js";
+import { nIconsSetIc3e } from "./n-icons-set-ic3e.js";
+import { nIconsSetIc3f } from "./n-icons-set-ic3f.js";
+
 // Piece registry: resolved lazily inside nIconsCollect (module order in the
 // flat own scope is alphabetical, so a top-level reference would hit TDZ).
 // Drawing agents append their piece module here.
@@ -30,6 +37,8 @@ function nIconsPieces() {
   return [nIconsSetBasic, nIconsSetIc2a, nIconsSetIc2b, nIconsSetIc2c, nIconsSetIc2d, nIconsSetIc2e, nIconsSetIc2f, nIconsSetIc2g, nIconsSetIc2h, nIconsSetIc2i];
 
   return [nIconsSetBasic, nIconsSetIc1a, nIconsSetIc1b, nIconsSetIc1c, nIconsSetIc1d, nIconsSetIc1e];
+
+  return [nIconsSetBasic, nIconsSetIc3a, nIconsSetIc3b, nIconsSetIc3c, nIconsSetIc3d, nIconsSetIc3e, nIconsSetIc3f];
 }
 
 // The 36 names of the inherited Qm table (app-specific glyphs). They keep
