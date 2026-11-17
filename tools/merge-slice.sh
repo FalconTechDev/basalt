@@ -11,7 +11,7 @@ for f in $U; do
     src-app/manifest.json) node tools/merge-manifest.mjs | head -1 | cut -c1-80 ;;
     src/app.js) git checkout --ours src/app.js ;;
     build-app.mjs) git checkout --ours build-app.mjs ;;  # every slice re-did the envBind getters; main has the superset
-    docs/*.md|THIRD_PARTY.md) node tools/keep-both.mjs "$f" ;;
+    docs/*.md|THIRD_PARTY.md|src-app/n-icons-core.js) node tools/keep-both.mjs "$f" ;; # appended registrations from parallel icon agents
     src-app/*.js) st=$(git status --porcelain -- "$f" | cut -c1-2); if [ "$st" = "UD" ] || [ "$st" = "DU" ]; then git rm -q -- "$f"; else echo "MANUAL CONFLICT: $f ($st)"; exit 2; fi ;;  # the clean-room branch deleted the old module
     *) echo "MANUAL CONFLICT: $f"; exit 2 ;;
   esac
