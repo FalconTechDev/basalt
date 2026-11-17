@@ -1,19 +1,21 @@
 /* modals (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* modal-container */
+/* ---------- modal frame ---------- */
+
+/* dimmed layer that centres the dialog */
 .modal-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: absolute;
   top: 0;
   bottom: 0;
   inset-inline-start: 0;
   z-index: var(--layer-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
 }
 
-/* modal-bg */
+/* click-catcher behind the dialog */
 .modal-bg {
   position: absolute;
   top: 0;
@@ -23,20 +25,20 @@
   background-color: var(--background-modifier-cover);
 }
 
-/* modal */
+/* the dialog itself: bordered, rounded, scrollable column */
 .modal {
   --checkbox-size: var(--font-ui-medium);
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: auto;
-  border-radius: var(--modal-radius);
-  border: var(--modal-border-width) solid var(--modal-border-color);
-  padding: var(--size-4-4);
-  min-height: 100px;
   width: var(--dialog-width);
+  min-height: 100px;
   max-width: var(--dialog-max-width);
   max-height: var(--dialog-max-height);
+  padding: var(--size-4-4);
+  border: var(--modal-border-width) solid var(--modal-border-color);
+  border-radius: var(--modal-radius);
   background-color: var(--modal-background);
   corner-shape: var(--corner-shape);
 }
@@ -45,17 +47,17 @@
   max-width: var(--modal-max-width-narrow);
 }
 
-/* modal-sidebar */
+/* community-style sidebar column inside the dialog */
 .modal-sidebar {
   --background-modifier-form-field: var(--background-primary);
+  display: flex;
   flex: 1 1 var(--modal-community-sidebar-width);
   flex-direction: column;
-  display: flex;
   min-width: var(--modal-community-sidebar-width);
   padding: var(--size-4-3) 0 0 0;
 }
 
-/* modal-close */
+/* floating close button in the top corner */
 .modal-close-button {
   position: absolute;
   top: var(--size-2-3);
@@ -63,23 +65,22 @@
   padding: var(--size-2-2);
 }
 
-/* modal-header */
 .modal-header {
-  margin-bottom: 0.75em;
   height: var(--modal-header-height);
+  margin-bottom: 0.75em;
 }
 
-/* modal-button */
+/* footer row of action buttons */
 .modal-button-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: var(--size-4-2);
-  flex-wrap: wrap;
   margin-top: 1.5em;
   font-size: var(--font-ui-medium);
 }
 
-/* modal-setting */
+/* settings modal nav strip */
 .modal-setting-nav-bar {
   display: flex;
   flex: 0 1 auto;
@@ -87,57 +88,57 @@
   border-bottom: var(--border-width) solid var(--background-modifier-border);
 }
 
-/* modal */
+/* call-to-action nav action pinned to the inline-end */
 .modal .modal-nav-action.mod-cta {
   inset-inline-end: 0;
   color: var(--color-accent);
   font-weight: var(--font-semibold);
 }
 
+/* in scrollable modals the button row docks to the bottom edge */
 .modal.mod-scrollable .modal-button-container {
-  gap: var(--size-4-2);
   position: absolute;
   bottom: 0;
+  width: 100%;
   margin: 0 0 0 calc(var(--size-4-4) * -1);
   padding: var(--size-4-4);
+  gap: var(--size-4-2);
   border-top: var(--border-width) solid var(--background-modifier-border);
-  width: 100%;
   background-color: var(--background-primary);
 }
 
-/* prompt */
+/* ---------- command prompt ---------- */
+
 .prompt {
-  display: flex;
-  flex-direction: column;
-  z-index: 1;
   position: absolute;
   top: 80px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  border-radius: var(--radius-l);
-  border: var(--prompt-border-width) solid var(--prompt-border-color);
-  box-shadow: var(--shadow-l);
   width: var(--prompt-width);
   max-width: var(--prompt-max-width);
   max-height: var(--prompt-max-height);
+  border: var(--prompt-border-width) solid var(--prompt-border-color);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-l);
   background-color: var(--prompt-background);
   backdrop-filter: var(--prompt-backdrop-filter);
   corner-shape: var(--corner-shape);
 }
 
-/* prompt-input */
 input.prompt-input {
   width: 100%;
   height: var(--prompt-input-height);
   padding: var(--size-4-6);
   padding-inline-end: var(--size-4-12);
   border: none;
-  border-radius: 0;
   border-bottom: var(--border-width) solid var(--background-secondary);
+  border-radius: 0;
   font-size: var(--font-ui-medium);
   background-color: transparent;
 }
 
-/* prompt-results */
 .prompt-results {
   overflow-y: auto;
   margin: 0;
@@ -145,34 +146,34 @@ input.prompt-input {
   list-style: none;
 }
 
-/* prompt-instructions */
+/* keybinding hints under the result list */
 .prompt-instructions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--size-4-3);
-  border-top: var(--border-width) solid var(--background-secondary);
   padding: var(--size-4-2);
-  user-select: none;
+  border-top: var(--border-width) solid var(--background-secondary);
   font-size: var(--font-ui-smaller);
   color: var(--text-muted);
   text-align: center;
+  user-select: none;
 }
 
-/* prompt-instruction */
 .prompt-instruction {
   display: inline-block;
 }
 
-/* vertical-tab */
+/* ---------- vertical tabs (settings sidebar) ---------- */
+
 .vertical-tab-nav-item {
   display: flex;
-  padding: var(--size-4-1) var(--size-4-2);
   margin-bottom: 0;
+  padding: var(--size-4-1) var(--size-4-2);
   border-radius: var(--radius-s);
-  user-select: none;
   font-size: calc(var(--font-ui-small) + 1px);
   cursor: var(--cursor);
+  user-select: none;
   corner-shape: var(--corner-shape);
 }
 
@@ -187,22 +188,22 @@ input.prompt-input {
 
 .vertical-tab-nav-item-icon {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  border-radius: var(--radius-s);
   margin-inline-end: var(--size-4-2);
+  border-radius: var(--radius-s);
   color: var(--text-muted);
 }
 
 .vertical-tab-content {
   container-type: inline-size;
+  height: 100%;
   overflow-y: auto;
-  padding-inline-start: var(--size-4-12);
-  padding-inline-end: var(--size-4-12);
   padding-top: var(--size-4-8);
   padding-bottom: var(--size-4-16);
-  height: 100%;
+  padding-inline-start: var(--size-4-12);
+  padding-inline-end: var(--size-4-12);
   background-color: var(--background-primary);
 }
 
@@ -223,19 +224,21 @@ input.prompt-input {
   padding: var(--size-4-3) 0;
 }
 
-/* checkbox-container */
+/* ---------- checkbox toggle ---------- */
+
+/* iOS-style switch: the input is invisible, the container paints the track */
 .checkbox-container {
+  position: relative;
   display: inline-block;
   flex-shrink: 0;
-  position: relative;
-  border-radius: var(--toggle-radius);
-  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.07), inset 0 0 1px rgba(0, 0, 0, 0.21);
-  outline: 0 solid var(--background-modifier-border-focus);
   width: var(--toggle-s-width);
   height: calc(var(--toggle-s-thumb-height) + var(--toggle-s-border-width) * 2);
-  user-select: none;
-  cursor: var(--cursor);
+  border-radius: var(--toggle-radius);
+  outline: 0 solid var(--background-modifier-border-focus);
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.07), inset 0 0 1px rgba(0, 0, 0, 0.21);
   background-color: var(--background-modifier-border-hover);
+  cursor: var(--cursor);
+  user-select: none;
   transition: box-shadow 0.15s ease-in-out, outline 0.15s ease-in-out, border 0.15s ease-in-out, opacity 0.15s ease-in-out;
   -webkit-app-region: no-drag;
 }
@@ -247,12 +250,14 @@ input.prompt-input {
 }
 
 @media (forced-colors: active) {
+  /* high-contrast mode needs a real outline instead of the shadow */
   .checkbox-container {
     outline: 1px ButtonBorder solid;
   }
 }
 
-/* modal-setting */
+/* ---------- settings modal title bar ---------- */
+
 .modal-setting-titlebar {
   display: flex;
   align-items: center;

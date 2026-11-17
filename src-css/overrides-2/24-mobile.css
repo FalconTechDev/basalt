@@ -1,27 +1,26 @@
 /* mobile (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* clickable-icon */
+/* ---------- tap feedback ---------- */
+
+/* tapped icons dim to the hover opacity */
 .clickable-icon.mobile-tap svg {
   opacity: var(--icon-opacity-hover);
 }
 
-/* text-icon */
+/* tapped text buttons tint their icon like a hover */
 .text-icon-button.mobile-tap .text-button-icon {
   color: var(--icon-color-hover);
 }
 
-/* is-phone */
-body:not(.is-phone) .vertical-tab-nav-item.is-active {
-  background-color: var(--background-modifier-hover);
-}
+/* ---------- onboarding ---------- */
 
-/* mobile-onboarding */
+/* selectable option cards in the mobile onboarding flow */
 .mobile-onboarding-radio-option {
   display: flex;
   gap: var(--size-4-2);
   padding: var(--size-4-3);
-  border-radius: var(--radius-m);
   border: 2px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
 }
 
 .mobile-onboarding-radio-option-desc {
@@ -30,12 +29,28 @@ body:not(.is-phone) .vertical-tab-nav-item.is-active {
   font-size: var(--font-ui-small);
 }
 
-/* is-phone */
+/* ---------- community & publish ---------- */
+
+/* stack the community modal buttons vertically on phones */
 .is-phone .community-modal-button-container {
   flex-direction: column;
 }
 
-/* mobile-option */
+/* the changes summary wraps instead of overflowing */
+.is-phone .publish-changes-info {
+  flex-wrap: wrap;
+}
+
+/* sync history entries get a roomier title on phones */
+.is-phone .sync-history-content .setting-item-name {
+  font-size: var(--font-ui-large);
+  font-weight: var(--font-semibold);
+  white-space: normal;
+}
+
+/* ---------- mobile settings & chrome ---------- */
+
+/* option rows: name takes the space, icons stay clickable */
 .mobile-option-setting-item-name {
   flex: 1 0 0;
   color: var(--text-normal);
@@ -51,50 +66,47 @@ body:not(.is-phone) .vertical-tab-nav-item.is-active {
   color: var(--text-success);
 }
 
-/* is-mobile */
+/* tree items leave room for the trailing controls */
 .is-mobile .tree-item .tree-item-self {
   padding-inline-end: var(--size-4-2);
 }
 
+/* modal buttons stack on mobile */
 .is-mobile .modal-button-container {
   display: flex;
   flex-direction: column;
 }
 
-/* mobile-toolbar */
+/* toolbar option lists clip to a rounded pill */
 .mobile-toolbar-options-list-container {
   overflow: hidden;
   border-radius: var(--touch-size-m);
 }
 
-/* mobile-tab */
+/* tab titles stay on one truncated line */
 .mobile-tab-title {
   overflow: hidden;
   font-size: var(--font-ui-smaller);
   font-weight: var(--font-medium);
   color: var(--text-normal);
-  text-overflow: ellipsis;
   text-align: center;
+  text-overflow: ellipsis;
   white-space: pre;
   unicode-bidi: plaintext;
 }
 
-/* is-phone */
-.is-phone .publish-changes-info {
-  flex-wrap: wrap;
-}
-
-.is-phone .sync-history-content .setting-item-name {
-  font-weight: var(--font-semibold);
-  font-size: var(--font-ui-large);
-  white-space: normal;
-}
-
-/* mobile-vault */
+/* ---------- vault chooser ---------- */
 
 .mobile-vault-chooser-action-icon {
   display: flex;
   padding: 10px;
   margin: -10px 0;
   color: var(--text-muted);
+}
+
+/* ---------- non-phone tab highlight ---------- */
+
+/* on anything but a phone the active vertical tab gets a hover fill */
+body:not(.is-phone) .vertical-tab-nav-item.is-active {
+  background-color: var(--background-modifier-hover);
 }
