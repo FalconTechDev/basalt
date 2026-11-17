@@ -7,7 +7,7 @@ import { parentPath, extensionOf, withoutExtension, normalizePath, lastSegment, 
 import { s05IsValidFileName } from "./s05-utils.js";
 import { s04ParseDataUrl, s04RawRequest } from "./s04-http.js";
 import { valueIgnoringCase } from "./text.js";
-import { extensionWithoutContent } from "./search-query.js";
+import { extensionWithoutContent } from "./n-g11-query.js";
 import { propertyTypeDefaults } from "./metadata-types.js";
 import { SerialTaskQueue, RefMultimap } from "./metadata-helpers.js";
 import { s20MergeFrontmatter, s20LinkUpdateForRename, s20DeepMerge, s20SplitFrontmatter, s20FrontmatterText } from "./s20-frontmatter.js";

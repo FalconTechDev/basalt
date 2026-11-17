@@ -8,11 +8,11 @@
 import { env } from "./env.js";
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
-import { defineFileQueue } from "./search-view.js";
+import { defineFileQueue } from "./n-g11-view.js";
 import { defineSuggestionList } from "./suggest.js";
 import { sortHitsByScore, shiftRanges } from "./misc.js";
 import { mergeSpans, containsAllWords, simpleMatch, renderMatches, renderResults } from "./search-simple.js";
-import { contextLineBounds } from "./search-view.js";
+import { contextLineBounds } from "./n-g11-view.js";
 import { s04CreateDeferred } from "./s04-themes.js";
 import { s05InlineText } from "./s05-utils.js";
 import { frontmatterBounds } from "./notes-utils.js";

@@ -15,9 +15,9 @@ import { makeTreePusher, markItemCollapsed, collapsibleTreeItem } from "./tree.j
 import { fileClass } from "./vault.js";
 import { baseName, extensionOf, lastSegment, withoutExtension } from "./path.js";
 import { flattenUniqueFiles } from "./bookmarks.js";
-import { sortOrderComparator, SEARCH_SORT_GROUPS } from "./search-view.js";
+import { sortOrderComparator, SEARCH_SORT_GROUPS } from "./n-g11-view.js";
 import { displayTooltip, hideTooltip, setElementTooltip } from "./tooltip.js";
-import { preventMiddleClick } from "./search-view.js";
+import { preventMiddleClick } from "./n-g11-view.js";
 
 // Classes produced by the factories below, visible to each other regardless of factory order.
 const explorer = {};

@@ -9,7 +9,7 @@ import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
 import { setElementTooltip } from "./tooltip.js";
 import { makeTreePusher, collapsibleTreeItem, walkTree, treeDropPosition, updateTreeDropIndicator } from "./tree.js";
-import { searchViewClasses } from "./search-view.js";
+import { searchViewClasses } from "./n-g11-view.js";
 import { fileClass } from "./vault.js";
 import { binaryFind, randomHex } from "./misc.js";
 import { displayName, withoutMd, parseLinktext , firstHeadingText } from "./path.js";
