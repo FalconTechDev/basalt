@@ -17,11 +17,19 @@ import { nIconsSetIc2g } from "./n-icons-set-ic2g.js";
 import { nIconsSetIc2h } from "./n-icons-set-ic2h.js";
 import { nIconsSetIc2i } from "./n-icons-set-ic2i.js";
 
+import { nIconsSetIc1a } from "./n-icons-set-ic1a.js";
+import { nIconsSetIc1b } from "./n-icons-set-ic1b.js";
+import { nIconsSetIc1c } from "./n-icons-set-ic1c.js";
+import { nIconsSetIc1d } from "./n-icons-set-ic1d.js";
+import { nIconsSetIc1e } from "./n-icons-set-ic1e.js";
+
 // Piece registry: resolved lazily inside nIconsCollect (module order in the
 // flat own scope is alphabetical, so a top-level reference would hit TDZ).
 // Drawing agents append their piece module here.
 function nIconsPieces() {
   return [nIconsSetBasic, nIconsSetIc2a, nIconsSetIc2b, nIconsSetIc2c, nIconsSetIc2d, nIconsSetIc2e, nIconsSetIc2f, nIconsSetIc2g, nIconsSetIc2h, nIconsSetIc2i];
+
+  return [nIconsSetBasic, nIconsSetIc1a, nIconsSetIc1b, nIconsSetIc1c, nIconsSetIc1d, nIconsSetIc1e];
 }
 
 // The 36 names of the inherited Qm table (app-specific glyphs). They keep
