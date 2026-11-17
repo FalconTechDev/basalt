@@ -30045,7 +30045,7 @@ function ng09ListIndentClass(host) {
       let deco = this.markCache.get(size);
       if (!deco) {
         deco = host.cmDecoration.line({
-          style: "text-indent:-" + size + "px;padding-inline-start:" + size + "px",
+          attributes: { style: "text-indent:-" + size + "px;padding-inline-start:" + size + "px" },
         });
         this.markCache.set(size, deco);
       }
@@ -30066,7 +30066,7 @@ function ng09ListIndentClass(host) {
           continue;
         }
         const size = this.markerSize(view, line, marker);
-        builder.add(line.from, line.to, this.lineDeco(size));
+        builder.add(line.from, line.from, this.lineDeco(size));
       }
       // entries for lines outside the viewport stay cached: markerSize keys
       // them by line text so neighbours are reused on scroll.
