@@ -171,12 +171,19 @@ export function ng12PublishPlugin(host) {
       this.registerFileMenu(plugin);
       this.ensureCommands();
       const self = this;
-      setTimeout(() => self.ensureCommands(), 0);
-      setTimeout(() => self.ensureCommands(), 1500);
-      setTimeout(() => self.ensureCommands(), 5000);
+      let heals = 0;
+      const heal = () => {
+        if (!self.app || !self.app.commands) return;
+        self.ensureCommands();
+        if (++heals < 40) self._healTimer = setTimeout(heal, 3000);
+      };
+      heal();
+      self._healTimer = setTimeout(heal, 3000);
     }
 
     onDisable() {
+      if (this._healTimer) clearTimeout(this._healTimer);
+      this._healTimer = null;
       this.modal = null;
     }
 
@@ -366,7 +373,9 @@ export function ng12PublishPlugin(host) {
     }
 
     getHashFromMetadataCache(file) {
-      const cache = this.app.metadataCache.getFileCache(file);
+      const cache = this.app.metadataCache.getFileInfo
+        ? this.app.metadataCache.getFileInfo(file.path)
+        : this.app.metadataCache.getFileCache(file);
       if (!cache) return null;
       if (cache.mtime === file.stat.mtime && cache.size === file.stat.size) {
         return cache.hash || null;
