@@ -155,8 +155,8 @@
   // ---- Basalt look for the settings window (tokens scoped to .mod-settings, so the rest of the app is untouched)
   // default accent = copper; a colour the user picks in Appearance sets --accent-h/s/l on <body> and wins over these
   const THEME_CSS = `
-    body.theme-light { --accent-h: 25; --accent-s: 44%; --accent-l: 29%; }
-    body.theme-dark { --accent-h: 25; --accent-s: 37%; --accent-l: 50%; }
+    body.theme-light { --accent-h: 27; --accent-s: 50%; --accent-l: 34%; }
+    body.theme-dark { --accent-h: 27; --accent-s: 50%; --accent-l: 57%; }
     .modal.mod-settings {
       --background-primary: #e6dfd6; --background-secondary: #ddd3c7; --background-modifier-hover: #ebe3d8; --background-modifier-border: #cdbfae;
       --divider-color: #cdbfae; --text-normal: #2a211a; --text-muted: #6e6154; --text-faint: #8a7b6c;
