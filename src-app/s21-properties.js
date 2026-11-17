@@ -20,7 +20,7 @@ import { renderMatches, renderResults, containsAllWords } from "./search-simple.
 import { s04StringCompare } from "./s04-themes.js";
 import { blockRefInsertion } from "./bookmarks.js";
 import { hideTooltip, displayTooltip, setElementTooltip } from "./tooltip.js";
-import { copyTextToClipboard } from "./search-view.js";
+import { copyTextToClipboard } from "./n-g11-view.js";
 
 const s21Env = () => hostEnv();
 const s21Cache = new WeakMap();

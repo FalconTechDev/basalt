@@ -1653,7 +1653,7 @@
     },
     {
       "orig": "wA",
-      "use": "s05CommandScore",
+      "use": "ng01CommandScore",
       "originalBytes": 562
     },
     {
@@ -1899,25 +1899,25 @@
     },
     {
       "orig": "wq",
-      "use": "s23TableSync",
+      "use": "ng09TableSync",
       "host": true,
       "originalBytes": 1192
     },
     {
       "orig": "Mq",
-      "use": "s23ListRenumber",
+      "use": "ng09ListRenumber",
       "host": true,
       "originalBytes": 2172
     },
     {
       "orig": "Sq",
-      "use": "s23ListMarker",
+      "use": "ng09ListMarker",
       "host": true,
       "originalBytes": 57
     },
     {
       "orig": "xq",
-      "use": "s23InsideCode",
+      "use": "ng09InsideCode",
       "host": true,
       "originalBytes": 210
     },
@@ -2557,11 +2557,11 @@
     },
     {
       "orig": "qD",
-      "use": "defineLeafHistory"
+      "use": "ng04LeafHistory"
     },
     {
       "orig": "jD",
-      "use": "defineWorkspaceLeaf"
+      "use": "ng04WorkspaceLeaf"
     },
     {
       "orig": "Ng",
@@ -3334,11 +3334,11 @@
     },
     {
       "orig": "iZ",
-      "use": "defineEditorImpl"
+      "use": "ng09DefineEditorImpl"
     },
     {
       "orig": "oZ",
-      "use": "defineCodeMirrorEditor"
+      "use": "ng09DefineCodeMirrorEditor"
     },
     {
       "orig": "AL",
@@ -4052,12 +4052,12 @@
     },
     {
       "orig": "CA",
-      "use": "defineCli",
+      "use": "ng01DefineCli",
       "originalBytes": 64702
     },
     {
       "orig": "bA",
-      "use": "defineTable",
+      "use": "ng01DefineTable",
       "originalBytes": 1313
     },
     {
@@ -4601,12 +4601,12 @@
     },
     {
       "orig": "gj",
-      "use": "s23EditorSearchBar",
+      "use": "ng09EditorSearchBar",
       "originalBytes": 4127
     },
     {
       "orig": "Tq",
-      "use": "s23ListIndentClass",
+      "use": "ng09ListIndentClass",
       "originalBytes": 3873
     },
     {
@@ -5318,7 +5318,7 @@
     },
     {
       "orig": "y5",
-      "use": "s32CanvasView"
+      "use": "ng02CanvasView"
     },
     {
       "orig": "MZ",
@@ -5611,12 +5611,12 @@
     },
     {
       "orig": "H0",
-      "use": "s48Workspace",
+      "use": "ng04S48Workspace",
       "originalBytes": 34792
     },
     {
       "orig": "_q",
-      "use": "s52Cm5Adapter"
+      "use": "ng09Cm5Adapter"
     }
   ],
   "host": {
@@ -7021,97 +7021,97 @@
     },
     {
       "orig": "T$",
-      "expr": "__basaltOwn.s10FilteredKeymap(__basaltHost)",
+      "expr": "__basaltOwn.ng09FilteredKeymap(__basaltHost)",
       "sha1": "1c066add42bd47140c4a8bb2b05669a1270c4b48",
       "originalBytes": 46
     },
     {
       "orig": "D$",
-      "expr": "__basaltOwn.s10IndentColumn(__basaltHost)",
+      "expr": "__basaltOwn.ng09IndentColumn(__basaltHost)",
       "sha1": "64ad1996ea63f08c14911d4df206db139a24c222",
       "originalBytes": 99
     },
     {
       "orig": "A$",
-      "expr": "__basaltOwn.s10FoldIndent(__basaltHost)",
+      "expr": "__basaltOwn.ng09FoldIndent(__basaltHost)",
       "sha1": "8a458323c84b3f4107d47f0e4be44c24bdc50ac5",
       "originalBytes": 259
     },
     {
       "orig": "P$",
-      "expr": "__basaltOwn.s10LastInsertPlugin(__basaltHost)",
+      "expr": "__basaltOwn.ng09LastInsertPlugin(__basaltHost)",
       "sha1": "5284351dfe28efa445f7a766d71657b6a1dcbf12",
       "originalBytes": 46
     },
     {
       "orig": "L$",
-      "expr": "__basaltOwn.s10DashInputHandler(__basaltHost)",
+      "expr": "__basaltOwn.ng09DashInputHandler(__basaltHost)",
       "sha1": "ab62f643a4e3707bf735d8e2571cb57175c3956d",
       "originalBytes": 306
     },
     {
       "orig": "O$",
-      "expr": "__basaltOwn.s10FoldHeading(__basaltHost)",
+      "expr": "__basaltOwn.ng09FoldHeading(__basaltHost)",
       "sha1": "a903bed7dad7521ed15b1bfc442e082f2a208dab",
       "originalBytes": 666
     },
     {
       "orig": "F$",
-      "expr": "__basaltOwn.s10FoldFrontmatter(__basaltHost)",
+      "expr": "__basaltOwn.ng09FoldFrontmatter(__basaltHost)",
       "sha1": "bc755ae9e41b0b1c70116fccfe8e5bd31f3939d7",
       "originalBytes": 250
     },
     {
       "orig": "N$",
-      "expr": "__basaltOwn.s10CmdGoStart(__basaltHost)",
+      "expr": "__basaltOwn.ng09CmdGoStart(__basaltHost)",
       "sha1": "d7e9e4176b2c44dbc7f513f1c9ff6d12c8881cec",
       "originalBytes": 102
     },
     {
       "orig": "R$",
-      "expr": "__basaltOwn.s10CmdFoldAll(__basaltHost)",
+      "expr": "__basaltOwn.ng09CmdFoldAll(__basaltHost)",
       "sha1": "d7e5434ab588b968c750c30eb98f6bcecf71741c",
       "originalBytes": 257
     },
     {
       "orig": "H$",
-      "expr": "__basaltOwn.s10CmdIndentMore(__basaltHost)",
+      "expr": "__basaltOwn.ng09CmdIndentMore(__basaltHost)",
       "sha1": "41a6800eeafeeace139385b65bdc1079caefeec4",
       "originalBytes": 274
     },
     {
       "orig": "z$",
-      "expr": "__basaltOwn.s10CmdIndentLess(__basaltHost)",
+      "expr": "__basaltOwn.ng09CmdIndentLess(__basaltHost)",
       "sha1": "29d75ba14f2ad8a49e090022313491f8abf22e26",
       "originalBytes": 527
     },
     {
       "orig": "q$",
-      "expr": "__basaltOwn.s10FieldSetEffect(__basaltHost)",
+      "expr": "__basaltOwn.ng09FieldSetEffect(__basaltHost)",
       "sha1": "31041be5deb4e5ce0ba0b5c5db6fa99078526c95",
       "originalBytes": 11
     },
     {
       "orig": "j$",
-      "expr": "__basaltOwn.s10MakeCmFieldFactory(__basaltHost)",
+      "expr": "__basaltOwn.ng09MakeCmFieldFactory(__basaltHost)",
       "sha1": "96bbf410b915d9c4d2841d42d7040ac777cbd8cc",
       "originalBytes": 197
     },
     {
       "orig": "U$",
-      "expr": "__basaltOwn.s10EditorField(__basaltHost)",
+      "expr": "__basaltOwn.ng09EditorField(__basaltHost)",
       "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
       "originalBytes": 8
     },
     {
       "orig": "W$",
-      "expr": "__basaltOwn.s10OwnerField(__basaltHost)",
+      "expr": "__basaltOwn.ng09OwnerField(__basaltHost)",
       "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
       "originalBytes": 8
     },
     {
       "orig": "G$",
-      "expr": "__basaltOwn.s10LivePreviewField(__basaltHost)",
+      "expr": "__basaltOwn.ng09LivePreviewField(__basaltHost)",
       "sha1": "2a6bdbff81b0ccfb37e79e43258cf5122b1333b5",
       "originalBytes": 6
     },
@@ -7123,7 +7123,7 @@
     },
     {
       "orig": "K$",
-      "expr": "__basaltOwn.s10MouseSelectionStyle(__basaltHost)",
+      "expr": "__basaltOwn.ng09MouseSelectionStyle(__basaltHost)",
       "sha1": "2102467cd0aa446a40429eeccb1ee46eff527b9d",
       "originalBytes": 447
     },
@@ -7146,32 +7146,26 @@
       "originalBytes": 6
     },
     {
-      "orig": "tZ",
-      "expr": "__basaltOwn.s10CompartmentOf(Y$,eZ)",
-      "sha1": "5c38612ad2c6f7ff3b7034aad01882da6734868c",
-      "originalBytes": 9
-    },
-    {
       "orig": "Z$",
-      "expr": "__basaltOwn.s10HypermdMode(__basaltHost)",
+      "expr": "__basaltOwn.ng09HypermdMode(__basaltHost)",
       "sha1": "7114d8e2523b0137f504c569ed37a42acfe5ceed",
       "originalBytes": 50
     },
     {
       "orig": "J$",
-      "expr": "__basaltOwn.s10TableCellMode(__basaltHost)",
+      "expr": "__basaltOwn.ng09TableCellMode(__basaltHost)",
       "sha1": "ba51e3da91c91e00c9115fa3df62311783c89036",
       "originalBytes": 187
     },
     {
       "orig": "X$",
-      "expr": "__basaltOwn.s10LineStartFactory(__basaltHost)",
+      "expr": "__basaltOwn.ng09LineStartFactory(__basaltHost)",
       "sha1": "d903f984886451a58cfb653531c78427262c9790",
       "originalBytes": 611
     },
     {
       "orig": "$$",
-      "expr": "__basaltOwn.s10LineEndFactory(__basaltHost)",
+      "expr": "__basaltOwn.ng09LineEndFactory(__basaltHost)",
       "sha1": "95b683fa91a0430ac0269f2291efc3a916badc57",
       "originalBytes": 402
     },
@@ -7411,27 +7405,27 @@
     },
     {
       "orig": "eA",
-      "expr": "__basaltOwn.s05CommunityPluginsUrl",
-      "sha1": "31b47de3731fcdc0256f24f25d758f938e0e299b",
-      "originalBytes": 59
+      "expr": "__basaltOwn.ng01CommunityPluginsUrl",
+      "sha1": "9e7272271f89ce037f32f46a4bcb736a2f2117a6",
+      "originalBytes": 34
     },
     {
       "orig": "nA",
-      "expr": "__basaltOwn.s05CommunityPluginStatsUrl",
-      "sha1": "eb1d3004df3189f4daf90ce0fa1372cd69a1ede6",
-      "originalBytes": 64
+      "expr": "__basaltOwn.ng01CommunityPluginStatsUrl",
+      "sha1": "996d5f3764275b48f84cd0ce5ef818c05f24ac19",
+      "originalBytes": 38
     },
     {
       "orig": "tA",
-      "expr": "__basaltOwn.s05CommunityPlugins",
-      "sha1": "268441f5f19ae024bb89bbd323010ddc0466f3db",
-      "originalBytes": 258
+      "expr": "__basaltOwn.ng01CommunityPlugins",
+      "sha1": "475f4e4db16ddc4dfd2c3b5a486b2057a9b5c4b3",
+      "originalBytes": 31
     },
     {
       "orig": "iA",
-      "expr": "__basaltOwn.s05CommunityPluginStats",
-      "sha1": "869711740f0bcd67356d75a2c2eb304c67d63cc1",
-      "originalBytes": 44
+      "expr": "__basaltOwn.ng01CommunityPluginStats",
+      "sha1": "56757f71d7d317cf60bd621c175eb76731b3a1b6",
+      "originalBytes": 35
     },
     {
       "orig": "DD",
@@ -7861,37 +7855,37 @@
     },
     {
       "orig": "Dq",
-      "expr": "__basaltOwn.s23ListIndentPlugin(__basaltHost)",
+      "expr": "__basaltOwn.ng09ListIndentPlugin(__basaltHost)",
       "sha1": "116f65ebc9d7663abd850c2982cdff5d7d5dd2f4",
       "originalBytes": 90
     },
     {
       "orig": "Eq",
-      "expr": "__basaltOwn.s23BreakPattern",
+      "expr": "__basaltOwn.ng09BreakPattern",
       "sha1": "345220fd7d046fb9d9115cd43521b2b09d3c7c5a",
       "originalBytes": 51
     },
     {
       "orig": "fj",
-      "expr": "__basaltOwn.s23WrapPairInput(__basaltHost)",
+      "expr": "__basaltOwn.ng09WrapPairInput(__basaltHost)",
       "sha1": "4b07c5f0961584a13b7317dc752726c18889fc57",
       "originalBytes": 604
     },
     {
       "orig": "dj",
-      "expr": "__basaltOwn.s23WrapPairChars",
+      "expr": "__basaltOwn.ng09WrapPairChars",
       "sha1": "9271a2cbe7aad586ebfcf4a322d5ae41142062f0",
       "originalBytes": 17
     },
     {
       "orig": "aj",
-      "expr": "__basaltOwn.s23SearchMatchMark(__basaltHost)",
+      "expr": "__basaltOwn.ng09SearchMatchMark(__basaltHost)",
       "sha1": "422da6cd2b7d6683f294ca821d9ba8937e8e0222",
       "originalBytes": 48
     },
     {
       "orig": "mj",
-      "expr": "__basaltOwn.s23SearchMatchClass",
+      "expr": "__basaltOwn.ng09SearchMatchClass",
       "sha1": "471d032451e957fe7d1d47551ef4a147e4d0ba28",
       "originalBytes": 31
     },
@@ -9417,573 +9411,6 @@
       "use": "fmGetAvailablePathForAttachment",
       "sha1": "961f29faac441d80c51bf7dc93c8b8b5dd7bff00",
       "originalBytes": 292
-    },
-    {
-      "class": "H0",
-      "name": "on",
-      "use": "wsOn",
-      "sha1": "5974e9a7081e080df478675ba93875b923c1d182",
-      "originalBytes": 55
-    },
-    {
-      "class": "H0",
-      "name": "trigger",
-      "use": "wsTrigger",
-      "sha1": "576bfc22529b24cffe944cfb73d064a6fba94360",
-      "originalBytes": 116
-    },
-    {
-      "class": "H0",
-      "name": "isAttached",
-      "use": "wsIsAttached",
-      "sha1": "ca3cdf9f9b1725f37c84ef36a5e5d5d159352629",
-      "originalBytes": 130
-    },
-    {
-      "class": "H0",
-      "name": "getLeftLeaf",
-      "use": "wsGetLeftLeaf",
-      "sha1": "3188a2625378c65d0e2cdaa13d97b044bb6608e9",
-      "originalBytes": 54
-    },
-    {
-      "class": "H0",
-      "name": "getRightLeaf",
-      "use": "wsGetRightLeaf",
-      "sha1": "1b3c19826ae37390cc158350332763a364d34429",
-      "originalBytes": 55
-    },
-    {
-      "class": "H0",
-      "name": "getLeaf",
-      "use": "wsGetLeaf",
-      "sha1": "211ded2122beb11099959b795b59c2f0b3dc765c",
-      "originalBytes": 160
-    },
-    {
-      "class": "H0",
-      "name": "getGroupLeaves",
-      "use": "wsGetGroupLeaves",
-      "sha1": "d6daa03ff45eee91799505e479741aa0b03a7b70",
-      "originalBytes": 97
-    },
-    {
-      "class": "H0",
-      "name": "iterateLeaves",
-      "use": "wsIterateLeaves",
-      "sha1": "bb71dd62d3317d5abf124b718747313ff48b25b7",
-      "originalBytes": 334
-    },
-    {
-      "class": "H0",
-      "name": "iterateTabs",
-      "use": "wsIterateTabs",
-      "sha1": "b9518d9b56f6438d52af9b3cc639a63e9e374157",
-      "originalBytes": 186
-    },
-    {
-      "class": "H0",
-      "name": "iterateAllLeaves",
-      "use": "wsIterateAllLeaves",
-      "sha1": "a4847df435eee4d2adfb213f654bcaafdb34c91e",
-      "originalBytes": 165
-    },
-    {
-      "class": "H0",
-      "name": "iterateRootLeaves",
-      "use": "wsIterateRootLeaves",
-      "sha1": "ab81d04d7cafafdc4c6f9705818f16173417c317",
-      "originalBytes": 49
-    },
-    {
-      "class": "H0",
-      "name": "iterateCodeMirrors",
-      "use": "wsIterateCodeMirrors",
-      "sha1": "07714e6deea17a4e7a859895c769cd8e910e44f0",
-      "originalBytes": 13
-    },
-    {
-      "class": "H0",
-      "name": "hasUndoHistory",
-      "use": "wsHasUndoHistory",
-      "sha1": "becb67aad72c391516991ea287c9abfc2d9eb17e",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "isInSidebar",
-      "use": "wsIsInSidebar",
-      "sha1": "f53b2eb354f8139189e63b9b2cd2b6e1437fb9c3",
-      "originalBytes": 85
-    },
-    {
-      "class": "H0",
-      "name": "onLayoutChange",
-      "use": "wsOnLayoutChange",
-      "sha1": "4d7743c86b68d18be5f305cedef06b26de6dfab3",
-      "originalBytes": 98
-    },
-    {
-      "class": "H0",
-      "name": "onLayoutReady",
-      "use": "wsOnLayoutReady",
-      "sha1": "eda77fef15e782fac92fc68e6e6c0bc660b98867",
-      "originalBytes": 140
-    },
-    {
-      "class": "H0",
-      "name": "onQuickPreview",
-      "use": "wsOnQuickPreview",
-      "sha1": "34d6115c546670b4a86091b47e250c580cbb2d3e",
-      "originalBytes": 48
-    },
-    {
-      "class": "H0",
-      "name": "addMobileFileInfo",
-      "use": "wsAddMobileFileInfo",
-      "sha1": "2335f0d14203dfa501db34f68353511977242f29",
-      "originalBytes": 41
-    },
-    {
-      "class": "H0",
-      "name": "getRecentFiles",
-      "use": "wsGetRecentFiles",
-      "sha1": "4017bde3a61e913e4d51dda88fad7576b79cb2d0",
-      "originalBytes": 60
-    },
-    {
-      "class": "H0",
-      "name": "getLastOpenFiles",
-      "use": "wsGetLastOpenFiles",
-      "sha1": "6dba792dbe3f88279b894aabba5c374f85030ae3",
-      "originalBytes": 60
-    },
-    {
-      "class": "H0",
-      "name": "addRecentFile",
-      "use": "wsAddRecentFile",
-      "sha1": "e995da93d613ae7814af76a8f4cc0bd2a1f8425b",
-      "originalBytes": 52
-    },
-    {
-      "class": "H0",
-      "name": "onResize",
-      "use": "wsOnResize",
-      "sha1": "928ee359e9023c416add256e33e03d1c3db332ae",
-      "originalBytes": 34
-    },
-    {
-      "class": "H0",
-      "name": "updateTitle",
-      "use": "wsUpdateTitle",
-      "sha1": "0de8e04341e5048494b585aaf62c134d0bed1ea1",
-      "originalBytes": 124
-    },
-    {
-      "class": "H0",
-      "name": "getActiveFile",
-      "use": "wsGetActiveFile",
-      "sha1": "29297cc28e3dcbbb771191fd90509d8240307080",
-      "originalBytes": 153
-    },
-    {
-      "class": "H0",
-      "name": "getFocusedContainer",
-      "use": "wsGetFocusedContainer",
-      "sha1": "0bef3884c53d9d8767d05c858fd962a9a3817ff3",
-      "originalBytes": 199
-    },
-    {
-      "class": "H0",
-      "name": "getMostRecentLeaf",
-      "use": "wsGetMostRecentLeaf",
-      "sha1": "232f752ac34c14f6ee8f196c76a6b292bbd9a56c",
-      "originalBytes": 193
-    },
-    {
-      "class": "H0",
-      "name": "getActiveViewOfType",
-      "use": "wsGetActiveViewOfType",
-      "sha1": "b9f5feb64360d1d302621fd3300c00c4e2db426c",
-      "originalBytes": 94
-    },
-    {
-      "class": "H0",
-      "name": "getActiveLeafOfViewType",
-      "use": "wsGetActiveLeafOfViewType",
-      "sha1": "d51434d8b1a778f9f5ba96fca8e8f4bf0971c618",
-      "originalBytes": 47
-    },
-    {
-      "class": "H0",
-      "name": "getSideLeaf",
-      "use": "wsGetSideLeaf",
-      "sha1": "ed07a42d3a912eaf67314d28d070558a5e27513b",
-      "originalBytes": 332
-    },
-    {
-      "class": "H0",
-      "name": "getActiveFileView",
-      "use": "wsGetActiveFileView",
-      "sha1": "e266d1c8d5f4de70c217426fcb15f0dbe4069f26",
-      "originalBytes": 255
-    },
-    {
-      "class": "H0",
-      "name": "activeLeafEvents",
-      "use": "wsActiveLeafEvents",
-      "sha1": "fcb0f5f6bccbcffbd05893518cef2877889d778b",
-      "originalBytes": 239
-    },
-    {
-      "class": "H0",
-      "name": "pushUndoHistory",
-      "use": "wsPushUndoHistory",
-      "sha1": "8e9b548e96b5793c1155f3fc8fde106f581cb41d",
-      "originalBytes": 232
-    },
-    {
-      "class": "H0",
-      "name": "changeLayout",
-      "use": "wsChangeLayout",
-      "sha1": "911b732347b2e712a7dc522ec0089de358f1bee8",
-      "originalBytes": 232
-    },
-    {
-      "class": "H0",
-      "name": "updateOptions",
-      "use": "wsUpdateOptions",
-      "sha1": "a1802abe1bb75bc3b0d042cc7bc8e8205ab1bb95",
-      "originalBytes": 177
-    },
-    {
-      "class": "H0",
-      "name": "registerObsidianProtocolHandler",
-      "use": "wsRegisterObsidianProtocolHandler",
-      "sha1": "838e31aaecfb7bc99f313d467d44f7d3dcfdc34b",
-      "originalBytes": 155
-    },
-    {
-      "class": "H0",
-      "name": "unregisterObsidianProtocolHandler",
-      "use": "wsUnregisterObsidianProtocolHandler",
-      "sha1": "d15f740358536dbc4b1825c4387468893d0de6ce",
-      "originalBytes": 83
-    },
-    {
-      "class": "H0",
-      "name": "registerUriHook",
-      "use": "wsRegisterUriHook",
-      "sha1": "2b4894056fc0329d5560f95b5d342752be395a50",
-      "originalBytes": 517
-    },
-    {
-      "class": "H0",
-      "name": "getUnpinnedLeaf",
-      "use": "wsGetUnpinnedLeaf",
-      "sha1": "2669cb181a81989f279671882d93a1e54613c301",
-      "originalBytes": 519
-    },
-    {
-      "class": "H0",
-      "name": "ensureSideLeaf",
-      "use": "wsEnsureSideLeaf",
-      "sha1": "100b7f32605ed0533063cbccd8bed46b91ab46e4",
-      "originalBytes": 603
-    },
-    {
-      "class": "H0",
-      "name": "revealLeaf",
-      "use": "wsRevealLeaf",
-      "sha1": "3486677b3a762829c860ccee7369e8451ee6fcb2",
-      "originalBytes": 516
-    },
-    {
-      "class": "H0",
-      "name": "splitLeaf",
-      "use": "wsSplitLeaf",
-      "sha1": "147ffb8bfb0e8b980d0e2637c0138cb7b96dd015",
-      "originalBytes": 480
-    },
-    {
-      "class": "H0",
-      "name": "getDropDirection",
-      "use": "wsGetDropDirection",
-      "sha1": "2c49e8393168dbad321d9cb5cbf55ea876cac168",
-      "originalBytes": 912
-    },
-    {
-      "class": "H0",
-      "name": "getDropLocation",
-      "use": "wsGetDropLocation",
-      "sha1": "26a012294680fca5b5ad70ddccb576d71da8a100",
-      "originalBytes": 588
-    },
-    {
-      "class": "H0",
-      "name": "duplicateLeaf",
-      "use": "wsDuplicateLeaf",
-      "sha1": "91070abbd4e20bda9936b6fa5a4799f007672e18",
-      "originalBytes": 414
-    },
-    {
-      "class": "H0",
-      "name": "createLeafInTabGroup",
-      "use": "wsCreateLeafInTabGroup",
-      "sha1": "ec5bd2b399f922911be371f709a6ce3a4406a4b1",
-      "originalBytes": 387
-    },
-    {
-      "class": "H0",
-      "name": "updateMobileVisibleTabGroup",
-      "use": "wsUpdateMobileVisibleTabGroup",
-      "sha1": "e0dbb81e869484d1748ba504697fa736a8b2014c",
-      "originalBytes": 367
-    },
-    {
-      "class": "H0",
-      "name": "readWorkspaceFile",
-      "use": "wsReadWorkspaceFile",
-      "sha1": "34d708d5330f6dcd6eb1797aae902c5e86b71b1a",
-      "originalBytes": 357
-    },
-    {
-      "class": "H0",
-      "name": "moveLeafToPopout",
-      "use": "wsMoveLeafToPopout",
-      "sha1": "491b0607f407905e122b5bcd5524c8a0687b6d64",
-      "originalBytes": 348
-    },
-    {
-      "class": "H0",
-      "name": "splitActiveLeaf",
-      "use": "wsSplitActiveLeaf",
-      "sha1": "f6cabb2c0aa39e083243c141b769284a28c461fa",
-      "originalBytes": 122
-    },
-    {
-      "class": "H0",
-      "name": "openLinkText",
-      "use": "wsOpenLinkText",
-      "sha1": "54cbde3d450241b7b2b2e8025cb60061645cd26b",
-      "originalBytes": 188
-    },
-    {
-      "class": "H0",
-      "name": "recursiveGetTarget",
-      "use": "wsRecursiveGetTarget",
-      "sha1": "3e9f41c934774a0aed9798bbe8ea8979affe62c9",
-      "originalBytes": 173
-    },
-    {
-      "class": "H0",
-      "name": "createLeafInParent",
-      "use": "wsCreateLeafInParent",
-      "sha1": "e8f8b59bc0206dc241c706278dfe8d9199859be4",
-      "originalBytes": 146
-    },
-    {
-      "class": "H0",
-      "name": "getLeafById",
-      "use": "wsGetLeafById",
-      "sha1": "b04893a252e9bfae372a35781c7cb0847fda5f41",
-      "originalBytes": 96
-    },
-    {
-      "class": "H0",
-      "name": "detachLeavesOfType",
-      "use": "wsDetachLeavesOfType",
-      "sha1": "df622bcac59226d3891b8ba858ae04163b580f3f",
-      "originalBytes": 81
-    },
-    {
-      "class": "H0",
-      "name": "registerEditorExtension",
-      "use": "wsRegisterEditorExtension",
-      "sha1": "63e777d0e3b02e5f540fde4102d102a3e12edf98",
-      "originalBytes": 63
-    },
-    {
-      "class": "H0",
-      "name": "unregisterEditorExtension",
-      "use": "wsUnregisterEditorExtension",
-      "sha1": "d53f2757b3a885beb2ad71ea80310b75701ceff5",
-      "originalBytes": 65
-    },
-    {
-      "class": "H0",
-      "name": "registerHoverLinkSource",
-      "use": "wsRegisterHoverLinkSource",
-      "sha1": "d0dd175190e82c2047f6727b719e5566f7738ca8",
-      "originalBytes": 41
-    },
-    {
-      "class": "H0",
-      "name": "unregisterHoverLinkSource",
-      "use": "wsUnregisterHoverLinkSource",
-      "sha1": "449bec459de3ba919da47fa3d40a998e6316a138",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "registerOperatorFuncConfigs",
-      "use": "wsRegisterOperatorFuncConfigs",
-      "sha1": "b7a786b763cc8b0575fb1c17491148fd859eb500",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "unregisterOperatorFuncConfigs",
-      "use": "wsUnregisterOperatorFuncConfigs",
-      "sha1": "4e0bc90047e1a91b4ae6782444786608927946e2",
-      "originalBytes": 47
-    },
-    {
-      "class": "H0",
-      "name": "clearLayout",
-      "use": "wsClearLayout",
-      "sha1": "99bcc0d81a933c53537ab17e0008ebae092c27f5",
-      "originalBytes": 811
-    },
-    {
-      "class": "H0",
-      "name": "createLeafBySplit",
-      "use": "wsCreateLeafBySplit",
-      "sha1": "3dac4fd7d0427356f9cbd3a39e8dde6c8055b9fb",
-      "originalBytes": 94
-    },
-    {
-      "class": "H0",
-      "name": "deserializeLayout",
-      "use": "wsDeserializeLayout",
-      "sha1": "f5ff7e8554d41b183d337841211bf6557a88eeed",
-      "originalBytes": 2270
-    },
-    {
-      "class": "H0",
-      "name": "focusLeaf",
-      "use": "wsFocusLeaf",
-      "sha1": "f5faf8dbcf3e959147536e407670b6eb04ad6da9",
-      "originalBytes": 296
-    },
-    {
-      "class": "H0",
-      "name": "getAdjacentLeafInDirection",
-      "use": "wsGetAdjacentLeafInDirection",
-      "sha1": "a5d72a7003bbf75420d653ff506cd4605832490b",
-      "originalBytes": 1051
-    },
-    {
-      "class": "H0",
-      "name": "getLayout",
-      "use": "wsGetLayout",
-      "sha1": "29f293cf8ffb78d3719b75cc3dcc79e4aeeadef7",
-      "originalBytes": 299
-    },
-    {
-      "class": "H0",
-      "name": "getLeavesOfType",
-      "use": "wsGetLeavesOfType",
-      "sha1": "c2bba0eb0162a95436f3c8464e64d4bde335056f",
-      "originalBytes": 104
-    },
-    {
-      "class": "H0",
-      "name": "handleExternalLinkContextMenu",
-      "use": "wsHandleExternalLinkContextMenu",
-      "sha1": "eba7410d257349cde0213dfc4f321136958f66ef",
-      "originalBytes": 437
-    },
-    {
-      "class": "H0",
-      "name": "handleLinkContextMenu",
-      "use": "wsHandleLinkContextMenu",
-      "sha1": "901a000ae1dc34c702a3d98f5b0232b1f04c6a3a",
-      "originalBytes": 1282
-    },
-    {
-      "class": "H0",
-      "name": "loadLayout",
-      "use": "wsLoadLayout",
-      "sha1": "1a014728f4aa970570ab4fee0bcc6fc133eaa5b3",
-      "originalBytes": 1437
-    },
-    {
-      "class": "H0",
-      "name": "onDragLeaf",
-      "use": "wsOnDragLeaf",
-      "sha1": "3e837a0e960da96a0dbe15132f68501044ebccc7",
-      "originalBytes": 5706
-    },
-    {
-      "class": "H0",
-      "name": "onStartLink",
-      "use": "wsOnStartLink",
-      "sha1": "2cf82884cd757e85458211dbebf756ece725bf74",
-      "originalBytes": 674
-    },
-    {
-      "class": "H0",
-      "name": "openPopout",
-      "use": "wsOpenPopout",
-      "sha1": "94a646a38513190b5961b8f7a36bad94b38d79fe",
-      "originalBytes": 89
-    },
-    {
-      "class": "H0",
-      "name": "openPopoutLeaf",
-      "use": "wsOpenPopoutLeaf",
-      "sha1": "29d92da3b94959ae6226f10c44fea700286c691d",
-      "originalBytes": 104
-    },
-    {
-      "class": "H0",
-      "name": "saveLayout",
-      "use": "wsSaveLayout",
-      "sha1": "01ac6739c3a410a9154699b7cc3be4ffe7c86492",
-      "originalBytes": 441
-    },
-    {
-      "class": "H0",
-      "name": "setActiveLeaf",
-      "use": "wsSetActiveLeaf",
-      "sha1": "0b9129f77c894af880781e34b629761d44bf7d3f",
-      "originalBytes": 823
-    },
-    {
-      "class": "H0",
-      "name": "setLayout",
-      "use": "wsSetLayout",
-      "sha1": "1cb80458f4de0e9f7291f467b15acd46d52f03a3",
-      "originalBytes": 2099
-    },
-    {
-      "class": "H0",
-      "name": "splitLeafOrActive",
-      "use": "wsSplitLeafOrActive",
-      "sha1": "64e2ab452d5265bb5fa4ecf2d4490bc26e1334ee",
-      "originalBytes": 75
-    },
-    {
-      "class": "H0",
-      "name": "unsetActiveEditor",
-      "use": "wsUnsetActiveEditor",
-      "sha1": "d8692572d939b2140db877e0ca8b4907002aa9f4",
-      "originalBytes": 65
-    },
-    {
-      "class": "H0",
-      "name": "updateFrameless",
-      "use": "wsUpdateFrameless",
-      "sha1": "d03525b2abc6825767628e25bd8af14fc7e81e6a",
-      "originalBytes": 2686
-    },
-    {
-      "class": "H0",
-      "name": "updateLayout",
-      "use": "wsUpdateLayout",
-      "sha1": "69eefec194c773fe98ce3cdeb0ef76c9ca31cc87",
-      "originalBytes": 1275
     },
     {
       "class": "Tte",
