@@ -8,7 +8,7 @@
 
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
-import { s09PublishHoverMove } from "./s09-publish.js";
+import { ng12PublishHoverMove as s09PublishHoverMove } from "./n-g12-s09-core.js";
 import { s04ModifierDisplayNames } from "./s04-menu.js";
 
 const PLUGIN_ID = "page-preview";

@@ -12,7 +12,7 @@ import { parseLinktext, plainHeading, linkSafeHeading, uniqueName } from "./text
 import { prepareQuery, fuzzyMatchJs } from "./search.js";
 import { debounceCall } from "./timing.js";
 import { s09FiltersToFrontmatter, s09Query, s09View, s09FileContext } from "./s09-query.js";
-import { s09BasesToolbarButton, s09BasesDropdown } from "./s09-publish.js";
+import { ng12BasesToolbarButton as s09BasesToolbarButton, ng12BasesDropdown as s09BasesDropdown } from "./n-g12-s09-widgets.js";
 import { s25ViewNameChars, s25ViewNamePattern, s25BasesViewType, s25Div, s25Icon } from "./s25-bases-toolbar.js";
 
 const s25Strings = () => env().gm.plugins.bases;

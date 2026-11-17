@@ -14,7 +14,7 @@ import { uniqueName, parsePropertyId, propertyId } from "./text.js";
 import { prepareQuery, fuzzyMatchJs } from "./search.js";
 import { debounceCall } from "./timing.js";
 import { s09IsCustomProperty, s09PropertyToRef, s09FormulaEditorExtensions, s09PropertySuggest, s09ConjunctionFilter } from "./s09-query.js";
-import { s09BasesDropdown } from "./s09-publish.js";
+import { ng12BasesDropdown as s09BasesDropdown } from "./n-g12-s09-widgets.js";
 import { s09IsIdentifierName } from "./s09-formula.js";
 import { s08FormulaValue, s08FormulaSuggester } from "./s08-values.js";
 import { s04NumberComponent } from "./s04-modals.js";
