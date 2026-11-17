@@ -5,7 +5,8 @@ import { env } from "./env.js";
 import { s09GraphNodeData, s09GraphLocalData, s09LoadPixiScript, s09GraphRenderer } from "./s09-graph.js";
 import { ng12PublishGraphData, ng12PublishResolveSub } from "./n-g12-s09-core.js";
 import { ng12PublishTagModal } from "./n-g12-s09-tree.js";
-import { lastSegment, parentPath, baseName, withoutExtension, extensionOf, displayName, withoutMd, parseLinktext, linkPath, isLocalLink, tidyLinkTarget, safeDecodeUri, escapeRegExp } from "./path.js";
+import { lastSegment, parentPath, baseName, withoutExtension, extensionOf, displayName, withoutMd, parseLinktext, linkPath, isLocalLink, tidyLinkTarget, safeDecodeUri } from "./path.js";
+import { escapeRegExp } from "./metadata-helpers.js";
 import { formEncodePath } from "./text.js";
 
 const ng12IsMd = (path) => extensionOf(path) === "md";

@@ -279,7 +279,7 @@ export function ng12PublishApp() {
             const links = node.tagName === "A" ? [node] : node.querySelectorAll ? node.querySelectorAll("a") : [];
             for (const a of links) {
               const href = a.getAttribute("href") || "";
-              const internal = href.startsWith(this.site.pathPrefix);
+              const internal = href.startsWith(this.site.pathprefix);
               if (internal) a.removeAttribute("rel");
               else {
                 const rel = (a.getAttribute("rel") || "")

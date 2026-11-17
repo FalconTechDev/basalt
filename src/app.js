@@ -27237,7 +27237,7 @@ function ng12PublishApp() {
             const links = node.tagName === "A" ? [node] : node.querySelectorAll ? node.querySelectorAll("a") : [];
             for (const a of links) {
               const href = a.getAttribute("href") || "";
-              const internal = href.startsWith(this.site.pathPrefix);
+              const internal = href.startsWith(this.site.pathprefix);
               if (internal) a.removeAttribute("rel");
               else {
                 const rel = (a.getAttribute("rel") || "")
@@ -27439,14 +27439,15 @@ function ng12PublishSite() {
     constructor(publish, siteInfo) {
       publish = publish || {};
       siteInfo = siteInfo || (typeof window !== "undefined" ? window.siteInfo : null) || {};
-      this.id = siteInfo.id;
-      this.host = siteInfo.host || "";
+      this.id = siteInfo.uid || siteInfo.id;
+      const rawHost = siteInfo.host || "";
       this.slug = siteInfo.slug || "";
       this.customUrl = siteInfo.customurl || "";
       this.status = siteInfo.status;
       this.options = siteInfo.options || {};
-      this.isLocalHost = ng12Loopback(this.host);
-      this.origin = (this.isLocalHost ? "http://" : "https://") + this.host;
+      this.isLocalHost = ng12Loopback(rawHost);
+      this.host = (this.isLocalHost ? "http://" : "https://") + rawHost;
+      this.origin = this.host;
       this._suffixCache = null;
 
       // password token persisted per site id; session fallback when storage throws
@@ -27460,7 +27461,7 @@ function ng12PublishSite() {
       this.cache = new (ng12PublishSiteCache())();
 
       const slug = encodeURIComponent(this.slug);
-      this.pathPrefix = this.customUrl
+      this.pathprefix = this.customUrl
         ? "https://" + this.customUrl + "/"
         : this.origin + "/" + slug + "/";
       this.publicOrigin = this.customUrl ? "https://" + this.customUrl : this.origin;
@@ -27521,7 +27522,7 @@ function ng12PublishSite() {
         rel = withoutMd(path);
         rel = formEncodePath(rel, "/");
       }
-      return this.pathPrefix + rel;
+      return this.pathprefix + rel;
     }
 
     _permalinkFor(path) {
