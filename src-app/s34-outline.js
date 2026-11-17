@@ -18,8 +18,8 @@ import { linkSafeHeading, endWithBlankLine } from "./text.js";
 import { renderMatches } from "./search-simple.js";
 import { searchClasses } from "./search-query.js";
 import { walkTree, treeDropPosition, updateTreeDropIndicator, makeTreePusher, collapsibleTreeItem } from "./tree.js";
-import { setDragPlainData } from "./drag.js";
-import { headingAtPosition } from "./bookmarks.js";
+import { ng08SetDragPlainData } from "./n-g08-drag.js";
+import { ng08HeadingAtPosition } from "./n-g08-bookmarks.js";
 
 const s34OutlineViewType = "outline";
 const outlineT = (host) => host.t.plugins.outline;
@@ -281,7 +281,7 @@ export function defineOutlineView(host) {
       });
     } else if (view.file) {
       const selection = view.editor.listSelections().first();
-      const heading = headingAtPosition(this.app, view.file, selection.head);
+      const heading = ng08HeadingAtPosition(this.app, view.file, selection.head);
       walkTree(this.tree.root, (item) => {
         if (item.heading === heading) {
           result = item;
@@ -338,7 +338,7 @@ export function defineOutlineView(host) {
     const item = new outlineParts.OutlineTreeItem(this, this.tree, heading);
     this.app.dragManager.handleDrag(item.selfEl, (event) => {
       self.app.dragManager.updateSource([item.selfEl], "is-being-dragged");
-      setDragPlainData(event.dataTransfer, item.heading.heading);
+      ng08SetDragPlainData(event.dataTransfer, item.heading.heading);
       return {
         source: "outline",
         type: "heading",

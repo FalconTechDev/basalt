@@ -18,7 +18,7 @@ import { tagValid } from "./metadata-helpers.js";
 import { prepareQuery, fuzzyMatchJs, matchScore } from "./search.js";
 import { renderMatches, renderResults, containsAllWords } from "./search-simple.js";
 import { s04StringCompare } from "./s04-themes.js";
-import { blockRefInsertion } from "./bookmarks.js";
+import { ng08BlockRefInsertion } from "./n-g08-bookmarks.js";
 import { hideTooltip, displayTooltip, setElementTooltip } from "./tooltip.js";
 import { copyTextToClipboard } from "./search-view.js";
 
@@ -793,7 +793,7 @@ function s21Build(host) {
         const beforeCursor = current.substring(2, range.startOffset);
         const linkInfo = s21Env().UI(this.app, suggestion, beforeCursor, current, 0, range.startOffset, this.sourcePath, key, "frontmatter");
         if (suggestion.type === "block" && linkInfo.blockId) {
-          const insertion = blockRefInsertion(suggestion, linkInfo.blockId);
+          const insertion = ng08BlockRefInsertion(suggestion, linkInfo.blockId);
           let content = suggestion.content;
           content = content.slice(0, insertion.blockEnd) + insertion.addition + content.slice(insertion.blockEnd);
           this.app.vault.modify(suggestion.file, content);
@@ -978,7 +978,7 @@ function s21Build(host) {
       const changes = [{ from: host.shiftPos(lineStart, linkInfo.start), to: host.shiftPos(lineStart, linkInfo.end), text: linkInfo.replacement }];
       const selection = { from: host.shiftPos(lineStart, linkInfo.selectionStart), to: host.shiftPos(lineStart, linkInfo.selectionEnd) };
       if (suggestion.type === "block" && linkInfo.blockId) {
-        const insertion = blockRefInsertion(suggestion, linkInfo.blockId);
+        const insertion = ng08BlockRefInsertion(suggestion, linkInfo.blockId);
         let content = suggestion.content;
         const blockStart = insertion.blockStart;
         const blockEnd = insertion.blockEnd;

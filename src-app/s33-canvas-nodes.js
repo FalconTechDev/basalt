@@ -5,7 +5,7 @@
 // a8 (canvas embed) and N8 (path suggest).
 import { randomHex, isLightColor } from "./misc.js";
 import { withoutMd } from "./path.js";
-import { blockRefInsertion } from "./bookmarks.js";
+import { ng08BlockRefInsertion } from "./n-g08-bookmarks.js";
 import { idleOrTimeout } from "./metadata-helpers.js";
 import { debounceCall } from "./timing.js";
 import { setElementTooltip } from "./tooltip.js";
@@ -273,7 +273,7 @@ export function defineS33CanvasFileNode(host) {
                   const content = result.content;
                   const target = result.file;
                   const id = (result.node.id = randomHex(6));
-                  const insertion = blockRefInsertion(result, id);
+                  const insertion = ng08BlockRefInsertion(result, id);
                   const blockEnd = insertion.blockEnd;
                   const addition = insertion.addition;
                   const text = content.slice(0, blockEnd) + addition + content.slice(blockEnd);

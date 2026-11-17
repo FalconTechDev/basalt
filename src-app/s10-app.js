@@ -5,7 +5,7 @@
 import { env } from "./env.js";
 import { linesOf, longPropertyId } from "./text.js";
 import { withoutExtension, extensionOf, lastSegment } from "./path.js";
-import { flattenUniqueFiles } from "./bookmarks.js";
+import { ng08FlattenUniqueFiles } from "./n-g08-bookmarks.js";
 import { isEditableNode } from "./tree.js";
 import { s10ForwardedEvents, s10PopoutStyleVars, s10PopoutBodyClasses } from "./s10-consts.js";
 
@@ -277,7 +277,7 @@ export function s10MovableFiles(e, t, host) {
     const o = e[i];
     if (s10OutsideFolder(o, t, host)) out.push(o);
   }
-  return flattenUniqueFiles(out);
+  return ng08FlattenUniqueFiles(out);
 }
 
 // Moves each entry of `t` into folder `n` (or beside it), renaming through the vault and
