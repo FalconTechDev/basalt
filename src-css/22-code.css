@@ -19,7 +19,7 @@ code[class*="language-"] {
 /* token emphasis */
 .token.important,
 .token.bold {
-  font-weight: bold;
+  font-weight: var(--font-bold);
 }
 
 .token.italic {

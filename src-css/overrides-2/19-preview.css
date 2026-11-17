@@ -19,7 +19,8 @@
   border-style: solid;
   border-color: rgba(var(--callout-color), var(--callout-border-opacity));
   border-radius: var(--callout-radius);
-  background-color: rgba(var(--callout-color), 0.1);
+  /* basalt callouts: a whisper of the type colour, no heavy fill */
+  background-color: color-mix(in srgb, rgb(var(--callout-color)) 8%, transparent);
   mix-blend-mode: var(--callout-blend-mode);
 }
 
@@ -63,8 +64,8 @@
   --icon-size: var(--icon-s);
   --icon-stroke: var(--icon-s-stroke-width);
   position: absolute;
-  top: 4px;
-  inset-inline-end: 4px;
+  top: var(--size-4-1);
+  inset-inline-end: var(--size-4-1);
   display: flex;
   align-items: center;
   padding: var(--size-2-2);
@@ -120,7 +121,7 @@
   container-type: inline-size;
   container-name: metadata;
   max-width: var(--metadata-max-width);
-  margin-block-end: 2rem;
+  margin-block-end: var(--size-4-8);
   padding: var(--metadata-padding);
   border-width: var(--metadata-border-width);
   border-style: solid;
@@ -151,7 +152,7 @@
 .metadata-error-container {
   padding: var(--size-4-1) var(--size-4-2);
   border-radius: var(--callout-radius);
-  background-color: rgba(var(--callout-error), 0.1);
+  background-color: rgba(var(--callout-error), 0.08);
 }
 
 .metadata-error-title {
@@ -175,6 +176,10 @@
   --input-border-width: 0;
   --input-border-width-focus: 0;
   --input-radius: 0;
+  /* property rows stay square like every other basalt row */
+  --metadata-property-radius: var(--radius-s);
+  --metadata-property-radius-hover: var(--radius-s);
+  --metadata-property-radius-focus: var(--radius-s);
   position: relative;
   display: flex;
   align-items: start;
@@ -304,7 +309,7 @@
   background-color: transparent;
   cursor: text;
   opacity: 0;
-  transition: opacity var(--anim-duration-fast) ease-in-out;
+  transition: opacity var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 /* list bullets render as centred inline glyphs */
@@ -328,7 +333,7 @@
   background-size: 0.825em;
   cursor: var(--cursor-link);
   filter: var(--link-external-filter);
-  transition: opacity var(--anim-duration-fast) ease-in-out;
+  transition: opacity var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 /* task list checkboxes take the shared checkbox size */

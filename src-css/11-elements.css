@@ -94,7 +94,7 @@ hr {
   border: none;
   border-top: var(--hr-thickness) solid;
   border-color: var(--hr-color);
-  margin: 2rem 0;
+  margin: var(--size-4-8) 0;
 }
 
 /* nesting deeper than one level returns to disc bullets */
@@ -144,7 +144,7 @@ a {
   text-decoration-line: var(--link-decoration);
   text-decoration-thickness: var(--link-decoration-thickness);
   cursor: var(--cursor-link);
-  transition: opacity var(--anim-duration-fast) ease-in-out;
+  transition: opacity var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 @media (hover: hover) {
