@@ -2379,6 +2379,10 @@
       "orig": "EV",
       "use": "s40FoldedRangeAt",
       "originalBytes": 105
+    },
+    {
+      "orig": "ym",
+      "use": "s65LocaleName"
     }
   ],
   "classes": [
@@ -9059,60 +9063,6 @@
       "expr": "__basaltOwn.s40IndentGuides(__basaltHost)",
       "sha1": "9fca539e7d2b7988b631341c874561b9daa4f8d3",
       "originalBytes": 1296
-    },
-    {
-      "orig": "q8",
-      "expr": "__basaltOwn.s14FootnotesPlugin()",
-      "sha1": "ff60bee9d57b2d58ded79a6b79ea12776cef892c",
-      "originalBytes": 560
-    },
-    {
-      "orig": "U8",
-      "expr": "__basaltOwn.s14MarkdownImporterPlugin()",
-      "sha1": "34bc76307d800ca9181dacd4d7beb12dd6663123",
-      "originalBytes": 426
-    },
-    {
-      "orig": "N8",
-      "expr": "__basaltOwn.s14ImporterPathSuggest()",
-      "sha1": "8fc4d3a688516696c36aa1aed37fb4ef3cb87d9c",
-      "originalBytes": 495
-    },
-    {
-      "orig": "b8",
-      "expr": "__basaltOwn.s14EditorStatusPlugin()",
-      "sha1": "bbad48d5d652122678e99cfb87c2ef9bd1f8c2a9",
-      "originalBytes": 2350
-    },
-    {
-      "orig": "r7",
-      "expr": "__basaltOwn.s14OutgoingLinkPlugin()",
-      "sha1": "9f91f5e907efb3027793be0835f315f7bcecf838",
-      "originalBytes": 2269
-    },
-    {
-      "orig": "t7",
-      "expr": "__basaltOwn.s14NoteComposerSettingsTab()",
-      "sha1": "10e782a49414767bb6c4bbcf8dda3805ab630481",
-      "originalBytes": 1236
-    },
-    {
-      "orig": "h7",
-      "expr": "__basaltOwn.s14OutlineHeadingItem()",
-      "sha1": "3c05f2b861e8bf1b30d348e685a207009af9df1d",
-      "originalBytes": 1004
-    },
-    {
-      "orig": "F8",
-      "expr": "__basaltOwn.s14FileRecoverySettingsTab()",
-      "sha1": "fa102066bc5e82ed7a6b86570019073007eaf89d",
-      "originalBytes": 1666
-    },
-    {
-      "orig": "H8",
-      "expr": "__basaltOwn.s14FootnoteListItem()",
-      "sha1": "8869da38b0e9876ef18a4392ae38360e23b0c649",
-      "originalBytes": 1577
     }
   ],
   "methods": [
