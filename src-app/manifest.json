@@ -1653,7 +1653,7 @@
     },
     {
       "orig": "wA",
-      "use": "s05CommandScore",
+      "use": "ng01CommandScore",
       "originalBytes": 562
     },
     {
@@ -3977,12 +3977,12 @@
     },
     {
       "orig": "CA",
-      "use": "defineCli",
+      "use": "ng01DefineCli",
       "originalBytes": 64702
     },
     {
       "orig": "bA",
-      "use": "defineTable",
+      "use": "ng01DefineTable",
       "originalBytes": 1313
     },
     {
@@ -7335,25 +7335,25 @@
     },
     {
       "orig": "eA",
-      "expr": "__basaltOwn.s05CommunityPluginsUrl",
+      "expr": "__basaltOwn.ng01CommunityPluginsUrl",
       "sha1": "31b47de3731fcdc0256f24f25d758f938e0e299b",
       "originalBytes": 59
     },
     {
       "orig": "nA",
-      "expr": "__basaltOwn.s05CommunityPluginStatsUrl",
+      "expr": "__basaltOwn.ng01CommunityPluginStatsUrl",
       "sha1": "eb1d3004df3189f4daf90ce0fa1372cd69a1ede6",
       "originalBytes": 64
     },
     {
       "orig": "tA",
-      "expr": "__basaltOwn.s05CommunityPlugins",
+      "expr": "__basaltOwn.ng01CommunityPlugins",
       "sha1": "268441f5f19ae024bb89bbd323010ddc0466f3db",
       "originalBytes": 258
     },
     {
       "orig": "iA",
-      "expr": "__basaltOwn.s05CommunityPluginStats",
+      "expr": "__basaltOwn.ng01CommunityPluginStats",
       "sha1": "869711740f0bcd67356d75a2c2eb304c67d63cc1",
       "originalBytes": 44
     },
