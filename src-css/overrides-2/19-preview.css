@@ -1,28 +1,28 @@
 /* preview (late): rules of this component that have to stay after rules of components further down the build order. */
 
-/* markdown-reading */
+/* reading view layout: search and replace flip the pane order so matches
+   surface at the bottom where the keyboard focus sits */
 .markdown-reading-view.is-searching,
 .markdown-source-view.is-replacing,
 .markdown-source-view.is-searching {
   flex-direction: column-reverse;
 }
 
-/* callout */
+/* callouts: a tinted card with a coloured title row and scrollable body */
 .callout {
   --callout-color: var(--callout-default);
   --callout-icon: lucide-pencil;
   overflow: hidden;
-  border-style: solid;
-  border-color: rgba(var(--callout-color), var(--callout-border-opacity));
-  border-width: var(--callout-border-width);
-  border-radius: var(--callout-radius);
   margin: 1em 0;
   padding: var(--callout-padding);
-  mix-blend-mode: var(--callout-blend-mode);
+  border-width: var(--callout-border-width);
+  border-style: solid;
+  border-color: rgba(var(--callout-color), var(--callout-border-opacity));
+  border-radius: var(--callout-radius);
   background-color: rgba(var(--callout-color), 0.1);
+  mix-blend-mode: var(--callout-blend-mode);
 }
 
-/* callout-title */
 .callout-title {
   display: flex;
   gap: var(--size-4-1);
@@ -33,35 +33,31 @@
   color: rgb(var(--callout-color));
 }
 
-/* callout-content */
 .callout-content {
   overflow-x: auto;
   padding: var(--callout-content-padding);
   background-color: var(--callout-content-background);
 }
 
-/* callout-icon */
 .callout-icon {
-  flex: 0 0 auto;
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
 }
 
-/* callout-title */
 .callout-title-inner {
   --font-weight: var(--callout-title-weight);
   font-weight: var(--font-weight);
   color: var(--callout-title-color);
 }
 
-/* callout-fold */
 .callout-fold {
   display: flex;
   align-items: center;
   padding-inline-end: var(--size-4-2);
 }
 
-/* markdown-embed */
+/* embeds: framed blocks with a link badge and an optional title row */
 .markdown-embed-link,
 .file-embed-link {
   --icon-size: var(--icon-s);
@@ -82,37 +78,34 @@
   height: 100%;
 }
 
-/* embed-title */
 .embed-title {
-  align-items: center;
   display: flex;
   gap: var(--size-4-1);
+  align-items: center;
   padding: 0 0 var(--size-4-2) 0;
   font-size: var(--font-text-size);
   font-weight: calc(var(--font-weight) + var(--bold-modifier));
   text-align: start;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-/* markdown-embed */
 .markdown-embed {
+  margin: 0;
   border-top: var(--embed-border-top);
   border-inline-end: var(--embed-border-end, var(--embed-border-right));
   border-bottom: var(--embed-border-bottom);
   border-inline-start: var(--embed-border-start, var(--embed-border-left));
-  margin: 0;
   font-style: var(--embed-font-style);
   background-color: var(--embed-background);
 }
 
-/* embed-iframe */
 .embed-iframe {
   width: 100%;
   height: 100%;
 }
 
-/* footnote-backref */
+/* footnote back references sit quietly after the note text */
 .footnote-backref {
   display: inline-block;
   margin-inline-start: var(--size-4-1);
@@ -120,54 +113,54 @@
   text-decoration: none;
 }
 
-/* metadata-container */
+/* metadata container: a named container-query context holding the property rows */
 .metadata-container {
   --input-height: var(--metadata-input-height);
   position: relative;
   container-type: inline-size;
   container-name: metadata;
-  border-radius: var(--metadata-border-radius);
-  border-color: var(--metadata-border-color);
-  border-style: solid;
-  border-width: var(--metadata-border-width);
-  padding: var(--metadata-padding);
   max-width: var(--metadata-max-width);
   margin-block-end: 2rem;
+  padding: var(--metadata-padding);
+  border-width: var(--metadata-border-width);
+  border-style: solid;
+  border-color: var(--metadata-border-color);
+  border-radius: var(--metadata-border-radius);
   color: var(--text-muted);
   background-color: var(--metadata-background);
 }
 
-/* metadata-properties */
+/* properties heading: a small-caps label with a collapse affordance */
 .metadata-properties-heading {
-  display: inline-block;
   position: relative;
-  padding: var(--size-4-1);
+  display: inline-block;
   margin-bottom: var(--size-4-2);
+  padding: var(--size-4-1);
   line-height: 1.2;
 }
 
 .metadata-properties-title {
   user-select: none;
+  font-family: var(--font-interface);
   font-size: max(var(--font-ui-small), 1em);
   font-weight: var(--font-medium);
-  font-family: var(--font-interface);
   color: var(--text-normal);
 }
 
-/* metadata-error */
+/* metadata errors: a callout-tinted box with an error title */
 .metadata-error-container {
-  border-radius: var(--callout-radius);
   padding: var(--size-4-1) var(--size-4-2);
+  border-radius: var(--callout-radius);
   background-color: rgba(var(--callout-error), 0.1);
 }
 
 .metadata-error-title {
-  color: var(--text-error);
   font-size: max(var(--font-ui-small), 1em);
   font-weight: var(--font-medium);
+  color: var(--text-error);
 }
 
-/* metadata-input */
+/* metadata inputs: chromeless fields that inherit the row's height */
 .metadata-input-text {
   overflow-y: hidden;
   width: 100%;
@@ -177,7 +170,7 @@
   resize: none;
 }
 
-/* metadata-property */
+/* property rows: a flex line split into key and value columns */
 .metadata-property {
   --input-border-width: 0;
   --input-border-width-focus: 0;
@@ -196,30 +189,28 @@
 .metadata-property-icon {
   display: flex;
   align-items: center;
-  padding: var(--size-4-1) 0;
   height: var(--input-height);
+  padding: var(--size-4-1) 0;
   color: var(--icon-color);
-  -webkit-user-select: none;
   cursor: var(--cursor);
+  -webkit-user-select: none;
 }
 
-/* metadata-input */
 .metadata-input-number {
   width: 100%;
   border-width: 0px;
   background-color: transparent;
 }
 
-/* metadata-property */
 .metadata-property-key {
   display: flex;
-  align-self: stretch;
-  align-items: flex-start;
   flex-direction: row;
   flex-shrink: 0;
-  border-bottom: var(--metadata-divider-width) solid var(--metadata-divider-color);
+  align-items: flex-start;
+  align-self: stretch;
   width: var(--metadata-label-width);
   min-width: var(--metadata-label-width);
+  border-bottom: var(--metadata-divider-width) solid var(--metadata-divider-color);
   font-family: var(--metadata-label-font);
   background-color: var(--metadata-label-background);
 }
@@ -227,11 +218,11 @@
 .metadata-property-warning-icon {
   --icon-size: var(--icon-s);
   position: absolute;
-  inset-inline-end: var(--size-2-1);
   top: var(--size-2-1);
   bottom: var(--size-2-1);
-  align-items: center;
+  inset-inline-end: var(--size-2-1);
   display: flex;
+  align-items: center;
   color: var(--text-warning);
 }
 
@@ -249,6 +240,7 @@
   background-color: var(--metadata-input-background);
 }
 
+/* value cells keep a transparent background in every interaction state */
 .metadata-property-value .metadata-input-text:hover,
 .metadata-property-value .metadata-input-number:hover,
 .metadata-property-value .multi-select-container:hover {
@@ -267,23 +259,23 @@
   background-color: transparent;
 }
 
-/* metadata-input */
+/* long text values grow up to a cap, then scroll */
 .metadata-input-longtext {
   flex-grow: 1;
   max-height: 300px;
   padding: var(--input-padding);
-  white-space: pre-wrap;
-  color: var(--metadata-input-text-color);
   font-size: var(--metadata-input-font-size);
+  color: var(--metadata-input-text-color);
+  white-space: pre-wrap;
   cursor: text;
 }
 
-/* metadata-link */
+/* link values: an ellipsized inner label inside a padded row */
 .metadata-link {
-  align-items: center;
   display: flex;
   flex: 1 1 auto;
   gap: var(--size-4-2);
+  align-items: center;
   padding: var(--input-padding);
   cursor: text;
 }
@@ -293,20 +285,21 @@
   color: var(--link-color);
   text-decoration-line: var(--link-decoration);
   text-decoration-thickness: var(--link-decoration-thickness);
-  text-overflow: ellipsis;
   white-space: nowrap;
+  text-overflow: ellipsis;
   cursor: var(--cursor-link);
 }
 
+/* the trailing flair on a link row fades in on hover, matching clickable icons */
 .metadata-link-flair {
   --icon-size: var(--icon-xs);
   display: flex;
   align-items: center;
   justify-content: center;
+  height: auto;
   margin-inline-start: auto;
   padding: var(--size-2-1);
   border-radius: var(--clickable-icon-radius);
-  height: auto;
   color: var(--icon-color);
   background-color: transparent;
   cursor: text;
@@ -314,49 +307,47 @@
   transition: opacity var(--anim-duration-fast) ease-in-out;
 }
 
-/* list-bullet */
+/* list bullets render as centred inline glyphs */
 .list-bullet {
   position: relative;
   display: inline-flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   color: transparent;
 }
 
-/* external-link */
+/* external links carry a trailing icon and the external-link tint */
 .external-link {
   padding-inline-end: 0.9em;
   color: var(--link-external-color);
   text-decoration-line: var(--link-external-decoration);
-  background-position: center right;
-  background-repeat: no-repeat;
   background-image: linear-gradient(transparent, transparent), url(public/images/external-link.svg);
-  background-size: 0.825em;
+  background-position: center right;
   background-position-y: 0.25em;
+  background-repeat: no-repeat;
+  background-size: 0.825em;
   cursor: var(--cursor-link);
   filter: var(--link-external-filter);
   transition: opacity var(--anim-duration-fast) ease-in-out;
 }
 
-/* task-list */
+/* task list checkboxes take the shared checkbox size */
 .task-list-item-checkbox {
   width: var(--checkbox-size);
   height: var(--checkbox-size);
 }
 
-/* embedded-backlinks */
+/* embedded backlinks close their section with a hairline */
 .embedded-backlinks {
   border-top: 1px solid var(--background-modifier-border);
 }
 
-/* base-toolbar */
+/* base toolbar: sort items stretch their metadata rows to fill */
 .base-toolbar-sort-item .metadata-property {
   flex: 1 1 auto;
 }
 
-/* table-col */
-
-/* tag-container */
+/* tag container: a padded, scrollable strip of tag pills */
 .tag-container {
   overflow: auto;
   padding: var(--size-4-3) var(--size-4-3) var(--size-4-8);
@@ -364,7 +355,7 @@
   font-size: var(--font-ui-small);
 }
 
-/* footnotes-view */
+/* footnote view: note bodies render flush without preview padding */
 .footnotes-view .footnote-content .markdown-preview-view,
 .footnotes-view .footnote-content .markdown-source-view {
   padding: 0;
