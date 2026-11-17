@@ -76,8 +76,8 @@
   // ---- Basalt look for the whole app: warm basalt palette + cut corners (same language as the card shapes).
   // Everything is a variable override or a small shape rule; a user theme / CSS snippet still wins over it.
   const APP_CSS = `
-    .modal-close-button:empty { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; cursor: pointer; z-index: 3; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px); transition: background .12s, border-color .12s; }
-    .modal-close-button:empty::before { content: ""; position: absolute; inset: 0; background: var(--text-muted); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11 11l10 10M21 11L11 21' stroke='black' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% no-repeat; transition: background .12s; }
+    .modal-close-button:empty { position: absolute; top: var(--size-4-3); right: var(--size-4-3); width: var(--size-4-8); height: var(--size-4-8); cursor: pointer; z-index: 3; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md)); transition: background var(--bs-dur-fast) var(--bs-ease-standard), border-color var(--bs-dur-fast) var(--bs-ease-standard); }
+    .modal-close-button:empty::before { content: ""; position: absolute; inset: 0; background: var(--text-muted); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11 11l10 10M21 11L11 21' stroke='black' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% no-repeat; transition: background var(--bs-dur-fast) var(--bs-ease-standard); }
     .modal-close-button:empty::after { content: none; }
     .modal-close-button:empty:hover { background: var(--interactive-accent); border-color: var(--interactive-accent); } .modal-close-button:empty:hover::before { background: var(--text-on-accent, #fff); }
     body.theme-light {
@@ -93,8 +93,8 @@
       --titlebar-background: #0c0a09; --titlebar-background-focused: #14110f; --tab-container-background: #0c0a09; --ribbon-background: #0c0a09; --modal-background: #1b1612;
     }
     /* the shape language of Basalt, for every module: panels, cards and pop-ups are cut at two corners (--bs-clip), small controls and list rows have --bs-r */
-    body { --bs-clip: polygon(var(--bs-c) 0, 100% 0, 100% calc(100% - var(--bs-c)), calc(100% - var(--bs-c)) 100%, 0 100%, 0 var(--bs-c)); --bs-r: 4px; --bs-gap: 8px; --bs-pad: 12px; --bs-ease: .12s; }
-    body { --bs-c: 6px; --radius-s: 0px; --radius-m: 0px; --radius-l: 0px; --button-radius: 0px; --input-radius: 0px; --checkbox-radius: 2px; }
+    body { --bs-clip: polygon(var(--bs-c) 0, 100% 0, 100% calc(100% - var(--bs-c)), calc(100% - var(--bs-c)) 100%, 0 100%, 0 var(--bs-c)); --bs-r: var(--radius-l); --bs-gap: var(--size-4-2); --bs-pad: var(--size-4-3); --bs-ease: var(--bs-dur-fast); }
+    body { --bs-c: var(--bs-cut-md); --radius-s: 0px; --radius-m: 0px; --radius-l: 0px; --button-radius: 0px; --input-radius: 0px; --checkbox-radius: 2px; }
     .modal:not(.mod-settings), .prompt, .menu, .suggestion-container, .popover, .notice {
       clip-path: polygon(var(--bs-c) 0, 100% 0, 100% calc(100% - var(--bs-c)), calc(100% - var(--bs-c)) 100%, 0 100%, 0 var(--bs-c));
     }
@@ -143,7 +143,7 @@
     .nav-buttons-container { gap: 2px; padding: 6px 8px; }
     .workspace-tab-header-container { padding-top: 2px; }
     .workspace-leaf-content .view-header { border-bottom: 1px solid var(--background-modifier-border); }
-    button:not(.clickable-icon):not(.modal-close-button):not(.mod-raised) { box-shadow: none; clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
+    button:not(.clickable-icon):not(.modal-close-button):not(.mod-raised) { box-shadow: none; clip-path: polygon(var(--bs-cut-sm) 0, 100% 0, 100% calc(100% - var(--bs-cut-sm)), calc(100% - var(--bs-cut-sm)) 100%, 0 100%, 0 var(--bs-cut-sm)); }
     .checkbox-container { border-radius: 2px; }
     .checkbox-container::after { border-radius: 1px; }
   `;
@@ -162,7 +162,7 @@
       --divider-color: #cdbfae; --text-normal: #2a211a; --text-muted: #5c4f42; --text-faint: #655847;
       --settings-background: #dcd2c3; --modal-sidebar-background: #d1c6b5; --setting-items-background: #eee7db; --setting-items-radius: 0; --setting-items-border-width: 0px;
       --radius-s: 0; --radius-m: 0; --radius-l: 0;
-      --bs-cut: 12px;
+      --bs-cut: var(--bs-cut-lg);
     }
     .theme-dark .modal.mod-settings {
       --background-primary: #14110f; --background-secondary: #0c0a09; --background-modifier-hover: #2b231d; --background-modifier-border: #3a2f26;
@@ -176,12 +176,12 @@
     .modal.mod-settings .setting-item { border-color: var(--divider-color); }
     .modal.mod-settings .vertical-tab-header { border-inline-end-color: var(--divider-color); }
     .modal.mod-settings .vertical-tab-header-group-title { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
-    .modal.mod-settings .vertical-tab-nav-item { border-radius: 0; position: relative; clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px); }
+    .modal.mod-settings .vertical-tab-nav-item { border-radius: 0; position: relative; clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md)); }
     .modal.mod-settings .vertical-tab-nav-item.is-active { background: var(--background-modifier-hover); color: var(--text-normal); box-shadow: inset 3px 0 0 var(--interactive-accent); }
     .modal.mod-settings .vertical-tab-nav-item.is-active .vertical-tab-nav-item-icon { color: var(--interactive-accent); }
     .modal.mod-settings .setting-item-heading .setting-item-name { font-weight: 600; letter-spacing: .01em; }
     .modal.mod-settings .setting-item-description { color: var(--text-muted); }
-    .modal.mod-settings button:not(.clickable-icon):not(.modal-close-button) { border-radius: 0; box-shadow: none; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+    .modal.mod-settings button:not(.clickable-icon):not(.modal-close-button) { border-radius: 0; box-shadow: none; clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md)); }
     .modal.mod-settings button.mod-cta { background: var(--interactive-accent); color: var(--text-on-accent); }
     .modal.mod-settings .checkbox-container { border-radius: 2px; }
     .modal.mod-settings .checkbox-container::after { border-radius: 1px; }
