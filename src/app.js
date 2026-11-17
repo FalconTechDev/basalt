@@ -28616,7 +28616,9 @@ function ng03DefineSyncChangesView(host) {
     const status = sync ? sync.getStatus() : "disconnected";
     const connected = status !== "uninitialized" && status !== "disconnected";
     this.uninitializedEl.toggleClass("is-hidden", connected);
+    this.uninitializedEl.style.display = connected ? "none" : "";
     this.treeBoxEl.toggleClass("is-hidden", !connected);
+    this.treeBoxEl.style.display = connected ? "" : "none";
     if (!connected) { this._renderGroups(); return; }
 
     // usernames
