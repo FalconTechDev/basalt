@@ -23117,14 +23117,14 @@ function ng12PublishSiteCache(host) {
   class Ng12SiteIndex {
     constructor() {
       this.cache = {};
-      this.uniqueFiles = new env().sc();
+      this.uniqueFiles = new (env().sc)();
       this.aliases = {};
       this.permalinks = {};
     }
 
     async load(cache) {
       this.cache = cache || {};
-      this.uniqueFiles = new env().sc();
+      this.uniqueFiles = new (env().sc)();
       this.aliases = {};
       this.permalinks = {};
       const paths = Object.keys(this.cache);
