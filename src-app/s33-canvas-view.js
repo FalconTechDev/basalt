@@ -7,7 +7,7 @@ import { inherit } from "./inherit.js";
 import { env } from "./env.js";
 import { newlinesBefore } from "./text.js";
 import { s13KeyNames } from "./s13-geom.js";
-import { s33CanvasViewType, s33CanvasStrings } from "./s33-canvas-edge.js";
+import { ng20CanvasViewType, ng20CanvasStrings } from "./n-g20-shared.js";
 
 export function defineS33CanvasView(host) {
   const t = () => host.t;
@@ -76,7 +76,7 @@ export function defineS33CanvasView(host) {
 
   proto.onResize = function () { this.canvas.onResize(); };
 
-  proto.getViewType = function () { return s33CanvasViewType; };
+  proto.getViewType = function () { return ng20CanvasViewType; };
 
   proto.getViewData = function () { return host.canvasSerialize(this.canvas.data); };
 
@@ -122,7 +122,7 @@ export function defineS33CanvasView(host) {
     const view = this;
     if (host.Platform.isDesktopApp) {
       menu.addItem((item) =>
-        item.setSection("action").setTitle(s33CanvasStrings().actionExportPng()).setIcon("lucide-image").onClick(() => view.canvas.generateHDImage()),
+        item.setSection("action").setTitle(ng20CanvasStrings().actionExportPng()).setIcon("lucide-image").onClick(() => view.canvas.generateHDImage()),
       );
     }
   };
