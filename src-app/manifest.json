@@ -2104,17 +2104,17 @@
     },
     {
       "orig": "jZ",
-      "use": "s27TextOffsetAt",
+      "use": "ng05TextOffsetAt",
       "originalBytes": 172
     },
     {
       "orig": "UZ",
-      "use": "s27TextLayerNodeAt",
+      "use": "ng05TextLayerNodeAt",
       "originalBytes": 243
     },
     {
       "orig": "$Z",
-      "use": "s27ShowEmbedError",
+      "use": "ng05ShowEmbedError",
       "originalBytes": 107
     },
     {
@@ -4966,77 +4966,77 @@
     },
     {
       "orig": "BZ",
-      "use": "s27PdfPasswordDialogClass",
+      "use": "ng05PdfPasswordDialogClass",
       "originalBytes": 1552
     },
     {
       "orig": "HZ",
-      "use": "s27PdfToolbarClass",
+      "use": "ng05PdfToolbarClass",
       "originalBytes": 5723
     },
     {
       "orig": "_Z",
-      "use": "s27PdfViewerClass",
+      "use": "ng05PdfViewerClass",
       "originalBytes": 18298
     },
     {
       "orig": "GZ",
-      "use": "s27PdfComponentClass",
+      "use": "ng05PdfComponentClass",
       "originalBytes": 1041
     },
     {
       "orig": "KZ",
-      "use": "s27PdfViewClass",
+      "use": "ng05PdfViewClass",
       "originalBytes": 1502
     },
     {
       "orig": "YZ",
-      "use": "s27PdfEmbedClass",
+      "use": "ng05PdfEmbedClass",
       "originalBytes": 1180
     },
     {
       "orig": "XZ",
-      "use": "s27VideoViewClass",
+      "use": "ng05VideoViewClass",
       "originalBytes": 658
     },
     {
       "orig": "eJ",
-      "use": "s27MediaEmbedClass",
+      "use": "ng05MediaEmbedClass",
       "originalBytes": 255
     },
     {
       "orig": "tJ",
-      "use": "s27ImageEmbedClass",
+      "use": "ng05ImageEmbedClass",
       "originalBytes": 216
     },
     {
       "orig": "nJ",
-      "use": "s27AudioEmbedClass",
+      "use": "ng05AudioEmbedClass",
       "originalBytes": 216
     },
     {
       "orig": "iJ",
-      "use": "s27VideoEmbedClass",
+      "use": "ng05VideoEmbedClass",
       "originalBytes": 216
     },
     {
       "orig": "rJ",
-      "use": "s27FileEmbedClass",
+      "use": "ng05FileEmbedClass",
       "originalBytes": 671
     },
     {
       "orig": "oJ",
-      "use": "s27FallbackEmbedClass",
+      "use": "ng05FallbackEmbedClass",
       "originalBytes": 1410
     },
     {
       "orig": "aJ",
-      "use": "s27EmbedRegistryClass",
+      "use": "ng05EmbedRegistryClass",
       "originalBytes": 1193
     },
     {
       "orig": "lJ",
-      "use": "s27MarkdownEmbedClass",
+      "use": "ng05MarkdownEmbedClass",
       "originalBytes": 10032
     },
     {
@@ -5330,19 +5330,19 @@
     },
     {
       "orig": "LZ",
-      "use": "s11PdfFindBar"
+      "use": "ng05PdfFindBar"
     },
     {
       "orig": "OZ",
-      "use": "s11PdfLocalization"
+      "use": "ng05PdfLocalization"
     },
     {
       "orig": "FZ",
-      "use": "s11PdfOutlineItem"
+      "use": "ng05PdfOutlineItem"
     },
     {
       "orig": "NZ",
-      "use": "s11PdfOutlineTree"
+      "use": "ng05PdfOutlineTree"
     },
     {
       "orig": "wZ",
@@ -8547,37 +8547,37 @@
     },
     {
       "orig": "RZ",
-      "expr": "__basaltOwn.s27PdfI18n()",
+      "expr": "__basaltOwn.ng05PdfI18n()",
       "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
       "originalBytes": 6
     },
     {
       "orig": "VZ",
-      "expr": "__basaltOwn.s27PdfI18n()",
+      "expr": "__basaltOwn.ng05PdfI18n()",
       "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
       "originalBytes": 6
     },
     {
       "orig": "zZ",
-      "expr": "__basaltOwn.s27PdfI18n()",
+      "expr": "__basaltOwn.ng05PdfI18n()",
       "sha1": "0673e83d5ade9e8f6a006971043194e5d38c0576",
       "originalBytes": 6
     },
     {
       "orig": "qZ",
-      "expr": "__basaltOwn.s27PdfStorageKey",
+      "expr": "__basaltOwn.ng05PdfStorageKey",
       "sha1": "67b315d406259a4fab51e6886f79128c60675375",
       "originalBytes": 17
     },
     {
       "orig": "QZ",
-      "expr": "__basaltOwn.s27VideoViewType",
+      "expr": "__basaltOwn.ng05VideoViewType",
       "sha1": "b53c54f0a814aab43d7729f68732b181b86b7f3c",
       "originalBytes": 7
     },
     {
       "orig": "ZZ",
-      "expr": "__basaltOwn.s27EmbedDepths",
+      "expr": "__basaltOwn.ng05EmbedDepths",
       "sha1": "53a9b0a3c30baac2eec4c403e29d5c0b1c41a10c",
       "originalBytes": 11
     },
@@ -8901,13 +8901,13 @@
     },
     {
       "orig": "TZ",
-      "expr": "__basaltOwn.s11PdfViewerConfig",
+      "expr": "__basaltOwn.ng05PdfViewerConfig",
       "sha1": "a7484ef7237bbeccb4e394959167515e66280d42",
       "originalBytes": 480
     },
     {
       "orig": "PZ",
-      "expr": "__basaltOwn.s11PdfSearchSettingsKey",
+      "expr": "__basaltOwn.ng05PdfSearchSettingsKey",
       "sha1": "b99d91d7d4c8886aa2a1efadc01c9b34861069b8",
       "originalBytes": 23
     },
