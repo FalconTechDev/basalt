@@ -37,18 +37,26 @@ import { nIconsSetIc4d } from "./n-icons-set-ic4d.js";
 import { nIconsSetIc4e } from "./n-icons-set-ic4e.js";
 import { nIconsSetIc4f } from "./n-icons-set-ic4f.js";
 import { nIconsSetIc4g } from "./n-icons-set-ic4g.js";
+import { nIconsSetIc15a } from "./n-icons-set-ic15a.js";
+import { nIconsSetIc15b } from "./n-icons-set-ic15b.js";
+import { nIconsSetIc15c } from "./n-icons-set-ic15c.js";
+import { nIconsSetIc15d } from "./n-icons-set-ic15d.js";
+import { nIconsSetIc15e } from "./n-icons-set-ic15e.js";
+import { nIconsSetIc15f } from "./n-icons-set-ic15f.js";
+import { nIconsSetIc15g } from "./n-icons-set-ic15g.js";
+import { nIconsSetIc15h } from "./n-icons-set-ic15h.js";
+import { nIconsSetIc15i } from "./n-icons-set-ic15i.js";
 
 // Piece registry: resolved lazily inside nIconsCollect (module order in the
 // flat own scope is alphabetical, so a top-level reference would hit TDZ).
 // Drawing agents append their piece module here.
 function nIconsPieces() {
-  return [nIconsSetBasic, nIconsSetIc2a, nIconsSetIc2b, nIconsSetIc2c, nIconsSetIc2d, nIconsSetIc2e, nIconsSetIc2f, nIconsSetIc2g, nIconsSetIc2h, nIconsSetIc2i];
-
-  return [nIconsSetBasic, nIconsSetIc1a, nIconsSetIc1b, nIconsSetIc1c, nIconsSetIc1d, nIconsSetIc1e];
-
-  return [nIconsSetBasic, nIconsSetIc3a, nIconsSetIc3b, nIconsSetIc3c, nIconsSetIc3d, nIconsSetIc3e, nIconsSetIc3f];
-
-  return [nIconsSetBasic, nIconsSetIc4a, nIconsSetIc4b, nIconsSetIc4c, nIconsSetIc4d, nIconsSetIc4e, nIconsSetIc4f, nIconsSetIc4g];
+  return [nIconsSetBasic,
+    nIconsSetIc1a, nIconsSetIc1b, nIconsSetIc1c, nIconsSetIc1d, nIconsSetIc1e,
+    nIconsSetIc2a, nIconsSetIc2b, nIconsSetIc2c, nIconsSetIc2d, nIconsSetIc2e, nIconsSetIc2f, nIconsSetIc2g, nIconsSetIc2h, nIconsSetIc2i,
+    nIconsSetIc3a, nIconsSetIc3b, nIconsSetIc3c, nIconsSetIc3d, nIconsSetIc3e, nIconsSetIc3f,
+    nIconsSetIc4a, nIconsSetIc4b, nIconsSetIc4c, nIconsSetIc4d, nIconsSetIc4e, nIconsSetIc4f, nIconsSetIc4g,
+    nIconsSetIc15a, nIconsSetIc15b, nIconsSetIc15c, nIconsSetIc15d, nIconsSetIc15e, nIconsSetIc15f, nIconsSetIc15g, nIconsSetIc15h, nIconsSetIc15i];
 }
 
 // The 36 names of the inherited Qm table (app-specific glyphs). They keep
