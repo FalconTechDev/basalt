@@ -1,464 +1,566 @@
-// g24 clean-room: small async/string helpers plus the `app.customCss` manager.
-// Replaces s04-themes.js. All names ng24-prefixed; host access is lazy.
-import { env, hostEnv } from "./env.js";
-import { inherit } from "./inherit.js";
-import { debounceCall } from "./timing.js";
-import { s04Request, s04RawFileUrl, s04ReleaseUrl, s04ThemeVersion } from "./s04-http.js";
-import { isOlderVersion } from "./text.js";
-import { lastSegment, normalizePath, extensionOf, baseName } from "./path.js";
-import { randomHex } from "./misc.js";
+// s04: own implementations of the CSS theme/snippet manager and its small
+// helpers (deferred, cached calls, promise sets, community theme list).
+//
+// Replaces the inherited `customCss` manager: it watches the vault for
+// theme/snippet changes, keeps theme.css + snippet <style> elements in
+// document.head in sync, and installs/updates themes from GitHub.
+//
+// Inherited pieces are reached through the factory's host table (Component,
+// debounce, SerialTaskQueue, Notice, i18n) or env() (Platform helpers,
+// translucency IPC, electronWindow). HTTP goes through the own s04-http
+// helpers; path/string helpers are the own flat-scope functions.
 
-// ---------------------------------------------------------------- helpers
+import { env } from "./env.js";
 
-export function ng24CreateDeferred() {
-  const d = { promise: null, resolve: null, reject: null };
-  d.promise = new Promise((resolve, reject) => { d.resolve = resolve; d.reject = reject; });
-  return d;
+const S04_THEME_FILE = "theme.css";
+const S04_MANIFEST_FILE = "manifest.json";
+const S04_THEMES_URL = "obsidianmd/obsidian-releases/community-css-themes.json";
+
+// ---------------------------------------------------------------- small async helpers (was `gb`, `yb`, `Eb`, `Mb`)
+
+/** A promise with exposed resolve/reject (was `gb`). */
+export function s04CreateDeferred() {
+  const deferred = { promise: null, resolve: null, reject: null };
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
 }
 
-/** TTL + in-flight dedupe cache; fetcher errors resolve to null, never reject. */
-export function ng24CachedCall(fetcher, cacheMs, dedupeMs) {
+/**
+ * Wraps `fetcher` in a TTL cache with in-flight dedupe (was `yb`).
+ * `cacheMs` is how long a successful result stays fresh; `dedupeMs` (default
+ * `cacheMs`) is the window after a failure during which the previous result
+ * is still served instead of refetching.
+ */
+export function s04CachedCall(fetcher, cacheMs, dedupeMs) {
   if (dedupeMs === undefined) dedupeMs = cacheMs;
-  let cached = null, cachedAt = 0, inflight = null, failAt = 0;
+  let pending = null;
+  let freshUntil = 0;
+  let result = null;
   return function () {
-    const now = Date.now();
-    if (cached !== null && now - cachedAt < cacheMs) return Promise.resolve(cached);
-    if (inflight) return inflight;
-    if (cached !== null && now - failAt < dedupeMs) return Promise.resolve(cached);
-    inflight = (async () => {
+    if (pending) return pending;
+    if (result && freshUntil > Date.now()) return Promise.resolve(result);
+    pending = (async () => {
+      freshUntil = Date.now() + dedupeMs;
       try {
-        const value = await fetcher();
-        cached = value; cachedAt = Date.now(); failAt = 0;
-        return value;
-      } catch (e) {
-        failAt = Date.now();
+        result = await fetcher();
+      } catch (err) {
+        pending = null;
         return null;
-      } finally {
-        inflight = null;
       }
+      freshUntil = Date.now() + cacheMs;
+      pending = null;
+      setTimeout(() => {
+        if (freshUntil > Date.now()) result = null;
+      }, cacheMs);
+      return result;
     })();
-    return inflight;
+    return pending;
   };
 }
 
-export function ng24SettlePromise(promise) {
-  return Promise.resolve(promise).then((v) => v, () => undefined);
-}
-
-export function ng24PromiseSetClass() {
+/** Collects promises; `promise()` awaits all added so far (was `Eb`). */
+export function s04PromiseSetClass() {
   class PromiseSet {
-    constructor() { this.tasks = []; }
-    add(task) { this.tasks.push(Promise.resolve().then(() => task())); }
-    addPromise(p) { this.tasks.push(p); }
-    isEmpty() { return this.tasks.length === 0; }
-    promise() { return Promise.all(this.tasks.slice()); }
+    constructor() {
+      this.promises = [];
+    }
+    add(task) {
+      this.promises.push(task());
+    }
+    addPromise(promise) {
+      this.promises.push(promise);
+    }
+    isEmpty() {
+      return this.promises.length === 0;
+    }
+    promise() {
+      return Promise.all(this.promises);
+    }
   }
   return PromiseSet;
 }
 
-const NG24_STRING_COLLATOR = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
-export const ng24StringCompare = (a, b) => NG24_STRING_COLLATOR.compare(String(a), String(b));
-export const ng24StringCompareDesc = (a, b) => NG24_STRING_COLLATOR.compare(String(b), String(a));
-export const ng24NumberCompare = (a, b) => a - b;
-
-export const ng24CommunityThemesUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json";
-
-async function ng24FetchCommunityThemes() {
-  const res = await s04Request(ng24CommunityThemesUrl);
-  const data = await res.json;
-  if (!Array.isArray(data)) throw new Error("Failed to parse community themes.");
-  return data;
+/** Resolves (never rejects) once `promise` settles, with its value or undefined (was `Mb`). */
+export function s04SettlePromise(promise) {
+  return new Promise((resolve) => promise.then(resolve, resolve));
 }
 
-const ng24CommunityThemesCached = ng24CachedCall(ng24FetchCommunityThemes, 300000, 60000);
-export function ng24CommunityThemes() { return ng24CommunityThemesCached(); }
-export const ng24CommunityThemesEmpty = ng24CachedCall(async () => ({}), 300000, 60000);
+// ---------------------------------------------------------------- community theme list (was `Ab`, `Pb`, `Lb`)
 
-// ---------------------------------------------------------------- CssManager
+const S04_COMMUNITY_THEMES_REPO = "obsidianmd/obsidian-releases";
 
-/** Factory for the `CssManager` class (manifest class entry `Ib`). */
-export function ng24CssManager(host) {
+/** Raw URL of the community theme catalog (was `Ab`). */
+// Literal: s04RawFileUrl's base const lives in s04-http.js, concatenated after this file.
+export const s04CommunityThemesUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json";
+
+/** Cached loader for the community theme catalog (was `Pb`). */
+export const s04CommunityThemes = s04CachedCall(async () => {
+  const list = await s04Request(s04RawFileUrl(S04_COMMUNITY_THEMES_REPO, "community-css-themes.json")).json;
+  if (!Array.isArray(list)) throw new Error("Failed to parse community themes.");
+  return list;
+}, 3e5, 6e4);
+
+/** Cached empty catalog used where fetching is unavailable (was `Lb`). */
+export const s04CommunityThemesEmpty = s04CachedCall(() => Promise.resolve({}), 3e5, 6e4);
+
+// ---------------------------------------------------------------- string helpers (was `cb`, `hb`, `pb`)
+
+const S04_COLLATOR = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
+
+/** Locale-aware string compare used for file lists (was `cb`). */
+export const s04StringCompare = S04_COLLATOR.compare;
+
+/** Descending variant (was `hb`). */
+export function s04StringCompareDesc(a, b) {
+  return -S04_COLLATOR.compare(a, b);
+}
+
+/** Numeric compare (was `pb`). */
+export function s04NumberCompare(a, b) {
+  return a - b;
+}
+
+// ---------------------------------------------------------------- the manager (was `Ib`)
+
+/**
+ * The `app.customCss` manager: keeps the active theme and enabled snippets
+ * rendered into <style> elements and handles theme install/update flows.
+ */
+export function s04CssManager(host) {
   function CssManager(app) {
     const self = host.Component.call(this) || this;
-    self.app = app;
+    self.app = null;
     self.styleEl = null;
     self.extraStyleEls = [];
+    self.boundRaw = self.onRaw.bind(self);
     self.oldThemes = [];
     self.themes = {};
-    self.updates = [];
+    self.updates = {};
     self.snippets = [];
     self.enabledSnippets = new Set();
     self.csscache = new Map();
     self.theme = "";
-    self._queue = Promise.resolve();
-    self._themeReload = debounceCall(() => self.reloadThemeNow(), 100);
-    self._themeScan = debounceCall(() => self.scanThemes(), 2000);
-    self._snippetScan = debounceCall(() => self.loadSnippets(), 100);
+    self.requestLoadTheme = host.debounce(self.loadTheme.bind(self), 100);
+    self.requestLoadSnippets = host.debounce(self.loadSnippets.bind(self), 100);
+    self.requestReadThemes = host.debounce(self.readThemes.bind(self), 2000);
+    self.queue = new host.SerialTaskQueue();
+    self.app = app;
     return self;
   }
-  inherit(CssManager, host.Component);
-  const proto = CssManager.prototype;
+  Object.setPrototypeOf(CssManager, host.Component);
+  CssManager.prototype = Object.create(host.Component.prototype, {
+    constructor: { value: CssManager, writable: true, configurable: true },
+  });
 
-  // -- serial queue ------------------------------------------------------
-  proto._enqueue = function (fn) {
-    const run = this._queue.then(fn, fn);
-    this._queue = run.then(() => undefined, () => undefined);
-    return run;
-  };
-
-  // -- lifecycle ----------------------------------------------------------
-  proto.onload = function () {
+  CssManager.prototype.onload = async function () {
+    host.Component.prototype.onload.call(this);
     const app = this.app;
-    const config = app.vault.getConfig("enabledCssSnippets");
-    if (Array.isArray(config)) this.enabledSnippets = new Set(config);
-    this.theme = app.vault.getConfig("cssTheme") || "";
-    if (app.vault.getConfig("translucency")) this.enableTranslucency();
-    this.styleEl = createEl("style", { type: "text/css" });
-    document.head.appendChild(this.styleEl);
-    this.registerEvent(app.vault.on("raw", this.onRawBound || (this.onRawBound = this.onRaw.bind(this))));
-    this._enqueue(async () => {
-      await this.readThemes(true);
-      await this.readSnippets(true);
-      await this.loadTheme();
-      await this.loadSnippets();
-    });
+    this.loadData();
+    await this.readThemes();
+    await this.readSnippets();
+    this.styleEl = document.head.createEl("style", { type: "text/css" });
+    this.registerEvent(app.vault.on("raw", this.boundRaw));
+    await this.loadTheme();
+    await this.loadSnippets();
   };
 
-  proto.onRaw = function (path) {
-    path = normalizePath(path);
-    this.csscache.delete(path);
-    const themeCss = this.getThemePath(this.theme);
-    if (this.theme && path === themeCss) { this._themeReload(); return; }
-    const themesDir = this.getThemeFolder() + "/";
-    if (path.startsWith(themesDir) && /(^|\/)(manifest\.json|theme\.css|[^/]+\.css)$/.test(path.slice(themesDir.length))) {
-      this._themeScan();
-      return;
-    }
-    const snippetsDir = this.getSnippetsFolder() + "/";
-    if (path.startsWith(snippetsDir) && extensionOf(path) === "css") {
-      this._enqueue(async () => { await this.readSnippets(true); await this.loadSnippets(); });
-    }
+  CssManager.prototype.loadData = function () {
+    const vault = this.app.vault;
+    const snippets = vault.getConfig("enabledCssSnippets");
+    if (snippets) this.enabledSnippets = new Set(snippets);
+    const theme = vault.getConfig("cssTheme");
+    if (theme) this.theme = theme;
+    if (vault.getConfig("translucency")) this.enableTranslucency();
   };
 
-  // -- folders / paths ----------------------------------------------------
-  proto.getThemeFolder = function () { return this.app.vault.configDir + "/themes"; };
-  proto.getSnippetsFolder = function () { return this.app.vault.configDir + "/snippets"; };
-  proto.getSnippetPath = function (name) { return this.getSnippetsFolder() + "/" + name + ".css"; };
-  proto.getThemePath = function (name) {
-    if (this.themes[name]) return this.getThemeFolder() + "/" + name + "/theme.css";
-    return this.getThemeFolder() + "/" + name + ".css";
+  CssManager.prototype.reloadTheme = function () {
+    this.theme = this.app.vault.getConfig("cssTheme") || "";
+    this.requestLoadTheme();
   };
 
-  // -- discovery ----------------------------------------------------------
-  proto.readThemes = function (reload) {
-    return this._enqueue(() => this._readThemes());
-  };
-  proto._readThemes = async function () {
-    const adapter = this.app.vault.adapter;
-    const dir = this.getThemeFolder();
-    this.themes = {};
-    this.oldThemes = [];
-    let entries = [];
-    try { entries = await adapter.list(dir); } catch (e) { entries = []; }
-    for (const entry of entries.files || []) {
-      const name = entry;
-      if (name.startsWith(".") || extensionOf(name) !== "css") continue;
-      const base = baseName(name);
-      if (!this.oldThemes.includes(base)) this.oldThemes.push(base);
-    }
-    for (const folder of entries.folders || []) {
-      if (folder.startsWith(".")) continue;
-      const themeCss = dir + "/" + folder + "/theme.css";
-      const manifestPath = dir + "/" + folder + "/manifest.json";
-      try {
-        if (!(await adapter.exists(themeCss))) continue;
-        const raw = await adapter.read(manifestPath);
-        const manifest = JSON.parse(raw);
-        if (manifest && manifest.name === folder) {
-          this.themes[folder] = { name: folder, version: manifest.version, minAppVersion: manifest.minAppVersion, author: manifest.author, dir: manifest.dir };
+  CssManager.prototype.readThemes = function (reload) {
+    const self = this;
+    return this.queue.queue(async function () {
+      const app = self.app;
+      const adapter = self.app.vault.adapter;
+      const legacy = [];
+      const themes = {};
+      const folder = self.getThemeFolder();
+      if (await app.vault.exists(folder)) {
+        const listing = await adapter.list(folder);
+        for (const dir of listing.folders) {
+          const name = lastSegment(dir);
+          const manifestPath = normalizePath(dir + "/" + S04_MANIFEST_FILE);
+          const cssPath = normalizePath(dir + "/" + S04_THEME_FILE);
+          try {
+            if (!(await adapter.exists(cssPath))) continue;
+            const raw = await adapter.read(manifestPath);
+            const manifest = JSON.parse(raw);
+            if (manifest.name && manifest.name === name) themes[name] = manifest;
+          } catch (err) {
+            console.error(err);
+          }
         }
-      } catch (e) {
-        console.error(e);
+        for (const file of listing.files) {
+          const name = lastSegment(file);
+          if (name.startsWith(".") || extensionOf(name) !== "css") continue;
+          legacy.push(baseName(name));
+        }
       }
+      self.oldThemes = legacy;
+      self.themes = themes;
+      if (reload) self.requestLoadTheme();
+    });
+  };
+
+  CssManager.prototype.readSnippets = function (reload) {
+    const self = this;
+    return this.queue.queue(async function () {
+      const vault = self.app.vault;
+      const adapter = vault.adapter;
+      const names = [];
+      const folder = self.getSnippetsFolder();
+      if (await adapter.exists(folder)) {
+        const listing = await adapter.list(folder);
+        for (const file of listing.files) {
+          const name = lastSegment(file);
+          if (name.startsWith(".") || extensionOf(name) !== "css") continue;
+          names.push(baseName(name));
+        }
+      }
+      names.sort(s04StringCompare);
+      self.snippets = names;
+      if (reload) self.requestLoadSnippets();
+    });
+  };
+
+  CssManager.prototype.onRaw = function (path) {
+    if (this.csscache.has(path)) this.csscache.delete(path);
+    const name = lastSegment(path);
+    const ext = extensionOf(name);
+    if (path === this.getThemePath(this.theme)) this.requestLoadTheme();
+    if (
+      path.startsWith(this.getThemeFolder()) &&
+      (name === S04_MANIFEST_FILE || name === S04_THEME_FILE || ext === "css")
+    ) {
+      this.requestReadThemes();
     }
-    this.oldThemes.sort(ng24StringCompare);
+    if (path.startsWith(this.getSnippetsFolder()) && ext === "css") this.readSnippets(true);
   };
 
-  proto.readSnippets = function (reload) {
-    return this._enqueue(() => this._readSnippets());
-  };
-  proto._readSnippets = async function () {
-    const adapter = this.app.vault.adapter;
-    const dir = this.getSnippetsFolder();
-    let entries = [];
-    try { entries = await adapter.list(dir); } catch (e) { entries = []; }
-    this.snippets = (entries.files || [])
-      .filter((f) => !f.startsWith(".") && extensionOf(f) === "css")
-      .map((f) => baseName(f))
-      .sort(ng24StringCompare);
-  };
-
-  // -- css loading ---------------------------------------------------------
-  proto.loadCss = function (path) {
-    const cache = this.csscache;
-    if (cache.has(path)) return Promise.resolve(cache.get(path));
-    const p = (async () => {
-      try {
-        return await this.app.vault.adapter.read(path);
-      } catch (e) {
-        return "";
+  CssManager.prototype.loadTheme = function (css) {
+    const self = this;
+    return this.queue.queue(async function () {
+      const styleEl = self.styleEl;
+      const theme = self.theme;
+      let text = "";
+      if (css) {
+        text = css;
+      } else if (theme) {
+        text = await self.loadCss(self.getThemePath(theme));
       }
-    })();
-    cache.set(path, p);
-    return p;
-  };
-
-  proto.loadTheme = function (css) {
-    return this._enqueue(async () => {
-      let text;
-      if (css !== undefined) text = css;
-      else if (!this.theme) text = "";
-      else text = await this.loadCss(this.getThemePath(this.theme));
-      if (this.styleEl.textContent !== text) {
-        this.styleEl.textContent = text;
-        this.app.workspace.trigger("css-change");
-        this.app.workspace.trigger("resize");
+      if (styleEl.textContent !== text) {
+        styleEl.textContent = text;
+        self.app.workspace.trigger("css-change");
+        self.app.workspace.trigger("resize");
       }
     });
   };
-  proto.reloadThemeNow = function () { return this.loadTheme(); };
 
-  proto.loadSnippets = function () {
-    return this._enqueue(async () => {
-      const enabled = Array.from(this.enabledSnippets).sort(ng24StringCompare);
-      const want = enabled.length;
-      // ensure one style element per enabled snippet, in order after styleEl
-      while (this.extraStyleEls.length < want) {
-        const el = createEl("style", { type: "text/css" });
-        const prev = this.extraStyleEls.length ? this.extraStyleEls[this.extraStyleEls.length - 1] : this.styleEl;
-        prev.after(el);
-        this.extraStyleEls.push(el);
+  CssManager.prototype.loadSnippets = function () {
+    const self = this;
+    return this.queue.queue(async function () {
+      const styleEl = self.styleEl;
+      const extraStyleEls = self.extraStyleEls;
+      const enabled = self.enabledSnippets;
+      const texts = [];
+      for (const name of self.snippets) {
+        if (!enabled.has(name)) continue;
+        texts.push(await self.loadCss(self.getSnippetPath(name)));
       }
-      while (this.extraStyleEls.length > want) this.extraStyleEls.pop().detach();
       let changed = false;
-      for (let i = 0; i < want; i++) {
-        const name = enabled[i];
-        const text = await this.loadCss(this.getSnippetPath(name));
-        const el = this.extraStyleEls[i];
-        if (el.textContent !== text) { el.textContent = text; changed = true; }
+      for (let i = 0; i < texts.length; i++) {
+        let el = extraStyleEls[i];
+        if (!el) {
+          el = host.createEl("style", { type: "text/css" });
+          extraStyleEls.push(el);
+          styleEl.parentNode.insertAfter(el, styleEl);
+          changed = true;
+        }
+        if (el.textContent !== texts[i]) {
+          el.textContent = texts[i];
+          changed = true;
+        }
+        styleEl = el;
+      }
+      const extra = extraStyleEls.length - texts.length;
+      for (let i = 0; i < extra; i++) {
+        extraStyleEls.pop().detach();
+        changed = true;
       }
       if (changed) {
-        this.app.workspace.trigger("css-change");
-        this.app.workspace.trigger("resize");
+        self.app.workspace.trigger("css-change");
+        self.app.workspace.trigger("resize");
       }
     });
   };
 
-  // -- config writes --------------------------------------------------------
-  proto.setTheme = function (name) {
-    this.theme = name || "";
-    this.app.vault.setConfig("cssTheme", this.theme);
-    this.loadTheme();
+  CssManager.prototype.loadCss = async function (path) {
+    if (this.csscache.has(path)) return this.csscache.get(path);
+    const adapter = this.app.vault.adapter;
+    if (await adapter.exists(path)) {
+      const css = await adapter.read(path);
+      this.csscache.set(path, css);
+      return css;
+    }
+    return "";
   };
-  proto.reloadTheme = function () {
-    this.theme = this.app.vault.getConfig("cssTheme") || "";
-    this.loadTheme();
-  };
-  proto.setCssEnabledStatus = function (name, enabled) {
+
+  CssManager.prototype.setCssEnabledStatus = function (name, enabled) {
     if (enabled) this.enabledSnippets.add(name);
     else this.enabledSnippets.delete(name);
     this.app.vault.setConfig("enabledCssSnippets", Array.from(this.enabledSnippets));
-    this.loadSnippets();
+    this.requestLoadSnippets();
   };
 
-  // -- translucency ---------------------------------------------------------
-  proto.isDarkMode = function () {
-    return document.body.classList.contains("theme-dark");
+  CssManager.prototype.setTheme = function (name) {
+    this.theme = name;
+    this.app.vault.setConfig("cssTheme", name);
+    this.requestLoadTheme();
   };
-  proto.setTranslucency = function (enabled) {
-    this.app.vault.setConfig("translucency", !!enabled);
+
+  CssManager.prototype.setTranslucency = function (enabled) {
+    this.app.vault.setConfig("translucency", enabled);
     if (enabled) this.enableTranslucency();
     else this.disableTranslucency();
   };
-  proto.enableTranslucency = function () {
+
+  CssManager.prototype.enableTranslucency = function () {
     const { Yl, Uf, Wf, electronWindow } = env();
-    if (!Yl.isDesktopApp || !Uf()) return;
-    document.body.classList.add("is-translucent");
+    if (!(Yl.isDesktopApp && Uf())) return;
     try {
-      Wf(true);
-    } catch (e) {
+      Wf(electronWindow, true);
+      document.body.addClass("is-translucent");
+    } catch (err) {
       new host.Notice(host.t.interface.msgUpgradeInstaller());
     }
   };
-  proto.disableTranslucency = function () {
-    const { Yl, Uf, Wf } = env();
-    if (!Yl.isDesktopApp || !Uf()) return;
-    document.body.classList.remove("is-translucent");
-    try { Wf(false); } catch (e) {}
+
+  CssManager.prototype.disableTranslucency = function () {
+    const { Yl, Uf, Wf, electronWindow } = env();
+    if (!(Yl.isDesktopApp && Uf())) return;
+    document.body.removeClass("is-translucent");
+    try {
+      Wf(electronWindow, false);
+    } catch (err) {}
   };
 
-  // -- removal ---------------------------------------------------------------
-  proto.removeTheme = function (name) {
-    return this._enqueue(async () => {
-      const adapter = this.app.vault.adapter;
-      const dir = this.getThemeFolder();
+  CssManager.prototype.isDarkMode = function () {
+    return document.body.hasClass("theme-dark");
+  };
+
+  CssManager.prototype.getThemeFolder = function () {
+    return this.app.vault.configDir + "/themes";
+  };
+
+  CssManager.prototype.getSnippetsFolder = function () {
+    return this.app.vault.configDir + "/snippets";
+  };
+
+  CssManager.prototype.getThemePath = function (name) {
+    if (!this.themes.hasOwnProperty(name) && this.oldThemes.includes(name)) {
+      return this.getThemeFolder() + "/" + name + ".css";
+    }
+    return this.getThemeFolder() + "/" + name + "/" + S04_THEME_FILE;
+  };
+
+  CssManager.prototype.getSnippetPath = function (name) {
+    return this.getSnippetsFolder() + "/" + name + ".css";
+  };
+
+  CssManager.prototype.removeTheme = async function (name) {
+    const adapter = this.app.vault.adapter;
+    const folder = this.getThemeFolder();
+    const dir = folder + "/" + name;
+    if (await adapter.exists(dir)) await adapter.rmdir(dir, true);
+    const legacyPath = folder + "/" + name + ".css";
+    const isLegacy = this.oldThemes.includes(name) && (await adapter.exists(legacyPath));
+    if (isLegacy) await adapter.remove(legacyPath);
+    await this.readThemes();
+    if (this.theme === name) this.setTheme("");
+  };
+
+  CssManager.prototype.downloadLegacyTheme = function (info) {
+    return s04Request(s04RawFileUrl(info.repo, "obsidian.css")).text;
+  };
+
+  CssManager.prototype.isThemeInstalled = function (name) {
+    return this.themes.hasOwnProperty(name) || this.oldThemes.includes(name);
+  };
+
+  CssManager.prototype.hasUpdates = function () {
+    return this.updates && Object.keys(this.updates).length > 0;
+  };
+
+  CssManager.prototype.checkForUpdate = async function (info) {
+    const folder = this.getThemeFolder();
+    const updates = this.updates || {};
+    const name = info.name;
+    const repo = info.repo;
+    if (!this.isThemeInstalled(name)) return;
+    let installedVersion = this.themes[name] ? this.themes[name].version : undefined;
+    const manifestPath = s04RawFileUrl(repo, S04_MANIFEST_FILE);
+    let manifest = null;
+    try {
+      manifest = await s04Request(manifestPath).json;
+    } catch (err) {}
+    if (!manifest) {
+      const css = await this.downloadLegacyTheme(info);
+      const hasDir = !!(this.themes[info.name] && this.themes[info.name].dir);
+      const cssPath = hasDir ? folder + "/" + name + "/" + S04_THEME_FILE : folder + "/" + name + ".css";
+      let current = "";
       try {
-        if (this.themes[name]) await adapter.rmdir(dir + "/" + name, true);
-        else await adapter.remove(dir + "/" + name + ".css");
-      } catch (e) { console.error(e); }
-      await this._readThemes();
-      if (this.theme === name) this.setTheme("");
-      this.loadTheme();
-    });
-  };
-
-  // -- community updates ------------------------------------------------------
-  proto.isThemeInstalled = function (name) {
-    return !!this.themes[name] || this.oldThemes.includes(name);
-  };
-
-  proto.getManifest = async function (repo) {
-    try {
-      const res = await s04Request(s04RawFileUrl(repo, "manifest.json"));
-      return await res.json;
-    } catch (e) {
-      return null;
-    }
-  };
-
-  proto.checkForUpdate = async function (info) {
-    if (!this.isThemeInstalled(info.name)) return null;
-    const repo = info.repo || info.cssRepo || info.repoName;
-    if (!repo) return null;
-    const manifest = await this.getManifest(repo);
-    if (manifest) {
-      const version = await s04ThemeVersion(repo, manifest);
-      const installed = this.themes[info.name];
-      const installedVersion = installed && installed.version;
-      if (!installedVersion || isOlderVersion(installedVersion, version)) {
-        return { themeInfo: info, version };
+        current = await this.app.vault.adapter.read(cssPath);
+      } catch (err) {
+        return false;
       }
-      return null;
+      if (css !== current) {
+        updates[name] = { themeInfo: info };
+        return true;
+      }
+      return false;
     }
-    // legacy fallback: compare obsidian.css with the installed file
-    try {
-      const remote = await s04Request(s04RawFileUrl(repo, "obsidian.css")).text;
-      const localPath = this.themes[info.name]
-        ? this.getThemeFolder() + "/" + info.name + "/theme.css"
-        : this.getThemeFolder() + "/" + info.name + ".css";
-      const local = await this.app.vault.adapter.read(localPath);
-      if (remote !== local) return { themeInfo: info };
-    } catch (e) {}
-    return null;
+    const latest = await s04ThemeVersion(repo, manifest);
+    if (!installedVersion || (latest && isOlderVersion(installedVersion, latest))) {
+      updates[name] = { themeInfo: info, version: latest };
+      return true;
+    }
+    return false;
   };
 
-  proto.hasUpdates = function () {
-    return this.updates.length > 0;
-  };
-
-  proto.checkForUpdates = async function () {
-    this.updates = [];
+  CssManager.prototype.checkForUpdates = async function () {
+    this.updates = {};
     let themes;
     try {
-      themes = await ng24CommunityThemes();
-      if (!Array.isArray(themes)) themes = await ng24CommunityThemesEmpty();
-    } catch (e) {
+      themes = await s04CommunityThemes();
+    } catch (err) {
+      console.error(err);
       new host.Notice(host.t.plugins.customCss.msgFailedToInstallTheme());
-      themes = await ng24CommunityThemesEmpty();
+      return;
     }
-    for (const info of themes || []) {
-      const update = await this.checkForUpdate(info);
-      if (update) this.updates.push(update);
+    for (let i = 0; i < themes.length; i++) {
+      await this.checkForUpdate(themes[i]);
     }
-    if (this.updates.length) {
-      new host.Notice(host.t.plugins.customCss.msgUpdatesFound({ count: this.updates.length }));
-    } else {
-      new host.Notice(host.t.plugins.customCss.msgNoUpdatesFound());
-    }
+    const count = Object.keys(this.updates).length;
+    new host.Notice(
+      count === 0
+        ? host.t.plugins.customCss.msgNoUpdatesFound()
+        : host.t.plugins.customCss.msgUpdatesFound({ count })
+    );
   };
 
-  // -- install ----------------------------------------------------------------
-  proto.downloadLegacyTheme = async function (info) {
-    const repo = info.repo || info.cssRepo || info.repoName;
-    const css = await s04Request(s04RawFileUrl(repo, "obsidian.css")).text;
-    const dir = this.getThemeFolder() + "/" + info.name;
-    await this.app.vault.adapter.mkdir(dir).catch(() => {});
-    await this.app.vault.adapter.write(dir + "/theme.css", css);
+  CssManager.prototype.installLegacyTheme = async function (info) {
+    const vault = this.app.vault;
+    const name = info.name;
+    const css = await this.downloadLegacyTheme(info);
+    const folder = this.getThemeFolder();
+    if (!(await vault.exists(folder))) await vault.createFolder(folder);
+    const dir = folder + "/" + name;
+    if (!(await vault.exists(dir))) await vault.createFolder(dir);
     const manifest = { name: info.name, version: "0.0.0", minAppVersion: "0.16.0", author: info.author };
-    await this.app.vault.adapter.write(dir + "/manifest.json", JSON.stringify(manifest, null, 2));
-    try { await this.app.vault.adapter.remove(this.getThemeFolder() + "/" + info.name + ".css"); } catch (e) {}
-    await this._readThemes();
-    this.loadTheme();
+    await vault.adapter.write(dir + "/" + S04_THEME_FILE, css);
+    await vault.adapter.write(dir + "/" + S04_MANIFEST_FILE, JSON.stringify(manifest, null, 4));
+    const legacyPath = folder + "/" + name + ".css";
+    if (await vault.adapter.exists(legacyPath)) await vault.adapter.remove(legacyPath);
+    await this.readThemes();
   };
 
-  proto.installLegacyTheme = function (info) {
-    return this.downloadLegacyTheme(info);
-  };
-
-  proto.installTheme = async function (info, version) {
-    const t = host.t.plugins.customCss;
-    // remember in localStorage["local-themes"]
+  CssManager.prototype.installTheme = async function (info, version) {
+    const name = info.name;
+    const repo = info.repo;
+    const notice = new host.Notice(host.t.plugins.customCss.msgInstallingTheme({ name }), 0);
+    notice.containerEl.addClass("is-loading");
     try {
-      let local = JSON.parse(localStorage.getItem("local-themes") || "[]");
-      if (!Array.isArray(local)) local = [];
-      if (!local.includes(info.name)) {
-        local.push(info.name);
-        localStorage.setItem("local-themes", JSON.stringify(local));
+      let installed = localStorage.getItem("local-themes");
+      let list = installed ? JSON.parse(installed) : [];
+      if (!Array.isArray(list)) list = [];
+      if (!list.contains(name)) {
+        list.push(name);
+        localStorage.setItem("local-themes", JSON.stringify(list));
       }
-    } catch (e) {}
-    const installing = new host.Notice(t.msgInstallingTheme({ name: info.name }), 0);
-    installing.containerEl.addClass("is-loading");
-    try {
-      if (!version) {
-        await this.downloadLegacyTheme(info);
-      } else {
-        const repo = info.repo || info.cssRepo || info.repoName;
-        let manifest, css;
-        try {
-          const res = await s04Request(s04ReleaseUrl(repo, version, "manifest.json"));
-          manifest = await res.json;
-          css = await s04Request(s04ReleaseUrl(repo, version, "theme.css")).text;
-        } catch (e) {
-          if (!(e && e.status === 404)) throw e;
-          manifest = await s04Request(s04RawFileUrl(repo, "manifest.json")).json;
-          css = await s04Request(s04RawFileUrl(repo, "theme.css")).text;
-        }
-        if (!manifest || manifest.name !== info.name) {
-          throw new Error("Theme name mismatch.");
-        }
-        const dir = this.getThemeFolder() + "/" + info.name;
-        await this.app.vault.adapter.mkdir(dir).catch(() => {});
-        await this.app.vault.adapter.write(dir + "/theme.css", css);
-        await this.app.vault.adapter.write(dir + "/manifest.json", JSON.stringify(manifest, null, 2));
-        try { await this.app.vault.adapter.remove(this.getThemeFolder() + "/" + info.name + ".css"); } catch (e) {}
-        await this._readThemes();
-        this.loadTheme();
-      }
-      this.updates = this.updates.filter((u) => (u.themeInfo || u).name !== info.name);
-      const ok = new host.Notice(t.msgSuccessfullyInstalledTheme({ name: info.name }), 3000);
-      ok.containerEl.addClass("mod-success");
-      return true;
-    } catch (e) {
-      const msg = e && e.message === "Theme name mismatch."
-        ? t.msgFailedToInstallTheme({ name: info.name }) + " Theme name mismatch."
-        : t.msgFailedToInstallTheme({ name: info.name });
-      new host.Notice(msg, 3000);
-      return false;
-    } finally {
-      installing.hide();
+    } catch (err) {
+      console.error(err);
     }
+    if (!version) {
+      await this.installLegacyTheme(info);
+      delete this.updates[name];
+      notice.hide();
+      return;
+    }
+    let manifestText;
+    let cssText;
+    try {
+      manifestText = await s04Request(s04ReleaseUrl(repo, version, S04_MANIFEST_FILE)).text;
+      cssText = await s04Request(s04ReleaseUrl(repo, version, S04_THEME_FILE)).text;
+    } catch (err) {
+      if (manifestText === undefined && err instanceof S04RequestError && err.status === 404) {
+        try {
+          manifestText = await s04Request(s04RawFileUrl(repo, S04_MANIFEST_FILE)).text;
+          cssText = await s04Request(s04RawFileUrl(repo, S04_THEME_FILE)).text;
+        } catch (fallbackErr) {
+          console.error(fallbackErr);
+          notice.containerEl.removeClass("is-loading");
+          notice.containerEl.addClass("mod-error");
+          notice.setMessage(host.t.plugins.customCss.msgFailedToInstallTheme({ name }));
+          setTimeout(() => notice.hide(), 3000);
+          return;
+        }
+      } else {
+        console.error(err);
+        notice.containerEl.removeClass("is-loading");
+        notice.containerEl.addClass("mod-error");
+        notice.setMessage(host.t.plugins.customCss.msgFailedToInstallTheme({ name }));
+        setTimeout(() => notice.hide(), 3000);
+        return;
+      }
+    }
+    if (JSON.parse(manifestText).name !== name) {
+      notice.containerEl.removeClass("is-loading");
+      notice.setMessage(host.t.plugins.customCss.msgFailedToInstallTheme({ name }) + " Theme name mismatch.");
+      setTimeout(() => notice.hide(), 3000);
+      return;
+    }
+    const adapter = this.app.vault.adapter;
+    const folder = this.getThemeFolder();
+    if (!(await adapter.exists(folder))) await adapter.mkdir(folder);
+    const dir = folder + "/" + name;
+    if (!(await adapter.exists(dir))) await adapter.mkdir(dir);
+    await adapter.write(dir + "/" + S04_MANIFEST_FILE, manifestText);
+    await adapter.write(dir + "/" + S04_THEME_FILE, cssText);
+    const legacyPath = folder + "/" + name + ".css";
+    if (await adapter.exists(legacyPath)) await adapter.remove(legacyPath);
+    notice.setMessage(host.t.plugins.customCss.msgSuccessfullyInstalledTheme({ name }));
+    notice.containerEl.removeClass("is-loading");
+    notice.containerEl.addClass("mod-success");
+    setTimeout(() => notice.hide(), 3000);
+    delete this.updates[name];
+    await this.readThemes();
+  };
+
+  CssManager.prototype.getManifest = async function (repo) {
+    let manifest = null;
+    try {
+      manifest = await s04Request(s04RawFileUrl(repo, S04_MANIFEST_FILE)).json;
+    } catch (err) {}
+    return manifest;
   };
 
   return CssManager;
 }
 
-// Contract aliases (manifest `use` names).
-export const s04CreateDeferred = ng24CreateDeferred;
-export const s04SettlePromise = ng24SettlePromise;
-export const s04CachedCall = ng24CachedCall;
-export const s04PromiseSetClass = ng24PromiseSetClass;
-export const s04CssManager = ng24CssManager;
-export const s04StringCompare = ng24StringCompare;
-export const s04StringCompareDesc = ng24StringCompareDesc;
-export const s04NumberCompare = ng24NumberCompare;
-export const s04CommunityThemes = ng24CommunityThemes;
+// g24 manifest declarator aliases.
+export const ng24CommunityThemesUrl = s04CommunityThemesUrl;
+export const ng24CommunityThemesEmpty = s04CommunityThemesEmpty;
