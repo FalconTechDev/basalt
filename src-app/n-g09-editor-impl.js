@@ -6,7 +6,7 @@
 // Clean-room reimplementation: own structure (constructor function +
 // inherit/methods like the other own classes), spec'd defects preserved.
 import { inherit, methods } from "./inherit.js";
-import { defineEditor } from "./editor-api.js";
+import { defineEditor } from "./n-g24-editor-api.js";
 
 // ---------------------------------------------------------------------------
 // small shared helpers (flat-scope names are ng09-prefixed)

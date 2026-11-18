@@ -5,7 +5,7 @@ import { inherit } from "./inherit.js";
 import { extensionOf, baseName, withoutExtension, parentPath, normalizePath } from "./path.js";
 import { s05IsValidFileName } from "./s05-utils.js";
 import { s10MergeText } from "./s10-app.js";
-import { s04SettlePromise } from "./s04-themes.js";
+import { s04SettlePromise } from "./n-g24-themes.js";
 import { contentHash } from "./metadata-helpers.js";
 import { formatBytes } from "./text.js";
 import { account, AccountError, acctRequest, acctUserInfo, acctListVaults, acctListSubscriptions, acctVaultRegions, acctCreateVault, acctMigrateVault, acctRenameVault, acctDeleteVault, acctListVaultShares, acctInviteVaultShare, acctRemoveVaultShare, acctSignOut, acctSignIn, acctSignup, acctSignupMobileSync, acctResendConfirmation, acctForgetPassword } from "./account.js";
