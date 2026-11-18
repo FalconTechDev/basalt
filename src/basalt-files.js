@@ -9,12 +9,12 @@
   css.textContent = `
     .bsf { display: flex; flex-direction: column; height: 100%; outline: none; }
     .bsf-bar { display: flex; gap: 2px; padding: 8px 8px 4px; align-items: center; flex-wrap: wrap; }
-    .bsf-bar button { background: transparent; box-shadow: none; padding: 4px; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 4px; clip-path: none; }
+    .bsf-bar button { background: transparent; box-shadow: none; padding: 4px; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 0; clip-path: none; }
     .bsf-bar button:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .bsf-bar button.is-on { color: var(--interactive-accent); }
     .bsf-bar svg, .bsf-i svg { width: 16px; height: 16px; flex: none; } .bsf-bar button .svg-icon { width: 16px; height: 16px; }
     .bsf-find { padding: 0 8px 6px; } .bsf-find input { width: 100%; height: 28px; font-size: var(--font-ui-small); }
     .bsf-tree { flex: 1; overflow: auto; padding: 2px 4px 24px; }
-    .bsf-r { display: flex; align-items: center; gap: 6px; height: 28px; padding-right: 8px; margin: 1px 0; border-radius: 4px; cursor: pointer; border-left: 2px solid transparent; user-select: none; color: var(--text-muted); }
+    .bsf-r { display: flex; align-items: center; gap: 6px; height: 28px; padding-right: 8px; margin: 1px 0; border-radius: 0; cursor: pointer; border-left: 2px solid transparent; user-select: none; color: var(--text-muted); }
     .bsf-r:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bsf-r.is-sel { background: color-mix(in srgb, var(--interactive-accent) 12%, transparent); color: var(--text-normal); }
     .bsf-r.is-active { background: color-mix(in srgb, var(--interactive-accent) 20%, transparent); border-left-color: var(--interactive-accent); color: var(--text-normal); }
@@ -28,7 +28,7 @@
     .bsf-i { color: var(--text-faint); display: inline-flex; } .bsf-r.is-dir .bsf-i { color: var(--interactive-accent); }
     .bsf-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bsf-n small { color: var(--text-faint); font-weight: 400; margin-left: 8px; }
-    .bsf-ext { display: inline-flex; align-items: center; justify-content: center; width: 22px; flex: none; height: 14px; padding: 0; margin: 1px -3px 1px -3px; border-radius: 3px; font-size: 8px; font-weight: 700; color: #fff; letter-spacing: .2px; text-transform: uppercase; box-sizing: border-box; line-height: 1; }
+    .bsf-ext { display: inline-flex; align-items: center; justify-content: center; width: 22px; flex: none; height: 14px; padding: 0; margin: 1px -3px 1px -3px; border-radius: 0; font-size: 8px; font-weight: 700; color: #fff; letter-spacing: .2px; text-transform: uppercase; box-sizing: border-box; line-height: 1; }
     .bsf-x { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
     .bsf-pin { width: 12px; height: 12px; color: var(--interactive-accent); flex: none; }
     .bsf-r input.bsf-ren { flex: 1; min-width: 0; height: 22px; padding: 0 4px; }

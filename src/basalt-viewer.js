@@ -27,7 +27,7 @@
     .bsv-nav:hover { opacity: 1; color: var(--text-normal); } .bsv-nav.l { left: 18px; } .bsv-nav.r { right: 18px; } .bsv-nav svg { width: 22px; height: 22px; }
     .bsv-info { position: absolute; right: 18px; top: 64px; width: 280px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  display: none; font-size: var(--font-ui-small); line-height: 1.7; }
     .bsv-info.is-on { display: block; } .bsv-info span { color: var(--text-muted); display: inline-block; width: 92px; } .bsv-info div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .canvas-node-label .bsv-open { display: inline-flex; vertical-align: middle; margin-left: 6px; padding: 1px 5px; border-radius: 4px; cursor: pointer; color: var(--text-muted); } .canvas-node-label .bsv-open:hover { color: var(--interactive-accent); background: var(--background-modifier-hover); }
+    .canvas-node-label .bsv-open { display: inline-flex; vertical-align: middle; margin-left: 6px; padding: 1px 5px; border-radius: 0; cursor: pointer; color: var(--text-muted); } .canvas-node-label .bsv-open:hover { color: var(--interactive-accent); background: var(--background-modifier-hover); }
     .canvas-node-label .bsv-open svg { width: 13px; height: 13px; }
   `;
   document.head.appendChild(css);

@@ -127,10 +127,10 @@
     .workspace-tab-header.is-active .workspace-tab-header-inner-title { color: var(--text-normal); }
     .workspace-tab-header:not(.is-active) .workspace-tab-header-inner-title { color: var(--text-muted); }
     .workspace-tab-header-inner-icon { color: var(--interactive-accent); opacity: .85; }
-    .workspace-tab-header-inner-close-button { border-radius: 4px; opacity: 0; transition: opacity .12s; }
+    .workspace-tab-header-inner-close-button { border-radius: 0; opacity: 0; transition: opacity .12s; }
     .workspace-tab-header:hover .workspace-tab-header-inner-close-button, .workspace-tab-header.is-active .workspace-tab-header-inner-close-button { opacity: .7; }
     .workspace-tab-header-inner-close-button:hover { opacity: 1 !important; background: var(--background-modifier-hover); color: var(--text-normal); }
-    .workspace-tab-header-new-tab .clickable-icon { border-radius: 4px; }
+    .workspace-tab-header-new-tab .clickable-icon { border-radius: 0; }
     /* file lists: calm rows, the open file marked with an accent bar and a tint */
     .tree-item-self, .nav-file-title, .nav-folder-title { border-radius: var(--nav-item-radius); margin: var(--bs-hairline) var(--size-4-1); transition: background-color var(--bs-dur-fast) var(--bs-ease-standard), color var(--bs-dur-fast) var(--bs-ease-standard), box-shadow var(--bs-dur-fast) var(--bs-ease-standard); }
     .tree-item-self:hover, .nav-file-title:hover, .nav-folder-title:hover { background: var(--background-modifier-hover); }

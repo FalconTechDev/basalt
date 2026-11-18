@@ -16,7 +16,7 @@
     .bt-i { display: inline-flex; flex: none; color: var(--interactive-accent); opacity: .85; } .bt-i svg { width: 15px; height: 15px; }
     .bt-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; font-size: var(--font-ui-small); }
     .bt-p { width: 11px; height: 11px; color: var(--interactive-accent); flex: none; }
-    .bt-x { width: 18px; height: 18px; flex: none; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; opacity: 0; color: var(--text-muted); font-size: 15px; line-height: 1; } .bt-x svg { width: 16px; height: 16px; }
+    .bt-x { width: 18px; height: 18px; flex: none; border-radius: 0; display: inline-flex; align-items: center; justify-content: center; opacity: 0; color: var(--text-muted); font-size: 15px; line-height: 1; } .bt-x svg { width: 16px; height: 16px; }
     .bt-t:hover .bt-x, .bt-t.is-cur .bt-x { opacity: .75; } .bt-x:hover { opacity: 1 !important; background: var(--background-modifier-hover); color: var(--text-normal); }
   `;
   document.head.appendChild(css);

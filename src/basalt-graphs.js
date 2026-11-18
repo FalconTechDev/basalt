@@ -82,9 +82,9 @@
     .bscg-row button { height: 26px; padding: 0 10px; font-size: 12px; }
     .bscg-info { position: absolute; left: 14px; bottom: 10px; z-index: 5; color: var(--text-faint); font-size: var(--font-ui-smaller); pointer-events: none; }
     .bsg canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
-    .bsg-tip { position: absolute; z-index: 5; pointer-events: none; display: none; max-width: 360px; padding: 6px 10px; border-radius: 8px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); box-shadow: 0 4px 16px rgba(0,0,0,.3); font-size: var(--font-ui-smaller); color: var(--text-normal); }
+    .bsg-tip { position: absolute; z-index: 5; pointer-events: none; display: none; max-width: 360px; padding: 6px 10px; border-radius: 0; background: var(--background-primary); border: 1px solid var(--background-modifier-border); box-shadow: 0 4px 16px rgba(0,0,0,.3); font-size: var(--font-ui-smaller); color: var(--text-normal); }
     .bsg-tip b { display: block; margin-bottom: 2px; } .bsg-tip span { color: var(--text-muted); display: block; }
-    .bsg-legend { position: absolute; left: 10px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: 60%; padding: 6px 10px; border-radius: 8px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); font-size: var(--font-ui-smaller); color: var(--text-muted); }
+    .bsg-legend { position: absolute; left: 10px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: 60%; padding: 6px 10px; border-radius: 0; background: var(--background-primary); border: 1px solid var(--background-modifier-border); font-size: var(--font-ui-smaller); color: var(--text-muted); }
     .bsg-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
     .bsg-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); pointer-events: none; text-align: center; padding: 24px; }
   `;
