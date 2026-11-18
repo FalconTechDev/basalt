@@ -125,6 +125,7 @@ export function ng19GraphFilterSection() {
         .addSearch((search) => {
           searchComp = search;
           this.search = search;
+          engine.options.search = "";
           search.setPlaceholder(ng19GT("promptFilterNodes"));
           search.setValue("");
           search.onChange((v) => {
