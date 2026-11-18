@@ -2174,72 +2174,72 @@
     },
     {
       "orig": "Rz",
-      "use": "s07weakMapFactory",
+      "use": "ng18NewEmbedCache",
       "originalBytes": 50
     },
     {
       "orig": "Hz",
-      "use": "s07workerScript",
+      "use": "ng18WorkerScript",
       "originalBytes": 241
     },
     {
       "orig": "Vz",
-      "use": "s07workerFromScript",
+      "use": "ng18WorkerFromScript",
       "originalBytes": 237
     },
     {
       "orig": "$z",
-      "use": "s07mermaidCodeText",
+      "use": "ng18MermaidCodeText",
       "originalBytes": 132
     },
     {
       "orig": "nq",
-      "use": "s07attrsMatch",
+      "use": "ng18AttrsMatch",
       "originalBytes": 111
     },
     {
       "orig": "cq",
-      "use": "s07linkHrefFor",
+      "use": "ng18LinkHrefFor",
       "originalBytes": 102
     },
     {
       "orig": "xz",
-      "use": "s07scheduleMathJaxFlush",
+      "use": "ng18ScheduleMathJaxFlush",
       "originalBytes": 92
     },
     {
       "orig": "kz",
-      "use": "s07texToHtml",
+      "use": "ng18TexToHtml",
       "originalBytes": 57
     },
     {
       "orig": "Yz",
-      "use": "s07renderMermaidDiagrams",
+      "use": "ng18RenderMermaidDiagrams",
       "originalBytes": 402
     },
     {
       "orig": "wz",
-      "use": "s07loadMathJax",
+      "use": "ng18LoadMathJax",
       "originalBytes": 160
     },
     {
       "orig": "vz",
-      "use": "s07loadMermaid",
+      "use": "ng18LoadMermaid",
       "originalBytes": 168
     },
     {
       "orig": "yz",
-      "use": "s07loadPrism",
+      "use": "ng18LoadPrism",
       "originalBytes": 166
     },
     {
       "orig": "pz",
-      "use": "s07loadPdfJs",
+      "use": "ng18LoadPdfJs",
       "originalBytes": 176
     },
     {
       "orig": "dz",
-      "use": "s07loadPdfViewer",
+      "use": "ng18LoadPdfViewer",
       "originalBytes": 216
     },
     {
@@ -5346,15 +5346,15 @@
     },
     {
       "orig": "wZ",
-      "use": "s11IframeEditMode"
+      "use": "ng18IframeEditMode"
     },
     {
       "orig": "kZ",
-      "use": "s11EmbedPreviewMode"
+      "use": "ng18EmbedPreviewMode"
     },
     {
       "orig": "CZ",
-      "use": "s11EmbedComponent"
+      "use": "ng18EmbedComponent"
     },
     {
       "orig": "gq",
@@ -5421,12 +5421,12 @@
     },
     {
       "orig": "E$",
-      "use": "s26BasesEmbedView",
+      "use": "ng18BasesEmbedView",
       "originalBytes": 1724
     },
     {
       "orig": "S$",
-      "use": "s26HoverPopover",
+      "use": "ng18HoverPopover",
       "originalBytes": 1558
     },
     {
@@ -8667,97 +8667,97 @@
     },
     {
       "orig": "bz",
-      "expr": "__basaltOwn.s07mathJaxLoader()",
+      "expr": "__basaltOwn.ng18MathJaxLoader()",
       "sha1": "f29a38078cc8f3cba3ae7d10c3c26e556fbb8908",
       "originalBytes": 470
     },
     {
       "orig": "mz",
-      "expr": "__basaltOwn.s07mermaidLoader()",
+      "expr": "__basaltOwn.ng18MermaidLoader()",
       "sha1": "2fd2ff5e3bc6c4180b7bd90355953538d822e1d8",
       "originalBytes": 428
     },
     {
       "orig": "uz",
-      "expr": "__basaltOwn.s07pdfJsLoader()",
+      "expr": "__basaltOwn.ng18PdfJsLoader()",
       "sha1": "ee068b8d8a4422bd858f8b253cefb4c49d2c2cc0",
       "originalBytes": 207
     },
     {
       "orig": "gz",
-      "expr": "__basaltOwn.s07prismLoader()",
+      "expr": "__basaltOwn.ng18PrismLoader()",
       "sha1": "b1a7904c097570c2c6476444edfe667513194d98",
       "originalBytes": 97
     },
     {
       "orig": "hz",
-      "expr": "__basaltOwn.s07pdfViewerLoader()",
+      "expr": "__basaltOwn.ng18PdfViewerLoader()",
       "sha1": "65e7dcbec30c1253311c1d1cc4a5a3e538766db5",
       "originalBytes": 94
     },
     {
       "orig": "fz",
-      "expr": "__basaltOwn.s07cmModesLoader()",
+      "expr": "__basaltOwn.ng18CmModesLoader()",
       "sha1": "e46be404345bc67db4d7b9ab18e4387fb6e23246",
       "originalBytes": 34
     },
     {
       "orig": "Sz",
-      "expr": "__basaltOwn.s07flushMathJax",
+      "expr": "__basaltOwn.ng18FlushMathJax",
       "sha1": "82a0cab9eab70198cf02f0370d5cff8501f892be",
       "originalBytes": 178
     },
     {
       "orig": "Kz",
-      "expr": "__basaltOwn.s07renderMermaidDiagram",
+      "expr": "__basaltOwn.ng18RenderMermaidDiagram",
       "sha1": "dceab885efcdaef4fa4173df8e75d600b092019b",
       "originalBytes": 1562
     },
     {
       "orig": "Qz",
-      "expr": "__basaltOwn.s07mermaidElementFor",
+      "expr": "__basaltOwn.ng18MermaidElementFor",
       "sha1": "cc37890534d8b70d1530ec26e24a0da1fa04fa78",
       "originalBytes": 148
     },
     {
       "orig": "Zz",
-      "expr": "__basaltOwn.s07highlightedLang",
+      "expr": "__basaltOwn.ng18HighlightedLang",
       "sha1": "ca1f003a4e2c2238e07ee19e1139efed424dd696",
       "originalBytes": 106
     },
     {
       "orig": "tq",
-      "expr": "__basaltOwn.s07mathElementFor",
+      "expr": "__basaltOwn.ng18MathElementFor",
       "sha1": "91129ef978179086dec3a76eb8be80d3a8064775",
       "originalBytes": 201
     },
     {
       "orig": "iq",
-      "expr": "__basaltOwn.s07internalEmbedFor",
+      "expr": "__basaltOwn.ng18InternalEmbedFor",
       "sha1": "37e063f6dd7ba0451d1db959dabe392e7f19a19b",
       "originalBytes": 194
     },
     {
       "orig": "Jz",
-      "expr": "__basaltOwn.s07highlightedCodeFor",
+      "expr": "__basaltOwn.ng18HighlightedCodeFor",
       "sha1": "270bab77e47f7539f7d9b9b546b3415762db9ccf",
       "originalBytes": 191
     },
     {
       "orig": "rq",
-      "expr": "__basaltOwn.s07imageFor",
+      "expr": "__basaltOwn.ng18ImageFor",
       "sha1": "bc7e9611e10abffac3fecd1859cc61c21cfdde33",
       "originalBytes": 303
     },
     {
       "orig": "Xz",
-      "expr": "__basaltOwn.s07newEmbedCache()",
+      "expr": "__basaltOwn.ng18NewEmbedCache()",
       "sha1": "46e96ccfcfbb4f4c05ed1f14a9ecd69852e8605f",
       "originalBytes": 4
     },
     {
       "orig": "eq",
-      "expr": "__basaltOwn.s07newEmbedCache()",
+      "expr": "__basaltOwn.ng18NewEmbedCache()",
       "sha1": "46e96ccfcfbb4f4c05ed1f14a9ecd69852e8605f",
       "originalBytes": 4
     },
@@ -9027,7 +9027,7 @@
     },
     {
       "orig": "I$",
-      "expr": "__basaltOwn.s26IosEditorExtensions()",
+      "expr": "__basaltOwn.ng18IosEditorExtensions()",
       "sha1": "47d2049cc8f66a543e7c8806fbd82567630b0c24",
       "originalBytes": 7
     },
