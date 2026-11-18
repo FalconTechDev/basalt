@@ -9348,18 +9348,6 @@
       "expr": "__basaltOwn.s91MajorSnapshot(Vf)",
       "sha1": "85d40c2f9de777cba80df079e9e94af8bdb30c10",
       "originalBytes": 2
-    },
-    {
-      "orig": "Um",
-      "expr": "__basaltOwn.nIconsUm()",
-      "sha1": "f4a77b9e087eaf3dbda5684f2ad4d484ad36c9bd",
-      "originalBytes": 287957
-    },
-    {
-      "orig": "Qm",
-      "expr": "__basaltOwn.nIconsQm()",
-      "sha1": "461b337a676550c80a8c92377417f31be418f122",
-      "originalBytes": 15559
     }
   ],
   "methods": [

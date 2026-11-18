@@ -58,3 +58,5 @@ Public plugin list used by the plugin catalog is read from a public GitHub repos
 | tslib helpers (`__awaiter`, `__generator`, `__spreadArray`, ...) | `src/app.js` bundle helpers | Apache-2.0 |
 | moment, yaml, pdf.js, capacitor bridges | bundled vendor modules in `src/app.js` / `src/lib` | respective upstream licenses (MIT / Apache-2.0) |
 | @replit/codemirror-vim + @replit/codemirror-search-panel (CM6 vim mode, search panel, inside `src/app.js`) | `src/app.js` application scope | MIT |
+
+| Lucide icons | table inside `src/app.js` (icon set used by the interface) | ISC License, Copyright (c) for portions Lucide Contributors; portions derived from Feather (MIT, Cole Bemis). Licence text: https://github.com/lucide-icons/lucide/blob/main/LICENSE |
