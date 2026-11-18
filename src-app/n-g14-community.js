@@ -10,7 +10,7 @@
 import { env, hostEnv } from "./env.js";
 import { inherit } from "./inherit.js";
 import { containsAllWords, renderMatches } from "./search-simple.js";
-import { s05CommunityPlugins, s05CommunityPluginStats } from "./s05-cli.js";
+import { ng01CommunityPlugins, ng01CommunityPluginStats } from "./n-g01-table.js";
 import { s04CommunityThemes } from "./s04-themes.js";
 import { isOlderVersion } from "./text.js";
 
@@ -554,7 +554,7 @@ export function definePluginBrowserModal(host) {
         const t = host.t.setting.thirdPartyPlugin;
         let feed;
         try {
-          feed = await s05CommunityPlugins();
+          feed = await ng01CommunityPlugins();
         } catch (err) {
           throw new Error(host.t.setting.thirdPartyPlugin.msgFailedLoadPlugins());
         }
@@ -562,7 +562,7 @@ export function definePluginBrowserModal(host) {
         // stats degrade to zero on failure, never block the list
         let stats = {};
         try {
-          const raw = await s05CommunityPluginStats();
+          const raw = await ng01CommunityPluginStats();
           if (raw && typeof raw === "object") stats = raw;
         } catch (err) {}
         self.items = [];

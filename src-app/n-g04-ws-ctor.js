@@ -3,7 +3,6 @@ import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
 import { makeHotkey } from "./text.js";
 import { firstHeadingText } from "./path.js";
-import { s12PosEq } from "./s12-consts.js";
 import { ng04WsTree } from "./n-g04-ws-tree.js";
 import { ng04WsOps } from "./n-g04-ws-ops.js";
 import { parseCallbackUrl } from "./vault-crypto.js";

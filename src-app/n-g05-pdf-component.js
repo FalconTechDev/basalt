@@ -3,7 +3,7 @@
 // affordance). Class factories are resolved lazily through the shared kit so
 // construction order inside the bundle does not matter.
 import { inherit } from "./inherit.js";
-import { isEditableNode } from "./tree.js";
+import { ng15IsEditableNode } from "./n-g15-tree.js";
 import { ng05ParsePdfSubpath } from "./n-g05-pdf-util.js";
 import { ng05PdfKitGet } from "./n-g05-pdf-viewer.js";
 import { ng05BuildController } from "./n-g05-pdf-controller.js";
@@ -109,7 +109,7 @@ export function ng05BuildView(host) {
       if (file === this.file) this.onModify(file);
     }, this));
     this.scope.register([], "ArrowLeft", (evt) => {
-      if (isEditableNode(evt.targetNode)) return;
+      if (ng15IsEditableNode(evt.targetNode)) return;
       const inner = this.viewer.child && this.viewer.child.pdfViewer && this.viewer.child.pdfViewer.pdfViewer;
       const scale = inner && inner.currentScaleValue;
       if (scale !== "page-width" && scale !== "page-height") return;
@@ -117,7 +117,7 @@ export function ng05BuildView(host) {
       this.pageStep(-1);
     });
     this.scope.register([], "ArrowRight", (evt) => {
-      if (isEditableNode(evt.targetNode)) return;
+      if (ng15IsEditableNode(evt.targetNode)) return;
       const inner = this.viewer.child && this.viewer.child.pdfViewer && this.viewer.child.pdfViewer.pdfViewer;
       const scale = inner && inner.currentScaleValue;
       if (scale !== "page-width" && scale !== "page-height") return;
