@@ -667,27 +667,27 @@
     },
     {
       "orig": "wP",
-      "use": "setDragUriData",
+      "use": "ng08SetDragUriData",
       "originalBytes": 72
     },
     {
       "orig": "bP",
-      "use": "setDragPlainData",
+      "use": "ng08SetDragPlainData",
       "originalBytes": 43
     },
     {
       "orig": "SP",
-      "use": "applyDropEffect",
+      "use": "ng08ApplyDropEffect",
       "originalBytes": 158
     },
     {
       "orig": "Eg",
-      "use": "suppressNextEvent",
+      "use": "ng08SuppressNextEvent",
       "originalBytes": 239
     },
     {
       "orig": "TP",
-      "use": "setDragImage",
+      "use": "ng08SetDragImage",
       "originalBytes": 120
     },
     {
@@ -782,97 +782,97 @@
     },
     {
       "orig": "GH",
-      "use": "walkTree",
+      "use": "ng15WalkTree",
       "originalBytes": 158
     },
     {
       "orig": "WH",
-      "use": "hasChildList",
+      "use": "ng15HasChildList",
       "originalBytes": 55
     },
     {
       "orig": "KH",
-      "use": "treeRange",
+      "use": "ng15TreeRange",
       "originalBytes": 248
     },
     {
       "orig": "QH",
-      "use": "nextVisibleTreeItem",
+      "use": "ng15NextVisibleTreeItem",
       "originalBytes": 234
     },
     {
       "orig": "$H",
-      "use": "prevVisibleTreeItem",
+      "use": "ng15PrevVisibleTreeItem",
       "originalBytes": 173
     },
     {
       "orig": "ZH",
-      "use": "lastVisibleTreeItem",
+      "use": "ng15LastVisibleTreeItem",
       "originalBytes": 276
     },
     {
       "orig": "XH",
-      "use": "prevTreeSibling",
+      "use": "ng15PrevTreeSibling",
       "originalBytes": 88
     },
     {
       "orig": "YH",
-      "use": "nextTreeSibling",
+      "use": "ng15NextTreeSibling",
       "originalBytes": 94
     },
     {
       "orig": "_H",
-      "use": "treeAncestorPath",
+      "use": "ng15TreeAncestorPath",
       "originalBytes": 119
     },
     {
       "orig": "Cl",
-      "use": "mountChildren",
+      "use": "ng15MountChildren",
       "originalBytes": 310
     },
     {
       "orig": "KL",
-      "use": "markItemCollapsed",
+      "use": "ng15MarkItemCollapsed",
       "originalBytes": 115
     },
     {
       "orig": "JH",
-      "use": "makeTreePusher",
+      "use": "ng15MakeTreePusher",
       "originalBytes": 109
     },
     {
       "orig": "Vv",
-      "use": "offsetBox",
+      "use": "ng15OffsetBox",
       "originalBytes": 333
     },
     {
       "orig": "wl",
-      "use": "animateCollapse",
+      "use": "ng15AnimateCollapse",
       "originalBytes": 274
     },
     {
       "orig": "bl",
-      "use": "expandFromZero",
+      "use": "ng15ExpandFromZero",
       "originalBytes": 274
     },
     {
       "orig": "ml",
-      "use": "boxMetrics",
+      "use": "ng15BoxMetrics",
       "originalBytes": 196
     },
     {
       "orig": "yg",
-      "use": "isEditableNode",
+      "use": "ng15IsEditableNode",
       "originalBytes": 108
     },
     {
       "orig": "Vg",
-      "use": "syntheticKeyEvent",
+      "use": "ng15SyntheticKeyEvent",
       "originalBytes": 294
     },
     {
       "orig": "QL",
-      "use": "collapsibleTreeItem",
+      "use": "ng15CollapsibleTreeItem",
       "originalBytes": 1246
     },
     {
@@ -968,59 +968,59 @@
     },
     {
       "orig": "I2",
-      "use": "bookmarkItemForFile"
+      "use": "ng08BookmarkItemForFile"
     },
     {
       "orig": "O2",
-      "use": "bookmarkItemForFolder"
+      "use": "ng08BookmarkItemForFolder"
     },
     {
       "orig": "F2",
-      "use": "bookmarkGroupItem"
+      "use": "ng08BookmarkGroupItem"
     },
     {
       "orig": "N2",
-      "use": "bookmarkItemForGraph"
+      "use": "ng08BookmarkItemForGraph"
     },
     {
       "orig": "R2",
-      "use": "bookmarkItemForUrl"
+      "use": "ng08BookmarkItemForUrl"
     },
     {
       "orig": "B2",
-      "use": "bookmarkItemForSearch"
+      "use": "ng08BookmarkItemForSearch"
     },
     {
       "orig": "V2",
-      "use": "viewToBookmarkItem"
+      "use": "ng08ViewToBookmarkItem"
     },
     {
       "orig": "z2",
-      "use": "filesToBookmarkItems"
+      "use": "ng08FilesToBookmarkItems"
     },
     {
       "orig": "H2",
-      "use": "walkBookmarkItems"
+      "use": "ng08WalkBookmarkItems"
     },
     {
       "orig": "GA",
-      "use": "headingAtPosition"
+      "use": "ng08HeadingAtPosition"
     },
     {
       "orig": "KA",
-      "use": "blockRefInsertion"
+      "use": "ng08BlockRefInsertion"
     },
     {
       "orig": "y$",
-      "use": "flattenUniqueFiles"
+      "use": "ng08FlattenUniqueFiles"
     },
     {
       "orig": "c2",
-      "use": "treeDropPosition"
+      "use": "ng15TreeDropPosition"
     },
     {
       "orig": "f2",
-      "use": "updateTreeDropIndicator"
+      "use": "ng15UpdateTreeDropIndicator"
     },
     {
       "orig": "Yc",
@@ -1341,7 +1341,7 @@
     },
     {
       "orig": "Zg",
-      "use": "s04FormatMenuPlugin",
+      "use": "ng08S04FormatMenuPlugin",
       "originalBytes": 802
     },
     {
@@ -1884,40 +1884,40 @@
     },
     {
       "orig": "OQ",
-      "use": "s09PublishGraphData",
+      "use": "ng12PublishGraphData",
       "originalBytes": 1086
     },
     {
       "orig": "oX",
-      "use": "s09PublishResolveSub",
+      "use": "ng12PublishResolveSub",
       "originalBytes": 113
     },
     {
       "orig": "O9",
-      "use": "s15ScrollLoadMore",
+      "use": "ng03ScrollLoadMore",
       "originalBytes": 138
     },
     {
       "orig": "wq",
-      "use": "s23TableSync",
+      "use": "ng09TableSync",
       "host": true,
       "originalBytes": 1192
     },
     {
       "orig": "Mq",
-      "use": "s23ListRenumber",
+      "use": "ng09ListRenumber",
       "host": true,
       "originalBytes": 2172
     },
     {
       "orig": "Sq",
-      "use": "s23ListMarker",
+      "use": "ng09ListMarker",
       "host": true,
       "originalBytes": 57
     },
     {
       "orig": "xq",
-      "use": "s23InsideCode",
+      "use": "ng09InsideCode",
       "host": true,
       "originalBytes": 210
     },
@@ -2557,11 +2557,11 @@
     },
     {
       "orig": "qD",
-      "use": "defineLeafHistory"
+      "use": "ng04LeafHistory"
     },
     {
       "orig": "jD",
-      "use": "defineWorkspaceLeaf"
+      "use": "ng04WorkspaceLeaf"
     },
     {
       "orig": "Ng",
@@ -2757,7 +2757,7 @@
     },
     {
       "orig": "xP",
-      "use": "defineDragManager",
+      "use": "ng08DefineDragManager",
       "originalBytes": 5966
     },
     {
@@ -2804,7 +2804,7 @@
     },
     {
       "orig": "bb",
-      "use": "defineBookmarkRunnable",
+      "use": "ng08DefineBookmarkRunnable",
       "originalBytes": 582
     },
     {
@@ -2819,27 +2819,27 @@
     },
     {
       "orig": "UH",
-      "use": "defineTreeChildren",
+      "use": "ng15DefineTreeChildren",
       "originalBytes": 800
     },
     {
       "orig": "YL",
-      "use": "defineTreeItem",
+      "use": "ng15DefineTreeItem",
       "originalBytes": 626
     },
     {
       "orig": "s2",
-      "use": "defineTreeRoot",
+      "use": "ng15DefineTreeRoot",
       "originalBytes": 210
     },
     {
       "orig": "tz",
-      "use": "defineInfinityScroll",
+      "use": "ng15DefineInfinityScroll",
       "originalBytes": 6613
     },
     {
       "orig": "l2",
-      "use": "defineTree",
+      "use": "ng15DefineTree",
       "originalBytes": 7238
     },
     {
@@ -3038,35 +3038,35 @@
     },
     {
       "orig": "nb",
-      "use": "defineButtonModal"
+      "use": "ng08DefineButtonModal"
     },
     {
       "orig": "RJ",
-      "use": "defineBookmarkEditModal"
+      "use": "ng08DefineBookmarkEditModal"
     },
     {
       "orig": "BJ",
-      "use": "defineBookmarkManyModal"
+      "use": "ng08DefineBookmarkManyModal"
     },
     {
       "orig": "i3",
-      "use": "defineBookmarkItemBase"
+      "use": "ng08DefineBookmarkItemBase"
     },
     {
       "orig": "o3",
-      "use": "defineBookmarkLeafItem"
+      "use": "ng08DefineBookmarkLeafItem"
     },
     {
       "orig": "r3",
-      "use": "defineBookmarkGroupItem"
+      "use": "ng08DefineBookmarkGroupItem"
     },
     {
       "orig": "a3",
-      "use": "defineBookmarksView"
+      "use": "ng08DefineBookmarksView"
     },
     {
       "orig": "l3",
-      "use": "defineBookmarksPlugin"
+      "use": "ng08DefineBookmarksPlugin"
     },
     {
       "orig": "Y0",
@@ -3106,27 +3106,27 @@
     },
     {
       "orig": "T8",
-      "use": "defineFileExplorerTree"
+      "use": "ng15DefineFileExplorerTree"
     },
     {
       "orig": "k8",
-      "use": "defineFileExplorerItemBase"
+      "use": "ng15DefineFileExplorerItemBase"
     },
     {
       "orig": "E8",
-      "use": "defineFileItem"
+      "use": "ng15DefineFileItem"
     },
     {
       "orig": "S8",
-      "use": "defineFolderItem"
+      "use": "ng15DefineFolderItem"
     },
     {
       "orig": "D8",
-      "use": "defineFileExplorerView"
+      "use": "ng15DefineFileExplorerView"
     },
     {
       "orig": "P8",
-      "use": "defineFileExplorerPlugin"
+      "use": "ng15DefineFileExplorerPlugin"
     },
     {
       "orig": "wee",
@@ -3334,11 +3334,11 @@
     },
     {
       "orig": "iZ",
-      "use": "defineEditorImpl"
+      "use": "ng09DefineEditorImpl"
     },
     {
       "orig": "oZ",
-      "use": "defineCodeMirrorEditor"
+      "use": "ng09DefineCodeMirrorEditor"
     },
     {
       "orig": "AL",
@@ -3507,122 +3507,122 @@
     },
     {
       "orig": "oC",
-      "use": "defineSyncScreenBase",
+      "use": "ng03DefineSyncScreenBase",
       "originalBytes": 511
     },
     {
       "orig": "aC",
-      "use": "defineSyncField",
+      "use": "ng03DefineSyncField",
       "originalBytes": 667
     },
     {
       "orig": "sC",
-      "use": "defineSyncRadioGroup",
+      "use": "ng03DefineSyncRadioGroup",
       "originalBytes": 686
     },
     {
       "orig": "lC",
-      "use": "defineSyncRadioOption",
+      "use": "ng03DefineSyncRadioOption",
       "originalBytes": 332
     },
     {
       "orig": "cC",
-      "use": "defineSyncStartScreen",
+      "use": "ng03DefineSyncStartScreen",
       "originalBytes": 810
     },
     {
       "orig": "uC",
-      "use": "defineSyncIntroScreen",
+      "use": "ng03DefineSyncIntroScreen",
       "originalBytes": 500
     },
     {
       "orig": "hC",
-      "use": "defineCreateVaultScreen",
+      "use": "ng03DefineCreateVaultScreen",
       "originalBytes": 2106
     },
     {
       "orig": "pC",
-      "use": "defineSyncSetupScreen",
+      "use": "ng03DefineSyncSetupScreen",
       "originalBytes": 1194
     },
     {
       "orig": "dC",
-      "use": "defineEncryptionScreen",
+      "use": "ng03DefineEncryptionScreen",
       "originalBytes": 2097
     },
     {
       "orig": "fC",
-      "use": "defineSyncSettingsScreen",
+      "use": "ng03DefineSyncSettingsScreen",
       "originalBytes": 2259
     },
     {
       "orig": "mC",
-      "use": "defineAuthChoiceScreen",
+      "use": "ng03DefineAuthChoiceScreen",
       "originalBytes": 409
     },
     {
       "orig": "vC",
-      "use": "defineRemoteVaultOptionsScreen",
+      "use": "ng03DefineRemoteVaultOptionsScreen",
       "originalBytes": 984
     },
     {
       "orig": "gC",
-      "use": "defineVaultListScreen",
+      "use": "ng03DefineVaultListScreen",
       "originalBytes": 1395
     },
     {
       "orig": "yC",
-      "use": "defineSignInScreen",
+      "use": "ng03DefineSignInScreen",
       "originalBytes": 2506
     },
     {
       "orig": "bC",
-      "use": "defineForgotPasswordScreen",
+      "use": "ng03DefineForgotPasswordScreen",
       "originalBytes": 1260
     },
     {
       "orig": "wC",
-      "use": "defineSyncMethodScreen",
+      "use": "ng03DefineSyncMethodScreen",
       "originalBytes": 2595
     },
     {
       "orig": "kC",
-      "use": "defineConnectMethodScreen",
+      "use": "ng03DefineConnectMethodScreen",
       "originalBytes": 2037
     },
     {
       "orig": "CC",
-      "use": "defineOtherSyncScreen",
+      "use": "ng03DefineOtherSyncScreen",
       "originalBytes": 510
     },
     {
       "orig": "EC",
-      "use": "defineEmailEntryScreen",
+      "use": "ng03DefineEmailEntryScreen",
       "originalBytes": 699
     },
     {
       "orig": "MC",
-      "use": "defineSignupScreen",
+      "use": "ng03DefineSignupScreen",
       "originalBytes": 1464
     },
     {
       "orig": "SC",
-      "use": "defineEmailVerificationScreen",
+      "use": "ng03DefineEmailVerificationScreen",
       "originalBytes": 1119
     },
     {
       "orig": "xC",
-      "use": "defineICloudMissingScreen",
+      "use": "ng03DefineICloudMissingScreen",
       "originalBytes": 319
     },
     {
       "orig": "TC",
-      "use": "defineStoragePermissionScreen",
+      "use": "ng03DefineStoragePermissionScreen",
       "originalBytes": 1022
     },
     {
       "orig": "DC",
-      "use": "defineICloudUnsupportedScreen",
+      "use": "ng03DefineICloudUnsupportedScreen",
       "originalBytes": 356
     },
     {
@@ -3659,7 +3659,7 @@
     },
     {
       "orig": "Xg",
-      "use": "s04MenuManager",
+      "use": "ng08DefineS04MenuManager",
       "originalBytes": 7820
     },
     {
@@ -3899,104 +3899,104 @@
     },
     {
       "orig": "m4",
-      "use": "defineS13CardsGroupHeader",
+      "use": "ng06CardsGroupHeader",
       "originalBytes": 235
     },
     {
       "orig": "z4",
-      "use": "defineS13ColumnWidth",
+      "use": "ng06DefineColumnWidth",
       "originalBytes": 245
     },
     {
       "orig": "q4",
-      "use": "defineS13TableRow",
+      "use": "ng06DefineTableRow",
       "originalBytes": 329
     },
     {
       "orig": "U4",
-      "use": "defineS13TableGroup",
+      "use": "ng06DefineTableGroup",
       "originalBytes": 659
     },
     {
       "orig": "W4",
-      "use": "defineS13HeaderRow",
+      "use": "ng06DefineHeaderRow",
       "originalBytes": 295
     },
     {
       "orig": "G4",
-      "use": "defineS13EntryRow",
+      "use": "ng06DefineEntryRow",
       "originalBytes": 294
     },
     {
       "orig": "Y4",
-      "use": "defineS13SummaryRow",
+      "use": "ng06DefineSummaryRow",
       "originalBytes": 555
     },
     {
       "orig": "_4",
-      "use": "defineS13HeaderCell",
+      "use": "ng06DefineHeaderCell",
       "originalBytes": 4038
     },
     {
       "orig": "K4",
-      "use": "defineS13BodyCell",
+      "use": "ng06DefineBodyCell",
       "originalBytes": 436
     },
     {
       "orig": "Q4",
-      "use": "defineS13SummaryCell",
+      "use": "ng06DefineSummaryCell",
       "originalBytes": 1141
     },
     {
       "orig": "g4",
-      "use": "defineS13CardsProperty",
+      "use": "ng06CardsProperty",
       "originalBytes": 416
     },
     {
       "orig": "v4",
-      "use": "defineS13CardsItem",
+      "use": "ng06CardsItem",
       "originalBytes": 2856
     },
     {
       "orig": "A4",
-      "use": "defineS13ListProperty",
+      "use": "ng06ListProperty",
       "originalBytes": 430
     },
     {
       "orig": "T4",
-      "use": "defineS13ListGroup",
+      "use": "ng06ListGroup",
       "originalBytes": 1384
     },
     {
       "orig": "D4",
-      "use": "defineS13ListItem",
+      "use": "ng06ListItem",
       "originalBytes": 1779
     },
     {
       "orig": "x4",
-      "use": "defineS13ListView",
+      "use": "ng06ListView",
       "originalBytes": 3968
     },
     {
       "orig": "R4",
-      "use": "defineS13PasteData",
+      "use": "ng06DefinePasteData",
       "originalBytes": 1568
     },
     {
       "orig": "J4",
-      "use": "defineS13ViewSwitcherModal"
+      "use": "ng06ViewSwitcherModal"
     },
     {
       "orig": "L4",
-      "use": "defineS13SummaryMenu"
+      "use": "ng06SummaryMenu"
     },
     {
       "orig": "I4",
-      "use": "defineS13SummaryFormulaListPage"
+      "use": "ng06SummaryFormulaListPage"
     },
     {
       "orig": "O4",
-      "use": "defineS13SummaryFormulaPage"
+      "use": "ng06SummaryFormulaPage"
     },
     {
       "orig": "n4",
@@ -4036,7 +4036,7 @@
     },
     {
       "orig": "f4",
-      "use": "defineS13CardsView"
+      "use": "ng06CardsView"
     },
     {
       "orig": "z3",
@@ -4048,7 +4048,7 @@
     },
     {
       "orig": "Z4",
-      "use": "defineS13BasesPlugin"
+      "use": "ng06BasesPlugin"
     },
     {
       "orig": "CA",
@@ -4296,287 +4296,287 @@
     },
     {
       "orig": "KY",
-      "use": "s09PublishSiteCache",
+      "use": "ng12PublishSiteCache",
       "originalBytes": 1893
     },
     {
       "orig": "zY",
-      "use": "s09BasesToolbarButton",
+      "use": "ng12BasesToolbarButton",
       "originalBytes": 721
     },
     {
       "orig": "qY",
-      "use": "s09BasesDropdown",
+      "use": "ng12BasesDropdown",
       "originalBytes": 948
     },
     {
       "orig": "jY",
-      "use": "s09BasesMenu",
+      "use": "ng12BasesMenu",
       "originalBytes": 3833
     },
     {
       "orig": "zQ",
-      "use": "s09PublishTreeItem",
+      "use": "ng12PublishTreeItem",
       "originalBytes": 343
     },
     {
       "orig": "qQ",
-      "use": "s09PublishFileItem",
+      "use": "ng12mPublishFileItem",
       "originalBytes": 432
     },
     {
       "orig": "jQ",
-      "use": "s09PublishFolderItem",
+      "use": "ng12mPublishFolderItem",
       "originalBytes": 336
     },
     {
       "orig": "UQ",
-      "use": "s09PublishTree",
+      "use": "ng12PublishTree",
       "originalBytes": 1301
     },
     {
       "orig": "WQ",
-      "use": "s09PublishOutlineItem",
+      "use": "ng12PublishOutlineItem",
       "originalBytes": 505
     },
     {
       "orig": "_Q",
-      "use": "s09PublishOutlineTree",
+      "use": "ng12PublishOutlineTree",
       "originalBytes": 696
     },
     {
       "orig": "GQ",
-      "use": "s09PublishOutlineView",
+      "use": "ng12PublishOutlineView",
       "originalBytes": 1328
     },
     {
       "orig": "HQ",
-      "use": "s09PublishNavView",
+      "use": "ng12PublishNavView",
       "originalBytes": 1945
     },
     {
       "orig": "KQ",
-      "use": "s09PublishModalBase",
+      "use": "ng12PublishModalBase",
       "originalBytes": 857
     },
     {
       "orig": "YQ",
-      "use": "s09PublishPasswordModal",
+      "use": "ng12PublishPasswordModal",
       "originalBytes": 2089
     },
     {
       "orig": "QQ",
-      "use": "s09PublishTagModal",
+      "use": "ng12PublishTagModal",
       "originalBytes": 859
     },
     {
       "orig": "IQ",
-      "use": "s09PublishGraphView",
+      "use": "ng12PublishGraphView",
       "originalBytes": 3534
     },
     {
       "orig": "aX",
-      "use": "s09PublishEmbedView",
+      "use": "ng12PublishEmbedView",
       "originalBytes": 5676
     },
     {
       "orig": "sX",
-      "use": "s09PublishPageView",
+      "use": "ng12PublishPageView",
       "originalBytes": 2887
     },
     {
       "orig": "q7",
-      "use": "definePublishPathSuggest",
+      "use": "ng12mPublishPathSuggest",
       "originalBytes": 287
     },
     {
       "orig": "j7",
-      "use": "definePublishSection",
+      "use": "ng12mPublishSection",
       "originalBytes": 238
     },
     {
       "orig": "U7",
-      "use": "definePublishOfflineSection",
+      "use": "ng12mPublishOfflineSection",
       "originalBytes": 135
     },
     {
       "orig": "W7",
-      "use": "definePublishLoginSection",
+      "use": "ng12mPublishLoginSection",
       "originalBytes": 620
     },
     {
       "orig": "_7",
-      "use": "definePublishManageSitesSection",
+      "use": "ng12mPublishManageSitesSection",
       "originalBytes": 5524
     },
     {
       "orig": "G7",
-      "use": "definePublishSiteOptionsSection",
+      "use": "ng12mPublishSiteOptionsSection",
       "originalBytes": 7156
     },
     {
       "orig": "K7",
-      "use": "definePublishSiteFiltersSection",
+      "use": "ng12mPublishSiteFiltersSection",
       "originalBytes": 1649
     },
     {
       "orig": "Y7",
-      "use": "definePublishTreeItemBase",
+      "use": "ng12mPublishTreeItemBase",
       "originalBytes": 431
     },
     {
       "orig": "X7",
-      "use": "definePublishFileItem",
+      "use": "ng12mPublishFileItem",
       "originalBytes": 3426
     },
     {
       "orig": "$7",
-      "use": "definePublishFolderItem",
+      "use": "ng12mPublishFolderItem",
       "originalBytes": 1452
     },
     {
       "orig": "Z7",
-      "use": "definePublishTreeSection",
+      "use": "ng12mPublishTreeSection",
       "originalBytes": 2799
     },
     {
       "orig": "J7",
-      "use": "definePublishReviewSection",
+      "use": "ng12mPublishReviewSection",
       "originalBytes": 4840
     },
     {
       "orig": "e9",
-      "use": "definePublishUploadSection",
+      "use": "ng12mPublishUploadSection",
       "originalBytes": 3732
     },
     {
       "orig": "t9",
-      "use": "definePublishEditSlugSection",
+      "use": "ng12mPublishEditSlugSection",
       "originalBytes": 1555
     },
     {
       "orig": "n9",
-      "use": "definePublishPasswordsSection",
+      "use": "ng12mPublishPasswordsSection",
       "originalBytes": 1584
     },
     {
       "orig": "i9",
-      "use": "definePublishAddPasswordSection",
+      "use": "ng12mPublishAddPasswordSection",
       "originalBytes": 1632
     },
     {
       "orig": "r9",
-      "use": "definePublishCustomDomainSection",
+      "use": "ng12mPublishCustomDomainSection",
       "originalBytes": 1786
     },
     {
       "orig": "o9",
-      "use": "definePublishShareModal",
+      "use": "ng12mPublishShareModal",
       "originalBytes": 2509
     },
     {
       "orig": "a9",
-      "use": "definePublishCompareModal",
+      "use": "ng12mPublishCompareModal",
       "originalBytes": 1170
     },
     {
       "orig": "s9",
-      "use": "definePublishConfirmModal",
+      "use": "ng12mPublishConfirmModal",
       "originalBytes": 699
     },
     {
       "orig": "l9",
-      "use": "definePublishIncludedFoldersModal",
+      "use": "ng12mPublishIncludedFoldersModal",
       "originalBytes": 612
     },
     {
       "orig": "c9",
-      "use": "definePublishExcludedFoldersModal",
+      "use": "ng12mPublishExcludedFoldersModal",
       "originalBytes": 651
     },
     {
       "orig": "p9",
-      "use": "definePublishRequestErrorClass",
+      "use": "ng12PublishRequestErrorClass",
       "originalBytes": 155
     },
     {
       "orig": "f9",
-      "use": "definePublishPlugin",
+      "use": "ng12PublishPlugin",
       "originalBytes": 14163
     },
     {
       "orig": "P9",
-      "use": "defineSyncSettingsView",
+      "use": "ng03DefineSyncSettingsView",
       "originalBytes": 11959
     },
     {
       "orig": "I9",
-      "use": "defineSyncFileHistoryView",
+      "use": "ng03DefineSyncFileHistoryView",
       "originalBytes": 10203
     },
     {
       "orig": "F9",
-      "use": "defineSyncFileHistoryModal",
+      "use": "ng03DefineSyncFileHistoryModal",
       "originalBytes": 1162
     },
     {
       "orig": "N9",
-      "use": "defineSyncDeletedFilesModal",
+      "use": "ng03DefineSyncDeletedFilesModal",
       "originalBytes": 2921
     },
     {
       "orig": "R9",
-      "use": "defineSyncUpgradeEncryptionModal",
+      "use": "ng03DefineSyncUpgradeEncryptionModal",
       "originalBytes": 633
     },
     {
       "orig": "B9",
-      "use": "defineSyncMigrateVaultModal",
+      "use": "ng03DefineSyncMigrateVaultModal",
       "originalBytes": 5035
     },
     {
       "orig": "V9",
-      "use": "defineSyncCreateVaultModal",
+      "use": "ng03DefineSyncCreateVaultModal",
       "originalBytes": 3131
     },
     {
       "orig": "H9",
-      "use": "defineSyncRemoteVaultsModal",
+      "use": "ng03DefineSyncRemoteVaultsModal",
       "originalBytes": 8354
     },
     {
       "orig": "z9",
-      "use": "defineSyncLogModal",
+      "use": "ng03DefineSyncLogModal",
       "originalBytes": 2413
     },
     {
       "orig": "q9",
-      "use": "defineSyncExcludedFoldersSuggest",
+      "use": "ng03DefineSyncExcludedFoldersSuggest",
       "originalBytes": 591
     },
     {
       "orig": "j9",
-      "use": "defineSyncLargestFilesModal",
+      "use": "ng03DefineSyncLargestFilesModal",
       "originalBytes": 617
     },
     {
       "orig": "U9",
-      "use": "defineSyncConnectVaultModal",
+      "use": "ng03DefineSyncConnectVaultModal",
       "originalBytes": 3819
     },
     {
       "orig": "W9",
-      "use": "defineSyncRenameVaultModal",
+      "use": "ng03DefineSyncRenameVaultModal",
       "originalBytes": 537
     },
     {
       "orig": "_9",
-      "use": "defineSyncManageSharingModal",
+      "use": "ng03DefineSyncManageSharingModal",
       "originalBytes": 3555
     },
     {
       "orig": "K9",
-      "use": "defineSyncChangesView",
+      "use": "ng03DefineSyncChangesView",
       "originalBytes": 5297
     },
     {
@@ -4601,117 +4601,117 @@
     },
     {
       "orig": "gj",
-      "use": "s23EditorSearchBar",
+      "use": "ng09EditorSearchBar",
       "originalBytes": 4127
     },
     {
       "orig": "Tq",
-      "use": "s23ListIndentClass",
+      "use": "ng09ListIndentClass",
       "originalBytes": 3873
     },
     {
       "orig": "AX",
-      "use": "defineS25FilterMenu",
+      "use": "ng06FilterMenu",
       "originalBytes": 2030
     },
     {
       "orig": "PX",
-      "use": "defineS25FormulaSuggester",
+      "use": "ng06FormulaSuggester",
       "originalBytes": 581
     },
     {
       "orig": "HX",
-      "use": "defineS25BasesView",
+      "use": "ng06BasesFileView",
       "originalBytes": 3262
     },
     {
       "orig": "jX",
-      "use": "defineS25NewItemButton",
+      "use": "ng06NewItemButton",
       "originalBytes": 2978
     },
     {
       "orig": "UX",
-      "use": "defineS25FormulaEditor",
+      "use": "ng06FormulaEditor",
       "originalBytes": 1291
     },
     {
       "orig": "WX",
-      "use": "defineS25ToolbarPage",
+      "use": "ng06ToolbarPage",
       "originalBytes": 218
     },
     {
       "orig": "GX",
-      "use": "defineS25PropertiesMenu",
+      "use": "ng06PropertiesMenu",
       "originalBytes": 1902
     },
     {
       "orig": "KX",
-      "use": "defineS25PropertyListPage",
+      "use": "ng06PropertyListPage",
       "originalBytes": 5777
     },
     {
       "orig": "YX",
-      "use": "defineS25PropertyEditPage",
+      "use": "ng06PropertyEditPage",
       "originalBytes": 881
     },
     {
       "orig": "QX",
-      "use": "defineS25PropertyForm",
+      "use": "ng06PropertyForm",
       "originalBytes": 2934
     },
     {
       "orig": "$X",
-      "use": "defineS25ResultsMenu",
+      "use": "ng06ResultsMenu",
       "originalBytes": 2805
     },
     {
       "orig": "ZX",
-      "use": "defineS25SearchMenu",
+      "use": "ng06SearchMenu",
       "originalBytes": 1447
     },
     {
       "orig": "e$",
-      "use": "defineS25SortMenu",
+      "use": "ng06SortMenu",
       "originalBytes": 3210
     },
     {
       "orig": "t$",
-      "use": "defineS25SortRowBase",
+      "use": "ng06SortRowBase",
       "originalBytes": 1963
     },
     {
       "orig": "n$",
-      "use": "defineS25SortRow",
+      "use": "ng06SortRow",
       "originalBytes": 553
     },
     {
       "orig": "i$",
-      "use": "defineS25GroupRow",
+      "use": "ng06GroupRow",
       "originalBytes": 363
     },
     {
       "orig": "a$",
-      "use": "defineS25ViewChooser",
+      "use": "ng06ViewChooser",
       "originalBytes": 2313
     },
     {
       "orig": "s$",
-      "use": "defineS25ViewsMenu",
+      "use": "ng06ViewsMenu",
       "originalBytes": 1807
     },
     {
       "orig": "l$",
-      "use": "defineS25ViewConfigPage",
+      "use": "ng06ViewConfigPage",
       "originalBytes": 6971
     },
     {
       "orig": "c$",
-      "use": "defineS25GroupEntries",
+      "use": "ng06DefineGroupEntries",
       "originalBytes": 143
     },
     {
       "orig": "u$",
-      "use": "defineS25QueryData",
+      "use": "ng06DefineQueryData",
       "originalBytes": 3105
     },
     {
@@ -5368,15 +5368,15 @@
     },
     {
       "orig": "bX",
-      "use": "s24PublishSite"
+      "use": "ng12PublishSite"
     },
     {
       "orig": "lX",
-      "use": "s24PublishSearch"
+      "use": "ng12PublishSearch"
     },
     {
       "orig": "yX",
-      "use": "s24PublishApp"
+      "use": "ng12PublishApp"
     },
     {
       "orig": "EX",
@@ -5401,7 +5401,7 @@
     },
     {
       "orig": "C$",
-      "use": "s26BasesController",
+      "use": "ng06BasesController",
       "originalBytes": 11496
     },
     {
@@ -5431,7 +5431,7 @@
     },
     {
       "orig": "k$",
-      "use": "s26BasesEvents",
+      "use": "ng06BasesEvents",
       "originalBytes": 0
     },
     {
@@ -5576,7 +5576,7 @@
     },
     {
       "orig": "uee",
-      "use": "s35SyncPlugin",
+      "use": "ng03SyncPlugin",
       "originalBytes": 44658
     },
     {
@@ -5611,12 +5611,12 @@
     },
     {
       "orig": "H0",
-      "use": "s48Workspace",
+      "use": "ng04S48Workspace",
       "originalBytes": 34792
     },
     {
       "orig": "_q",
-      "use": "s52Cm5Adapter"
+      "use": "ng09Cm5Adapter"
     }
   ],
   "host": {
@@ -6408,6 +6408,7 @@
     "s13EntryRow": "G4",
     "s13HeaderRow": "W4",
     "s13SummaryRow": "Y4",
+    "s13SummaryCell": "Q4",
     "s13HeaderCell": "_4",
     "s13BodyCell": "K4",
     "s13ColumnWidth": "z4",
@@ -6424,7 +6425,30 @@
     "OutgoingLinkView": "o7",
     "AllPropertiesView": "E7",
     "FilePropertiesView": "M7",
-    "s91FormatMarks": "uf"
+    "s91FormatMarks": "uf",
+    "s13TableRow": "q4",
+    "s13BasesCellBase": "j4",
+    "s13CardsProperty": "g4",
+    "s13ListProperty": "A4",
+    "s13ListGroup": "T4",
+    "s13ListItem": "D4",
+    "s13BasesEvents": "k$",
+    "s13BasesController": "C$",
+    "s13BasesPlugin": "Z4",
+    "s25ViewsMenu": "s$",
+    "s25ResultsMenu": "$X",
+    "s25SearchMenu": "ZX",
+    "s25NewItemButton": "jX",
+    "s25FilterMenu": "AX",
+    "s25PropertiesMenu": "GX",
+    "s25SortMenu": "e$",
+    "s25FormulaEditor": "UX",
+    "s25QueryData": "u$",
+    "s25GroupEntries": "c$",
+    "s09BasesToolbarButton": "zY",
+    "s09BasesDropdown": "qY",
+    "s13QueryData": "u$",
+    "s13GroupSet": "c$"
   },
   "declarators": [
     {
@@ -6465,13 +6489,13 @@
     },
     {
       "orig": "MP",
-      "expr": "__basaltOwn.dragEffectMap",
+      "expr": "__basaltOwn.ng08DragEffectMap",
       "sha1": "f0a4c1f32d9933faae8531e80432a3bec18a42fa",
       "originalBytes": 170
     },
     {
       "orig": "EP",
-      "expr": "__basaltOwn.dragPixel",
+      "expr": "__basaltOwn.ng08DragPixel",
       "sha1": "1f088489658055a2b71dd274b9c080e721998b88",
       "originalBytes": 9
     },
@@ -6495,9 +6519,9 @@
     },
     {
       "orig": "ez",
-      "expr": "__basaltOwn.walkTreeAll",
-      "sha1": "9abe299f3b1e24c01475f20b716ccb41ecd2b78a",
-      "originalBytes": 136
+      "expr": "__basaltOwn.ng15WalkTreeAll",
+      "sha1": "36a1dc7383f85fc93def4bf2619d6c148c7a816f",
+      "originalBytes": 23
     },
     {
       "orig": "iH",
@@ -6615,19 +6639,19 @@
     },
     {
       "orig": "Fg",
-      "expr": "__basaltOwn.s04ModifierKeys",
+      "expr": "__basaltOwn.ng08S04ModifierKeys",
       "sha1": "4428b988a70c6f2f49de439a7e99ed216cdb7918",
       "originalBytes": 35
     },
     {
       "orig": "Qg",
-      "expr": "__basaltOwn.s04AcceleratorNames",
+      "expr": "__basaltOwn.ng08S04AcceleratorNames",
       "sha1": "748fcc24d0198ed1e2bb2dca237c2c3ee970faba",
       "originalBytes": 75
     },
     {
       "orig": "Og",
-      "expr": "__basaltOwn.s04ModifierDisplayNames(jl)",
+      "expr": "__basaltOwn.ng08S04ModifierDisplayNames(jl)",
       "sha1": "adb72b4ae6d3d11dc387315975caa10039aea8b0",
       "originalBytes": 108
     },
@@ -6966,6 +6990,12 @@
       "originalBytes": 2
     },
     {
+      "orig": "tZ",
+      "expr": "__basaltOwn.ng09CompartmentOf(Y$,eZ)",
+      "sha1": "970d9ddb16ab0aa5965d0cc09a0d610f514bdbd8",
+      "originalBytes": 35
+    },
+    {
       "orig": "rZ",
       "expr": "__basaltOwn.s10CmHistoryStore",
       "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
@@ -7021,99 +7051,99 @@
     },
     {
       "orig": "T$",
-      "expr": "__basaltOwn.s10FilteredKeymap(__basaltHost)",
-      "sha1": "1c066add42bd47140c4a8bb2b05669a1270c4b48",
-      "originalBytes": 46
+      "expr": "__basaltOwn.ng09FilteredKeymap(__basaltHost)",
+      "sha1": "a85ac96d74c3bbc31f2f4eb31c607f288a020a2f",
+      "originalBytes": 43
     },
     {
       "orig": "D$",
-      "expr": "__basaltOwn.s10IndentColumn(__basaltHost)",
-      "sha1": "64ad1996ea63f08c14911d4df206db139a24c222",
-      "originalBytes": 99
+      "expr": "__basaltOwn.ng09IndentColumn(__basaltHost)",
+      "sha1": "8ec2ced36ef082dbc339cf6f77b65ffc4304869d",
+      "originalBytes": 41
     },
     {
       "orig": "A$",
-      "expr": "__basaltOwn.s10FoldIndent(__basaltHost)",
-      "sha1": "8a458323c84b3f4107d47f0e4be44c24bdc50ac5",
-      "originalBytes": 259
+      "expr": "__basaltOwn.ng09FoldIndent(__basaltHost)",
+      "sha1": "cf82997931521efd06d84ddfdac66bd9c92e775c",
+      "originalBytes": 39
     },
     {
       "orig": "P$",
-      "expr": "__basaltOwn.s10LastInsertPlugin(__basaltHost)",
-      "sha1": "5284351dfe28efa445f7a766d71657b6a1dcbf12",
-      "originalBytes": 46
+      "expr": "__basaltOwn.ng09LastInsertPlugin(__basaltHost)",
+      "sha1": "199362a2db15bc61733673a45233212de9e6aec4",
+      "originalBytes": 45
     },
     {
       "orig": "L$",
-      "expr": "__basaltOwn.s10DashInputHandler(__basaltHost)",
-      "sha1": "ab62f643a4e3707bf735d8e2571cb57175c3956d",
-      "originalBytes": 306
+      "expr": "__basaltOwn.ng09DashInputHandler(__basaltHost)",
+      "sha1": "41190b81b9fb58c49914227184ba8570509af44b",
+      "originalBytes": 45
     },
     {
       "orig": "O$",
-      "expr": "__basaltOwn.s10FoldHeading(__basaltHost)",
-      "sha1": "a903bed7dad7521ed15b1bfc442e082f2a208dab",
-      "originalBytes": 666
+      "expr": "__basaltOwn.ng09FoldHeading(__basaltHost)",
+      "sha1": "b8de9d89eb4dbedd233029d10145b65510eb2daa",
+      "originalBytes": 40
     },
     {
       "orig": "F$",
-      "expr": "__basaltOwn.s10FoldFrontmatter(__basaltHost)",
-      "sha1": "bc755ae9e41b0b1c70116fccfe8e5bd31f3939d7",
-      "originalBytes": 250
+      "expr": "__basaltOwn.ng09FoldFrontmatter(__basaltHost)",
+      "sha1": "428c0026dab6144ccda58a2c12564ff0e369877b",
+      "originalBytes": 44
     },
     {
       "orig": "N$",
-      "expr": "__basaltOwn.s10CmdGoStart(__basaltHost)",
-      "sha1": "d7e9e4176b2c44dbc7f513f1c9ff6d12c8881cec",
-      "originalBytes": 102
+      "expr": "__basaltOwn.ng09CmdGoStart(__basaltHost)",
+      "sha1": "8f83b16988120a3aeb10424d25c30f39907b590b",
+      "originalBytes": 39
     },
     {
       "orig": "R$",
-      "expr": "__basaltOwn.s10CmdFoldAll(__basaltHost)",
-      "sha1": "d7e5434ab588b968c750c30eb98f6bcecf71741c",
-      "originalBytes": 257
+      "expr": "__basaltOwn.ng09CmdFoldAll(__basaltHost)",
+      "sha1": "5475ebb8ed836a2280ddfd0752c4893b6cdf29ac",
+      "originalBytes": 39
     },
     {
       "orig": "H$",
-      "expr": "__basaltOwn.s10CmdIndentMore(__basaltHost)",
-      "sha1": "41a6800eeafeeace139385b65bdc1079caefeec4",
-      "originalBytes": 274
+      "expr": "__basaltOwn.ng09CmdIndentMore(__basaltHost)",
+      "sha1": "5a00ea252ae8c895cb3bd2d6e1e87c6212958749",
+      "originalBytes": 42
     },
     {
       "orig": "z$",
-      "expr": "__basaltOwn.s10CmdIndentLess(__basaltHost)",
-      "sha1": "29d75ba14f2ad8a49e090022313491f8abf22e26",
-      "originalBytes": 527
+      "expr": "__basaltOwn.ng09CmdIndentLess(__basaltHost)",
+      "sha1": "6962a92000901d2b2ad275a6b5056e57c0bc7664",
+      "originalBytes": 42
     },
     {
       "orig": "q$",
-      "expr": "__basaltOwn.s10FieldSetEffect(__basaltHost)",
-      "sha1": "31041be5deb4e5ce0ba0b5c5db6fa99078526c95",
-      "originalBytes": 11
+      "expr": "__basaltOwn.ng09FieldSetEffect(__basaltHost)",
+      "sha1": "a7dfc12ba79cca26d8a3c1699847a0b4295aed13",
+      "originalBytes": 43
     },
     {
       "orig": "j$",
-      "expr": "__basaltOwn.s10MakeCmFieldFactory(__basaltHost)",
-      "sha1": "96bbf410b915d9c4d2841d42d7040ac777cbd8cc",
-      "originalBytes": 197
+      "expr": "__basaltOwn.ng09MakeCmFieldFactory(__basaltHost)",
+      "sha1": "f4b64fac7e40e6a8988c26e2d86d99165a4a1e2e",
+      "originalBytes": 47
     },
     {
       "orig": "U$",
-      "expr": "__basaltOwn.s10EditorField(__basaltHost)",
-      "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
-      "originalBytes": 8
+      "expr": "__basaltOwn.ng09EditorField(__basaltHost)",
+      "sha1": "43ff6817d4ec31c34c5fef394df99028cff28f0d",
+      "originalBytes": 40
     },
     {
       "orig": "W$",
-      "expr": "__basaltOwn.s10OwnerField(__basaltHost)",
-      "sha1": "9de437c87018ba127b6448042a3c36848c4306fd",
-      "originalBytes": 8
+      "expr": "__basaltOwn.ng09OwnerField(__basaltHost)",
+      "sha1": "56cb239cc286b6de350c75498b8e82bc92dc5081",
+      "originalBytes": 39
     },
     {
       "orig": "G$",
-      "expr": "__basaltOwn.s10LivePreviewField(__basaltHost)",
-      "sha1": "2a6bdbff81b0ccfb37e79e43258cf5122b1333b5",
-      "originalBytes": 6
+      "expr": "__basaltOwn.ng09LivePreviewField(__basaltHost)",
+      "sha1": "9480b37ca31acf2176ee9b779feeb7a3baa2cae4",
+      "originalBytes": 45
     },
     {
       "orig": "_$",
@@ -7123,9 +7153,9 @@
     },
     {
       "orig": "K$",
-      "expr": "__basaltOwn.s10MouseSelectionStyle(__basaltHost)",
-      "sha1": "2102467cd0aa446a40429eeccb1ee46eff527b9d",
-      "originalBytes": 447
+      "expr": "__basaltOwn.ng09MouseSelectionStyle(__basaltHost)",
+      "sha1": "aa3c2efcf24489d75798352624b68d12da7c72b8",
+      "originalBytes": 48
     },
     {
       "orig": "Y$",
@@ -7146,34 +7176,28 @@
       "originalBytes": 6
     },
     {
-      "orig": "tZ",
-      "expr": "__basaltOwn.s10CompartmentOf(Y$,eZ)",
-      "sha1": "5c38612ad2c6f7ff3b7034aad01882da6734868c",
-      "originalBytes": 9
-    },
-    {
       "orig": "Z$",
-      "expr": "__basaltOwn.s10HypermdMode(__basaltHost)",
-      "sha1": "7114d8e2523b0137f504c569ed37a42acfe5ceed",
-      "originalBytes": 50
+      "expr": "__basaltOwn.ng09HypermdMode(__basaltHost)",
+      "sha1": "7a09931eee52a3364a2289dc80591c6ce2bc6594",
+      "originalBytes": 40
     },
     {
       "orig": "J$",
-      "expr": "__basaltOwn.s10TableCellMode(__basaltHost)",
-      "sha1": "ba51e3da91c91e00c9115fa3df62311783c89036",
-      "originalBytes": 187
+      "expr": "__basaltOwn.ng09TableCellMode(__basaltHost)",
+      "sha1": "b7785de64ac8fb80bf1462ebe2f524e56a086be6",
+      "originalBytes": 42
     },
     {
       "orig": "X$",
-      "expr": "__basaltOwn.s10LineStartFactory(__basaltHost)",
-      "sha1": "d903f984886451a58cfb653531c78427262c9790",
-      "originalBytes": 611
+      "expr": "__basaltOwn.ng09LineStartFactory(__basaltHost)",
+      "sha1": "5454e62aa906c3c084b4394535689e6dca98d669",
+      "originalBytes": 45
     },
     {
       "orig": "$$",
-      "expr": "__basaltOwn.s10LineEndFactory(__basaltHost)",
-      "sha1": "95b683fa91a0430ac0269f2291efc3a916badc57",
-      "originalBytes": 402
+      "expr": "__basaltOwn.ng09LineEndFactory(__basaltHost)",
+      "sha1": "cc05c9ea70cb83ce10281da14b0d0987369611a0",
+      "originalBytes": 43
     },
     {
       "orig": "Ete",
@@ -7405,9 +7429,9 @@
     },
     {
       "orig": "j4",
-      "expr": "__basaltOwn.s13BasesCellBase",
-      "sha1": "5c8e9a87c248bab4799732dec76af64242c6b5f2",
-      "originalBytes": 99
+      "expr": "__basaltOwn.ng06CellBase",
+      "sha1": "0c53c85ab40bba5db389c9710c8493ec622da7a0",
+      "originalBytes": 28
     },
     {
       "orig": "eA",
@@ -7615,231 +7639,231 @@
     },
     {
       "orig": "YY",
-      "expr": "__basaltOwn.s09PubOptIndexFile",
+      "expr": "__basaltOwn.ng12PubOptIndexFile",
       "sha1": "ec314aa4773907b1ea256888bdc0eb9572a36e0f",
       "originalBytes": 11
     },
     {
       "orig": "QY",
-      "expr": "__basaltOwn.s09PubOptSiteName",
+      "expr": "__basaltOwn.ng12PubOptSiteName",
       "sha1": "2a6716a1fd3f3ca83953a866848da548ae4a2b83",
       "originalBytes": 10
     },
     {
       "orig": "XY",
-      "expr": "__basaltOwn.s09PubOptLogo",
+      "expr": "__basaltOwn.ng12PubOptLogo",
       "sha1": "01338915e9c4e5672564060e13c0b816a51e6113",
       "originalBytes": 6
     },
     {
       "orig": "$Y",
-      "expr": "__basaltOwn.s09PubOptNoindex",
+      "expr": "__basaltOwn.ng12PubOptNoindex",
       "sha1": "a15ce0d096ff1aa0c60b19702adba4049a16260a",
       "originalBytes": 9
     },
     {
       "orig": "ZY",
-      "expr": "__basaltOwn.s09PubOptDefaultTheme",
+      "expr": "__basaltOwn.ng12PubOptDefaultTheme",
       "sha1": "0ce51889c24f935ab5766e764504c73c31ca4103",
       "originalBytes": 14
     },
     {
       "orig": "JY",
-      "expr": "__basaltOwn.s09PubOptShowThemeToggle",
+      "expr": "__basaltOwn.ng12PubOptShowThemeToggle",
       "sha1": "bc53ff4e0baf3eed26b0fc65619e9cd8eef9d1de",
       "originalBytes": 17
     },
     {
       "orig": "eQ",
-      "expr": "__basaltOwn.s09PubOptShowNavigation",
+      "expr": "__basaltOwn.ng12PubOptShowNavigation",
       "sha1": "b1fc9074b4bf0b19cc1684725a6b75183fefd848",
       "originalBytes": 16
     },
     {
       "orig": "tQ",
-      "expr": "__basaltOwn.s09PubOptShowGraph",
+      "expr": "__basaltOwn.ng12PubOptShowGraph",
       "sha1": "aa7d871b0b197f36f134b3da03b9c9c285a9c0a3",
       "originalBytes": 11
     },
     {
       "orig": "nQ",
-      "expr": "__basaltOwn.s09PubOptShowOutline",
+      "expr": "__basaltOwn.ng12PubOptShowOutline",
       "sha1": "7a8a62f5aa1f75e80e79818fd3206a25147a8709",
       "originalBytes": 13
     },
     {
       "orig": "iQ",
-      "expr": "__basaltOwn.s09PubOptShowSearch",
+      "expr": "__basaltOwn.ng12PubOptShowSearch",
       "sha1": "da7275d5cb66afca9cd8b5c43f83d84ee4c09e5d",
       "originalBytes": 12
     },
     {
       "orig": "rQ",
-      "expr": "__basaltOwn.s09PubOptGoogleAnalytics",
+      "expr": "__basaltOwn.ng12PubOptGoogleAnalytics",
       "sha1": "3aca11f4c7274481d8d668034dc9e1e8c0fa19b6",
       "originalBytes": 17
     },
     {
       "orig": "oQ",
-      "expr": "__basaltOwn.s09PubOptHideTitle",
+      "expr": "__basaltOwn.ng12PubOptHideTitle",
       "sha1": "34914676f53a2004f447ea015a9ee72114474217",
       "originalBytes": 11
     },
     {
       "orig": "aQ",
-      "expr": "__basaltOwn.s09PubOptReadableLineLength",
+      "expr": "__basaltOwn.ng12PubOptReadableLineLength",
       "sha1": "35fe8ac5ec9847d7fd2fd7d5fb66dd5019bf322c",
       "originalBytes": 20
     },
     {
       "orig": "sQ",
-      "expr": "__basaltOwn.s09PubOptStrictLineBreaks",
+      "expr": "__basaltOwn.ng12PubOptStrictLineBreaks",
       "sha1": "685682d2e1f6ea97c56702972dfca8452d4db181",
       "originalBytes": 18
     },
     {
       "orig": "lQ",
-      "expr": "__basaltOwn.s09PubOptShowHoverPreview",
+      "expr": "__basaltOwn.ng12PubOptShowHoverPreview",
       "sha1": "9b9e8c959756a07889411cb91706fb451850b1e5",
       "originalBytes": 18
     },
     {
       "orig": "cQ",
-      "expr": "__basaltOwn.s09PubOptShowBacklinks",
+      "expr": "__basaltOwn.ng12PubOptShowBacklinks",
       "sha1": "78c738427f55d56a147c95f217a83ce55215142c",
       "originalBytes": 15
     },
     {
       "orig": "uQ",
-      "expr": "__basaltOwn.s09PubOptSlidingWindowMode",
+      "expr": "__basaltOwn.ng12PubOptSlidingWindowMode",
       "sha1": "8bc6c72bb109e7fa2fa85b408b67719f6e6cfc1b",
       "originalBytes": 19
     },
     {
       "orig": "hQ",
-      "expr": "__basaltOwn.s09PubOptNavigationOrdering",
+      "expr": "__basaltOwn.ng12PubOptNavigationOrdering",
       "sha1": "b1d4b2212554bd2bbbf091b8acebcbb06d8a9bae",
       "originalBytes": 20
     },
     {
       "orig": "pQ",
-      "expr": "__basaltOwn.s09PubOptNavigationHiddenItems",
+      "expr": "__basaltOwn.ng12PubOptNavigationHiddenItems",
       "sha1": "813426f1070e5a06591c5808cc133311b96442b5",
       "originalBytes": 23
     },
     {
       "orig": "dQ",
-      "expr": "VY=__basaltOwn.s09PublishDefaults()",
+      "expr": "VY=__basaltOwn.ng12PublishDefaults()",
       "sha1": "6b1e0f0870152b2fb0465272bcd8cbe2607ef06d",
       "originalBytes": 202
     },
     {
       "orig": "XQ",
-      "expr": "__basaltOwn.s09PublishHiddenHovers",
+      "expr": "__basaltOwn.ng12PublishHiddenHovers",
       "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
       "originalBytes": 2
     },
     {
       "orig": "$Q",
-      "expr": "__basaltOwn.s09PublishActiveHovers",
+      "expr": "__basaltOwn.ng12PublishActiveHovers",
       "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
       "originalBytes": 2
     },
     {
       "orig": "ZQ",
-      "expr": "__basaltOwn.s09PublishHoverTimer",
+      "expr": "__basaltOwn.ng12PublishHoverTimer",
       "sha1": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
       "originalBytes": 1
     },
     {
       "orig": "JQ",
-      "expr": "__basaltOwn.s09PublishHoverPoint",
+      "expr": "__basaltOwn.ng12PublishHoverPoint",
       "sha1": "2be88ca4242c76e8253ac62474851065032d6833",
       "originalBytes": 4
     },
     {
       "orig": "eX",
-      "expr": "function(e){__basaltOwn.s09PublishHoverClick(e)}",
+      "expr": "function(e){__basaltOwn.ng12PublishHoverClick(e)}",
       "sha1": "e1d876351e1b8f939fed7783e48bc2a42f23e2da",
       "originalBytes": 314
     },
     {
       "orig": "tX",
-      "expr": "function(e){__basaltOwn.s09PublishHoverMove(e)}",
+      "expr": "function(e){__basaltOwn.ng12PublishHoverMove(e)}",
       "sha1": "a8c642f92d6eaaed1e1c34e817ba708f198ed477",
       "originalBytes": 51
     },
     {
       "orig": "nX",
-      "expr": "function(){__basaltOwn.s09PublishHoverTick()}",
+      "expr": "function(){__basaltOwn.ng12PublishHoverTick()}",
       "sha1": "2375fce01eeef1a16e6aecb27b80976b8a365bf9",
       "originalBytes": 369
     },
     {
       "orig": "iX",
-      "expr": "function(){__basaltOwn.s09PublishHoverStart()}",
+      "expr": "function(){__basaltOwn.ng12PublishHoverStart()}",
       "sha1": "fd76505456e891513a8135deb62c402b799740a4",
       "originalBytes": 191
     },
     {
       "orig": "Q7",
-      "expr": "__basaltOwn.s15PublishItemSort",
+      "expr": "__basaltOwn.ng12PublishItemSort",
       "sha1": "308ac3af0d81794f4af75140d89b372f6b6d07ae",
       "originalBytes": 124
     },
     {
       "orig": "u9",
-      "expr": "__basaltOwn.s15Env().gm.plugins.publish",
+      "expr": "__basaltOwn.ng12S15Env().gm.plugins.publish",
       "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
       "originalBytes": 18
     },
     {
       "orig": "T9",
-      "expr": "__basaltOwn.s15Env().gm.plugins.sync",
+      "expr": "__basaltOwn.ng12S15Env().gm.plugins.sync",
       "sha1": "2cb35f6768d475d28ffbccfc2c43fa33fca71a9a",
       "originalBytes": 15
     },
     {
       "orig": "G9",
-      "expr": "__basaltOwn.s15Env().gm.plugins.sync",
+      "expr": "__basaltOwn.ng12S15Env().gm.plugins.sync",
       "sha1": "2cb35f6768d475d28ffbccfc2c43fa33fca71a9a",
       "originalBytes": 15
     },
     {
       "orig": "D9",
-      "expr": "__basaltOwn.s15Env().gm.plugins.publish",
+      "expr": "__basaltOwn.ng12S15Env().gm.plugins.publish",
       "sha1": "e5efa92fbdae358fb25959828b11939ee585dd4f",
       "originalBytes": 18
     },
     {
       "orig": "m9",
-      "expr": "__basaltOwn.s15Env().gm.plugins.quickSwitcher",
+      "expr": "__basaltOwn.ng12S15Env().gm.plugins.quickSwitcher",
       "sha1": "a66b1d230f3eb1f0e71b8f91b08b691f5c410082",
       "originalBytes": 24
     },
     {
       "orig": "h9",
-      "expr": "__basaltOwn.s15PublishUrl",
+      "expr": "__basaltOwn.ng12PublishUrl",
       "sha1": "a590a2c81292877011d80d2461e2391703e43d31",
       "originalBytes": 27
     },
     {
       "orig": "d9",
-      "expr": "__basaltOwn.s15PublishAssets",
+      "expr": "__basaltOwn.ng12PublishAssets",
       "sha1": "bb34a7702f148105fc4716028cdaf9145b63f7ad",
       "originalBytes": 55
     },
     {
       "orig": "L9",
-      "expr": "__basaltOwn.s15AvatarColorClasses",
-      "sha1": "83c9230ee597be017b517e6aded3f1399151be3b",
-      "originalBytes": 169
+      "expr": "__basaltOwn.ng03AvatarColorClasses",
+      "sha1": "7e94375210d92d9a011e707bafd12a612dcbe703",
+      "originalBytes": 33
     },
     {
       "orig": "A9",
-      "expr": "__basaltOwn.s15SyncHourMs",
-      "sha1": "afa31f8135d8e3a100e5f974ef67cdb5b50cbfff",
-      "originalBytes": 4
+      "expr": "__basaltOwn.ng03SyncHourMs",
+      "sha1": "f85a33a383b707e57f64ca74813330cb36f3937b",
+      "originalBytes": 25
     },
     {
       "orig": "C9",
@@ -7849,7 +7873,7 @@
     },
     {
       "orig": "M9",
-      "expr": "__basaltOwn.s15Env().Hv(\"/lib/reveal/reveal.js\")",
+      "expr": "__basaltOwn.ng12S15Env().Hv(\"/lib/reveal/reveal.js\")",
       "sha1": "4933725e20cfdd13dc9ed83635463667d65db2f4",
       "originalBytes": 27
     },
@@ -7861,38 +7885,38 @@
     },
     {
       "orig": "Dq",
-      "expr": "__basaltOwn.s23ListIndentPlugin(__basaltHost)",
-      "sha1": "116f65ebc9d7663abd850c2982cdff5d7d5dd2f4",
-      "originalBytes": 90
+      "expr": "__basaltOwn.ng09ListIndentPlugin(__basaltHost)",
+      "sha1": "5ab5cb4099ced14773b0eecb12573d539f76387b",
+      "originalBytes": 45
     },
     {
       "orig": "Eq",
-      "expr": "__basaltOwn.s23BreakPattern",
-      "sha1": "345220fd7d046fb9d9115cd43521b2b09d3c7c5a",
-      "originalBytes": 51
+      "expr": "__basaltOwn.ng09BreakPattern",
+      "sha1": "c66bdbace33fb8e4fc7fdcc72710e72159970188",
+      "originalBytes": 27
     },
     {
       "orig": "fj",
-      "expr": "__basaltOwn.s23WrapPairInput(__basaltHost)",
-      "sha1": "4b07c5f0961584a13b7317dc752726c18889fc57",
-      "originalBytes": 604
+      "expr": "__basaltOwn.ng09WrapPairInput(__basaltHost)",
+      "sha1": "5c0ebea279cb0ba52e42db4405a8e4902721ab00",
+      "originalBytes": 42
     },
     {
       "orig": "dj",
-      "expr": "__basaltOwn.s23WrapPairChars",
-      "sha1": "9271a2cbe7aad586ebfcf4a322d5ae41142062f0",
-      "originalBytes": 17
+      "expr": "__basaltOwn.ng09WrapPairChars",
+      "sha1": "bd128b5a0b7a588249dc3bc1987d6ef7e0360072",
+      "originalBytes": 28
     },
     {
       "orig": "aj",
-      "expr": "__basaltOwn.s23SearchMatchMark(__basaltHost)",
-      "sha1": "422da6cd2b7d6683f294ca821d9ba8937e8e0222",
-      "originalBytes": 48
+      "expr": "__basaltOwn.ng09SearchMatchMark(__basaltHost)",
+      "sha1": "ec44efcffbd5481225c76b4c301b7d142ebf43f7",
+      "originalBytes": 44
     },
     {
       "orig": "mj",
-      "expr": "__basaltOwn.s23SearchMatchClass",
-      "sha1": "471d032451e957fe7d1d47551ef4a147e4d0ba28",
+      "expr": "__basaltOwn.ng09SearchMatchClass",
+      "sha1": "d380e50af32962dbe839e33b0a2dae79094de300",
       "originalBytes": 31
     },
     {
@@ -9324,6 +9348,18 @@
       "expr": "__basaltOwn.s91MajorSnapshot(Vf)",
       "sha1": "85d40c2f9de777cba80df079e9e94af8bdb30c10",
       "originalBytes": 2
+    },
+    {
+      "orig": "Um",
+      "expr": "__basaltOwn.nIconsUm()",
+      "sha1": "f4a77b9e087eaf3dbda5684f2ad4d484ad36c9bd",
+      "originalBytes": 287957
+    },
+    {
+      "orig": "Qm",
+      "expr": "__basaltOwn.nIconsQm()",
+      "sha1": "461b337a676550c80a8c92377417f31be418f122",
+      "originalBytes": 15559
     }
   ],
   "methods": [
@@ -9417,573 +9453,6 @@
       "use": "fmGetAvailablePathForAttachment",
       "sha1": "961f29faac441d80c51bf7dc93c8b8b5dd7bff00",
       "originalBytes": 292
-    },
-    {
-      "class": "H0",
-      "name": "on",
-      "use": "wsOn",
-      "sha1": "5974e9a7081e080df478675ba93875b923c1d182",
-      "originalBytes": 55
-    },
-    {
-      "class": "H0",
-      "name": "trigger",
-      "use": "wsTrigger",
-      "sha1": "576bfc22529b24cffe944cfb73d064a6fba94360",
-      "originalBytes": 116
-    },
-    {
-      "class": "H0",
-      "name": "isAttached",
-      "use": "wsIsAttached",
-      "sha1": "ca3cdf9f9b1725f37c84ef36a5e5d5d159352629",
-      "originalBytes": 130
-    },
-    {
-      "class": "H0",
-      "name": "getLeftLeaf",
-      "use": "wsGetLeftLeaf",
-      "sha1": "3188a2625378c65d0e2cdaa13d97b044bb6608e9",
-      "originalBytes": 54
-    },
-    {
-      "class": "H0",
-      "name": "getRightLeaf",
-      "use": "wsGetRightLeaf",
-      "sha1": "1b3c19826ae37390cc158350332763a364d34429",
-      "originalBytes": 55
-    },
-    {
-      "class": "H0",
-      "name": "getLeaf",
-      "use": "wsGetLeaf",
-      "sha1": "211ded2122beb11099959b795b59c2f0b3dc765c",
-      "originalBytes": 160
-    },
-    {
-      "class": "H0",
-      "name": "getGroupLeaves",
-      "use": "wsGetGroupLeaves",
-      "sha1": "d6daa03ff45eee91799505e479741aa0b03a7b70",
-      "originalBytes": 97
-    },
-    {
-      "class": "H0",
-      "name": "iterateLeaves",
-      "use": "wsIterateLeaves",
-      "sha1": "bb71dd62d3317d5abf124b718747313ff48b25b7",
-      "originalBytes": 334
-    },
-    {
-      "class": "H0",
-      "name": "iterateTabs",
-      "use": "wsIterateTabs",
-      "sha1": "b9518d9b56f6438d52af9b3cc639a63e9e374157",
-      "originalBytes": 186
-    },
-    {
-      "class": "H0",
-      "name": "iterateAllLeaves",
-      "use": "wsIterateAllLeaves",
-      "sha1": "a4847df435eee4d2adfb213f654bcaafdb34c91e",
-      "originalBytes": 165
-    },
-    {
-      "class": "H0",
-      "name": "iterateRootLeaves",
-      "use": "wsIterateRootLeaves",
-      "sha1": "ab81d04d7cafafdc4c6f9705818f16173417c317",
-      "originalBytes": 49
-    },
-    {
-      "class": "H0",
-      "name": "iterateCodeMirrors",
-      "use": "wsIterateCodeMirrors",
-      "sha1": "07714e6deea17a4e7a859895c769cd8e910e44f0",
-      "originalBytes": 13
-    },
-    {
-      "class": "H0",
-      "name": "hasUndoHistory",
-      "use": "wsHasUndoHistory",
-      "sha1": "becb67aad72c391516991ea287c9abfc2d9eb17e",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "isInSidebar",
-      "use": "wsIsInSidebar",
-      "sha1": "f53b2eb354f8139189e63b9b2cd2b6e1437fb9c3",
-      "originalBytes": 85
-    },
-    {
-      "class": "H0",
-      "name": "onLayoutChange",
-      "use": "wsOnLayoutChange",
-      "sha1": "4d7743c86b68d18be5f305cedef06b26de6dfab3",
-      "originalBytes": 98
-    },
-    {
-      "class": "H0",
-      "name": "onLayoutReady",
-      "use": "wsOnLayoutReady",
-      "sha1": "eda77fef15e782fac92fc68e6e6c0bc660b98867",
-      "originalBytes": 140
-    },
-    {
-      "class": "H0",
-      "name": "onQuickPreview",
-      "use": "wsOnQuickPreview",
-      "sha1": "34d6115c546670b4a86091b47e250c580cbb2d3e",
-      "originalBytes": 48
-    },
-    {
-      "class": "H0",
-      "name": "addMobileFileInfo",
-      "use": "wsAddMobileFileInfo",
-      "sha1": "2335f0d14203dfa501db34f68353511977242f29",
-      "originalBytes": 41
-    },
-    {
-      "class": "H0",
-      "name": "getRecentFiles",
-      "use": "wsGetRecentFiles",
-      "sha1": "4017bde3a61e913e4d51dda88fad7576b79cb2d0",
-      "originalBytes": 60
-    },
-    {
-      "class": "H0",
-      "name": "getLastOpenFiles",
-      "use": "wsGetLastOpenFiles",
-      "sha1": "6dba792dbe3f88279b894aabba5c374f85030ae3",
-      "originalBytes": 60
-    },
-    {
-      "class": "H0",
-      "name": "addRecentFile",
-      "use": "wsAddRecentFile",
-      "sha1": "e995da93d613ae7814af76a8f4cc0bd2a1f8425b",
-      "originalBytes": 52
-    },
-    {
-      "class": "H0",
-      "name": "onResize",
-      "use": "wsOnResize",
-      "sha1": "928ee359e9023c416add256e33e03d1c3db332ae",
-      "originalBytes": 34
-    },
-    {
-      "class": "H0",
-      "name": "updateTitle",
-      "use": "wsUpdateTitle",
-      "sha1": "0de8e04341e5048494b585aaf62c134d0bed1ea1",
-      "originalBytes": 124
-    },
-    {
-      "class": "H0",
-      "name": "getActiveFile",
-      "use": "wsGetActiveFile",
-      "sha1": "29297cc28e3dcbbb771191fd90509d8240307080",
-      "originalBytes": 153
-    },
-    {
-      "class": "H0",
-      "name": "getFocusedContainer",
-      "use": "wsGetFocusedContainer",
-      "sha1": "0bef3884c53d9d8767d05c858fd962a9a3817ff3",
-      "originalBytes": 199
-    },
-    {
-      "class": "H0",
-      "name": "getMostRecentLeaf",
-      "use": "wsGetMostRecentLeaf",
-      "sha1": "232f752ac34c14f6ee8f196c76a6b292bbd9a56c",
-      "originalBytes": 193
-    },
-    {
-      "class": "H0",
-      "name": "getActiveViewOfType",
-      "use": "wsGetActiveViewOfType",
-      "sha1": "b9f5feb64360d1d302621fd3300c00c4e2db426c",
-      "originalBytes": 94
-    },
-    {
-      "class": "H0",
-      "name": "getActiveLeafOfViewType",
-      "use": "wsGetActiveLeafOfViewType",
-      "sha1": "d51434d8b1a778f9f5ba96fca8e8f4bf0971c618",
-      "originalBytes": 47
-    },
-    {
-      "class": "H0",
-      "name": "getSideLeaf",
-      "use": "wsGetSideLeaf",
-      "sha1": "ed07a42d3a912eaf67314d28d070558a5e27513b",
-      "originalBytes": 332
-    },
-    {
-      "class": "H0",
-      "name": "getActiveFileView",
-      "use": "wsGetActiveFileView",
-      "sha1": "e266d1c8d5f4de70c217426fcb15f0dbe4069f26",
-      "originalBytes": 255
-    },
-    {
-      "class": "H0",
-      "name": "activeLeafEvents",
-      "use": "wsActiveLeafEvents",
-      "sha1": "fcb0f5f6bccbcffbd05893518cef2877889d778b",
-      "originalBytes": 239
-    },
-    {
-      "class": "H0",
-      "name": "pushUndoHistory",
-      "use": "wsPushUndoHistory",
-      "sha1": "8e9b548e96b5793c1155f3fc8fde106f581cb41d",
-      "originalBytes": 232
-    },
-    {
-      "class": "H0",
-      "name": "changeLayout",
-      "use": "wsChangeLayout",
-      "sha1": "911b732347b2e712a7dc522ec0089de358f1bee8",
-      "originalBytes": 232
-    },
-    {
-      "class": "H0",
-      "name": "updateOptions",
-      "use": "wsUpdateOptions",
-      "sha1": "a1802abe1bb75bc3b0d042cc7bc8e8205ab1bb95",
-      "originalBytes": 177
-    },
-    {
-      "class": "H0",
-      "name": "registerObsidianProtocolHandler",
-      "use": "wsRegisterObsidianProtocolHandler",
-      "sha1": "838e31aaecfb7bc99f313d467d44f7d3dcfdc34b",
-      "originalBytes": 155
-    },
-    {
-      "class": "H0",
-      "name": "unregisterObsidianProtocolHandler",
-      "use": "wsUnregisterObsidianProtocolHandler",
-      "sha1": "d15f740358536dbc4b1825c4387468893d0de6ce",
-      "originalBytes": 83
-    },
-    {
-      "class": "H0",
-      "name": "registerUriHook",
-      "use": "wsRegisterUriHook",
-      "sha1": "2b4894056fc0329d5560f95b5d342752be395a50",
-      "originalBytes": 517
-    },
-    {
-      "class": "H0",
-      "name": "getUnpinnedLeaf",
-      "use": "wsGetUnpinnedLeaf",
-      "sha1": "2669cb181a81989f279671882d93a1e54613c301",
-      "originalBytes": 519
-    },
-    {
-      "class": "H0",
-      "name": "ensureSideLeaf",
-      "use": "wsEnsureSideLeaf",
-      "sha1": "100b7f32605ed0533063cbccd8bed46b91ab46e4",
-      "originalBytes": 603
-    },
-    {
-      "class": "H0",
-      "name": "revealLeaf",
-      "use": "wsRevealLeaf",
-      "sha1": "3486677b3a762829c860ccee7369e8451ee6fcb2",
-      "originalBytes": 516
-    },
-    {
-      "class": "H0",
-      "name": "splitLeaf",
-      "use": "wsSplitLeaf",
-      "sha1": "147ffb8bfb0e8b980d0e2637c0138cb7b96dd015",
-      "originalBytes": 480
-    },
-    {
-      "class": "H0",
-      "name": "getDropDirection",
-      "use": "wsGetDropDirection",
-      "sha1": "2c49e8393168dbad321d9cb5cbf55ea876cac168",
-      "originalBytes": 912
-    },
-    {
-      "class": "H0",
-      "name": "getDropLocation",
-      "use": "wsGetDropLocation",
-      "sha1": "26a012294680fca5b5ad70ddccb576d71da8a100",
-      "originalBytes": 588
-    },
-    {
-      "class": "H0",
-      "name": "duplicateLeaf",
-      "use": "wsDuplicateLeaf",
-      "sha1": "91070abbd4e20bda9936b6fa5a4799f007672e18",
-      "originalBytes": 414
-    },
-    {
-      "class": "H0",
-      "name": "createLeafInTabGroup",
-      "use": "wsCreateLeafInTabGroup",
-      "sha1": "ec5bd2b399f922911be371f709a6ce3a4406a4b1",
-      "originalBytes": 387
-    },
-    {
-      "class": "H0",
-      "name": "updateMobileVisibleTabGroup",
-      "use": "wsUpdateMobileVisibleTabGroup",
-      "sha1": "e0dbb81e869484d1748ba504697fa736a8b2014c",
-      "originalBytes": 367
-    },
-    {
-      "class": "H0",
-      "name": "readWorkspaceFile",
-      "use": "wsReadWorkspaceFile",
-      "sha1": "34d708d5330f6dcd6eb1797aae902c5e86b71b1a",
-      "originalBytes": 357
-    },
-    {
-      "class": "H0",
-      "name": "moveLeafToPopout",
-      "use": "wsMoveLeafToPopout",
-      "sha1": "491b0607f407905e122b5bcd5524c8a0687b6d64",
-      "originalBytes": 348
-    },
-    {
-      "class": "H0",
-      "name": "splitActiveLeaf",
-      "use": "wsSplitActiveLeaf",
-      "sha1": "f6cabb2c0aa39e083243c141b769284a28c461fa",
-      "originalBytes": 122
-    },
-    {
-      "class": "H0",
-      "name": "openLinkText",
-      "use": "wsOpenLinkText",
-      "sha1": "54cbde3d450241b7b2b2e8025cb60061645cd26b",
-      "originalBytes": 188
-    },
-    {
-      "class": "H0",
-      "name": "recursiveGetTarget",
-      "use": "wsRecursiveGetTarget",
-      "sha1": "3e9f41c934774a0aed9798bbe8ea8979affe62c9",
-      "originalBytes": 173
-    },
-    {
-      "class": "H0",
-      "name": "createLeafInParent",
-      "use": "wsCreateLeafInParent",
-      "sha1": "e8f8b59bc0206dc241c706278dfe8d9199859be4",
-      "originalBytes": 146
-    },
-    {
-      "class": "H0",
-      "name": "getLeafById",
-      "use": "wsGetLeafById",
-      "sha1": "b04893a252e9bfae372a35781c7cb0847fda5f41",
-      "originalBytes": 96
-    },
-    {
-      "class": "H0",
-      "name": "detachLeavesOfType",
-      "use": "wsDetachLeavesOfType",
-      "sha1": "df622bcac59226d3891b8ba858ae04163b580f3f",
-      "originalBytes": 81
-    },
-    {
-      "class": "H0",
-      "name": "registerEditorExtension",
-      "use": "wsRegisterEditorExtension",
-      "sha1": "63e777d0e3b02e5f540fde4102d102a3e12edf98",
-      "originalBytes": 63
-    },
-    {
-      "class": "H0",
-      "name": "unregisterEditorExtension",
-      "use": "wsUnregisterEditorExtension",
-      "sha1": "d53f2757b3a885beb2ad71ea80310b75701ceff5",
-      "originalBytes": 65
-    },
-    {
-      "class": "H0",
-      "name": "registerHoverLinkSource",
-      "use": "wsRegisterHoverLinkSource",
-      "sha1": "d0dd175190e82c2047f6727b719e5566f7738ca8",
-      "originalBytes": 41
-    },
-    {
-      "class": "H0",
-      "name": "unregisterHoverLinkSource",
-      "use": "wsUnregisterHoverLinkSource",
-      "sha1": "449bec459de3ba919da47fa3d40a998e6316a138",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "registerOperatorFuncConfigs",
-      "use": "wsRegisterOperatorFuncConfigs",
-      "sha1": "b7a786b763cc8b0575fb1c17491148fd859eb500",
-      "originalBytes": 44
-    },
-    {
-      "class": "H0",
-      "name": "unregisterOperatorFuncConfigs",
-      "use": "wsUnregisterOperatorFuncConfigs",
-      "sha1": "4e0bc90047e1a91b4ae6782444786608927946e2",
-      "originalBytes": 47
-    },
-    {
-      "class": "H0",
-      "name": "clearLayout",
-      "use": "wsClearLayout",
-      "sha1": "99bcc0d81a933c53537ab17e0008ebae092c27f5",
-      "originalBytes": 811
-    },
-    {
-      "class": "H0",
-      "name": "createLeafBySplit",
-      "use": "wsCreateLeafBySplit",
-      "sha1": "3dac4fd7d0427356f9cbd3a39e8dde6c8055b9fb",
-      "originalBytes": 94
-    },
-    {
-      "class": "H0",
-      "name": "deserializeLayout",
-      "use": "wsDeserializeLayout",
-      "sha1": "f5ff7e8554d41b183d337841211bf6557a88eeed",
-      "originalBytes": 2270
-    },
-    {
-      "class": "H0",
-      "name": "focusLeaf",
-      "use": "wsFocusLeaf",
-      "sha1": "f5faf8dbcf3e959147536e407670b6eb04ad6da9",
-      "originalBytes": 296
-    },
-    {
-      "class": "H0",
-      "name": "getAdjacentLeafInDirection",
-      "use": "wsGetAdjacentLeafInDirection",
-      "sha1": "a5d72a7003bbf75420d653ff506cd4605832490b",
-      "originalBytes": 1051
-    },
-    {
-      "class": "H0",
-      "name": "getLayout",
-      "use": "wsGetLayout",
-      "sha1": "29f293cf8ffb78d3719b75cc3dcc79e4aeeadef7",
-      "originalBytes": 299
-    },
-    {
-      "class": "H0",
-      "name": "getLeavesOfType",
-      "use": "wsGetLeavesOfType",
-      "sha1": "c2bba0eb0162a95436f3c8464e64d4bde335056f",
-      "originalBytes": 104
-    },
-    {
-      "class": "H0",
-      "name": "handleExternalLinkContextMenu",
-      "use": "wsHandleExternalLinkContextMenu",
-      "sha1": "eba7410d257349cde0213dfc4f321136958f66ef",
-      "originalBytes": 437
-    },
-    {
-      "class": "H0",
-      "name": "handleLinkContextMenu",
-      "use": "wsHandleLinkContextMenu",
-      "sha1": "901a000ae1dc34c702a3d98f5b0232b1f04c6a3a",
-      "originalBytes": 1282
-    },
-    {
-      "class": "H0",
-      "name": "loadLayout",
-      "use": "wsLoadLayout",
-      "sha1": "1a014728f4aa970570ab4fee0bcc6fc133eaa5b3",
-      "originalBytes": 1437
-    },
-    {
-      "class": "H0",
-      "name": "onDragLeaf",
-      "use": "wsOnDragLeaf",
-      "sha1": "3e837a0e960da96a0dbe15132f68501044ebccc7",
-      "originalBytes": 5706
-    },
-    {
-      "class": "H0",
-      "name": "onStartLink",
-      "use": "wsOnStartLink",
-      "sha1": "2cf82884cd757e85458211dbebf756ece725bf74",
-      "originalBytes": 674
-    },
-    {
-      "class": "H0",
-      "name": "openPopout",
-      "use": "wsOpenPopout",
-      "sha1": "94a646a38513190b5961b8f7a36bad94b38d79fe",
-      "originalBytes": 89
-    },
-    {
-      "class": "H0",
-      "name": "openPopoutLeaf",
-      "use": "wsOpenPopoutLeaf",
-      "sha1": "29d92da3b94959ae6226f10c44fea700286c691d",
-      "originalBytes": 104
-    },
-    {
-      "class": "H0",
-      "name": "saveLayout",
-      "use": "wsSaveLayout",
-      "sha1": "01ac6739c3a410a9154699b7cc3be4ffe7c86492",
-      "originalBytes": 441
-    },
-    {
-      "class": "H0",
-      "name": "setActiveLeaf",
-      "use": "wsSetActiveLeaf",
-      "sha1": "0b9129f77c894af880781e34b629761d44bf7d3f",
-      "originalBytes": 823
-    },
-    {
-      "class": "H0",
-      "name": "setLayout",
-      "use": "wsSetLayout",
-      "sha1": "1cb80458f4de0e9f7291f467b15acd46d52f03a3",
-      "originalBytes": 2099
-    },
-    {
-      "class": "H0",
-      "name": "splitLeafOrActive",
-      "use": "wsSplitLeafOrActive",
-      "sha1": "64e2ab452d5265bb5fa4ecf2d4490bc26e1334ee",
-      "originalBytes": 75
-    },
-    {
-      "class": "H0",
-      "name": "unsetActiveEditor",
-      "use": "wsUnsetActiveEditor",
-      "sha1": "d8692572d939b2140db877e0ca8b4907002aa9f4",
-      "originalBytes": 65
-    },
-    {
-      "class": "H0",
-      "name": "updateFrameless",
-      "use": "wsUpdateFrameless",
-      "sha1": "d03525b2abc6825767628e25bd8af14fc7e81e6a",
-      "originalBytes": 2686
-    },
-    {
-      "class": "H0",
-      "name": "updateLayout",
-      "use": "wsUpdateLayout",
-      "sha1": "69eefec194c773fe98ce3cdeb0ef76c9ca31cc87",
-      "originalBytes": 1275
     },
     {
       "class": "Tte",
@@ -10329,7 +9798,7 @@
       "originalBytes": 26549
     }
   ],
-  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,Pl,Ll,s12cmDecoration:Vn,s12cmViewPlugin:ji,s12cmStateField:ke,s12cmStateEffect:We,s12cmFacet:me,s12cmEditorViewStatics:_o,s12cmRangeSet:lt,s12lezerTree:Nu,s12webpackRequire:n,s12capacitor:km,s12githubRaw:ty,s12reqObsidian:d,s12reqAutocomplete:l,s12reqCollab:h,s12reqCommands:a,s12reqLanguage:o,s12reqLint:p,s12reqSearch:s,s12reqState:e,s12reqView:t,s12reqLezerCommon:i,s12reqLezerLr:c,s12reqLezerHighlight:r,s12txHasEffect:VA,s12treePusherEl:JH,s12wikilinkPattern:fI,s12mdLinkPattern:pT,s12pathParentDir:By,s12sanitizeTitle:VJ,s12bookmarkUrlItem:R2,s12bookmarkEditModal:RJ,s12webviewerAddressBar:HJ,s12systemInfo:oD,s12graphOptions:TJ,s12svgIcon:T1,s12backlinksView:H6,s12defaults:it,s12widgetBase:FV,s12cmWidgetType:Rn,s12rangeSetBuilder:ct,s12measureIndent:_A,s12cmHighlightDecoField:xA,s12cmHighlightEffect:EA,s12rangeHasMatch:NA,s12rangeContainsMark:RA,s12cmStyleSpan:C6,s12embedChildBase:NV,s12fileSuggestBase:U2,s12syntaxClassProp:$d,s12isUrlLike:YC,s12mathReady:bz,s12renderMath:kz,s12recalcMath:xz,s12iframeEmbed:Pz,s12fetchBuffer:hy,s12mimeMap:du,s12headerLookup:qV,s12toBuffer:vu,s12nativeClipboard:Qf,s12pointerPos:Fl,s12dragPointer:Cg,s12pdfEmbed:YZ,s12basesEmbed:E$,s12imageFileEmbed:tJ,s12isImageDimension:zx,s12cmAnnotation:qe,s12applyIcon:tv,s12ariaTooltip:Mv,s12syntaxHighlight:Yz,s12extMarkdown:jy,s12extCanvas:Uy,s12extImage:Vy,nF,iF,Iz,createEl,hT,Jl,Xz,eq,aP,_I,YI,d0,s29Require:n,s30Rn:Rn,s30FV:FV,s30Zx:zx,s30Fl:Fl,s30Cg:Cg,s30du:du,s30vu:vu,s30fu:fu,s30VJ:VJ,s30tJ:tJ,s30m6:m6,s30R2:R2,s30RJ:RJ,s30Qf:Qf,s30hy:hy,s30qV:qV,s30HJ:HJ,s30qJ:qJ,s30Pz:Pz,s30Az:Az,NV,FV,Rn,Vn,E$,YZ,sJ,tJ,d6,zx,JZ,Yz,pq,uq,bz,kz,xz,W2,hq,_A,_2,tp,VA,G2,EA,MA,K2,$2,$d,J2,SA,X2,Y2,Z2,a6,c6,ct,e6,i6,l6,s6,xA,NA,RA,Zd,AA,ji,H6,D,Gg,Zw,y5,eJ,RI,Tc,lg,a8,N8,L8,F8,R8,pT,Zc,Qc,UI,WI,VI,BI,uP,LL,IL,tO,electronWindow:window.electronWindow,electron:window.electron,fZ,cg,Kc,dq,iP,AQ,wQ,Qy,kQ,PQ,BD,dz,WZ,Cv,Ic,RT,qp,jp,VH,Pc,Ly,xy,Ny,createSpan,yg,nJ,iJ,kZ,wZ,GZ,_Z,HZ,LZ,BZ,NZ,FZ,OZ,lJ,TJ,DJ,AJ,LJ,OJ,xJ,kJ,EJ,mJ,HJ,zJ,qJ,rJ,oJ,aJ,uJ,nP,lz,mZ,vZ,pv,MJ,Rk,SJ,Pv,Mg,sz,aq,Bl,Fl,Wc,Tv,wg,HA,_e,lc,qA,jA,zA,tP,FA,df,DL,nt,Cz,Ez,Mz,yq,Cg,Cy,ky,Ey,WY,GY,ML,u,KW,Ja,Ua,EY,DY,k$,s$,$X,e$,AX,GX,ZX,jX,d$,f$,m$,C$,P$,L$,PI,UH,YL,Z9,gk,hee,ib,lee,see,yk,U7,W7,_7,G7,K7,J7,e9,t9,n9,i9,r9,dD,Sw,Nw,Bw,gw,p9,uD,rD,JH,Sg,Lc,Gc,BQ,T7,A7,D7,P7,V8,z8,X8,o7,xT,n7,nm,jg,R0,Sv,tE,oP,Cc,rg,Hm,Rg,B0,P0,f0,BX,OX,pI,dI,wJ,fz,ry,$q,AR,Bq,Fq,Gp,Gq,Hq,Jq,Kq,LR,Nd,Nq,Oq,PF,PR,Qp,Qq,Rq,SR,TF,UR,Uq,Vd,Vq,W$,Wq,Xq,Yq,Zq,aN,eP,jq,ne,oN,qq,tj,uB,yB,yp,zq,Lu,ff,mf ,s12syntaxHighlight:Yz ,s91require:Lf ",
+  "envBind": "Yl,If,UT,KT,AC,PC,debounce:wc,gm,GT,qT,vb,activeWindow,dT,lT,cT,Xx,mA,jL,vA,Kx,kb,jC,sT,VT,LD,ID,jD,zD,WD,O0,MD,W6,jl,Kf,Em,xm,Ek,V0,N0,F0,tD,OD,FD,Iv,Bv,Yg,fb,_D,GD,L0,I0,MT,Bg,dl,PD,yl,Nc,TP,tv,gc,Ec,createDiv,activeDocument,electronWindow,sleep,qf,electron,Eu,$T,YC,JC,ZC,Pm,T,Bk,Ak,Fk,Im,S,Lv,Ree,Bee,Ug,s0,bI,vk,Of,pu,su,cu,Eb,pD,Lk,Nk,Ik,Hk,JT,H0,mI,Nee,_L,RL,vte,Q6,o2,$0,$g,J6,X6,Z6,e4,Am,cD,Bm,ou,yte,zf,gy,fy,nb,I7,kP,CP,Xw,lD,sD,aD,hD,createFragment,Tte,gte,eD,nD,P8,dJ,g9,bJ,V6,i8,r7,dee,q8,k7,f7,v8,wee,Z8,u8,k9,b8,l3,U8,See,w9,p7,Pee,S9,a4,Iee,O8,f9,uee,Z4,M2,Fb,xD,TD,Ob,m0,g0,au,JI,jy,kI,eO,U6,RV,iZ,CZ,$I,rP,OA,IA,pe,nu,Gz,dw,mw,sm,lm,Jf,Zf,Tm,M0,S0,Fm,ym,A0,ete,zee,cy,Zx,xL,eb,C0,Sm,kD,Dm,CD,Nf,Uf,Wf,bW,CW,EW,MW,SW,LW,AW,DK,RK,np,ej,dA,XD,Pb,Hw,Mm,vD,yD,gD,wD,bD,iE,Ul,Gl,lb,UC,$x,lv,UD,vl,OW,NW,BW,kW,gW,yW,zW,PW,QW,QG,Wj,xK,kh,Wh,MI,DW,wW,_o,JO,RU,wG,Jo,TG,wF,BG,k,Fy,Kl,Jc,Mc,ub,Hv,Nv,Rv,_g,Hz,Fc,OT,ST,Vy,Hy,zy,qy,xc,Dc,Ac,NT,VQ,$L,ZL,eI,JL,fT,rX,jm,cc,ET,DT,wT,nT,IT,NQ,RQ,FT,oc,iu,hu,Cb,sc,Ng,Mv,gg,mD,RX,Ky,ajaxPromise,bb,z7,R7,TI,x7,V7,ZT,dQ,$Y,JY,QY,XY,YY,ZY,aQ,cQ,eQ,hQ,iQ,lQ,nQ,oQ,pQ,rQ,sQ,tQ,uQ,tb,NI,Y0,l2,R6,zk,qk,Wk,BH,fD,oD,Dl,Uv,o8,Rz,Rb,tee,Uy,Wy,_y,$9,Q9,X9,YT,kk,gb,fq,Gk,K6,oT,M9,gJ,SI,vj,XL,hJ,wb,re,AI,By,fg,Av,dg,kv,DO,oO,mg,vg,ng,Pl,Ll,s12cmDecoration:Vn,s12cmViewPlugin:ji,s12cmStateField:ke,s12cmStateEffect:We,s12cmFacet:me,s12cmEditorViewStatics:_o,s12cmRangeSet:lt,s12lezerTree:Nu,s12webpackRequire:n,s12capacitor:km,s12githubRaw:ty,s12reqObsidian:d,s12reqAutocomplete:l,s12reqCollab:h,s12reqCommands:a,s12reqLanguage:o,s12reqLint:p,s12reqSearch:s,s12reqState:e,s12reqView:t,s12reqLezerCommon:i,s12reqLezerLr:c,s12reqLezerHighlight:r,s12txHasEffect:VA,s12treePusherEl:JH,s12wikilinkPattern:fI,s12mdLinkPattern:pT,s12pathParentDir:By,s12sanitizeTitle:VJ,s12bookmarkUrlItem:R2,s12bookmarkEditModal:RJ,s12webviewerAddressBar:HJ,s12systemInfo:oD,s12graphOptions:TJ,s12svgIcon:T1,s12backlinksView:H6,s12defaults:it,s12widgetBase:FV,s12cmWidgetType:Rn,s12rangeSetBuilder:ct,s12measureIndent:_A,s12cmHighlightDecoField:xA,s12cmHighlightEffect:EA,s12rangeHasMatch:NA,s12rangeContainsMark:RA,s12cmStyleSpan:C6,s12embedChildBase:NV,s12fileSuggestBase:U2,s12syntaxClassProp:$d,s12isUrlLike:YC,s12mathReady:bz,s12renderMath:kz,s12recalcMath:xz,s12iframeEmbed:Pz,s12fetchBuffer:hy,s12mimeMap:du,s12headerLookup:qV,s12toBuffer:vu,s12nativeClipboard:Qf,s12pointerPos:Fl,s12dragPointer:Cg,s12pdfEmbed:YZ,s12basesEmbed:E$,s12imageFileEmbed:tJ,s12isImageDimension:zx,s12cmAnnotation:qe,s12applyIcon:tv,s12ariaTooltip:Mv,s12syntaxHighlight:Yz,s12extMarkdown:jy,s12extCanvas:Uy,s12extImage:Vy,nF,iF,Iz,createEl,hT,Jl,Xz,eq,aP,_I,YI,d0,s29Require:n,s30Rn:Rn,s30FV:FV,s30Zx:zx,s30Fl:Fl,s30Cg:Cg,s30du:du,s30vu:vu,s30fu:fu,s30VJ:VJ,s30tJ:tJ,s30m6:m6,s30R2:R2,s30RJ:RJ,s30Qf:Qf,s30hy:hy,s30qV:qV,s30HJ:HJ,s30qJ:qJ,s30Pz:Pz,s30Az:Az,NV,FV,Rn,Vn,E$,YZ,sJ,tJ,d6,zx,JZ,Yz,pq,uq,bz,kz,xz,W2,hq,_A,_2,tp,VA,G2,EA,MA,K2,$2,$d,J2,SA,X2,Y2,Z2,a6,c6,ct,e6,i6,l6,s6,xA,NA,RA,Zd,AA,ji,H6,D,Gg,Zw,y5,eJ,RI,Tc,lg,a8,N8,L8,F8,R8,pT,Zc,Qc,UI,WI,VI,BI,uP,LL,IL,tO,electronWindow:window.electronWindow,electron:window.electron,fZ,cg,Kc,dq,iP,AQ,wQ,Qy,kQ,PQ,BD,dz,WZ,Cv,Ic,RT,qp,jp,VH,Pc,Ly,xy,Ny,createSpan,yg,nJ,iJ,kZ,wZ,GZ,_Z,HZ,LZ,BZ,NZ,FZ,OZ,lJ,TJ,DJ,AJ,LJ,OJ,xJ,kJ,EJ,mJ,HJ,zJ,qJ,rJ,oJ,aJ,uJ,nP,lz,mZ,vZ,pv,MJ,Rk,SJ,Pv,Mg,sz,aq,Bl,Fl,Wc,Tv,wg,HA,_e,lc,qA,jA,zA,tP,FA,df,DL,nt,Cz,Ez,Mz,yq,Cg,Cy,ky,Ey,WY,GY,ML,u,KW,Ja,Ua,EY,DY,k$,s$,$X,e$,AX,GX,ZX,jX,d$,f$,m$,C$,P$,L$,PI,UH,YL,Z9,gk,hee,ib,lee,see,yk,U7,W7,_7,G7,K7,J7,e9,t9,n9,i9,r9,dD,Sw,Nw,Bw,gw,p9,uD,rD,JH,Sg,Lc,Gc,BQ,T7,A7,D7,P7,V8,z8,X8,o7,xT,n7,nm,jg,R0,Sv,tE,oP,Cc,rg,Hm,Rg,B0,P0,f0,BX,OX,pI,dI,wJ,fz,ry,$q,AR,Bq,Fq,Gp,Gq,Hq,Jq,Kq,LR,Nd,Nq,Oq,PF,PR,Qp,Qq,Rq,SR,TF,UR,Uq,Vd,Vq,W$,Wq,Xq,Yq,Zq,aN,eP,jq,ne,oN,qq,tj,uB,yB,yp,zq,Lu,ff,mf ,s12syntaxHighlight:Yz ,s91require:Lf ,zY,qY,jY,UX,$K,zz,u$,oY,JK,HX,CY,RW",
   "patches": [
     {
       "find": "function Iz(e){return/*own*/__basaltOwn.renderMatchRanges(e)}",

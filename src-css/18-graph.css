@@ -60,7 +60,7 @@
 /* ---------- colour group picker ---------- */
 
 .graph-color-button-container {
-  margin-bottom: 10px;
+  margin-bottom: var(--size-4-2);
   text-align: center;
 }
 
@@ -71,7 +71,7 @@
 
 /* extra bottom padding while drag-reordering colour groups */
 .graph-control-section.mod-color-groups .tree-item-children.is-grabbing .graph-color-groups-container {
-  padding-bottom: 40px;
+  padding-bottom: var(--size-4-10);
 }
 
 /* the last non-slider row in the display section is label-only */

@@ -23,7 +23,7 @@
 
 .text-icon-button.is-disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.45;
 }
 
 @media (hover: hover) {
@@ -47,7 +47,10 @@
   input[type='number']:hover {
     border-color: var(--background-modifier-border-hover);
     background-color: var(--background-modifier-form-field-hover);
-    transition: box-shadow var(--anim-duration-fast) ease-in-out, border var(--anim-duration-fast) ease-in-out;
+    transition:
+      background-color var(--bs-dur-fast) var(--bs-ease-standard),
+      border-color var(--bs-dur-fast) var(--bs-ease-standard),
+      box-shadow var(--bs-dur-fast) var(--bs-ease-standard);
   }
 }
 
@@ -72,7 +75,10 @@ input[type='email']:focus,
 input[type='password']:focus,
 input[type='number']:focus {
   border-color: var(--background-modifier-border-focus);
-  transition: box-shadow 0.15s ease-in-out, border 0.15s ease-in-out;
+  transition:
+    background-color var(--bs-dur-fast) var(--bs-ease-standard),
+    border-color var(--bs-dur-fast) var(--bs-ease-standard),
+    box-shadow var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 textarea:active,
@@ -127,7 +133,10 @@ input[type=checkbox] {
   height: var(--checkbox-size);
   -webkit-appearance: none;
   appearance: none;
-  transition: box-shadow 0.15s ease-in-out;
+  transition:
+    background-color var(--bs-dur-fast) var(--bs-ease-standard),
+    border-color var(--bs-dur-fast) var(--bs-ease-standard),
+    box-shadow var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 input[type="radio"] {

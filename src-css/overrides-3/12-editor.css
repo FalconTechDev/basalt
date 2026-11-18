@@ -95,9 +95,9 @@
 /* HyperMD link hover card keeps its light paper look */
 .cm-s-basalt div.HyperMD-hover > .HyperMD-hover-content {
   padding: 0.5em;
-  border: 1px solid #000;
-  color: #000;
-  background-color: #fff;
+  border: var(--bs-hairline) solid var(--background-modifier-border-hover);
+  color: var(--text-normal);
+  background-color: var(--background-primary);
 }
 
 /* block math scrolls horizontally inside the source view */

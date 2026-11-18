@@ -15,7 +15,7 @@
 .workspace-drawer .search-input-container {
   --background-modifier-form-field: transparent;
   --background-modifier-form-field-hover: transparent;
-  --input-radius: 0;
+  --input-radius: var(--radius-s);
   --input-border-width-focus: 0;
   margin: var(--size-4-1) var(--size-4-1) 0;
 }

@@ -92,12 +92,12 @@
 
 /* grouped search suggestions: groups after the first get a top border */
 .search-suggest-item.mod-group:not(:first-child) {
-  margin-top: 6px;
-  margin-inline-end: -6px;
-  padding-top: 6px;
-  padding-inline-end: 6px;
+  margin-top: var(--size-2-3);
+  margin-inline-end: calc(var(--size-2-3) * -1);
+  padding-top: var(--size-2-3);
+  padding-inline-end: var(--size-2-3);
   padding-bottom: 0px;
-  padding-inline-start: 14px;
+  padding-inline-start: var(--size-2-7);
   border-top: var(--border-width) solid var(--background-modifier-border);
 }
 

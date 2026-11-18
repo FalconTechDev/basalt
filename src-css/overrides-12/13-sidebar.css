@@ -15,5 +15,6 @@
   --icon-opacity-hover: 1;
   gap: var(--size-4-2);
   padding: var(--size-4-1) 0 var(--size-4-2) 0;
+  border-radius: var(--radius-s);
   background-color: var(--mobile-sidebar-background);
 }

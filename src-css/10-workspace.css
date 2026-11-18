@@ -26,12 +26,15 @@ body.is-grabbing webview {
 
 /* ---------- drag ghosts ---------- */
 
+/* floating drag plate: warm dark surface, copper keyline, menu radius */
 .drag-ghost {
   position: fixed;
   z-index: var(--layer-dragged-item);
   padding: var(--size-2-3) var(--size-4-2);
-  border-radius: var(--radius-s);
-  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
+  border: var(--bs-hairline) solid var(--bs-accent);
+  border-radius: var(--radius-m);
+  corner-shape: var(--corner-shape);
+  box-shadow: var(--shadow-s);
   max-width: 300px;
   font-size: var(--font-ui-small);
   font-weight: var(--font-medium);
@@ -53,8 +56,9 @@ body.is-grabbing webview {
 .drag-reorder-ghost {
   position: fixed;
   z-index: var(--layer-dragged-item);
-  border-radius: var(--radius-s);
-  box-shadow: 0 2px 8px var(--background-modifier-box-shadow);
+  border: var(--bs-hairline) solid var(--background-modifier-border-hover);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-s);
   background-color: var(--background-primary);
   pointer-events: none;
   corner-shape: var(--corner-shape);
@@ -102,9 +106,9 @@ body.is-grabbing webview {
   right: 0;
   bottom: 0;
   visibility: visible;
-  border-radius: 5px;
+  border-radius: var(--radius-l);
   content: ' ';
-  background-color: hsla(var(--interactive-accent-hsl), 0.3);
+  background-color: color-mix(in srgb, var(--bs-accent) 30%, transparent);
 }
 
 /* macOS pop-out windows reserve titlebar space on the left */
@@ -172,7 +176,7 @@ body.is-frameless > .app-container ~ * {
   flex: 1 0 0;
   overflow: hidden;
   height: 100%;
-  transition: padding-left 100ms ease-in;
+  transition: padding-left var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 .is-translucent .workspace {
@@ -220,7 +224,7 @@ body.is-frameless > .app-container ~ * {
   display: none;
 }
 
-/* drop-target highlight washes the whole leaf */
+/* drop target highlight washes the whole leaf in accent-soft */
 .workspace-leaf.is-highlighted:before {
   position: absolute;
   top: 0;
@@ -229,7 +233,7 @@ body.is-frameless > .app-container ~ * {
   height: 100%;
   width: 100%;
   content: ' ';
-  background-color: hsla(var(--interactive-accent-hsl), 0.25);
+  background-color: var(--bs-accent-soft);
   pointer-events: none;
 }
 
@@ -241,7 +245,7 @@ body.is-frameless > .app-container ~ * {
   border-width: var(--divider-width);
   margin: 0;
   background-color: transparent;
-  transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out, opacity 200ms ease-in-out;
+  transition: background-color var(--bs-dur-fast) var(--bs-ease-standard), border-color var(--bs-dur-fast) var(--bs-ease-standard), opacity var(--bs-dur-fast) var(--bs-ease-standard);
   -webkit-app-region: no-drag;
 }
 
@@ -286,10 +290,10 @@ body.is-frameless > .app-container ~ * {
   pointer-events: none;
   will-change: transform, width, height;
   transform: translate(0, 0);
-  transition: all 100ms ease-in-out;
+  transition: all var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
-/* drop overlay shows an inset accent frame */
+/* drop overlay frames the target slot with a 2px copper keyline */
 .workspace-drop-overlay:before {
   position: absolute;
   top: 0;
@@ -299,10 +303,9 @@ body.is-frameless > .app-container ~ * {
   width: calc(100% - 6px);
   height: calc(100% - 6px);
   margin: auto;
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-s);
+  box-shadow: inset 0 0 0 var(--bs-focus-width) var(--bs-accent);
   content: ' ';
-  background-color: var(--interactive-accent);
-  opacity: 0.5;
 }
 
 .workspace-fake-target-container {
@@ -322,7 +325,7 @@ body.is-frameless > .app-container ~ * {
 /* ---------- sidedock ---------- */
 
 .workspace-sidedock-empty-state {
-  padding: 20px 30px;
+  padding: var(--size-4-5) var(--size-4-8);
   font-size: var(--font-ui-small);
 }
 

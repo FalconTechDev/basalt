@@ -42,7 +42,7 @@
   position: absolute;
   top: 100%;
   padding: var(--size-4-2) var(--size-4-6);
-  border-radius: 50px;
+  border-radius: var(--pill-radius);
   font-size: var(--font-ui-small);
 }
 
@@ -70,7 +70,7 @@
   width: 90vw;
   height: 8px;
   margin: 0 10vw;
-  border-radius: 3px;
+  border-radius: var(--radius-m);
 }
 
 /* ---------- viewer frame ---------- */
@@ -136,7 +136,7 @@
   width: var(--divider-width-hover);
   background-color: transparent;
   cursor: col-resize;
-  transition: background-color 200ms ease-in-out;
+  transition: background-color var(--bs-dur-normal) var(--bs-ease-standard);
 }
 
 @media (hover: hover) {

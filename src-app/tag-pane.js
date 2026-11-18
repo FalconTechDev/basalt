@@ -8,9 +8,9 @@
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
 import { setElementTooltip } from "./tooltip.js";
-import { makeTreePusher, collapsibleTreeItem, walkTree, hasChildList } from "./tree.js";
-import { searchClasses } from "./search-query.js";
-import { compareSearchText } from "./search-view.js";
+import { ng15MakeTreePusher, ng15CollapsibleTreeItem, ng15WalkTree, ng15HasChildList } from "./n-g15-tree.js";
+import { searchClasses } from "./n-g11-query.js";
+import { compareSearchText } from "./n-g11-view.js";
 
 // Classes defined by the factories below, visible to each other regardless of factory order.
 const tagPane = {};
@@ -25,7 +25,7 @@ const SORT_GROUPS = [["alphabetical", "alphabeticalReverse"], ["frequency", "fre
 
 /** A collapsible tree item showing "parent/tag" split into parent prefix + leaf name, plus an occurrence count. */
 export function defineTagPaneItem(host) {
-  const ItemBase = collapsibleTreeItem(host.TreeItem);
+  const ItemBase = ng15CollapsibleTreeItem(host.TreeItem);
 
   function TagPaneItem(tree, tagView) {
     const self = ItemBase.call(this) || this;
@@ -33,7 +33,7 @@ export function defineTagPaneItem(host) {
     self.tag = "";
     self.count = -1;
     self.vChildren = new host.TreeChildren(self);
-    self.pusherEl = makeTreePusher();
+    self.pusherEl = ng15MakeTreePusher();
     self.tree = tree;
     self.tagView = tagView;
     const selfEl = self.selfEl;
@@ -419,8 +419,8 @@ export function defineTagPaneView(host) {
     tree.root.vChildren.sort(compare);
 
     const filtering = !!(self.searchComponent && self.searchComponent.getValue());
-    walkTree(tree.root, (item) => {
-      if (hasChildList(item)) item.vChildren.sort(compare);
+    ng15WalkTree(tree.root, (item) => {
+      if (ng15HasChildList(item)) item.vChildren.sort(compare);
       if (filtering) {
         if (self.searchQuery.matchContent(item.tag)) {
           // keep the row and every ancestor visible

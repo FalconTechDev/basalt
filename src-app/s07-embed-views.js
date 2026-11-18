@@ -5,8 +5,8 @@
 
 import { inherit, methods } from "./inherit.js";
 import { env } from "./env.js";
-import { searchClasses } from "./search-query.js";
-import { searchViewClasses, runSearchOverFiles } from "./search-view.js";
+import { searchClasses } from "./n-g11-query.js";
+import { searchViewClasses, runSearchOverFiles } from "./n-g11-view.js";
 
 export function defineMarkdownEmbedView(host) {
   /** Reading-mode embed of another markdown file (or a `file#subpath` slice of it). */

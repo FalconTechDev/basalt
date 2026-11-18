@@ -11,10 +11,12 @@ import { ng01RegisterMetaQueries } from "./n-g01-meta.js";
 import { ng01RegisterWorkspace } from "./n-g01-ws.js";
 import { ng01RegisterPlugins } from "./n-g01-plugins.js";
 import { ng01RegisterDev } from "./n-g01-dev.js";
+let Ng01HostRef = null;
 
 const NG01_USAGE_SORT = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
 
 export function ng01DefineCli(host) {
+  Ng01HostRef = host;
   const TableClass = ng01DefineTable();
 
   class Ng01Cli {
@@ -293,7 +295,7 @@ function ng01RegisterMeta(cli) {
   });
 
   cli.registerHandler("version", "App version", null, () => {
-    return `${host.Platform.version} (installer ${host.Platform.build})`;
+    return `${Ng01HostRef.Platform.version} (installer ${Ng01HostRef.Platform.build})`;
   });
 }
 

@@ -5,7 +5,7 @@
 // (helpers) and the declarators U5/W5/_5 (arrow rotation map and edge-end kinds).
 import { boxCenter, sideMidpoint, bezierEdge, boxOfRect, boxUnion, boxGrow, distance, rgbTripleToHex } from "./misc.js";
 import { s13NearestSide, s13ApplyCanvasColor } from "./s13-geom.js";
-import { suppressNextEvent } from "./drag.js";
+import { ng08SuppressNextEvent } from "./n-g08-drag.js";
 import { env } from "./env.js";
 
 /** Stack order of nodes for serialisation/painting (lower zIndex first). */
@@ -474,7 +474,7 @@ export function defineS33CanvasEdge(host) {
           cancel: () => edge.update(from, to),
           cleanup: () => {
             canvas.canvasEl.removeClass("is-connecting");
-            suppressNextEvent(edge.lineGroupEl, "click");
+            ng08SuppressNextEvent(edge.lineGroupEl, "click");
           },
         });
       });

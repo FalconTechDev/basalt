@@ -11,7 +11,7 @@
 .formula-editor:active,
 .formula-editor:focus,
 .formula-editor:focus-within {
-  transition: box-shadow 0.15s ease-in-out, border 0.15s ease-in-out;
+  transition: box-shadow var(--bs-dur-fast) var(--bs-ease-standard), border var(--bs-dur-fast) var(--bs-ease-standard);
   border-color: var(--background-modifier-border-focus);
 }
 

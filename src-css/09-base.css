@@ -2,17 +2,17 @@
 
 /* ---------- undo bar ---------- */
 
-/* undo bar floats centred under the titlebar; palette via light-dark() */
+/* undo bar floats centred under the titlebar; colours ride the theme tokens */
 #editorUndoBar {
-  --text-primary-color: light-dark(#15141a, #fbfbfe);
-  --message-bar-icon-color: light-dark(#0060df, #73a7f3);
-  --message-bar-bg-color: light-dark(#deeafc, #003070);
+  --text-primary-color: var(--text-normal);
+  --message-bar-icon-color: var(--text-accent);
+  --message-bar-bg-color: var(--menu-background);
   --message-bar-fg-color: var(--text-primary-color);
-  --message-bar-border-color: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
-  --undo-button-bg-color: light-dark(rgba(21, 20, 26, 0.07), rgba(255, 255, 255, 0.08));
-  --undo-button-bg-color-hover: light-dark(rgba(21, 20, 26, 0.14), rgba(255, 255, 255, 0.14));
-  --undo-button-bg-color-active: light-dark(rgba(21, 20, 26, 0.21), rgba(255, 255, 255, 0.21));
-  --undo-button-border: 1px solid light-dark(#0060df, #0df);
+  --message-bar-border-color: var(--menu-border-color);
+  --undo-button-bg-color: color-mix(in srgb, var(--text-normal) 8%, transparent);
+  --undo-button-bg-color-hover: color-mix(in srgb, var(--text-normal) 14%, transparent);
+  --undo-button-bg-color-active: color-mix(in srgb, var(--text-normal) 21%, transparent);
+  --undo-button-border: 1px solid var(--interactive-accent);
   --undo-button-fg-color: var(--message-bar-fg-color);
   --undo-button-fg-color-hover: var(--undo-button-fg-color);
   --undo-button-fg-color-active: var(--undo-button-fg-color);
@@ -20,34 +20,14 @@
   top: 50px;
   left: 50%;
   z-index: 10;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 16px;
-  padding-right: 8px;
+  padding-top: var(--size-4-2);
+  padding-bottom: var(--size-4-2);
+  padding-left: var(--size-4-4);
+  padding-right: var(--size-4-2);
   font: menu;
-  font-size: 15px;
+  font-size: var(--font-ui-medium);
   cursor: default;
   transform: translateX(-50%);
-}
-
-/* csstools fallback layer for engines without light-dark() */
-#editorUndoBar * {
-  --csstools-light-dark-toggle--29: var(--csstools-color-scheme--dark) rgba(0, 0, 0, 0.08);
-  --message-bar-border-color: var(--csstools-light-dark-toggle--29, rgba(255, 255, 255, 0.08));
-  --csstools-light-dark-toggle--30: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.07);
-  --undo-button-bg-color: var(--csstools-light-dark-toggle--30, rgba(255, 255, 255, 0.08));
-  --csstools-light-dark-toggle--31: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.14);
-  --undo-button-bg-color-hover: var(--csstools-light-dark-toggle--31, rgba(255, 255, 255, 0.14));
-  --csstools-light-dark-toggle--32: var(--csstools-color-scheme--dark) rgba(21, 20, 26, 0.21);
-  --undo-button-bg-color-active: var(--csstools-light-dark-toggle--32, rgba(255, 255, 255, 0.21));
-  --csstools-light-dark-toggle--0: var(--csstools-color-scheme--dark) #15141a;
-  --text-primary-color: var(--csstools-light-dark-toggle--0, #fbfbfe);
-  --csstools-light-dark-toggle--1: var(--csstools-color-scheme--dark) #0060df;
-  --message-bar-icon-color: var(--csstools-light-dark-toggle--1, #73a7f3);
-  --csstools-light-dark-toggle--2: var(--csstools-color-scheme--dark) #deeafc;
-  --message-bar-bg-color: var(--csstools-light-dark-toggle--2, #003070);
-  --csstools-light-dark-toggle--3: var(--csstools-color-scheme--dark) #0060df;
-  --undo-button-border: 1px solid var(--csstools-light-dark-toggle--3, #0df);
 }
 
 @media screen and (forced-colors: active) {
@@ -70,10 +50,10 @@
   align-items: center;
 }
 
-/* global focus ring colour with the same fallback pattern */
+/* global focus ring colour with the same fallback pattern (copper per DESIGN §10) */
 :root * {
-  --csstools-light-dark-toggle--23: var(--csstools-color-scheme--dark) #0060df;
-  --focus-ring-color: var(--csstools-light-dark-toggle--23, #0df);
+  --csstools-light-dark-toggle--23: var(--csstools-color-scheme--dark) #8a5a26;
+  --focus-ring-color: var(--csstools-light-dark-toggle--23, #e0a96f);
 }
 
 /* ---------- pdf presentation ---------- */
@@ -152,27 +132,27 @@ body.is-grabbing *:not(.workspace-leaf-resize-handle) {
 .empty-state-container {
   max-width: 480px;
   max-height: 280px;
-  margin: 20px;
+  margin: var(--size-4-5);
   text-align: center;
 }
 
 .empty-state-title {
   position: relative;
-  margin: 20px 0;
+  margin: var(--size-4-5) 0;
   font-weight: var(--h2-weight);
   font-size: var(--h2-size);
   line-height: var(--line-height-tight);
 }
 
 .empty-state-action-list {
-  margin-top: 20px;
+  margin-top: var(--size-4-5);
   font-size: var(--font-text-size);
   line-height: var(--line-height-tight);
   color: var(--text-muted);
 }
 
 .empty-state-action {
-  line-height: 36px;
+  line-height: var(--size-4-9);
   color: var(--text-accent);
   cursor: var(--cursor);
 }
@@ -212,7 +192,7 @@ body.is-frameless.is-hidden-frameless:not(.in-progress) {
 }
 
 .loader-spinner svg {
-  animation: spin 1s ease infinite;
+  animation: spin calc(var(--bs-dur-slow) * 3) linear infinite;
 }
 
 /* ---------- view content ---------- */
@@ -271,7 +251,7 @@ body.is-frameless.is-hidden-frameless:not(.in-progress) {
   display: flex;
   gap: var(--size-4-2);
   align-items: center;
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-s);
   margin: var(--size-4-2) 0;
 }
 
@@ -316,7 +296,7 @@ body.is-frameless.is-hidden-frameless:not(.in-progress) {
   margin-inline-start: var(--size-4-2);
   padding: var(--size-2-1) var(--size-2-2);
   color: var(--flair-color);
-  font-size: 10px;
+  font-size: var(--font-smallest);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -366,7 +346,7 @@ body input[type='datetime-local']:not([disabled="true"]) {
   border-radius: var(--pill-radius);
   width: var(--pill-focus-width);
   height: 100%;
-  box-shadow: 0 0 0 1px var(--background-modifier-border-focus), inset 0 0 0 1px var(--background-modifier-border-focus);
+  box-shadow: 0 0 0 var(--bs-focus-width) var(--focus-ring-color);
   content: '';
   pointer-events: none;
 }
@@ -404,7 +384,7 @@ audio {
 }
 
 audio::-webkit-media-controls-enclosure {
-  border-radius: calc(var(--radius-m) - 1px);
+  border-radius: var(--radius-s);
   border: var(--border-width) solid var(--background-modifier-border);
   background-color: var(--background-primary-alt);
 }
@@ -428,9 +408,9 @@ audio::-webkit-media-controls-time-remaining-display {
 .popupWrapper > div {
   position: relative;
   margin: var(--size-4-3);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
   background-color: var(--background-primary);
-  filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.2)) drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3)) drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.3));
+  box-shadow: var(--shadow-s);
 }
 
 /* little arrow nub on top of the popup card */

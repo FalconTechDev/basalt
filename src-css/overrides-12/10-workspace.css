@@ -35,6 +35,6 @@
 }
 
 .workspace-drawer-active-tab-content .view-content {
-  padding-top: 4px;
+  padding-top: var(--size-4-1);
   height: 100%;
 }

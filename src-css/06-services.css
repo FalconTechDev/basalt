@@ -35,8 +35,8 @@
   content: '';
   pointer-events: none;
   opacity: 0.5;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0) 50%);
-  transition: box-shadow var(--anim-duration-superfast) ease-in-out;
+  background: linear-gradient(to top, var(--background-modifier-cover), rgba(0, 0, 0, 0) 50%);
+  transition: box-shadow var(--bs-dur-instant) var(--bs-ease-standard);
 }
 
 .attachments-gallery .download-attachment-item:hover:before {
@@ -116,7 +116,7 @@
 /* dismiss button straddles the card's top-inline-end corner */
 .feedback-banner-dismiss-button {
   position: absolute;
-  top: -8px;
+  top: calc(var(--size-4-2) * -1);
   inset-inline-end: var(--size-4-2);
   padding: var(--size-4-2) var(--size-4-1);
   font-weight: var(--font-semibold);
@@ -214,7 +214,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
 
 .spellchecker-dictionary-item {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: var(--size-4-2);
 }
 
 .spellchecker-dictionary-word {
@@ -222,7 +222,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
 }
 
 .spellchecker-dictionary-remove-button {
-  margin-inline-end: 10px;
+  margin-inline-end: var(--size-4-3);
   color: var(--text-muted);
   cursor: var(--cursor);
 }
@@ -245,8 +245,8 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
 .changelog-item:before {
   display: inline-block;
   width: 50px;
-  border-radius: var(--radius-m);
-  margin-right: 14px;
+  border-radius: var(--pill-radius);
+  margin-right: var(--size-4-4);
   font-size: var(--font-ui-small);
   line-height: 22px;
   text-align: center;
@@ -338,7 +338,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   border-radius: var(--radius-s);
   content: ' ';
   background-color: rgba(var(--background-modifier-success-rgb), 0.2);
-  transition: width 150ms ease-in-out;
+  transition: width var(--bs-dur-normal) var(--bs-ease-standard);
 }
 
 .publish-upload-item.mod-failed:before {
@@ -380,7 +380,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
 }
 
 .sync-history-list-item-header.is-active .sync-history-list-item-avatar {
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: var(--bs-hairline) solid color-mix(in srgb, var(--bs-on-accent) 30%, transparent);
 }
 
 .sync-history-list-item-header:not(.is-active) .sync-history-list-item-avatar.mod-avatar-current-user {
@@ -446,7 +446,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
 
 .sync-exclude-folder-remove {
   visibility: hidden;
-  margin-inline-end: 6px;
+  margin-inline-end: var(--size-2-3);
 }
 
 .sync-exclude-folder:hover .sync-exclude-folder-remove {
@@ -523,5 +523,5 @@ textarea.webviewer-adblock-lists {
 }
 
 .starter .notice {
-  top: 38px;
+  top: calc(var(--titlebar-height) + var(--size-4-2));
 }

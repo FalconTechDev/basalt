@@ -13,8 +13,8 @@ import { extensionOf } from "./path.js";
 import { makeHotkey } from "./text.js";
 import { hideTooltip } from "./tooltip.js";
 import { sliderCurve, sliderCurveInverse, hslToRgb, rgbToInt } from "./misc.js";
-import { runSearchOverFiles } from "./search-view.js";
-import { extensionWithoutContent } from "./search-query.js";
+import { runSearchOverFiles } from "./n-g11-view.js";
+import { extensionWithoutContent } from "./n-g11-query.js";
 import { s09GraphDefaults, s09GraphNodeData, s09GraphLocalData, s09GraphRenderer } from "./s09-graph.js";
 import { fileClass } from "./vault.js";
 

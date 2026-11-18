@@ -2,7 +2,7 @@
 
 /* callouts, embed links, metadata rows, footnotes */
 .callout-content .callout {
-  margin-top: 20px;
+  margin-top: var(--size-4-5);
 }
 
 .callout-icon .svg-icon {
@@ -10,7 +10,7 @@
 }
 
 .callout-fold .svg-icon {
-  transition: transform 100ms ease-in-out;
+  transition: transform var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 @media (hover: hover) {
@@ -38,7 +38,7 @@
 .metadata-container .metadata-show-source-button,
 .metadata-container .metadata-add-button {
   padding-inline-start: var(--size-2-3);
-  margin-top: 0.5em;
+  margin-top: var(--size-2-3);
   font-size: var(--metadata-label-font-size);
   font-family: var(--metadata-label-font);
 }
@@ -108,7 +108,7 @@ input.metadata-property-key-input:focus {
   text-decoration-line: var(--link-decoration);
   color: var(--link-color);
   cursor: var(--cursor-link);
-  transition: opacity var(--anim-duration-fast) ease-in-out;
+  transition: opacity var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 @container (width < 250px) {

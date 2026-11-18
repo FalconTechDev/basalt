@@ -29,7 +29,7 @@
   height: 100%;
   background-color: var(--background-modifier-cover);
   opacity: 1;
-  transition: opacity ease-out 150ms;
+  transition: opacity var(--bs-dur-normal) var(--bs-ease-standard);
 }
 
 .workspace-drawer-ribbon {
@@ -40,7 +40,8 @@
   height: 100%;
   width: var(--ribbon-width);
   padding: var(--safe-area-inset-top) 0 var(--safe-area-inset-bottom);
-  border-inline-end: var(--border-width) solid var(--background-modifier-border);
+  border-inline-end: var(--divider-width) solid var(--divider-color);
+  background-color: var(--ribbon-background);
 }
 
 .workspace-drawer-header-icon {
@@ -74,7 +75,7 @@
   opacity: 1;
   scrollbar-gutter: stable;
   background-color: var(--interactive-normal);
-  transition: max-height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1), opacity 0.15s ease;
+  transition: max-height var(--bs-dur-normal) var(--anim-motion-swing), opacity var(--bs-dur-fast) var(--bs-ease-standard);
 }
 
 .workspace-drawer-tab-select {

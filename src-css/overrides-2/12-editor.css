@@ -9,14 +9,14 @@
   top: 0;
   inset-inline-end: 0;
   height: 100%;
-  padding-inline-end: 5px;
+  padding-inline-end: var(--size-4-1);
   opacity: 0;
   cursor: var(--cursor);
 }
 
 /* folded regions collapse to a quiet placeholder tag */
 .markdown-source-view.mod-cm6 .cm-foldPlaceholder {
-  margin-inline-start: 8px;
+  margin-inline-start: var(--size-4-2);
   border: none;
   color: var(--text-faint);
   background-color: transparent;
@@ -127,11 +127,11 @@
 /* the "back to parent" button in folded lists is a small accent chip */
 .cm-s-basalt div.HyperMD-goback-button {
   display: inline-block;
-  padding-right: 15px;
-  border-radius: 0 10px 10px 0;
+  padding-right: var(--size-4-4);
+  border-radius: 0 var(--radius-m) var(--radius-m) 0;
   text-align: center;
-  color: #f7f7f7;
-  background-color: #8daed9;
+  color: var(--text-on-accent);
+  background-color: var(--interactive-accent);
   cursor: var(--cursor);
 }
 
