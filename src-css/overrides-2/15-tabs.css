@@ -56,6 +56,8 @@
   border-radius: var(--clickable-icon-radius);
   color: var(--icon-color);
   background-color: transparent;
+  border: 0;
+  box-shadow: none;
   cursor: var(--cursor);
   corner-shape: var(--corner-shape);
   -webkit-app-region: no-drag;
