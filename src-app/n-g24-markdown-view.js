@@ -1,59 +1,38 @@
-// g24 clean-room: the "markdown" workspace view (edit/preview modes).
+// g24 clean-room: the "markdown" workspace view (W6).
+// Composes the already-independent edit mode (j6) and preview mode (fq);
+// owns inline title, MetadataEditor, embedded backlinks, mode switching,
+// view state (mode/source/backlinks/backlinkOpts) and file lifecycle via
+// TextFileView.
 import { inherit } from "./inherit.js";
-import { env, hostEnv } from "./env.js";
+import { env } from "./env.js";
 import { debounceCall } from "./timing.js";
 import { firstHeadingText } from "./path.js";
-import { lineBounds } from "./text.js";
-import { ng24SettlePromise } from "./n-g24-themes.js";
-
-const NG24_MODES = {};
 
 // ---------------------------------------------------------------------------
-// Mode registration: edit (source) and preview modes.
-// ---------------------------------------------------------------------------
-
-export function ng24DefineMarkdownViewModeRegistry(host) {
-  const registry = NG24_MODES;
-  registry.edit = {
-    type: "source",
-    name: () => host.t.view.edit(),
-    icon: "lucide-pencil",
-    init(view) { return view.editMode; },
-  };
-  registry.preview = {
-    type: "preview",
-    name: () => host.t.view.preview(),
-    icon: "lucide-eye",
-    init(view) { return view.previewMode; },
-  };
-  return registry;
-}
-
-// ---------------------------------------------------------------------------
-// MarkdownView (W6)
+// MarkdownView
 // ---------------------------------------------------------------------------
 
 export function ng24DefineMarkdownView(host) {
-  function MarkdownView(leaf, sourcePath) {
+  function MarkdownView(leaf) {
     const self = host.TextFileView.call(this, leaf) || this;
-    self.app = leaf.app || (leaf.view && leaf.view.app);
-    self.path = "";
-    self.file = null;
+    self.app = leaf.app;
     self.icon = "lucide-file";
     self.navigation = true;
     self.editModeType = "source";
     self.currentMode = "source";
-    self.editor = null;
-    self.preview = null;
-    self.backlinks = null;
-    self.backlinkOpts = {};
-    self.sourceMode = null;
-    self.previewMode = null;
-    self._mode = "source";
-    self._scrollSync = debounceCall(() => self.syncScroll(), 16);
-    self._state = null;
-    self._ephemeralState = null;
+    self.path = "";
+    self._modeState = null; // persisted layout state fragment
+    self._ephemeral = null;
+    self._scroll = null;
     self.titleListeners = [];
+    self.metadataEditor = null;
+    self.inlineTitleEl = null;
+    self.backlinksEl = null;
+    self.backlinks = null;
+    self.editMode = null;
+    self.previewMode = null;
+    self._modeButtonEl = null;
+    self._saveFolds = debounceCall(() => self.onMarkdownFold(), 500);
     return self;
   }
   inherit(MarkdownView, host.TextFileView);
@@ -63,108 +42,157 @@ export function ng24DefineMarkdownView(host) {
   proto.getViewType = function () { return "markdown"; };
   proto.getIcon = function () { return "lucide-file"; };
 
-  // ---------------------------------------------------------------- open
+  /** The public Editor surface: the active mode's editor (source mode only). */
+  Object.defineProperty(proto, "editor", {
+    get() {
+      const mode = this.currentModeInstance();
+      return mode && mode.editor ? mode.editor : null;
+    },
+    enumerable: false,
+    configurable: true,
+  });
 
-  proto.onOpen = function () {
-    this._registerModes();
-    // source mode container
-    this.editModeEl = host.createDiv({ cls: "markdown-source-view" });
-    this.contentEl.appendChild(this.editModeEl);
-    // preview mode container
-    this.previewModeEl = host.createDiv({ cls: "markdown-preview-view" });
-    this.contentEl.appendChild(this.previewModeEl);
-    this.previewModeEl.hide();
-    // mode button + header actions
-    this.registerEvent(this.app.workspace.on("css-change", () => {}));
-    this.registerEvent(this.app.workspace.on("active-leaf-change", () => this.onActiveLeafChange()));
-    this._setupHeader();
-    this._setupBacklinks();
+  proto.currentModeInstance = function () {
+    return this.currentMode === "preview" ? this.previewMode : this.editMode;
   };
 
-  proto._registerModes = function () {
-    ng24DefineMarkdownViewModeRegistry(host);
-    this.sourceMode = NG24_MODES.edit;
-    this.previewMode = NG24_MODES.preview;
-    // instantiate modes
-    this.editMode = host.MarkdownEditMode ? new host.MarkdownEditMode(this) : null;
-    this.previewModeInstance = host.MarkdownPreviewView ? new host.MarkdownPreviewView(this) : null;
+  // ------------------------------------------------------------------ open
+
+  proto.onload = function () {
+    host.TextFileView.prototype.onload.call(this);
+    // inline title + properties editor + backlinks host elements; the active
+    // mode reparents them into its own chrome on show().
+    this.inlineTitleEl = this.contentEl.createDiv("inline-title");
+    this.metadataEditor = new host.MetadataEditor(this.app, this);
+    this.addChild(this.metadataEditor);
+    this.backlinksEl = this.contentEl.createDiv("embedded-backlinks");
+    this.backlinksEl.hide();
+    this.backlinks = new host.BacklinksPane(this.app, this.backlinksEl, this.contentEl);
+    this.addChild(this.backlinks);
+    // modes
+    this.editMode = new host.MarkdownEditMode(this);
+    this.previewMode = new host.MarkdownPreviewView(this);
+    this.addChild(this.previewMode);
+    // mode toggle action in the view header
+    this._modeButtonEl = this.addAction("lucide-eye", "Reading view", () => this.toggleMode());
+    this.registerEvent(this.app.workspace.on("css-change", () => this.onResize()));
+    this.registerEvent(this.app.vault.on("config-changed", this.onConfigChanged, this));
+    this.updateModeButton();
   };
 
-  proto._setupHeader = function () {
-    this.headerEl = host.createEl("div", { cls: "view-header" }, this.contentEl);
-    const titleEl = host.createEl("div", { cls: "view-header-title" }, this.headerEl);
-    this.titleEl = host.createEl("div", { cls: "view-header-breadcrumb", text: "" }, titleEl);
-    const actions = host.createEl("div", { cls: "view-actions" }, this.headerEl);
-    // mode toggle button
-    this.modeButtonEl = host.createEl("a", { cls: "clickable-icon view-action", attr: { "aria-label": "Reading view" } }, actions);
-    setIcon(this.modeButtonEl, "lucide-eye");
-    this.modeButtonEl.addEventListener("click", () => this.toggleMode());
-    // more options
-    this.moreButtonEl = host.createEl("a", { cls: "clickable-icon view-action", attr: { "aria-label": "More options" } }, actions);
-    setIcon(this.moreButtonEl, "lucide-ellipsis");
-    this.moreButtonEl.addEventListener("click", (e) => this.onMoreMenu(e));
+  proto.onConfigChanged = function () {};
+
+  proto.updateModeButton = function () {
+    if (!this._modeButtonEl) return;
+    const reading = this.currentMode === "preview";
+    host.setIcon(this._modeButtonEl, reading ? "lucide-pencil" : "lucide-eye");
+    const label = reading
+      ? "Editing view"
+      : "Reading view";
+    host.setTooltip(this._modeButtonEl, label);
+    this._modeButtonEl.setAttr("aria-label", label);
   };
 
-  proto._setupBacklinks = function () {
-    this.backlinkEl = host.createDiv({ cls: "embedded-backlinks" });
-    this.contentEl.appendChild(this.backlinkEl);
-    this.backlinks = new host.BacklinksPane(this.app, this.backlinkEl, this);
-  };
-
-  // ---------------------------------------------------------------- file
-
-  proto.getViewData = function () {
-    return { type: "markdown", state: this._state, ephemeralState: this._ephemeralState };
-  };
-
-  proto.setViewData = function (data) {
-    if (data && data.state) this._state = data.state;
-    if (data && data.ephemeralState) this._ephemeralState = data.ephemeralState;
-  };
+  // ------------------------------------------------------------------ file
 
   proto.onLoadFile = async function (file) {
-    this.file = file;
     this.path = file.path;
-    if (this._state && this._state.mode) this.currentMode = this._state.mode;
-    else this.currentMode = this.app.vault.getConfig("defaultViewMode") === "preview" ? "preview" : "source";
-    this.updateMode();
-    this.updateTitle();
-    this.backlinks && this.backlinks.update(file, this.backlinkOpts);
-    this.dataEl = this.app.vault.adapter.read ? null : null;
-  };
-
-  proto.onUnloadFile = function (file) {
-    if (this.file === file) {
-      this.file = null;
-      this.path = "";
+    // pick the mode before the text is pushed into it
+    const saved = this._modeState;
+    this.currentMode = saved && (saved.mode === "source" || saved.mode === "preview")
+      ? saved.mode
+      : (this.app.vault.getConfig("defaultViewMode") === "preview" ? "preview" : "source");
+    await host.TextFileView.prototype.onLoadFile.call(this, file);
+    // inline title: first heading text or the basename
+    const cache = this.app.metadataCache.getFileCache(file);
+    const headings = cache && cache.headings;
+    const title = headings && headings.length ? headings[0].heading : file.basename;
+    this.inlineTitleEl.setText(title);
+    for (const fn of this.titleListeners) { try { fn(title); } catch (e) {} }
+    // backlinks pane follows the file
+    if (this.backlinks) {
+      this.backlinks.file = file;
+      this.backlinks.update && this.backlinks.update();
     }
-    this.backlinks && this.backlinks.update(null, this.backlinkOpts);
+    this.updateMode();
+    this.metadataEditor && this.metadataEditor.update && this.metadataEditor.update();
   };
 
-  proto.updateTitle = function () {
-    const file = this.file;
-    const title = file ? firstHeadingText(file.basename) || file.basename : "";
-    if (this.titleEl) this.titleEl.setText(title);
-    for (const fn of this.titleListeners) fn(title);
+  proto.onUnloadFile = async function (file) {
+    await host.TextFileView.prototype.onUnloadFile.call(this, file);
+    this.path = "";
+    if (this.backlinks) { this.backlinks.file = null; this.backlinks.update && this.backlinks.update(); }
   };
 
-  proto.onAddTitleListener = function (fn) { this.titleListeners.push(fn); };
-  proto.onRemoveTitleListener = function (fn) {
-    const i = this.titleListeners.indexOf(fn);
-    if (i >= 0) this.titleListeners.splice(i, 1);
+  // TextFileView data channel: the text itself.
+  proto.getViewData = function () {
+    const mode = this.currentModeInstance();
+    return mode && mode.get ? mode.get() : "";
   };
 
-  // ---------------------------------------------------------------- modes
+  proto.setViewData = function (text, clear) {
+    const mode = this.currentModeInstance();
+    if (mode && mode.set) mode.set(text, clear);
+  };
+
+  proto.clear = function () {
+    const mode = this.currentModeInstance();
+    if (mode && mode.clear) mode.clear();
+  };
+
+  // ------------------------------------------------------------------ state
+
+  proto.canAcceptExtension = function (ext) {
+    return ext === "md" || ext === "markdown";
+  };
+
+  proto.getState = function () {
+    const state = host.FileView.prototype.getState.call(this);
+    state.mode = this.currentMode;
+    if (this._modeState) {
+      if (this._modeState.source !== undefined) state.source = this._modeState.source;
+      if (this._modeState.backlinks !== undefined) state.backlinks = this._modeState.backlinks;
+      if (this._modeState.backlinkOpts) state.backlinkOpts = this._modeState.backlinkOpts;
+    }
+    return state;
+  };
+
+  proto.setState = async function (state, result) {
+    if (state) {
+      this._modeState = state;
+      if (state.mode === "source" || state.mode === "preview") this.currentMode = state.mode;
+    }
+    return host.FileView.prototype.setState.call(this, state, result);
+  };
+
+  proto.getEphemeralState = function (state) {
+    const mode = this.currentModeInstance();
+    if (mode && mode.getEphemeralState) mode.getEphemeralState(state);
+    state.mode = this.currentMode;
+    return state;
+  };
+
+  proto.setEphemeralState = function (state) {
+    this._ephemeral = state;
+    const mode = this.currentModeInstance();
+    if (mode && mode.setEphemeralState) mode.setEphemeralState(state);
+  };
+
+  // ------------------------------------------------------------------ modes
 
   proto.getMode = function () { return this.currentMode; };
 
   proto.setMode = function (mode) {
-    if (mode === this.currentMode) return;
+    if (mode !== "source" && mode !== "preview") return;
+    if (mode === this.currentMode) { this.updateMode(); return; }
+    // hand the scroll position across
+    const from = this.currentModeInstance();
+    if (from && from.getScroll) this._scroll = from.getScroll();
     this.currentMode = mode;
     this.updateMode();
+    this._modeState = this._modeState || {};
+    this._modeState.mode = mode;
     this.app.workspace.trigger("markdown-view-mode-changed", this);
-    this._state = this._state || {};
-    this._state.mode = mode;
   };
 
   proto.toggleMode = function () {
@@ -172,55 +200,136 @@ export function ng24DefineMarkdownView(host) {
   };
 
   proto.updateMode = function () {
-    const source = this.currentMode === "source";
-    this.contentEl.setAttr("data-mode", source ? "source" : "preview");
-    if (this.editModeEl) this.editModeEl.toggle(!source);
-    if (this.previewModeEl) this.previewModeEl.toggle(source);
-    if (this.modeButtonEl) {
-      setIcon(this.modeButtonEl, source ? "lucide-eye" : "lucide-pencil");
-      this.modeButtonEl.setAttr("aria-label", source ? "Reading view" : "Editing view");
+    const preview = this.currentMode === "preview";
+    this.containerEl.setAttr("data-mode", preview ? "preview" : "source");
+    if (this.editMode) preview ? this.editMode.hide() : this.editMode.show();
+    if (this.previewMode) preview ? this.previewMode.show() : this.previewMode.hide();
+    this.updateModeButton();
+    this.updateBacklinksVisibility();
+    const mode = this.currentModeInstance();
+    if (mode && mode.onResize) mode.onResize();
+    if (this._scroll !== null && mode && mode.applyScroll) {
+      mode.applyScroll(this._scroll);
+      this._scroll = null;
     }
-    if (source && this.editMode && this.editMode.onModeEnter) this.editMode.onModeEnter();
-    if (!source && this.previewModeInstance && this.previewModeInstance.onModeEnter) this.previewModeInstance.onModeEnter();
-    this.updateTitle();
   };
 
-  // ---------------------------------------------------------------- editor
+  // ------------------------------------------------------------------ backlinks
 
-  proto.onDataChanged = function () {
-    this.app.metadataCache.trigger("changed", this.file);
+  proto.canToggleBacklinks = function () {
+    return !!this.file;
   };
 
-  // ---------------------------------------------------------------- menus
+  proto.toggleBacklinks = function () {
+    this._modeState = this._modeState || {};
+    this._modeState.backlinks = !this._modeState.backlinks;
+    this.updateBacklinksVisibility();
+    this.app.workspace.requestSaveLayout && this.app.workspace.requestSaveLayout();
+  };
 
-  proto.onMoreMenu = function (event) {
+  proto.updateBacklinksVisibility = function () {
+    const show = !!(this._modeState && this._modeState.backlinks) && this.canToggleBacklinks();
+    if (this.backlinksEl) this.backlinksEl.toggle(show);
+  };
+
+  // ------------------------------------------------------------------ helpers used by modes / plugins
+
+  proto.canShowProperties = function () {
+    return this.app.vault.getConfig("propertiesInDocument") !== "hidden" && !!this.file;
+  };
+
+  proto.onInternalDataChange = function () {
+    this.requestSave();
+    if (this.file) this.app.metadataCache.trigger("changed", this.file);
+  };
+
+  proto.syncScroll = function () {
+    const mode = this.currentModeInstance();
+    if (mode && mode.getScroll) this._scroll = mode.getScroll();
+  };
+
+  proto.onMarkdownFold = function () {
+    if (!this.file) return;
+    const mode = this.currentModeInstance();
+    if (mode && mode.getFoldInfo) {
+      this.app.foldManager.save(this.file, mode.getFoldInfo());
+    }
+  };
+
+  proto.replaceScope = function (scope) {
+    if (scope === this.scope) return;
+    if (this.scope) this.app.keymap.popScope(this.scope);
+    this.scope = scope;
+    if (scope) this.app.keymap.pushScope(scope);
+  };
+
+  proto.focus = function () {
+    const mode = this.currentModeInstance();
+    if (mode && mode.focus) mode.focus();
+  };
+
+  proto.hasFocus = function () {
+    return this.containerEl.contains(document.activeElement);
+  };
+
+  // MetadataEditor owner hooks
+  proto.shiftFocusBefore = function () { this.editMode && this.editMode.focus && this.editMode.focus(); };
+  proto.shiftFocusAfter = function () { this.editMode && this.editMode.focus && this.editMode.focus(); };
+
+  // inline title listeners (tab header sync etc.)
+  proto.onAddTitleListener = function (fn) { this.titleListeners.push(fn); };
+  proto.onRemoveTitleListener = function (fn) {
+    const i = this.titleListeners.indexOf(fn);
+    if (i >= 0) this.titleListeners.splice(i, 1);
+  };
+
+  // ------------------------------------------------------------------ menus / misc
+
+  proto.onMoreOptions = function (event) {
     const menu = host.Menu.forEvent(event);
-    menu.addItem((item) => item.setTitle("Open in new window").setIcon("lucide-external-link").onClick(() => this.app.workspace.moveLeafToPopout(this.leaf)));
-    menu.addItem((item) => item.setTitle("Copy link to file").setIcon("lucide-link").onClick(() => {
-      navigator.clipboard && navigator.clipboard.writeText("obsidian://open?vault=" + encodeURIComponent(this.app.vault.getName()) + "&file=" + encodeURIComponent(this.path));
-    }));
-    if (this.file) {
-      menu.addSeparator();
-      menu.addItem((item) => item.setTitle("Open file properties").setIcon("lucide-info").onClick(() => {
-        const plugin = this.app.internalPlugins.getPluginById("properties");
-        plugin && plugin.openProperties(this.file);
-      }));
+    menu.addSections(["view"]);
+    const modeItem = menu.addItem((item) => item
+      .setSection("view")
+      .setTitle(this.currentMode === "source" ? "Reading view" : "Editing view")
+      .setIcon(this.currentMode === "source" ? "lucide-eye" : "lucide-pencil")
+      .onClick(() => this.toggleMode()));
+    if (this.canToggleBacklinks()) {
+      menu.addItem((item) => item
+        .setSection("view")
+        .setTitle("Backlinks in document")
+        .setChecked(!!(this._modeState && this._modeState.backlinks))
+        .onClick(() => this.toggleBacklinks()));
     }
+    menu.addSeparator("view");
+    menu.addItem((item) => item
+      .setSection("view")
+      .setTitle(host.t.interface.copyLinkText ? host.t.interface.copyLinkText() : "Copy link to file")
+      .setIcon("lucide-link-2")
+      .onClick(() => {
+        const link = "obsidian://open?vault=" + encodeURIComponent(this.app.vault.getName()) + "&file=" + encodeURIComponent(this.path);
+        navigator.clipboard && navigator.clipboard.writeText(link);
+      }));
+    menu.showAtMouseEvent(event);
   };
 
-  // ---------------------------------------------------------------- lifecycle
-
-  proto.onClose = function () {
-    this.app.workspace.detachLeavesOfType("backlink", true);
+  proto.onPaneMenu = function (menu, source) {
+    host.ItemView.prototype.onPaneMenu.call(this, menu, source);
+    if (source === "more-options") return;
+    menu.addSeparator();
+    menu.addItem((item) => item
+      .setTitle(this.currentMode === "source" ? "Reading view" : "Editing view")
+      .setIcon(this.currentMode === "source" ? "lucide-eye" : "lucide-pencil")
+      .onClick(() => this.toggleMode()));
   };
+
+  proto.handleCopy = function () {};
+  proto.handleCut = function () {};
+  proto.handlePaste = function () {};
 
   proto.onResize = function () {
-    this._scrollSync();
+    const mode = this.currentModeInstance();
+    if (mode && mode.onResize) mode.onResize();
   };
-
-  proto.syncScroll = function () {};
-
-  proto.onActiveLeafChange = function () {};
 
   return MarkdownView;
 }

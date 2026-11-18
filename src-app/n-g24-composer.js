@@ -17,15 +17,26 @@ const NG24_OPTIONS = {
 // helpers
 // ---------------------------------------------------------------------------
 
-function ng24Options(app) {
-  const data = app.plugins.getPluginData(NG24_PLUGIN_ID) || {};
-  return Object.assign({}, NG24_OPTIONS, data);
+function ng24Confirm(app, message) {
+  return new Promise((resolve) => {
+    const modal = new host.Modal(app);
+    modal.titleEl.setText("Confirm");
+    modal.contentEl.createEl("p", { text: message });
+    const buttons = modal.contentEl.createDiv({ cls: "modal-button-container" });
+    buttons.createEl("button", { text: "Cancel" }).addEventListener("click", () => { modal.close(); resolve(false); });
+    buttons.createEl("button", { cls: "mod-cta", text: "OK" }).addEventListener("click", () => { modal.close(); resolve(true); });
+    modal.open();
+  });
 }
 
-function ng24SetOptions(app, patch) {
-  const next = Object.assign(ng24Options(app), patch);
-  app.plugins.setPluginData(NG24_PLUGIN_ID, next);
-  return next;
+function ng24Options(plugin) {
+  return Object.assign({}, NG24_OPTIONS, plugin && plugin.options ? plugin.options : {});
+}
+
+function ng24SetOptions(plugin, patch) {
+  plugin.options = Object.assign({}, plugin.options, patch);
+  plugin.saveOptions && plugin.saveOptions();
+  return plugin.options;
 }
 
 /** Heading records for a markdown file (from metadata cache). */
@@ -116,7 +127,7 @@ export function ng24DefineNoteComposerSettingTab(host) {
   proto.display = function () {
     const { containerEl } = this;
     containerEl.empty();
-    const opts = ng24Options(this.app);
+    const opts = ng24Options(this);
     new host.Setting(containerEl)
       .setName("Ask before merging")
       .setDesc("Show a confirmation dialog before merging notes.")
@@ -147,19 +158,24 @@ export function ng24DefineNoteComposerSettingTab(host) {
 // ---------------------------------------------------------------------------
 
 export function ng24DefineNoteComposerPlugin(host) {
-  function NoteComposerPlugin(app, manifest) {
-    const self = host.Plugin.call(this, app, manifest) || this;
-    self.app = app;
-    return self;
+  // Internal-plugin shell: constructed with no args by the startup loader;
+  // init(app, plugin) receives the app and its PluginWrapper.
+  function NoteComposerPlugin() {
+    this.id = NG24_PLUGIN_ID;
+    this.name = "Note Composer";
+    this.description = "Merge, split and extract sections of markdown notes.";
+    this.defaultOn = true;
+    this.options = Object.assign({}, NG24_OPTIONS);
   }
-  inherit(NoteComposerPlugin, host.Plugin);
   const proto = NoteComposerPlugin.prototype;
 
-  Object.defineProperty(proto, "id", { get() { return NG24_PLUGIN_ID; } });
-
-  proto.onload = function () {
-    const app = this.app;
-    this.registerEvent(app.workspace.on("file-menu", (menu, file) => {
+  proto.init = async function (app, plugin) {
+    this.app = app;
+    this.plugin = plugin;
+    const saved = await plugin.loadData();
+    if (saved && typeof saved === "object") this.options = Object.assign({}, NG24_OPTIONS, saved);
+    this.saveOptions = () => plugin.saveData(this.options);
+    plugin.registerEvent(app.workspace.on("file-menu", (menu, file, source, leaf) => {
       if (!file || file.extension !== "md") return;
       menu.addSeparator();
       menu.addItem((item) => item
@@ -175,8 +191,8 @@ export function ng24DefineNoteComposerPlugin(host) {
         .setIcon("lucide-split")
         .onClick(() => this.openSplitModal(file)));
     }));
-    this.addCommand({
-      id: "note-composer:merge",
+    plugin.registerGlobalCommand({
+      id: "note-composer:merge-file",
       name: "Merge note into another",
       checkCallback: (checking) => {
         const file = app.workspace.getActiveFile();
@@ -185,8 +201,8 @@ export function ng24DefineNoteComposerPlugin(host) {
         return true;
       },
     });
-    this.addCommand({
-      id: "note-composer:extract",
+    plugin.registerGlobalCommand({
+      id: "note-composer:extract-heading",
       name: "Extract section into new note",
       checkCallback: (checking) => {
         const file = app.workspace.getActiveFile();
@@ -195,8 +211,8 @@ export function ng24DefineNoteComposerPlugin(host) {
         return true;
       },
     });
-    this.addCommand({
-      id: "note-composer:split",
+    plugin.registerGlobalCommand({
+      id: "note-composer:split-file",
       name: "Split note at cursor",
       checkCallback: (checking) => {
         const file = app.workspace.getActiveFile();
@@ -205,13 +221,10 @@ export function ng24DefineNoteComposerPlugin(host) {
         return true;
       },
     });
+    plugin.addSettingTab(new (ng24ComposerSettingTabClass || (ng24ComposerSettingTabClass = ng24DefineNoteComposerSettingTab(host)))(app, plugin, this));
   };
 
-  proto.onloadSettings = function () {
-    this.settingTab = new host.NoteComposerSettingTab(this.app, this);
-    this.app.setting.open();
-    this.app.setting.openTabById(this.app.setting.lastTabId);
-  };
+  proto.onloadSettings = function () {};
 
   // ------------------------------------------------------------------ merge
 
@@ -222,7 +235,7 @@ export function ng24DefineNoteComposerPlugin(host) {
     const { contentEl } = modal;
     contentEl.createEl("p", { text: `Merge "${file.basename}" into another note.` });
     let target = null;
-    const suggest = new host.MergeFileSuggest(app, contentEl.createEl("input", { cls: "text-input" }), (f) => { target = f; });
+    const suggest = new (ng24MergeSuggestClass || (ng24MergeSuggestClass = ng24DefineMergeFileSuggest(host)))(app, contentEl.createEl("input", { cls: "text-input" }), (f) => { target = f; });
     suggest.inputEl.placeholder = "Search for target note...";
     suggest.open();
     const buttons = contentEl.createDiv({ cls: "modal-button-container" });
@@ -230,9 +243,9 @@ export function ng24DefineNoteComposerPlugin(host) {
     const merge = buttons.createEl("button", { cls: "mod-cta", text: "Merge" });
     merge.addEventListener("click", async () => {
       if (!target) { new host.Notice("Select a target note first."); return; }
-      const opts = ng24Options(app);
+      const opts = ng24Options(this);
       if (opts.askBeforeMerging) {
-        const ok = await host.confirm(`Merge "${file.basename}" into "${target.basename}"? This cannot be undone.`);
+        const ok = await ng24Confirm(this.app, `Merge "${file.basename}" into "${target.basename}"? This cannot be undone.`);
         if (!ok) return;
       }
       await this.doMerge(file, target, opts);
@@ -302,7 +315,7 @@ export function ng24DefineNoteComposerPlugin(host) {
     const section = await ng24SectionUnderHeading(app, file, heading);
     const title = heading.title || "Untitled";
     const newFile = await app.fileManager.createNewMarkdownFile(app.vault.getRoot(), title);
-    const content = (ng24Options(app).template ? applyTemplateVars(ng24Options(app).template, { title: newFile.basename }) + "\n\n" : "") + section.trim() + "\n";
+    const content = (ng24Options(this).template ? applyTemplateVars(ng24Options(this).template, { title: newFile.basename }) + "\n\n" : "") + section.trim() + "\n";
     await app.vault.modify(newFile, content);
     // replace the section in the source with an embed/link
     const sourceText = await app.vault.read(file);
@@ -354,6 +367,9 @@ export function ng24DefineNoteComposerPlugin(host) {
 
   return NoteComposerPlugin;
 }
+
+let ng24ComposerSettingTabClass = null;
+let ng24MergeSuggestClass = null;
 
 export const defineNoteComposerPlugin = ng24DefineNoteComposerPlugin;
 export const defineMergeFileSuggest = ng24DefineMergeFileSuggest;

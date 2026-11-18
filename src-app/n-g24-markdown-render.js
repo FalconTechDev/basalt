@@ -3,7 +3,7 @@
 import { inherit } from "./inherit.js";
 import { env } from "./env.js";
 import { debounceCall } from "./timing.js";
-import { randomHex, isUrl, copyText } from "./misc.js";
+import { randomHex } from "./misc.js";
 import { lineBounds } from "./text.js";
 
 // ---------------------------------------------------------------------------
@@ -99,13 +99,13 @@ export function ng24DefinePreviewLinkHandlers(host) {
       .setSection("clipboard")
       .setTitle(host.t.interface.menu.copyLinkText ? host.t.interface.menu.copyLinkText() : "Copy link text")
       .setIcon("lucide-copy")
-      .onClick(() => copyText(targetEl.textContent)));
+      .onClick(() => ng24Copy(targetEl.textContent)));
     app.workspace.handleLinkContextMenu(menu, linktext, this.info.path);
   };
 
   proto.onExternalLinkClick = function (event, targetEl, href) {
     event.preventDefault();
-    if (!isUrl(href)) {
+    if (!host.isUrl(href)) {
       new host.Notice(host.t.interface.msgFailedToOpenHref({ href }));
       return;
     }
@@ -122,7 +122,7 @@ export function ng24DefinePreviewLinkHandlers(host) {
       .setSection("clipboard")
       .setTitle(host.t.interface.menu.copyLinkText ? host.t.interface.menu.copyLinkText() : "Copy link text")
       .setIcon("lucide-copy")
-      .onClick(() => copyText(targetEl.textContent)));
+      .onClick(() => ng24Copy(targetEl.textContent)));
     app.workspace.handleExternalLinkContextMenu(menu, href);
   };
 
@@ -145,6 +145,9 @@ export function ng24DefinePreviewLinkHandlers(host) {
 // ---------------------------------------------------------------------------
 
 const ng24WarnedPlugins = new Set();
+function ng24Copy(text) {
+  try { navigator.clipboard && navigator.clipboard.writeText(text); } catch (e) {}
+}
 
 export function ng24DefineMarkdownRenderer(host) {
   function MarkdownRenderer(app, containerEl, sourcePath, registerEvents = true) {
@@ -220,7 +223,7 @@ export function ng24DefineMarkdownRenderer(host) {
   };
 
   proto.postProcess = function (section, promises, frontmatter) {
-    const ctx = host.MarkdownPreviewView.postProcess(this.app, {
+    const ctx = MarkdownRenderer.postProcess(this.app, {
       docId: this.docId,
       sourcePath: this.path,
       frontmatter,

@@ -195,26 +195,37 @@ function ng24ContentRow(el, text) {
 // ---------------------------------------------------------------------------
 
 export function ng24DefineMarkdownImporterPlugin(host) {
-  function MarkdownImporterPlugin(app, manifest) {
-    const self = host.Plugin.call(this, app, manifest) || this;
-    self.app = app;
-    return self;
+  // Internal-plugin shell: constructed with no args; init(app, plugin) gets
+  // the app and its PluginWrapper.
+  function MarkdownImporterPlugin() {
+    this.id = NG24_IMPORTER_ID;
+    this.name = "Markdown format importer";
+    this.description = "Import notes from Roam, Bear and Zettelkasten formats.";
   }
-  inherit(MarkdownImporterPlugin, host.Plugin);
   const proto = MarkdownImporterPlugin.prototype;
 
-  Object.defineProperty(proto, "id", { get() { return NG24_IMPORTER_ID; } });
-
-  proto.onload = function () {
-    this.addCommand({
+  proto.init = function (app, plugin) {
+    this.app = app;
+    this.plugin = plugin;
+    plugin.registerRibbonItem("Import markdown", "lucide-download", () => this.onOpen());
+    plugin.registerGlobalCommand({
       id: "markdown-importer:open",
       name: "Open markdown importer",
-      callback: () => new host.ImporterModal(this.app).open(),
+      icon: "lucide-download",
+      callback: () => this.onOpen(),
     });
+  };
+
+  proto.onOpen = function () {
+    const ModalClass = ng24ImporterModalClass || (ng24ImporterModalClass = ng24DefineImporterModal(host));
+    new ModalClass(this.app).open();
+    return false;
   };
 
   return MarkdownImporterPlugin;
 }
+
+let ng24ImporterModalClass = null;
 
 export const defineMarkdownImporterPlugin = ng24DefineMarkdownImporterPlugin;
 export const defineImporterModal = ng24DefineImporterModal;
