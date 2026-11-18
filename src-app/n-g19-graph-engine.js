@@ -6,15 +6,10 @@ import { fileClass } from "./vault.js";
 import { extensionOf } from "./path.js";
 import { collectTags } from "./metadata-helpers.js";
 import { sliderCurve } from "./misc.js";
-import {
-  ng19GraphDefaults, ng19GraphNodeData, ng19GraphLocalData,
-} from "./n-g19-graph-util.js";
-import {
-  ng19GT, ng19Graph, ng19LocalGraphViewType,
-} from "./n-g19-graph-consts.js";
+import { ng19GraphDefaults, ng19GraphNodeData, ng19GraphLocalData, } from "./n-g19-graph-util.js";
+import { ng19GT, ng19Graph, ng19LocalGraphViewType, ng19Host } from "./n-g19-graph-consts.js";
 
-const ng19Host = () => __basaltHost;
-const ng19Clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+const ng19EngineClamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
 
 /** Extensions whose files carry no searchable text content (binary attachments). */
 function ng19AttachmentExtensions() {
@@ -485,7 +480,7 @@ export function ng19GraphEngine() {
       this.progression = 1;
       this._progStart = Date.now();
       this._progTotal = Math.max(1, this._lastNumLinks || 1);
-      this.progressionSpeed = ng19Clamp(0.5 * Math.sqrt(this._progTotal), 5, 100);
+      this.progressionSpeed = ng19EngineClamp(0.5 * Math.sqrt(this._progTotal), 5, 100);
       this._inProg = true;
       this.render();
       this._inProg = false;

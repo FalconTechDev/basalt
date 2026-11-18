@@ -4,13 +4,8 @@
 // option listeners so engine.getOptions/setOptions stay generic.
 import { env } from "./env.js";
 import { hslToRgb, rgbToInt, sliderCurve } from "./misc.js";
-import {
-  ng19GraphDisplayDefaults, ng19GraphForceDefaults,
-  ng19GT, ng19TT, ng19Graph,
-} from "./n-g19-graph-consts.js";
+import { ng19GraphDisplayDefaults, ng19GraphForceDefaults, ng19GT, ng19TT, ng19Graph, ng19Host } from "./n-g19-graph-consts.js";
 import { ng19GraphDefaults } from "./n-g19-graph-util.js";
-
-const ng19Host = () => __basaltHost;
 
 function ng19AddCls(el, ...cls) {
   if (!el) return;

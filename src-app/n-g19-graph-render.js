@@ -2,12 +2,7 @@
 // the Renderer facade (worker protocol, pan/zoom, frame loop, screenshots).
 import { env } from "./env.js";
 import { withoutExtension, lastSegment } from "./path.js";
-import {
-  ng19Damp, ng19LerpColor, ng19BoxesDisjoint, ng19BoxAround, ng19ResetCanvasStyle,
-  ng19GraphColorClasses, ng19GraphNodeBaseSize, ng19GraphLinkAlpha,
-  ng19GraphNodeData, ng19GraphNodeDataFrom,
-  ng19WorkerUrl, ng19WorkerName, ng19PowerTagText,
-} from "./n-g19-graph-util.js";
+import { ng19Damp, ng19LerpColor, ng19BoxesDisjoint, ng19BoxAround, ng19ResetCanvasStyle, ng19GraphColorClasses, ng19GraphNodeBaseSize, ng19GraphLinkAlpha, ng19GraphNodeData, ng19GraphNodeDataFrom, ng19WorkerUrl, ng19WorkerName, ng19PowerTagText, } from "./n-g19-graph-util.js";
 
 const ng19PIXI = () => (typeof PIXI !== "undefined" ? PIXI : null);
 const ng19Clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);

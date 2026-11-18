@@ -3,17 +3,10 @@
 import { env } from "./env.js";
 import { inherit } from "./inherit.js";
 import { makeHotkey } from "./text.js";
-import {
-  ng19GraphViewType, ng19LocalGraphViewType, ng19GT, ng19Graph,
-} from "./n-g19-graph-consts.js";
+import { ng19GraphViewType, ng19LocalGraphViewType, ng19GT, ng19Graph, ng19Host } from "./n-g19-graph-consts.js";
 import { ng19GraphRenderer } from "./n-g19-graph-render.js";
 import { ng19GraphEngine } from "./n-g19-graph-engine.js";
-import {
-  ng19GraphControlSection, ng19GraphFilterSection, ng19GraphColorSection,
-  ng19GraphDisplaySection, ng19GraphForceSection,
-} from "./n-g19-graph-sections.js";
-
-const ng19Host = () => __basaltHost;
+import { ng19GraphControlSection, ng19GraphFilterSection, ng19GraphColorSection, ng19GraphDisplaySection, ng19GraphForceSection, } from "./n-g19-graph-sections.js";
 
 function ng19GraphPluginInstance(app) {
   const w = app.internalPlugins && app.internalPlugins.getPluginById("graph");

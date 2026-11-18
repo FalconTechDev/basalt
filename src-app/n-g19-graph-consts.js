@@ -70,5 +70,10 @@ export function ng19TT(plugin, key, ...args) {
   return typeof v === "string" ? v : key;
 }
 
+/** Lazy host accessor shared by the graph modules. */
+export function ng19Host() {
+  return typeof __basaltHost !== "undefined" ? __basaltHost : null;
+}
+
 /** Shared registry the section/engine/view/plugin factories publish classes into. */
 export const ng19Graph = {};
