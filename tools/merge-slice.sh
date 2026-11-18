@@ -16,6 +16,7 @@ for f in $U; do
     *) echo "MANUAL CONFLICT: $f"; exit 2 ;;
   esac
 done
+node tools/check-imports.mjs || { echo "DANGLING IMPORTS (fix, then rebuild)"; exit 6; }
 node tools/check-dups.mjs || { echo "DUPLICATE NAMES (fix, then rebuild)"; exit 3; }
 node build-app.mjs --no-cargo > /tmp/build.log 2>&1 || { grep -m2 "Error" /tmp/build.log; echo BUILD-FAILED; exit 4; }; tail -1 /tmp/build.log | cut -c1-200
 node --check src/app.js || exit 5
