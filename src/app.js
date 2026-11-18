@@ -63632,6 +63632,7 @@ function ng19GraphFilterSection() {
         .addSearch((search) => {
           searchComp = search;
           this.search = search;
+          engine.options.search = "";
           search.setPlaceholder(ng19GT("promptFilterNodes"));
           search.setValue("");
           search.onChange((v) => {
@@ -64322,6 +64323,7 @@ function ng19GraphView() {
     const app = this.app;
     this.renderer = new (ng19GraphRenderer())(this.contentEl, !env().Yl.isIosApp, true);
     this.engine = new (ng19GraphEngine())(app, this, this.renderer);
+    this.dataEngine = this.engine;
     this.registerEvent(app.metadataCache.on("resolved", this.update, this));
     this.engine.load();
     const plugin = ng19GraphPluginInstance(app);
@@ -64406,6 +64408,7 @@ function ng19LocalGraphView() {
     Base.prototype.load.call(this);
     this.renderer = new (ng19GraphRenderer())(this.contentEl, !env().Yl.isIosApp, true);
     this.engine = new (ng19GraphEngine())(this.app, this, this.renderer);
+    this.dataEngine = this.engine;
     this.registerEvent(this.app.metadataCache.on("resolved", this.update, this));
     this.engine.load();
     const saved = this._pendingState && this._pendingState.options;
@@ -64414,6 +64417,7 @@ function ng19LocalGraphView() {
 
   proto.update = function () {
     const file = this.file;
+    this.renderedFile = file || null;
     if (file !== this._lastGraphFile) {
       this._lastGraphFile = file;
       if (this.renderer) this.renderer.resetPan();
@@ -64508,15 +64512,7 @@ function ng19GraphPlugin() {
       id: "graph:open-local",
       name: T("actionOpenLocal"),
       icon: "lucide-git-fork",
-      checkCallback: (checking) => {
-        const file = app.workspace.getActiveFile();
-        if (!file) return false;
-        if (!checking) {
-          const leaf = app.workspace.getLeaf("split");
-          leaf.setViewState({ type: ng19LocalGraphViewType, active: true, state: { file: file.path } });
-        }
-        return true;
-      },
+      checkCallback: (checking) => this.openLocalGraph(checking),
     });
     plugin.registerGlobalCommand({
       id: "graph:animate",
@@ -64556,8 +64552,20 @@ function ng19GraphPlugin() {
 
   proto.openGraphView = function (event) {
     const app = this.app;
-    const leaf = app.workspace.getLeaf(host.Keymap.isModEvent(event ?? app.lastEvent));
+    const evt = event ?? app.lastEvent;
+    const leaf = app.workspace.getLeaf(evt ? host.Keymap.isModEvent(evt) : false);
     leaf.setViewState({ type: ng19GraphViewType, active: true, state: {} });
+  };
+
+  proto.openLocalGraph = function (checking) {
+    const app = this.app;
+    const file = app.workspace.getActiveFile();
+    if (!file) return false;
+    if (!checking) {
+      const leaf = app.workspace.getLeaf("split");
+      leaf.setViewState({ type: ng19LocalGraphViewType, active: true, state: { file: file.path } });
+    }
+    return true;
   };
 
   proto.onFileMenu = function (menu, file, source, leaf) {
