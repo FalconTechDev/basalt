@@ -1864,22 +1864,22 @@
     },
     {
       "orig": "PQ",
-      "use": "s09GraphLocalData",
+      "use": "ng19GraphLocalData",
       "originalBytes": 796
     },
     {
       "orig": "BQ",
-      "use": "s09SortTreeItems",
+      "use": "ng19SortTreeItems",
       "originalBytes": 438
     },
     {
       "orig": "kQ",
-      "use": "s09GraphNodeData",
+      "use": "ng19GraphNodeData",
       "originalBytes": 59
     },
     {
       "orig": "CQ",
-      "use": "s09GraphNodeDataFrom",
+      "use": "ng19GraphNodeDataFrom",
       "originalBytes": 86
     },
     {
@@ -4276,22 +4276,22 @@
     },
     {
       "orig": "xQ",
-      "use": "s09GraphNode",
+      "use": "ng19GraphNode",
       "originalBytes": 3863
     },
     {
       "orig": "TQ",
-      "use": "s09GraphLink",
+      "use": "ng19GraphLink",
       "originalBytes": 2111
     },
     {
       "orig": "DQ",
-      "use": "s09GraphPowerTag",
+      "use": "ng19GraphPowerTag",
       "originalBytes": 1029
     },
     {
       "orig": "AQ",
-      "use": "s09GraphRenderer",
+      "use": "ng19GraphRenderer",
       "originalBytes": 14173
     },
     {
@@ -4716,47 +4716,47 @@
     },
     {
       "orig": "bJ",
-      "use": "s28GraphPlugin",
+      "use": "ng19GraphPlugin",
       "originalBytes": 2504
     },
     {
       "orig": "kJ",
-      "use": "s28GraphView",
+      "use": "ng19GraphView",
       "originalBytes": 1778
     },
     {
       "orig": "EJ",
-      "use": "s28LocalGraphView",
+      "use": "ng19LocalGraphView",
       "originalBytes": 2112
     },
     {
       "orig": "xJ",
-      "use": "s28GraphEngine",
+      "use": "ng19GraphEngine",
       "originalBytes": 9953
     },
     {
       "orig": "TJ",
-      "use": "s28GraphControlSection",
+      "use": "ng19GraphControlSection",
       "originalBytes": 998
     },
     {
       "orig": "DJ",
-      "use": "s28GraphFilterSection",
+      "use": "ng19GraphFilterSection",
       "originalBytes": 3627
     },
     {
       "orig": "AJ",
-      "use": "s28GraphColorSection",
+      "use": "ng19GraphColorSection",
       "originalBytes": 2973
     },
     {
       "orig": "LJ",
-      "use": "s28GraphDisplaySection",
+      "use": "ng19GraphDisplaySection",
       "originalBytes": 1616
     },
     {
       "orig": "OJ",
-      "use": "s28GraphForceSection",
+      "use": "ng19GraphForceSection",
       "originalBytes": 1432
     },
     {
@@ -7573,67 +7573,67 @@
     },
     {
       "orig": "mQ",
-      "expr": "__basaltOwn.s09Damp",
+      "expr": "__basaltOwn.ng19Damp",
       "sha1": "d8aa7f083efcc236db28b8553375c971b56e4fe8",
       "originalBytes": 54
     },
     {
       "orig": "vQ",
-      "expr": "__basaltOwn.s09LerpColor",
+      "expr": "__basaltOwn.ng19LerpColor",
       "sha1": "2658d9c0e7e39df907afef75a5c7c9d7a092a4e3",
       "originalBytes": 97
     },
     {
       "orig": "gQ",
-      "expr": "__basaltOwn.s09BoxesDisjoint",
+      "expr": "__basaltOwn.ng19BoxesDisjoint",
       "sha1": "356cbb0d3686cd931881abda3581287144bf9087",
       "originalBytes": 84
     },
     {
       "orig": "yQ",
-      "expr": "__basaltOwn.s09BoxAround",
+      "expr": "__basaltOwn.ng19BoxAround",
       "sha1": "4c5e22ef1b30c378f0cebbba149e4409023bb3ff",
       "originalBytes": 62
     },
     {
       "orig": "bQ",
-      "expr": "__basaltOwn.s09ResetCanvasStyle",
+      "expr": "__basaltOwn.ng19ResetCanvasStyle",
       "sha1": "26c21610a84f1b41b984de112cdcba7bd00099ba",
       "originalBytes": 139
     },
     {
       "orig": "wQ",
-      "expr": "__basaltOwn.s09GraphDefaults",
+      "expr": "__basaltOwn.ng19GraphDefaults",
       "sha1": "0a3acfce0798bfc0afd9bd98719ae990a172dbe7",
       "originalBytes": 148
     },
     {
       "orig": "fQ",
-      "expr": "__basaltOwn.s09GraphLinkAlpha",
+      "expr": "__basaltOwn.ng19GraphLinkAlpha",
       "sha1": "2db92f66554fa5837dd62843ecf91c4dc772ae55",
       "originalBytes": 2
     },
     {
       "orig": "EQ",
-      "expr": "__basaltOwn.s09GraphNoWeightTypes",
+      "expr": "__basaltOwn.ng19GraphNoWeightTypes",
       "sha1": "97d4f06bec75475459c0f66e3263eda546f9ab5b",
       "originalBytes": 8
     },
     {
       "orig": "MQ",
-      "expr": "__basaltOwn.s09GraphColorClasses",
+      "expr": "__basaltOwn.ng19GraphColorClasses",
       "sha1": "632af5d3c6ad5139024d8017422d56a35b0f8e78",
       "originalBytes": 307
     },
     {
       "orig": "SQ",
-      "expr": "__basaltOwn.s09GraphNodeBaseSize",
+      "expr": "__basaltOwn.ng19GraphNodeBaseSize",
       "sha1": "310b86e0b62b828562fc91c7be5380a992b2786a",
       "originalBytes": 3
     },
     {
       "orig": "LQ",
-      "expr": "__basaltOwn.s09LoadPixiScript",
+      "expr": "__basaltOwn.ng19LoadPixiScript",
       "sha1": "7e43fdddeaa8ae0b46caa27874d3f6280b68bea8",
       "originalBytes": 28
     },
@@ -7921,49 +7921,49 @@
     },
     {
       "orig": "fJ",
-      "expr": "__basaltOwn.s28SearchViewType",
+      "expr": "__basaltOwn.ng19SearchViewType",
       "sha1": "ede94f4e836f1cba807a6cc67c74395d09d8c469",
       "originalBytes": 8
     },
     {
       "orig": "yJ",
-      "expr": "__basaltOwn.s28GraphStrings(__basaltHost)",
+      "expr": "__basaltOwn.ng19GraphStrings(__basaltHost)",
       "sha1": "496f1f7b58908971355f410fbb9007800fd5bf47",
       "originalBytes": 20
     },
     {
       "orig": "wJ",
-      "expr": "__basaltOwn.s28GraphViewType",
+      "expr": "__basaltOwn.ng19GraphViewType",
       "sha1": "e74147a3fabab018bf1ba4d0bb7115e435ab0817",
       "originalBytes": 7
     },
     {
       "orig": "CJ",
-      "expr": "__basaltOwn.s28LocalGraphViewType",
+      "expr": "__basaltOwn.ng19LocalGraphViewType",
       "sha1": "27bc91ef9758321901edc5b3043ef668db899f06",
       "originalBytes": 12
     },
     {
       "orig": "PJ",
-      "expr": "__basaltOwn.s28GraphDisplayDefaults",
+      "expr": "__basaltOwn.ng19GraphDisplayDefaults",
       "sha1": "49af16fdd536cfeef165ad67f2b7744f3fe0c7bb",
       "originalBytes": 77
     },
     {
       "orig": "IJ",
-      "expr": "__basaltOwn.s28GraphForceDefaults",
+      "expr": "__basaltOwn.ng19GraphForceDefaults",
       "sha1": "0eb1f278573cde7b8543669534a409538d5dde0e",
       "originalBytes": 84
     },
     {
       "orig": "FJ",
-      "expr": "__basaltOwn.s28BookmarkParentSymbol",
+      "expr": "__basaltOwn.ng19BookmarkParentSymbol",
       "sha1": "12d4de7df3726d0b9c435cffbff8315512c6d5f5",
       "originalBytes": 16
     },
     {
       "orig": "NJ",
-      "expr": "__basaltOwn.s28BookmarkStrings(__basaltHost)",
+      "expr": "__basaltOwn.ng19BookmarkStrings(__basaltHost)",
       "sha1": "cf2fd143b0abc4b77438af8ca5925c12cbe93861",
       "originalBytes": 20
     },

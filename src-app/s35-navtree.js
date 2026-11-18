@@ -9,7 +9,7 @@
 import { inherit } from "./inherit.js";
 import { env } from "./env.js";
 import { lastSegment, parentPath } from "./path.js";
-import { s09SortTreeItems } from "./s09-graph.js";
+import { ng19SortTreeItems } from "./n-g19-graph-util.js";
 
 const pubI18n = (host) => host.i18n.plugins.publish;
 
@@ -80,7 +80,7 @@ export function s35PublishNavTree(host) {
     const order = [];
     const visit = (items) => {
       const sorted = items.slice();
-      s09SortTreeItems(sorted, {}, false);
+      ng19SortTreeItems(sorted, {}, false);
       let changed = false;
       for (let i = 0; i < items.length; i++) {
         if (sorted[i].path !== items[i].path) {
@@ -102,7 +102,7 @@ export function s35PublishNavTree(host) {
   proto.render = function () {
     const ranks = {};
     for (let i = 0; i < this.navOrder.length; i++) ranks[this.navOrder[i]] = i;
-    s09SortTreeItems(this.children, ranks);
+    ng19SortTreeItems(this.children, ranks);
     const hidden = new Set(this.hiddenItems);
     const mark = (items) => {
       for (const item of items) {

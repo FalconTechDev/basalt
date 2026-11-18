@@ -11,7 +11,7 @@ import { defineDialogModal } from "./modal.js";
 import { Runnable } from "./metadata-helpers.js";
 import { ng08SetPlainText } from "./n-g08-drag.js";
 import { searchViewClasses } from "./search-view.js";
-import { s28BookmarkParentSymbol } from "./s28-graph.js";
+import { ng19BookmarkParentSymbol } from "./n-g19-graph-consts.js";
 
 const ng08Host = () => __basaltHost;
 const ng08BmT = () => ng08Host().t.plugins.bookmarks;
@@ -638,7 +638,7 @@ export function ng08DefineBookmarkEditModal(host) {
 }
 
 function ng08BmParentOf(item) {
-  return item[s28BookmarkParentSymbol] || null;
+  return item[ng19BookmarkParentSymbol] || null;
 }
 
 /** BookmarkManyModal: "Add N bookmarks" — wraps items into a new group. */

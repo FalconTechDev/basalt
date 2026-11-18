@@ -2,7 +2,8 @@
 // full-page renderer. DOM class names and the public method surface are the
 // contract; internals are composed from host primitives.
 import { env } from "./env.js";
-import { s09GraphNodeData, s09GraphLocalData, s09LoadPixiScript, s09GraphRenderer } from "./s09-graph.js";
+import { ng19GraphLocalData, ng19LoadPixiScript } from "./n-g19-graph-util.js";
+import { ng19GraphRenderer } from "./n-g19-graph-render.js";
 import { ng12PublishGraphData, ng12PublishResolveSub } from "./n-g12-s09-core.js";
 import { ng12PublishTagModal } from "./n-g12-s09-tree.js";
 import { lastSegment, parentPath, baseName, withoutExtension, extensionOf, displayName, withoutMd, parseLinktext, linkPath, isLocalLink, tidyLinkTarget, safeDecodeUri } from "./path.js";
@@ -72,11 +73,11 @@ export function ng12PublishGraphView() {
       env().gg(this.containerEl, async () => {
         if (this.renderer) return;
         const worker = new (env().Hz)("/sim.js", { name: "Graph Worker" });
-        await s09LoadPixiScript();
+        await ng19LoadPixiScript();
         const doc = env().activeDocument || document;
         if (doc.fonts && doc.fonts.ready) await doc.fonts.ready;
         if (this.renderer) return;
-        const Renderer = s09GraphRenderer();
+        const Renderer = ng19GraphRenderer();
         this.renderer = new Renderer(this.containerEl, false, false, worker);
         this.renderer.onNodeClick = (e, path, type) => this.onNodeClick(e, path, type);
         this.renderer.setScale(0.5);
@@ -150,7 +151,7 @@ export function ng12PublishGraphView() {
         const cache = site && site.cache;
         const full = cache ? await this.getGraphData(cache) : { nodes: {} };
         if (!this.global) {
-          data = s09GraphLocalData(full, {
+          data = ng19GraphLocalData(full, {
             localFile: path,
             localJumps: 1,
             localInterlinks: true,

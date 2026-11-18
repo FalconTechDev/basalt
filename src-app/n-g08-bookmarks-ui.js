@@ -7,7 +7,7 @@ import { binaryFind, randomHex } from "./misc.js";
 import { displayName, firstHeadingText, parseLinktext } from "./path.js";
 import { linkSafeHeading } from "./text.js";
 import { ng08SetPlainText } from "./n-g08-drag.js";
-import { s28BookmarkParentSymbol } from "./s28-graph.js";
+import { ng19BookmarkParentSymbol } from "./n-g19-graph-consts.js";
 
 const ng08BmT2 = () => __basaltHost.t.plugins.bookmarks;
 
@@ -170,10 +170,10 @@ export function ng08DefineBookmarksView(host) {
     const group = ng08BookmarkGroupItem();
     if (parent) {
       parent.items.push(group);
-      Object.defineProperty(group, s28BookmarkParentSymbol, { value: parent, enumerable: false, configurable: true, writable: true });
+      Object.defineProperty(group, ng19BookmarkParentSymbol, { value: parent, enumerable: false, configurable: true, writable: true });
     } else {
       this.plugin.items.push(group);
-      Object.defineProperty(group, s28BookmarkParentSymbol, { value: null, enumerable: false, configurable: true, writable: true });
+      Object.defineProperty(group, ng19BookmarkParentSymbol, { value: null, enumerable: false, configurable: true, writable: true });
     }
     this.plugin.saveData();
     this.update();
@@ -196,7 +196,7 @@ export function ng08DefineBookmarksView(host) {
             for (const entry of dragged) {
               const item = entry.item || entry;
               if (!item || !item.type) continue;
-              const parentNode = item[s28BookmarkParentSymbol];
+              const parentNode = item[ng19BookmarkParentSymbol];
               if (parentNode === parentItem) continue;
               plugin.moveItem(item, parentItem, index);
             }
@@ -296,7 +296,7 @@ export function ng08DefineBookmarksView(host) {
       const focused = this.tree.focusedItem;
       let parent = null;
       if (focused && this.isItem(focused)) {
-        parent = focused.item.type === "group" ? focused.item : (focused.item[s28BookmarkParentSymbol] || null);
+        parent = focused.item.type === "group" ? focused.item : (focused.item[ng19BookmarkParentSymbol] || null);
       }
       for (const entry of parsed) {
         this.plugin.addItem(Object.assign({}, entry, { ctime: Date.now() }), parent);
@@ -424,7 +424,7 @@ export function ng08DefineBookmarksPlugin(host) {
 
   proto._linkParents = function (list, parent) {
     for (const item of list || []) {
-      Object.defineProperty(item, s28BookmarkParentSymbol, {
+      Object.defineProperty(item, ng19BookmarkParentSymbol, {
         value: parent, enumerable: false, configurable: true, writable: true,
       });
       if (item.type === "group" && item.items) this._linkParents(item.items, item);
@@ -477,7 +477,7 @@ export function ng08DefineBookmarksPlugin(host) {
   };
 
   proto.addItem = function (item, parent) {
-    Object.defineProperty(item, s28BookmarkParentSymbol, {
+    Object.defineProperty(item, ng19BookmarkParentSymbol, {
       value: parent || null, enumerable: false, configurable: true, writable: true,
     });
     if (parent && parent.items) parent.items.push(item);
@@ -490,7 +490,7 @@ export function ng08DefineBookmarksPlugin(host) {
   };
 
   proto.removeItem = function (item) {
-    const parent = item[s28BookmarkParentSymbol];
+    const parent = item[ng19BookmarkParentSymbol];
     const list = parent && parent.items ? parent.items : this.items;
     const index = list.indexOf(item);
     if (index !== -1) list.splice(index, 1);
@@ -498,7 +498,7 @@ export function ng08DefineBookmarksPlugin(host) {
   };
 
   proto.moveItem = function (item, parent, index) {
-    const oldParent = item[s28BookmarkParentSymbol];
+    const oldParent = item[ng19BookmarkParentSymbol];
     const oldList = oldParent && oldParent.items ? oldParent.items : this.items;
     const oldIndex = oldList.indexOf(item);
     if (oldIndex === -1) return;
@@ -509,7 +509,7 @@ export function ng08DefineBookmarksPlugin(host) {
     if (target < 0) target = 0;
     if (target > newList.length) target = newList.length;
     newList.splice(target, 0, item);
-    Object.defineProperty(item, s28BookmarkParentSymbol, {
+    Object.defineProperty(item, ng19BookmarkParentSymbol, {
       value: parent || null, enumerable: false, configurable: true, writable: true,
     });
     this._onItemsChanged(true);
