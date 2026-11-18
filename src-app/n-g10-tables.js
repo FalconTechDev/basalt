@@ -13,6 +13,14 @@ import { s06EscapeTableCell, s06UnescapeTableCell } from "./s06-util.js";
 
 const ng10E = () => env();
 
+function ng10IterChanges(changes) {
+  try {
+    return changes && typeof changes.iterChanges === "function" ? Array.from(changes.iterChanges()) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // ng10TableCell (orig gq)
 // ---------------------------------------------------------------------------
@@ -41,7 +49,14 @@ methods(ng10TableCell, {
     self.start = start;
     self.end = end;
     const wrapper = (self.contentEl = createDiv("table-cell-wrapper"));
-    while (el.firstChild) wrapper.appendChild(el.firstChild);
+    for (const node of Array.from(el.childNodes)) {
+      if (node.nodeType === 1 && node.classList.contains("table-cell-wrapper")) {
+        while (node.firstChild) wrapper.appendChild(node.firstChild);
+        node.remove();
+      } else {
+        wrapper.appendChild(node);
+      }
+    }
     if (!wrapper.firstChild) wrapper.appendChild(createEl("br"));
     el.appendChild(wrapper);
     self.setTextDir();
@@ -56,6 +71,8 @@ methods(ng10TableCell, {
             self.table.selectCells(rows[0][0], rows[rows.length - 1][rows[0].length - 1]);
           }
         }, 0);
+      } else if (event.detail === 1 && event.button === 0) {
+        self.table.selectCells(self, self);
       }
     });
     el.addEventListener("contextmenu", (event) => {
@@ -158,7 +175,7 @@ methods(ng10TableCell, {
   onPointerDown(event) {
     const self = this;
     const table = self.table;
-    if (event.button !== 0 || event.defaultPrevented) return;
+    if (event.button !== 0) return;
     const isTouch = event.pointerType === "touch";
     const start = ng10E().Fl(event);
     let dragging = false;
@@ -248,10 +265,10 @@ export function defineTableCell() {
 // ---------------------------------------------------------------------------
 
 export function defineTableWidget(host) {
-  const Base = () => env().s12embedChildBase;
+  const base = () => env().s12embedChildBase;
 
   function TableWidget(app, editor, doc, isDocComplete) {
-    const self = Base().call(this, app, editor) || this;
+    const self = base().call(this, app, editor) || this;
     self.app = app;
     self.editor = editor;
     self.doc = typeof doc === "string" ? host.cmState.create({ doc }).doc : doc;
@@ -272,7 +289,7 @@ export function defineTableWidget(host) {
     self.rendered = false;
     return self;
   }
-  inherit(TableWidget, Base);
+  inherit(TableWidget, base());
 
   const proto = TableWidget.prototype;
 
@@ -329,6 +346,9 @@ export function defineTableWidget(host) {
   proto.render = function () {
     const self = this;
     const text = self.doc.toString();
+    const prevSel = self.selectionAnchor && self.selectionHead
+      ? self.validateSelectionBounds(self.getSelectionBounds(self.selectionAnchor, self.selectionHead))
+      : null;
     self.rows = [];
     self.alignments = [];
     self.colWidths = [];
@@ -448,6 +468,12 @@ export function defineTableWidget(host) {
         }
       }
     }
+
+    if (prevSel) {
+      const a = self.getCellAt(prevSel.minRow, prevSel.minCol);
+      const h = self.getCellAt(prevSel.maxRow, prevSel.maxCol);
+      if (a && h) self.selectCells(a, h);
+    }
   },
 
   proto.makeDomCell = function (tr) {
@@ -472,7 +498,7 @@ export function defineTableWidget(host) {
   // ------------------------------------------------------------ DOM / chrome
 
   proto.toDOM = function () {
-    return this.containerEl || (this.containerEl = this.initDOM());
+    return this.initDOM();
   };
 
   proto.initDOM = function () {
@@ -542,12 +568,11 @@ export function defineTableWidget(host) {
         if (!cell.el) continue;
         const handle = mkHandle("table-col-drag-handle", "lucide-grip-horizontal");
         handle.addEventListener("contextmenu", (event) => {
-          if (event.defaultPrevented) return;
           event.preventDefault();
-          const menu = new (ng10E().Ug)();
-          self.makeSortMenu(menu);
-          self.makeColMenu(menu, cell.col);
-          menu.showAtMouseEvent(event);
+          const menu = ng10E().Ug.forEvent(event);
+          menu._bmRaw = true;
+          self.onContextMenu(cell, menu);
+          (event.win || window).setTimeout(() => menu.showAtMouseEvent(event), 0);
           menu.onHide(() => self.deselectCells());
         });
         handle.addEventListener("pointerdown", (event) => {
@@ -563,11 +588,11 @@ export function defineTableWidget(host) {
       if (!cell.el) continue;
       const handle = mkHandle("table-row-drag-handle", "lucide-grip-vertical");
       handle.addEventListener("contextmenu", (event) => {
-        if (event.defaultPrevented) return;
         event.preventDefault();
-        const menu = new (ng10E().Ug)();
-        self.makeRowMenu(menu, cell.row);
-        menu.showAtMouseEvent(event);
+        const menu = ng10E().Ug.forEvent(event);
+        menu._bmRaw = true;
+        self.onContextMenu(cell, menu);
+        (event.win || window).setTimeout(() => menu.showAtMouseEvent(event), 0);
         menu.onHide(() => self.deselectCells());
       });
       handle.addEventListener("pointerdown", (event) => {
@@ -610,7 +635,6 @@ export function defineTableWidget(host) {
     const self = this;
     if (!anchor || !head) return;
     if (!dragging && self.selectionAnchor === anchor && self.selectionHead === head) return;
-    if (anchor === head && !dragging) { self.deselectCells(); return; }
     self.deselectCells();
     const bounds = self.getSelectionBounds(anchor, head);
     if (!bounds) return;
@@ -620,6 +644,7 @@ export function defineTableWidget(host) {
         const cell = self.rows[r] && self.rows[r][c];
         if (!cell || !cell.el) continue;
         cell.el.addClass("is-selected");
+        if (cell.contentEl) cell.contentEl.addClass("is-selected");
         cell.el.toggleClass("start", c === minCol);
         cell.el.toggleClass("end", c === maxCol);
         cell.el.toggleClass("top", r === minRow);
@@ -628,6 +653,8 @@ export function defineTableWidget(host) {
         self.selectedCells.add(cell);
       }
     }
+    if (anchor.el) { anchor.el.addClass("is-selected"); if (anchor.contentEl) anchor.contentEl.addClass("is-selected"); }
+    if (head !== anchor && head.el) { head.el.addClass("is-selected"); if (head.contentEl) head.contentEl.addClass("is-selected"); }
     self.selectionAnchor = anchor;
     self.selectionHead = head;
     self.containerEl.addClass("has-selection");
@@ -640,6 +667,7 @@ export function defineTableWidget(host) {
       if (cell.el) {
         cell.el.removeClass("is-selected", "start", "end", "top", "bottom", "mod-dragging");
       }
+      if (cell.contentEl) cell.contentEl.removeClass("is-selected");
     }
     self.selectedCells = new Set();
     self.selectionAnchor = null;
@@ -961,8 +989,8 @@ export function defineTableWidget(host) {
     const self = this;
     const start = self.start, end = self.end;
     const changes = transaction.changes;
-    if (!changes || !changes.length) return null;
-    const list = Array.from(changes.iterChanges());
+    const list = ng10IterChanges(changes);
+    if (!list) return null;
     // A change covering the whole table with identical text is rejected.
     if (list.length === 1) {
       const [fA, tA, fB, tB] = list[0];
@@ -1004,7 +1032,8 @@ export function defineTableWidget(host) {
     let touched = false;
     if (cellEditor && cellEditor.table === self && cellEditor.cell) {
       const offsets = cellEditor.cell.getAbsoluteOffsets();
-      for (const [f, t] of Array.from(transaction.changes.iterChanges())) {
+      const list = ng10IterChanges(transaction.changes) || [];
+      for (const [f, t] of list) {
         if (f >= offsets.start && t <= offsets.end) touched = true;
       }
     }
@@ -1074,6 +1103,7 @@ export function defineTableWidget(host) {
   proto.receiveSelection = function (transaction) {
     const self = this;
     if (!self.rendered || !self.rows.length) return;
+    if (!transaction.selectionSet && !transaction.docChanged) return;
     const cm = self.editor.cm;
     const cellEditor = self.editor.tableCell;
     if (!cm.hasFocus && !(cellEditor && cellEditor.cm.hasFocus)) return;
@@ -1112,8 +1142,7 @@ export function defineTableWidget(host) {
   proto.setCellFocus = function (row, col, selectFn) {
     const self = this;
     if (self.isMalformed) {
-      self.rebuildTable();
-      self.receiveCellFocus(row, col, selectFn, true);
+      self.dispatchTable(row, col, selectFn);
       return;
     }
     self.receiveCellFocus(row, col, selectFn, true);
@@ -1514,7 +1543,13 @@ export function defineTableWidget(host) {
       const tableEl = html instanceof HTMLTableElement ? html : html.querySelector("table");
       const th = tableEl && tableEl.querySelector("th");
       if (th) {
-        while (th.firstChild) cell.contentEl.appendChild(th.firstChild);
+        for (const child of Array.from(th.childNodes)) {
+          if (child.nodeType === 1 && child.classList.contains("table-cell-wrapper")) {
+            while (child.firstChild) cell.contentEl.appendChild(child.firstChild);
+          } else {
+            cell.contentEl.appendChild(child);
+          }
+        }
       } else {
         cell.contentEl.setText(cell.text);
       }
@@ -1603,6 +1638,7 @@ export function defineTableWidget(host) {
       return;
     }
     const menu = ng10E().Ug.forEvent(event);
+    menu._bmRaw = true;
     self.onContextMenu(cell, menu);
     if (menu.showAtMouseEvent) menu.showAtMouseEvent(event);
   };

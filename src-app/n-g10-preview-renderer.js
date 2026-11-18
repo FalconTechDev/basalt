@@ -25,11 +25,17 @@ export function ng10Link(Cls, getParent, table) {
     const Parent = getParent();
     if (!Parent) return;
     if (Parent.ng10ensure) Parent.ng10ensure();
+    const prev = Cls.prototype;
     inherit(Cls, Parent);
+    for (const key of Object.getOwnPropertyNames(prev)) {
+      if (key === "constructor") continue;
+      Object.defineProperty(Cls.prototype, key, Object.getOwnPropertyDescriptor(prev, key));
+    }
     if (table) methods(Cls, table);
     done = true;
   };
   Object.defineProperty(Cls, "ng10ensure", { value: ensure, configurable: true });
+  ensure();
   return ensure;
 }
 
@@ -144,6 +150,7 @@ export function defineMarkdownPreviewRenderer(host) {
 
   function MarkdownPreviewRenderer(owner, linkHandlers, containerEl, workerPath, registerEvents) {
     MarkdownPreviewRenderer.ng10ensure();
+    if (this && !(typeof window !== "undefined" && this === window) && Object.getPrototypeOf(this) !== MarkdownPreviewRenderer.prototype) Object.setPrototypeOf(this, MarkdownPreviewRenderer.prototype);
     const self = RendererBase().call(this) || this;
     self.owner = owner;
     self.linkHandlers = linkHandlers;
@@ -262,8 +269,7 @@ export function defineMarkdownPreviewRenderer(host) {
   proto.queueRender = function () {
     if (this.renderQueued) return;
     this.renderQueued = true;
-    const win = env().activeWindow || window;
-    const schedule = win.requestIdleCallback || ((fn) => win.setTimeout(fn, 0));
+    const schedule = (fn) => (env().activeWindow || window).setTimeout(fn, 0);
     schedule(() => {
       this.renderQueued = false;
       this.onRender();
@@ -604,21 +610,16 @@ export function defineMarkdownPreviewRenderer(host) {
     }
 
     // detach out-of-window, mount in-window (order: pusher first, then sections)
-    sizer.style.minHeight = Math.max(0, totalHeight - 1) + "px";
-    let marginBottom = 0;
-    let foundFirst = false;
     const desired = [];
     desired.push(this.pusherEl);
     for (const m of mounts) {
       const el = m.section.el;
       if (m.keep) {
         desired.push(el);
-        if (!foundFirst) { foundFirst = true; marginBottom = Math.max(0, m.top - (this.topSpace || 0)); }
       } else if (el.parentElement === sizer) {
         el.detach();
       }
     }
-    this.pusherEl.style.marginBottom = marginBottom + "px";
     // ensure order
     let cursor = this.pusherEl;
     for (let i = 1; i < desired.length; i++) {
@@ -629,8 +630,51 @@ export function defineMarkdownPreviewRenderer(host) {
 
     // measure mounted-but-uncomputed sections
     this.measureWindow(mounts, from, to);
-    this.renderHighlights(from, to);
+    // effective heights include collapsed margins between sections: derive them
+    // from live layout (top delta to the next mounted section)
+    this.syncSectionHeights();
+
+    // recompute totals with fresh heights
+    totalHeight = 0;
+    let firstKeepTop = -1;
+    let highlightFrom = sections.length, highlightTo = -1;
+    for (let i = 0; i < sections.length; i++) {
+      const s = sections[i];
+      const h = s.shown ? (s.computed ? s.height : avg) : 0;
+      if (mounts[i].keep) {
+        if (firstKeepTop === -1) firstKeepTop = totalHeight;
+        if (highlightFrom === sections.length) highlightFrom = i;
+        highlightTo = i;
+      }
+      totalHeight += h;
+    }
+    sizer.style.minHeight = Math.max(0, totalHeight - 1) + "px";
+    this.pusherEl.style.marginBottom = Math.max(0, (firstKeepTop === -1 ? totalHeight : firstKeepTop) - (this.topSpace || 0)) + "px";
+
+    this.renderHighlights(highlightFrom, highlightTo);
     this.lastScroll = scrollTop;
+  };
+
+  /** Recomputes mounted sections' heights as the layout distance to the next
+   * mounted section, so collapsed child margins are accounted for. */
+  proto.syncSectionHeights = function () {
+    const sizer = this.sizerEl;
+    const byEl = new Map();
+    for (const s of this.sections) if (s.el) byEl.set(s.el, s);
+    for (const s of this.sections) {
+      const el = s.el;
+      if (!el || el.parentElement !== sizer || !s.shown || !s.rendered) continue;
+      // next section element in DOM order (skips overlays/spacers)
+      let next = el.nextElementSibling;
+      while (next && !byEl.has(next)) next = next.nextElementSibling;
+      if (next) {
+        const d = next.getBoundingClientRect().top - el.getBoundingClientRect().top;
+        if (d > 0) s.height = d;
+      } else {
+        const oh = el.offsetHeight;
+        if (oh > 0) s.height = oh;
+      }
+    }
   };
 
   proto.sectionIndexAtNode = function (node) {
@@ -814,7 +858,18 @@ export function defineMarkdownPreviewRenderer(host) {
     let accLines = 0, accHeight = 0;
     for (let i = 0; i < sections.length; i++) {
       const s = sections[i];
-      if (!s.shown) continue;
+      if (!s.shown) {
+        if (target < accLines + s.lines) {
+          this.showSection(s);
+          if (!s.shown) { accLines += s.lines; continue; }
+          const self = this;
+          this.onRendered(() => {
+            (env().activeWindow || window).setTimeout(() => self.applyScroll(line, options), 0);
+          });
+          return true;
+        }
+        accLines += s.lines; continue;
+      }
       if (target < accLines + s.lines || i === sections.length - 1) {
         if (!s.computed) {
           if (options.highlight) this.showSection(s);
@@ -917,13 +972,11 @@ export function defineMarkdownPreviewRenderer(host) {
     const sections = this.sections;
     let threshold = 7;
     for (const s of sections) {
-      if (s.headingCollapsed) {
-        s.shown = false;
-        if (s.level < threshold) threshold = s.level;
-      } else if (s.level > threshold) {
+      if (s.level > threshold) {
         s.shown = false;
       } else {
         s.shown = true;
+        if (s.headingCollapsed) threshold = s.level;
       }
     }
   };
@@ -985,10 +1038,9 @@ export function defineMarkdownPreviewRenderer(host) {
     const sections = this.sections;
     const idx = sections.indexOf(section);
     if (idx === -1) return;
-    for (let i = idx - 1; i >= 0; i--) {
+    for (let i = 0; i < idx; i++) {
       const s = sections[i];
       if (s.headingCollapsed && s.level < section.level) s.setCollapsed(false);
-      if (s.level <= section.level && !s.headingCollapsed) break;
     }
     section.shown = true;
     this.updateShownSections();
@@ -1115,7 +1167,7 @@ export function defineMarkdownPreviewRenderer(host) {
   proto.selectRange = function (range) {
     const section = range.section || this.getSectionContainer(range.el);
     if (!section) return;
-    if (!section.computed) this.showSection(section);
+    if (!section.computed || !section.shown) this.showSection(section);
     this.applyScrollSection(section);
     this.highlightEl(section.el);
     const target = section.el.querySelector("[data-line]") || section.el;

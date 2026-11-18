@@ -149,9 +149,10 @@ export function livePreviewDecorations(component, view, host) {
     const closeCallout = (pos) => {
       if (inCallout === -1 || calloutEnd >= pos) return;
       const text = doc.sliceString(inCallout, calloutEnd);
+      const suppressed = highlightCovers(hiState, searchMark, inCallout, calloutEnd);
       const w = oldCallouts.find((x) => x.text === text) ||
-        (covered(inCallout, calloutEnd) ? null : new host.livePreviewCalloutWidget(app, component, view, text));
-      if (!covered(inCallout, calloutEnd)) decos.push(replaceSpec({ widget: w, side: 1, block: true }, inCallout, calloutEnd));
+        (suppressed ? null : new host.livePreviewCalloutWidget(app, component, view, text));
+      if (!suppressed) decos.push(replaceSpec({ widget: w, side: 1, block: true }, inCallout, calloutEnd));
       if (w) { w.setPos(inCallout, calloutEnd); callouts.push(w); }
       inCallout = -1; calloutEnd = -1;
     };
@@ -289,7 +290,7 @@ export function livePreviewDecorations(component, view, host) {
         const syntaxClasses = type.prop(host.livePreviewSyntaxClasses);
         if (syntaxClasses) {
           const set = new Set(syntaxClasses.split(" "));
-          if (set.has("HyperMD-callout") && set.has("HyperMD-quote-1")) { closeCallout(from); inCallout = from; calloutEnd = to; }
+          if (set.has("HyperMD-callout")) { closeCallout(from); inCallout = from; calloutEnd = to; }
           if (set.has("HyperMD-quote") && inCallout !== -1) { if (from - calloutEnd > 1) closeCallout(from); else calloutEnd = to; }
           if (set.has("HyperMD-table-row")) {
             closeCallout(from);
@@ -344,6 +345,25 @@ export function livePreviewDecorations(component, view, host) {
     });
     closeCallout(doc.length + 1); closeTable(doc.length + 1);
 
+    // Fallback for callouts the syntax walk did not tag: a quote block whose
+    // first line carries the [!type] marker.
+    if (!callouts.length) {
+      for (let i = 1; i <= doc.lines; i++) {
+        const line = doc.line(i);
+        if (!/^>\s*\[![^\]]+\]/.test(line.text)) continue;
+        let j = i;
+        while (j < doc.lines && /^>/.test(doc.line(j + 1).text)) j++;
+        const from = line.from, to = doc.line(j).to, text = doc.sliceString(from, to);
+        if (!highlightCovers(hiState, searchMark, from, to)) {
+          const w = new host.livePreviewCalloutWidget(app, component, view, text);
+          w.setPos(from, to);
+          decos.push(replaceSpec({ widget: w, side: 1, block: true }, from, to));
+          callouts.push(w);
+        }
+        i = j;
+      }
+    }
+
     if (component.tableCell && component.tableCell.cm.hasFocus && update.docChanged &&
         (update.isUserEvent("undo") || update.isUserEvent("redo")) &&
         !component.tableCell.table.containsSelection(state.selection)) view.focus();
@@ -369,7 +389,7 @@ export function livePreviewDecorations(component, view, host) {
     if (!update.selection || !tables.length) return;
     for (const w of tables) {
       if (w.containedBySelection(update.selection)) w.selectTable();
-      else { w.deselectTable(); if (!w.containsSelection(update.selection)) w.deselectCells(); }
+      else if (!w.containsSelection(update.selection)) w.deselectTable();
     }
   }
 
@@ -377,7 +397,8 @@ export function livePreviewDecorations(component, view, host) {
     create() { return host.cmDecoration.none; },
     update(deco, update) {
       let value; let full = true;
-      if (!host.ensureSyntaxViewport(update.state, view.viewport.to + 2000, 20)) full = false;
+      const syntaxUpto = Math.min(view.viewport.to + 2000, Math.max(0, update.state.doc.length - 1));
+      if (!host.ensureSyntaxViewport(update.state, syntaxUpto, 20)) full = false;
       if (hasEffect([update], host.mobileCursorEffect) || hasEffect([update], host.cmHighlightField) || hasEffect([update], host.cmFilterEffect)) full = true;
       if (view.composing || computing || (view.plugin(host.mobileCursorPlugin) || {}).mousedown) full = false;
       if (full) {

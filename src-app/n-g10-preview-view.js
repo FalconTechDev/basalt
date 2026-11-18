@@ -12,6 +12,7 @@ export function defineMarkdownPreviewView(host) {
 
   function MarkdownPreviewView(view) {
     MarkdownPreviewView.ng10ensure();
+    if (this && !(typeof window !== "undefined" && this === window) && Object.getPrototypeOf(this) !== MarkdownPreviewView.prototype) Object.setPrototypeOf(this, MarkdownPreviewView.prototype);
     const app = view.app;
     const el = createDiv("markdown-reading-view");
     el.style.width = "100%";
@@ -46,8 +47,8 @@ export function defineMarkdownPreviewView(host) {
   proto.configTable = function () {
     return {
       readableLineLength: ["is-readable-line-width"],
-      foldHeading: ["allow-fold-headings", (v, on) => { if (!on) v.unfoldAllHeadings(); }],
-      foldIndent: ["allow-fold-lists", (v, on) => { if (!on) v.unfoldAllLists(); }],
+      foldHeading: ["allow-fold-headings", (v, on) => { if (!on) v.renderer.unfoldAllHeadings(); }],
+      foldIndent: ["allow-fold-lists", (v, on) => { if (!on) v.renderer.unfoldAllLists(); }],
       showIndentGuide: ["show-indentation-guide"],
       rightToLeft: ["rtl"],
       propertiesInDocument: ["show-properties", null, (v) => v.app.vault.getConfig("propertiesInDocument") !== "hidden"],
