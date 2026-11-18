@@ -61,7 +61,7 @@
     .bscg-controls .canvas-control-item { background: transparent; } .bscg-controls .canvas-control-item:hover { background: var(--background-modifier-hover); }
     .bsg-body > .bsg-panel { z-index: 7; }
     .bsg-panel .hd.first { margin-top: 2px; padding-top: 0; border-top: 0; }
-    .bsg-panel .btns { display: flex; gap: 6px; margin: 6px 0 2px; } .bsg-panel .btns button { flex: 1; height: 26px; font-size: 12px; background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); border-radius: var(--bs-r); cursor: pointer; } .bsg-panel .btns button:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
+    .bsg-panel .btns { display: flex; gap: 6px; margin: 6px 0 2px; } .bsg-panel .btns button { flex: 1; height: 26px; font-size: 12px; color: var(--text-muted); cursor: pointer; } .bsg-panel .btns button:hover { color: var(--text-normal); }
     .bsg-panel .li { display: inline-flex; width: 15px; height: 15px; margin-right: 7px; color: var(--text-faint); vertical-align: -3px; flex: none; } .bsg-panel .li svg { width: 15px; height: 15px; }
     .bsg-panel .hd { display: flex; align-items: center; } .bsg-panel .hd .li { color: var(--interactive-accent); }
     .bsg-panel .row .lb { display: flex; align-items: center; flex: 1; min-width: 0; }
