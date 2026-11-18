@@ -1,16 +1,19 @@
-// g24 clean-room: reading-mode render foundation.
-// MarkdownRenderChild / MarkdownPreviewSection / PreviewLinkHandlers / MarkdownRenderer.
+// The reading-mode render foundation: MarkdownRenderChild (the Component that owns a rendered container),
+// MarkdownPreviewSection (one rendered slice of a document), the link/hover handlers every rendered view shares,
+// and MarkdownRenderer (the object plugins call to render markdown into a DOM node).
+//
+// Everything the application scope still owns (the sectioned preview renderer, the embed loader, the markdown
+// parsers, the preview view that post-processes embeds) is reached through `host`; names there are the only
+// minified identifiers in this file.
 import { inherit } from "./inherit.js";
-import { env } from "./env.js";
-import { debounceCall } from "./timing.js";
-import { randomHex } from "./misc.js";
+import { randomHex, isUrl, copyText } from "./misc.js";
 import { lineBounds } from "./text.js";
 
-// ---------------------------------------------------------------------------
-// MarkdownRenderChild (zz): Component owning a render container element.
-// ---------------------------------------------------------------------------
+/** Plugins that called renderMarkdown without a Component: warn once per plugin id (was the bundle's `sq`). */
+const renderWarnings = {};
 
-export function ng24DefineMarkdownRenderChild(host) {
+export function defineMarkdownRenderChild(host) {
+  /** A Component that simply owns the element its rendered content goes into. */
   function MarkdownRenderChild(containerEl) {
     const self = host.Component.call(this) || this;
     self.containerEl = containerEl;
@@ -20,11 +23,9 @@ export function ng24DefineMarkdownRenderChild(host) {
   return MarkdownRenderChild;
 }
 
-// ---------------------------------------------------------------------------
-// MarkdownPreviewSection (qz): one measured slice of a preview.
-// ---------------------------------------------------------------------------
-
-export function ng24DefineMarkdownPreviewSection(host) {
+export function defineMarkdownPreviewSection(host) {
+  /** One rendered section of a preview: holds the sanitized html, the source range it came from and the
+   *  geometry the renderer measured. `html === null` means "not rendered yet". */
   function MarkdownPreviewSection(html) {
     this.rendered = false;
     this.height = 0;
@@ -38,31 +39,30 @@ export function ng24DefineMarkdownPreviewSection(host) {
     this.usesFrontMatter = false;
     this.html = html || "";
     this.el = createDiv();
-    this.start = { line: 0, col: 0, offset: 0 };
-    this.end = { line: 0, col: 0, offset: 0 };
-    // `null` html marks the pre-render "empty slot" sentinel
-    if (html === null) { this.rendered = true; this.html = ""; }
+    if (html === null) {
+      this.rendered = true;
+      this.start = this.end = { line: 0, col: 0, offset: 0 };
+    }
   }
-  const proto = MarkdownPreviewSection.prototype;
 
-  proto.render = function () {
+  MarkdownPreviewSection.prototype.render = function () {
     if (this.rendered) return;
     const fragment = host.sanitizeHtml(this.html);
     this.el.appendChild(fragment);
-    const first = this.el.firstElementChild;
-    if (first) this.el.addClass("el-" + first.tagName.toLowerCase());
+    const first = this.el.firstChild;
+    if (first && first.nodeType === Node.ELEMENT_NODE) this.el.addClass("el-" + first.tagName.toLowerCase());
     this.rendered = true;
     this.computed = false;
   };
 
-  proto.resetCompute = function () {
+  /** Marks the measured geometry stale; highlight rects of child ranges are dropped with it. */
+  MarkdownPreviewSection.prototype.resetCompute = function () {
     this.computed = false;
-    if (this.highlightRanges) {
-      for (const r of this.highlightRanges) r.rects = null;
-    }
+    const ranges = this.highlightRanges;
+    if (ranges) for (let i = 0; i < ranges.length; i++) ranges[i].rects = null;
   };
 
-  proto.setCollapsed = function (collapsed) {
+  MarkdownPreviewSection.prototype.setCollapsed = function (collapsed) {
     this.headingCollapsed = collapsed;
     host.setCollapsed(this.el, collapsed);
   };
@@ -70,11 +70,9 @@ export function ng24DefineMarkdownPreviewSection(host) {
   return MarkdownPreviewSection;
 }
 
-// ---------------------------------------------------------------------------
-// PreviewLinkHandlers (lq): click/drag/hover/right-click for links & tags.
-// ---------------------------------------------------------------------------
-
-export function ng24DefinePreviewLinkHandlers(host) {
+export function definePreviewLinkHandlers(host) {
+  /** The click/drag/hover behaviour of links and tags inside rendered markdown. `info` is the owner
+   *  (a MarkdownRenderer, or an editor wrapper): it provides `app` and `path`. */
   function PreviewLinkHandlers(info) {
     this.info = info;
   }
@@ -91,39 +89,31 @@ export function ng24DefinePreviewLinkHandlers(host) {
   };
 
   proto.onInternalLinkRightClick = function (event, targetEl, linktext) {
-    const app = this.info.app;
     const menu = host.Menu.forEvent(event);
-    menu.setParentElement(targetEl.parentElement);
+    menu.setParentElement(targetEl);
     menu.addSections(["title", "open", "action", "clipboard", "view", "info", "", "danger"]);
-    menu.addItem((item) => item
-      .setSection("clipboard")
-      .setTitle(host.t.interface.menu.copyLinkText ? host.t.interface.menu.copyLinkText() : "Copy link text")
-      .setIcon("lucide-copy")
-      .onClick(() => ng24Copy(targetEl.textContent)));
-    app.workspace.handleLinkContextMenu(menu, linktext, this.info.path);
+    menu.addItem((item) => item.setSection("clipboard").setTitle(host.t.interface.menu.copy()).setIcon("lucide-copy")
+      .onClick(() => copyText(targetEl.getText())));
+    this.info.app.workspace.handleLinkContextMenu(menu, linktext, this.info.path);
   };
 
   proto.onExternalLinkClick = function (event, targetEl, href) {
     event.preventDefault();
-    if (!host.isUrl(href)) {
+    if (isUrl(href)) {
+      const mod = host.Keymap.isModEvent(event);
+      // a boolean means "no modifier string to pass on"
+      window.open(href, typeof mod === "boolean" ? "" : mod);
+    } else {
       new host.Notice(host.t.interface.msgFailedToOpenHref({ href }));
-      return;
     }
-    const mod = host.Keymap.isModEvent(event);
-    window.open(href, mod ? host.keyNames.Mod : "");
   };
 
   proto.onExternalLinkRightClick = function (event, targetEl, href) {
-    const app = this.info.app;
     const menu = host.Menu.forEvent(event);
-    menu.setParentElement(targetEl.parentElement);
     menu.addSections(["title", "open", "selection", "clipboard", "info", "action", "view", "", "danger"]);
-    menu.addItem((item) => item
-      .setSection("clipboard")
-      .setTitle(host.t.interface.menu.copyLinkText ? host.t.interface.menu.copyLinkText() : "Copy link text")
-      .setIcon("lucide-copy")
-      .onClick(() => ng24Copy(targetEl.textContent)));
-    app.workspace.handleExternalLinkContextMenu(menu, href);
+    menu.addItem((item) => item.setSection("clipboard").setTitle(host.t.interface.menu.copy()).setIcon("lucide-copy")
+      .onClick(() => copyText(targetEl.getText())));
+    this.info.app.workspace.handleExternalLinkContextMenu(menu, href);
   };
 
   proto.onInternalLinkMouseover = function (event, targetEl, linktext) {
@@ -133,181 +123,167 @@ export function ng24DefinePreviewLinkHandlers(host) {
   };
 
   proto.onTagClick = function (event, targetEl, tag) {
-    const plugin = this.info.app.internalPlugins.getEnabledPluginById("global-search");
-    if (plugin) plugin.openGlobalSearch("tag:" + tag);
+    const search = this.info.app.internalPlugins.getEnabledPluginById("global-search");
+    if (search) search.openGlobalSearch("tag:" + tag);
   };
 
   return PreviewLinkHandlers;
 }
 
-// ---------------------------------------------------------------------------
-// MarkdownRenderer (hq): the object plugins call to render markdown into DOM.
-// ---------------------------------------------------------------------------
-
-const ng24WarnedPlugins = new Set();
-function ng24Copy(text) {
-  try { navigator.clipboard && navigator.clipboard.writeText(text); } catch (e) {}
-}
-
-export function ng24DefineMarkdownRenderer(host) {
-  function MarkdownRenderer(app, containerEl, sourcePath, registerEvents = true) {
+export function defineMarkdownRenderer(host) {
+  /** Renders markdown into DOM. Plugins use the statics (render / renderMarkdown); a view uses an instance
+   *  (constructed with the view's app, a container element and the file path) and drives `renderer`. */
+  function MarkdownRenderer(app, containerEl, sourcePath, registerEvents) {
+    if (registerEvents === undefined) registerEvents = true;
     const self = host.MarkdownRenderChild.call(this, containerEl) || this;
     self.docId = randomHex(16);
     self.hoverPopover = null;
-    self.requestUpdateLinks = debounceCall(() => self.resolveLinks(), 500);
+    self.requestUpdateLinks = host.debounce(() => {
+      const sections = self.renderer.sections;
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        if (section.rendered) self.resolveLinks(section.el);
+      }
+    }, 500);
     self.app = app;
-    const info = { app, path: sourcePath || "" };
-    self.linkHandlers = new host.PreviewLinkHandlers(info);
-    self.renderer = new host.MarkdownPreviewRenderer(self, self.linkHandlers, containerEl, "worker.js", registerEvents);
+    const linkHandlers = new host.PreviewLinkHandlers(self);
+    self.renderer = new host.MarkdownPreviewRenderer(self, linkHandlers, containerEl, "worker.js", registerEvents);
     return self;
   }
   inherit(MarkdownRenderer, host.MarkdownRenderChild);
   const proto = MarkdownRenderer.prototype;
 
-  Object.defineProperty(proto, "path", {
-    get() { return (this.file && this.file.path) || ""; },
-    enumerable: false,
-    configurable: true,
-  });
-
   proto.onload = function () {
     const app = this.app;
-    this.registerEvent(app.vault.on("modify", this.onFileChangeBound || (this.onFileChangeBound = this.onFileChange.bind(this))));
-    this.registerEvent(app.vault.on("delete", this.onFileChangeBound));
-    this.registerEvent(app.metadataCache.on("changed", this.onFileChangeBound));
+    this.registerEvent(app.vault.on("modify", this.onFileChange, this));
+    this.registerEvent(app.vault.on("delete", this.onFileChange, this));
+    this.registerEvent(app.metadataCache.on("changed", this.onFileChange, this));
   };
 
-  proto.onFileChange = function () {
-    this.requestUpdateLinks();
-  };
-
-  /** Re-resolves "is-unresolved" on every rendered section's links. */
-  proto.resolveLinks = function (el) {
-    const app = this.app;
-    const sections = el ? [this.renderer.getSectionContainer ? this.renderer.getSectionContainer(el) : null] : this.renderer.sections;
-    for (const section of sections) {
-      if (!section || !section.el) continue;
-      const links = section.el.findAll("a.internal-link");
-      for (const link of links) {
-        const href = link.getAttr("data-href") || link.getAttr("href");
-        if (href) link.toggleClass("is-unresolved", app.metadataCache.isUnresolved(href.split("#")[0].split("|")[0], this.path));
-      }
-    }
-  };
-
+  /** Checkbox toggle inside rendered task lists: flips the source and patches the rendered list item. */
   proto.onCheckboxClick = function (event, checkboxEl, line) {
     event.preventDefault();
-    navigator.vibrate && navigator.vibrate(100);
-    const toggled = host.MarkdownRenderer.toggleCheckbox(this.renderer.text, line);
-    if (!toggled) return;
-    // patch the owning section's stored html so re-renders keep the state
-    const section = this.renderer.getSectionContainer(checkboxEl);
-    if (section && section.html) {
-      const rel = line - section.start.line;
-      const re = new RegExp(
-        '(<li class="task-list-item[^"]*" data-task="." data-line="' + rel + '">[\\s\\S]*?<input[^>]*class="task-list-item-checkbox"[^>]*>)',
-      );
-      section.html = section.html.replace(re, (m) =>
-        m.replace('class="task-list-item-checkbox"', 'class="task-list-item-checkbox" checked')
-         .replace(/data-task="[^"]*"/, 'data-task="' + (toggled.char === "x" ? "x" : " ") + '"'));
-      section.rendered = false;
-      section.el.empty();
-      this.renderer.queueRender();
+    navigator.vibrate(100);
+    const text = this.renderer.text;
+    const toggled = MarkdownRenderer.toggleCheckbox(text, line);
+    if (toggled !== null) {
+      const section = this.renderer.getSectionContainer(checkboxEl);
+      if (section) {
+        const checked = toggled.char !== " ";
+        const sectionLine = line - section.start.line;
+        if (sectionLine >= 0) {
+          const key = String(sectionLine);
+          // rewrite the matching <li> in the section's html so a re-render keeps the new state
+          section.html = section.html.replace(
+            /<li class="task-list-item( is-checked)?" data-task="(.)" data-line="(\d+)"><input class="task-list-item-checkbox" type="checkbox"( checked)? data-line="(\d+)">/g,
+            (match, isChecked, task, dataLine, wasChecked, endLine) =>
+              dataLine === key && endLine === key
+                ? '<li class="task-list-item' + (checked ? " is-checked" : "") + '" data-task="' + toggled.char + '" data-line="' + dataLine + '"><input class="task-list-item-checkbox" type="checkbox"' + (checked ? " checked" : "") + ' data-line="' + endLine + '">'
+                : match
+          );
+        }
+        setTimeout(() => {
+          checkboxEl.checked = checked;
+          const item = checkboxEl.parentNode;
+          if (item && item.instanceOf(HTMLLIElement)) {
+            item.setAttr("data-task", toggled.char);
+            item.toggleClass("is-checked", checked);
+          }
+        }, 0);
+      }
+      this.edit(toggled.text);
     }
-    // flip the live DOM node
-    checkboxEl.checked = toggled.char === "x";
-    checkboxEl.setAttr("data-task", toggled.char);
-    const li = checkboxEl.closest("li");
-    if (li) li.toggleClass("is-checked", toggled.char === "x");
-    this.edit(toggled.text);
   };
 
+  /** Flips the [ ]/[x] on `line`; returns the new source text and marker char, or null when there is none. */
+  MarkdownRenderer.toggleCheckbox = function (text, line) {
+    const bounds = lineBounds(text, line);
+    if (!bounds) return null;
+    const mark = text.slice(bounds.start, bounds.end).search(/\[.\]/);
+    if (mark === -1) return null;
+    const at = bounds.start + mark + 1;
+    const char = text.charAt(at) === " " ? "x" : " ";
+    return { text: text.slice(0, at) + char + text.slice(at + 1), char };
+  };
+
+  /** Runs every registered post-processor over a rendered section, then resolves its links. */
   proto.postProcess = function (section, promises, frontmatter) {
-    const ctx = MarkdownRenderer.postProcess(this.app, {
-      docId: this.docId,
-      sourcePath: this.path,
+    const self = this;
+    const ctx = host.MarkdownPreviewView.postProcess(self.app, {
+      docId: self.docId,
+      sourcePath: self.path,
       frontmatter,
       promises,
-      addChild: (child) => this.addChild(child),
-      getSectionInfo: (el) => this.renderer.getSectionInfo(el),
+      addChild: (child) => self.addChild(child),
+      getSectionInfo: (el) => self.renderer.getSectionInfo(el),
       replace: (html, rerender) => {
-        const text = this.renderer.text;
-        const next = text.slice(0, section.start.offset) + html + text.slice(section.end.offset);
+        const text = self.renderer.text;
+        const from = section.start;
+        const to = section.end;
+        const next = text.slice(0, from.offset) + html + text.slice(to.offset);
         if (rerender) {
-          const parsed = host.renderSectionHtml(next.slice(section.start.offset, section.start.offset + html.length));
-          // adopt the single resulting section html when available
+          const rendered = host.renderSectionHtml(html);
+          if (rendered.sections.length === 1) section.html = rendered.sections[0].html;
         }
-        this.edit(next);
+        self.edit(next);
       },
-      containerEl: this.renderer.sizerEl,
+      containerEl: self.renderer.sizerEl,
       el: section.el,
     });
     section.usesFrontMatter = !!ctx.usesFrontMatter;
-    this.resolveLinks(section.el);
-    return ctx;
+    self.resolveLinks(section.el);
   };
 
   proto.onScroll = function () {};
   proto.onFoldChange = function () {};
   proto.onRenderComplete = function () {};
 
-  /** Writes `text` back as the view's source (edit-mode path). */
-  proto.edit = function (text) {
-    if (this.view && this.view.onInternalDataChange) {
-      this.renderer.set(text);
-      this.view.onInternalDataChange();
-      this.view.save && this.view.save();
-    }
+  Object.defineProperty(proto, "path", {
+    get: function () { return (this.file && this.file.path) || ""; },
+    enumerable: false,
+    configurable: true,
+  });
+
+  proto.onFileChange = function () { this.requestUpdateLinks(); };
+
+  proto.resolveLinks = function (el) {
+    const self = this;
+    host.refreshLinkStates(self.app, el, self.path, (linktext) => self.renderer.getInternalLinkHref(linktext));
   };
 
-  // ------------------------------------------------------------- statics
-
-  /** Flips the first "[ ]"/"[x]" marker on `line` of `text`. */
-  MarkdownRenderer.toggleCheckbox = function (text, line) {
-    const { start, end } = lineBounds(text, line);
-    const lineText = text.slice(start, end);
-    const m = /\[([ xX])\]/.exec(lineText);
-    if (!m) return null;
-    const char = m[1] === " " ? "x" : " ";
-    const next = lineText.slice(0, m.index) + "[" + char + "]" + lineText.slice(m.index + m[0].length);
-    return { text: text.slice(0, start) + next + text.slice(end), char };
-  };
-
-  /** Instance-less post-processing shared by render() and instances. */
+  /** The post-processing every rendered markdown root gets: query embeds, registered post-processors,
+   *  file embeds. `ctx` is { app, markdown, el, sourcePath, component }. */
   MarkdownRenderer.postProcess = function (app, ctx) {
-    const el = ctx.el || ctx.containerEl;
-    // query blocks -> query embeds
-    const blocks = el.findAll("code.language-query");
-    for (const block of blocks) {
-      const query = host.queryBlockText(block.textContent || "");
-      if (query) {
-        const embed = host.queryEmbed(app, query, block.parentElement || block, ctx.sourcePath);
-        if (ctx.addChild) ctx.addChild(embed);
-      }
+    const sourcePath = ctx.sourcePath;
+    const promises = ctx.promises;
+    const el = ctx.el;
+    const displayMode = ctx.displayMode;
+    const queries = el.findAll("code.language-query");
+    for (let i = 0; i < queries.length; i++) {
+      const code = queries[i];
+      const query = host.queryBlockText(code).trim();
+      const parent = code.parentElement;
+      ctx.addChild(host.queryEmbed(app, query, parent, sourcePath));
     }
-    // registered post-processors
-    const processors = host.MarkdownPreviewRenderer.postProcessors || [];
-    for (const processor of processors) {
-      try {
-        const out = processor(el, ctx);
-        if (out && typeof out.then === "function") ctx.promises.push(out);
-      } catch (e) { console.error(e); }
+    const postProcessors = host.MarkdownPreviewRenderer.postProcessors;
+    for (let i = 0; i < postProcessors.length; i++) {
+      const result = postProcessors[i](el, ctx);
+      if (result && result.then) promises.push(result);
     }
     const depth = host.embedDepth(ctx.containerEl);
     const embeds = el.findAll(".internal-embed:not(.is-loaded)");
-    for (const embed of embeds) {
-      const src = embed.getAttr("src") || embed.getAttr("data-src") || "";
-      const child = host.EmbedLoader.load({
-        app,
-        linktext: src,
-        sourcePath: ctx.sourcePath,
-        containerEl: embed,
-        displayMode: ctx.displayMode,
-        showInline: true,
-        depth,
-      });
-      if (ctx.addChild) ctx.addChild(child);
-      if (child && child.loadFile) ctx.promises.push(Promise.resolve(child.loadFile()));
+    if (embeds.length > 0) {
+      for (let i = 0; i < embeds.length; i++) {
+        const embed = embeds[i];
+        const linktext = embed.getAttribute("src");
+        const child = host.EmbedLoader.load({
+          app, linktext, sourcePath, containerEl: embed, displayMode, showInline: true, depth,
+        });
+        if (child) {
+          ctx.addChild(child);
+          promises.push(child.loadFile());
+        }
+      }
     }
     return ctx;
   };
@@ -316,17 +292,20 @@ export function ng24DefineMarkdownRenderer(host) {
     return MarkdownRenderer.render(null, markdown, el, sourcePath, component);
   };
 
+  /** Parses `markdown`, appends the sanitized DOM to `el` and runs post-processing; resolves when embeds settle. */
   MarkdownRenderer.render = function (app, markdown, el, sourcePath, component) {
-    if (!(component instanceof host.Component)) {
-      // warn once per plugin id (parsed from the stack's plugin:<id> frame)
-      try {
-        const stack = new Error().stack || "";
-        const m = /plugin:([\w-]+)/.exec(stack);
-        if (m && !ng24WarnedPlugins.has(m[1])) {
-          ng24WarnedPlugins.add(m[1]);
-          console.error("MarkdownRenderer.render/renderMarkdown requires the calling plugin's Component to avoid leaked global handlers.");
+    if (!(component && component instanceof host.Component)) {
+      const stack = new Error().stack;
+      if (typeof stack === "string") {
+        const match = stack.match(/plugin:([^:]+)/);
+        if (match) {
+          const id = match[1];
+          if (!renderWarnings.hasOwnProperty(id)) {
+            renderWarnings[id] = true;
+            console.error(new Error('Plugin "' + id + '" is not passing Component in renderMarkdown. This is needed to avoid memory leaks when embedded contents register global event handlers.'));
+          }
         }
-      } catch (e) {}
+      }
     }
     const tree = host.markdownTree(markdown);
     const frontmatter = host.treeFrontmatter(tree);
@@ -335,24 +314,40 @@ export function ng24DefineMarkdownRenderer(host) {
     const promises = [];
     const ctx = {
       docId: randomHex(16),
-      sourcePath: sourcePath || "",
+      sourcePath,
       frontmatter,
       promises,
-      addChild: component instanceof host.Component ? (child) => component.addChild(child) : () => {},
+      addChild: (child) => component && component.addChild(child),
       getSectionInfo: () => null,
       replace: () => null,
       containerEl: el,
       el,
       displayMode: true,
     };
-    MarkdownRenderer.postProcess(app || { internalPlugins: { getEnabledPluginById: () => null }, metadataCache: { getFirstLinkpathDest: () => null }, embedRegistry: { getEmbedCreator: () => null }, vault: { getAbstractFileByPath: () => null }, dragManager: {}, workspace: {} }, ctx);
-    return promises.length ? Promise.all(promises) : Promise.resolve();
+    const postProcessors = host.MarkdownPreviewRenderer.postProcessors;
+    for (let i = 0; i < postProcessors.length; i++) {
+      const result = postProcessors[i](el, ctx);
+      if (result && result.then) promises.push(result);
+    }
+    if (app && component) {
+      const depth = host.embedDepth(el);
+      const embeds = el.findAll(".internal-embed:not(.is-loaded)");
+      if (embeds.length > 0) {
+        for (let i = 0; i < embeds.length; i++) {
+          const embed = embeds[i];
+          const linktext = embed.getAttribute("src");
+          const child = host.EmbedLoader.load({
+            app, linktext, sourcePath, containerEl: embed, displayMode: true, showInline: true, depth,
+          });
+          if (child) {
+            ctx.addChild(child);
+            promises.push(child.loadFile());
+          }
+        }
+      }
+    }
+    return promises.length > 0 ? Promise.all(promises).then() : Promise.resolve();
   };
 
   return MarkdownRenderer;
 }
-
-export const defineMarkdownRenderChild = ng24DefineMarkdownRenderChild;
-export const defineMarkdownPreviewSection = ng24DefineMarkdownPreviewSection;
-export const definePreviewLinkHandlers = ng24DefinePreviewLinkHandlers;
-export const defineMarkdownRenderer = ng24DefineMarkdownRenderer;
