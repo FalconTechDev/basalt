@@ -569,10 +569,11 @@ export function defineTableWidget(host) {
         const handle = mkHandle("table-col-drag-handle", "lucide-grip-horizontal");
         handle.addEventListener("contextmenu", (event) => {
           event.preventDefault();
-          const menu = ng10E().Ug.forEvent(event);
+          const menu = new (ng10E().Ug)().setUseNativeMenu(false);
           menu._bmRaw = true;
-          self.onContextMenu(cell, menu);
-          (event.win || window).setTimeout(() => menu.showAtMouseEvent(event), 0);
+          self.makeSortMenu(menu);
+          self.makeColMenu(menu, cell.col);
+          menu.showAtMouseEvent(event);
           menu.onHide(() => self.deselectCells());
         });
         handle.addEventListener("pointerdown", (event) => {
@@ -589,10 +590,10 @@ export function defineTableWidget(host) {
       const handle = mkHandle("table-row-drag-handle", "lucide-grip-vertical");
       handle.addEventListener("contextmenu", (event) => {
         event.preventDefault();
-        const menu = ng10E().Ug.forEvent(event);
+        const menu = new (ng10E().Ug)().setUseNativeMenu(false);
         menu._bmRaw = true;
-        self.onContextMenu(cell, menu);
-        (event.win || window).setTimeout(() => menu.showAtMouseEvent(event), 0);
+        self.makeRowMenu(menu, cell.row);
+        menu.showAtMouseEvent(event);
         menu.onHide(() => self.deselectCells());
       });
       handle.addEventListener("pointerdown", (event) => {

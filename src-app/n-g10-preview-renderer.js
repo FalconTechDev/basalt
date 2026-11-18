@@ -648,7 +648,8 @@ export function defineMarkdownPreviewRenderer(host) {
       }
       totalHeight += h;
     }
-    sizer.style.minHeight = Math.max(0, totalHeight - 1) + "px";
+    const bottomPad = this.addBottomPadding ? Math.max(0, preview.clientHeight || 0) : 0;
+    sizer.style.minHeight = Math.max(0, totalHeight - 1 + bottomPad) + "px";
     this.pusherEl.style.marginBottom = Math.max(0, (firstKeepTop === -1 ? totalHeight : firstKeepTop) - (this.topSpace || 0)) + "px";
 
     this.renderHighlights(highlightFrom, highlightTo);
@@ -818,28 +819,29 @@ export function defineMarkdownPreviewRenderer(host) {
       if (accHeight + s.height >= scrollTop || i === sections.length - 1) {
         const within = Math.max(0, scrollTop - accHeight);
         const pxPerLine = s.lines > 0 ? s.height / s.lines : 0;
-        // refine with <li data-line> items when possible
-        let base = accLines;
+        let result = accLines + (pxPerLine > 0 ? within / pxPerLine : 0);
         const items = s.el.querySelectorAll("li[data-line]");
-        if (items.length && pxPerLine > 0) {
+        if (items.length && s.height > 0) {
           const sRect = s.el.getBoundingClientRect();
-          const targetY = scrollTop - accHeight + sRect.top - this.previewEl.getBoundingClientRect().top;
+          const anchors = [{ line: 0, top: 0 }];
           for (const li of items) {
-            const r = li.getBoundingClientRect();
-            if (r.bottom - sRect.top > targetY) {
-              const line = parseInt(li.getAttribute("data-line"), 10);
-              if (!isNaN(line)) {
-                const liTop = r.top - sRect.top;
-                const frac = pxPerLine > 0 ? Math.min(1, Math.max(0, (targetY - liTop) / pxPerLine)) : 0;
-                return base + line + frac;
-              }
-              break;
-            }
             const line = parseInt(li.getAttribute("data-line"), 10);
-            if (!isNaN(line)) base = accLines + line;
+            const top = li.getBoundingClientRect().top - sRect.top;
+            if (!isNaN(line) && top >= 0) anchors.push({ line, top });
+          }
+          anchors.push({ line: Math.max(1, s.lines), top: s.height });
+          anchors.sort((a, b) => a.top - b.top);
+          let prev = anchors[0], next = null;
+          for (const a of anchors) {
+            if (a.top <= within) prev = a;
+            else { next = a; break; }
+          }
+          if (next && next.top > prev.top) {
+            const frac = Math.min(1, Math.max(0, (within - prev.top) / (next.top - prev.top)));
+            result = accLines + prev.line + frac * (next.line - prev.line);
           }
         }
-        return base + (pxPerLine > 0 ? within / pxPerLine : 0);
+        return result;
       }
       accLines += s.lines;
       accHeight += s.height;

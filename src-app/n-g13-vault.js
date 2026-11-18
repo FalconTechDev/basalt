@@ -854,6 +854,7 @@ export function createVault(EventsClass) {
     }
     await this.writeJson(this.getConfigFile("app"), appConfig);
     await this.writeJson(this.getConfigFile("appearance"), appearanceConfig);
+    this.configTs = Date.now();
   };
 
   proto.setupConfig = async function () {
