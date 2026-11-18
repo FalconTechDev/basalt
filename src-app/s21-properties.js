@@ -17,7 +17,7 @@ import { toStringList } from "./text.js";
 import { tagValid } from "./metadata-helpers.js";
 import { prepareQuery, fuzzyMatchJs, matchScore } from "./search.js";
 import { renderMatches, renderResults, containsAllWords } from "./search-simple.js";
-import { s04StringCompare } from "./s04-themes.js";
+import { s04StringCompare } from "./n-g24-themes.js";
 import { ng08BlockRefInsertion } from "./n-g08-bookmarks.js";
 import { hideTooltip, displayTooltip, setElementTooltip } from "./tooltip.js";
 import { copyTextToClipboard } from "./n-g11-view.js";

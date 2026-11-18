@@ -6595,7 +6595,7 @@
     },
     {
       "orig": "Ab",
-      "expr": "__basaltOwn.s04CommunityThemesUrl",
+      "expr": "__basaltOwn.ng24CommunityThemesUrl",
       "sha1": "da95c0c251fd5e31526af19a540a3cac36b3524c",
       "originalBytes": 62
     },
@@ -6607,7 +6607,7 @@
     },
     {
       "orig": "Lb",
-      "expr": "__basaltOwn.s04CommunityThemesEmpty",
+      "expr": "__basaltOwn.ng24CommunityThemesEmpty",
       "sha1": "2d252ec11513ebc4651220c2523f74c5bcf799bb",
       "originalBytes": 52
     },
