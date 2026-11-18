@@ -1,383 +1,463 @@
-// g24 clean-room: "note-composer" plugin — merge/split/extract markdown files.
+// The "Note composer" core plugin: merge one note into another, or extract a selection /
+// a whole heading into a new note.
+//
+// Replaces the inherited pieces:
+//   Z8  NoteComposerPlugin        -> defineNoteComposerPlugin
+//   J8  MergeFileSuggest          -> defineMergeFileSuggest   (base: quick-switcher modal)
+//   e7  ExtractFileSuggest        -> defineExtractFileSuggest (base: quick-switcher modal)
+//   t7  NoteComposerSettingTab    -> defineNoteComposerSettingTab (base: plugin setting tab)
+//   $8  gm.plugins.noteComposer   -> declarator __basaltHost.t.plugins.noteComposer
+//
+// Options persisted through the plugin instance: askBeforeMerging, replacementText ("link" |
+// "embed" | "none") and an optional template file whose {{content}}/{{fromTitle}}/{{newTitle}}/
+// {{date:...}} variables are expanded on merge/extract.
+
 import { inherit } from "./inherit.js";
-import { env } from "./env.js";
-import { ng24StringCompare } from "./n-g24-themes.js";
-import { applyTemplateVars } from "./n-g13-notes.js";
 import { firstHeadingText } from "./path.js";
-import { lineBounds } from "./text.js";
-let Ng24cHostRef = null;
+import { applyTemplateVars } from "./notes-utils.js";
 
-const NG24_PLUGIN_ID = "note-composer";
-const NG24_OPTIONS = {
-  askBeforeMerging: true,
-  replacementText: "link",
-  template: "",
-};
+const composerT = (host) => host.t.plugins.noteComposer;
 
-// ---------------------------------------------------------------------------
-// helpers
-// ---------------------------------------------------------------------------
+// The plugin and the suggest/settings factories run at different bundle positions; they reach
+// each other through this registry.
+const composerParts = {};
 
-function ng24Confirm(app, message) {
-  return new Promise((resolve) => {
-    const modal = new Ng24cHostRef.Modal(app);
-    modal.titleEl.setText("Confirm");
-    modal.contentEl.createEl("p", { text: message });
-    const buttons = modal.contentEl.createDiv({ cls: "modal-button-container" });
-    buttons.createEl("button", { text: "Cancel" }).addEventListener("click", () => { modal.close(); resolve(false); });
-    buttons.createEl("button", { cls: "mod-cta", text: "OK" }).addEventListener("click", () => { modal.close(); resolve(true); });
-    modal.open();
-  });
-}
+const REPLACEMENT_LINK = "link";
+const REPLACEMENT_EMBED = "embed";
+const REPLACEMENT_NONE = "none";
 
-function ng24Options(plugin) {
-  return Object.assign({}, NG24_OPTIONS, plugin && plugin.options ? plugin.options : {});
-}
-
-function ng24SetOptions(plugin, patch) {
-  plugin.options = Object.assign({}, plugin.options, patch);
-  plugin.saveOptions && plugin.saveOptions();
-  return plugin.options;
-}
-
-/** Heading records for a markdown file (from metadata cache). */
-function ng24Headings(app, file) {
-  const cache = app.metadataCache.getFileCache(file);
-  if (!cache || !Array.isArray(cache.headings)) return [];
-  return cache.headings
-    .filter((h) => h && h.heading)
-    .map((h) => ({
-      level: h.level,
-      title: h.heading,
-      from: h.position.start.line,
-      to: h.position.end.line,
-    }));
-}
-
-/** Text of `file` between two line numbers (inclusive start, exclusive end). */
-async function ng24Slice(app, file, fromLine, toLine) {
-  const content = await app.vault.read(file);
-  const lines = content.split("\n");
-  return lines.slice(fromLine, toLine === undefined ? lines.length : toLine + 1).join("\n");
-}
-
-/** The sub-document under the heading at `heading` (until next same-or-higher heading). */
-async function ng24SectionUnderHeading(app, file, heading) {
-  const headings = ng24Headings(app, file);
-  const idx = headings.indexOf(heading);
-  const next = headings.slice(idx + 1).find((h) => h.level <= heading.level);
-  return ng24Slice(app, file, heading.from, next ? next.from - 1 : undefined);
-}
-
-// ---------------------------------------------------------------------------
-// MergeFileSuggest (J8) / ExtractFileSuggest (e7): file pickers.
-// ---------------------------------------------------------------------------
-
-function ng24DefineFileSuggest(host, pick) {
-  Ng24cHostRef = host;
-  function ComposerFileSuggest(app, el, onPick) {
-    const self = host.AbstractInputSuggest.call(this, el) || this;
-    self.app = app;
-    self.onPick = onPick;
-    self.files = app.vault.getMarkdownFiles();
+/** Modal asking which file the current note should be merged into (or a new file created). */
+export function defineMergeFileSuggest(host) {
+  function MergeFileSuggest(app, composer) {
+    const self = host.s13QuickSwitcherModalBase.call(this, app) || this;
+    self.currentFile = null;
+    self.emptyStateText = composerT(host).labelNoFiles();
+    self.composer = composer;
+    self.shouldShowNonImageAttachments = false;
+    self.shouldShowImages = false;
+    self.shouldShowNonAttachments = false;
+    self.setPlaceholder(composerT(host).promptSelectFileToMerge());
+    self.setInstructions([
+      { command: "↑↓", purpose: composerT(host).instructionNavigate() },
+      { command: "↵", purpose: composerT(host).instructionMerge() },
+      { command: host.isMacLike ? "cmd ↵" : "ctrl ↵", purpose: composerT(host).instructionCreateNew() },
+      { command: "shift ↵", purpose: composerT(host).instructionMergeAtTop() },
+      { command: "esc", purpose: composerT(host).instructionDismiss() },
+    ]);
+    self.scope.register(["Shift"], "Enter", (event) => { self.selectActiveSuggestion(event); return false; });
+    self.scope.register(["Mod"], "Enter", (event) => { self.selectActiveSuggestion(event); return false; });
     return self;
   }
-  inherit(ComposerFileSuggest, host.AbstractInputSuggest);
-  const proto = ComposerFileSuggest.prototype;
+  inherit(MergeFileSuggest, host.s13QuickSwitcherModalBase);
+  const proto = MergeFileSuggest.prototype;
 
-  proto.getSuggestions = function (query) {
-    const q = (query || "").toLowerCase();
-    return this.files
-      .filter((f) => f.path.toLowerCase().includes(q))
-      .slice(0, 50)
-      .map((file) => ({ value: file.path, file }));
+  proto.setCurrentFile = function (file) {
+    this.currentFile = file;
   };
 
-  proto.renderSuggestion = function (item, el) {
-    el.empty();
-    host.createEl("div", { cls: "suggestion-title", text: item.value }, el);
+  proto.onChooseSuggestion = async function (suggestion, evt) {
+    const app = this.app;
+    const input = this.inputEl.value;
+    let target;
+    // Mod+Enter or no suggestion: create a new file from the typed name.
+    if (host.Keymap.isModifier(evt, "Mod") || !suggestion || suggestion.type === "unresolved") {
+      const linktext = suggestion && suggestion.type === "unresolved" ? suggestion.linktext : input;
+      const parent = app.fileManager.getNewFileParent(this.currentFile.path, linktext);
+      try {
+        target = await app.fileManager.createNewMarkdownFile(parent, linktext);
+      } catch (error) {
+        new host.Notice(error.toString());
+        return;
+      }
+    } else if (suggestion.type === "bookmark") {
+      if (suggestion.item.type === "file") {
+        const file = app.vault.getAbstractFileByPath(suggestion.item.path);
+        if (file instanceof host.TFile) target = file;
+      }
+    } else {
+      target = suggestion.file;
+    }
+    if (!target || target === this.currentFile) return;
+    const source = this.currentFile;
+    const composer = this.composer;
+    let skipConfirm = false;
+    const doMerge = async () => {
+      if (skipConfirm) {
+        composer.options.askBeforeMerging = false;
+        composer.pluginInstance.saveData(composer.options);
+      }
+      await this.mergeFile(target, source, evt.shiftKey ? "prepend" : "append");
+    };
+    if (composer.options.askBeforeMerging) {
+      const content = document.createDocumentFragment();
+      content.createEl("p", {
+        text: composerT(host).labelConfirmFileMerge({ file: source.basename, destination: target.basename }),
+      });
+      const modal = new host.ButtonModal(app).setTitle(composerT(host).labelMergeFile()).setContent(content);
+      if (!host.Platform.isMobile) {
+        modal.addCheckbox(host.t.dialogue.labelDoNotAskAgain(), (cb) => {
+          skipConfirm = cb.target.checked;
+        });
+      }
+      modal
+        .addButton("mod-warning", composerT(host).buttonMerge(), () => doMerge())
+        .addCancelButton()
+        .open();
+    } else {
+      await doMerge();
+    }
   };
 
-  proto.selectSuggestion = function (item) {
-    this.onPick(item.file);
+  /** Reads the source, expands the template, writes into the target, trashes the source, opens the target. */
+  proto.mergeFile = async function (target, source, position = "append") {
+    const app = this.app;
+    const fileManager = app.fileManager;
+    const content = await app.vault.read(source);
+    const merged = await this.composer.applyTemplate(content, source.basename, target.basename);
+    await fileManager.runAsyncLinkUpdate(async (links) => {
+      await fileManager.insertIntoFile(target, merged, position);
+      await fileManager.trashFile(source);
+      if (links) {
+        for (const link of links) {
+          if (link.resolvedFile === source) {
+            link.resolvedFile = target;
+            link.resolvedPaths = [];
+          }
+        }
+      }
+    });
+    await app.workspace.getLeaf().openFile(target);
   };
 
-  return ComposerFileSuggest;
+  composerParts.MergeFileSuggest = MergeFileSuggest;
+  return MergeFileSuggest;
 }
 
-export function ng24DefineMergeFileSuggest(host) {
-  Ng24cHostRef = host;
-  return ng24DefineFileSuggest(host, "merge");
-}
-export function ng24DefineExtractFileSuggest(host) {
-  Ng24cHostRef = host;
-  return ng24DefineFileSuggest(host, "extract");
-}
-
-// ---------------------------------------------------------------------------
-// NoteComposerSettingTab (t7)
-// ---------------------------------------------------------------------------
-
-export function ng24DefineNoteComposerSettingTab(host) {
-  Ng24cHostRef = host;
-  function NoteComposerSettingTab(app, plugin) {
-    const self = host.PluginSettingTab.call(this, app, plugin) || this;
-    self.app = app;
-    self.plugin = plugin;
+/** Modal asking which file the current selection (or heading) should be extracted into. */
+export function defineExtractFileSuggest(host) {
+  function ExtractFileSuggest(app, editor, composer, heading) {
+    const self = host.s13QuickSwitcherModalBase.call(this, app) || this;
+    self.defaultValue = "";
+    self.allowCreateNewFile = true;
+    self.editor = editor;
+    self.composer = composer;
+    self.shouldShowUnresolved = true;
+    self.shouldShowNonImageAttachments = false;
+    self.shouldShowImages = false;
+    self.shouldShowNonAttachments = false;
+    if (!heading) {
+      const firstLine = editor.getSelection().split("\n");
+      if (firstLine.length > 0) heading = firstHeadingText(firstLine[0]);
+    }
+    self.defaultValue = heading || "";
+    self.setPlaceholder(composerT(host).promptSelectFileToMerge());
+    self.setInstructions([
+      { command: "↑↓", purpose: composerT(host).instructionNavigate() },
+      { command: "↵", purpose: composerT(host).instructionAppend() },
+      { command: host.isMacLike ? "cmd ↵" : "ctrl ↵", purpose: composerT(host).instructionCreateNew() },
+      { command: "shift ↵", purpose: composerT(host).instructionPrepend() },
+      { command: "esc", purpose: composerT(host).instructionDismiss() },
+    ]);
+    self.scope.register(["Shift"], "Enter", (event) => { self.selectActiveSuggestion(event); return false; });
+    self.scope.register(["Mod"], "Enter", (event) => { self.selectActiveSuggestion(event); return false; });
     return self;
   }
-  inherit(NoteComposerSettingTab, host.PluginSettingTab);
+  inherit(ExtractFileSuggest, host.s13QuickSwitcherModalBase);
+  const proto = ExtractFileSuggest.prototype;
+
+  proto.onOpen = function () {
+    host.s13QuickSwitcherModalBase.prototype.onOpen.call(this);
+    this.inputEl.value = this.defaultValue;
+    this.updateSuggestions();
+  };
+
+  proto.setCurrentFile = function (file) {
+    this.currentFile = file;
+  };
+
+  proto.onChooseSuggestion = async function (suggestion, evt) {
+    const app = this.app;
+    const selection = this.editor.getSelection();
+    const createNew = host.Keymap.isModifier(evt, "Mod");
+    const source = this.currentFile;
+    let target;
+    try {
+      if (createNew || !suggestion) {
+        target = await app.fileManager.createNewMarkdownFileFromLinktext(this.inputEl.value, source.path);
+      } else if (suggestion.type === "unresolved") {
+        target = await app.fileManager.createNewMarkdownFileFromLinktext(suggestion.linktext, source.path);
+      } else if (suggestion.type === "file" || suggestion.type === "alias") {
+        target = suggestion.file;
+      }
+    } catch (error) {
+      new host.Notice(error.toString());
+      return;
+    }
+    const content = await this.composer.applyTemplate(selection, source.basename, target.basename);
+    await app.fileManager.insertIntoFile(target, content, evt.shiftKey ? "prepend" : "append");
+    const link = app.fileManager.generateMarkdownLink(target, source.path);
+    const mode = this.composer.options.replacementText;
+    if (mode === REPLACEMENT_EMBED) this.editor.replaceSelection("!" + link);
+    else if (mode === REPLACEMENT_NONE) this.editor.replaceSelection("");
+    else this.editor.replaceSelection(link);
+  };
+
+  composerParts.ExtractFileSuggest = ExtractFileSuggest;
+  return ExtractFileSuggest;
+}
+
+/** Settings tab: replacement text after extraction, template file, merge confirmation. */
+export function defineNoteComposerSettingTab(host) {
+  function NoteComposerSettingTab(app, plugin, instance) {
+    const self = host.PluginInstanceSettingTab.call(this, app, plugin) || this;
+    self.icon = "merge";
+    self.instance = instance;
+    return self;
+  }
+  inherit(NoteComposerSettingTab, host.PluginInstanceSettingTab);
   const proto = NoteComposerSettingTab.prototype;
 
   proto.display = function () {
-    const { containerEl } = this;
+    const self = this;
+    const containerEl = this.containerEl;
     containerEl.empty();
-    const opts = ng24Options(this);
-    new host.Setting(containerEl)
-      .setName("Ask before merging")
-      .setDesc("Show a confirmation dialog before merging notes.")
-      .addToggle((t) => t.setValue(!!opts.askBeforeMerging).onChange((v) => ng24SetOptions(this.app, { askBeforeMerging: v })));
-    new host.Setting(containerEl)
-      .setName("Replacement text")
-      .setDesc("What to leave behind when merging: link, embed, or none.")
-      .addDropdown((d) => d
-        .addOption("link", "Link")
-        .addOption("embed", "Embed")
-        .addOption("none", "Nothing")
-        .setValue(opts.replacementText || "link")
-        .onChange((v) => ng24SetOptions(this.app, { replacementText: v })));
-    new host.Setting(containerEl)
-      .setName("Template")
-      .setDesc("Template applied to merged notes (supports {{title}}, {{date}}, etc.).")
-      .addTextArea((t) => t
-        .setValue(opts.template || "")
-        .setPlaceholder("# {{title}}\n\nCreated {{date}}")
-        .onChange((v) => ng24SetOptions(this.app, { template: v })));
+    const options = this.instance.options;
+    new host.SettingGroup(containerEl)
+      .addSetting((setting) =>
+        setting
+          .setName(composerT(host).optionSplitReplacementText())
+          .setDesc(composerT(host).optionSplitReplacementTextDescription())
+          .addDropdown((dropdown) => {
+            dropdown
+              .addOption(REPLACEMENT_LINK, composerT(host).optionChoiceSplitReplacementTextLink())
+              .addOption(REPLACEMENT_EMBED, composerT(host).optionChoiceSplitReplacementTextEmbed())
+              .addOption(REPLACEMENT_NONE, composerT(host).optionChoiceSplitReplacementTextNone())
+              .setValue(options.replacementText || REPLACEMENT_LINK)
+              .onChange((value) => {
+                options.replacementText = value;
+                self.plugin.saveData(options);
+              });
+          })
+      )
+      .addSetting((setting) =>
+        setting
+          .setName(composerT(host).optionTemplateFile())
+          .setDesc(composerT(host).optionTemplateFileDescription({ interpolation: { prefix: "{{{{", suffix: "}}}}" } }))
+          .addText((text) => {
+            text
+              .setPlaceholder(host.t.setting.filePathExamplePlaceholder())
+              .setValue(options.template)
+              .onChange((value) => {
+                options.template = value.trim();
+                self.plugin.saveData(options);
+              });
+            new host.MarkdownFileSuggest(self.app, text.inputEl);
+          })
+      )
+      .addSetting((setting) =>
+        setting
+          .setName(composerT(host).optionConfirmFileMerge())
+          .setDesc(composerT(host).optionConfirmFileMergeDescription())
+          .addToggle((toggle) => {
+            toggle
+              .setValue(options.askBeforeMerging)
+              .onChange((value) => {
+                options.askBeforeMerging = value;
+                self.plugin.saveData(options);
+              });
+          })
+      );
   };
 
+  composerParts.NoteComposerSettingTab = NoteComposerSettingTab;
   return NoteComposerSettingTab;
 }
 
-// ---------------------------------------------------------------------------
-// NoteComposerPlugin (Z8)
-// ---------------------------------------------------------------------------
+/** The plugin shell: registers the three commands, the file/editor menu entries and the settings tab. */
+export function defineNoteComposerPlugin(host) {
+  const t = composerT(host);
 
-export function ng24DefineNoteComposerPlugin(host) {
-  Ng24cHostRef = host;
-  // Internal-plugin shell: constructed with no args by the startup loader;
-  // init(app, plugin) receives the app and its PluginWrapper.
-  function NoteComposerPlugin() {
-    this.id = NG24_PLUGIN_ID;
-    this.name = "Note Composer";
-    this.description = "Merge, split and extract sections of markdown notes.";
-    this.defaultOn = true;
-    this.options = Object.assign({}, NG24_OPTIONS);
-  }
-  const proto = NoteComposerPlugin.prototype;
+  class NoteComposerPlugin {
+    constructor() {
+      this.id = "note-composer";
+      this.name = t.name();
+      this.description = t.desc();
+      this.defaultOn = true;
+      this.options = {};
+      this.app = null;
+      this.pluginInstance = null;
+    }
 
-  proto.init = async function (app, plugin) {
-    this.app = app;
-    this.plugin = plugin;
-    const saved = await plugin.loadData();
-    if (saved && typeof saved === "object") this.options = Object.assign({}, NG24_OPTIONS, saved);
-    this.saveOptions = () => plugin.saveData(this.options);
-    plugin.registerEvent(app.workspace.on("file-menu", (menu, file, source, leaf) => {
-      if (!file || file.extension !== "md") return;
-      menu.addSeparator();
-      menu.addItem((item) => item
-        .setTitle("Merge note into another...")
-        .setIcon("lucide-merge")
-        .onClick(() => this.openMergeModal(file)));
-      menu.addItem((item) => item
-        .setTitle("Extract section into new note...")
-        .setIcon("lucide-scissors")
-        .onClick(() => this.openExtractModal(file)));
-      menu.addItem((item) => item
-        .setTitle("Split note at cursor...")
-        .setIcon("lucide-split")
-        .onClick(() => this.openSplitModal(file)));
-    }));
-    plugin.registerGlobalCommand({
-      id: "note-composer:merge-file",
-      name: "Merge note into another",
-      checkCallback: (checking) => {
-        const file = app.workspace.getActiveFile();
-        if (!file || file.extension !== "md") return false;
-        if (!checking) this.openMergeModal(file);
-        return true;
-      },
-    });
-    plugin.registerGlobalCommand({
-      id: "note-composer:extract-heading",
-      name: "Extract section into new note",
-      checkCallback: (checking) => {
-        const file = app.workspace.getActiveFile();
-        if (!file || file.extension !== "md") return false;
-        if (!checking) this.openExtractModal(file);
-        return true;
-      },
-    });
-    plugin.registerGlobalCommand({
-      id: "note-composer:split-file",
-      name: "Split note at cursor",
-      checkCallback: (checking) => {
-        const file = app.workspace.getActiveFile();
-        if (!file || file.extension !== "md") return false;
-        if (!checking) this.openSplitModal(file);
-        return true;
-      },
-    });
-    plugin.addSettingTab(new (ng24ComposerSettingTabClass || (ng24ComposerSettingTabClass = ng24DefineNoteComposerSettingTab(host)))(app, plugin, this));
-  };
+    init(app, plugin) {
+      const self = this;
+      this.app = app;
+      this.pluginInstance = plugin;
+      plugin.registerGlobalCommand({
+        id: "note-composer:merge-file",
+        name: t.commandMergeFile(),
+        icon: "lucide-git-merge",
+        checkCallback: (checking) => {
+          const file = self.app.workspace.getActiveFile();
+          if (file && file.extension === "md") {
+            if (!checking) {
+              const modal = new composerParts.MergeFileSuggest(self.app, self);
+              modal.setCurrentFile(file);
+              modal.open();
+            }
+            return true;
+          }
+        },
+      });
+      plugin.registerGlobalCommand({
+        id: "note-composer:split-file",
+        name: t.commandSplitFile(),
+        icon: "lucide-scissors",
+        editorCheckCallback: (checking, editor, ctx) => {
+          if (ctx.file && editor.somethingSelected()) {
+            if (!checking) {
+              const modal = new composerParts.ExtractFileSuggest(self.app, editor, self);
+              modal.setCurrentFile(ctx.file);
+              modal.open();
+            }
+            return true;
+          }
+        },
+      });
+      plugin.registerGlobalCommand({
+        id: "note-composer:extract-heading",
+        name: t.commandExtractHeading(),
+        icon: "lucide-scissors",
+        editorCheckCallback: (checking, editor, ctx) => {
+          if (!ctx.file) return;
+          const line = editor.getCursor().line;
+          if (firstHeadingText(editor.getLine(line)) !== null) {
+            if (!checking) self.extractHeading(ctx.file, editor);
+            return true;
+          }
+        },
+      });
+    }
 
-  proto.onloadSettings = function () {};
+    async onEnable(app, wrapper) {
+      this.options = (await wrapper.loadData()) || { askBeforeMerging: true };
+      wrapper.registerEvent(app.workspace.on("file-menu", this.onFileMenu, this));
+      wrapper.registerEvent(app.workspace.on("editor-menu", this.onEditorMenu, this));
+      wrapper.addSettingTab(new composerParts.NoteComposerSettingTab(app, wrapper, this));
+    }
 
-  // ------------------------------------------------------------------ merge
+    async onExternalSettingsChange() {
+      this.options = (await this.pluginInstance.loadData()) || {};
+    }
 
-  proto.openMergeModal = function (file) {
-    const app = this.app;
-    const modal = new host.Modal(app);
-    modal.titleEl.setText("Merge note");
-    const { contentEl } = modal;
-    contentEl.createEl("p", { text: `Merge "${file.basename}" into another note.` });
-    let target = null;
-    const suggest = new (ng24MergeSuggestClass || (ng24MergeSuggestClass = ng24DefineMergeFileSuggest(host)))(app, contentEl.createEl("input", { cls: "text-input" }), (f) => { target = f; });
-    suggest.inputEl.placeholder = "Search for target note...";
-    suggest.open();
-    const buttons = contentEl.createDiv({ cls: "modal-button-container" });
-    const cancel = buttons.createEl("button", { text: "Cancel" });
-    const merge = buttons.createEl("button", { cls: "mod-cta", text: "Merge" });
-    merge.addEventListener("click", async () => {
-      if (!target) { new host.Notice("Select a target note first."); return; }
-      const opts = ng24Options(this);
-      if (opts.askBeforeMerging) {
-        const ok = await ng24Confirm(this.app, `Merge "${file.basename}" into "${target.basename}"? This cannot be undone.`);
-        if (!ok) return;
+    onFileMenu(menu, file, source) {
+      if (source === "link-context-menu") return;
+      if (!(file instanceof host.TFile) || file.extension !== "md") return;
+      const self = this;
+      menu.addItem((item) =>
+        item
+          .setSection("action")
+          .setTitle(t.actionMergeFile())
+          .setIcon("lucide-git-merge")
+          .onClick(() => {
+            const modal = new composerParts.MergeFileSuggest(self.app, self);
+            modal.setCurrentFile(file);
+            modal.open();
+          })
+      );
+    }
+
+    onEditorMenu(menu, editor, ctx) {
+      const file = ctx.file;
+      if (!file) return;
+      const self = this;
+      if (editor.getSelection().trim()) {
+        menu.addItem((item) =>
+          item
+            .setTitle(t.commandSplitFile())
+            .setIcon("lucide-git-branch-plus")
+            .setSection("selection")
+            .onClick(() => {
+              const modal = new composerParts.ExtractFileSuggest(self.app, editor, self);
+              modal.setCurrentFile(file);
+              modal.open();
+            })
+        );
       }
-      await this.doMerge(file, target, opts);
-      modal.close();
-    });
-    cancel.addEventListener("click", () => modal.close());
-    modal.open();
-    return modal;
-  };
-
-  proto.doMerge = async function (source, target, opts) {
-    const app = this.app;
-    const sourceText = await app.vault.read(source);
-    const targetText = await app.vault.read(target);
-    const replacement = this.replacementFor(source, target, opts);
-    const merged = targetText.trimEnd() + "\n\n" + sourceText.trim() + "\n";
-    await app.vault.modify(target, merged);
-    if (opts.replacementText !== "none") {
-      await app.vault.modify(source, replacement);
-    } else {
-      await app.vault.delete(source);
+      const line = editor.getCursor().line;
+      if (firstHeadingText(editor.getLine(line)) !== null) {
+        menu.addItem((item) =>
+          item
+            .setTitle(t.commandExtractHeading())
+            .setSection("action")
+            .setIcon("lucide-git-branch-plus")
+            .onClick(() => self.extractHeading(file, editor))
+        );
+      }
     }
-    new host.Notice(`Merged "${source.basename}" into "${target.basename}".`);
-  };
 
-  proto.replacementFor = function (source, target, opts) {
-    const link = `[[${target.basename}]]`;
-    switch (opts.replacementText) {
-      case "embed": return `![[${target.basename}]]`;
-      case "none": return "";
-      default: return link;
+    /** Selects the whole section under the cursor's heading, then opens the extract modal for it. */
+    extractHeading(file, editor) {
+      const line = editor.getCursor().line;
+      const section = this.getSelectionUnderHeading(file, editor, line);
+      if (section) {
+        editor.setSelection(section.start, section.end);
+        const modal = new composerParts.ExtractFileSuggest(this.app, editor, this, section.heading);
+        modal.setCurrentFile(file);
+        modal.open();
+      } else {
+        new host.Notice(t.msgFailToFindHeading());
+      }
     }
-  };
 
-  // --------------------------------------------------------------- extract
-
-  proto.openExtractModal = function (file) {
-    const app = this.app;
-    const modal = new host.Modal(app);
-    modal.titleEl.setText("Extract section");
-    const headings = ng24Headings(app, file);
-    const contentEl = modal.contentEl;
-    contentEl.createEl("p", { text: `Extract a section of "${file.basename}" into a new note.` });
-    const select = contentEl.createEl("select", { cls: "dropdown" });
-    headings.forEach((h, i) => {
-      const opt = select.createEl("option", { text: "#".repeat(Math.min(h.level, 6)) + " " + h.title, value: String(i) });
-    });
-    if (!headings.length) {
-      contentEl.createEl("p", { text: "No headings found in this note." });
-      return modal.open();
+    /** Finds the heading at `line` and the line range of its section (up to the next same-or-higher heading). */
+    getSelectionUnderHeading(file, editor, line) {
+      const cache = this.app.metadataCache.getFileCache(file);
+      if (!cache) return null;
+      const headings = cache.headings;
+      if (!headings || headings.length === 0) return null;
+      let heading = null;
+      let level = 0;
+      let next = null;
+      for (const candidate of headings) {
+        if (heading && candidate.level <= level) {
+          next = candidate;
+          break;
+        }
+        if (!heading && candidate.position.start.line === line) {
+          level = candidate.level;
+          heading = candidate;
+        }
+      }
+      if (!heading) return null;
+      let end;
+      if (next) {
+        end = next.position.start.line - 1;
+        while (editor.getLine(end).trim() === "" && end > line) end--;
+      } else {
+        end = editor.lineCount() - 1;
+      }
+      return {
+        heading: heading.heading.trim(),
+        start: { line, ch: 0 },
+        end: { line: end, ch: editor.getLine(end).length },
+      };
     }
-    const buttons = contentEl.createDiv({ cls: "modal-button-container" });
-    const cancel = buttons.createEl("button", { text: "Cancel" });
-    const go = buttons.createEl("button", { cls: "mod-cta", text: "Extract" });
-    go.addEventListener("click", async () => {
-      const heading = headings[parseInt(select.value, 10)];
-      await this.doExtract(file, heading);
-      modal.close();
-    });
-    cancel.addEventListener("click", () => modal.close());
-    modal.open();
-    return modal;
-  };
 
-  proto.doExtract = async function (file, heading) {
-    const app = this.app;
-    const section = await ng24SectionUnderHeading(app, file, heading);
-    const title = heading.title || "Untitled";
-    const newFile = await app.fileManager.createNewMarkdownFile(app.vault.getRoot(), title);
-    const content = (ng24Options(this).template ? applyTemplateVars(ng24Options(this).template, { title: newFile.basename }) + "\n\n" : "") + section.trim() + "\n";
-    await app.vault.modify(newFile, content);
-    // replace the section in the source with an embed/link
-    const sourceText = await app.vault.read(file);
-    const lines = sourceText.split("\n");
-    const headings = ng24Headings(app, file);
-    const idx = headings.indexOf(heading);
-    const next = headings.slice(idx + 1).find((h) => h.level <= heading.level);
-    const from = heading.from;
-    const to = next ? next.from - 1 : lines.length - 1;
-    const replacement = `![[${newFile.basename}]]`;
-    const out = lines.slice(0, from).concat([replacement], lines.slice(to + 1)).join("\n");
-    await app.vault.modify(file, out);
-    new host.Notice(`Extracted "${title}" into "${newFile.basename}".`);
-  };
-
-  // ------------------------------------------------------------------ split
-
-  proto.openSplitModal = function (file) {
-    const app = this.app;
-    const view = app.workspace.getActiveViewOfType("markdown");
-    if (!view || !view.editor) { new host.Notice("Open the note in the editor first."); return; }
-    const cursor = view.editor.getCursor();
-    const modal = new host.Modal(app);
-    modal.titleEl.setText("Split note");
-    modal.contentEl.createEl("p", { text: `Split "${file.basename}" at line ${cursor.line + 1} into a new note.` });
-    const buttons = modal.contentEl.createDiv({ cls: "modal-button-container" });
-    const cancel = buttons.createEl("button", { text: "Cancel" });
-    const go = buttons.createEl("button", { cls: "mod-cta", text: "Split" });
-    go.addEventListener("click", async () => {
-      await this.doSplit(file, cursor.line);
-      modal.close();
-    });
-    cancel.addEventListener("click", () => modal.close());
-    modal.open();
-    return modal;
-  };
-
-  proto.doSplit = async function (file, atLine) {
-    const app = this.app;
-    const content = await app.vault.read(file);
-    const lines = content.split("\n");
-    const head = lines.slice(0, atLine).join("\n");
-    const tail = lines.slice(atLine).join("\n");
-    const newFile = await app.fileManager.createNewMarkdownFile(app.vault.getRoot(), file.basename + " (split)");
-    await app.vault.modify(newFile, tail + "\n");
-    await app.vault.modify(file, head + "\n" + `![[${newFile.basename}]]\n`);
-    new host.Notice(`Split "${file.basename}" into "${newFile.basename}".`);
-  };
-
+    /** Expands the configured template file's variables against the merge/extract context. */
+    async applyTemplate(content, fromTitle, newTitle) {
+      const template = this.options.template;
+      if (!template) return content;
+      const app = this.app;
+      const dest = app.metadataCache.getFirstLinkpathDest(template, "");
+      if (!dest) {
+        new host.Notice(t.msgFailToFetchTemplate({ template }));
+        return content;
+      }
+      let templateText = await app.vault.cachedRead(dest);
+      if (!templateText) return content;
+      if (!templateText.contains("{{content}}")) templateText += "\n\n{{content}}";
+      return applyTemplateVars(templateText, { fromTitle, newTitle, content });
+    }
+  }
   return NoteComposerPlugin;
 }
-
-let ng24ComposerSettingTabClass = null;
-let ng24MergeSuggestClass = null;
-
-export const defineNoteComposerPlugin = ng24DefineNoteComposerPlugin;
-export const defineMergeFileSuggest = ng24DefineMergeFileSuggest;
-export const defineExtractFileSuggest = ng24DefineExtractFileSuggest;
-export const defineNoteComposerSettingTab = ng24DefineNoteComposerSettingTab;
