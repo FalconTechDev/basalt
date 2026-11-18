@@ -62829,14 +62829,14 @@ function ng19GraphRenderer() {
         const frame = el.createEl("iframe");
         frame.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0;";
         this.iframeEl = frame;
-        this.interactiveEl = frame;
         this._listen(frame, "load", () => this._initIframeGraphics());
         this._listen(frame, "unload", () => this._teardownGraphics());
-      } else {
-        const canvas = el.createEl("canvas");
-        canvas.className = "graph-canvas";
-        canvas.style.cssText = "position:absolute;left:0;top:0;";
-        this.interactiveEl = canvas;
+      }
+      const canvas = el.createEl("canvas");
+      canvas.className = "graph-canvas";
+      canvas.style.cssText = "position:absolute;left:0;top:0;";
+      this.interactiveEl = canvas;
+      if (!iframeMode) {
         this._retryTimer = setTimeout(() => this._initGraphics(window, canvas), 50);
       }
       this._bindInput();
