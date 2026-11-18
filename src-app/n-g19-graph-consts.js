@@ -10,12 +10,18 @@ export const ng19BookmarkParentSymbol = Symbol("parent");
 
 /** i18n table for the graph view: `host.t.plugins.graphView`. */
 export function ng19GraphStrings(host) {
-  return host.t.plugins.graphView;
+  const viaHost = host && host.t && host.t.plugins && host.t.plugins.graphView;
+  if (viaHost) return viaHost;
+  const gm = env().gm;
+  return gm && gm.plugins ? gm.plugins.graphView : null;
 }
 
 /** i18n table for the bookmarks plugin: `host.t.plugins.bookmarks`. */
 export function ng19BookmarkStrings(host) {
-  return host.t.plugins.bookmarks;
+  const viaHost = host && host.t && host.t.plugins && host.t.plugins.bookmarks;
+  if (viaHost) return viaHost;
+  const gm = env().gm;
+  return gm && gm.plugins ? gm.plugins.bookmarks : null;
 }
 
 export const ng19GraphDisplayDefaults = {
