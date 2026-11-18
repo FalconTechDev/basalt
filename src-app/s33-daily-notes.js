@@ -2,7 +2,7 @@
 // validator used by the settings tab (g8). The format constant and locale alias are
 // declarator replacements (d8/f8) defined alongside the other slice constants.
 import { lastSegment } from "./path.js";
-import { s33DailyNotesStrings, s33FileExplorerStrings } from "./s33-canvas-edge.js";
+import { ng20DailyNotesStrings, ng20FileExplorerStrings } from "./n-g20-shared.js";
 
 /** Path of `file` relative to the daily-notes folder prefix, or null when outside it. */
 export function s33DailyNoteSuffix(folder, file) {
@@ -18,9 +18,9 @@ export function s33DailyNoteSuffix(folder, file) {
 export function s33ValidateDateFormat(format, host) {
   if (!format) return "";
   const sample = window.moment().format(format);
-  if (format.startsWith("/")) return s33DailyNotesStrings().msgInvalidDateFormat();
+  if (format.startsWith("/")) return ng20DailyNotesStrings().msgInvalidDateFormat();
   if (host.invalidCharsPattern.test(lastSegment(sample))) {
-    return s33FileExplorerStrings().msgInvalidCharacters() + host.invalidCharsList;
+    return ng20FileExplorerStrings().msgInvalidCharacters() + host.invalidCharsList;
   }
-  return window.moment(sample, format, true).isValid() ? "" : s33DailyNotesStrings().msgInvalidDateFormat();
+  return window.moment(sample, format, true).isValid() ? "" : ng20DailyNotesStrings().msgInvalidDateFormat();
 }
