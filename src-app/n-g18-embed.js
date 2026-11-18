@@ -343,14 +343,20 @@ function buildNg18IframeEditMode(host) {
     this.cleanupIframe();
   };
 
-  proto.onUpdate = function (update, transactions) {
-    host.EditModeBase.prototype.onUpdate.call(this, update, transactions);
-    if (!transactions) return;
-    this.owner.save(update.state.doc.toString());
-    this.requestSaveFolds();
+  proto.set = function (text, scroll) {
+    host.CodeMirrorEditor.prototype.set.call(this, text, scroll === true);
+    if (typeof scroll === "number") this.applyScroll(scroll);
+  };
+
+  proto.onUpdate = function (update, docChanged) {
+    host.EditModeBase.prototype.onUpdate.call(this, update, docChanged);
+    const transactions = update.transactions || [];
     const hasFold = transactions.some((tr) =>
       tr.effects.some((effect) => effect.is(host.cmFoldEffect) || effect.is(host.cmUnfoldEffect)));
     if (hasFold) this.requestSaveFolds();
+    if (!docChanged) return;
+    this.owner.save(update.state.doc.toString());
+    this.requestSaveFolds();
   };
 
   proto.getDynamicExtensions = function () {
