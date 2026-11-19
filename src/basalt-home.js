@@ -43,22 +43,27 @@
     .bsh-stat div { border-radius: 0; display: flex; justify-content: space-between; padding: 11px 12px; background: var(--background-secondary); border-left: 2px solid var(--background-modifier-border); }
     .bsh-stat b { color: var(--text-normal); } .bsh-stat span { color: var(--text-muted); }
     .bsh-close { color: var(--text-faint); font-size: var(--font-ui-smaller); cursor: pointer; align-self: flex-start; } .bsh-close:hover { color: var(--text-normal); }
+    .bsh-search, .bsh-tile { border: 0; clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md)); background: var(--interactive-normal); }
+    .bsh-search:hover, .bsh-tile:hover { background: var(--interactive-hover); box-shadow: inset 2px 0 0 var(--interactive-accent); border: 0; }
+    .bsh-tile .bsh-ti, .bsh-tile svg { border-radius: 0; }
+    .bsh kbd { border-radius: 0; }
+    .bsh h3 { color: var(--text-muted); border-bottom: 1px solid var(--background-modifier-border); padding-bottom: 8px; }
     .empty-state .empty-state-container { display: none; }
   `;
   document.head.appendChild(css);
 
   const ICON = {
-    search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
-    note: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
-    canvas: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
-    term: '<path d="M4 17l6-6-6-6M12 19h8"/>',
-    graph: '<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="8" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7l8 1M7 8l4 8M17 10l-4 6"/>',
-    file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
-    plug: '<path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4"/>',
-    gear: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
-    history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
+    search: '<path d="M9 4H13L16 7V11L13 14H9L6 11V7Z M15 15L20 20"/>',
+    note: '<path d="M5 3H15L19 7V21H5Z M15 3V7H19 M9 13H15 M9 17H13"/>',
+    canvas: '<path d="M3 4H11V10H3Z M14 14H21V20H14Z M11 7H17V14"/>',
+    term: '<path d="M3 4H21V20H3Z M7 9L11 12L7 15 M13 15H17"/>',
+    graph: '<path d="M5 3H9V7H5Z M15 3H19V7H15Z M10 17H14V21H10Z M7 7V11H17V7 M12 11V17"/>',
+    file: '<path d="M5 3H15L19 7V21H5Z M15 3V7H19"/>',
+    plug: '<path d="M9 2V8 M15 2V8 M6 8H18V12L14 16H10L6 12Z M12 16V22"/>',
+    gear: '<path d="M9 3H15L21 9V15L15 21H9L3 15V9Z M9 9H15V15H9Z"/>',
+    history: '<path d="M9 3H15L21 9V15L15 21H9L3 15V9Z M12 7V12L15 15"/>',
   };
-  const svg = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+  const svg = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" stroke-linejoin="miter">${ICON[k]}</svg>`;
   const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const ago = (ms) => { const s = (Date.now() - ms) / 1000; if (s < 90) return "только что"; if (s < 3600) return Math.round(s / 60) + " мин"; if (s < 86400) return Math.round(s / 3600) + " ч"; if (s < 86400 * 30) return Math.round(s / 86400) + " дн"; return new Date(ms).toLocaleDateString(); };
   const cmd = (id) => { try { app.commands.executeCommandById(id); } catch (e) { /* missing */ } };
