@@ -2355,8 +2355,9 @@
     },
     {
       "orig": "oO",
-      "use": "s21RenderLinkValue",
-      "originalBytes": 1421
+      "use": "ng16RenderLinkValue",
+      "originalBytes": 1421,
+      "host": true
     },
     {
       "orig": "gZ",
@@ -3310,15 +3311,15 @@
     },
     {
       "orig": "tO",
-      "use": "defineMetadataEditor"
+      "use": "ng16DefineMetadataEditor"
     },
     {
       "orig": "nO",
-      "use": "definePropertyRow"
+      "use": "ng16DefinePropertyRow"
     },
     {
       "orig": "AO",
-      "use": "definePropertyKeySuggest"
+      "use": "ng16DefinePropertyKeySuggest"
     },
     {
       "orig": "cP",
@@ -4776,98 +4777,98 @@
     },
     {
       "orig": "iO",
-      "use": "defineS06ValueItem"
+      "use": "ng16DefineS06ValueItem"
     },
     {
       "orig": "LO",
-      "use": "defineS06UnknownValue"
+      "use": "ng16DefineS06UnknownValue"
     },
     {
       "orig": "mO",
-      "use": "defineS06CheckboxValue"
+      "use": "ng16DefineS06CheckboxValue"
     },
     {
       "orig": "dO",
-      "use": "defineS06FileValue"
+      "use": "ng16DefineS06FileValue"
     },
     {
       "orig": "fO",
-      "use": "defineS06FolderValue"
+      "use": "ng16DefineS06FolderValue"
     },
     {
       "orig": "uO",
-      "use": "defineS06DateValue"
+      "use": "ng16DefineS06DateValue"
     },
     {
       "orig": "pO",
-      "use": "defineS06DateTimeValue"
+      "use": "ng16DefineS06DateTimeValue"
     },
     {
       "orig": "hO",
-      "use": "defineS06DailyNoteDateValue"
+      "use": "ng16DefineS06DailyNoteDateValue"
     },
     {
       "orig": "SO",
-      "use": "defineS06NumberValue"
+      "use": "ng16DefineS06NumberValue"
     },
     {
       "orig": "OO",
-      "use": "defineS06TagValueSuggest"
+      "use": "ng16DefineS06TagValueSuggest"
     },
     {
       "orig": "DI",
-      "use": "defineS06FilteredFileSuggest"
+      "use": "ng16DefineS06FilteredFileSuggest"
     },
     {
       "orig": "TI",
-      "use": "defineS06MarkdownFileSuggest"
+      "use": "ng16DefineS06MarkdownFileSuggest"
     },
     {
       "orig": "PI",
-      "use": "defineS06FolderSuggest"
+      "use": "ng16DefineS06FolderSuggest"
     },
     {
       "orig": "FO",
-      "use": "defineS06ChangeTypeModal"
+      "use": "ng16DefineS06ChangeTypeModal"
     },
     {
       "orig": "aO",
-      "use": "defineS06TextValue",
+      "use": "ng16DefineS06TextValue",
       "originalBytes": 1721
     },
     {
       "orig": "sO",
-      "use": "defineS06MultiTextValue",
+      "use": "ng16DefineS06MultiTextValue",
       "originalBytes": 1211
     },
     {
       "orig": "lO",
-      "use": "defineS06TagsValue",
+      "use": "ng16DefineS06TagsValue",
       "originalBytes": 1294
     },
     {
       "orig": "cO",
-      "use": "defineS06AliasesValue",
+      "use": "ng16DefineS06AliasesValue",
       "originalBytes": 767
     },
     {
       "orig": "gO",
-      "use": "defineS06PropertyKeyValue",
+      "use": "ng16DefineS06PropertyKeyValue",
       "originalBytes": 384
     },
     {
       "orig": "vO",
-      "use": "defineS06TypeCombobox",
+      "use": "ng16DefineS06TypeCombobox",
       "originalBytes": 303
     },
     {
       "orig": "XI",
-      "use": "defineS06MultiSelect",
+      "use": "ng16DefineS06MultiSelect",
       "originalBytes": 6415
     },
     {
       "orig": "MI",
-      "use": "defineS06Combobox",
+      "use": "ng16DefineS06Combobox",
       "originalBytes": 5512
     },
     {
@@ -5303,17 +5304,17 @@
     },
     {
       "orig": "DO",
-      "use": "s21DefineValueLinkSuggest",
+      "use": "ng16DefineValueLinkSuggest",
       "originalBytes": 3809
     },
     {
       "orig": "_I",
-      "use": "s21DefineWikilinkSuggest",
+      "use": "ng16DefineWikilinkSuggest",
       "originalBytes": 2935
     },
     {
       "orig": "YI",
-      "use": "s21DefineTagTriggerSuggest",
+      "use": "ng16DefineTagTriggerSuggest",
       "originalBytes": 920
     },
     {
@@ -5521,17 +5522,17 @@
     },
     {
       "orig": "C7",
-      "use": "s35PropertyItem",
+      "use": "ng16PropertyItem",
       "originalBytes": 4574
     },
     {
       "orig": "E7",
-      "use": "s35AllPropertiesView",
+      "use": "ng16AllPropertiesView",
       "originalBytes": 6788
     },
     {
       "orig": "M7",
-      "use": "s35FilePropertiesView",
+      "use": "ng16FilePropertiesView",
       "originalBytes": 3993
     },
     {
@@ -8061,73 +8062,73 @@
     },
     {
       "orig": "rO",
-      "expr": "__basaltOwn.s06PropertyOptionText(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06TextDesc(__basaltHost)",
       "sha1": "83eaca695d398d5b6c18b4e52882e3a11faa8aef",
       "originalBytes": 297
     },
     {
       "orig": "yO",
-      "expr": "__basaltOwn.s06PropertyOptionPropertyName(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06PropertyDesc(__basaltHost)",
       "sha1": "0ae89a6264b979b4e326f27d58bfcd169cd3d920",
       "originalBytes": 188
     },
     {
       "orig": "bO",
-      "expr": "__basaltOwn.s06PropertyOptionAliases(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06AliasesDesc(__basaltHost)",
       "sha1": "4a9da8b69f50194f8b63a124fc0e18a78f5e9462",
       "originalBytes": 208
     },
     {
       "orig": "wO",
-      "expr": "__basaltOwn.s06PropertyOptionTags(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06TagsDesc(__basaltHost)",
       "sha1": "17c630f325fd65070c00896a3d1ea42024901054",
       "originalBytes": 196
     },
     {
       "orig": "kO",
-      "expr": "__basaltOwn.s06PropertyOptionFolder(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06FolderDesc(__basaltHost)",
       "sha1": "14da60069a39869bac0ae942ede7432d578d3d8c",
       "originalBytes": 182
     },
     {
       "orig": "CO",
-      "expr": "__basaltOwn.s06PropertyOptionFile(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06FileDesc(__basaltHost)",
       "sha1": "f398196acf117b1fecaa5dfd28506a5a39bf5c9c",
       "originalBytes": 176
     },
     {
       "orig": "EO",
-      "expr": "__basaltOwn.s06PropertyOptionDate(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06DateDesc(__basaltHost)",
       "sha1": "858d20b1ee776dd52a7ef5793f854dc17be96792",
       "originalBytes": 179
     },
     {
       "orig": "MO",
-      "expr": "__basaltOwn.s06PropertyOptionDatetime(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06DateTimeDesc(__basaltHost)",
       "sha1": "b484cded7c6d343dedfbb9fdd55d99d2c4cd4985",
       "originalBytes": 184
     },
     {
       "orig": "xO",
-      "expr": "__basaltOwn.s06PropertyOptionNumber(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06NumberDesc(__basaltHost)",
       "sha1": "6a0d48865c6ad15ef4677f6cf0a24932302d1ee3",
       "originalBytes": 167
     },
     {
       "orig": "TO",
-      "expr": "__basaltOwn.s06PropertyOptionCheckbox(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06CheckboxDesc(__basaltHost)",
       "sha1": "09f3acad7084b0653758c042ef24f59623d2933e",
       "originalBytes": 177
     },
     {
       "orig": "PO",
-      "expr": "__basaltOwn.s06PropertyOptionMultitext(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06MultitextDesc(__basaltHost)",
       "sha1": "aa4eb4f9b595848af59fa333d3e879ad85410311",
       "originalBytes": 184
     },
     {
       "orig": "IO",
-      "expr": "__basaltOwn.s06PropertyOptionUnknownDescriptor(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06UnknownDesc(__basaltHost)",
       "sha1": "99baa6211fe0adbc985770ee7ebd377141554f7c",
       "originalBytes": 157
     },
