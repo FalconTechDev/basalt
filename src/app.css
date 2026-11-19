@@ -17702,4 +17702,33 @@ button:focus-visible{
 .checkbox-container::after{
     border-radius:0
 }
+.canvas-node-container{
+    --bs-edge:rgb(var(--canvas-color));
+    border-radius:0;
+    box-shadow:none;
+    clip-path:polygon(var(--bs-cut-md) 0,100% 0,100% calc(100% - var(--bs-cut-md)),calc(100% - var(--bs-cut-md)) 100%,0 100%,0 var(--bs-cut-md))
+}
+.canvas-node-container::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:5;
+    background:linear-gradient(135deg,transparent calc(50% - 1px),var(--bs-edge) calc(50% - 1px),var(--bs-edge) calc(50% + 1px),transparent calc(50% + 1px)) top left / var(--bs-cut-md) var(--bs-cut-md) no-repeat,linear-gradient(135deg,transparent calc(50% - 1px),var(--bs-edge) calc(50% - 1px),var(--bs-edge) calc(50% + 1px),transparent calc(50% + 1px)) bottom right / var(--bs-cut-md) var(--bs-cut-md) no-repeat
+}
+.canvas-node.is-selected .canvas-node-container,.canvas-node.is-focused .canvas-node-container,.canvas-node.is-selected.is-themed .canvas-node-container,.canvas-node.is-focused.is-themed .canvas-node-container,.canvas-node.is-selected.is-dragging .canvas-node-container,.canvas-node.is-focused.is-dragging .canvas-node-container{
+    border-color:var(--interactive-accent);
+    box-shadow:inset 0 0 0 2px var(--interactive-accent);
+    --bs-edge:var(--interactive-accent)
+}
+.canvas-node-group .canvas-node-container{
+    clip-path:none
+}
+.canvas-node-group .canvas-node-container::after{
+    display:none
+}
+.canvas-node-label{
+    font-size:var(--font-ui-smaller);
+    letter-spacing:.02em
+}
 
