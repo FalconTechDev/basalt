@@ -4,6 +4,19 @@
 (() => {
   "use strict";
   const ICONS = {
+  "archive": "M3 4H21V8H3Z M5 8V21H19V8 M10 12H14",
+  "panel-left": "M3 4H21V20H3Z M9 4V20",
+  "panel-right": "M3 4H21V20H3Z M15 4V20",
+  "tags": "M3 3H12L21 12L12 21L3 12Z M7 7H8",
+  "bookmark-plus": "M6 3H18V21L12 15L6 21Z M12 6V11 M9 8.5H15",
+  "sort-asc": "M7 4V20 M4 17L7 20L10 17 M14 6H20 M14 12H18 M14 18H16",
+  "folder-tree": "M3 3H9V7H3Z M13 11H21V15H13Z M13 17H21V21H13Z M6 7V19H13 M6 13H13",
+  "move-vertical": "M12 3V21 M8 7L12 3L16 7 M8 17L12 21L16 17",
+  "help": "M9 3H15L21 9V15L15 21H9L3 15V9Z M10 10L12 8L14 10L12 12V14 M12 16V17",
+  "uppercase-lowercase-a": "M3 18L7 6L11 18 M4.5 14H9.5 M14 18V13H19V18H14Z",
+  "links-coming-in": "M10 8H7L4 11V13L7 16H10 M14 12H20 M17 9L20 12L17 15",
+  "links-going-out": "M14 8H17L20 11V13L17 16H14 M4 12H10 M7 9L10 12L7 15",
+  "right-triangle": "M9 5L16 12L9 19",
   "rotate-ccw": "M5 5V10H10 M5 10L9 6H15L19 10V14L15 18H9L5 14",
   "refresh-cw": "M5 8H19 M15 4L19 8L15 12 M19 16H5 M9 12L5 16L9 20",
   "chevrons-up-down": "M8 9L12 5L16 9 M8 15L12 19L16 15",
@@ -100,7 +113,7 @@
   function swap(svg) {
     if (svg.__bsIcon) return;
     let name = null;
-    for (const c of svg.classList) if (c.startsWith("lucide-") && ICONS[c.slice(7)]) { name = c.slice(7); break; }
+    for (const c of svg.classList) { const k = c.startsWith("lucide-") ? c.slice(7) : c; if (ICONS[k] && k !== "svg-icon") { name = k; break; } }
     if (!name) return;
     svg.__bsIcon = true;
     svg.setAttribute("viewBox", "0 0 24 24");

@@ -38,20 +38,20 @@
   document.head.appendChild(css);
 
   const ICON = {
-    folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
-    note: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
-    canvas: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
-    image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',
-    file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
-    car: '<path d="M9 6l6 6-6 6"/>',
-    pin: '<path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/>',
-    newNote: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
-    newDir: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 11v6M9 14h6"/>',
-    newCanvas: '<rect x="3" y="3" width="8" height="8"/><path d="M17 3v8M13 7h8M3 15h18M3 19h18"/>',
-    sort: '<path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/>',
-    collapse: '<path d="M4 8l4 4-4 4M20 8l-4 4 4 4"/>',
+    folder: '<path d="M3 5H10L12 7H21V19H3Z"/>',
+    note: '<path d="M5 3H15L19 7V21H5Z M15 3V7H19 M9 13H15 M9 17H13"/>',
+    canvas: '<path d="M3 4H11V10H3Z M14 14H21V20H14Z M11 7H17V14"/>',
+    image: '<path d="M3 4H21V20H3Z M3 17L8 12L12 16L16 12L21 17 M15 8H17"/>',
+    file: '<path d="M5 3H15L19 7V21H5Z M15 3V7H19"/>',
+    car: '<path d="M9 5L16 12L9 19"/>',
+    pin: '<path d="M9 3H15V9L18 12V14H6V12L9 9Z M12 14V21"/>',
+    newNote: '<path d="M4 20V16L16 4L20 8L8 20Z M13 7L17 11"/>',
+    newDir: '<path d="M3 5H10L12 7H21V19H3Z M12 10V16 M9 13H15"/>',
+    newCanvas: '<path d="M3 4H11V10H3Z M14 14H21V20H14Z M11 7H17V14"/>',
+    sort: '<path d="M8 20V5 M4 9L8 5L12 9 M16 4V19 M12 15L16 19L20 15"/>',
+    collapse: '<path d="M8 5L12 9L16 5 M8 19L12 15L16 19"/>',
   };
-  const svg = (k, cls) => `<svg class="${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+  const svg = (k, cls) => `<svg class="${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" stroke-linejoin="miter">${ICON[k]}</svg>`;
   const IMG = /^(png|jpe?g|gif|webp|bmp|svg|avif|ico)$/i;
   const kindOf = (f) => (f.children ? "folder" : f.extension === "md" ? "note" : f.extension === "canvas" ? "canvas" : IMG.test(f.extension) ? "image" : "file");
   const HIDDEN = /^\.(basalt|obsidian|git|trash)$/;
