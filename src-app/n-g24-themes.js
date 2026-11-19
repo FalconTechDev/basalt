@@ -93,7 +93,8 @@ export function s04SettlePromise(promise) {
 const S04_COMMUNITY_THEMES_REPO = "obsidianmd/obsidian-releases";
 
 /** Raw URL of the community theme catalog (was `Ab`). */
-export const s04CommunityThemesUrl = s04RawFileUrl(S04_COMMUNITY_THEMES_REPO, "community-css-themes.json");
+// Literal: s04RawFileUrl's base const lives in s04-http.js, concatenated after this file.
+export const s04CommunityThemesUrl = "https://raw.githubusercontent.com/obsidianmd/obsidian-releases/HEAD/community-css-themes.json";
 
 /** Cached loader for the community theme catalog (was `Pb`). */
 export const s04CommunityThemes = s04CachedCall(async () => {
@@ -559,3 +560,7 @@ export function s04CssManager(host) {
 
   return CssManager;
 }
+
+// g24 manifest declarator aliases.
+export const ng24CommunityThemesUrl = s04CommunityThemesUrl;
+export const ng24CommunityThemesEmpty = s04CommunityThemesEmpty;

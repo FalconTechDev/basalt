@@ -1864,22 +1864,22 @@
     },
     {
       "orig": "PQ",
-      "use": "s09GraphLocalData",
+      "use": "ng19GraphLocalData",
       "originalBytes": 796
     },
     {
       "orig": "BQ",
-      "use": "s09SortTreeItems",
+      "use": "ng19SortTreeItems",
       "originalBytes": 438
     },
     {
       "orig": "kQ",
-      "use": "s09GraphNodeData",
+      "use": "ng19GraphNodeData",
       "originalBytes": 59
     },
     {
       "orig": "CQ",
-      "use": "s09GraphNodeDataFrom",
+      "use": "ng19GraphNodeDataFrom",
       "originalBytes": 86
     },
     {
@@ -2323,22 +2323,22 @@
     },
     {
       "orig": "b5",
-      "use": "s33ZIndexCompare",
+      "use": "ng20ZIndexCompare",
       "originalBytes": 42
     },
     {
       "orig": "V5",
-      "use": "s33EdgeDirection",
+      "use": "ng20EdgeDirection",
       "originalBytes": 213
     },
     {
       "orig": "z5",
-      "use": "s33EdgeOutset",
+      "use": "ng20EdgeOutset",
       "originalBytes": 142
     },
     {
       "orig": "o8",
-      "use": "s33CanvasPreview",
+      "use": "ng20CanvasPreview",
       "host": true,
       "originalBytes": 910
     },
@@ -3158,39 +3158,39 @@
     },
     {
       "orig": "l5",
-      "use": "defineCanvasUndoStack"
+      "use": "defineNg20UndoStack"
     },
     {
       "orig": "Y3",
-      "use": "defineSpatialIndex"
+      "use": "defineNg20SpatialIndex"
     },
     {
       "orig": "n8",
-      "use": "defineCanvasDataCache"
+      "use": "defineNg20CanvasDataCache"
     },
     {
       "orig": "M5",
-      "use": "defineNodeInteractionLayer"
+      "use": "defineNg20InteractionLayer"
     },
     {
       "orig": "t8",
-      "use": "defineCanvasLinkUpdater"
+      "use": "defineNg20LinkUpdater"
     },
     {
       "orig": "m5",
-      "use": "defineBboxCachedIndex"
+      "use": "defineNg20BboxCachedIndex"
     },
     {
       "orig": "v5",
-      "use": "definePointIndex"
+      "use": "defineNg20PointIndex"
     },
     {
       "orig": "g5",
-      "use": "defineBBoxItemIndex"
+      "use": "defineNg20BBoxItemIndex"
     },
     {
       "orig": "e8",
-      "use": "defineCanvasMetadataExtractor"
+      "use": "defineNg20MetadataExtractor"
     },
     {
       "orig": "i8",
@@ -3198,75 +3198,75 @@
     },
     {
       "orig": "w5",
-      "use": "defineUrlEditModal"
+      "use": "defineNg20UrlModal"
     },
     {
       "orig": "E5",
-      "use": "defineSectionSuggestModal"
+      "use": "defineNg20SectionSuggest"
     },
     {
       "orig": "K5",
-      "use": "defineEdgeLabel"
+      "use": "defineNg20EdgeLabel"
     },
     {
       "orig": "Q5",
-      "use": "defineJumpToGroupModal"
+      "use": "defineNg20JumpModal"
     },
     {
       "orig": "L5",
-      "use": "defineViewTypeSuggestModal"
+      "use": "defineNg20ViewTypeSuggest"
     },
     {
       "orig": "O5",
-      "use": "defineCanvasMarkdownEmbed"
+      "use": "defineNg20MarkdownEmbed"
     },
     {
       "orig": "N5",
-      "use": "defineCanvasEmptyEmbed"
+      "use": "defineNg20EmptyEmbed"
     },
     {
       "orig": "lI",
-      "use": "defineRenamePromptModal"
+      "use": "defineNg20RenamePrompt"
     },
     {
       "orig": "cI",
-      "use": "defineNewFileModal"
+      "use": "defineNg20NewFileModal"
     },
     {
       "orig": "x3",
-      "use": "defineCanvasFileSuggest"
+      "use": "defineNg20FileSuggest"
     },
     {
       "orig": "T3",
-      "use": "defineCanvasMediaSuggest"
+      "use": "defineNg20MediaSuggest"
     },
     {
       "orig": "D3",
-      "use": "defineCanvasImageSuggest"
+      "use": "defineNg20ImageSuggest"
     },
     {
       "orig": "S5",
-      "use": "defineCanvasNode"
+      "use": "defineNg20CanvasNode"
     },
     {
       "orig": "x5",
-      "use": "defineContentMountNode"
+      "use": "defineNg20ContentMountNode"
     },
     {
       "orig": "T5",
-      "use": "defineDummyNode"
+      "use": "defineNg20DummyNode"
     },
     {
       "orig": "A5",
-      "use": "defineEditableNode"
+      "use": "defineNg20EditableNode"
     },
     {
       "orig": "I5",
-      "use": "defineTextNode"
+      "use": "defineNg20TextNode"
     },
     {
       "orig": "F5",
-      "use": "defineLinkNode"
+      "use": "defineNg20LinkNode"
     },
     {
       "orig": "zz",
@@ -4040,11 +4040,11 @@
     },
     {
       "orig": "z3",
-      "use": "defineS13CanvasSelection"
+      "use": "defineNg20CanvasSelection"
     },
     {
       "orig": "U3",
-      "use": "defineS13CanvasMenu"
+      "use": "defineNg20CanvasMenu"
     },
     {
       "orig": "Z4",
@@ -4276,22 +4276,22 @@
     },
     {
       "orig": "xQ",
-      "use": "s09GraphNode",
+      "use": "ng19GraphNode",
       "originalBytes": 3863
     },
     {
       "orig": "TQ",
-      "use": "s09GraphLink",
+      "use": "ng19GraphLink",
       "originalBytes": 2111
     },
     {
       "orig": "DQ",
-      "use": "s09GraphPowerTag",
+      "use": "ng19GraphPowerTag",
       "originalBytes": 1029
     },
     {
       "orig": "AQ",
-      "use": "s09GraphRenderer",
+      "use": "ng19GraphRenderer",
       "originalBytes": 14173
     },
     {
@@ -4716,47 +4716,47 @@
     },
     {
       "orig": "bJ",
-      "use": "s28GraphPlugin",
+      "use": "ng19GraphPlugin",
       "originalBytes": 2504
     },
     {
       "orig": "kJ",
-      "use": "s28GraphView",
+      "use": "ng19GraphView",
       "originalBytes": 1778
     },
     {
       "orig": "EJ",
-      "use": "s28LocalGraphView",
+      "use": "ng19LocalGraphView",
       "originalBytes": 2112
     },
     {
       "orig": "xJ",
-      "use": "s28GraphEngine",
+      "use": "ng19GraphEngine",
       "originalBytes": 9953
     },
     {
       "orig": "TJ",
-      "use": "s28GraphControlSection",
+      "use": "ng19GraphControlSection",
       "originalBytes": 998
     },
     {
       "orig": "DJ",
-      "use": "s28GraphFilterSection",
+      "use": "ng19GraphFilterSection",
       "originalBytes": 3627
     },
     {
       "orig": "AJ",
-      "use": "s28GraphColorSection",
+      "use": "ng19GraphColorSection",
       "originalBytes": 2973
     },
     {
       "orig": "LJ",
-      "use": "s28GraphDisplaySection",
+      "use": "ng19GraphDisplaySection",
       "originalBytes": 1616
     },
     {
       "orig": "OJ",
-      "use": "s28GraphForceSection",
+      "use": "ng19GraphForceSection",
       "originalBytes": 1432
     },
     {
@@ -5243,32 +5243,32 @@
     },
     {
       "orig": "G5",
-      "use": "defineS33CanvasEdge",
+      "use": "defineNg20CanvasEdge",
       "originalBytes": 8030
     },
     {
       "orig": "P5",
-      "use": "defineS33CanvasFileNode",
+      "use": "defineNg20FileNode",
       "originalBytes": 7091
     },
     {
       "orig": "R5",
-      "use": "defineS33CanvasGroupNode",
+      "use": "defineNg20GroupNode",
       "originalBytes": 4310
     },
     {
       "orig": "X5",
-      "use": "defineS33CanvasFileIndex",
+      "use": "defineNg20FileIndex",
       "originalBytes": 1918
     },
     {
       "orig": "a8",
-      "use": "defineS33CanvasEmbed",
+      "use": "defineNg20CanvasEmbed",
       "originalBytes": 853
     },
     {
       "orig": "N8",
-      "use": "defineS33PathSuggest",
+      "use": "defineNg20PathSuggest",
       "originalBytes": 495
     },
     {
@@ -6595,7 +6595,7 @@
     },
     {
       "orig": "Ab",
-      "expr": "__basaltOwn.s04CommunityThemesUrl",
+      "expr": "__basaltOwn.ng24CommunityThemesUrl",
       "sha1": "da95c0c251fd5e31526af19a540a3cac36b3524c",
       "originalBytes": 62
     },
@@ -6607,7 +6607,7 @@
     },
     {
       "orig": "Lb",
-      "expr": "__basaltOwn.s04CommunityThemesEmpty",
+      "expr": "__basaltOwn.ng24CommunityThemesEmpty",
       "sha1": "2d252ec11513ebc4651220c2523f74c5bcf799bb",
       "originalBytes": 52
     },
@@ -7573,67 +7573,67 @@
     },
     {
       "orig": "mQ",
-      "expr": "__basaltOwn.s09Damp",
+      "expr": "__basaltOwn.ng19Damp",
       "sha1": "d8aa7f083efcc236db28b8553375c971b56e4fe8",
       "originalBytes": 54
     },
     {
       "orig": "vQ",
-      "expr": "__basaltOwn.s09LerpColor",
+      "expr": "__basaltOwn.ng19LerpColor",
       "sha1": "2658d9c0e7e39df907afef75a5c7c9d7a092a4e3",
       "originalBytes": 97
     },
     {
       "orig": "gQ",
-      "expr": "__basaltOwn.s09BoxesDisjoint",
+      "expr": "__basaltOwn.ng19BoxesDisjoint",
       "sha1": "356cbb0d3686cd931881abda3581287144bf9087",
       "originalBytes": 84
     },
     {
       "orig": "yQ",
-      "expr": "__basaltOwn.s09BoxAround",
+      "expr": "__basaltOwn.ng19BoxAround",
       "sha1": "4c5e22ef1b30c378f0cebbba149e4409023bb3ff",
       "originalBytes": 62
     },
     {
       "orig": "bQ",
-      "expr": "__basaltOwn.s09ResetCanvasStyle",
+      "expr": "__basaltOwn.ng19ResetCanvasStyle",
       "sha1": "26c21610a84f1b41b984de112cdcba7bd00099ba",
       "originalBytes": 139
     },
     {
       "orig": "wQ",
-      "expr": "__basaltOwn.s09GraphDefaults",
+      "expr": "__basaltOwn.ng19GraphDefaults",
       "sha1": "0a3acfce0798bfc0afd9bd98719ae990a172dbe7",
       "originalBytes": 148
     },
     {
       "orig": "fQ",
-      "expr": "__basaltOwn.s09GraphLinkAlpha",
+      "expr": "__basaltOwn.ng19GraphLinkAlpha",
       "sha1": "2db92f66554fa5837dd62843ecf91c4dc772ae55",
       "originalBytes": 2
     },
     {
       "orig": "EQ",
-      "expr": "__basaltOwn.s09GraphNoWeightTypes",
+      "expr": "__basaltOwn.ng19GraphNoWeightTypes",
       "sha1": "97d4f06bec75475459c0f66e3263eda546f9ab5b",
       "originalBytes": 8
     },
     {
       "orig": "MQ",
-      "expr": "__basaltOwn.s09GraphColorClasses",
+      "expr": "__basaltOwn.ng19GraphColorClasses",
       "sha1": "632af5d3c6ad5139024d8017422d56a35b0f8e78",
       "originalBytes": 307
     },
     {
       "orig": "SQ",
-      "expr": "__basaltOwn.s09GraphNodeBaseSize",
+      "expr": "__basaltOwn.ng19GraphNodeBaseSize",
       "sha1": "310b86e0b62b828562fc91c7be5380a992b2786a",
       "originalBytes": 3
     },
     {
       "orig": "LQ",
-      "expr": "__basaltOwn.s09LoadPixiScript",
+      "expr": "__basaltOwn.ng19LoadPixiScript",
       "sha1": "7e43fdddeaa8ae0b46caa27874d3f6280b68bea8",
       "originalBytes": 28
     },
@@ -7921,49 +7921,49 @@
     },
     {
       "orig": "fJ",
-      "expr": "__basaltOwn.s28SearchViewType",
+      "expr": "__basaltOwn.ng19SearchViewType",
       "sha1": "ede94f4e836f1cba807a6cc67c74395d09d8c469",
       "originalBytes": 8
     },
     {
       "orig": "yJ",
-      "expr": "__basaltOwn.s28GraphStrings(__basaltHost)",
+      "expr": "__basaltOwn.ng19GraphStrings(__basaltHost)",
       "sha1": "496f1f7b58908971355f410fbb9007800fd5bf47",
       "originalBytes": 20
     },
     {
       "orig": "wJ",
-      "expr": "__basaltOwn.s28GraphViewType",
+      "expr": "__basaltOwn.ng19GraphViewType",
       "sha1": "e74147a3fabab018bf1ba4d0bb7115e435ab0817",
       "originalBytes": 7
     },
     {
       "orig": "CJ",
-      "expr": "__basaltOwn.s28LocalGraphViewType",
+      "expr": "__basaltOwn.ng19LocalGraphViewType",
       "sha1": "27bc91ef9758321901edc5b3043ef668db899f06",
       "originalBytes": 12
     },
     {
       "orig": "PJ",
-      "expr": "__basaltOwn.s28GraphDisplayDefaults",
+      "expr": "__basaltOwn.ng19GraphDisplayDefaults",
       "sha1": "49af16fdd536cfeef165ad67f2b7744f3fe0c7bb",
       "originalBytes": 77
     },
     {
       "orig": "IJ",
-      "expr": "__basaltOwn.s28GraphForceDefaults",
+      "expr": "__basaltOwn.ng19GraphForceDefaults",
       "sha1": "0eb1f278573cde7b8543669534a409538d5dde0e",
       "originalBytes": 84
     },
     {
       "orig": "FJ",
-      "expr": "__basaltOwn.s28BookmarkParentSymbol",
+      "expr": "__basaltOwn.ng19BookmarkParentSymbol",
       "sha1": "12d4de7df3726d0b9c435cffbff8315512c6d5f5",
       "originalBytes": 16
     },
     {
       "orig": "NJ",
-      "expr": "__basaltOwn.s28BookmarkStrings(__basaltHost)",
+      "expr": "__basaltOwn.ng19BookmarkStrings(__basaltHost)",
       "sha1": "cf2fd143b0abc4b77438af8ca5925c12cbe93861",
       "originalBytes": 20
     },
@@ -8775,103 +8775,103 @@
     },
     {
       "orig": "U5",
-      "expr": "__basaltOwn.s33EdgeEndRotation",
+      "expr": "__basaltOwn.ng20EdgeEndRotation",
       "sha1": "dd1b090c5c4c731c7fe4b94c7c36af9e95b4d6e8",
       "originalBytes": 44
     },
     {
       "orig": "W5",
-      "expr": "__basaltOwn.s33EdgeEndNone",
+      "expr": "__basaltOwn.ng20EdgeEndNone",
       "sha1": "0bff1905a62874b4c14c4755e27adb3f8548d042",
       "originalBytes": 6
     },
     {
       "orig": "_5",
-      "expr": "__basaltOwn.s33EdgeEndArrow",
+      "expr": "__basaltOwn.ng20EdgeEndArrow",
       "sha1": "3fae4e538a641e310c345211a6eadec5230244a0",
       "originalBytes": 7
     },
     {
       "orig": "$5",
-      "expr": "__basaltOwn.s33CanvasViewType",
+      "expr": "__basaltOwn.ng20CanvasViewType",
       "sha1": "a45a640067b238c6ac8364a4f115c457e31c6e9f",
       "originalBytes": 8
     },
     {
       "orig": "Z5",
-      "expr": "__basaltOwn.s33CanvasExtension",
+      "expr": "__basaltOwn.ng20CanvasExtension",
       "sha1": "a45a640067b238c6ac8364a4f115c457e31c6e9f",
       "originalBytes": 8
     },
     {
       "orig": "d8",
-      "expr": "__basaltOwn.s33DefaultDateFormat",
+      "expr": "__basaltOwn.ng20DefaultDateFormat",
       "sha1": "75cfb5df5e81bdc9de577a6287f27a13d5bd61f5",
       "originalBytes": 12
     },
     {
       "orig": "L8",
-      "expr": "__basaltOwn.s33RecoveryDefaults",
+      "expr": "__basaltOwn.ng20RecoveryDefaults",
       "sha1": "b0c73f549ba090ea52f4ef696102da8dbad350a1",
       "originalBytes": 30
     },
     {
       "orig": "k5",
-      "expr": "__basaltOwn.s33InterfaceStrings()",
+      "expr": "__basaltOwn.ng20InterfaceStrings()",
       "sha1": "d2a102c51649bc1ad9fc621739e5aad2c089eb65",
       "originalBytes": 12
     },
     {
       "orig": "C5",
-      "expr": "__basaltOwn.s33CanvasStrings()",
+      "expr": "__basaltOwn.ng20CanvasStrings()",
       "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
       "originalBytes": 17
     },
     {
       "orig": "B5",
-      "expr": "__basaltOwn.s33CanvasStrings()",
+      "expr": "__basaltOwn.ng20CanvasStrings()",
       "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
       "originalBytes": 17
     },
     {
       "orig": "Y5",
-      "expr": "__basaltOwn.s33CanvasStrings()",
+      "expr": "__basaltOwn.ng20CanvasStrings()",
       "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
       "originalBytes": 17
     },
     {
       "orig": "J5",
-      "expr": "__basaltOwn.s33CanvasStrings()",
+      "expr": "__basaltOwn.ng20CanvasStrings()",
       "sha1": "f8e1bdd99a9f2be54b61deb037d698d26806cb87",
       "originalBytes": 17
     },
     {
       "orig": "f8",
-      "expr": "__basaltOwn.s33DailyNotesStrings()",
+      "expr": "__basaltOwn.ng20DailyNotesStrings()",
       "sha1": "b7a393a5ba47ac1d023e0e27db944bac6c7a08b9",
       "originalBytes": 21
     },
     {
       "orig": "w8",
-      "expr": "__basaltOwn.s33FileExplorerStrings()",
+      "expr": "__basaltOwn.ng20FileExplorerStrings()",
       "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
       "originalBytes": 23
     },
     {
       "orig": "A8",
-      "expr": "__basaltOwn.s33FileExplorerStrings()",
+      "expr": "__basaltOwn.ng20FileExplorerStrings()",
       "sha1": "859e1f6375f60d7c537d3012f3deb2e459cf9d36",
       "originalBytes": 23
     },
     {
       "orig": "I8",
-      "expr": "__basaltOwn.s33FileRecoveryStrings()",
+      "expr": "__basaltOwn.ng20FileRecoveryStrings()",
       "sha1": "5046bf7b27becfc7c1cc703111d64e3cfc839477",
       "originalBytes": 23
     },
     {
       "orig": "x8",
-      "expr": "__basaltOwn.s33FileExplorerViewType",
+      "expr": "__basaltOwn.ng20FileExplorerViewType",
       "sha1": "9ef25e946b31fe4054ed7e931293d85254dfda1d",
       "originalBytes": 15
     },

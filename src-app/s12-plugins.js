@@ -2,7 +2,7 @@
 // App classes come from the __basaltHost object; inherited helpers come from env().
 
 import { env } from "./env.js";
-import { s12imageContextMenu } from "./s12-livepreview.js";
+import { s12imageContextMenu } from "./n-g10-s12-livepreview.js";
 
 const S12PENV = () => env();
 

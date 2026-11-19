@@ -1,0 +1,12 @@
+/* settings window (design sheet "05 Settings") */
+.modal.mod-settings .vertical-tab-nav-item { position: relative; border-radius: 0; color: var(--text-muted); }
+.modal.mod-settings .vertical-tab-nav-item.is-active { background: var(--bs-accent-soft); color: var(--text-normal); }
+.modal.mod-settings .vertical-tab-nav-item.is-active::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--interactive-accent); }
+.modal.mod-settings .vertical-tab-header-group-title { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+.modal.mod-settings .setting-item { padding: var(--size-4-4) 0; border-top: 0; border-bottom: 1px solid var(--background-modifier-border); }
+.modal.mod-settings .setting-item-name { font-size: var(--font-ui-medium); font-weight: 500; }
+.modal.mod-settings .setting-item-description { font-size: var(--font-ui-smaller); color: var(--text-muted); }
+.modal.mod-settings .setting-item-heading { border-bottom: 0; font-size: var(--font-ui-large); font-weight: 600; }
+.checkbox-container { border-radius: 0; border: 2px solid var(--background-modifier-border-hover); clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+.checkbox-container.is-enabled { background: var(--interactive-accent); border-color: var(--interactive-accent); }
+.checkbox-container::after { border-radius: 0; }

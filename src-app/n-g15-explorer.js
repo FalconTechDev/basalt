@@ -6,7 +6,7 @@ import { debounceCall } from "./timing.js";
 import { displayTooltip, hideTooltip, setElementTooltip } from "./tooltip.js";
 import { ng15CollapsibleTreeItem, ng15MakeTreePusher } from "./n-g15-tree.js";
 import { sortOrderComparator, SEARCH_SORT_GROUPS, SEARCH_SORT_ORDERS, searchSortLabel, preventMiddleClick } from "./n-g11-view.js";
-import { flattenUniqueFiles } from "./bookmarks.js";
+import { ng08FlattenUniqueFiles } from "./n-g08-bookmarks.js";
 import { stringCollator } from "./misc.js";
 
 const NG15_CLIPBOARD_MIME = "basalt/files";
@@ -75,7 +75,7 @@ export function ng15DefineFileExplorerItemBase(host) {
     const view = this.view;
     const selected = view.tree.getSelectedItems().filter((item) => item.file);
     const files = selected.length > 0 && selected.indexOf(this) >= 0
-      ? flattenUniqueFiles(selected.map((item) => item.file))
+      ? ng08FlattenUniqueFiles(selected.map((item) => item.file))
       : [this.file];
     if (!files || files.length === 0) return null;
     const app = view.app;
@@ -816,7 +816,7 @@ export function ng15DefineFileExplorerView(host) {
     if (event) event.preventDefault();
     const items = this.tree.getSelectedItems();
     const files = items.map((item) => item.file).filter(Boolean);
-    const unique = flattenUniqueFiles(files);
+    const unique = ng08FlattenUniqueFiles(files);
     for (const file of unique) {
       if (file === this.app.vault.getRoot()) continue;
       if (this.app.vault.getAbstractFileByPath(file.path)) this.app.fileManager.promptForDeletion(file);
@@ -988,7 +988,7 @@ export function ng15DefineFileExplorerView(host) {
 
   proto.handleCopy = function (event) {
     const items = this.tree.getSelectedItems();
-    const paths = flattenUniqueFiles(items.map((item) => item.file).filter(Boolean)).map((f) => f.path);
+    const paths = ng08FlattenUniqueFiles(items.map((item) => item.file).filter(Boolean)).map((f) => f.path);
     this._writeClipboard(event, "copy", paths);
     this.itemsBeingCut = [];
     this.clearCutMarks();
@@ -996,7 +996,7 @@ export function ng15DefineFileExplorerView(host) {
 
   proto.handleCut = function (event) {
     const items = this.tree.getSelectedItems();
-    const files = flattenUniqueFiles(items.map((item) => item.file).filter(Boolean));
+    const files = ng08FlattenUniqueFiles(items.map((item) => item.file).filter(Boolean));
     this._writeClipboard(event, "cut", files.map((f) => f.path));
     this.itemsBeingCut = files;
     for (const item of items) item.selfEl && item.selfEl.addClass("is-cut");
@@ -1018,7 +1018,7 @@ export function ng15DefineFileExplorerView(host) {
       const f = vault.getAbstractFileByPath(p);
       if (f) sources.push(f);
     }
-    const unique = flattenUniqueFiles(sources);
+    const unique = ng08FlattenUniqueFiles(sources);
     if (unique.length === 0) return;
     // destination: focused folder -> itself, focused file -> its parent, none -> root
     const focused = this.tree.focusedItem;
@@ -1291,7 +1291,7 @@ export function ng15DefineFileExplorerView(host) {
   proto.showFilesMenu = function (event, files) {
     const menu = new host.Menu();
     menu.addSections(["title", "open", "action-primary", "action", "info", "info.copy", "view", "system", "", "danger"]);
-    const unique = flattenUniqueFiles(files);
+    const unique = ng08FlattenUniqueFiles(files);
     if (host.Platform.isPhone) {
       menu.addItem((item) => item.setSection("title").setTitle(String(unique.length)).setDisabled(true));
     }
@@ -1310,7 +1310,7 @@ export function ng15DefineFileExplorerView(host) {
   };
 
   proto.newFolderFromSelection = async function (files) {
-    const unique = flattenUniqueFiles(files);
+    const unique = ng08FlattenUniqueFiles(files);
     if (unique.length === 0) return;
     // create a folder next to the first file's parent, then move the movable files into it
     const first = unique[0];

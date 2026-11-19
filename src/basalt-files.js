@@ -9,12 +9,12 @@
   css.textContent = `
     .bsf { display: flex; flex-direction: column; height: 100%; outline: none; }
     .bsf-bar { display: flex; gap: 2px; padding: 8px 8px 4px; align-items: center; flex-wrap: wrap; }
-    .bsf-bar button { background: transparent; box-shadow: none; padding: 4px; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 4px; clip-path: none; }
+    .bsf-bar button { background: transparent; box-shadow: none; padding: 4px; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 0; clip-path: none; }
     .bsf-bar button:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .bsf-bar button.is-on { color: var(--interactive-accent); }
     .bsf-bar svg, .bsf-i svg { width: 16px; height: 16px; flex: none; } .bsf-bar button .svg-icon { width: 16px; height: 16px; }
     .bsf-find { padding: 0 8px 6px; } .bsf-find input { width: 100%; height: 28px; font-size: var(--font-ui-small); }
     .bsf-tree { flex: 1; overflow: auto; padding: 2px 4px 24px; }
-    .bsf-r { display: flex; align-items: center; gap: 6px; height: 28px; padding-right: 8px; margin: 1px 0; border-radius: 4px; cursor: pointer; border-left: 2px solid transparent; user-select: none; color: var(--text-muted); }
+    .bsf-r { display: flex; align-items: center; gap: 6px; height: 28px; padding-right: 8px; margin: 1px 0; border-radius: 0; cursor: pointer; border-left: 2px solid transparent; user-select: none; color: var(--text-muted); }
     .bsf-r:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bsf-r.is-sel { background: color-mix(in srgb, var(--interactive-accent) 12%, transparent); color: var(--text-normal); }
     .bsf-r.is-active { background: color-mix(in srgb, var(--interactive-accent) 20%, transparent); border-left-color: var(--interactive-accent); color: var(--text-normal); }
@@ -28,7 +28,7 @@
     .bsf-i { color: var(--text-faint); display: inline-flex; } .bsf-r.is-dir .bsf-i { color: var(--interactive-accent); }
     .bsf-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bsf-n small { color: var(--text-faint); font-weight: 400; margin-left: 8px; }
-    .bsf-ext { display: inline-flex; align-items: center; justify-content: center; width: 22px; flex: none; height: 14px; padding: 0; margin: 1px -3px 1px -3px; border-radius: 3px; font-size: 8px; font-weight: 700; color: #fff; letter-spacing: .2px; text-transform: uppercase; box-sizing: border-box; line-height: 1; }
+    .bsf-ext { display: inline-flex; align-items: center; justify-content: center; width: 22px; flex: none; height: 14px; padding: 0; margin: 1px -3px 1px -3px; border-radius: 0; font-size: 8px; font-weight: 700; color: #fff; letter-spacing: .2px; text-transform: uppercase; box-sizing: border-box; line-height: 1; }
     .bsf-x { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
     .bsf-pin { width: 12px; height: 12px; color: var(--interactive-accent); flex: none; }
     .bsf-r input.bsf-ren { flex: 1; min-width: 0; height: 22px; padding: 0 4px; }
@@ -38,20 +38,20 @@
   document.head.appendChild(css);
 
   const ICON = {
-    folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
-    note: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
-    canvas: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>',
-    image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',
-    file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
-    car: '<path d="M9 6l6 6-6 6"/>',
-    pin: '<path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/>',
-    newNote: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
-    newDir: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 11v6M9 14h6"/>',
-    newCanvas: '<rect x="3" y="3" width="8" height="8"/><path d="M17 3v8M13 7h8M3 15h18M3 19h18"/>',
-    sort: '<path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/>',
-    collapse: '<path d="M4 8l4 4-4 4M20 8l-4 4 4 4"/>',
+    folder: '<path d="M3 5H10L12 7H21V19H3Z"/>',
+    note: '<path d="M5 3H15L19 7V21H5Z M15 3V7H19 M9 13H15 M9 17H13"/>',
+    canvas: '<path d="M3 4H11V10H3Z M14 14H21V20H14Z M11 7H17V14"/>',
+    image: '<path d="M3 4H21V20H3Z M3 17L8 12L12 16L16 12L21 17 M15 8H17"/>',
+    file: '<path d="M5 3H15L19 7V21H5Z M15 3V7H19"/>',
+    car: '<path d="M9 5L16 12L9 19"/>',
+    pin: '<path d="M9 3H15V9L18 12V14H6V12L9 9Z M12 14V21"/>',
+    newNote: '<path d="M4 20V16L16 4L20 8L8 20Z M13 7L17 11"/>',
+    newDir: '<path d="M3 5H10L12 7H21V19H3Z M12 10V16 M9 13H15"/>',
+    newCanvas: '<path d="M3 4H11V10H3Z M14 14H21V20H14Z M11 7H17V14"/>',
+    sort: '<path d="M8 20V5 M4 9L8 5L12 9 M16 4V19 M12 15L16 19L20 15"/>',
+    collapse: '<path d="M8 5L12 9L16 5 M8 19L12 15L16 19"/>',
   };
-  const svg = (k, cls) => `<svg class="${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+  const svg = (k, cls) => `<svg class="${cls || ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" stroke-linejoin="miter">${ICON[k]}</svg>`;
   const IMG = /^(png|jpe?g|gif|webp|bmp|svg|avif|ico)$/i;
   const kindOf = (f) => (f.children ? "folder" : f.extension === "md" ? "note" : f.extension === "canvas" ? "canvas" : IMG.test(f.extension) ? "image" : "file");
   const HIDDEN = /^\.(basalt|obsidian|git|trash)$/;

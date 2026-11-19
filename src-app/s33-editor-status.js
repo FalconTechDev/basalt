@@ -2,10 +2,10 @@
 // active markdown view's mode (read / source / live-preview).
 import { setElementTooltip } from "./tooltip.js";
 import { env } from "./env.js";
-import { s33EditorStatusStrings } from "./s33-canvas-edge.js";
+import { ng20EditorStatusStrings } from "./n-g20-shared.js";
 
 export function defineS33EditorStatusPlugin(host) {
-  const t = () => s33EditorStatusStrings();
+  const t = () => ng20EditorStatusStrings();
 
   function EditorStatusPlugin() {
     this.id = "editor-status";

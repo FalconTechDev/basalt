@@ -2,7 +2,7 @@
 // Option keys/defaults, the shared link-hover tracker, the published-site
 // link index (cache/aliases/permalinks), subpath resolution and graph data.
 import { env } from "./env.js";
-import { s09GraphNodeData } from "./s09-graph.js";
+import { ng19GraphNodeData } from "./n-g19-graph-util.js";
 
 const ng12Has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
@@ -264,7 +264,7 @@ export async function ng12PublishGraphData(cache, options) {
   for (const path of Object.keys(cache.cache)) {
     if (!isMd(path) && !showAttachments) continue;
     const entry = cache.cache[path];
-    const node = (nodes[path] = s09GraphNodeData());
+    const node = (nodes[path] = ng19GraphNodeData());
     const links = node.links;
     env().ST(entry, (ref) => {
       const target = env().ET(ref.link);
@@ -273,7 +273,7 @@ export async function ng12PublishGraphData(cache, options) {
         if (showAttachments || isMd(dest)) links[dest] = true;
       } else if (hideUnresolved) {
         links[target] = true;
-        if (!nodes[target]) nodes[target] = s09GraphNodeData("unresolved");
+        if (!nodes[target]) nodes[target] = ng19GraphNodeData("unresolved");
       }
     });
     if (showTags) {
@@ -281,7 +281,7 @@ export async function ng12PublishGraphData(cache, options) {
       if (tags) {
         for (const tag of tags) {
           links[tag] = true;
-          if (!nodes[tag]) nodes[tag] = s09GraphNodeData("tag");
+          if (!nodes[tag]) nodes[tag] = ng19GraphNodeData("tag");
         }
       }
     }

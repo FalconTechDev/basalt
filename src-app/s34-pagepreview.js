@@ -9,7 +9,7 @@
 import { inherit } from "./inherit.js";
 import { debounceCall } from "./timing.js";
 import { ng12PublishHoverMove } from "./n-g12-s09-core.js";
-import { s04ModifierDisplayNames } from "./s04-menu.js";
+import { ng08S04ModifierDisplayNames } from "./n-g08-menu.js";
 
 const PLUGIN_ID = "page-preview";
 const pagePreviewT = (host) => host.t.plugins.pagePreview;
@@ -34,7 +34,7 @@ export function definePagePreviewSettingTab(host) {
     const containerEl = this.containerEl;
     containerEl.empty();
     const group = new host.SettingGroup(containerEl).setHeading(
-      pagePreviewT(host).labelRequireMod({ key: s04ModifierDisplayNames(host.isMacLike).Mod })
+      pagePreviewT(host).labelRequireMod({ key: ng08S04ModifierDisplayNames(host.isMacLike).Mod })
     );
     const overrides = this.instance.overrides;
     const sources = this.app.workspace.hoverLinkSources;

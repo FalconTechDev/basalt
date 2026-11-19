@@ -4,7 +4,7 @@
 
 import { env } from "./env.js";
 import { escapeRegExp } from "./metadata-helpers.js";
-import { s04CreateDeferred } from "./s04-themes.js";
+import { s04CreateDeferred } from "./n-g24-themes.js";
 import { s07weakMapFactory } from "./s07-helpers.js";
 
 // ---------- lazy script loaders (were `Hv(...)` declarators) ----------

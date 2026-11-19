@@ -1,0 +1,23 @@
+/* floating surfaces (design sheet "04 Menus"): menu, dialog, suggest/palette, tooltip, notice.
+   One cut shape; the 1px frame is repeated along the cut by two corner gradients because clip-path eats the border there. */
+.menu, .modal, .suggestion-container, .tooltip, .notice {
+  --bs-edge: var(--menu-border-color, var(--background-modifier-border));
+  border-radius: 0;
+  box-shadow: none;
+  position: relative;
+}
+.menu { position: fixed; --bs-cut: var(--bs-cut-md); }
+.modal { --bs-cut: var(--bs-cut-lg); clip-path: polygon(var(--bs-cut-lg) 0, 100% 0, 100% calc(100% - var(--bs-cut-lg)), calc(100% - var(--bs-cut-lg)) 100%, 0 100%, 0 var(--bs-cut-lg)); }
+.suggestion-container, .notice, .tooltip { --bs-cut: var(--bs-cut-md); clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md)); }
+.menu::after, .modal::after, .suggestion-container::after, .tooltip::after, .notice::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  background:
+    linear-gradient(135deg, transparent calc(50% - .5px), var(--bs-edge) calc(50% - .5px), var(--bs-edge) calc(50% + .5px), transparent calc(50% + .5px)) top left / var(--bs-cut) var(--bs-cut) no-repeat,
+    linear-gradient(135deg, transparent calc(50% - .5px), var(--bs-edge) calc(50% - .5px), var(--bs-edge) calc(50% + .5px), transparent calc(50% + .5px)) bottom right / var(--bs-cut) var(--bs-cut) no-repeat;
+}
+.tooltip .tooltip-arrow { display: none; }
+.menu-item, .suggestion-item { border-radius: 0; }
+.menu-item.selected:not(.is-disabled):not(.is-label), .suggestion-item.is-selected { background: var(--bs-accent-soft); color: var(--text-normal); box-shadow: inset 2px 0 0 var(--interactive-accent); }
+.menu-item.is-warning:not(.is-disabled).selected { background: color-mix(in srgb, var(--text-error) 14%, transparent); box-shadow: inset 2px 0 0 var(--text-error); }
+.menu-separator { margin: var(--size-2-3) 0; border-top: 1px solid var(--background-modifier-border); }
+.notice { border-left: 2px solid var(--interactive-accent); }

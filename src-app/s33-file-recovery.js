@@ -10,11 +10,11 @@ import { parentPath, extensionOf, withoutMd } from "./path.js";
 import { formatBytes } from "./text.js";
 import { copyTextToClipboard } from "./n-g11-view.js";
 import { s10RenderDiffView } from "./s10-app.js";
-import { s33FileRecoveryStrings, s33InterfaceStrings, s33SyncStrings } from "./s33-canvas-edge.js";
+import { ng20FileRecoveryStrings, ng20InterfaceStrings, ng20SyncStrings } from "./n-g20-shared.js";
 
-const recoveryStrings = s33FileRecoveryStrings;
-const interfaceStrings = s33InterfaceStrings;
-const syncStrings = s33SyncStrings;
+const recoveryStrings = ng20FileRecoveryStrings;
+const interfaceStrings = ng20InterfaceStrings;
+const syncStrings = ng20SyncStrings;
 
 // ---- history modal (R8) ---------------------------------------------------------------------
 
