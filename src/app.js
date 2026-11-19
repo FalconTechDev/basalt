@@ -64784,11 +64784,11 @@ function defineNg20CanvasEdge(host) {
       this.zIndex = canvas_.getZIndex();
 
       this.lineGroupEl = createSvg("g", "canvas-edge");
-      this.interactionPathEl = this.lineGroupEl.createSvg("path", { cls: "canvas-edge-interaction" });
-      this.pathEl = this.lineGroupEl.createSvg("path", { cls: "canvas-edge-path" });
+      this.interactionPathEl = this.lineGroupEl.createSvg("path", { cls: "canvas-interaction-path" });
+      this.pathEl = this.lineGroupEl.createSvg("path", { cls: "canvas-display-path" });
       this.lineEndGroupEl = createSvg("g", "canvas-edge-ends");
-      this.fromEndEl = this.lineEndGroupEl.createSvg("path", { cls: "canvas-edge-end" });
-      this.toEndEl = this.lineEndGroupEl.createSvg("path", { cls: "canvas-edge-end" });
+      this.fromEndEl = this.lineEndGroupEl.createSvg("path", { cls: "canvas-edge-end canvas-path-end" });
+      this.toEndEl = this.lineEndGroupEl.createSvg("path", { cls: "canvas-edge-end canvas-path-end" });
 
       this.labelElement = createDiv("canvas-path-label-wrapper");
       this.labelElement.style.pointerEvents = "none";
