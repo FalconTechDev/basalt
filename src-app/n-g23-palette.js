@@ -347,7 +347,6 @@ export function defineQuickSwitcherModalBase(host) {
     const file = app.workspace.getActiveFile && app.workspace.getActiveFile();
     return file ? file.path : "";
   };
-}
   inherit(QuickSwitcherModalBase, host.SuggestModal);
   ng23Sw.ModalBase = QuickSwitcherModalBase;
   host.s13QuickSwitcherModalBase = QuickSwitcherModalBase;
