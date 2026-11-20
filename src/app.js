@@ -65956,7 +65956,7 @@ function defineNg20CanvasMenu(host) {
         const b = this.menuEl.createDiv(`canvas-menu-button ${cls}`);
         b.setAttr("aria-label", title);
         b.setAttr("title", title);
-        if (icon) b.createDiv("canvas-menu-icon").setText(icon);
+        if (icon) { const ic = b.createDiv("canvas-menu-icon"); try { window.__bsApi.setIcon(ic, "lucide-" + icon); } catch (e) { ic.setText(icon); } }
         b.addEventListener("click", (evt) => { evt.stopPropagation(); fn(); });
         return b;
       };
