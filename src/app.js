@@ -509,390 +509,6 @@ function describeCliOptions(options) {
   }).join(" ");
 }
 
-// ---- misc.js ----
-// Small numeric, array, date, colour, binary and geometry helpers.
-
-// ---------- numbers ----------
-
-/** Smaller of two (the second one when they compare equal or are unordered). */
-function smaller(a, b) { return a < b ? a : b; }
-/** Larger of two (the second one when they compare equal or are unordered). */
-function larger(a, b) { return a > b ? a : b; }
-
-/** Perceptual-slider mapping: (t^(1-x) - t) / (1 - t). */
-function sliderCurve(x, t) { return (Math.pow(t, 1 - x) - t) / (1 - t); }
-/** Inverse of sliderCurve. */
-function sliderCurveInverse(x, t) { return 1 - Math.log(x * (1 - t) + t) / Math.log(t); }
-
-/** [0, 1/n, 2/n, ... 1]. */
-function unitSteps(n) {
-  const out = [];
-  for (let i = 0; i <= n; i++) out.push(i / n);
-  return out;
-}
-
-/** Random lowercase hex string of the given length. */
-function randomHex(length) {
-  let out = "";
-  for (let i = 0; i < length; i++) out += ((16 * Math.random()) | 0).toString(16);
-  return out;
-}
-
-// ---------- arrays ----------
-
-/** Array.isArray(v) ? v : [v]. */
-function asArray(v) { return Array.isArray(v) ? v : [v]; }
-
-/** Distinct values, first occurrence wins. */
-function distinct(list) { return Array.from(new Set(list)); }
-
-/** Moves list[from] to index `to` in place and returns the list. */
-function moveItem(list, from, to) {
-  const item = list[from];
-  list.splice(from, 1);
-  list.splice(to, 0, item);
-  return list;
-}
-
-/** Removes and returns the first item matching the predicate, null when none. */
-function takeFirst(list, test) {
-  const at = list.findIndex((x) => test(x));
-  return at < 0 ? null : list.splice(at, 1)[0];
-}
-
-/** Binary search with a three-way probe (0 found, <0 look left, >0 look right); the item or null. */
-function binaryFind(list, probe) {
-  let lo = 0;
-  let hi = list.length - 1;
-  while (lo <= hi) {
-    const mid = Math.floor((lo + hi) / 2);
-    const item = list[mid];
-    const way = probe(item);
-    if (way === 0) return item;
-    if (way < 0) hi = mid - 1; else lo = mid + 1;
-  }
-  return null;
-}
-
-/** True when the value is an array of strings (null/undefined entries ignored when `lenient`). */
-function isStringArray(value, lenient = false) {
-  if (!Array.isArray(value)) return false;
-  const items = lenient ? value.filter((v) => v != null) : value;
-  return items.every((v) => typeof v === "string");
-}
-
-/** Concatenation that avoids copying when one side is empty. */
-function joinLists(a, b) {
-  if (!a.length) return b;
-  return b.length ? a.concat(b) : a;
-}
-
-/** Window of an undo history: the last `keep` entries before index `at`, plus `entry`. */
-function pushHistory(history, at, keep, entry) {
-  const from = at + 1 > keep + 20 ? at - keep - 1 : 0;
-  const out = history.slice(from, at);
-  out.push(entry);
-  return out;
-}
-
-/** Shallow list equality using ===. */
-function sameItems(a, b) {
-  return a == b || (a.length == b.length && a.every((x, i) => x === b[i]));
-}
-
-/** List equality with a custom comparer. */
-function sameItemsBy(a, b, eq) {
-  if (a.length != b.length) return false;
-  for (let i = 0; i < a.length; i++) if (!eq(a[i], b[i])) return false;
-  return true;
-}
-
-/** Sorts items by their index in `order` (unknown ids go last). */
-function sortByOrder(items, order) {
-  const rank = new Map(order.map((id, i) => [id, i]));
-  return items.sort((a, b) => (rank.get(a.id) ?? Infinity) - (rank.get(b.id) ?? Infinity));
-}
-
-/** Penalty for a match list used when ordering suggestions. */
-function matchPenalty(matches) {
-  return matches ? -(matches.length + (matches.length > 0 ? matches[0][0] / 10 : 0)) : 0;
-}
-
-// ---------- dates ----------
-
-/** Two digits, zero padded. */
-function twoDigits(n) { return String(n).padStart(2, "0"); }
-const two = twoDigits;
-
-/** "2024-03-07" in local time. */
-function localDate(d) {
-  return `${String(d.getFullYear()).padStart(4, "0")}-${two(d.getMonth() + 1)}-${two(d.getDate())}`;
-}
-
-/** "09:05:03" in local time. */
-function localTime(d) {
-  return `${two(d.getHours())}:${two(d.getMinutes())}:${two(d.getSeconds())}`;
-}
-
-// ---------- colour ----------
-
-/** Hex byte "0a". */
-function hexByte(n) {
-  const h = n.toString(16);
-  return h.length === 1 ? "0" + h : h;
-}
-
-/** {r,g,b} -> "#rrggbb". */
-function rgbToHex({ r, g, b }) { return "#" + hexByte(r) + hexByte(g) + hexByte(b); }
-
-/** {r,g,b} -> 0xrrggbb. */
-function rgbToInt({ r, g, b }) { return (r << 16) | (g << 8) | b; }
-
-/** True for colours that need dark text on top. */
-function isLightColor({ r, g, b }) { return (299 * r + 587 * g + 114 * b) / 1000 >= 150; }
-
-function hueToChannel(p, q, t) {
-  if (t < 0) t += 1;
-  if (t > 1) t -= 1;
-  if (t < 1 / 6) return p + 6 * (q - p) * t;
-  if (t < 0.5) return q;
-  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-  return p;
-}
-
-/** {h: 0-360, s: 0-100, l: 0-100} -> {r,g,b} (0-255). */
-function hslToRgb({ h, s, l }) {
-  h /= 360; s /= 100; l /= 100;
-  let r, g, b;
-  if (s == 0) {
-    r = g = b = l;
-  } else {
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hueToChannel(p, q, h + 1 / 3);
-    g = hueToChannel(p, q, h);
-    b = hueToChannel(p, q, h - 1 / 3);
-  }
-  return { r: Math.round(255 * r), g: Math.round(255 * g), b: Math.round(255 * b) };
-}
-
-/** {r,g,b} (0-255) -> {h,s,l} with integer degrees / percents. */
-function rgbToHsl({ r, g, b }) {
-  r /= 255; g /= 255; b /= 255;
-  const hi = Math.max(r, g, b);
-  const lo = Math.min(r, g, b);
-  const l = (hi + lo) / 2;
-  let h, s;
-  if (hi == lo) {
-    h = s = 0;
-  } else {
-    const d = hi - lo;
-    s = l > 0.5 ? d / (2 - hi - lo) : d / (hi + lo);
-    switch (hi) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-    h /= 6;
-  }
-  return { h: Math.round(360 * h), s: Math.round(100 * s), l: Math.round(100 * l) };
-}
-
-const HEX_COLOR = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
-const RGB_TRIPLE = /^\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*$/i;
-
-/** "#aabbcc" / "aabbcc" -> {r,g,b}, null if not a hex colour. */
-function parseHexColor(text) {
-  const m = HEX_COLOR.exec(text);
-  return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : null;
-}
-
-/** "12, 34, 56" -> "#0c2238"; anything else is returned unchanged. */
-function rgbTripleToHex(text) {
-  const m = text.match(RGB_TRIPLE);
-  return m ? rgbToHex({ r: parseInt(m[1]), g: parseInt(m[2]), b: parseInt(m[3]) }) : text;
-}
-
-// ---------- binary ----------
-
-/** "00ff10" -> ArrayBuffer. */
-function hexToBuffer(hex) {
-  const n = hex.length / 2;
-  const buf = new ArrayBuffer(n);
-  const view = new Uint8Array(buf);
-  for (let i = 0; i < n; i++) view[i] = parseInt(hex.substr(2 * i, 2), 16);
-  return buf;
-}
-
-/** ArrayBuffer -> "00ff10". */
-function bufferToHex(buf) {
-  const bytes = new Uint8Array(buf);
-  let out = "";
-  for (let i = 0; i < bytes.length; i++) out += (bytes[i] >>> 4).toString(16) + (bytes[i] & 15).toString(16);
-  return out;
-}
-
-/** String made of the given char codes. */
-function stringFromCodes(codes) { return String.fromCharCode.apply(String, Array.from(codes)); }
-
-/** Big-endian signed 32-bit read. */
-function readInt32BE(bytes, at) { return (bytes[at] << 24) | (bytes[at + 1] << 16) | (bytes[at + 2] << 8) | bytes[at + 3]; }
-/** Little-endian signed 32-bit read. */
-function readInt32LE(bytes, at) { return bytes[at] | (bytes[at + 1] << 8) | (bytes[at + 2] << 16) | (bytes[at + 3] << 24); }
-
-/** Copy of exactly the bytes a typed array views. */
-function ownBuffer(view) { return view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength); }
-
-/** Fills with zero, returns the array. */
-function zeroFill(list) {
-  for (let i = 0; i < list.length; i++) list[i] = 0;
-  return list;
-}
-
-/** dst[i] ^= src[i]. */
-function xorInto(dst, src) { for (let i = 0; i < src.length; i++) dst[i] ^= src[i]; }
-
-/** Clears the top bit of two bytes (ed25519-style clamp helper). */
-function clearTopBits(bytes) {
-  bytes[bytes.length - 8] &= 127;
-  bytes[bytes.length - 4] &= 127;
-}
-
-/** fs.Stats -> {ctime, mtime, size} (birth time in ms). */
-function statFromNode(st) { return { ctime: Math.round(st.birthtimeMs), mtime: Math.round(st.mtimeMs), size: st.size }; }
-/** Capacitor-style stat -> {ctime, mtime, size}. */
-function statFromCapacitor(st) { return { ctime: Math.round(st.ctime), mtime: Math.round(st.mtime), size: st.size }; }
-
-// ---------- geometry ----------
-
-const point = (x, y) => ({ x, y });
-const rect = (x, y, width, height) => ({ x, y, width, height });
-const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-const rectAt = (origin, size) => rect(origin.x, origin.y, size.width, size.height);
-const pointOfEvent = (e) => point(e.clientX, e.clientY);
-const box = (minX, minY, maxX, maxY) => ({ minX, minY, maxX, maxY });
-const boxOfPoints = (a, b) => box(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.max(a.x, b.x), Math.max(a.y, b.y));
-const boxOfRect = (r) => box(r.x, r.y, r.x + r.width, r.y + r.height);
-const rectOfBox = (b) => rect(b.minX, b.minY, b.maxX - b.minX, b.maxY - b.minY);
-const boxContains = (a, b) => a.minX <= b.minX && a.minY <= b.minY && a.maxX >= b.maxX && a.maxY >= b.maxY;
-const boxCenter = (b) => point((b.minX + b.maxX) / 2, (b.minY + b.maxY) / 2);
-const centeredOrigin = (p, size) => point(p.x - size.width / 2, p.y - size.height / 2);
-const boxX = (p) => p.x;
-const boxY = (p) => p.y;
-
-/** Smallest box around many boxes (an inverted infinite box for none). */
-function boxUnion(boxes) {
-  const out = box(Infinity, Infinity, -Infinity, -Infinity);
-  for (const b of boxes) {
-    out.minX = Math.min(out.minX, b.minX);
-    out.minY = Math.min(out.minY, b.minY);
-    out.maxX = Math.max(out.maxX, b.maxX);
-    out.maxY = Math.max(out.maxY, b.maxY);
-  }
-  return out;
-}
-
-/** The box grown by `by` on every side. */
-function boxGrow(b, by) { return box(b.minX - by, b.minY - by, b.maxX + by, b.maxY + by); }
-
-/** Four corners plus centre of a box. */
-function boxPoints(b) {
-  const { minX, minY, maxX, maxY } = b;
-  return [point(minX, minY), point(minX, maxY), point(maxX, minY), point(maxX, maxY), point((minX + maxX) / 2, (minY + maxY) / 2)];
-}
-
-/** Midpoint of one side ("top" | "right" | "bottom" | "left") of a box; undefined for other names. */
-function sideMidpoint(b, side) {
-  switch (side) {
-    case "top": return point((b.minX + b.maxX) / 2, b.minY);
-    case "right": return point(b.maxX, (b.minY + b.maxY) / 2);
-    case "bottom": return point((b.minX + b.maxX) / 2, b.maxY);
-    case "left": return point(b.minX, (b.minY + b.maxY) / 2);
-  }
-}
-
-/** `p` moved `by` pixels out of a side. */
-function pushOut(side, p, by) {
-  switch (side) {
-    case "left": return { x: p.x - by, y: p.y };
-    case "right": return { x: p.x + by, y: p.y };
-    case "top": return { x: p.x, y: p.y - by };
-    case "bottom": return { x: p.x, y: p.y + by };
-  }
-}
-
-/** Distinct, sorted (x then y) corner/centre points of many boxes. */
-function sortedBoxPoints(boxes) {
-  const all = [].concat(...boxes.map(boxPoints));
-  all.sort((a, b) => (a.x !== b.x ? a.x - b.x : a.y - b.y));
-  const out = [];
-  let prev = null;
-  for (const p of all) {
-    if (prev && prev.x === p.x && prev.y === p.y) continue;
-    prev = p;
-    out.push(p);
-  }
-  return out;
-}
-
-/** Bezier edge between two anchor points leaving through the given sides. */
-function bezierEdge(from, fromSide, to, toSide) {
-  const dist = distance(from, to);
-  const reach = Math.min(Math.max(dist / 2, 70), 150);
-  const c1 = pushOut(fromSide, from, reach);
-  const c2 = pushOut(toSide, to, reach);
-  return { from, to, cp1: c1, cp2: c2, path: `M${from.x},${from.y} C${c1.x},${c1.y} ${c2.x},${c2.y} ${to.x},${to.y}` };
-}
-
-/** Sorts an array in place by a numeric key. */
-function sortByKey(list, key) { list.sort((a, b) => key(a) - key(b)); }
-
-/** Sorts search hits by descending score. */
-function sortHitsByScore(hits) { hits.sort((a, b) => b.match.score - a.match.score); }
-
-/** Adds an offset to every [from, to] pair, in place. */
-function shiftRanges(ranges, by) {
-  if (ranges) for (const r of ranges) { r[0] += by; r[1] += by; }
-}
-
-// ---------- clipboard / urls ----------
-
-/** True when `value` parses as an absolute URL. */
-function isUrl(value) {
-  if (!value) return false;
-  try { new URL(value); } catch (e) { return false; }
-  return true;
-}
-
-/** Copies `text` to the clipboard (execCommand fallback where the async API is missing). */
-function copyText(text) {
-  if (navigator.clipboard && navigator.permissions) {
-    navigator.clipboard.writeText(text);
-  } else {
-    const area = activeDocument.createElement("textarea");
-    area.value = text;
-    area.style.top = "0";
-    area.style.left = "0";
-    area.style.position = "fixed";
-    activeDocument.body.appendChild(area);
-    try {
-      area.focus({ preventScroll: true });
-      area.select();
-      activeDocument.execCommand("copy");
-    } catch (e) {}
-    activeDocument.body.removeChild(area);
-  }
-}
-
-/** Runs `callback` now when `el` is already laid out, otherwise once it is inserted (and shown). */
-function focusWhenShown(el, callback) {
-  if (el.isShown()) callback();
-  else el.onNodeInserted(callback, true);
-}
-
-/** Locale-aware "sort" comparator used for user-visible name lists. */
-const stringCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
-
 // ---- frontmatter.js ----
 // Reading well-known properties (tags, aliases ...) out of parsed frontmatter.
 
@@ -71490,6 +71106,2818 @@ function s04CssManager(host) {
 const ng24CommunityThemesUrl = s04CommunityThemesUrl;
 const ng24CommunityThemesEmpty = s04CommunityThemesEmpty;
 
+// ---- n-g25-crypto.js ----
+// n-g25-crypto.js — clean-room vault crypto (spec g25 Part J).
+// AES-GCM via WebCrypto; AES-SIV (S2V/CMAC/CTR) built on AES-CBC single-block
+// primitive; scrypt via node crypto or window.scrypt; HKDF via WebCrypto.
+
+const ng25cSubtle = () => globalThis.crypto.subtle;
+const ng25cText = () => new TextEncoder();
+
+function utf8Bytes(str) {
+  const u8 = ng25cText().encode(String(str));
+  return u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
+}
+function utf8String(buf) {
+  return new TextDecoder().decode(buf);
+}
+function decodeBase64(b64) {
+  const bin = atob(b64);
+  const u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return u8.buffer;
+}
+function encodeBase64(buf) {
+  const u8 = new Uint8Array(buf);
+  let s = "";
+  const CH = 0x8000;
+  for (let i = 0; i < u8.length; i += CH) {
+    s += String.fromCharCode.apply(null, u8.subarray(i, i + CH));
+  }
+  return btoa(s);
+}
+async function sha256(data) {
+  return ng25cSubtle().digest("SHA-256", data);
+}
+function randomSaltHex() {
+  const u8 = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(u8);
+  return ng25cHex(u8);
+}
+function constantTimeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let acc = 0;
+  for (let i = 0; i < a.length; i++) acc |= a[i] ^ b[i];
+  return acc === 0;
+}
+
+function ng25cHex(buf) {
+  const u8 = new Uint8Array(buf);
+  let s = "";
+  for (let i = 0; i < u8.length; i++) s += u8[i].toString(16).padStart(2, "0");
+  return s;
+}
+function ng25cUnhex(hex) {
+  const s = String(hex);
+  const u8 = new Uint8Array(s.length / 2);
+  for (let i = 0; i < u8.length; i++) u8[i] = parseInt(s.substr(i * 2, 2), 16);
+  return u8;
+}
+function ng25cConcat(parts) {
+  const u8s = parts.map((p) => p instanceof Uint8Array ? p : new Uint8Array(p));
+  const out = new Uint8Array(u8s.reduce((n, u) => n + u.length, 0));
+  let o = 0;
+  for (const u of u8s) { out.set(u, o); o += u.length; }
+  return out;
+}
+
+let ng25cSivErrorClass = null;
+function defineSivError() {
+  if (!ng25cSivErrorClass) {
+    ng25cSivErrorClass = class SivError extends Error {
+      constructor(msg) { super(msg); this.name = "SivError"; }
+    };
+  }
+  return ng25cSivErrorClass;
+}
+
+async function importAesGcmKey(rawKey) {
+  return ng25cSubtle().importKey("raw", rawKey, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+}
+
+async function aesGcmEncrypt(data, key, iv) {
+  const ivBytes = iv === undefined
+    ? (() => { const u = new Uint8Array(12); globalThis.crypto.getRandomValues(u); return u; })()
+    : (iv instanceof Uint8Array ? iv : new Uint8Array(iv));
+  const ct = await ng25cSubtle().encrypt({ name: "AES-GCM", iv: ivBytes }, key, data);
+  return ng25cConcat([ivBytes, new Uint8Array(ct)]).buffer;
+}
+
+async function aesGcmDecrypt(data, key) {
+  const u8 = new Uint8Array(data);
+  if (u8.length < 12) throw new Error("Encrypted data is bad");
+  if (u8.length === 12) return new ArrayBuffer(0);
+  const pt = await ng25cSubtle().decrypt({ name: "AES-GCM", iv: u8.subarray(0, 12) }, key, u8.subarray(12));
+  return pt;
+}
+
+const NG25_SCRYPT_PARAMS = { N: 32768, r: 8, p: 1, maxmem: 67108864 };
+
+async function deriveScryptKey(password, salt) {
+  const pwd = new TextEncoder().encode(String(password).normalize("NFKC"));
+  const st = new TextEncoder().encode(String(salt).normalize("NFKC"));
+  const req = (typeof window !== "undefined" && window.require) || (typeof globalThis !== "undefined" && globalThis.require);
+  if (req) {
+    const nodeCrypto = req("crypto");
+    return await new Promise((resolve, reject) => {
+      nodeCrypto.scrypt(pwd, st, 32, NG25_SCRYPT_PARAMS, (err, key) => {
+        if (err) reject(err);
+        else resolve(key.buffer.slice(key.byteOffset, key.byteOffset + key.byteLength));
+      });
+    });
+  }
+  if (typeof window !== "undefined" && window.scrypt && window.scrypt.scrypt) {
+    const out = await window.scrypt.scrypt(pwd, st, NG25_SCRYPT_PARAMS.N, NG25_SCRYPT_PARAMS.r, NG25_SCRYPT_PARAMS.p, 32);
+    const u8 = out instanceof Uint8Array ? out : new Uint8Array(out);
+    return u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
+  }
+  throw new TypeError("No scrypt implementation available");
+}
+
+async function ng25cHkdfBits(ikm, salt, info, bits) {
+  const key = await ng25cSubtle().importKey("raw", ikm, "HKDF", false, ["deriveBits"]);
+  const out = await ng25cSubtle().deriveBits(
+    { name: "HKDF", hash: "SHA-256", salt, info },
+    key, bits);
+  return new Uint8Array(out);
+}
+
+async function ng25cHkdfKeyBytes(ikm, salt, info) {
+  const bits = await ng25cHkdfBits(ikm, salt, info, 256);
+  return bits.buffer.slice(bits.byteOffset, bits.byteOffset + bits.byteLength);
+}
+
+async function ng25cImportAesCbc(rawKey, usages) {
+  return ng25cSubtle().importKey("raw", rawKey, { name: "AES-CBC" }, true, usages);
+}
+
+async function ng25cImportAesCbcExtractable(rawKey) {
+  return ng25cSubtle().importKey("raw", rawKey, { name: "AES-CBC" }, true, ["encrypt"]);
+}
+
+async function deriveKeyHash(keyBytes, salt, version) {
+  if (version === 0) {
+    return ng25cHex(await sha256(keyBytes));
+  }
+  if (version === 2 || version === 3) {
+    const bits = await ng25cHkdfKeyBytes(keyBytes, utf8Bytes(salt || ""), utf8Bytes("ObsidianKeyHash"));
+    const key = await ng25cImportAesCbcExtractable(bits);
+    const raw = await ng25cSubtle().exportKey("raw", key);
+    return ng25cHex(raw);
+  }
+  throw new Error("Encryption version not supported");
+}
+
+async function deriveVaultSecrets(password, salt, version) {
+  const key = await deriveScryptKey(password, salt);
+  const keyhash = await deriveKeyHash(key, salt, version);
+  return { key, keyhash };
+}
+
+async function deriveVaultKeyhash(password, salt, version) {
+  const key = await deriveScryptKey(password, salt);
+  return deriveKeyHash(key, salt, version);
+}
+
+// ---- AES block primitive: AES-CBC with zero IV over one block yields AES-ECB.
+async function ng25cAesBlock(key, block16) {
+  const ct = await ng25cSubtle().encrypt({ name: "AES-CBC", iv: new Uint8Array(16) }, key, block16);
+  return new Uint8Array(ct).subarray(0, 16);
+}
+
+function ng25cXor16(a, b) {
+  const out = new Uint8Array(16);
+  for (let i = 0; i < 16; i++) out[i] = a[i] ^ b[i];
+  return out;
+}
+
+async function ng25cCbcCrypt(key, iv, data) {
+  // data length multiple of 16; manual CBC so we control padding-free blocks.
+  const out = new Uint8Array(data.length);
+  let prev = iv;
+  for (let o = 0; o < data.length; o += 16) {
+    const block = ng25cXor16(new Uint8Array(data.subarray(o, o + 16)), prev);
+    const enc = await ng25cAesBlock(key, block);
+    out.set(enc, o);
+    prev = enc;
+  }
+  return out;
+}
+
+function defineBlock() {
+  return class Block {
+    constructor() { this.data = new Uint8Array(16); }
+    dbl() {
+      const msb = this.data[0] & 0x80;
+      let carry = 0;
+      for (let i = 15; i >= 0; i--) {
+        const nc = this.data[i] >> 7;
+        this.data[i] = ((this.data[i] << 1) & 0xff) | carry;
+        carry = nc;
+      }
+      if (msb) this.data[15] ^= 0x87;
+      return this;
+    }
+    static fromBytes(b) { const blk = new this(); blk.data.set(b.subarray(0, 16)); return blk; }
+  };
+}
+
+const ng25cBlockProto = defineBlock();
+
+function ng25cDouble(block16) {
+  const b = ng25cBlockProto.fromBytes(block16);
+  b.dbl();
+  return b.data;
+}
+
+function defineCmac() {
+  return class Cmac {
+    constructor(key) { this.key = key; this._k1 = null; this._k2 = null; this._done = false; }
+    async _subkeys() {
+      if (!this._k1) {
+        const l = await ng25cAesBlock(this.key, new Uint8Array(16));
+        this._k1 = ng25cDouble(l);
+        this._k2 = ng25cDouble(this._k1);
+      }
+      return [this._k1, this._k2];
+    }
+    async mac(data) {
+      const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
+      const [k1, k2] = await this._subkeys();
+      const n = u8.length % 16 === 0 ? u8.length / 16 : Math.ceil(u8.length / 16);
+      const parts = [];
+      for (let i = 0; i < n - 1; i++) parts.push(u8.subarray(i * 16, i * 16 + 16));
+      const rem = u8.subarray((n - 1) * 16);
+      let last;
+      if (u8.length > 0 && u8.length % 16 === 0) {
+        last = ng25cXor16(new Uint8Array(rem), k1);
+      } else {
+        const pad = new Uint8Array(16);
+        pad.set(rem);
+        pad[rem.length] = 0x80;
+        last = ng25cXor16(pad, k2);
+      }
+      parts.push(last);
+      const cbcIn = ng25cConcat(parts);
+      const ct = await ng25cCbcCrypt(this.key, new Uint8Array(16), cbcIn);
+      return ct.subarray(ct.length - 16);
+    }
+    finish() { this._done = true; }
+    update() { if (this._done) throw new Error("Cannot update finished CMAC"); }
+  };
+}
+
+function defineCbcMacCipher() {
+  return class CbcMacCipher {
+    constructor(key) { this._cmac = new (defineCmac())(key); }
+    async mac(data) { return this._cmac.mac(data); }
+  };
+}
+
+function defineCtrCipher() {
+  return class CtrCipher {
+    constructor(key) { this.key = key; }
+    async crypt(counter16, data) {
+      const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
+      const out = new Uint8Array(u8.length);
+      const ctr = new Uint8Array(counter16.subarray(0, 16));
+      for (let o = 0; o < u8.length; o += 16) {
+        const ks = await ng25cAesBlock(this.key, ctr);
+        const n = Math.min(16, u8.length - o);
+        for (let i = 0; i < n; i++) out[o + i] = u8[o + i] ^ ks[i];
+        // increment 128-bit big-endian counter
+        for (let i = 15; i >= 0; i--) { ctr[i] = (ctr[i] + 1) & 0xff; if (ctr[i] !== 0) break; }
+      }
+      return out;
+    }
+  };
+}
+
+function ng25cSivMask(tag) {
+  const t = new Uint8Array(tag);
+  const n = t.length;
+  if (n >= 16) { t[n - 8] &= 0x7f; t[n - 4] &= 0x7f; }
+  return t;
+}
+
+function defineSiv() {
+  const SivError = defineSivError();
+  return class Siv {
+    constructor(macKey, ctrKey) {
+      this._cmac = new (defineCmac())(macKey);
+      this._ctr = new (defineCtrCipher())(ctrKey);
+    }
+    async _s2v(plaintext) {
+      // RFC 5297 S2V over the single vector element P (no associated data).
+      const p = plaintext instanceof Uint8Array ? plaintext : new Uint8Array(plaintext);
+      const d = new Uint8Array(await this._cmac.mac(new Uint8Array(16)));
+      let t;
+      if (p.length >= 16) {
+        t = new Uint8Array(p);
+        for (let i = 0; i < 16; i++) t[p.length - 16 + i] ^= d[i];
+      } else {
+        const dd = ng25cDouble(d);
+        t = new Uint8Array(16);
+        t.set(p);
+        t[p.length] = 0x80;
+        for (let i = 0; i < 16; i++) t[i] ^= dd[i];
+      }
+      return new Uint8Array(await this._cmac.mac(t));
+    }
+    async seal(plaintext) {
+      const pt = plaintext instanceof Uint8Array ? plaintext : new Uint8Array(plaintext);
+      const tag = ng25cSivMask(await this._s2v(pt));
+      const ct = await this._ctr.crypt(tag, pt);
+      return ng25cConcat([tag, ct]);
+    }
+    async open(data) {
+      const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
+      if (u8.length < 16) throw new SivError("AES-SIV: ciphertext is truncated");
+      const tag = u8.subarray(0, 16);
+      const ct = u8.subarray(16);
+      const pt = new Uint8Array(await this._ctr.crypt(ng25cSivMask(tag), ct));
+      const expected = ng25cSivMask(await this._s2v(pt));
+      if (!constantTimeEqual(expected, ng25cSivMask(tag))) {
+        pt.fill(0);
+        throw new SivError("AES-SIV: ciphertext verification failure!");
+      }
+      return pt;
+    }
+  };
+}
+
+function defineCipherV0() {
+  return class CipherV0 {
+    constructor(keyBytes, salt) {
+      this.encryptionVersion = 0;
+      this._salt = salt || "";
+      this._ready = this._setup(keyBytes);
+    }
+    async _setup(keyBytes) {
+      const kb = new Uint8Array(keyBytes);
+      if (kb.length !== 32) throw new Error("Invalid encryption key");
+      this.keyHash = ng25cHex(await sha256(kb.buffer.slice(kb.byteOffset, kb.byteOffset + kb.byteLength)));
+      this.cryptoKey = await importAesGcmKey(kb.buffer.slice(kb.byteOffset, kb.byteOffset + kb.byteLength));
+    }
+    async encrypt(data) { await this._ready; return aesGcmEncrypt(data, this.cryptoKey); }
+    async decrypt(data) { await this._ready; return aesGcmDecrypt(data, this.cryptoKey); }
+    async deterministicEncodeStr(str) {
+      await this._ready;
+      const ivFull = new Uint8Array(await sha256(utf8Bytes(str)));
+      const iv = ivFull.subarray(0, 12);
+      const ct = await aesGcmEncrypt(utf8Bytes(str), this.cryptoKey, iv);
+      return ng25cHex(ct);
+    }
+    async deterministicDecodeStr(hex) {
+      await this._ready;
+      const pt = await aesGcmDecrypt(ng25cUnhex(hex).buffer, this.cryptoKey);
+      return utf8String(pt);
+    }
+  };
+}
+
+function defineCipherV23() {
+  return class CipherV23 {
+    constructor(keyBytes, salt, version) {
+      this.encryptionVersion = version;
+      this._salt = salt || "";
+      this._ready = this._setup(keyBytes, version);
+    }
+    async _setup(keyBytes, version) {
+      if (version !== 2 && version !== 3) throw new Error("Encryption version not supported");
+      const kb = new Uint8Array(keyBytes);
+      if (kb.length !== 32) throw new Error("Invalid encryption key");
+      const raw = kb.buffer.slice(kb.byteOffset, kb.byteOffset + kb.byteLength);
+      this.keyHash = await deriveKeyHash(raw, this._salt, version);
+      const saltBytes = utf8Bytes(this._salt);
+      const emptySalt = new Uint8Array(0);
+      const macBits = await ng25cHkdfKeyBytes(raw, saltBytes, utf8Bytes("ObsidianAesSivMac"));
+      const encBits = await ng25cHkdfKeyBytes(raw, saltBytes, utf8Bytes("ObsidianAesSivEnc"));
+      const gcmBits = await ng25cHkdfKeyBytes(raw, emptySalt, utf8Bytes("ObsidianAesGcm"));
+      const macKey = await ng25cImportAesCbc(macBits, ["encrypt"]);
+      const encKey = await ng25cImportAesCbc(encBits, ["encrypt"]);
+      this.siv = new (defineSiv())(macKey, encKey);
+      this.cryptoKey = await ng25cSubtle().importKey("raw", gcmBits, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+    }
+    async encrypt(data) { await this._ready; return aesGcmEncrypt(data, this.cryptoKey); }
+    async decrypt(data) { await this._ready; return aesGcmDecrypt(data, this.cryptoKey); }
+    async deterministicEncodeStr(str) {
+      await this._ready;
+      const sealed = await this.siv.seal(utf8Bytes(str));
+      return ng25cHex(sealed);
+    }
+    async deterministicDecodeStr(hex) {
+      await this._ready;
+      const opened = await this.siv.open(ng25cUnhex(hex));
+      return utf8String(opened.buffer.slice(opened.byteOffset, opened.byteOffset + opened.byteLength));
+    }
+  };
+}
+
+async function initCipher(version, keyBytes, salt) {
+  if (version === 0) {
+    const C = defineCipherV0();
+    const c = new C(keyBytes, salt);
+    await c._ready;
+    return c;
+  }
+  if (version === 2 || version === 3) {
+    const C = defineCipherV23();
+    const c = new C(keyBytes, salt, version);
+    await c._ready;
+    return c;
+  }
+  throw new Error("Encryption version not supported");
+}
+
+async function requestVaultAccess(vaultUid, password, salt, host, encryptionVersion) {
+  const keyhash = await deriveVaultKeyhash(password, salt, encryptionVersion);
+  return acctVaultAccess(account.token, vaultUid, keyhash, host, encryptionVersion);
+}
+
+function parseCallbackUrl(url) {
+  if (typeof url !== "string" || !url.startsWith("obsidian://")) return null;
+  const rest = url.slice("obsidian://".length);
+  // vault branch: obsidian://vault/<a>/<b>… (hash/query not parsed here)
+  const pathPart = rest.split("#")[0].split("?")[0];
+  const vm = /^vault\/([^/]+)(?:\/([\s\S]*))?$/.exec(pathPart);
+  if (vm) {
+    return { action: "open", vault: decodeURIComponent(vm[1]), file: vm[2] !== undefined ? decodeURIComponent(vm[2]) : "" };
+  }
+  let hash = "";
+  let work = rest;
+  const hi = work.indexOf("#");
+  if (hi >= 0) { hash = work.slice(hi + 1); work = work.slice(0, hi); }
+  const params = {};
+  const qi = work.indexOf("?");
+  let action = work;
+  if (qi >= 0) {
+    action = work.slice(0, qi);
+    const query = work.slice(qi + 1);
+    for (const pair of query.split("&")) {
+      if (!pair) continue;
+      const eq = pair.indexOf("=");
+      const k = eq < 0 ? pair : pair.slice(0, eq);
+      const v = eq < 0 ? "true" : pair.slice(eq + 1);
+      try { params[decodeURIComponent(k)] = decodeURIComponent(v); }
+      catch { params[k] = v; }
+    }
+  }
+  action = action.replace(/\/+$/, "");
+  if (hash) params.hash = hash;
+  params.action = decodeURIComponent(action);
+  return params;
+}
+
+function renderFormattedDescription(containerEl, text) {
+  const lines = String(text).split("\n");
+  for (const line of lines) {
+    const p = document.createElement("p");
+    const re = /\*\*(.*?)\*\*/g;
+    let last = 0, m;
+    while ((m = re.exec(line))) {
+      if (m.index > last) p.appendChild(document.createTextNode(line.slice(last, m.index)));
+      const strong = document.createElement("strong");
+      strong.textContent = m[1];
+      p.appendChild(strong);
+      last = m.index + m[0].length;
+    }
+    if (last < line.length) p.appendChild(document.createTextNode(line.slice(last)));
+    containerEl.appendChild(p);
+  }
+}
+
+const SYNCABLE_FEATURE_TYPES = ["app", "appearance", "appearance-data", "hotkey", "core-plugin", "core-plugin-data"];
+const MEDIA_FEATURE_TYPES = ["image", "audio", "pdf", "video"];
+
+// ---- n-g25-locale.js ----
+// g25 clean-room locale display names: BCP-47-ish tag -> 'Lang (Region)(extra)...'.
+// Tables: ISO 639-1 (2-letter), ISO 639-2 *bibliographic* (3-letter; terminologic codes absent),
+// ISO 3166-1 alpha-2 (uppercase keys, English short names). Unknown codes pass through verbatim.
+
+const NG25_LANG2 = {"aa":"Afar","ab":"Abkhazian","af":"Afrikaans","ak":"Akan","sq":"Albanian","am":"Amharic","ar":"Arabic","an":"Aragonese","hy":"Armenian","as":"Assamese","av":"Avaric","ae":"Avestan","ay":"Aymara","az":"Azerbaijani","ba":"Bashkir","bm":"Bambara","eu":"Basque","be":"Belarusian","bn":"Bengali","bh":"Bihari languages","bi":"Bislama","bs":"Bosnian","br":"Breton","bg":"Bulgarian","my":"Burmese","ca":"Catalan","ch":"Chamorro","ce":"Chechen","zh":"Chinese","cu":"Church Slavic","cv":"Chuvash","kw":"Cornish","co":"Corsican","cr":"Cree","cs":"Czech","da":"Danish","dv":"Divehi","nl":"Dutch","dz":"Dzongkha","en":"English","eo":"Esperanto","et":"Estonian","ee":"Ewe","fo":"Faroese","fj":"Fijian","fi":"Finnish","fr":"French","fy":"Western Frisian","ff":"Fulah","ka":"Georgian","de":"German","gd":"Gaelic","ga":"Irish","gl":"Galician","gv":"Manx","el":"Greek, Modern (1453-)","gn":"Guarani","gu":"Gujarati","ht":"Haitian","ha":"Hausa","he":"Hebrew","hz":"Herero","hi":"Hindi","ho":"Hiri Motu","hr":"Croatian","hu":"Hungarian","ig":"Igbo","is":"Icelandic","io":"Ido","ii":"Sichuan Yi","iu":"Inuktitut","ie":"Interlingue","ia":"Interlingua (International Auxiliary Language Association)","id":"Indonesian","ik":"Inupiaq","it":"Italian","jv":"Javanese","ja":"Japanese","kl":"Kalaallisut","kn":"Kannada","ks":"Kashmiri","kr":"Kanuri","kk":"Kazakh","km":"Central Khmer","ki":"Kikuyu","rw":"Kinyarwanda","ky":"Kirghiz","kv":"Komi","kg":"Kongo","ko":"Korean","kj":"Kuanyama","ku":"Kurdish","lo":"Lao","la":"Latin","lv":"Latvian","li":"Limburgan","ln":"Lingala","lt":"Lithuanian","lb":"Luxembourgish","lu":"Luba-Katanga","lg":"Ganda","mk":"Macedonian","mh":"Marshallese","ml":"Malayalam","mi":"Maori","mr":"Marathi","ms":"Malay","mg":"Malagasy","mt":"Maltese","mn":"Mongolian","na":"Nauru","nv":"Navajo","nr":"South Ndebele","nd":"North Ndebele","ng":"Ndonga","ne":"Nepali","nn":"Norwegian Nynorsk","nb":"Norwegian Bokmål","no":"Norwegian","ny":"Chichewa","oc":"Occitan (post 1500)","oj":"Ojibwa","or":"Oriya","om":"Oromo","os":"Ossetian","pa":"Panjabi","fa":"Persian","pi":"Pali","pl":"Polish","pt":"Portuguese","ps":"Pushto","qu":"Quechua","rm":"Romansh","ro":"Romanian","rn":"Rundi","ru":"Russian","sg":"Sango","sa":"Sanskrit","si":"Sinhala","sk":"Slovak","sl":"Slovenian","se":"Northern Sami","sm":"Samoan","sn":"Shona","sd":"Sindhi","so":"Somali","st":"Sotho, Southern","es":"Spanish","sc":"Sardinian","sr":"Serbian","ss":"Swati","su":"Sundanese","sw":"Swahili","sv":"Swedish","ty":"Tahitian","ta":"Tamil","tt":"Tatar","te":"Telugu","tg":"Tajik","tl":"Tagalog","th":"Thai","bo":"Tibetan","ti":"Tigrinya","to":"Tonga (Tonga Islands)","tn":"Tswana","ts":"Tsonga","tk":"Turkmen","tr":"Turkish","tw":"Twi","ug":"Uighur","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","ve":"Venda","vi":"Vietnamese","vo":"Volapük","cy":"Welsh","wa":"Walloon","wo":"Wolof","xh":"Xhosa","yi":"Yiddish","yo":"Yoruba","za":"Zhuang","zu":"Zulu"};
+const NG25_LANG3 = {"aar":"Afar","abk":"Abkhazian","ace":"Achinese","ach":"Acoli","ada":"Adangme","ady":"Adyghe","afa":"Afro-Asiatic languages","afh":"Afrihili","afr":"Afrikaans","ain":"Ainu","aka":"Akan","akk":"Akkadian","alb":"Albanian","ale":"Aleut","alg":"Algonquian languages","alt":"Southern Altai","amh":"Amharic","ang":"English, Old (ca.450-1100)","anp":"Angika","apa":"Apache languages","ara":"Arabic","arc":"Official Aramaic (700-300 BCE)","arg":"Aragonese","arm":"Armenian","arn":"Mapudungun","arp":"Arapaho","art":"Artificial languages","arw":"Arawak","asm":"Assamese","ast":"Asturian","ath":"Athapascan languages","aus":"Australian languages","ava":"Avaric","ave":"Avestan","awa":"Awadhi","aym":"Aymara","aze":"Azerbaijani","bad":"Banda languages","bai":"Bamileke languages","bak":"Bashkir","bal":"Baluchi","bam":"Bambara","ban":"Balinese","baq":"Basque","bas":"Basa","bat":"Baltic languages","bej":"Beja","bel":"Belarusian","bem":"Bemba","ben":"Bengali","ber":"Berber languages","bho":"Bhojpuri","bih":"Bihari languages","bik":"Bikol","bin":"Bini","bis":"Bislama","bla":"Siksika","bnt":"Bantu languages","bos":"Bosnian","bra":"Braj","bre":"Breton","btk":"Batak languages","bua":"Buriat","bug":"Buginese","bul":"Bulgarian","bur":"Burmese","byn":"Blin","cad":"Caddo","cai":"Central American Indian languages","car":"Galibi Carib","cat":"Catalan","cau":"Caucasian languages","ceb":"Cebuano","cel":"Celtic languages","cha":"Chamorro","chb":"Chibcha","che":"Chechen","chg":"Chagatai","chi":"Chinese","chk":"Chuukese","chm":"Mari","chn":"Chinook jargon","cho":"Choctaw","chp":"Chipewyan","chr":"Cherokee","chu":"Church Slavic","chv":"Chuvash","chy":"Cheyenne","cmc":"Chamic languages","cnr":"Montenegrin","cop":"Coptic","cor":"Cornish","cos":"Corsican","cpe":"Creoles and pidgins, English based","cpf":"Creoles and pidgins, French-based","cpp":"Creoles and pidgins, Portuguese-based","cre":"Cree","crh":"Crimean Tatar","crp":"Creoles and pidgins","csb":"Kashubian","cus":"Cushitic languages","cze":"Czech","dak":"Dakota","dan":"Danish","dar":"Dargwa","day":"Land Dayak languages","del":"Delaware","den":"Slave (Athapascan)","dgr":"Dogrib","din":"Dinka","div":"Divehi","doi":"Dogri","dra":"Dravidian languages","dsb":"Lower Sorbian","dua":"Duala","dum":"Dutch, Middle (ca.1050-1350)","dut":"Dutch","dyu":"Dyula","dzo":"Dzongkha","efi":"Efik","egy":"Egyptian (Ancient)","eka":"Ekajuk","elx":"Elamite","eng":"English","enm":"English, Middle (1100-1500)","epo":"Esperanto","est":"Estonian","ewe":"Ewe","ewo":"Ewondo","fan":"Fang","fao":"Faroese","fat":"Fanti","fij":"Fijian","fil":"Filipino","fin":"Finnish","fiu":"Finno-Ugrian languages","fon":"Fon","fre":"French","frm":"French, Middle (ca.1400-1600)","fro":"French, Old (842-ca.1400)","frr":"Northern Frisian","frs":"Eastern Frisian","fry":"Western Frisian","ful":"Fulah","fur":"Friulian","gaa":"Ga","gay":"Gayo","gba":"Gbaya","gem":"Germanic languages","geo":"Georgian","ger":"German","gez":"Geez","gil":"Gilbertese","gla":"Gaelic","gle":"Irish","glg":"Galician","glv":"Manx","gmh":"German, Middle High (ca.1050-1500)","goh":"German, Old High (ca.750-1050)","gon":"Gondi","gor":"Gorontalo","got":"Gothic","grb":"Grebo","grc":"Greek, Ancient (to 1453)","gre":"Greek, Modern (1453-)","grn":"Guarani","gsw":"Swiss German","guj":"Gujarati","gwi":"Gwich'in","hai":"Haida","hat":"Haitian","hau":"Hausa","haw":"Hawaiian","heb":"Hebrew","her":"Herero","hil":"Hiligaynon","him":"Himachali languages","hin":"Hindi","hit":"Hittite","hmn":"Hmong","hmo":"Hiri Motu","hrv":"Croatian","hsb":"Upper Sorbian","hun":"Hungarian","hup":"Hupa","iba":"Iban","ibo":"Igbo","ice":"Icelandic","ido":"Ido","iii":"Sichuan Yi","ijo":"Ijo languages","iku":"Inuktitut","ile":"Interlingue","ilo":"Iloko","ina":"Interlingua (International Auxiliary Language Association)","inc":"Indic languages","ind":"Indonesian","ine":"Indo-European languages","inh":"Ingush","ipk":"Inupiaq","ira":"Iranian languages","iro":"Iroquoian languages","ita":"Italian","jav":"Javanese","jbo":"Lojban","jpn":"Japanese","jpr":"Judeo-Persian","jrb":"Judeo-Arabic","kaa":"Kara-Kalpak","kab":"Kabyle","kac":"Kachin","kal":"Kalaallisut","kam":"Kamba","kan":"Kannada","kar":"Karen languages","kas":"Kashmiri","kau":"Kanuri","kaw":"Kawi","kaz":"Kazakh","kbd":"Kabardian","kha":"Khasi","khi":"Khoisan languages","khm":"Central Khmer","kho":"Khotanese","kik":"Kikuyu","kin":"Kinyarwanda","kir":"Kirghiz","kmb":"Kimbundu","kok":"Konkani","kom":"Komi","kon":"Kongo","kor":"Korean","kos":"Kosraean","kpe":"Kpelle","krc":"Karachay-Balkar","krl":"Karelian","kro":"Kru languages","kru":"Kurukh","kua":"Kuanyama","kum":"Kumyk","kur":"Kurdish","kut":"Kutenai","lad":"Ladino","lah":"Lahnda","lam":"Lamba","lao":"Lao","lat":"Latin","lav":"Latvian","lez":"Lezghian","lim":"Limburgan","lin":"Lingala","lit":"Lithuanian","lol":"Mongo","loz":"Lozi","ltz":"Luxembourgish","lua":"Luba-Lulua","lub":"Luba-Katanga","lug":"Ganda","lui":"Luiseno","lun":"Lunda","luo":"Luo (Kenya and Tanzania)","lus":"Lushai","mac":"Macedonian","mad":"Madurese","mag":"Magahi","mah":"Marshallese","mai":"Maithili","mak":"Makasar","mal":"Malayalam","man":"Mandingo","mao":"Maori","map":"Austronesian languages","mar":"Marathi","mas":"Masai","may":"Malay","mdf":"Moksha","mdr":"Mandar","men":"Mende","mga":"Irish, Middle (900-1200)","mic":"Mi'kmaq","min":"Minangkabau","mis":"Uncoded languages","mkh":"Mon-Khmer languages","mlg":"Malagasy","mlt":"Maltese","mnc":"Manchu","mni":"Manipuri","mno":"Manobo languages","moh":"Mohawk","mon":"Mongolian","mos":"Mossi","mul":"Multiple languages","mun":"Munda languages","mus":"Creek","mwl":"Mirandese","mwr":"Marwari","myn":"Mayan languages","myv":"Erzya","nah":"Nahuatl languages","nai":"North American Indian languages","nap":"Neapolitan","nau":"Nauru","nav":"Navajo","nbl":"South Ndebele","nde":"North Ndebele","ndo":"Ndonga","nds":"Low German","nep":"Nepali","new":"Nepal Bhasa","nia":"Nias","nic":"Niger-Kordofanian languages","niu":"Niuean","nno":"Norwegian Nynorsk","nob":"Norwegian Bokmål","nog":"Nogai","non":"Norse, Old","nor":"Norwegian","nqo":"N'Ko","nso":"Pedi","nub":"Nubian languages","nwc":"Classical Newari","nya":"Chichewa","nym":"Nyamwezi","nyn":"Nyankole","nyo":"Nyoro","nzi":"Nzima","oci":"Occitan (post 1500)","oji":"Ojibwa","ori":"Oriya","orm":"Oromo","osa":"Osage","oss":"Ossetian","ota":"Turkish, Ottoman (1500-1928)","oto":"Otomian languages","paa":"Papuan languages","pag":"Pangasinan","pal":"Pahlavi","pam":"Pampanga","pan":"Panjabi","pap":"Papiamento","pau":"Palauan","peo":"Persian, Old (ca.600-400 B.C.)","per":"Persian","phi":"Philippine languages","phn":"Phoenician","pli":"Pali","pol":"Polish","pon":"Pohnpeian","por":"Portuguese","pra":"Prakrit languages","pro":"Provençal, Old (to 1500)","pus":"Pushto","qaa-qtz":"Reserved for local use","que":"Quechua","raj":"Rajasthani","rap":"Rapanui","rar":"Rarotongan","roa":"Romance languages","roh":"Romansh","rom":"Romany","rum":"Romanian","run":"Rundi","rup":"Aromanian","rus":"Russian","sad":"Sandawe","sag":"Sango","sah":"Yakut","sai":"South American Indian languages","sal":"Salishan languages","sam":"Samaritan Aramaic","san":"Sanskrit","sas":"Sasak","sat":"Santali","scn":"Sicilian","sco":"Scots","sel":"Selkup","sem":"Semitic languages","sga":"Irish, Old (to 900)","sgn":"Sign Languages","shn":"Shan","sid":"Sidamo","sin":"Sinhala","sio":"Siouan languages","sit":"Sino-Tibetan languages","sla":"Slavic languages","slo":"Slovak","slv":"Slovenian","sma":"Southern Sami","sme":"Northern Sami","smi":"Sami languages","smj":"Lule Sami","smn":"Inari Sami","smo":"Samoan","sms":"Skolt Sami","sna":"Shona","snd":"Sindhi","snk":"Soninke","sog":"Sogdian","som":"Somali","son":"Songhai languages","sot":"Sotho, Southern","spa":"Spanish","srd":"Sardinian","srn":"Sranan Tongo","srp":"Serbian","srr":"Serer","ssa":"Nilo-Saharan languages","ssw":"Swati","suk":"Sukuma","sun":"Sundanese","sus":"Susu","sux":"Sumerian","swa":"Swahili","swe":"Swedish","syc":"Classical Syriac","syr":"Syriac","tah":"Tahitian","tai":"Tai languages","tam":"Tamil","tat":"Tatar","tel":"Telugu","tem":"Timne","ter":"Tereno","tet":"Tetum","tgk":"Tajik","tgl":"Tagalog","tha":"Thai","tib":"Tibetan","tig":"Tigre","tir":"Tigrinya","tiv":"Tiv","tkl":"Tokelau","tlh":"Klingon","tli":"Tlingit","tmh":"Tamashek","tog":"Tonga (Nyasa)","ton":"Tonga (Tonga Islands)","tpi":"Tok Pisin","tsi":"Tsimshian","tsn":"Tswana","tso":"Tsonga","tuk":"Turkmen","tum":"Tumbuka","tup":"Tupi languages","tur":"Turkish","tut":"Altaic languages","tvl":"Tuvalu","twi":"Twi","tyv":"Tuvinian","udm":"Udmurt","uga":"Ugaritic","uig":"Uighur","ukr":"Ukrainian","umb":"Umbundu","und":"Undetermined","urd":"Urdu","uzb":"Uzbek","vai":"Vai","ven":"Venda","vie":"Vietnamese","vol":"Volapük","vot":"Votic","wak":"Wakashan languages","wal":"Wolaitta","war":"Waray","was":"Washo","wel":"Welsh","wen":"Sorbian languages","wln":"Walloon","wol":"Wolof","xal":"Kalmyk","xho":"Xhosa","yao":"Yao","yap":"Yapese","yid":"Yiddish","yor":"Yoruba","ypk":"Yupik languages","zap":"Zapotec","zbl":"Blissymbols","zen":"Zenaga","zgh":"Standard Moroccan Tamazight","zha":"Zhuang","znd":"Zande languages","zul":"Zulu","zun":"Zuni","zxx":"No linguistic content","zza":"Zaza"};
+const NG25_COUNTRY = {"AW":"Aruba","AF":"Afghanistan","AO":"Angola","AI":"Anguilla","AX":"Åland Islands","AL":"Albania","AD":"Andorra","AE":"United Arab Emirates","AR":"Argentina","AM":"Armenia","AS":"American Samoa","AQ":"Antarctica","TF":"French Southern Territories","AG":"Antigua & Barbuda","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BI":"Burundi","BE":"Belgium","BJ":"Benin","BF":"Burkina Faso","BD":"Bangladesh","BG":"Bulgaria","BH":"Bahrain","BS":"Bahamas","BA":"Bosnia & Herzegovina","BL":"St. Barthélemy","SH":"St. Helena","BY":"Belarus","BZ":"Belize","BM":"Bermuda","BO":"Bolivia","BQ":"Caribbean Netherlands","BR":"Brazil","BB":"Barbados","BN":"Brunei","BT":"Bhutan","BV":"Bouvet Island","BW":"Botswana","CF":"Central African Republic","CA":"Canada","CC":"Cocos (Keeling) Islands","CH":"Switzerland","CL":"Chile","CN":"China","CI":"Côte d’Ivoire","CM":"Cameroon","CD":"Congo - Kinshasa","CG":"Congo - Brazzaville","CK":"Cook Islands","CO":"Colombia","KM":"Comoros","CV":"Cape Verde","CR":"Costa Rica","CU":"Cuba","CW":"Curaçao","CX":"Christmas Island","KY":"Cayman Islands","CY":"Cyprus","CZ":"Czechia","DE":"Germany","DJ":"Djibouti","DM":"Dominica","DK":"Denmark","DO":"Dominican Republic","DZ":"Algeria","EC":"Ecuador","EG":"Egypt","ER":"Eritrea","EH":"Western Sahara","ES":"Spain","EE":"Estonia","ET":"Ethiopia","FI":"Finland","FJ":"Fiji","FK":"Falkland Islands","FR":"France","FO":"Faroe Islands","FM":"Micronesia","GA":"Gabon","GB":"United Kingdom","GE":"Georgia","GG":"Guernsey","GH":"Ghana","GI":"Gibraltar","GN":"Guinea","GP":"Guadeloupe","GM":"Gambia","GW":"Guinea-Bissau","GQ":"Equatorial Guinea","GR":"Greece","GD":"Grenada","GL":"Greenland","GT":"Guatemala","GF":"French Guiana","GU":"Guam","GY":"Guyana","HK":"Hong Kong SAR China","HM":"Heard & McDonald Islands","HN":"Honduras","HR":"Croatia","HT":"Haiti","HU":"Hungary","ID":"Indonesia","IM":"Isle of Man","IN":"India","IO":"British Indian Ocean Territory","IE":"Ireland","IR":"Iran","IQ":"Iraq","IS":"Iceland","IL":"Israel","IT":"Italy","JM":"Jamaica","JE":"Jersey","JO":"Jordan","JP":"Japan","KZ":"Kazakhstan","KE":"Kenya","KG":"Kyrgyzstan","KH":"Cambodia","KI":"Kiribati","KN":"St. Kitts & Nevis","KR":"South Korea","XK":"Kosovo","KW":"Kuwait","LA":"Laos","LB":"Lebanon","LR":"Liberia","LY":"Libya","LC":"St. Lucia","LI":"Liechtenstein","LK":"Sri Lanka","LS":"Lesotho","LT":"Lithuania","LU":"Luxembourg","LV":"Latvia","MO":"Macao SAR China","MF":"St. Martin","MA":"Morocco","MC":"Monaco","MD":"Moldova","MG":"Madagascar","MV":"Maldives","MX":"Mexico","MH":"Marshall Islands","MK":"North Macedonia","ML":"Mali","MT":"Malta","MM":"Myanmar (Burma)","ME":"Montenegro","MN":"Mongolia","MP":"Northern Mariana Islands","MZ":"Mozambique","MR":"Mauritania","MS":"Montserrat","MQ":"Martinique","MU":"Mauritius","MW":"Malawi","MY":"Malaysia","YT":"Mayotte","NA":"Namibia","NC":"New Caledonia","NE":"Niger","NF":"Norfolk Island","NG":"Nigeria","NI":"Nicaragua","NU":"Niue","NL":"Netherlands","NO":"Norway","NP":"Nepal","NR":"Nauru","NZ":"New Zealand","OM":"Oman","PK":"Pakistan","PA":"Panama","PN":"Pitcairn Islands","PE":"Peru","PH":"Philippines","PW":"Palau","PG":"Papua New Guinea","PL":"Poland","PR":"Puerto Rico","KP":"North Korea","PT":"Portugal","PY":"Paraguay","PS":"Palestinian Territories","PF":"French Polynesia","QA":"Qatar","RE":"Réunion","RO":"Romania","RU":"Russia","RW":"Rwanda","SA":"Saudi Arabia","SD":"Sudan","SN":"Senegal","SG":"Singapore","GS":"South Georgia & South Sandwich Islands","SJ":"Svalbard & Jan Mayen","SB":"Solomon Islands","SL":"Sierra Leone","SV":"El Salvador","SM":"San Marino","SO":"Somalia","PM":"St. Pierre & Miquelon","RS":"Serbia","SS":"South Sudan","ST":"São Tomé & Príncipe","SR":"Suriname","SK":"Slovakia","SI":"Slovenia","SE":"Sweden","SZ":"Eswatini","SX":"Sint Maarten","SC":"Seychelles","SY":"Syria","TC":"Turks & Caicos Islands","TD":"Chad","TG":"Togo","TH":"Thailand","TJ":"Tajikistan","TK":"Tokelau","TM":"Turkmenistan","TL":"Timor-Leste","TO":"Tonga","TT":"Trinidad & Tobago","TN":"Tunisia","TR":"Türkiye","TV":"Tuvalu","TW":"Taiwan","TZ":"Tanzania","UG":"Uganda","UA":"Ukraine","UM":"U.S. Outlying Islands","UY":"Uruguay","US":"United States","UZ":"Uzbekistan","VA":"Vatican City","VC":"St. Vincent & Grenadines","VE":"Venezuela","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","VN":"Vietnam","VU":"Vanuatu","WF":"Wallis & Futuna","WS":"Samoa","YE":"Yemen","ZA":"South Africa","ZM":"Zambia","ZW":"Zimbabwe"};
+
+function ng25Lang(code) {
+  return code.length === 2 ? NG25_LANG2[code] : code.length === 3 ? NG25_LANG3[code] : undefined;
+}
+
+/** 'en-US' -> 'English (United States)'; falsy -> ''. */
+function s65LocaleName(locale) {
+  if (!locale) return '';
+  const parts = String(locale).split('-');
+  if (parts.length === 1) {
+    const p = parts[0];
+    return NG25_LANG2[p] || NG25_LANG3[p] || NG25_COUNTRY[p] || locale;
+  }
+  const lang = ng25Lang(parts[0]) || parts[0];
+  let out = lang + ' (' + (NG25_COUNTRY[parts[1]] || parts[1]) + ')';
+  for (let i = 2; i < parts.length; i++) out += '(' + parts[i] + ')';
+  return out;
+}
+
+// ---- n-g25-misc.js ----
+// g25 clean-room misc helpers: numbers, lists, dates, colours, binary, geometry, DOM/clipboard glue.
+// Spec: F:\orch\specs\g25.md Part A. No host/env usage; `activeDocument` is a bundle-scope free variable.
+
+function smaller(a, b) { return a < b ? a : b; }
+function larger(a, b) { return a > b ? a : b; }
+
+/** Perceptual slider mapping: slider fraction `x` at position `t`. */
+function sliderCurve(x, t) { return (Math.pow(t, 1 - x) - t) / (1 - t); }
+
+/** Inverse of sliderCurve for the same `t`. */
+function sliderCurveInverse(y, t) {
+  return 1 - Math.log(y * (1 - t) + t) / Math.log(t);
+}
+
+/** n+1 evenly spaced values from 0 to 1 inclusive. */
+function unitSteps(n) {
+  const out = new Array(n + 1);
+  for (let i = 0; i <= n; i++) out[i] = i / n;
+  return out;
+}
+
+/** `length` lowercase hex chars from Math.random (not crypto-random). */
+function randomHex(length) {
+  let s = "";
+  for (let i = 0; i < length; i++) s += Math.floor(Math.random() * 16).toString(16);
+  return s;
+}
+
+function asArray(v) { return Array.isArray(v) ? v : [v]; }
+
+/** Deduped array, first occurrence wins (=== equality). */
+function distinct(list) {
+  const out = [];
+  for (const v of list) if (!out.includes(v)) out.push(v);
+  return out;
+}
+
+/** In-place move of the element at `from` to index `to`; returns the list. */
+function moveItem(list, from, to) {
+  list.splice(to, 0, list.splice(from, 1)[0]);
+  return list;
+}
+
+/** Removes and returns the first element matching `test`, or null. */
+function takeFirst(list, test) {
+  for (let i = 0; i < list.length; i++) {
+    if (test(list[i])) return list.splice(i, 1)[0];
+  }
+  return null;
+}
+
+/**
+ * Three-way binary search: probe returns 0 on match, negative to search the left
+ * half, positive for the right half. Returns the item or null.
+ */
+function binaryFind(list, probe) {
+  let lo = 0, hi = list.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const r = probe(list[mid]);
+    if (r === 0) return list[mid];
+    if (r < 0) hi = mid - 1; else lo = mid + 1;
+  }
+  return null;
+}
+
+/** Every element is a string; `lenient` ignores null/undefined entries. */
+function isStringArray(v, lenient = false) {
+  if (!Array.isArray(v)) return false;
+  for (const x of v) {
+    if (lenient && (x === null || x === undefined)) continue;
+    if (typeof x !== "string") return false;
+  }
+  return true;
+}
+
+/** Concat that avoids copying when either side is empty. */
+function joinLists(a, b) {
+  if (!a || a.length === 0) return b || [];
+  if (!b || b.length === 0) return a;
+  return a.concat(b);
+}
+
+/**
+ * Sliding undo window: entries history[from..at-1] plus `entry`. Once the
+ * history grows past `keep + 20` entries the oldest are dropped.
+ */
+function pushHistory(history, at, keep, entry) {
+  const from = at + 1 > keep + 20 ? at - keep - 1 : 0;
+  return history.slice(from, at).concat(entry);
+}
+
+function sameItems(a, b) {
+  if (a == b) return true;
+  if (!a || !b || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+
+function sameItemsBy(a, b, eq) {
+  if (a == b) return true;
+  if (!a || !b || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (!eq(a[i], b[i])) return false;
+  return true;
+}
+
+/** In-place sort by index in `order`; unknown ids sort last (stable). */
+function sortByOrder(items, order) {
+  const rank = new Map();
+  for (let i = 0; i < order.length; i++) if (!rank.has(order[i])) rank.set(order[i], i);
+  const r = (item) => {
+    const v = rank.get(item.id);
+    return v === undefined ? Infinity : v;
+  };
+  items.sort((a, b) => {
+    const ra = r(a), rb = r(b);
+    return ra === rb ? 0 : ra < rb ? -1 : 1;
+  });
+  return items;
+}
+
+/** Suggestion penalty: 0 without matches, else -(count + firstScore/10). */
+function matchPenalty(matches) {
+  if (!matches) return 0;
+  return -(matches.length + matches[0][0] / 10);
+}
+
+function twoDigits(n) { return n < 10 ? "0" + n : String(n); }
+
+function ng25Pad2(n) { return n < 10 ? "0" + n : String(n); }
+
+/** "YYYY-MM-DD" in local time; year padded to 4 digits. */
+function localDate(d) {
+  return String(d.getFullYear()).padStart(4, "0") + "-" + ng25Pad2(d.getMonth() + 1) + "-" + ng25Pad2(d.getDate());
+}
+
+/** "HH:MM:SS" in local time. */
+function localTime(d) {
+  return ng25Pad2(d.getHours()) + ":" + ng25Pad2(d.getMinutes()) + ":" + ng25Pad2(d.getSeconds());
+}
+
+function hexByte(n) { return n.toString(16).padStart(2, "0"); }
+
+function ng25Channel(v) { return Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0"); }
+
+function rgbToHex({ r, g, b }) { return "#" + ng25Channel(r) + ng25Channel(g) + ng25Channel(b); }
+function rgbToInt({ r, g, b }) { return (r << 16) | (g << 8) | b; }
+
+/** Perceived brightness (Rec. 601 luma) at or above 150. */
+function isLightColor({ r, g, b }) { return (299 * r + 587 * g + 114 * b) / 1000 >= 150; }
+
+/** h 0-360, s/l 0-100 -> {r,g,b} 0-255 rounded. */
+function hslToRgb({ h, s, l }) {
+  h = ((h % 360) + 360) % 360 / 360;
+  s = Math.max(0, Math.min(100, s)) / 100;
+  l = Math.max(0, Math.min(100, l)) / 100;
+  if (s === 0) {
+    const v = Math.round(l * 255);
+    return { r: v, g: v, b: v };
+  }
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const hue = (t) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  return { r: Math.round(hue(h + 1 / 3) * 255), g: Math.round(hue(h) * 255), b: Math.round(hue(h - 1 / 3) * 255) };
+}
+
+/** 0-255 rgb -> {h,s,l} integer degrees/percents. */
+function rgbToHsl({ r, g, b }) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return { h: 0, s: 0, l: Math.round(l * 100) };
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h;
+  if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  return { h: Math.round(h * 60), s: Math.round(s * 100), l: Math.round(l * 100) };
+}
+
+const ng25Hex6 = /^#?([0-9a-fA-F]{6})$/;
+
+/** "#aabbcc" or "aabbcc" -> {r,g,b}; anything else -> null. */
+function parseHexColor(text) {
+  const m = ng25Hex6.exec(String(text));
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+const ng25RgbTriple = /^\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*$/;
+
+/** "r, g, b" -> "#rrggbb"; non-matching input returned unchanged. */
+function rgbTripleToHex(text) {
+  const m = ng25RgbTriple.exec(String(text));
+  if (!m) return text;
+  return "#" + [+m[1], +m[2], +m[3]].map((v) => (v & 255).toString(16).padStart(2, "0")).join("");
+}
+
+/** Hex string -> ArrayBuffer; odd tail and non-hex chars degrade to 0 bytes. */
+function hexToBuffer(hex) {
+  const s = String(hex);
+  const out = new Uint8Array(Math.ceil(s.length / 2));
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(s.substr(i * 2, 2), 16);
+  return out.buffer;
+}
+
+/** ArrayBuffer -> lowercase hex. */
+function bufferToHex(buf) {
+  const u = new Uint8Array(buf);
+  let s = "";
+  for (let i = 0; i < u.length; i++) s += u[i].toString(16).padStart(2, "0");
+  return s;
+}
+
+function stringFromCodes(codes) { return String.fromCharCode.apply(null, codes); }
+
+function readInt32BE(bytes, at) {
+  return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getInt32(at, false);
+}
+
+function readInt32LE(bytes, at) {
+  return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getInt32(at, true);
+}
+
+/** Exact copy of the bytes a typed array view covers. */
+function ownBuffer(view) {
+  return view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength);
+}
+
+/** Fill with 0 and return the array. */
+function zeroFill(list) { list.fill(0); return list; }
+
+/** dst[i] ^= src[i] in place. */
+function xorInto(dst, src) {
+  for (let i = 0; i < dst.length; i++) dst[i] ^= src[i];
+  return dst;
+}
+
+/** Clear bit 7 of the bytes at length-8 and length-4 (SIV tag positions). */
+function clearTopBits(bytes) {
+  bytes[bytes.length - 8] &= 0x7f;
+  bytes[bytes.length - 4] &= 0x7f;
+  return bytes;
+}
+
+/** fs.Stats-like -> {ctime,mtime,size} with rounded times. */
+function statFromNode(st) {
+  return { ctime: Math.round(st.birthtimeMs), mtime: Math.round(st.mtimeMs), size: st.size };
+}
+
+/** Capacitor stat -> {ctime,mtime,size} with rounded times. */
+function statFromCapacitor(st) {
+  return { ctime: Math.round(st.ctime), mtime: Math.round(st.mtime), size: st.size };
+}
+
+// ---------------------------------------------------------------- geometry
+
+function point(x, y) { return { x, y }; }
+function rect(x, y, width, height) { return { x, y, width, height }; }
+
+function distance(a, b) {
+  const dx = a.x - b.x, dy = a.y - b.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function rectAt(origin, size) {
+  return { x: origin.x, y: origin.y, width: size.width, height: size.height };
+}
+
+function pointOfEvent(e) { return { x: e.clientX, y: e.clientY }; }
+
+function box(minX, minY, maxX, maxY) { return { minX, minY, maxX, maxY }; }
+
+function boxOfPoints(a, b) {
+  return { minX: Math.min(a.x, b.x), minY: Math.min(a.y, b.y), maxX: Math.max(a.x, b.x), maxY: Math.max(a.y, b.y) };
+}
+
+function boxOfRect(r) {
+  return { minX: r.x, minY: r.y, maxX: r.x + r.width, maxY: r.y + r.height };
+}
+
+function rectOfBox(b) {
+  return { x: b.minX, y: b.minY, width: b.maxX - b.minX, height: b.maxY - b.minY };
+}
+
+function boxContains(a, b) {
+  return a.minX <= b.minX && a.minY <= b.minY && a.maxX >= b.maxX && a.maxY >= b.maxY;
+}
+
+function boxCenter(b) {
+  return { x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2 };
+}
+
+/** Point offset so `size` is centered on `p`. */
+function centeredOrigin(p, size) {
+  return { x: p.x - size.width / 2, y: p.y - size.height / 2 };
+}
+
+function boxX(p) { return p.x; }
+function boxY(p) { return p.y; }
+
+/** Smallest box containing all; empty input -> inverted infinite box. */
+function boxUnion(boxes) {
+  if (!boxes || boxes.length === 0) return { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const b of boxes) {
+    if (b.minX < minX) minX = b.minX;
+    if (b.minY < minY) minY = b.minY;
+    if (b.maxX > maxX) maxX = b.maxX;
+    if (b.maxY > maxY) maxY = b.maxY;
+  }
+  return { minX, minY, maxX, maxY };
+}
+
+function boxGrow(b, by) {
+  return { minX: b.minX - by, minY: b.minY - by, maxX: b.maxX + by, maxY: b.maxY + by };
+}
+
+/** 4 corners then centre: (minX,minY),(minX,maxY),(maxX,minY),(maxX,maxY),centre. */
+function boxPoints(b) {
+  return [
+    { x: b.minX, y: b.minY },
+    { x: b.minX, y: b.maxY },
+    { x: b.maxX, y: b.minY },
+    { x: b.maxX, y: b.maxY },
+    boxCenter(b),
+  ];
+}
+
+const ng25Sides = {
+  top: { axis: "y", sign: -1 },
+  right: { axis: "x", sign: 1 },
+  bottom: { axis: "y", sign: 1 },
+  left: { axis: "x", sign: -1 },
+};
+
+/** Midpoint of a "top"|"right"|"bottom"|"left" side; undefined otherwise. */
+function sideMidpoint(b, side) {
+  const s = ng25Sides[side];
+  if (!s) return undefined;
+  if (side === "top") return { x: (b.minX + b.maxX) / 2, y: b.minY };
+  if (side === "bottom") return { x: (b.minX + b.maxX) / 2, y: b.maxY };
+  if (side === "left") return { x: b.minX, y: (b.minY + b.maxY) / 2 };
+  return { x: b.maxX, y: (b.minY + b.maxY) / 2 };
+}
+
+/** `p` moved `by` px out of a side; undefined for unknown side names. */
+function pushOut(side, p, by) {
+  const s = ng25Sides[side];
+  if (!s) return undefined;
+  const out = { x: p.x, y: p.y };
+  out[s.axis] += s.sign * by;
+  return out;
+}
+
+/** Distinct corner/center points of many boxes, sorted x-then-y. */
+function sortedBoxPoints(boxes) {
+  const seen = new Set();
+  const pts = [];
+  for (const b of boxes) {
+    for (const p of boxPoints(b)) {
+      const k = p.x + "," + p.y;
+      if (!seen.has(k)) { seen.add(k); pts.push(p); }
+    }
+  }
+  pts.sort((a, b) => (a.x - b.x) || (a.y - b.y));
+  return pts;
+}
+
+/** Cubic bezier edge between two points leaving/entering through box sides. */
+function bezierEdge(from, fromSide, to, toSide) {
+  const d = distance(from, to);
+  const reach = Math.min(150, Math.max(70, d / 2));
+  const cp1 = pushOut(fromSide, from, reach);
+  const cp2 = pushOut(toSide, to, reach);
+  const path = `M${from.x},${from.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${to.x},${to.y}`;
+  return { from, to, cp1, cp2, path };
+}
+
+/** In-place sort by numeric key ascending. */
+function sortByKey(list, key) {
+  list.sort((a, b) => key(a) - key(b));
+  return list;
+}
+
+/** In-place sort by match.score descending. */
+function sortHitsByScore(hits) {
+  hits.sort((a, b) => b.match.score - a.match.score);
+  return hits;
+}
+
+/** Add `by` to every [from,to] pair in place. */
+function shiftRanges(ranges, by) {
+  for (const r of ranges) { r[0] += by; r[1] += by; }
+  return ranges;
+}
+
+/** True when `value` parses as an absolute URL. */
+function isUrl(value) {
+  if (!value) return false;
+  try { new URL(value); return true; } catch { return false; }
+}
+
+/**
+ * Clipboard copy: the async clipboard API when available, else a hidden
+ * textarea + execCommand("copy"). Failures are silent.
+ */
+function copyText(text) {
+  try {
+    if (typeof navigator !== "undefined" && navigator.clipboard && navigator.permissions) {
+      navigator.clipboard.writeText(text);
+      return;
+    }
+    const doc = typeof activeDocument !== "undefined" && activeDocument ? activeDocument : document;
+    const ta = doc.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    doc.body.appendChild(ta);
+    ta.select();
+    doc.execCommand("copy");
+    ta.remove();
+  } catch { /* silent */ }
+}
+
+/** Run `callback` now when `el` is shown, else on its next insertion. */
+function focusWhenShown(el, callback) {
+  if (el.isShown && el.isShown()) callback();
+  else el.onNodeInserted(callback, true);
+}
+
+/** Shared locale-aware string collator. */
+const stringCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
+
+// ---- n-g25-s05.js ----
+// g25 clean-room s05-utils: mdast text/positions, frontmatter links, filename checks,
+// loaders, system info, mobile vault list, titlebar dblclick, wheel scroll.
+// Spec: F:\orch\specs\g25.md Part D.
+
+
+// ---------------------------------------------------------------- mdast
+
+/** mdast 1-based {line,column,offset} -> 0-based {line,col,offset}. */
+function s05Point(position) {
+  return { line: position.line - 1, col: position.column - 1, offset: position.offset };
+}
+
+/** {start,end} points of an mdast range. */
+function s05Range(range) {
+  return { start: s05Point(range.start), end: s05Point(range.end) };
+}
+
+function s05HasPosition(node) {
+  return !!node && Object.prototype.hasOwnProperty.call(node, "position");
+}
+
+function s05HasKey(node) {
+  return !!node && Object.prototype.hasOwnProperty.call(node, "key");
+}
+
+/** mdast subtree -> plain text (type-specific whitespace rules). */
+function s05InlineText(node) {
+  if (!node) return "";
+  const type = node.type;
+  if (type === "html" || type === "comment") return "";
+  if (type === "iembed") return node.href || "";
+  if (type === "tag") return node.tag || "";
+  if (type === "listItem") {
+    const kids = node.children || [];
+    return kids.map(s05InlineText).join("\n") + "\n";
+  }
+  let text = node.value || node.alt || node.title || "";
+  if (!text) {
+    const kids = node.children || [];
+    if (kids.length) text = kids.map(s05InlineText).join("");
+  }
+  if (type === "list" && typeof node.start === "number") text = node.start + ". " + text;
+  if (type === "paragraph" || type === "break" || type === "heading" || type === "code") {
+    text += "\n";
+  } else {
+    text = text.replace(/\n$/, "");
+  }
+  if (type === "tableCell") text += " ";
+  if (type === "tableRow") text += "\n";
+  return text;
+}
+
+/** Plain text of each child node. */
+function s05ChildrenText(children) {
+  return (children || []).map(s05InlineText);
+}
+
+// ---------------------------------------------------------------- frontmatter links
+
+const ng25MdLinkFull = /^(!?\[)([^\]]*)\]\(\s*(<[^>]*?>|[^)\s]+)(?:\s+[^)]*)?\s*\)$/;
+
+function ng25FmLinkValue(value) {
+  const t = value.trim();
+  if (t.length > 4 && t.charAt(0) === "[" && t.charAt(1) === "[") {
+    const parsed = env().iE(t.slice(2, -2));
+    if (parsed && parsed.href !== undefined) {
+      return { link: parsed.href, original: value, displayText: parsed.title };
+    }
+  }
+  const m = ng25MdLinkFull.exec(t);
+  if (m) {
+    let dest = m[3];
+    if (dest.charAt(0) === "<" && dest.charAt(dest.length - 1) === ">") dest = dest.slice(1, -1);
+    let link;
+    try { link = decodeURI(dest); } catch { link = dest; }
+    if (isLocalLink(link)) return { link, original: value, displayText: m[2] };
+  }
+  return null;
+}
+
+/** All "[[…]]" / "[…](…)" links inside a frontmatter object, with dotted keys. */
+function s05FrontmatterLinks(frontmatter) {
+  const out = [];
+  const walk = (value, key) => {
+    if (typeof value === "string") {
+      const link = ng25FmLinkValue(value);
+      if (link) out.push({ key, link: link.link, original: link.original, displayText: link.displayText });
+      return;
+    }
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) walk(value[i], key + "." + i);
+      return;
+    }
+    if (value && typeof value === "object") {
+      for (const k of Object.keys(value)) walk(value[k], key ? key + "." + k : k);
+    }
+  };
+  walk(frontmatter, "");
+  return out;
+}
+
+/** Metadata node links or embeds match the predicate. */
+function s05HasRef(node, target) {
+  if (!node) return false;
+  return anyRefMatch(node.links, target) || anyRefMatch(node.embeds, target);
+}
+
+/** Plain text of a cached heading (parsed markdown, raw fallback). */
+function s05HeadingText(heading) {
+  const raw = heading && heading.heading;
+  try {
+    const parsed = env().Kx(raw);
+    const text = parsed ? s05InlineText(parsed) : "";
+    return text || raw;
+  } catch {
+    return raw;
+  }
+}
+
+// ---------------------------------------------------------------- filenames
+
+const ng25Reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
+
+/** Throws Error on an invalid file name (Windows rules only when env().Ul). */
+function s05AssertValidFileName(name) {
+  if (env().Ul) {
+    const base = lastSegment(String(name));
+    if (/[. ]$/.test(base)) throw new Error("File name must not end with a dot or space: " + name);
+    if (ng25Reserved.test(base)) throw new Error("Reserved file name: " + name);
+  }
+  const segs = String(name).split(/[\\/]/);
+  const bad = env().UT;
+  for (const seg of segs) {
+    if (bad && bad.test(seg)) throw new Error("Invalid characters in file name (" + (env().qT || "") + "): " + name);
+  }
+}
+
+function s05IsValidFileName(name) {
+  try {
+    s05AssertValidFileName(name);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------- misc app helpers
+
+/** One-shot filesystem permission probe; caches the flag in env().kD. */
+async function s05CheckFilePermissions() {
+  if (env().kD !== undefined && env().kD !== null) return env().kD;
+  try {
+    const r = await env().Dm.checkPerms();
+    env().kD = r !== false;
+  } catch {
+    env().kD = false;
+  }
+  return env().kD;
+}
+
+/** Append {key, ts} to the action log env().aD. */
+function s05TrackAction(key) {
+  const log = env().aD;
+  if (log && typeof log.push === "function") log.push({ key, ts: performance.now() });
+}
+
+/** Dotted-path lookup inside the animation tree env().lD; null when missing. */
+function s05LookupAnimNode(path) {
+  let node = env().lD;
+  if (!node) return null;
+  if (!path) return node;
+  for (const seg of String(path).split(".")) {
+    node = node && node.children ? node.children[seg] : undefined;
+    if (!node) return null;
+  }
+  return node;
+}
+
+function s05AnimDuration(path) {
+  const node = s05LookupAnimNode(path);
+  return node && typeof node.duration === "number" ? node.duration : 0;
+}
+
+/** .loader-cube div with 9 .sk-cube.sk-cubeN children. */
+function s05CreateLoaderCube(parent) {
+  const cube = env().createDiv("loader-cube", parent);
+  for (let n = 1; n <= 9; n++) env().createDiv("sk-cube sk-cube" + n, cube);
+  return cube;
+}
+
+/** .loader-spinner div with the loader-2 icon. */
+function s05CreateLoaderSpinner(parent) {
+  const el = env().createDiv("loader-spinner", parent);
+  env().tv(el, "loader-2");
+  return el;
+}
+
+/** Show a spinner while `task()` runs; always removed afterwards. */
+async function s05WithLoader(parent, task) {
+  const spinner = s05CreateLoaderSpinner(parent);
+  try {
+    return await task();
+  } finally {
+    if (spinner.detach) spinner.detach();
+    else if (spinner.remove) spinner.remove();
+  }
+}
+
+/** First non-word character index >= from, or -1. */
+function s05FindBreakIndex(text, from) {
+  for (let i = from; i < text.length; i++) {
+    if (/\W/.test(text.charAt(i))) return i;
+  }
+  return -1;
+}
+
+/** Max numeric footnote id (excluding "[inline...") + 1; 1 when none. */
+function s05NextFootnoteId(node) {
+  let max = 0;
+  const list = node && node.footnotes;
+  if (list) {
+    for (const f of list) {
+      const id = f && f.id !== undefined && f.id !== null ? String(f.id) : "";
+      if (id.indexOf("[inline") === 0) continue;
+      const n = parseInt(id, 10);
+      if (!Number.isNaN(n) && n > max) max = n;
+    }
+  }
+  return max + 1;
+}
+
+/** `cssclasses` frontmatter as filtered single-token classes, or null. */
+function s05CssClasses(frontmatter) {
+  const list = frontmatterStrings(frontmatter, /^cssclasses$/i);
+  if (!list) return null;
+  return list.filter((c) => !!c && !/\s/.test(c));
+}
+
+// ---------------------------------------------------------------- system info / vaults
+
+/** Diagnostic text block for the debug-info pane. */
+function s05SystemInfo() {
+  const p = env().Yl || {};
+  const mobile = !!(p.isMobileApp || p.isMobile || p.isAndroidApp || p.isIosApp);
+  const lines = ["SYSTEM INFO:"];
+  if (mobile) {
+    lines.push("Basalt version: " + p.version + " (" + p.build + ")");
+    lines.push("API version: " + env().gte);
+    const os = [p.osName, p.osVersion].filter(Boolean).join(" ");
+    const mm = [p.manufacturer, p.model].filter(Boolean).join(" ").trim();
+    lines.push("OS: " + os + (mm ? " (" + mm + ")" : ""));
+    if ((p.isAndroidApp || env().Sm) && typeof navigator !== "undefined" && navigator.userAgent) {
+      const cv = chromeVersion(navigator.userAgent);
+      if (cv) lines.push("Webview version: " + cv);
+    }
+  } else {
+    lines.push("Basalt version: " + p.version);
+    let installer = "unknown";
+    try {
+      env().Of((e) => {
+        if (e && e.app && typeof e.app.getVersion === "function") installer = e.app.getVersion();
+      });
+    } catch { /* no bridge */ }
+    lines.push("Installer version: " + installer);
+    lines.push("OS: " + [p.osName, p.osVersion].filter(Boolean).join(" "));
+    let insider = false;
+    try {
+      env().Of((e) => {
+        insider = !!(e && e.ipcRenderer && e.ipcRenderer.sendSync("insider-build", null));
+      });
+    } catch { /* no bridge */ }
+    lines.push("Insider build toggle: " + (insider ? "on" : "off"));
+  }
+  const hw = env().Hw || {};
+  lines.push("Login status: " + (hw.token ? "logged in" : "not logged in"));
+  lines.push("Language: " + (env().sm ? env().sm() : ""));
+  if (hw.token) lines.push("Catalyst license: " + (hw.license || "none"));
+  return lines.join("\n");
+}
+
+async function ng25CollectVault(adapter, subdir, prefix, storageType, excludes, out) {
+  let entries;
+  try {
+    entries = await adapter.readdir(subdir);
+  } catch (e) {
+    console.error(e);
+    return;
+  }
+  for (const en of entries || []) {
+    const name = en && en.name;
+    if (!name || name.charAt(0) === ".") continue;
+    if (excludes && excludes.has(name)) continue;
+    if (en.type === "directory") out.push({ name, location: prefix + name, storageType });
+  }
+}
+
+/** Vault list for mobile platforms; [] elsewhere. */
+async function s05MobileVaultList() {
+  const out = [];
+  if (env().Mm) {
+    if (env().yD) await ng25CollectVault(env().yD, env().wD || "", "icloud/", "iCloud", null, out);
+    if (env().vD) await ng25CollectVault(env().vD, "", "documents/", "local", null, out);
+    return out;
+  }
+  if (env().Sm) {
+    if (!(await s05CheckFilePermissions())) return out;
+    const excludes = new Set();
+    const base = env().vD && env().vD.getUri ? env().vD.getUri("") : "";
+    for (const dir of env().gD || []) {
+      try {
+        const uri = env().bD.getUri(dir);
+        if (base && uri.indexOf(base + "/") === 0) {
+          const rest = uri.slice(base.length + 1);
+          if (rest && rest.indexOf("/") === -1) excludes.add(decodeURIComponent(rest));
+        }
+        const st = await env().bD.stat(dir);
+        if (st && st.type === "directory") {
+          out.push({ name: lastSegment(dir), location: dir, storageType: "local" });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (env().vD) await ng25CollectVault(env().vD, "", "", "local", excludes, out);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------- DOM glue
+
+/** macOS desktop: double-click titlebar -> minimize/maximize per system preference. */
+function s05TitlebarDoubleClick(element) {
+  const p = env().Yl;
+  if (!p || !p.isMacOS || !p.isDesktopApp) return;
+  element.addEventListener("dblclick", (event) => {
+    if (event.button !== 0) return;
+    const t = event.target;
+    if (!(t instanceof HTMLElement)) return;
+    if (t.closest(".clickable-icon") || t.closest(".workspace-tab-header-inner-close-button")) return;
+    const tab = t.closest(".workspace-tab-header");
+    if (tab && tab.closest(".workspace-split.mod-sidedock")) return;
+    const win = element.win && element.win.electronWindow;
+    if (!win || !win.isMaximizable) return;
+    try {
+      env().Of((e) => {
+        const sp = e && e.remote && e.remote.systemPreferences;
+        const pref = sp ? sp.getUserDefault("AppleActionOnDoubleClick", "string") : "";
+        if (pref === "Minimize") win.minimize();
+        else if (pref === "Maximize" || pref === "") {
+          if (typeof win.isMaximized === "function" && win.isMaximized()) win.unmaximize();
+          else win.maximize();
+        }
+      });
+    } catch { /* no bridge */ }
+  });
+}
+
+/** Wheel deltaY -> horizontal scroll on the event's currentTarget. */
+function s05WheelScroll(event) {
+  if (!event.deltaY) return;
+  const el = event.currentTarget;
+  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) el.scrollLeft += event.deltaX;
+  else el.scrollLeft += event.deltaY;
+  event.preventDefault();
+}
+
+// ---- n-g25-s06.js ----
+// g25 clean-room s06-util: positions, frontmatter, table cells, link/tag helpers, shared regexes.
+// Spec: F:\orch\specs\g25.md Part C. env() names are the minified bundle bindings (lazy).
+
+
+// ---------------------------------------------------------------- regexes / consts (contract-exact)
+
+const s06BlockquoteRe = /^\s{0,3}>(\s*)/;
+const s06TagRe = /(^|\s)#[^ -⁯⸀-⹿'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\\s]*$/g;
+const s06WikiLinkRe = /^(!?\[\[)(.*?)(\|(.*))?(]])$/;
+const s06FootnoteRefRe = /^#\d+$/;
+const s06ListMarkerRe = /^([>\s]*)(([*+-] |(\d+)([.)] ))(?:\[(.)\] )?)?/;
+const s06HeadingRe = /^([>\s]*)(#{1,6} )?(.*)/;
+const s06DateTimeRe = /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d$/;
+const s06DateRe = /^\d{4}-[01]\d-[0-3]\d$/;
+const s06DateTimeFormats = ["YYYY-MM-DD[T]HH:mm:ss", "YYYY-MM-DD[T]HH:mm", "YYYY-MM-DD HH:mm:ss", "YYYY-MM-DD HH:mm"];
+const s06DateFormats = ["YYYY-MM-DD"];
+const s06CommentPrefix = "<!-- basalt -->";
+const s06CjkBrackets = [
+  { regex: /(！)?【【$/, replace: (m) => (m[1] ? "![[" : "[[") },
+  { regex: /】】$/, replace: "]]" },
+  { regex: /【【$/, replace: "[[" },
+];
+const s06EmptySuggestion = { type: "none", matches: null, score: 0 };
+
+// ---------------------------------------------------------------- positions
+
+function s06Pos(line, ch = 0) { return { line, ch }; }
+function s06PosEq(a, b) { return a.line === b.line && a.ch === b.ch; }
+function s06PosAdd(pos, ch) { return { line: pos.line, ch: pos.ch + ch }; }
+
+/** {line,ch} (0-based line) -> absolute offset. ch<0 counts from line end; missing/Infinity ch -> line end. */
+function s06PosToOffset(doc, pos) {
+  const n = pos.line;
+  if (n < 0) {
+    const l0 = doc.line(1);
+    return l0.from + ng25ChOffset(l0, pos.ch);
+  }
+  if (n >= doc.lines) return doc.length;
+  const l = doc.line(n + 1);
+  return l.from + ng25ChOffset(l, pos.ch);
+}
+
+function ng25ChOffset(line, ch) {
+  if (ch === undefined || ch === null || ch === Infinity) return line.length;
+  if (ch < 0) return Math.max(0, line.length + ch);
+  return ch;
+}
+
+/** Absolute offset -> {line,ch} clamped into the doc. */
+function s06OffsetToPos(doc, offset) {
+  const o = Math.max(0, Math.min(doc.length, offset));
+  const l = doc.lineAt(o);
+  return { line: l.number - 1, ch: o - l.from };
+}
+
+/** Visual width of the leading blockquote indent captured by s06BlockquoteRe. */
+function ng25IndentWidth(s) {
+  let w = 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === " ") {
+      let n = 0;
+      while (i < s.length && s[i] === " ") { n++; i++; }
+      i--;
+      w += Math.floor(n / 4) + (n % 4);
+    } else if (c === "\t") {
+      w += 4 - (w % 4);
+    } else {
+      w += 1;
+    }
+  }
+  return w;
+}
+
+/** Width of the leading ">" marker run plus its indent; 0 without a marker. */
+function s06QuotePrefixWidth(text) {
+  const m = s06BlockquoteRe.exec(text);
+  if (!m) return 0;
+  return 1 + ng25IndentWidth(m[1]);
+}
+
+// ---------------------------------------------------------------- object helpers
+
+/** Set obj[path...] = value; path array is consumed (shift). Aborts silently on type/index mismatch. */
+function s06SetPath(obj, path, value) {
+  while (path.length > 1) {
+    const key = path.shift();
+    if (Array.isArray(obj)) {
+      const i = Number(key);
+      if (!Number.isInteger(i) || i < 0 || i >= obj.length) return;
+      obj = obj[i];
+    } else if (obj && typeof obj === "object") {
+      const next = obj[key];
+      if (next === undefined || next === null || typeof next !== "object") return;
+      obj = next;
+    } else {
+      return;
+    }
+  }
+  if (path.length === 0) return;
+  const key = path.shift();
+  if (Array.isArray(obj)) {
+    const i = Number(key);
+    if (Number.isInteger(i) && i >= 0 && i < obj.length) obj[i] = value;
+  } else if (obj && typeof obj === "object") {
+    obj[key] = value;
+  }
+}
+
+/** Deep merge into target: arrays concat+dedupe, plain objects recurse, scalars overwrite (null ignored over existing). */
+function s06MergeDeep(target, source) {
+  if (!source || typeof source !== "object") return target;
+  for (const key of Object.keys(source)) {
+    const nv = source[key];
+    const ov = target[key];
+    if (Array.isArray(nv)) {
+      const base = Array.isArray(ov) ? ov : [];
+      target[key] = base.concat(nv).filter((v, i, a) => a.indexOf(v) === i);
+    } else if (nv && typeof nv === "object") {
+      if (ov && typeof ov === "object" && !Array.isArray(ov) && !Array.isArray(nv)) s06MergeDeep(ov, nv);
+      else target[key] = nv;
+    } else {
+      if (nv === null && ov !== undefined) continue;
+      target[key] = nv;
+    }
+  }
+  return target;
+}
+
+// ---------------------------------------------------------------- frontmatter
+
+/** "---\n<yaml>\n---\n" or "" for null/empty data. */
+function s06FrontmatterBlock(data) {
+  if (!data || typeof data !== "object" || Object.keys(data).length === 0) return "";
+  const yaml = env().vA(data);
+  return "---\n" + String(yaml).trim() + "\n---\n";
+}
+
+function ng25FmObject(v) {
+  return v && typeof v === "object" && !Array.isArray(v) ? v : {};
+}
+
+/** {content, frontmatter} split at the frontmatter block. */
+function s06ParseFrontmatter(text) {
+  const info = env().Xx(text);
+  const fm = info && info.frontmatter ? env().mA(info.frontmatter) : {};
+  return { content: text.slice(info ? info.contentStart : 0), frontmatter: ng25FmObject(fm) };
+}
+
+/** Serialized `data` block followed by the body of `text`. */
+function s06WithFrontmatter(text, data) {
+  const info = env().Xx(text);
+  return s06FrontmatterBlock(data) + text.slice(info ? info.contentStart : 0);
+}
+
+/** Parse fm, run mutate(obj), rewrite the block; empty result drops the block. */
+function s06UpdateFrontmatter(text, mutate) {
+  const info = env().Xx(text);
+  const had = !!(info && info.exists);
+  const parsed = had && info.frontmatter ? env().mA(info.frontmatter) : {};
+  const obj = ng25FmObject(parsed);
+  if (mutate) mutate(obj);
+  const empty = !obj || typeof obj !== "object" || Object.keys(obj).length === 0;
+  if (empty) return had ? text.slice(info.contentStart) : text;
+  const yaml = String(env().vA(obj)).trim();
+  if (had) return text.slice(0, info.from) + yaml + "\n" + text.slice(info.to);
+  return "---\n" + yaml + "\n---\n" + text;
+}
+
+// ---------------------------------------------------------------- tables / DOM
+
+/** True for a header row: THEAD row, first TABLE row, or first TBODY row after absent/blank THEAD — all-TH cells. */
+function s06IsHeaderRow(el) {
+  const cells = el.childNodes;
+  let allTh = cells.length > 0;
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i].nodeName !== "TH") { allTh = false; break; }
+  }
+  if (!allTh) return false;
+  const p = el.parentNode;
+  if (!p) return false;
+  if (p.nodeName === "THEAD") return true;
+  if (el !== p.firstChild) return false;
+  if (p.nodeName === "TABLE") return true;
+  if (p.nodeName === "TBODY") {
+    const prev = p.previousSibling;
+    if (!prev) return true;
+    if (prev.nodeName === "THEAD") return !prev.textContent || !prev.textContent.trim();
+  }
+  return false;
+}
+
+/** Sorted offsets -> [{line,ch}] via one forward scan. */
+function s06OffsetsToPositions(text, offsets) {
+  const out = [];
+  let line = 0, start = 0, nl = text.indexOf("\n");
+  for (const off of offsets) {
+    while (nl !== -1 && off > nl) {
+      line++;
+      start = nl + 1;
+      nl = text.indexOf("\n", start);
+    }
+    out.push({ line, ch: off - start });
+  }
+  return out;
+}
+
+/** colspan-1 (0 when absent/invalid). */
+function s06Colspan(cell) {
+  const v = cell.getAttribute && cell.getAttribute("colspan");
+  if (v === null || v === undefined) return 0;
+  const n = parseInt(v, 10);
+  return Number.isNaN(n) ? 0 : Math.max(0, n - 1);
+}
+
+/** Filler repeated for the extra colspan columns. */
+function s06ColspanRepeat(cell, filler) {
+  return String(filler).repeat(s06Colspan(cell));
+}
+
+function ng25Changeset(changes, length) {
+  return env().re.of(changes, length);
+}
+
+/** Escape newlines -> <br> and unescaped pipes -> \| for a table cell. */
+function s06EscapeTableCell(text) {
+  const changes = [];
+  let out = "";
+  let bs = 0;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === "\r" && text[i + 1] === "\n") {
+      changes.push({ from: i, to: i + 2, insert: "<br>" });
+      out += "<br>";
+      i++;
+      bs = 0;
+      continue;
+    }
+    if (c === "\n") {
+      changes.push({ from: i, to: i + 1, insert: "<br>" });
+      out += "<br>";
+      bs = 0;
+      continue;
+    }
+    if (c === "\\") { bs++; out += c; continue; }
+    if (c === "|") {
+      if (bs % 2 === 0) {
+        changes.push({ from: i, to: i, insert: "\\" });
+        out += "\\|";
+      } else {
+        out += "|";
+      }
+      bs = 0;
+      continue;
+    }
+    bs = 0;
+    out += c;
+  }
+  return { result: out, changes: ng25Changeset(changes, text.length) };
+}
+
+/** Reverse of s06EscapeTableCell: <br> -> \n (outside code spans), odd-backslash \| -> |. */
+function s06UnescapeTableCell(text) {
+  const changes = [];
+  let out = "";
+  let i = 0;
+  let codeLen = 0;
+  while (i < text.length) {
+    const c = text[i];
+    if (c === "`") {
+      let n = 0;
+      while (i + n < text.length && text[i + n] === "`") n++;
+      if (codeLen === 0) codeLen = n;
+      else if (n === codeLen) codeLen = 0;
+      out += text.substr(i, n);
+      i += n;
+      continue;
+    }
+    if (codeLen === 0 && text.startsWith("<br>", i)) {
+      changes.push({ from: i, to: i + 4, insert: "\n" });
+      out += "\n";
+      i += 4;
+      continue;
+    }
+    if (c === "|") {
+      let bs = 0, j = i - 1;
+      while (j >= 0 && text[j] === "\\") { bs++; j--; }
+      if (bs % 2 === 1) {
+        // odd run: drop one backslash, keep the literal pipe
+        changes.push({ from: j + 1, to: j + 2, insert: "" });
+        if (out.charAt(out.length - 1) === "\\") out = out.slice(0, -1);
+        out += "|";
+      } else {
+        out += "|";
+      }
+      i++;
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return { result: out, changes: ng25Changeset(changes, text.length) };
+}
+
+// ---------------------------------------------------------------- suggestions / matching
+
+/** Try basename match first (ranges shifted); else whole text with score-1. */
+function s06MatchBasenameFirst(matchFn, text) {
+  const base = lastSegment(text);
+  const hit = matchFn(base);
+  if (hit) {
+    const shift = text.length - base.length;
+    if (hit.matches) shiftRanges(hit.matches, shift);
+    return hit;
+  }
+  const whole = matchFn(text);
+  if (whole) whole.score -= 1;
+  return whole === undefined ? null : whole;
+}
+
+function s06CompareScoreDesc(a, b) { return b.score - a.score; }
+function s06ComparePathLength(a, b) { return a.path.length - b.path.length; }
+
+/** dataTransfer carries file items, or iOS "Files" drop. */
+function s06HasIosFilesDrop(dt) {
+  const items = dt && dt.items;
+  if (items) {
+    for (let i = 0; i < items.length; i++) {
+      if (items[i] && items[i].kind === "file") return true;
+    }
+  }
+  const platform = env().Yl;
+  return !!(platform && platform.isIosApp && dt && dt.types && dt.types.indexOf("Files") !== -1);
+}
+
+// ---------------------------------------------------------------- views / links
+
+function ng25HasOwnMeta(view, host) {
+  return !!(view && Object.prototype.hasOwnProperty.call(view, "metadataEditor")
+    && host && host.MetadataEditor && view.metadataEditor instanceof host.MetadataEditor);
+}
+
+/** View owns a MetadataEditor instance. */
+function s06HasMetadataEditor(view, host) {
+  return ng25HasOwnMeta(view, host);
+}
+
+/** metadataEditor of activeEditor (preferred) or activeLeaf view, when it can show properties. */
+function s06ActivePropertiesEditor(ws, host) {
+  const ed = ws && ws.activeEditor;
+  if (ng25HasOwnMeta(ed, host) && typeof ed.canShowProperties === "function" && ed.canShowProperties()) {
+    return ed.metadataEditor;
+  }
+  const leaf = ws && ws.activeLeaf && ws.activeLeaf.view;
+  if (ng25HasOwnMeta(leaf, host) && typeof leaf.canShowProperties === "function" && leaf.canShowProperties()) {
+    return leaf.metadataEditor;
+  }
+  return null;
+}
+
+/** DOMPurify-sanitize `html` and return the imported DOM node (DocumentFragment). */
+function s06SanitizeHtml(html, host) {
+  const purify = (host && host.s06Purify) || env().s06Purify || env().EL;
+  const config = (host && host.s06PurifyConfig) || env().s06PurifyConfig || env().SL;
+  const clean = purify.sanitize(String(html), config);
+  const tpl = document.createElement("template");
+  tpl.innerHTML = clean;
+  return tpl.content;
+}
+
+
+/** Markdown link strings for drop targets; `embed` prefixes image links with "!". */
+function s06DropLinkTexts(app, target, sourcePath, embed, host) {
+  const out = [];
+  const fm = app && app.fileManager;
+  const vault = app && app.vault;
+  const push = (file, subpath, alias) => {
+    if (!file) return;
+    let link = fm ? fm.generateMarkdownLink(file, sourcePath, subpath || "", alias || "") : "";
+    if (embed && host && host.isImageExtension && host.isImageExtension(file.extension)) link = "!" + link;
+    out.push(link);
+  };
+  const resolve = (f) => {
+    if (!f) return null;
+    if (host && host.TFile && f instanceof host.TFile) return f;
+    if (typeof f === "string" && vault) {
+      const r = vault.getAbstractFileByPath(f);
+      return host && host.TFile && r instanceof host.TFile ? r : null;
+    }
+    return null;
+  };
+  const t = target && target.type;
+  if (t === "file") {
+    push(resolve(target.file));
+  } else if (t === "files") {
+    const list = target.files || [];
+    for (let i = 0; i < list.length; i++) push(resolve(list[i]));
+  } else if (t === "link") {
+    const lp = parseLinktext(String(target.linktext || ""));
+    const file = resolve(target.file);
+    if (file) push(file, lp.subpath);
+    else out.push(String(target.linktext || ""));
+  } else if (t === "heading") {
+    const file = resolve(target.file);
+    if (file) {
+      const h = target.heading;
+      const text = h && typeof h === "object" ? (h.text || "") : String(h || "");
+      push(file, "#" + linkSafeHeading(text));
+    }
+  } else if (t === "bookmarks") {
+    const items = target.items || target.bookmarks || [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (!item || item.type !== "file") continue;
+      const file = vault ? vault.getAbstractFileByPath(item.path) : null;
+      if (host && host.TFile && !(file instanceof host.TFile)) continue;
+      if (!file) continue;
+      push(file, item.subpath || "", item.title || "");
+    }
+  }
+  return out;
+}
+
+const ng25WikiRe = s06WikiLinkRe;
+
+function ng25MdPattern(host) {
+  return (host && host.s06MdLinkPattern) || env().s06MdLinkPattern || env().pT;
+}
+
+/** Rewrite {original, link} to newLink preserving alias/format; fallback "[](<escaped>)". */
+function s06RewriteLink(pair, newLink, host) {
+  const original = String(pair.original || "");
+  const oldLink = String(pair.link || "");
+  const wiki = ng25WikiRe.exec(original);
+  if (wiki) {
+    const bang = wiki[1].charAt(0) === "!" ? "!" : "";
+    const open = wiki[1].charAt(bang.length) === "[" ? wiki[1].slice(bang.length) : wiki[1];
+    let inner = wiki[2];
+    let alias = wiki[4];
+    const sep = wiki[3]; // "|alias" or undefined
+    if (inner.indexOf("/") !== -1 && alias !== undefined && alias.trim() === baseName(inner)) {
+      alias = baseName(newLink);
+    }
+    const tail = sep !== undefined ? "|" + alias : "";
+    return bang + "[[" + newLink + tail + "]]";
+  }
+  const md = ng25MdPattern(host);
+  if (md) {
+    const m = md.exec(original);
+    if (m) {
+      // groups: 1 prefix "["/"![", 2 text, 3 "](", 4 dest(+title), 5 dest, 6 title-part, 9 close ")"
+      const prefix = m[1];
+      const oldText = m[2];
+      const oldDest = m[5] || "";
+      const angle = oldDest.charAt(0) === "<";
+      const newDest = angle ? "<" + newLink + ">" : escapeLinkChars(newLink);
+      const oldName = displayName(oldLink);
+      const oldNoExt = withoutExtension(oldLink);
+      let newText = oldText;
+      if (oldText === oldName || oldText === oldNoExt || oldText === oldLink) {
+        newText = displayName(newLink);
+      }
+      const titlePart = m[6] || "";
+      const close = m[9] || ")";
+      return prefix + newText + m[3] + newDest + titlePart + close;
+    }
+  }
+  const esc = escapeLinkChars(newLink);
+  return (original.charAt(0) === "!" ? "![" : "[") + "](" + esc + ")";
+}
+
+/** On rename resolution: {sourcePath, reference, change} or undefined. */
+function s06LinkChangeFor(resolved, cache, host) {
+  if (!resolved || !cache) return undefined;
+  const reference = resolved.reference;
+  const sourcePath = resolved.sourcePath;
+  if (!reference || !reference.link) return undefined;
+  const parsed = parseLinktext(reference.link);
+  const dest = cache.getLinkpathDest(parsed.path, sourcePath);
+  const resolvedPath = resolved.file ? resolved.file.path : resolved.path;
+  if (dest === resolvedPath) return undefined;
+  const wasWiki = /^!?\[\[/.test(String(reference.original || ""));
+  const file = resolved.file;
+  if (!file || typeof cache.fileToLinktext !== "function") return undefined;
+  const newLink = cache.fileToLinktext(file, sourcePath, wasWiki) + (parsed.subpath || "");
+  if (newLink === reference.link) return undefined;
+  return { sourcePath, reference, change: s06RewriteLink(reference, newLink, host) };
+}
+
+/** {path, subpath} for link-bearing items. */
+function s06LinkTarget(item) {
+  const t = item && item.type;
+  if (t === "block") {
+    return { path: item.file.path, subpath: "#^" + item.id };
+  }
+  if (t === "heading") {
+    const h = item.heading;
+    const text = h && typeof h === "object" ? (h.text || "") : String(h || "");
+    return { path: item.file.path, subpath: "#" + linkSafeHeading(text) };
+  }
+  if (t === "file" || t === "alias") {
+    return { path: item.file.path, subpath: "" };
+  }
+  if (t === "linktext") {
+    const p = parseLinktext(String(item.linktext || ""));
+    return { path: p.path, subpath: p.subpath };
+  }
+  return { path: "", subpath: "" };
+}
+
+/** Fuzzy tag suggestions sorted by score desc (alpha pre-order via host.compareStrings). */
+function s06TagSuggestions(cache, query, withHash = false, host) {
+  const tags = (cache && typeof cache.getTags === "function" ? cache.getTags() : null) || {};
+  const cmp = (host && host.compareStrings) || ((a, b) => String(a).localeCompare(String(b)));
+  const q = String(query || "").toLowerCase();
+  const prepared = prepareQuery(q);
+  const strip = (t) => (withHash ? t : String(t).replace(/^#/, ""));
+  const keys = Object.keys(tags).map(strip);
+  keys.sort(cmp);
+  const emptyQ = q === "" || (withHash && q === "#");
+  const out = [];
+  for (const tag of keys) {
+    let score = 0, matches = null;
+    if (!emptyQ) {
+      const m = fuzzyMatchJs(prepared, tag.toLowerCase());
+      if (!m) continue;
+      score = m.score + matchPenalty(m.matches);
+      matches = m.matches;
+    }
+    out.push({ tag, score, matches });
+  }
+  out.sort(s06CompareScoreDesc);
+  return out;
+}
+
+// ---- n-g25-s07.js ----
+// g25 clean-room s07-helpers: CM position conversion, _handlers trio, IME dispatch,
+// cursor restore, embed URLs/iframe, writing-tools menu, outline HTML, sort
+// comparators, match rendering, weak-map caches, DOM/list helpers.
+// Spec: F:\orch\specs\g25.md Part E.
+
+
+// ---------------------------------------------------------------- positions
+
+/** CM6 {line,ch} -> offset; ch clamped to line end (unlike s06's from-end rule). */
+function s07posToOffset(doc, pos) {
+  const n = pos.line + 1;
+  if (n < 1) return 0;
+  if (n > doc.lines) return doc.length;
+  const line = doc.line(n);
+  return Math.min(line.from + Math.max(0, pos.ch), line.to);
+}
+
+/** Offset -> {line,ch}; null when out of [0, doc.length]. */
+function s07offsetToPos(doc, offset) {
+  if (offset < 0 || offset > doc.length) return null;
+  const line = doc.lineAt(offset);
+  return { line: line.number - 1, ch: offset - line.from };
+}
+
+// ---------------------------------------------------------------- _handlers trio
+
+function ng25IsDom(t) {
+  return !!(t && typeof t.addEventListener === "function" && typeof t.removeEventListener === "function");
+}
+
+function s07addHandler(t, type, fn) {
+  if (ng25IsDom(t)) {
+    t.addEventListener(type, fn, false);
+    return;
+  }
+  const h = t._handlers || (t._handlers = {});
+  const list = h[type] || (h[type] = []);
+  list.push(fn);
+}
+
+function s07removeHandler(t, type, fn) {
+  if (ng25IsDom(t)) {
+    t.removeEventListener(type, fn, false);
+    return;
+  }
+  const h = t && t._handlers;
+  const list = h && h[type];
+  if (!list) return;
+  const i = list.indexOf(fn);
+  if (i !== -1) list.splice(i, 1);
+}
+
+/** Run every fn stored under target._handlers[type] with `args`. */
+function s07emitStored(target, type, ...args) {
+  const h = target && target._handlers;
+  const list = h && h[type];
+  if (!list) return;
+  for (let i = 0; i < list.length; i++) list[i].apply(list, args);
+}
+
+/** Invoke every fn in `fns` with `args`. */
+function s07callAll(fns, ...args) {
+  for (let i = 0; i < fns.length; i++) fns[i].apply(fns, args);
+}
+
+// ---------------------------------------------------------------- CM6 glue
+
+/** IME-aware dispatch: compose userEvent, rewrite "input" annotations, respect readOnly. */
+function s07cm6Dispatch(facade, spec) {
+  const cm6 = facade && facade.cm6;
+  if (!cm6 || (cm6.state && cm6.state.readOnly)) return undefined;
+  const userEvent = facade.curOp && !facade.lastChange ? "input.type.compose.start" : "input.type.compose";
+  if (spec && spec.annotations) {
+    for (const a of spec.annotations) {
+      if (a && a.value === "input") {
+        try { a.value = userEvent; } catch (e) { console.error(e); }
+      }
+    }
+  } else if (spec) {
+    spec.userEvent = userEvent;
+  }
+  return cm6.dispatch(spec);
+}
+
+/** undo/redo on facade.cm6, then restore the recorded selection start when possible. */
+function s07cm6RestoreCursor(facade, undo) {
+  const op = facade && facade.curOp;
+  const start = op ? op.$changeStart : undefined;
+  if (op) op.$changeStart = undefined;
+  const cm6 = facade.cm6;
+  if (undo) env().nF(cm6); else env().iF(cm6);
+  if (start !== undefined && start !== null) {
+    const doc = cm6.state && cm6.state.doc;
+    let anchor = null;
+    if (start && typeof start === "object") anchor = start;
+    else if (typeof start === "number" && doc) anchor = s07offsetToPos(doc, start);
+    if (anchor && typeof cm6.dispatch === "function") cm6.dispatch({ selection: { anchor } });
+  }
+}
+
+// ---------------------------------------------------------------- embeds
+
+const s07youtubeRe = /(?:youtube\.com\/(?:watch\?[^#]*v=|embed\/|v\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/i;
+const s07tweetRe = /(?:twitter\.com|x\.com)\/[^/?#]+\/status(?:es)?\/(\d+)/i;
+
+function ng25YoutubeId(text) {
+  let m;
+  if (/youtu\.be\//i.test(text)) {
+    m = /youtu\.be\/([A-Za-z0-9_-]{3,})/i.exec(text);
+  } else if (/youtube\.com\/watch/i.test(text)) {
+    m = /[?&]v=([A-Za-z0-9_-]{3,})/.exec(text);
+  } else {
+    m = /youtube\.com\/(?:embed|v|shorts)\/([A-Za-z0-9_-]{3,})/i.exec(text);
+    if (!m && /^[A-Za-z0-9_-]{6,}$/.test(text.trim())) m = [null, text.trim()];
+  }
+  return m ? m[1] : null;
+}
+
+function ng25YoutubeStart(text) {
+  const tm = /[?&](?:t|start)=([^&#]+)/.exec(text);
+  if (!tm) return "";
+  const raw = tm[1];
+  const hm = /^(\d+)m(\d+)s?$/.exec(raw);
+  const sm = /^(\d+)s$/.exec(raw);
+  const dm = /^(\d+)$/.exec(raw);
+  if (hm) return String(+hm[1] * 60 + +hm[2]);
+  if (sm) return sm[1];
+  if (dm) return dm[1];
+  return raw;
+}
+
+/** YouTube/Twitter URL -> sandboxed embed URL, else null. */
+function s07embedUrlFor(text) {
+  if (typeof text !== "string" || !text) return null;
+  const ytId = ng25YoutubeId(text);
+  if (ytId) {
+    const st = ng25YoutubeStart(text);
+    return "https://www.youtube-nocookie.com/embed/" + ytId + (st ? "?start=" + st : "");
+  }
+  const tw = s07tweetRe.exec(text);
+  if (tw) {
+    const dark = typeof document !== "undefined" && document.body && document.body.classList.contains("theme-dark");
+    return "https://platform.twitter.com/embed/Tweet.html?dnt=true&theme=" + (dark ? "dark" : "light") + "&id=" + tw[1];
+  }
+  return null;
+}
+
+/** Sandboxed iframe for an external embed URL. */
+function s07externalEmbed(url) {
+  const frame = document.createElement("iframe");
+  frame.className = "external-embed mod-receives-events";
+  frame.setAttribute("sandbox", "allow-forms allow-presentation allow-same-origin allow-popups-to-escape-sandbox allow-scripts allow-modals allow-popups");
+  frame.setAttribute("allow", "fullscreen");
+  frame.setAttribute("frameborder", "0");
+  frame.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+  frame.src = url;
+  if (/platform\.twitter\.com/.test(String(url))) {
+    frame.setAttribute("scrolling", "no");
+    const onMsg = (e) => {
+      const d = e && e.data;
+      if (d && d.type === "twttr.private.resize") {
+        const h = d.params && d.params[0] && d.params[0].height;
+        if (typeof h === "number" && isFinite(h)) frame.style.height = Math.min(1000, h) + "px";
+      }
+    };
+    const win = frame.contentWindow || frame.win;
+    if (win && win.addEventListener) win.addEventListener("message", onMsg);
+    try {
+      if (env().Iz) env().Iz(frame.win || win, onMsg);
+    } catch { /* no bridge */ }
+  }
+  return frame;
+}
+
+// ---------------------------------------------------------------- menus
+
+function ng25SubItem(menu, section, fmt, editor, state, spec) {
+  menu.addItem((item) => {
+    item.setSection(section);
+    item.setTitle(fmt[spec.title]());
+    item.setIcon(spec.icon);
+    if (spec.checked !== undefined) item.setChecked(!!state[spec.checked]);
+    item.onClick(() => {
+      if (spec.comment) editor.toggleComment();
+      else if (spec.clear) editor.clearMarkdownFormatting();
+      else editor.toggleMarkdownFormatting(spec.kind);
+    });
+  });
+}
+
+/** macOS writing-tools formatting menu (basic/advanced/danger sections). */
+function s07writingToolsMenu(menu, editor, state, section) {
+  const fmt = env().gm.interface.formatting;
+  menu.setShowMacWritingTools(true);
+  menu.addSections([section + ".basic", section + ".advanced", section + ".danger"]);
+  menu.addItem((item) => {
+    item.setSection(section);
+    item.setTitle(fmt.labelFormatting());
+    item.setIcon("lucide-paintbrush");
+    const sub = item.setSubmenu();
+    const mk = (title, icon, extra) => ng25SubItem(sub, section, fmt, editor, state || {}, Object.assign({ title, icon }, extra));
+    mk("toggleBold", "lucide-bold", { kind: "bold", checked: "bold" });
+    mk("toggleItalics", "lucide-italic", { kind: "italic", checked: "italic" });
+    mk("toggleStrikethrough", "lucide-strikethrough", { kind: "strikethrough", checked: "strikethrough" });
+    mk("toggleHighlight", "lucide-highlighter", { kind: "highlight", checked: "highlight" });
+    mk("toggleCode", "lucide-code-2", { kind: "code" });
+    mk("toggleMath", "lucide-sigma", { kind: "math" });
+    mk("toggleComments", "lucide-percent", { comment: true });
+    mk("clear", "lucide-eraser", { clear: true });
+  });
+}
+
+// ---------------------------------------------------------------- outline / markdown pipeline
+
+/** TOC sections {html,pos,level} for top-level markdown blocks plus frontmatter. */
+function s07outlineHtml(markdown) {
+  const ast = env().Kx(markdown);
+  const children = (ast && ast.children) || [];
+  const markTypes = ["checklist", "listItem", "code"];
+  const sections = [];
+  for (const child of children) {
+    if (!child || !child.position) continue;
+    const level = child.type === "heading" ? (child.depth || 1) : 7;
+    env().jC(child, markTypes, (node) => {
+      if (!node || !node.position) return;
+      const data = node.data || (node.data = {});
+      const hp = data.hProperties || (data.hProperties = {});
+      const ns = node.position && node.position.start;
+      const cs = child.position && child.position.start;
+      if (ns && cs) hp["data-line"] = ns.line - cs.line;
+    });
+    sections.push({
+      html: env().Zx({ children: [child] }),
+      pos: env().hT(child.position),
+      level,
+    });
+  }
+  return { sections, frontmatter: env().$x(ast) };
+}
+
+// ---------------------------------------------------------------- sorting
+
+const s07sortOrderPairs = [
+  ["alphabetical", "alphabeticalReverse"],
+  ["byModifiedTime", "byModifiedTimeReverse"],
+  ["byCreatedTime", "byCreatedTimeReverse"],
+];
+
+function ng25ItemName(x) {
+  return x.basename !== undefined ? x.basename : String(x.path || "");
+}
+
+/** Six file-explorer sort comparators (forward + reverse). */
+function s07fileSortComparators() {
+  const fwd = {
+    alphabetical: (a, b) => env().ub(ng25ItemName(a), ng25ItemName(b)),
+    byModifiedTime: (a, b) => (b.stat ? b.stat.mtime : 0) - (a.stat ? a.stat.mtime : 0),
+    byCreatedTime: (a, b) => (b.stat ? b.stat.ctime : 0) - (a.stat ? a.stat.ctime : 0),
+  };
+  const out = {};
+  for (const key of Object.keys(fwd)) {
+    out[key] = fwd[key];
+    out[key + "Reverse"] = (a, b) => -fwd[key](a, b);
+  }
+  return out;
+}
+
+const NG25_LABEL_KEYS = {
+  alphabetical: "labelSortAToZ",
+  alphabeticalReverse: "labelSortZToA",
+  byModifiedTime: "labelSortNewToOld",
+  byModifiedTimeReverse: "labelSortOldToNew",
+  byCreatedTime: "labelSortCreatedNewToOld",
+  byCreatedTimeReverse: "labelSortCreatedOldToNew",
+};
+
+/** The six i18n label strings for the sort menu. */
+function s07labelSortComparators() {
+  const labels = env().gm.plugins.fileExplorer;
+  const out = {};
+  for (const key of Object.keys(NG25_LABEL_KEYS)) out[key] = labels[NG25_LABEL_KEYS[key]];
+  return out;
+}
+
+const s07paraBreakRe = /\r?\n\r?\n/y;
+const s07searchKeyFilepath = "filepath";
+const s07searchResultKeys = ["filename", "filepath", "content", "propertyName", "tag"];
+function s07sentinelKey() {}
+const s07mermaidFlowConfig = { progressiveRender: true, asyncParse: true, listBullet: true };
+
+// ---------------------------------------------------------------- match rendering
+
+/** Render `text[start,end)` into `el` with matched ranges as highlighted spans. */
+function s07renderMatchSegments(el, text, start, end, ranges) {
+  const clipped = [];
+  for (const r of ranges || []) {
+    const rFrom = Math.max(r[0], start);
+    const rTo = Math.min(r[1], end);
+    if (rTo <= rFrom) continue;
+    clipped.push([rFrom, rTo]);
+  }
+  clipped.sort((a, b) => a[0] - b[0]);
+  let pos = start;
+  const push = (from, to, matched) => {
+    if (to <= from) return;
+    const span = env().createEl ? env().createEl("span", matched ? "search-result-file-matched-text" : undefined) : document.createElement("span");
+    if (matched) span.className = "search-result-file-matched-text";
+    span.textContent = text.substring(from, to);
+    el.appendChild(span);
+  };
+  for (const r of clipped) {
+    if (r[0] >= end) break;
+    if (r[0] > pos) push(pos, Math.min(r[0], end), false);
+    push(Math.max(r[0], pos), Math.min(r[1], end), true);
+    pos = Math.max(pos, r[1]);
+    if (pos >= end) break;
+  }
+  if (pos < end) push(pos, end, false);
+}
+
+// ---------------------------------------------------------------- weak maps
+
+class s07weakMapBox {
+  constructor() { this._m = new WeakMap(); }
+  set(k, v) { this._m.set(k, v); return this; }
+  get(k) { return this._m.get(k); }
+  has(k) { return this._m.has(k); }
+  delete(k) { return this._m.delete(k); }
+}
+
+let ng25WeakmapSeq = 0;
+
+/** WeakMap-shaped polyfill storing values under a unique own property of the key. */
+class s07weakMapPolyfill {
+  constructor() { this._id = "_weakmap_" + (++ng25WeakmapSeq); }
+  set(k, v) { if (k && (typeof k === "object" || typeof k === "function")) k[this._id] = v; return this; }
+  get(k) { return k ? k[this._id] : undefined; }
+  has(k) { return !!(k && this._id in k); }
+  delete(k) { if (k && this._id in k) { delete k[this._id]; return true; } return false; }
+}
+
+/** Box when a real WeakMap exists, polyfill otherwise. */
+function s07weakMapFactory() {
+  return typeof WeakMap === "function" ? new s07weakMapBox() : new s07weakMapPolyfill();
+}
+
+const s07loadedWindows = new WeakSet();
+
+// ---------------------------------------------------------------- misc DOM/list helpers
+
+/** Fill `el` from an embed attribute value (quoted string, JSON string, inline SVG, or icon). */
+function s07embedAttrValue(el, raw) {
+  let value = String(raw);
+  if (value.length >= 2 && value.charAt(0) === "'" && value.charAt(value.length - 1) === "'") {
+    value = value.slice(1, -1).replace(/\\'/g, "'");
+  }
+  if (value.length >= 2 && value.charAt(0) === '"') {
+    try {
+      const parsed = JSON.parse(value);
+      if (typeof parsed === "string") value = parsed;
+    } catch { /* keep raw */ }
+  }
+  if (/^<svg[\s>]/i.test(value)) {
+    const frag = env().xL(value);
+    const node = frag && (frag.firstChild || frag.firstElementChild);
+    if (node && node instanceof SVGSVGElement) {
+      node.setAttribute("width", "16");
+      node.setAttribute("height", "16");
+      node.setAttribute("fill", "currentColor");
+      node.setAttribute("stroke", "currentColor");
+      el.appendChild(node);
+      return;
+    }
+  }
+  env().tv(el, value);
+}
+
+/** cb for every <li> under `root` that contains a nested list. */
+function s07forEachNestedItem(root, cb) {
+  const items = root && root.findAll ? root.findAll("li") : (root ? Array.from(root.querySelectorAll("li")) : []);
+  for (const li of items) {
+    const nested = li.findAll ? li.findAll("ul, ol") : li.querySelectorAll("ul, ol");
+    if (nested && nested.length) cb(li);
+  }
+}
+
+/** cb(firstChild) when the first child is a heading element. */
+function s07ifFirstHeading(el, cb) {
+  const first = el && el.firstChild;
+  if (first && first instanceof HTMLHeadingElement) cb(first);
+}
+
+/** Leading list/quote marker text of `text`, or null. */
+function s07leadingListMarker(text) {
+  const m = env().aP.exec(text);
+  return m && m[0] ? m[0] : null;
+}
+
+/** Continuation indent for a list line at `offset`: quote prefix + marker-width spaces. */
+function s07listMarkerIndent(doc, offset) {
+  const line = doc.lineAt(offset);
+  const m = env().aP.exec(line.text);
+  if (!m) return "";
+  return (m[1] || "") + " ".repeat((m[3] || "").length);
+}
+
+/** RangeSet equality: eq() for equal lengths, prefix-compare otherwise. */
+function s07rangeSetsEqual(a, b) {
+  if (a.length === b.length) return a.eq(b);
+  const short = a.length < b.length ? a : b;
+  const long = a.length < b.length ? b : a;
+  return short.eq(long.slice(0, short.length));
+}
+
+// ---- n-g25-s12.js ----
+// n-g25-s12.js — clean-room s12-consts replacement (spec g25 Part F).
+
+function s12SecretsWarningKey() { return "secrets-encryption-warning-dismissed"; }
+function s12SecretsDirName() { return "secrets"; }
+function s12SecretsEncryptedName() { return "secrets-encrypted"; }
+function s12SecretsMetaName() { return "secrets-meta"; }
+function s12ReleaseNotesViewType() { return "release-notes"; }
+function s12ReleaseNotesRepo() { return "obsidianmd/obsidian-docs"; }
+function s12WorkspaceLayoutFile() { return "workspace.json"; }
+function s12WorkspaceMobileLayoutFile() { return "workspace-mobile.json"; }
+function s12WebviewerViewType() { return "webviewer"; }
+function s12WebviewerHistoryViewType() { return "webviewer-history"; }
+function s12DefaultSearchEngineKey() { return "duckduckgo"; }
+function s12WebviewerEmptyPageUrl() { return "data:text/plain,"; }
+function s12BacklinkViewType() { return "backlink"; }
+function s12MarkdownViewTypeName() { return "markdown"; }
+function s12DeprecationIndexUrl() {
+  return env().s12githubRaw("obsidianmd/obsidian-releases", "community-plugin-deprecation.json");
+}
+
+function s12CmIterateErrorDetail() {
+  return "tree.iterate has changed syntax. Migrate to the object form tree.iterate({from,to,enter,leave}); see https://discuss.codemirror.net/t/tree-iterate/ for details.";
+}
+
+function s12CmIterateCompat(inner) {
+  return function (spec, from, to) {
+    console.error(new Error("[CM6] " + s12CmIterateErrorDetail()));
+    return inner.call(this, spec && spec.type !== undefined ? spec.type : spec, spec && spec.from !== undefined ? spec.from : from, spec && spec.to !== undefined ? spec.to : to);
+  };
+}
+
+function s12CmEmptyFieldConfig() { return { from() {} }; }
+
+const S12REQ_SPEC = [
+  ["obsidian", "s12reqObsidian"],
+  ["@codemirror/autocomplete", "s12reqAutocomplete"],
+  ["@codemirror/collab", "s12reqCollab"],
+  ["@codemirror/commands", "s12reqCommands"],
+  ["@codemirror/language", "s12reqLanguage"],
+  ["@codemirror/lint", "s12reqLint"],
+  ["@codemirror/search", "s12reqSearch"],
+  ["@codemirror/state", "s12reqState"],
+  ["@codemirror/text", "s12reqState"],
+  ["@codemirror/view", "s12reqView"],
+  ["@lezer/common", "s12reqLezerCommon"],
+  ["@lezer/lr", "s12reqLezerLr"],
+  ["@lezer/highlight", "s12reqLezerHighlight"],
+];
+
+function s12PluginRequireMap() {
+  const out = {};
+  const e = env();
+  for (const [name, key] of S12REQ_SPEC) out[name] = e[key];
+  return out;
+}
+
+const S12REQ_DEPRECATED = {
+  "@codemirror/closebrackets": "@codemirror/autocomplete",
+  "@codemirror/comment": "@codemirror/commands",
+  "@codemirror/fold": "@codemirror/language",
+  "@codemirror/gutter": "@codemirror/view",
+  "@codemirror/highlight": "@codemirror/language",
+  "@codemirror/history": "@codemirror/commands",
+  "@codemirror/matchbrackets": "@codemirror/language",
+  "@codemirror/panel": "@codemirror/view",
+  "@codemirror/rangeset": "@codemirror/state",
+  "@codemirror/rectangular-selection": "@codemirror/view",
+  "@codemirror/stream-parser": "@codemirror/language",
+  "@codemirror/tooltip": "@codemirror/view",
+};
+
+function s12PluginDeprecatedRequireMap() {
+  const req = s12PluginRequireMap();
+  const out = {};
+  for (const [dep, cur] of Object.entries(S12REQ_DEPRECATED)) out[dep] = req[cur];
+  return out;
+}
+
+function s12InlineSourcemapPattern() {
+  return /^\/\/[@#] sourceMappingURL=data:application\/json(?:;charset[:=][^;]+)?;base64,.*$/gm;
+}
+function s12NoSourcemapMarker() { return "\n/* nosourcemap */"; }
+
+function s12WebviewerSearchEngines() {
+  return {
+    duckduckgo: { display: "duckduckgo", url: "https://duckduckgo.com/?q=%s" },
+    brave: { display: "brave", url: "https://search.brave.com/search?q=%s" },
+    bing: { display: "bing", url: "https://www.bing.com/search?q=%s" },
+    google: { display: "google", url: "https://www.google.com/search?q=%s" },
+    custom: { display: "custom" },
+  };
+}
+function s12WebviewerDefaultOptions() { return { openExternalURLs: true, enableAdblocking: true }; }
+function s12EmptyWebviewerOptions() { return {}; }
+function s12WebviewTagBlocklist() { return ["script", "style", "link", "meta", "object", "embed", "webview"]; }
+function s12NullDropState() { return null; }
+
+let ng25s12DropEl = null;
+function s12DropIndicatorElement() {
+  if (!ng25s12DropEl) ng25s12DropEl = env().createDiv("drop-indicator is-active");
+  return ng25s12DropEl;
+}
+function s12DropIndicatorUpdater() {
+  const el = s12DropIndicatorElement();
+  return env().debounce(({ x, y, placement }) => {
+    el.style.left = x + "px";
+    el.style.top = (y + (placement === "after" ? 1 : -1) - 2) + "px";
+  }, 0);
+}
+
+const S12CALLOUT_KEYS = ["info", "important", "tip", "success", "question", "warning", "example", "quote"];
+function s12CalloutTypeLabels() {
+  const t = env().gm.callout.type;
+  const out = {};
+  for (const k of S12CALLOUT_KEYS) out[k] = t[k];
+  return out;
+}
+const S12CALLOUT_EXTRA = ["abstract", "summary", "tldr", "todo", "hint", "check", "done", "question", "faq", "help", "caution", "attention", "failure", "fail", "missing", "danger", "error", "bug", "example", "cite"];
+function s12CalloutTypeNames() { return S12CALLOUT_KEYS.concat(S12CALLOUT_EXTRA); }
+
+function s12PluginSortLabels() {
+  const s = env().gm.setting.thirdPartyPlugin;
+  return {
+    download: s.labelByPopularity,
+    release: s.labelByReleased,
+    alphabetical: s.labelAlphabetical,
+    update: s.labelByUpdated,
+  };
+}
+function s12HotkeyFilterLabels() {
+  const h = env().gm.setting.hotkeys;
+  return {
+    "show-all": h.labelShowAll,
+    "show-assigned": h.labelShowAssigned,
+    "show-user-assigned": h.labelShowUserAssigned,
+    "show-unassigned": h.labelShowUnassigned,
+  };
+}
+
+let ng25s12PostFx = null;
+function s12CmPostprocessEffect() {
+  if (!ng25s12PostFx) ng25s12PostFx = env().s12cmStateEffect.define();
+  return ng25s12PostFx;
+}
+function s12cmPostprocessFxRef() { return ng25s12PostFx; }
+function s12cmRefreshDispatch(view) {
+  const fx = s12CmPostprocessEffect();
+  view.dom.win.setTimeout(() => view.dispatch({ effects: fx.of() }), 10);
+}
+
+let ng25s12MousePlugin = null;
+function s12CmMouseDownPlugin() {
+  if (!ng25s12MousePlugin) {
+    ng25s12MousePlugin = env().s12cmViewPlugin.define(() => ({ mousedown: false }));
+  }
+  return ng25s12MousePlugin;
+}
+function s12cmMousePluginInstance() { return ng25s12MousePlugin; }
+function s12cmEmptyReplace() { return env().s12cmDecoration.replace({}); }
+
+function s12CmUnderlineMark() {
+  return env().s12cmDecoration.mark({ class: "cm-underline", attributes: { tabindex: "-1", draggable: "true" } });
+}
+function s12CmTransparentMark() { return env().s12cmDecoration.mark({ class: "cm-transparent" }); }
+function s12CmUnresolvedMark() { return env().s12cmDecoration.mark({ class: "is-unresolved" }); }
+function s12CmListBulletMark() { return env().s12cmDecoration.mark({ class: "list-bullet" }); }
+function s12CmListNumberMark() { return env().s12cmDecoration.mark({ class: "list-number" }); }
+function s12CmMouseDownField() { return env().s12cmStateField.define(() => ({ mousedown: false })); }
+
+function s12LivepreviewSyntaxTags() {
+  return new Set(["em", "strong", "inline-code", "strikethrough", "highlight", "link", "image", "hmd-internal-link", "hmd-embed", "formatting-link", "footref"]);
+}
+function s12CodeblockFencePattern() { return /^\s*(~~~+|```+)[ \t]*([\w\/+\#-]*)[^\n`]*$/; }
+
+function s12RegisterSecureStorage() {
+  return env().s12capacitor.F3("SecureStorage", {
+    web: () => {
+      const m = env().s12webpackRequire(3357);
+      return m.SecureStorageWeb || m.default || m;
+    },
+    ios: () => {
+      const m = env().s12webpackRequire(9804);
+      return typeof m.SecureStorageNative === "function" ? m.SecureStorageNative(self) : (m.SecureStorageNative || m.default || m);
+    },
+    android: () => {
+      const m = env().s12webpackRequire(9804);
+      return typeof m.SecureStorageNative === "function" ? m.SecureStorageNative(self) : (m.SecureStorageNative || m.default || m);
+    },
+  });
+}
+
+const S12LEAF_TYPES = ["tab", "window", "split"];
+function s12leafTypeOrFalse(e) {
+  const isBool = typeof isBoolean === "function" ? isBoolean(e) : typeof e === "boolean";
+  if (isBool || S12LEAF_TYPES.includes(e)) return e;
+  return false;
+}
+
+function s12requireDesktopApp() {
+  const e = env();
+  const iface = e.gm.interface;
+  if (!e.Yl.isDesktopApp) {
+    const msg = iface.msgDesktopOnlyFeature();
+    new e.fb(msg);
+    throw new Error(msg);
+  }
+  if (e.qf < 13) {
+    const msg = iface.msgUpgradeInstaller();
+    new e.fb(msg);
+    throw new Error(msg);
+  }
+}
+
+function s12runCommandCallback(cmd) {
+  if (cmd.checkCallback) cmd.checkCallback(false);
+  else if (cmd.callback) cmd.callback();
+  else console.error("Command " + cmd + " did not provide a callback");
+}
+
+function ng25s12StripDim(s, isDim) {
+  const pi = s.lastIndexOf("|");
+  if (pi >= 0 && isDim(s.slice(pi + 1))) return s.slice(0, pi);
+  return s;
+}
+
+function s12appendImageSizeText(linkText, size) {
+  const sized = size === undefined ? "" : String(size);
+  const e = env();
+  const isDim = (t) => !!e.s12isImageDimension(t);
+  const fix = (inner) => {
+    let s = ng25s12StripDim(inner, isDim);
+    if (!s || isDim(s)) return sized;
+    return s + (sized ? "|" + sized : "");
+  };
+  const wiki = e.s12wikilinkPattern.exec(linkText);
+  if (wiki) {
+    const inner = wiki[2] + (wiki[3] || "");
+    return wiki[1] + fix(inner) + wiki[5];
+  }
+  const md = e.s12mdLinkPattern.exec(linkText);
+  if (md) {
+    return md[1] + fix(md[2]) + md[3] + md[4] + md[8];
+  }
+  return linkText;
+}
+
+function s12PropertiesLivePreviewPlugin(plugin) {
+  return env().s12cmViewPlugin.define((view) => {
+    const off = plugin.app.workspace.on("post-processor-change", () => s12cmRefreshDispatch(view));
+    return { destroy() { off.e.offref(off); } };
+  });
+}
+
+// ---- n-g25-view.js ----
+// n-g25-view.js — clean-room View / ItemView base classes (spec g25 Part G).
+
+function ng25vDiv(cls, doc) {
+  const d = (doc || document).createElement("div");
+  if (cls) d.className = cls;
+  return d;
+}
+
+function ng25vSetText(el, text) {
+  if (el.setText) el.setText(text);
+  else el.textContent = text;
+}
+
+function ng25vDebounce(fn, ms) {
+  let t = null;
+  const d = (...a) => {
+    if (t) clearTimeout(t);
+    t = setTimeout(() => { t = null; fn(...a); }, ms);
+  };
+  return d;
+}
+
+function defineView(host) {
+  const H = host;
+  return class View extends H.Component {
+    constructor(leaf) {
+      super();
+      this.icon = "lucide-file";
+      this.navigation = false;
+      this.app = leaf.app;
+      this.leaf = leaf;
+      this.containerEl = ng25vDiv("workspace-leaf-content");
+      this.containerEl.setAttribute("data-type", this.getViewType());
+    }
+    getViewType() { return undefined; }
+    getIcon() { return this.icon || "lucide-file"; }
+    getState() { return {}; }
+    setState() {}
+    getEphemeralState() { return {}; }
+    setEphemeralState() {}
+    load() {}
+    unload() {}
+    onOpen() {}
+    onClose() {}
+    onResize() {}
+    onHeaderMenu() {}
+    onPaneMenu() {}
+    onTabMenu(menu) {
+      const leaf = this.leaf;
+      const ws = this.app.workspace;
+      const t = H.t.interface.menu;
+      menu.addItem((item) => item
+        .setSection("close")
+        .setTitle(t.close())
+        .setIcon("lucide-x")
+        .onClick(() => leaf.detach()));
+      const parent = leaf.parent;
+      if (!parent || ws.isInSidebar(leaf)) return;
+      const kids = parent.children || [];
+      const unpinned = kids.filter((c) => !c.pinned);
+      const others = unpinned.filter((c) => c !== leaf);
+      const idx = kids.indexOf(leaf);
+      const after = others.filter((c) => kids.indexOf(c) > idx);
+      if (others.length) {
+        menu.addItem((item) => item
+          .setSection("close")
+          .setTitle(t.closeOthers())
+          .setIcon("lucide-x")
+          .onClick(() => { for (const c of others) c.detach(); }));
+      }
+      if (after.length) {
+        menu.addItem((item) => item
+          .setSection("close")
+          .setTitle(t.closeAfter())
+          .setIcon("lucide-x")
+          .onClick(() => { for (const c of after) c.detach(); }));
+      }
+      if (unpinned.length > 1 || (unpinned.length === 1 && unpinned[0] !== leaf)) {
+        menu.addItem((item) => item
+          .setSection("close")
+          .setTitle(t.closeAll())
+          .setIcon("lucide-x")
+          .onClick(() => { for (const c of unpinned) c.detach(); }));
+      }
+    }
+    getSideTooltipPlacement() {
+      const root = this.leaf.getRoot && this.leaf.getRoot();
+      const side = root && root.side;
+      if (side === "left") return "right";
+      if (side === "right") return "left";
+      return undefined;
+    }
+    handleCut() {}
+    handleCopy() {}
+    handlePaste() {}
+    async open(parentEl) {
+      parentEl.appendChild(this.containerEl);
+      await this.load();
+      await this.onOpen();
+    }
+    async close() {
+      if (this.containerEl.parentElement) this.containerEl.parentElement.removeChild(this.containerEl);
+      this.unload();
+      await this.onClose();
+    }
+  };
+}
+
+function defineItemView(host) {
+  const H = host;
+  return class ItemView extends H.View {
+    constructor(leaf) {
+      super(leaf);
+      this.canDropAnywhere = false;
+      const app = this.app;
+      const ws = app.workspace;
+      this.headerEl = ng25vDiv("view-header");
+      this.contentEl = ng25vDiv("view-content");
+      this.containerEl.appendChild(this.headerEl);
+      this.containerEl.appendChild(this.contentEl);
+      const headerLeft = ng25vDiv("view-header-left");
+      this.headerEl.appendChild(headerLeft);
+      if (H.Platform.isMobile) {
+        const toggle = document.createElement("button");
+        toggle.className = "view-action clickable-icon mod-left-split-toggle mod-raised sidebar-toggle-button mod-left";
+        H.setTooltip(toggle, H.t.interface.sidebarExpand());
+        H.setIcon(toggle, "sidebar-toggle-button-icon");
+        toggle.addEventListener("click", () => {
+          if (navigator.vibrate) navigator.vibrate(100);
+          ws.leftSplit.toggle();
+        });
+        this.leftSidebarToggleEl = toggle;
+        headerLeft.appendChild(toggle);
+      } else {
+        this.leftSidebarToggleEl = null;
+      }
+      const navBtns = ng25vDiv("view-header-nav-buttons");
+      headerLeft.appendChild(navBtns);
+      const navFn = () => this.leaf;
+      this.backButtonEl = H.createNavButton(app, navFn, "backward");
+      this.forwardButtonEl = H.createNavButton(app, navFn, "forward");
+      H.setIcon(this.backButtonEl, "lucide-arrow-left");
+      H.setIcon(this.forwardButtonEl, "lucide-arrow-right");
+      navBtns.appendChild(this.backButtonEl);
+      navBtns.appendChild(this.forwardButtonEl);
+      this.titleContainerEl = ng25vDiv("view-header-title-container mod-at-start mod-fade");
+      this.titleParentEl = ng25vDiv("view-header-title-parent");
+      this.titleEl = ng25vDiv("view-header-title");
+      this.titleContainerEl.appendChild(this.titleParentEl);
+      this.titleParentEl.appendChild(this.titleEl);
+      this.headerEl.appendChild(this.titleContainerEl);
+      const updateFade = ng25vDebounce(() => {
+        const el = this.titleParentEl;
+        const atStart = el.scrollLeft === 0;
+        const atEnd = Math.ceil(el.scrollLeft) >= el.scrollWidth - el.offsetWidth;
+        this.titleContainerEl.classList.toggle("mod-at-start", atStart);
+        this.titleContainerEl.classList.toggle("mod-at-end", atEnd);
+      }, 10);
+      this.titleParentEl.addEventListener("scroll", updateFade);
+      this.actionsEl = ng25vDiv("view-actions" + (H.Platform.isPhone ? " mod-raised" : ""));
+      this.headerEl.appendChild(this.actionsEl);
+      const openMore = (e) => {
+        if (!this.moreOptionsButtonEl.classList.contains("has-active-menu")) this.onMoreOptions(e);
+      };
+      this.moreOptionsButtonEl = this.addAction("lucide-more-vertical", H.t.interface.menu.moreOptions(), openMore);
+      if (H.Platform.isMobile) {
+        this.moreOptionsButtonEl.addEventListener("contextmenu", (e) => {
+          if (H.Platform.isPhone) {
+            e.preventDefault();
+            ws.rightSplit.expand();
+          }
+        });
+      }
+      if (app.dragManager && app.dragManager.handleDrop) {
+        app.dragManager.handleDrop(this.containerEl, this.handleDrop.bind(this));
+      }
+    }
+    getDisplayText() { return ""; }
+    updateNavButtons() {
+      const hist = this.leaf.history || {};
+      this.backButtonEl.ariaDisabled = String((hist.backHistory || []).length === 0);
+      this.forwardButtonEl.ariaDisabled = String((hist.forwardHistory || []).length === 0);
+    }
+    load() {
+      super.load();
+      ng25vSetText(this.titleEl, this.getDisplayText());
+      this.leaf.on("group-change", () => this.onGroupChange());
+      this.leaf.on("history-change", () => this.updateNavButtons());
+    }
+    onGroupChange() {}
+    onMoreOptionsMenu() {}
+    handleDrop(event, data, isPreview) {
+      const mod = H.isMacLike ? event.shiftKey : event.altKey;
+      const inHeader = this.headerEl.contains(event.target);
+      if (!this.canDropAnywhere && !mod && !inHeader) return undefined;
+      const hint = this.leaf.handleDrop(event, data, isPreview);
+      if (hint) {
+        hint.hoverEl = this.headerEl;
+        hint.hoverClass = "is-highlighted";
+      }
+      return hint;
+    }
+    addAction(icon, title, cb) {
+      const btn = document.createElement("button");
+      btn.className = "clickable-icon view-action";
+      H.setIcon(btn, icon);
+      H.setTooltip(btn, title);
+      btn.addEventListener("mousedown", (e) => e.preventDefault());
+      btn.addEventListener("click", (e) => {
+        if (e.button === 0 || e.button === 1) cb(e);
+      });
+      this.actionsEl.prepend(btn);
+      return btn;
+    }
+    onMoreOptions(event) {
+      event.preventDefault();
+      const menu = new H.Menu();
+      const t = H.t.interface.menu;
+      menu.addSections(["close", "pane", "open", "action", "find", "info", "info.copy", "view", "view.linked", "system", "", "danger"]);
+      menu.setSectionSubmenu("info.copy", { title: t.copyPath(), icon: "lucide-clipboard" });
+      menu.setSectionSubmenu("view.linked", { title: t.openLinkedView(), icon: "lucide-link" });
+      this.onPaneMenu(menu, "more-options");
+      this.onMoreOptionsMenu(menu);
+      this.app.workspace.trigger("leaf-menu", menu, this.leaf);
+      const btn = this.moreOptionsButtonEl;
+      const rect = btn.getBoundingClientRect();
+      menu.setParentElement(btn);
+      menu.showAtPosition({ x: rect.x, y: rect.bottom, width: rect.width, overlap: true, left: true });
+    }
+    onPaneMenu(menu, source) {
+      super.onPaneMenu(menu, source);
+      const t = H.t.interface.menu;
+      const ws = this.app.workspace;
+      const leaf = this.leaf;
+      if (H.Platform.isPhone && source === "more-options") {
+        menu.addItem((item) => item.setSection("close").setTitle(t.close()).setIcon("lucide-x").onClick(() => leaf.detach()));
+        menu.addItem((item) => item
+          .setSection("pane")
+          .setTitle(leaf.pinned ? t.unpin() : t.pin())
+          .setIcon(leaf.pinned ? "lucide-pin-off" : "lucide-pin")
+          .onClick(() => leaf.togglePinned()));
+      }
+      if (H.Platform.canSplit && leaf.canPin && leaf.canPin()) {
+        const inSidebar = ws.isInSidebar && ws.isInSidebar(leaf);
+        menu.addItem((item) => item
+          .setSection("pane")
+          .setTitle(H.tc.splitRight())
+          .setIcon("lucide-separator-vertical")
+          .setDisabled(!!inSidebar)
+          .onClick(() => ws.duplicateLeaf(leaf, "vertical")));
+        menu.addItem((item) => item
+          .setSection("pane")
+          .setTitle(H.tc.splitDown())
+          .setIcon("lucide-separator-horizontal")
+          .setDisabled(false)
+          .onClick(() => ws.duplicateLeaf(leaf, "horizontal")));
+      }
+    }
+    onTabMenu(menu) {
+      super.onTabMenu(menu);
+      const t = H.t.interface.menu;
+      const ws = this.app.workspace;
+      const leaf = this.leaf;
+      if (leaf.canPin && leaf.canPin()) {
+        menu.addItem((item) => item
+          .setSection("pane")
+          .setTitle(leaf.pinned ? t.unpin() : t.pin())
+          .setIcon("lucide-pin")
+          .onClick(() => leaf.togglePinned()));
+        if (leaf.group) {
+          menu.addItem((item) => item
+            .setSection("pane")
+            .setTitle(t.unlinkTab())
+            .setIcon("lucide-link")
+            .onClick(() => leaf.setGroup(null)));
+        } else {
+          menu.addItem((item) => item
+            .setSection("pane")
+            .setTitle(t.linkTab())
+            .setIcon("lucide-link")
+            .onClick(() => ws.onStartLink(leaf)));
+        }
+      }
+      if (H.Platform.canPopoutWindow) {
+        menu.addItem((item) => item
+          .setSection("pane")
+          .setTitle(t.moveToNewWindow())
+          .setIcon("lucide-picture-in-picture")
+          .onClick(() => ws.moveLeafToPopout(leaf)));
+      }
+    }
+  };
+}
+
 // ---- notice.js ----
 // Notice: the toast messages in the corner of the window.
 
@@ -75836,362 +78264,6 @@ function defineMobileDrawer(host) {
   return drawerBase;
 }
 
-// ---- s05-utils.js ----
-// s05 slice: small application helpers — position/range mapping, markdown
-// inline-text extraction, frontmatter link scanning, filename validation,
-// action tracking, animation-tree lookup, loaders, footnote ids, cssclasses,
-// system info, vault listing (mobile) and the titlebar double-click handler.
-
-// mdast position {line, column, offset} -> editor-style {line, col, offset}
-// with 1-based line/column converted to 0-based.
-function s05Point(position) {
-  return { line: position.line - 1, col: position.column - 1, offset: position.offset };
-}
-
-function s05Range(range) {
-  return { start: s05Point(range.start), end: s05Point(range.end) };
-}
-
-function s05HasPosition(node) {
-  return node.hasOwnProperty("position");
-}
-
-function s05HasKey(node) {
-  return node.hasOwnProperty("key");
-}
-
-// Render an mdast subtree as plain text, preserving list/table structure.
-function s05InlineText(node) {
-  if (!node) return "";
-  const type = node.type;
-  if (type === "html") return "";
-  if (type === "iembed") return node.href;
-  if (type === "listItem") {
-    const parts = s05ChildrenText(node.children);
-    return parts.length === 1 ? parts[0] + "\n" : parts.join("\n");
-  }
-  if (type === "tag") return node.tag;
-  if (type === "comment") return "";
-  let text = node.value || node.alt || node.title ||
-    (node.hasOwnProperty("children") && s05ChildrenText(node.children).join("")) || "";
-  if (type === "list" && node.start !== undefined && node.start !== null) {
-    text = node.start + ". " + text;
-  }
-  if (type === "paragraph" || type === "break" || type === "heading" || type === "code") {
-    text += "\n";
-  } else if (text.endsWith("\n")) {
-    text = text.substring(0, text.length - 1);
-  }
-  if (type === "tableCell") text += " ";
-  if (type === "tableRow") text += "\n";
-  return text;
-}
-
-function s05ChildrenText(children) {
-  const out = [];
-  if (!children) return out;
-  for (const child of children) out.push(s05InlineText(child));
-  return out;
-}
-
-const MD_LINK = /^(!?\[)(.*?)(]\(\s*)((<[^>]*?>|[^ "]+?)(\s+([^ ]+|"[^"]+"|'[^']+'|\([^']+\)))?)(\s*\))$/;
-
-// Collect every [[wikilink]] / [md](url) reference inside a frontmatter value,
-// keyed by the dotted path to the value.
-function s05FrontmatterLinks(frontmatter) {
-  const links = [];
-  const visit = (prefix, key, value) => {
-    const path = prefix ? prefix + "." + key : key;
-    if (typeof value === "string") {
-      if (value.startsWith("[[") && value.endsWith("]]")) {
-        const parsed = env().iE(value.substring(2, value.length - 2));
-        links.push({ key: path, link: parsed.href, original: value, displayText: parsed.title });
-      }
-      if (value.startsWith("[") && value.endsWith(")")) {
-        const match = value.match(MD_LINK);
-        if (match) {
-          let url = match[5];
-          if (url.startsWith("<") && url.endsWith(">")) {
-            url = url.slice(1, -1).trim();
-          }
-          if (isLocalLink(url)) {
-            let href = url;
-            try { href = decodeURI(url); } catch (e) { /* keep raw */ }
-            links.push({ key: path, link: href, original: value, displayText: match[2] });
-          }
-        }
-      }
-    } else {
-      walk(path, value);
-    }
-  };
-  const walk = (prefix, value) => {
-    if (Array.isArray(value)) {
-      for (let i = 0; i < value.length; i++) visit(prefix, String(i), value[i]);
-    } else if (typeof value === "object") {
-      for (const key in value) {
-        if (value.hasOwnProperty(key)) visit(prefix, key, value[key]);
-      }
-    }
-  };
-  walk("", frontmatter);
-  return links;
-}
-
-// True when the cached metadata for `node` references the given file(s).
-function s05HasRef(node, target) {
-  return !!node && (anyRefMatch(node.links, target) === true || anyRefMatch(node.embeds, target) === true);
-}
-
-// Plain-text heading for outline/TOC use; `heading` is the cache heading
-// object, falls back to its raw heading string.
-function s05HeadingText(heading) {
-  const text = s05InlineText(env().Kx(heading.heading));
-  return text || heading.heading;
-}
-
-const WINDOWS_RESERVED = /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i;
-
-function s05AssertValidFileName(name) {
-  if (env().Ul) {
-    const last = name.charAt(name.length - 1);
-    if (last === "." || last === " ") {
-      throw new Error("File names cannot end with a dot or a space.");
-    }
-    const base = baseName(name);
-    if (WINDOWS_RESERVED.test(base)) {
-      throw new Error("File name is forbidden: " + base);
-    }
-  }
-  if (name.split("/").some((segment) => env().UT.test(segment))) {
-    throw new Error("File name cannot contain any of the following characters: " + env().qT);
-  }
-}
-
-function s05IsValidFileName(name) {
-  try {
-    s05AssertValidFileName(name);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-// Probe whether the filesystem adapter supports permission checks; caches the
-// result in the shared flag so the check runs at most once.
-async function s05CheckFilePermissions() {
-  try {
-    await env().Dm.checkPerms();
-    env().kD = true;
-  } catch (e) {
-    env().kD = false;
-  }
-  return env().kD;
-}
-
-function s05TrackAction(key) {
-  env().aD.push({ key, ts: performance.now() });
-}
-
-// Look up a node in the shared animation-name tree by dotted path.
-function s05LookupAnimNode(path) {
-  let node = env().lD;
-  if (path) {
-    for (const segment of path.split(".")) {
-      if (!node.children.hasOwnProperty(segment)) return null;
-      node = node.children[segment];
-    }
-  }
-  return node;
-}
-
-function s05AnimDuration(path) {
-  const node = s05LookupAnimNode(path);
-  return node?.duration ?? 0;
-}
-
-function s05CreateLoaderCube(parent) {
-  const el = env().createDiv("loader-cube");
-  for (let i = 1; i <= 9; i++) {
-    el.createDiv({ cls: "sk-cube sk-cube" + i });
-  }
-  if (parent) parent.appendChild(el);
-  return el;
-}
-
-function s05CreateLoaderSpinner(parent) {
-  const el = env().createDiv("loader-spinner");
-  env().tv(el, "loader-2");
-  if (parent) parent.appendChild(el);
-  return el;
-}
-
-// Show a spinner for the duration of `task()` and always remove it after.
-async function s05WithLoader(parent, task) {
-  const spinner = s05CreateLoaderSpinner(parent);
-  try {
-    return await task();
-  } finally {
-    spinner.detach();
-  }
-}
-
-const NON_WORD = /\W/;
-
-// Index of the first non-word character at or after `from`, or -1.
-function s05FindBreakIndex(text, from) {
-  const length = text.length;
-  for (let i = from; i < length; i += 1) {
-    if (NON_WORD.test(text[i])) return i;
-  }
-  return -1;
-}
-
-const FOOTNOTE_PREFIX = "[inline";
-
-// Next free numeric footnote id (ids starting with "[inline" are ignored).
-function s05NextFootnoteId(node) {
-  let max = 0;
-  if (node?.footnotes) {
-    for (const footnote of node.footnotes) {
-      if (!footnote.id.startsWith(FOOTNOTE_PREFIX) && /^\d+$/.test(footnote.id)) {
-        const value = parseInt(footnote.id, 10);
-        if (value > max) max = value;
-      }
-    }
-  }
-  return max + 1;
-}
-
-// `cssclasses` frontmatter entry as a filtered list of single-token classes.
-function s05CssClasses(frontmatter) {
-  if (!frontmatter) return null;
-  const value = frontmatterStrings(frontmatter, /^cssclasses$/i);
-  return value ? value.filter((cls) => !!cls && !cls.includes(" ")) : null;
-}
-
-// Human-readable system/vault diagnostic block for bug reports.
-async function s05SystemInfo() {
-  let out = "SYSTEM INFO:\n";
-  const platform = env().Yl;
-  if (platform.isDesktopApp) {
-    out += "\tBasalt version: " + platform.version + "\n";
-    out += "\tInstaller version: " + platform.build + "\n";
-    out += "\tOperating system: " + platform.osName + " " + platform.osVersion + "\n";
-  }
-  if (platform.isMobileApp) {
-    out += "\tBasalt version: " + platform.version + " (" + platform.build + ")\n";
-    out += "\tAPI version: " + env().gte + "\n";
-    out += "\tOperating system: " + platform.osName + " " + platform.osVersion +
-      " (" + platform.manufacturer + " " + platform.model + ")\n";
-    if (platform.isAndroidApp) {
-      out += "\tWebview version: " + chromeVersion(navigator.userAgent) + "\n";
-    }
-  }
-  const login = env().Hw.token ? "logged in" : "not logged in";
-  out += "\tLogin status: " + login + "\n";
-  out += "\tLanguage: " + env().sm() + "\n";
-  if (env().Hw.token) {
-    out += "\tCatalyst license: " + (env().Hw.license || "none") + "\n";
-  }
-  if (platform.isDesktopApp) {
-    let insider = "";
-    env().Of((electron) => {
-      insider = electron.ipcRenderer.sendSync("insider-build", null) ? "on" : "off";
-      out += "\tInsider build toggle: " + insider + "\n";
-    });
-  }
-  return out;
-}
-
-// List every vault visible to the mobile shell. On iOS this merges the iCloud
-// root (when configured) with the documents adapter; on Android it merges
-// permission-gated local roots; other platforms get an empty list.
-async function s05MobileVaultList() {
-  const out = [];
-  const collect = async (adapter, subdir, prefix, isICloud, exclude) => {
-    let entries;
-    try {
-      entries = await adapter.readdir(subdir);
-    } catch (e) {
-      console.error(e);
-      return;
-    }
-    for (const entry of entries) {
-      const name = entry.name;
-      if (name.startsWith(".") || (exclude && exclude.contains(name))) continue;
-      if (entry.type === "directory") {
-        out.push({ name, location: prefix + name, storageType: isICloud ? "iCloud" : "local" });
-      }
-    }
-  };
-  if (env().Mm) {
-    if (env().yD) await collect(env().yD, env().wD, "icloud/", true);
-    await collect(env().vD, "", "documents/");
-  } else if (env().Sm) {
-    if (await s05CheckFilePermissions()) {
-      const rootUri = env().vD.getUri("") + "/";
-      const names = [];
-      for (const dir of env().gD) {
-        try {
-          const uri = env().bD.getUri(dir);
-          if (uri.startsWith(rootUri)) {
-            const rel = uri.substr(rootUri.length);
-            if (!rel.contains("/")) names.push(decodeURIComponent(rel));
-          }
-          if ((await env().bD.stat(dir)).type === "directory") {
-            out.push({ location: dir, name: lastSegment(dir), storageType: "local" });
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      await collect(env().vD, "", "", false, names);
-    }
-  }
-  return out;
-}
-
-// macOS-only: double-clicking the titlebar area toggles minimise/maximise per
-// the system preference, unless the click landed on an interactive control.
-function s05TitlebarDoubleClick(element) {
-  const platform = env().Yl;
-  if (!(platform.isMacOS && platform.isDesktopApp)) return;
-  element.addEventListener("dblclick", (event) => {
-    if (event.button !== 0) return;
-    const target = event.target;
-    if (!target.instanceOf(HTMLElement)) return;
-    if (target.closest(".clickable-icon") ||
-        target.closest(".workspace-tab-header-inner-close-button") ||
-        (target.closest(".workspace-tab-header") && target.closest(".workspace-split.mod-sidedock"))) {
-      return;
-    }
-    const win = element.win.electronWindow;
-    if (!win.isMaximizable) return;
-    env().Of((electron) => {
-      const action = electron.remote.systemPreferences.getUserDefault("AppleActionOnDoubleClick", "string");
-      if (action === "Minimize") {
-        win.minimize();
-      } else if (action === "Maximize" || action === "") {
-        if (win.isMaximized()) win.unmaximize(); else win.maximize();
-      }
-    });
-  });
-}
-
-// Wheel events over a horizontally scrollable element: translate vertical
-// wheel delta into horizontal scrolling.
-function s05WheelScroll(event) {
-  if (!event.deltaY) return;
-  const target = event.currentTarget;
-  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
-    target.scrollLeft += event.deltaX;
-  } else {
-    target.scrollLeft += event.deltaY;
-  }
-  event.preventDefault();
-}
-
 // ---- s05-widgets.js ----
 // s05 slice: UI widgets and vault-chooser suggesters.
 // - unified-diff builder used by `diff` CLI output
@@ -77718,442 +79790,6 @@ function s06PropertyOptionUnknownDescriptor(host) {
   };
 }
 
-// ---- s06-util.js ----
-// s06 utility replacements: editor positions, frontmatter helpers, table-cell
-// helpers, link/tag suggestion helpers and small comparators.
-// Dependencies that still live in the inherited bundle are reached through
-// env() (manifest envBind names) or the trailing `host` argument that
-// manifest entries with "host": true receive; helpers already rewritten are
-// called by their own names.
-
-// ---- shared regular expressions / constants (also spliced back as declarators) ----
-
-/** Matches a leading blockquote marker `> ` (with up to two spaces of indent). */
-const s06BlockquoteRe = /^\s{0,3}>(\s*)/;
-/** Matches a `#tag` at the end of a line (used by the tag suggest trigger). */
-const s06TagRe = /(^|\s)#[^\u2000-\u206F\u2E00-\u2E7F'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\\s]*$/g;
-/** Matches a whole `[[link|alias]]` / `[[link]]` wikilink. */
-const s06WikiLinkRe = /^(!?\[\[)(.*?)(\|(.*))?(]])$/;
-/** Matches a footnote reference `#1234`. */
-const s06FootnoteRefRe = /^#\d+$/;
-/** Matches a leading list marker or blockquote (used by line classification). */
-const s06ListMarkerRe = /^([>\s]*)(([*+-] |(\d+)([.)] ))(?:\[(.)\] )?)?/;
-/** Matches a leading heading marker. */
-const s06HeadingRe = /^([>\s]*)(#{1,6} )?(.*)/;
-/** ISO-like date+time accepted by the date properties. */
-const s06DateTimeRe = /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d$/;
-/** ISO-like date accepted by the date properties. */
-const s06DateRe = /^\d{4}-[01]\d-[0-3]\d$/;
-/** moment.js formats tried for datetime property values, most specific first. */
-const s06DateTimeFormats = ["YYYY-MM-DD[T]HH:mm:ss", "YYYY-MM-DD[T]HH:mm", "YYYY-MM-DD HH:mm:ss", "YYYY-MM-DD HH:mm"];
-/** moment.js formats tried for date property values. */
-const s06DateFormats = ["YYYY-MM-DD"];
-/** HTML comment that marks generated/managed blocks in file contents. */
-const s06CommentPrefix = "<!-- basalt -->";
-/** Input rules that turn CJK bracket pairs into wikilink brackets. */
-const s06CjkBrackets = [
-  { regex: /(！)?【【$/, replace: (m) => (m[1] ? "![[" : "[[") },
-  { regex: /】】$/, replace: () => "]]" },
-  { regex: /【【$/, replace: () => "[[" },
-];
-/** Empty suggestion result shared by suggest flows. */
-const s06EmptySuggestion = { type: "none", matches: null, score: 0 };
-
-// ---- editor positions ({line, ch} <-> offsets in a CodeMirror doc) ----
-
-/** Builds a position object. */
-function s06Pos(line, ch = 0) { return { line, ch }; }
-
-/** Position equality on line and ch only. */
-function s06PosEq(a, b) { return a.line === b.line && a.ch === b.ch; }
-
-/** Position shifted by `ch` columns on the same line. */
-function s06PosAdd(pos, ch) { return { line: pos.line, ch: pos.ch + ch }; }
-
-/** Offset of a {line, ch} position inside a CodeMirror doc; negative `ch` counts from line end, missing `ch` means line end. */
-function s06PosToOffset(doc, pos) {
-  if (pos.line < 0) return 0;
-  const lineNo = pos.line + 1;
-  if (lineNo > doc.lines) return doc.length;
-  const line = doc.line(lineNo);
-  if (!isFinite(pos.ch)) return line.to;
-  return pos.ch < 0 ? line.from + Math.max(0, line.length + pos.ch) : line.from + pos.ch;
-}
-
-/** {line, ch} of an offset inside a CodeMirror doc (clamped to the doc). */
-function s06OffsetToPos(doc, offset) {
-  offset = Math.clamp(offset, 0, doc.length);
-  const line = doc.lineAt(offset);
-  return { line: line.number - 1, ch: offset - line.from };
-}
-
-// ---- small pure helpers ----
-
-/** Visual width of the blockquote prefix of a line (4-space groups inside the marker collapse). */
-function s06QuotePrefixWidth(text) {
-  const m = text.match(s06BlockquoteRe);
-  if (!m) return 0;
-  let indent = m[1];
-  while (indent.startsWith("    ")) indent = indent.substring(4);
-  const width = m[0].length - m[1].length;
-  return indent.startsWith(" ") ? width + 1 : width;
-}
-
-/** Sets `value` at `path` inside `obj`, creating arrays/objects along the way; mutates `obj` and `path`. */
-function s06SetPath(obj, path, value) {
-  while (obj && path.length) {
-    const key = path.shift();
-    if (Array.isArray(obj)) {
-      const index = parseInt(key);
-      if (isNaN(index) || index < 0 || index >= obj.length) return;
-      if (!(path.length > 0)) { obj[index] = value; return; }
-      obj = obj[index];
-    } else {
-      if (typeof obj !== "object") return;
-      if (!(path.length > 0)) { obj[key] = value; return; }
-      obj = obj[key];
-    }
-  }
-}
-
-/** Deep-merges `source` into `target`: arrays concatenate+dedupe, plain objects recurse, other values overwrite. */
-function s06MergeDeep(target, source) {
-  if (Object.keys(source).length === 0) return;
-  for (const key in source) {
-    if (!source.hasOwnProperty(key)) continue;
-    const oldVal = target.hasOwnProperty(key) ? target[key] : undefined;
-    const newVal = source[key];
-    if (oldVal) {
-      if (Array.isArray(oldVal) && Array.isArray(newVal)) target[key] = oldVal.concat(newVal).unique();
-      else if (typeof oldVal === "object" && newVal !== null && typeof newVal === "object") s06MergeDeep(oldVal, newVal);
-      else if (newVal !== null) target[key] = newVal;
-    } else target[key] = newVal;
-  }
-}
-
-// ---- frontmatter helpers ----
-
-/** Serializes a frontmatter object to a `---\n...\n---\n` block (empty object -> ""). */
-function s06FrontmatterBlock(data) {
-  let out = "";
-  if (data && Object.keys(data).length > 0) {
-    const body = env().vA(data).trim();
-    out = "---\n".concat(body, "\n---\n");
-  }
-  return out;
-}
-
-/** Splits file text into {content, frontmatter} at the frontmatter block. */
-function s06ParseFrontmatter(text) {
-  const info = env().Xx(text);
-  const content = text.slice(info.contentStart);
-  let frontmatter = {};
-  if (info.frontmatter) frontmatter = env().mA(info.frontmatter);
-  return { content, frontmatter };
-}
-
-/** Returns `text` with its body only, prefixed by the serialized frontmatter `data`. */
-function s06WithFrontmatter(text, data) {
-  const block = s06FrontmatterBlock(data);
-  const info = env().Xx(text);
-  return block + text.slice(info.contentStart);
-}
-
-/** Lets `mutate` edit the parsed frontmatter object, then rewrites the file's frontmatter block. */
-function s06UpdateFrontmatter(text, mutate) {
-  const info = env().Xx(text);
-  const data = info.exists ? env().mA(info.frontmatter) : {};
-  const obj = data && typeof data === "object" ? data : {};
-  mutate(obj);
-  if (Object.keys(obj).length === 0) return info.exists ? text.slice(info.contentStart) : text;
-  const block = env().vA(obj);
-  return info.exists ? text.slice(0, info.from) + block + text.slice(info.to) : "---\n" + block + "---\n" + text;
-}
-
-// ---- table helpers ----
-
-/** True when `el` is a table header row (`<thead>` context and only `<th>` children). */
-function s06IsHeaderRow(el) {
-  if (!el) return false;
-  const parent = el.parentNode;
-  if (parent.nodeName === "THEAD") return true;
-  const firstOfKind = parent.firstChild === el &&
-    (parent.nodeName === "TABLE" ||
-      (parent.nodeName === "TBODY" &&
-        (!parent.previousSibling ||
-          (parent.previousSibling.nodeName === "THEAD" && /^\s*$/i.test(parent.previousSibling.textContent)))));
-  return firstOfKind && Array.prototype.every.call(el.childNodes, (child) => child.nodeName === "TH");
-}
-
-/** Converts a list of offsets into {line, ch} positions by scanning newlines. */
-function s06OffsetsToPositions(text, offsets) {
-  let line = 0, lineStart = 0, nl = text.indexOf("\n"), out = [];
-  for (let k = 0; k < offsets.length; k++) {
-    const offset = offsets[k];
-    while (nl < offset) {
-      if (nl === -1) { nl = text.length; break; }
-      line++; lineStart = nl + 1; nl = text.indexOf("\n", lineStart);
-    }
-    out.push({ line, ch: offset - lineStart });
-  }
-  return out;
-}
-
-/** Extra columns a `<td>` spans (colspan - 1, 0 when absent/invalid). */
-function s06Colspan(cell) {
-  const raw = cell.getAttribute("colspan");
-  if (!raw) return 0;
-  const n = parseInt(raw);
-  return isNaN(n) ? 0 : Math.max(0, n - 1);
-}
-
-/** `filler` repeated for each extra column the cell spans. */
-function s06ColspanRepeat(cell, filler) {
-  return filler.repeat(s06Colspan(cell));
-}
-
-// ---- table cell text <-> markdown escaping (produces a CodeMirror ChangeSet) ----
-
-const S06_CELL_BREAK_RE = /(\r?\n|\\*\|)/g;
-const S06_CELL_CODE_RE = /(`+)[^`]+\1/g;
-const S06_CELL_ESCAPED_RE = /(\\+\||<br>)/gi;
-
-/** Escapes raw newlines/pipes in cell `text` for markdown; returns {result, changes}. */
-function s06EscapeTableCell(text) {
-  const changes = [];
-  const length = text.length;
-  let delta = 0;
-  const matches = Array.from(text.matchAll(S06_CELL_BREAK_RE));
-  for (let k = 0; k < matches.length; k++) {
-    const m = matches[k], token = m[1], at = m.index, size = token.length;
-    const isPipe = token[token.length - 1] === "|";
-    let insertAt = at, insertSize = size, insert;
-    if (isPipe) {
-      const bs = token.match(/^(\\+)/);
-      if (bs && bs[1].length % 2 === 1) continue;
-      if (bs) { insertAt = at + size - 1; insertSize = 1; }
-      insert = "\\|";
-    } else {
-      insert = "<br>";
-    }
-    const pos = insertAt + delta;
-    text = text.substring(0, pos) + insert + text.substring(pos + insertSize);
-    delta -= insertSize - insert.length;
-    changes.push({ from: insertAt, to: insertAt + insertSize, insert });
-  }
-  return { result: text, changes: env().re.of(changes, length) };
-}
-
-/** Replaces `<br>`/escaped-pipe/code-span markers inside cell `text`; returns {result, changes}. */
-function s06UnescapeTableCell(text) {
-  const changes = [];
-  const length = text.length;
-  let delta = 0;
-  const codeSpans = Array.from(text.matchAll(S06_CELL_CODE_RE));
-  const apply = (m) => {
-    const token = m[1], at = m.index, size = token.length;
-    let from = at, span = size, insert;
-    if (token.toLowerCase() !== "<br>") {
-      const bs = token.match(/^(\\+)/);
-      if (bs && bs[1].length % 2 === 0) return;
-      if (bs) { from = at + span - 2; span = 2; }
-      insert = "|";
-    } else {
-      if (codeSpans.some((s) => s.index < m.index && s.index + s[0].length > at + span)) return;
-      insert = "\n";
-    }
-    const pos = from + delta;
-    text = text.substring(0, pos) + insert + text.substring(pos + span);
-    delta -= span - insert.length;
-    changes.push({ from, to: from + span, insert });
-  };
-  const escaped = Array.from(text.matchAll(S06_CELL_ESCAPED_RE));
-  for (let k = 0; k < escaped.length; k++) apply(escaped[k]);
-  return { result: text, changes: env().re.of(changes, length) };
-}
-
-// ---- search/suggestion helpers ----
-
-/** Tries `matchFn` on the basename first, then the whole text (score -1 on fallback). */
-function s06MatchBasenameFirst(matchFn, text) {
-  const base = lastSegment(text);
-  let hit = matchFn(base);
-  if (hit) {
-    shiftRanges(hit.matches, text.length - base.length);
-    return hit;
-  }
-  hit = matchFn(text);
-  if (hit) hit.score -= 1;
-  return hit;
-}
-
-/** Comparator: higher score first. */
-function s06CompareScoreDesc(a, b) { return b.score - a.score; }
-
-/** Comparator: shorter path first. */
-function s06ComparePathLength(a, b) { return a.path.length - b.path.length; }
-
-// ---- platform / view helpers ----
-
-/** True when an iOS "open in Files" drop should be honoured for this dataTransfer. */
-function s06HasIosFilesDrop(dataTransfer) {
-  for (let i = 0; i < dataTransfer.items.length; i++) {
-    if (dataTransfer.items[i].kind === "file") return true;
-  }
-  return env().Yl.isIosApp && dataTransfer.types.indexOf("Files") !== -1;
-}
-
-/** True when `view` exposes a properties metadata editor. */
-function s06HasMetadataEditor(view, host) {
-  return view && typeof view === "object" && Object.hasOwn(view, "metadataEditor") && view.metadataEditor instanceof host.MetadataEditor;
-}
-
-/** The metadata editor of the workspace's active editor or active leaf view, when visible. */
-function s06ActivePropertiesEditor(workspace, host) {
-  const editor = workspace.activeEditor;
-  if (s06HasMetadataEditor(editor, host) && editor.canShowProperties()) return editor.metadataEditor;
-  const leaf = workspace.activeLeaf;
-  const view = leaf === null || leaf === undefined ? undefined : leaf.view;
-  return s06HasMetadataEditor(view, host) && view.canShowProperties() ? view.metadataEditor : null;
-}
-
-/** Sanitizes `html` through DOMPurify and imports the result as a DOM node. */
-function s06SanitizeHtml(html, host) {
-  return document.importNode(host.s06Purify.sanitize(html, host.s06PurifyConfig), true);
-}
-
-// ---- link text helpers ----
-
-/** Turns a drop/link target into markdown link texts (file(s), link, heading, bookmarks). */
-function s06DropLinkTexts(app, target, sourcePath, embed, host) {
-  const fileManager = app.fileManager, vault = app.vault;
-  const linkFor = (file, subpath, alias) => {
-    const md = fileManager.generateMarkdownLink(file, sourcePath, subpath, alias);
-    return embed && host.isImageExtension(file.extension) ? "!" + md : md;
-  };
-  if (target.type === "file") return [linkFor(target.file)];
-  if (target.type === "files") {
-    const out = [];
-    for (let i = 0; i < target.files.length; i++) {
-      const f = target.files[i];
-      if (f instanceof host.TFile) out.push(linkFor(f));
-    }
-    return out;
-  }
-  if (target.type === "link") {
-    if (target.file) {
-      const subpath = parseLinktext(target.linktext).subpath;
-      return [linkFor(target.file, subpath)];
-    }
-    return [target.linktext];
-  }
-  if (target.type === "heading") {
-    const subpath = "#" + linkSafeHeading(target.heading.heading);
-    return [linkFor(target.file, subpath)];
-  }
-  if (target.type === "bookmarks") {
-    const out = [];
-    for (let i = 0; i < target.items.length; i++) {
-      const item = target.items[i].item;
-      if (item.type === "file") {
-        const file = vault.getAbstractFileByPath(item.path);
-        if (file instanceof host.TFile) out.push(linkFor(file, item.subpath, item.title));
-      }
-    }
-    return out;
-  }
-  return [];
-}
-
-/** Rewrites the link inside a {original, link} pair to `newLink`, preserving alias/format. */
-function s06RewriteLink(pair, newLink, host) {
-  const original = pair.original, link = pair.link;
-  const wiki = original.match(s06WikiLinkRe);
-  let result;
-  if (wiki) {
-    const bang = wiki[1], inner = wiki[2], pipe = wiki[4], tail = wiki[5];
-    let alias = pipe === undefined ? "" : pipe;
-    if (alias) {
-      const sep = /\\\|/.test(original) ? "\\|" : "|";
-      if (inner.contains("/")) {
-        const trimmed = alias.trim();
-        if (baseName(inner) === trimmed) alias = baseName(linkPath(newLink));
-      }
-      result = bang + newLink + sep + alias + tail;
-    } else result = bang + newLink + tail;
-  } else {
-    const md = original.match(host.s06MdLinkPattern);
-    const safe = !md || !md[5].startsWith("<") ? escapeLinkChars(newLink) : "<" + newLink + ">";
-    if (md) {
-      let text = md[2];
-      const display = plainSpaces(text).trim();
-      const oldPath = linkPath(link);
-      if (display === displayName(oldPath)) text = displayName(linkPath(newLink));
-      else if (display.contains("/") && display === withoutMd(oldPath)) text = withoutMd(linkPath(newLink));
-      result = md[1] + text + md[3] + safe + (md[6] !== null && md[6] !== undefined ? md[6] : "") + md[8];
-    } else {
-      result = "[](".concat(safe, ")");
-      if (original.startsWith("!")) result = "!" + result;
-    }
-  }
-  return result;
-}
-
-/** Computes the link update for a resolved link whose target paths changed. */
-function s06LinkChangeFor(resolved, metadataCache, host) {
-  const reference = resolved.reference, sourceFile = resolved.sourceFile;
-  const resolvedPaths = resolved.resolvedPaths;
-  const sourcePath = sourceFile.path;
-  const parsed = parseLinktext(reference.link);
-  const linkPathPart = parsed.path, subpath = parsed.subpath;
-  const destPaths = metadataCache.getLinkpathDest(linkPathPart, sourcePath).map((d) => d.path);
-  const same = destPaths.length !== 0 && s06ArraysEqual(resolvedPaths, destPaths);
-  if (same) return undefined;
-  const wasWiki = s06WikiLinkRe.test(reference.original);
-  const newLink = metadataCache.fileToLinktext(resolved.resolvedFile, sourcePath, wasWiki) + subpath;
-  if (reference.link === newLink) return undefined;
-  return { sourcePath, reference, change: s06RewriteLink(reference, newLink, host) };
-}
-
-function s06ArraysEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; ++i) if (a[i] !== b[i]) return false;
-  return true;
-}
-
-/** {path, subpath} a link/suggestion item points at. */
-function s06LinkTarget(item) {
-  let parsed, path = "", subpath = "";
-  if (item.type === "block") { path = item.file.path; subpath = "#^" + item.node.id; }
-  else if (item.type === "heading") { path = item.file.path; subpath = "#" + linkSafeHeading(item.heading); }
-  else if (item.type === "file" || item.type === "alias") { path = item.file.path; }
-  else if (item.type === "linktext") { parsed = parseLinktext(item.path); path = parsed.path; subpath = parsed.subpath; }
-  return { path, subpath };
-}
-
-/** Tag suggestions for `query` from the metadata cache (prefix `#` included when `withHash`). */
-function s06TagSuggestions(metadataCache, query, withHash, host) {
-  if (withHash === undefined) withHash = false;
-  query = query.toLowerCase();
-  let tags = Object.keys(metadataCache.getTags());
-  if (!withHash) tags = tags.map((t) => t.slice(1));
-  const prepared = prepareQuery(query);
-  tags.sort(host.compareStrings);
-  const out = [];
-  for (let i = 0; i < tags.length; i++) {
-    const tag = tags[i];
-    if (query === "" || (query === "#" && withHash)) out.push({ tag, score: 0, matches: null });
-    else {
-      const hit = fuzzyMatchJs(prepared, tag.toLowerCase());
-      if (hit) out.push({ tag, score: hit.score, matches: hit.matches });
-    }
-  }
-  out.sort(s06CompareScoreDesc);
-  return out;
-}
-
 // ---- s07-embed-views.js ----
 // Display-mode embed views: the markdown file embed shown inside reading mode
 // (`dq`) and the base section every CM6 embed child derives from (`NV`).
@@ -78748,379 +80384,6 @@ function s07imageFor(sections, url, source) {
 function s07linkHrefFor(el, container) {
   const href = el.getAttr("data-href") || el.getAttr("href");
   return href && env().Gz.belongsToMe(el, container) ? href : null;
-}
-
-// ---- s07-helpers.js ----
-// s07 helpers: small application-scope utilities — document position conversion, the
-// _handlers event trio used by the CM5-compat facade, the IME-composition dispatch fix,
-// cursor restore after undo/redo, embed URL detection, the external-embed iframe,
-// the macOS writing-tools formatting menu, outline HTML sections, file-explorer sort
-// comparators, search match segment rendering and the lazy-embed weak maps.
-
-// ---------- document position helpers (CM6 Text <-> {line, ch}) ----------
-
-/** Offset of a 0-based {line, ch} position in a CM6 Text; clamps like the original. */
-function s07posToOffset(doc, pos) {
-  const ch = pos.ch;
-  const line = pos.line + 1;
-  if (line < 1) return 0;
-  if (line > doc.lines) return doc.length;
-  const l = doc.line(line);
-  return Math.min(l.from + Math.max(0, ch), l.to);
-}
-
-/** {line, ch} of an offset in a CM6 Text, or null when out of range. */
-function s07offsetToPos(doc, offset) {
-  if (offset < 0 || offset > doc.length) return null;
-  const l = doc.lineAt(offset);
-  return { line: l.number - 1, ch: offset - l.from };
-}
-
-// ---------- _handlers event trio (targets without addEventListener) ----------
-
-/** Remove one listener; falls back to the `_handlers` map on non-DOM targets. */
-function s07removeHandler(target, type, fn) {
-  if (target.removeEventListener) target.removeEventListener(type, fn, false);
-  else {
-    const map = target._handlers;
-    const list = map && map[type];
-    if (list) {
-      const at = list.indexOf(fn);
-      if (at > -1) map[type] = list.slice(0, at).concat(list.slice(at + 1));
-    }
-  }
-}
-
-/** Add one listener; stores it in `_handlers` when there is no addEventListener. */
-function s07addHandler(target, type, fn) {
-  if (target.addEventListener) target.addEventListener(type, fn, false);
-  else {
-    const map = target._handlers || (target._handlers = {});
-    map[type] = (map[type] || []).concat(fn);
-  }
-}
-
-// ---------- editor facade glue ----------
-
-/**
- * Dispatch a CM6 transaction spec through the facade, rewriting a pending
- * "input.type.compose(.start)" user event while an IME composition is in flight.
- */
-function s07cm6Dispatch(facade, spec) {
-  const view = facade.cm6;
-  if (view.state.readOnly) return;
-  let userEvent = "input.type.compose";
-  if (facade.curOp && !facade.curOp.lastChange) userEvent = "input.type.compose.start";
-  if (spec.annotations && Array.isArray(spec.annotations)) {
-    try {
-      spec.annotations.some((a) => {
-        if (a.value == "input") a.value = userEvent;
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  } else spec.userEvent = userEvent;
-  return view.dispatch(spec);
-}
-
-/** Re-dispatch the cursor position recorded at the start of an undo/redo op. */
-function s07cm6RestoreCursor(facade, undo) {
-  if (facade.curOp) facade.curOp.$changeStart = undefined;
-  (undo ? env().nF : env().iF)(facade.cm6);
-  const start = facade.curOp == null ? void 0 : facade.curOp.$changeStart;
-  if (start != null) facade.cm6.dispatch({ selection: { anchor: start } });
-}
-
-// ---------- embed URL detection ----------
-
-const S07_YOUTUBE_RE = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)(?:\/(?:[\w\-]+\?(?:.*?\&)*v=|embed\/|v\/)?)([\w\-]+)(?:\??&?(?:t|start)=([0-9]+))?(?:\S+)?$/;
-const S07_TWEET_RE = /^(?:https?:\/\/)?(?:mobile\.)?(?:twitter|x)\.com\/.+\/(\d+)/;
-
-const s07youtubeRe = S07_YOUTUBE_RE;
-const s07tweetRe = S07_TWEET_RE;
-
-/** Privacy-enhanced YouTube embed URL, or a theme-aware Twitter embed URL, else null. */
-function s07embedUrlFor(text) {
-  if (!text || typeof text != "string") return null;
-  let m = text.match(S07_YOUTUBE_RE);
-  if (m) {
-    let url = "https://www.youtube-nocookie.com/embed/" + m[1];
-    if (m[2]) url += "?start=" + m[2];
-    return url;
-  }
-  m = text.match(S07_TWEET_RE);
-  if (m) {
-    const dark = document.body.hasClass("theme-dark");
-    return "https://platform.twitter.com/embed/Tweet.html?dnt=true&theme=".concat(dark ? "dark" : "light", "&id=").concat(m[1]);
-  }
-  return null;
-}
-
-// ---------- external embed iframe ----------
-
-/** Sandboxed iframe for externally hosted embeds (tweets resize themselves via framemessage). */
-function s07externalEmbed(url) {
-  const frame = env().createEl("iframe", "external-embed mod-receives-events");
-  frame.setAttr("sandbox", "allow-forms allow-presentation allow-same-origin allow-popups-to-escape-sandbox allow-scripts allow-modals allow-popups");
-  frame.setAttr("allow", "fullscreen");
-  frame.setAttr("frameborder", "0");
-  frame.setAttr("referrerpolicy", "strict-origin-when-cross-origin");
-  frame.src = url;
-  if (url.contains("platform.twitter.com")) {
-    frame.setAttr("scrolling", "no");
-    frame.addEventListener("framemessage", (e) => {
-      const detail = e.detail;
-      if (detail) {
-        const tw = detail.data && detail.data["twttr.embed"];
-        if (tw && tw.method === "twttr.private.resize") {
-          const height = tw.params[0].height;
-          if (Number.isNumber(height)) frame.style.height = String(Math.min(1e3, height)) + "px";
-        }
-      }
-    });
-    env().Iz(frame.win);
-    frame.onWindowMigrated(() => env().Iz(frame.win));
-  }
-  return frame;
-}
-
-// ---------- macOS writing-tools formatting menu ----------
-
-/** Registers the bold/italic/... formatting submenu on a native context menu. */
-function s07writingToolsMenu(menu, editor, state, section) {
-  const fmt = env().gm.interface.formatting;
-  menu.setShowMacWritingTools(true);
-  menu.addSections([section + ".basic", section + ".advanced", section + ".danger"]);
-  menu.addItem((item) => {
-    item.setSection(section).setTitle(fmt.labelFormatting()).setIcon("lucide-paintbrush").setSubmenu()
-      .addItem((sub) => sub.setSection(section + ".basic").setTitle(fmt.toggleBold()).setChecked(state.bold).setIcon("lucide-bold").onClick(() => editor.toggleMarkdownFormatting("bold")))
-      .addItem((sub) => sub.setSection(section + ".basic").setTitle(fmt.toggleItalics()).setChecked(state.italic).setIcon("lucide-italic").onClick(() => editor.toggleMarkdownFormatting("italic")))
-      .addItem((sub) => sub.setSection(section + ".basic").setTitle(fmt.toggleStrikethrough()).setChecked(state.strikethrough).setIcon("lucide-strikethrough").onClick(() => editor.toggleMarkdownFormatting("strikethrough")))
-      .addItem((sub) => sub.setSection(section + ".basic").setTitle(fmt.toggleHighlight()).setChecked(state.highlight).setIcon("lucide-highlighter").onClick(() => editor.toggleMarkdownFormatting("highlight")))
-      .addItem((sub) => sub.setSection(section + ".advanced").setTitle(fmt.toggleCode()).setChecked(state.code).setIcon("lucide-code-2").onClick(() => editor.toggleMarkdownFormatting("code")))
-      .addItem((sub) => sub.setSection(section + ".advanced").setTitle(fmt.toggleMath()).setChecked(state.math).setIcon("lucide-sigma").onClick(() => editor.toggleMarkdownFormatting("math")))
-      .addItem((sub) => sub.setSection(section + ".advanced").setTitle(fmt.toggleComments()).setChecked(state.comment).setIcon("lucide-percent").onClick(() => editor.toggleComment()))
-      .addItem((sub) => sub.setSection(section + ".danger").setTitle(fmt.clear()).setIcon("lucide-eraser").onClick(() => editor.clearMarkdownFormatting()));
-  });
-}
-
-// ---------- outline / table-of-contents HTML ----------
-
-/**
- * Renders the top-level blocks of a markdown document to HTML sections for the
- * outline: each entry is { html, pos, level } plus the parsed frontmatter.
- */
-function s07outlineHtml(markdown) {
-  const ast = env().Kx(markdown);
-  const definitions = { definitions: env().oT(ast) };
-  const sections = [];
-  const children = ast.children;
-  const frontmatter = env().$x(ast);
-  ast.children = [null];
-  for (let i = 0; i < children.length; i++) {
-    const child = children[i];
-    let level = 7;
-    if (child.type === "heading") level = child.depth || 1;
-    env().jC(child, ["checklist", "listItem", "code"], (node) => {
-      const data = node.data || (node.data = {});
-      const props = data.hProperties || (data.hProperties = {});
-      props["data-line"] = String(node.position.start.line - child.position.start.line);
-    });
-    ast.children[0] = child;
-    const html = env().Zx(ast, definitions);
-    sections.push({ html, pos: env().hT(child.position), level });
-  }
-  return { sections, frontmatter };
-}
-
-// ---------- file explorer sorting ----------
-
-/** Sort-order key pairs offered by the file explorer setting. */
-const s07sortOrderPairs = [
-  ["alphabetical", "alphabeticalReverse"],
-  ["byModifiedTime", "byModifiedTimeReverse"],
-  ["byCreatedTime", "byCreatedTimeReverse"],
-];
-
-/** Basename/stat comparators used when no locale sort order is configured. */
-function s07fileSortComparators() {
-  const alphabetical = (a, b) => env().ub(a.basename, b.basename);
-  const byModifiedTime = (a, b) => b.stat.mtime - a.stat.mtime;
-  const byCreatedTime = (a, b) => b.stat.ctime - a.stat.ctime;
-  return {
-    alphabetical,
-    alphabeticalReverse: (a, b) => -alphabetical(a, b),
-    byModifiedTime,
-    byModifiedTimeReverse: (a, b) => -byModifiedTime(a, b),
-    byCreatedTime,
-    byCreatedTimeReverse: (a, b) => -byCreatedTime(a, b),
-  };
-}
-
-/** Localized label comparators from the fileExplorer strings. */
-function s07labelSortComparators() {
-  const labels = env().gm.plugins.fileExplorer;
-  return {
-    alphabetical: labels.labelSortAToZ,
-    alphabeticalReverse: labels.labelSortZToA,
-    byModifiedTime: labels.labelSortNewToOld,
-    byModifiedTimeReverse: labels.labelSortOldToNew,
-    byCreatedTime: labels.labelSortCreatedNewToOld,
-    byCreatedTimeReverse: labels.labelSortCreatedOldToNew,
-  };
-}
-
-// ---------- search match segment rendering ----------
-
-const S07_PARA_BREAK_RE = /\r?\n\r?\n/y;
-const s07paraBreakRe = S07_PARA_BREAK_RE;
-
-/**
- * Renders `text` into `el`, wrapping the [start, end) match ranges (clipped to
- * that window) in spans with the search-result-file-matched-text class.
- */
-function s07renderMatchSegments(el, text, start, end, ranges) {
-  const paint = (matched, from, to) => {
-    const piece = text.substring(from, to);
-    if (matched) el.createSpan({ cls: "search-result-file-matched-text", text: piece });
-    else el.createSpan({ text: piece });
-  };
-  let cursor = start;
-  for (let i = 0; i < ranges.length; i++) {
-    const range = ranges[i];
-    let rFrom = range[0];
-    if (rFrom >= end) break;
-    let rTo = range[1];
-    if (rTo < start) continue;
-    if (rFrom < start) rFrom = start;
-    if (rTo > end) rTo = end;
-    if (rFrom > cursor) paint(false, cursor, rFrom);
-    paint(true, rFrom, rTo);
-    cursor = rTo;
-  }
-  if (cursor < end) paint(false, cursor, end);
-}
-
-// ---------- search field keys ----------
-
-const s07searchKeyFilepath = "filepath";
-const s07searchResultKeys = ["filename", "filepath", "content", "propertyName", "tag"];
-
-// ---------- lazy-embed caches ----------
-
-/** No-op constructor used as the identity key for per-document search caches. */
-function s07sentinelKey() {}
-
-class S07WeakMapBox {
-  constructor() { this.map = new WeakMap(); }
-  get(key) { return this.map.get(key); }
-  set(key, value) { this.map.set(key, value); return this; }
-  has(key) { return this.map.has(key); }
-  delete(key) { return this.map.delete(key); }
-}
-
-let s07weakMapSeq = 0;
-
-/** WeakMap-shaped fallback for environments without window.WeakMap. */
-class S07WeakMapPolyfill {
-  constructor() { this._ = "_weakmap_" + s07weakMapSeq++; }
-  get(key) { return this.has(key) ? key[this._] : undefined; }
-  set(key, value) { Object.defineProperty(key, this._, { configurable: true, value }); return this; }
-  has(key) { return Object.hasOwnProperty.call(key, this._); }
-  delete(key) { return this.has(key) && delete key[this._]; }
-}
-
-const s07weakMapBox = S07WeakMapBox;
-const s07weakMapPolyfill = S07WeakMapPolyfill;
-
-/** The weak-map factory the embed caches are built from. */
-function s07weakMapFactory() {
-  return window.WeakMap ? new S07WeakMapBox() : new S07WeakMapPolyfill();
-}
-
-/** Windows that already got the framemessage bridge (see Iz). */
-const s07loadedWindows = new WeakSet();
-
-/** Mermaid flowchart defaults applied on top of the library defaults. */
-const s07mermaidFlowConfig = { progressiveRender: true, asyncParse: true, listBullet: true };
-
-// ---------- embed value + section-tree helpers ----------
-
-/**
- * Fill `el` with an embed attribute value: unwraps single quotes, JSON-decodes
- * double-quoted strings, renders inline `<svg` markup at icon size, otherwise
- * sets the plain text.
- */
-function s07embedAttrValue(el, raw) {
-  let value = raw;
-  if (value.startsWith("'") && value.endsWith("'")) {
-    value = value.substring(1, value.length - 1).replace(/\'/g, "'");
-  } else if (value.startsWith('"')) {
-    try {
-      const parsed = JSON.parse(value);
-      if (String.isString(parsed)) value = parsed;
-    } catch (e) {}
-  }
-  if (value.startsWith("<svg")) {
-    const node = env().xL(value).firstChild;
-    if (node && node.instanceOf(SVGSVGElement)) {
-      node.setAttrs({ width: 16, height: 16, fill: "currentColor", stroke: "currentColor" });
-      el.empty();
-      el.appendChild(node);
-    }
-  } else {
-    env().tv(el, value);
-  }
-}
-
-/** Call `cb` for every `<li>` that contains a nested `<ul>`/`<ol>`. */
-function s07forEachNestedItem(root, cb) {
-  const items = root.findAll("li");
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    const nested = item.findAll("ul, ol");
-    if (nested && nested.length > 0) cb(item);
-  }
-}
-
-/** Call `cb` with the first child when it is a heading element. */
-function s07ifFirstHeading(el, cb) {
-  const first = el.firstChild;
-  if (first && first.instanceOf(HTMLHeadingElement)) cb(first);
-}
-
-/** Invoke every function in `fns` with the given arguments. */
-function s07callAll(fns, ...args) {
-  if (!fns) return;
-  for (let i = 0; i < fns.length; i++) fns[i].apply(fns, args);
-}
-
-/** Invoke the `_handlers[type]` listeners of a non-DOM event target. */
-function s07emitStored(target, type, ...args) {
-  const list = target._handlers?.[type];
-  if (!list) return;
-  for (let i = 0; i < list.length; i++) list[i].apply(list, args);
-}
-
-/** Leading list marker text of a line ("- ", "1. ", "> - [ ] "), or null. */
-function s07leadingListMarker(text) {
-  const m = env().aP.exec(text);
-  return m && m[0] ? m[0] : null;
-}
-
-/** Indentation prefix a continued list item should get at `offset`. */
-function s07listMarkerIndent(doc, offset) {
-  const m = doc.lineAt(offset).text.match(env().aP);
-  if (!m) return "";
-  const quote = m[1] ?? "";
-  const marker = m[3] ?? "";
-  return quote + " ".repeat(marker.length);
-}
-
-/** Structural equality of two RangeSets of possibly different lengths. */
-function s07rangeSetsEqual(a, b) {
-  if (a.length === b.length) return a.eq(b);
-  return a.length < b.length ? b.slice(0, a.length).eq(a) : a.slice(0, b.length).eq(b);
 }
 
 // ---- s09-publish.js ----
@@ -80589,356 +81852,6 @@ function s11InstallTitlebar(win) {
     win.frameDom = new (env().BD)(win.electronWindow, win);
     if (style === "hidden") win.document.body.addClass("is-hidden-frameless");
   }
-}
-
-// ---- s12-consts.js ----
-// s12 constants: small top-level data of the application scope — view-type names, storage keys,
-// i18n label tables, regular expressions, CodeMirror marks/effects and the plugin require maps.
-// Everything here is data or a tiny factory; the classes that consume it live in the other s12 modules.
-//
-// Own modules never name minified identifiers: application values come from env() (envBind) or the
-// host object passed to the class factories.
-
-const s12gm = () => env().gm;
-const cmDecoration = () => env().s12cmDecoration;
-const cmStateField = () => env().s12cmStateField;
-const cmStateEffect = () => env().s12cmStateEffect;
-const debounce = () => env().debounce;
-const s12CreateDiv = (...args) => env().createDiv(...args);
-
-// =====================================================================================================================
-// Secrets / storage keys
-// =====================================================================================================================
-
-function s12SecretsWarningKey() { return "secrets-encryption-warning-dismissed"; }
-function s12SecretsDirName() { return "secrets"; }
-function s12SecretsEncryptedName() { return "secrets-encrypted"; }
-function s12SecretsMetaName() { return "secrets-meta"; }
-
-// =====================================================================================================================
-// Release notes / workspace layout file names
-// =====================================================================================================================
-
-function s12ReleaseNotesViewType() { return "release-notes"; }
-function s12ReleaseNotesRepo() { return "obsidianmd/obsidian-docs"; }
-function s12WorkspaceLayoutFile() { return "workspace.json"; }
-function s12WorkspaceMobileLayoutFile() { return "workspace-mobile.json"; }
-
-// =====================================================================================================================
-// CodeMirror 6 compatibility shim (tree.iterate warning + plugin field defaults)
-// =====================================================================================================================
-
-function s12CmIterateErrorDetail() {
-  return "See the stack trace to find the faulty plugin and file an issue with the plugin author. \nDetails: https://discuss.codemirror.net/t/release-0-20-0/4302";
-}
-
-/** Wraps a lezer Tree.iterate enter/leave callback with the legacy-syntax warning. */
-function s12CmIterateCompat(inner) {
-  return function (spec) {
-    console.error(new Error("[CM6] tree.iterate has changed syntax.\n".concat(s12CmIterateErrorDetail())));
-    return inner.call(this, spec.type, spec.from, spec.to);
-  };
-}
-
-/** The shared empty field config used for PluginField.define/decorations/atomicRanges/scrollMargins. */
-function s12CmEmptyFieldConfig() {
-  return { from() {} };
-}
-
-// =====================================================================================================================
-// Plugin require() maps (the names plugins see through require("@codemirror/...")).
-// The module objects themselves are bound through env (s12req*).
-// =====================================================================================================================
-
-function s12PluginRequireMap() {
-  const e = env();
-  return {
-    obsidian: e.s12reqObsidian,
-    "@codemirror/autocomplete": e.s12reqAutocomplete,
-    "@codemirror/collab": e.s12reqCollab,
-    "@codemirror/commands": e.s12reqCommands,
-    "@codemirror/language": e.s12reqLanguage,
-    "@codemirror/lint": e.s12reqLint,
-    "@codemirror/search": e.s12reqSearch,
-    "@codemirror/state": e.s12reqState,
-    "@codemirror/text": e.s12reqState,
-    "@codemirror/view": e.s12reqView,
-    "@lezer/common": e.s12reqLezerCommon,
-    "@lezer/lr": e.s12reqLezerLr,
-    "@lezer/highlight": e.s12reqLezerHighlight,
-  };
-}
-
-function s12PluginDeprecatedRequireMap() {
-  const e = env();
-  return {
-    "@codemirror/closebrackets": e.s12reqAutocomplete,
-    "@codemirror/comment": e.s12reqCommands,
-    "@codemirror/fold": e.s12reqLanguage,
-    "@codemirror/gutter": e.s12reqView,
-    "@codemirror/highlight": e.s12reqLanguage,
-    "@codemirror/history": e.s12reqCommands,
-    "@codemirror/matchbrackets": e.s12reqLanguage,
-    "@codemirror/panel": e.s12reqView,
-    "@codemirror/rangeset": e.s12reqState,
-    "@codemirror/rectangular-selection": e.s12reqView,
-    "@codemirror/stream-parser": e.s12reqLanguage,
-    "@codemirror/tooltip": e.s12reqView,
-  };
-}
-
-// =====================================================================================================================
-// Source-map stripping helpers used by the plugin loader
-// =====================================================================================================================
-
-function s12InlineSourcemapPattern() {
-  return /^\/\/[@#] sourceMappingURL=data:application\/json(?:;charset[:=][^;]+)?;base64,.*$/gm;
-}
-
-function s12NoSourcemapMarker() { return "\n/* nosourcemap */"; }
-
-// =====================================================================================================================
-// Web viewer core plugin data
-// =====================================================================================================================
-
-function s12WebviewerViewType() { return "webviewer"; }
-function s12WebviewerHistoryViewType() { return "webviewer-history"; }
-function s12DefaultSearchEngineKey() { return "duckduckgo"; }
-function s12WebviewerEmptyPageUrl() { return "data:text/plain,"; }
-
-function s12WebviewerSearchEngines() {
-  return {
-    duckduckgo: { display: "DuckDuckGo", url: "https://duckduckgo.com/?q=%s" },
-    brave: { display: "Brave", url: "https://search.brave.com/search?q=%s" },
-    bing: { display: "Bing", url: "https://www.bing.com/search?q=%s" },
-    google: { display: "Google", url: "https://www.google.com/search?q=%s" },
-    custom: { display: "custom" },
-  };
-}
-
-function s12WebviewerDefaultOptions() {
-  return { openExternalURLs: true, enableAdblocking: true };
-}
-
-/** Empty options object used as a default for the web viewer plugin data. */
-function s12EmptyWebviewerOptions() { return {}; }
-
-/** Tags a <webview> must never load (used when sanitising reader-mode / saved HTML). */
-function s12WebviewTagBlocklist() {
-  return ["script", "style", "link", "meta", "object", "embed", "webview"];
-}
-
-// =====================================================================================================================
-// Tree drag drop indicator (u2 element + h2 debounced positioner + p2/d2 state slots)
-// =====================================================================================================================
-
-let s12dropIndicatorEl = null;
-
-function s12DropIndicatorElement() {
-  s12dropIndicatorEl = s12CreateDiv("drop-indicator is-active");
-  return s12dropIndicatorEl;
-}
-
-function s12DropIndicatorUpdater() {
-  return debounce()((info) => {
-    const x = info.x, y = info.y, placement = info.placement;
-    s12dropIndicatorEl.style.left = x + "px";
-    s12dropIndicatorEl.style.top = (y + (placement === "after" ? 1 : -1) - 2) + "px";
-  }, 0);
-}
-
-function s12NullDropState() { return null; }
-
-// =====================================================================================================================
-// Callout type tables (live preview + suggest)
-// =====================================================================================================================
-
-function s12CalloutTypeLabels() {
-  const t = s12gm().callout.type;
-  return {
-    info: t.info,
-    important: t.important,
-    tip: t.tip,
-    success: t.success,
-    question: t.question,
-    warning: t.warning,
-    example: t.example,
-    quote: t.quote,
-  };
-}
-
-/** Every callout type name the editor accepts: the labelled ones plus the extra aliases. */
-function s12CalloutTypeNames() {
-  const extra = ["abstract", "summary", "tldr", "todo", "hint", "check", "done", "question", "faq", "help",
-    "caution", "attention", "failure", "fail", "missing", "danger", "error", "bug", "example", "cite"];
-  return [...Object.keys(s12CalloutTypeLabels()), ...extra];
-}
-
-// =====================================================================================================================
-// Community plugin sort labels + hotkey filter labels
-// =====================================================================================================================
-
-function s12PluginSortLabels() {
-  const t = s12gm().setting.thirdPartyPlugin;
-  return {
-    download: t.labelByPopularity,
-    release: t.labelByReleased,
-    alphabetical: t.labelAlphabetical,
-    update: t.labelByUpdated,
-  };
-}
-
-function s12HotkeyFilterLabels() {
-  const t = s12gm().setting.hotkeys;
-  return {
-    "show-all": t.labelShowAll,
-    "show-assigned": t.labelShowAssigned,
-    "show-user-assigned": t.labelShowUserAssigned,
-    "show-unassigned": t.labelShowUnassigned,
-  };
-}
-
-// =====================================================================================================================
-// Live-preview CodeMirror decorations
-// =====================================================================================================================
-
-let s12postprocessFx = null;
-
-/** Creates (once per call site) the state-effect type used to ask live preview to rebuild decorations. */
-function s12CmPostprocessEffect() {
-  s12postprocessFx = cmStateEffect().define();
-  return s12postprocessFx;
-}
-
-/** Schedules a decoration refresh on the given editor view (used by focus/blur and post-processor hooks). */
-function s12cmRefreshDispatch(view) {
-  view.dom.win.setTimeout(() => view.dispatch({ effects: s12postprocessFx.of() }), 10);
-}
-
-/** The live-preview refresh effect instance created by the G2 declarator (null until then). */
-function s12cmPostprocessFxRef() { return s12postprocessFx; }
-
-let s12mouseDownPlugin = null;
-
-/** The view plugin whose instance tracks whether the mouse button is held down. */
-function s12CmMouseDownPlugin() {
-  s12mouseDownPlugin = env().s12cmViewPlugin.define(() => ({ mousedown: false }));
-  return s12mouseDownPlugin;
-}
-
-/** The shared mouse-down plugin instance (same object the K2 declarator installed). */
-function s12cmMousePluginInstance() { return s12mouseDownPlugin; }
-
-function s12cmEmptyReplace() { return cmDecoration().replace({}); }
-function s12CmUnderlineMark() {
-  return cmDecoration().mark({ class: "cm-underline", attributes: { tabIndex: "-1", draggable: "true" } });
-}
-function s12CmTransparentMark() { return cmDecoration().mark({ class: "cm-transparent" }); }
-function s12CmUnresolvedMark() { return cmDecoration().mark({ class: "is-unresolved" }); }
-function s12CmListBulletMark() { return cmDecoration().mark({ class: "list-bullet" }); }
-function s12CmListNumberMark() { return cmDecoration().mark({ class: "list-number" }); }
-
-/** State field remembering whether the mouse button is down (used by selection normalisation). */
-function s12CmMouseDownField() {
-  return cmStateField().define(() => ({ mousedown: false }));
-}
-
-/** The set of inline syntax tags that get live-preview widgets. */
-function s12LivepreviewSyntaxTags() {
-  return new Set(["em", "strong", "inline-code", "strikethrough", "highlight", "link", "image",
-    "hmd-internal-link", "hmd-embed", "formatting-link", "footref"]);
-}
-
-/** Matches an opening code fence line (``` or ~~~ with optional language). */
-function s12CodeblockFencePattern() {
-  return /^\s*(~~~+|```+)[ \t]*([\w\/+#-]*)[^\n`]*$/;
-}
-
-// =====================================================================================================================
-// Misc view-type names
-// =====================================================================================================================
-
-function s12BacklinkViewType() { return "backlink"; }
-function s12MarkdownViewTypeName() { return "markdown"; }
-function s12DeprecationIndexUrl() {
-  return env().s12githubRaw("obsidianmd/obsidian-releases", "community-plugin-deprecation.json");
-}
-/** Registers the "SecureStorage" capacitor plugin (web = localStorage, ios/android = native module 9804). */
-function s12RegisterSecureStorage() {
-  const e = env();
-  const req = e.s12webpackRequire;
-  let self = null;
-  const load = (id) => () => Promise.resolve().then(req.bind(req, id));
-  self = e.s12capacitor.F3("SecureStorage", {
-    web: async () => new (await load(3357)()).SecureStorageWeb(),
-    ios: async () => new (await load(9804)()).SecureStorageNative(self),
-    android: async () => new (await load(9804)()).SecureStorageNative(self),
-  });
-  return self;
-}
-
-// =====================================================================================================================
-// Small application functions
-// =====================================================================================================================
-
-/** Validates a leaf "type" option: boolean or one of the container keywords; returns the value or false. */
-function s12leafTypeOrFalse(e) {
-  return !(!isBoolean(e) && "tab" !== e && "window" !== e && "split" !== e) && e;
-}
-
-/** Throws (and shows a notice) when a desktop-only feature is used on an old Electron or non-desktop build. */
-function s12requireDesktopApp() {
-  const e = env();
-  if (!e.Yl.isDesktopApp) {
-    const msg = e.gm.interface.msgDesktopOnlyFeature();
-    throw new e.fb(msg), new Error(msg);
-  }
-  if (e.qf < 13) {
-    const msg2 = e.gm.interface.msgUpgradeInstaller();
-    throw new e.fb(msg2), new Error(msg2);
-  }
-}
-
-/** Invokes a registered command's checkCallback/callback, or logs when the command has neither. */
-function s12runCommandCallback(cmd) {
-  if (cmd.checkCallback) cmd.checkCallback(false);
-  else if (cmd.callback) cmd.callback();
-  else console.error("Command ".concat(cmd, " did not provide a callback"));
-}
-
-/**
- * Rewrites a markdown image/embed link so its size annotation matches `size`.
- * Handles both ![[wiki]] and ![alt](url) forms; a trailing "|WxH" segment is replaced or appended.
- */
-function s12appendImageSizeText(linkText, size) {
-  const isImageDimension = env().s12isImageDimension;
-  const appendSize = (text) => {
-    if (!text || isImageDimension(text)) return size === undefined ? "" : String(size);
-    const suffix = size === undefined ? "" : "|".concat(size);
-    const bar = text.lastIndexOf("|");
-    if (bar !== -1 && isImageDimension(text.slice(bar + 1))) return text.slice(0, bar) + suffix;
-    return text + suffix;
-  };
-  const e = env();
-  let m = linkText.match(e.s12wikilinkPattern);
-  if (m) {
-    const sized = appendSize(m[4] != null ? m[4] : "");
-    return "![[" + m[2] + (sized ? "|" + sized : "") + "]]";
-  }
-  m = linkText.match(e.s12mdLinkPattern);
-  if (m) {
-    const s = m[1], l = m[2], c = m[3], u = m[4], h = m[8];
-    return s + appendSize(l) + c + u + h;
-  }
-  return linkText;
-}
-
-/** Live-preview extension factory: refreshes decorations whenever the properties post-processor changes. */
-function s12PropertiesLivePreviewPlugin(plugin) {
-  return env().s12cmViewPlugin.define((view) => {
-    const off = plugin.app.workspace.on("post-processor-change", () => s12cmRefreshDispatch(view));
-    return { destroy() { off.e.offref(off); } };
-  });
 }
 
 // ---- s12-plugins.js ----
@@ -100846,255 +101759,6 @@ function defineS50BasesTableView(host) {
   return TableView;
 }
 
-// ---- s65-locale-name.js ----
-// s65-locale-name.js
-// Own implementation of the locale display-name helper (replaces the inherited
-// top-level `ym`). Given a BCP-47-ish locale tag it returns a human-readable
-// name: the language name plus the region name in parentheses, e.g.
-// "English (United States)". Used by the settings language pickers through env().ym.
-//
-// Lookup order for the language part: two-letter ISO 639-1 code, then the
-// three-letter ISO 639-2/3 code, then (single-part tags only) an ISO 3166-1
-// alpha-2 country code, then the raw tag. The second subtag is looked up in the
-// country table only; any further subtags are appended verbatim in parentheses.
-
-const s65Lang2 = {
-  aa: "Afar", ab: "Abkhaz", ae: "Avestan", af: "Afrikaans", ak: "Akan", am: "Amharic",
-  an: "Aragonese", ar: "Arabic", as: "Assamese", av: "Avaric", ay: "Aymara", az: "Azerbaijani",
-  ba: "Bashkir", be: "Belarusian", bg: "Bulgarian", bi: "Bislama", bm: "Bambara", bn: "Bengali",
-  bo: "Tibetan", br: "Breton", bs: "Bosnian", ca: "Catalan", ce: "Chechen", ch: "Chamorro",
-  co: "Corsican", cr: "Cree", cs: "Czech", cu: "Old Church Slavonic", cv: "Chuvash", cy: "Welsh",
-  da: "Danish", de: "German", dv: "Divehi", dz: "Dzongkha", ee: "Ewe", el: "Greek",
-  en: "English", eo: "Esperanto", es: "Spanish", et: "Estonian", eu: "Basque", fa: "Persian",
-  ff: "Fula", fi: "Finnish", fj: "Fijian", fo: "Faroese", fr: "French", fy: "Western Frisian",
-  ga: "Irish", gd: "Scottish Gaelic", gl: "Galician", gn: "Guaraní", gu: "Gujarati", gv: "Manx",
-  ha: "Hausa", he: "Hebrew", hi: "Hindi", ho: "Hiri Motu", hr: "Croatian", ht: "Haitian",
-  hu: "Hungarian", hy: "Armenian", hz: "Herero", ia: "Interlingua", id: "Indonesian", ie: "Interlingue",
-  ig: "Igbo", ii: "Nuosu", ik: "Inupiaq", io: "Ido", is: "Icelandic", it: "Italian",
-  iu: "Inuktitut", ja: "Japanese", jv: "Javanese", ka: "Georgian", kg: "Kongo", ki: "Kikuyu",
-  kj: "Kwanyama", kk: "Kazakh", kl: "Kalaallisut", km: "Khmer", kn: "Kannada", ko: "Korean",
-  kr: "Kanuri", ks: "Kashmiri", ku: "Kurdish", kv: "Komi", kw: "Cornish", ky: "Kyrgyz",
-  la: "Latin", lb: "Luxembourgish", lg: "Ganda", li: "Limburgish", ln: "Lingala", lo: "Lao",
-  lt: "Lithuanian", lu: "Luba-Katanga", lv: "Latvian", mg: "Malagasy", mh: "Marshallese", mi: "Māori",
-  mk: "Macedonian", ml: "Malayalam", mn: "Mongolian", mr: "Marathi", ms: "Malay", mt: "Maltese",
-  my: "Burmese", na: "Nauru", nb: "Norwegian Bokmål", nd: "Northern Ndebele", ne: "Nepali", ng: "Ndonga",
-  nl: "Dutch", nn: "Norwegian Nynorsk", no: "Norwegian", nr: "Southern Ndebele", nv: "Navajo", ny: "Chichewa",
-  oc: "Occitan", oj: "Ojibwe", om: "Oromo", or: "Oriya", os: "Ossetian", pa: "Panjabi",
-  pi: "Pāli", pl: "Polish", ps: "Pashto", pt: "Portuguese", qu: "Quechua", rm: "Romansh",
-  rn: "Kirundi", ro: "Romanian", ru: "Russian", rw: "Kinyarwanda", sa: "Sanskrit", sc: "Sardinian",
-  sd: "Sindhi", se: "Northern Sami", sg: "Sango", sh: "Serbo-Croatian", si: "Sinhala", sk: "Slovak",
-  sl: "Slovenian", sm: "Samoan", sn: "Shona", so: "Somali", sq: "Albanian", sr: "Serbian",
-  ss: "Swati", st: "Southern Sotho", su: "Sundanese", sv: "Swedish", sw: "Swahili", ta: "Tamil",
-  te: "Telugu", tg: "Tajik", th: "Thai", ti: "Tigrinya", tk: "Turkmen", tl: "Tagalog",
-  tn: "Tswana", to: "Tonga", tr: "Turkish", ts: "Tsonga", tt: "Tatar", tw: "Twi",
-  ty: "Tahitian", ug: "Uyghur", uk: "Ukrainian", ur: "Urdu", uz: "Uzbek", ve: "Venda",
-  vi: "Vietnamese", vo: "Volapük", wa: "Walloon", wo: "Wolof", xh: "Xhosa", yi: "Yiddish",
-  yo: "Yoruba", za: "Zhuang", zh: "Chinese", zu: "Zulu",
-};
-
-const s65Lang3 = {
-  aar: "Afar", abk: "Abkhaz", ace: "Achinese", ach: "Acoli",
-  ada: "Adangme", ady: "Adyghe; Adygei", afa: "Afro-Asiatic languages", afh: "Afrihili",
-  afr: "Afrikaans", ain: "Ainu", aka: "Akan", akk: "Akkadian",
-  alb: "Albanian", ale: "Aleut", alg: "Algonquian languages", alt: "Southern Altai",
-  amh: "Amharic", ang: "English, Old (ca.450-1100)", anp: "Angika", apa: "Apache languages",
-  ara: "Arabic", arc: "Official Aramaic (700-300 BCE); Imperial Aramaic (700-300 BCE)", arg: "Aragonese", arm: "Armenian",
-  arn: "Mapudungun; Mapuche", arp: "Arapaho", art: "Artificial languages", arw: "Arawak",
-  asm: "Assamese", ast: "Asturian; Bable; Leonese; Asturleonese", ath: "Athapascan languages", aus: "Australian languages",
-  ava: "Avaric", ave: "Avestan", awa: "Awadhi", aym: "Aymara",
-  aze: "Azerbaijani", bad: "Banda languages", bai: "Bamileke languages", bak: "Bashkir",
-  bal: "Baluchi", bam: "Bambara", ban: "Balinese", baq: "Basque",
-  bas: "Basa", bat: "Baltic languages", bej: "Beja; Bedawiyet", bel: "Belarusian",
-  bem: "Bemba", ben: "Bengali", ber: "Berber languages", bho: "Bhojpuri",
-  bik: "Bikol", bin: "Bini; Edo", bis: "Bislama", bla: "Siksika",
-  bnt: "Bantu languages", bos: "Bosnian", bra: "Braj", bre: "Breton",
-  btk: "Batak languages", bua: "Buriat", bug: "Buginese", bul: "Bulgarian",
-  bur: "Burmese", byn: "Blin; Bilin", cad: "Caddo", cai: "Central American Indian languages",
-  car: "Galibi Carib", cat: "Catalan", cau: "Caucasian languages", ceb: "Cebuano",
-  cel: "Celtic languages", cha: "Chamorro", chb: "Chibcha", che: "Chechen",
-  chg: "Chagatai", chi: "Chinese", chk: "Chuukese", chm: "Mari",
-  chn: "Chinook jargon", cho: "Choctaw", chp: "Chipewyan; Dene Suline", chr: "Cherokee",
-  chu: "Old Church Slavonic", chv: "Chuvash", chy: "Cheyenne", cmc: "Chamic languages",
-  cnr: "Montenegrin", cop: "Coptic", cor: "Cornish", cos: "Corsican",
-  cpe: "Creoles and pidgins, English based", cpf: "Creoles and pidgins, French-based", cpp: "Creoles and pidgins, Portuguese-based", cre: "Cree",
-  crh: "Crimean Tatar; Crimean Turkish", crp: "Creoles and pidgins", csb: "Kashubian", cus: "Cushitic languages",
-  cze: "Czech", dak: "Dakota", dan: "Danish", dar: "Dargwa",
-  day: "Land Dayak languages", del: "Delaware", den: "Slave (Athapascan)", dgr: "Dogrib",
-  din: "Dinka", div: "Divehi", doi: "Dogri", dra: "Dravidian languages",
-  dsb: "Lower Sorbian", dua: "Duala", dum: "Dutch, Middle (ca.1050-1350)", dut: "Dutch",
-  dyu: "Dyula", dzo: "Dzongkha", efi: "Efik", egy: "Egyptian (Ancient)",
-  eka: "Ekajuk", elx: "Elamite", eng: "English", enm: "English, Middle (1100-1500)",
-  epo: "Esperanto", est: "Estonian", ewe: "Ewe", ewo: "Ewondo",
-  fan: "Fang", fao: "Faroese", fat: "Fanti", fij: "Fijian",
-  fil: "Filipino; Pilipino", fin: "Finnish", fiu: "Finno-Ugrian languages", fon: "Fon",
-  fre: "French", frm: "French, Middle (ca.1400-1600)", fro: "French, Old (842-ca.1400)", frr: "Northern Frisian",
-  frs: "Eastern Frisian", fry: "Western Frisian", ful: "Fula", fur: "Friulian",
-  gaa: "Ga", gay: "Gayo", gba: "Gbaya", gem: "Germanic languages",
-  geo: "Georgian", ger: "German", gez: "Geez", gil: "Gilbertese",
-  gla: "Scottish Gaelic", gle: "Irish", glg: "Galician", glv: "Manx",
-  gmh: "German, Middle High (ca.1050-1500)", goh: "German, Old High (ca.750-1050)", gon: "Gondi", gor: "Gorontalo",
-  got: "Gothic", grb: "Grebo", grc: "Greek, Ancient (to 1453)", gre: "Greek",
-  grn: "Guaraní", gsw: "Swiss German; Alemannic; Alsatian", guj: "Gujarati", gwi: "Gwich'in",
-  hai: "Haida", hat: "Haitian", hau: "Hausa", haw: "Hawaiian",
-  heb: "Hebrew", her: "Herero", hil: "Hiligaynon", him: "Himachali languages; Western Pahari languages",
-  hin: "Hindi", hit: "Hittite", hmn: "Hmong; Mong", hmo: "Hiri Motu",
-  hrv: "Croatian", hsb: "Upper Sorbian", hun: "Hungarian", hup: "Hupa",
-  iba: "Iban", ibo: "Igbo", ice: "Icelandic", ido: "Ido",
-  iii: "Nuosu", ijo: "Ijo languages", iku: "Inuktitut", ile: "Interlingue",
-  ilo: "Iloko", ina: "Interlingua", inc: "Indic languages", ind: "Indonesian",
-  ine: "Indo-European languages", inh: "Ingush", ipk: "Inupiaq", ira: "Iranian languages",
-  iro: "Iroquoian languages", ita: "Italian", jav: "Javanese", jbo: "Lojban",
-  jpn: "Japanese", jpr: "Judeo-Persian", jrb: "Judeo-Arabic", kaa: "Kara-Kalpak",
-  kab: "Kabyle", kac: "Kachin; Jingpho", kal: "Kalaallisut", kam: "Kamba",
-  kan: "Kannada", kar: "Karen languages", kas: "Kashmiri", kau: "Kanuri",
-  kaw: "Kawi", kaz: "Kazakh", kbd: "Kabardian", kha: "Khasi",
-  khi: "Khoisan languages", khm: "Khmer", kho: "Khotanese; Sakan", kik: "Kikuyu",
-  kin: "Kinyarwanda", kir: "Kyrgyz", kmb: "Kimbundu", kok: "Konkani",
-  kom: "Komi", kon: "Kongo", kor: "Korean", kos: "Kosraean",
-  kpe: "Kpelle", krc: "Karachay-Balkar", krl: "Karelian", kro: "Kru languages",
-  kru: "Kurukh", kua: "Kwanyama", kum: "Kumyk", kur: "Kurdish",
-  kut: "Kutenai", lad: "Ladino", lah: "Lahnda", lam: "Lamba",
-  lao: "Lao", lat: "Latin", lav: "Latvian", lez: "Lezghian",
-  lim: "Limburgish", lin: "Lingala", lit: "Lithuanian", lol: "Mongo",
-  loz: "Lozi", ltz: "Luxembourgish", lua: "Luba-Lulua", lub: "Luba-Katanga",
-  lug: "Ganda", lui: "Luiseno", lun: "Lunda", luo: "Luo (Kenya and Tanzania)",
-  lus: "Lushai", mac: "Macedonian", mad: "Madurese", mag: "Magahi",
-  mah: "Marshallese", mai: "Maithili", mak: "Makasar", mal: "Malayalam",
-  man: "Mandingo", mao: "Māori", map: "Austronesian languages", mar: "Marathi",
-  mas: "Masai", may: "Malay", mdf: "Moksha", mdr: "Mandar",
-  men: "Mende", mga: "Irish, Middle (900-1200)", mic: "Mi'kmaq; Micmac", min: "Minangkabau",
-  mis: "Uncoded languages", mkh: "Mon-Khmer languages", mlg: "Malagasy", mlt: "Maltese",
-  mnc: "Manchu", mni: "Manipuri", mno: "Manobo languages", moh: "Mohawk",
-  mon: "Mongolian", mos: "Mossi", mul: "Multiple languages", mun: "Munda languages",
-  mus: "Creek", mwl: "Mirandese", mwr: "Marwari", myn: "Mayan languages",
-  myv: "Erzya", nah: "Nahuatl languages", nai: "North American Indian languages", nap: "Neapolitan",
-  nau: "Nauru", nav: "Navajo", nbl: "Southern Ndebele", nde: "Northern Ndebele",
-  ndo: "Ndonga", nds: "Low German; Low Saxon; German, Low; Saxon, Low", nep: "Nepali", new: "Nepal Bhasa; Newari",
-  nia: "Nias", nic: "Niger-Kordofanian languages", niu: "Niuean", nno: "Norwegian Nynorsk",
-  nob: "Norwegian Bokmål", nog: "Nogai", non: "Norse, Old", nor: "Norwegian",
-  nqo: "N'Ko", nso: "Pedi; Sepedi; Northern Sotho", nub: "Nubian languages", nwc: "Classical Newari; Old Newari; Classical Nepal Bhasa",
-  nya: "Chichewa", nym: "Nyamwezi", nyn: "Nyankole", nyo: "Nyoro",
-  nzi: "Nzima", oci: "Occitan", oji: "Ojibwe", ori: "Oriya",
-  orm: "Oromo", osa: "Osage", oss: "Ossetian", ota: "Turkish, Ottoman (1500-1928)",
-  oto: "Otomian languages", paa: "Papuan languages", pag: "Pangasinan", pal: "Pahlavi",
-  pam: "Pampanga; Kapampangan", pan: "Panjabi", pap: "Papiamento", pau: "Palauan",
-  peo: "Persian, Old (ca.600-400 B.C.)", per: "Persian", phi: "Philippine languages", phn: "Phoenician",
-  pli: "Pāli", pol: "Polish", pon: "Pohnpeian", por: "Portuguese",
-  pra: "Prakrit languages", pro: "Provençal, Old (to 1500); Occitan, Old (to 1500)", pus: "Pashto", "qaa-qtz": "Reserved for local use",
-  que: "Quechua", raj: "Rajasthani", rap: "Rapanui", rar: "Rarotongan; Cook Islands Maori",
-  roa: "Romance languages", roh: "Romansh", rom: "Romany", rum: "Romanian",
-  run: "Kirundi", rup: "Aromanian; Arumanian; Macedo-Romanian", rus: "Russian", sad: "Sandawe",
-  sag: "Sango", sah: "Yakut", sai: "South American Indian languages", sal: "Salishan languages",
-  sam: "Samaritan Aramaic", san: "Sanskrit", sas: "Sasak", sat: "Santali",
-  scn: "Sicilian", sco: "Scots", sel: "Selkup", sem: "Semitic languages",
-  sga: "Irish, Old (to 900)", sgn: "Sign Languages", shn: "Shan", sid: "Sidamo",
-  sin: "Sinhala", sio: "Siouan languages", sit: "Sino-Tibetan languages", sla: "Slavic languages",
-  slo: "Slovak", slv: "Slovenian", sma: "Southern Sami", sme: "Northern Sami",
-  smi: "Sami languages", smj: "Lule Sami", smn: "Inari Sami", smo: "Samoan",
-  sms: "Skolt Sami", sna: "Shona", snd: "Sindhi", snk: "Soninke",
-  sog: "Sogdian", som: "Somali", son: "Songhai languages", sot: "Southern Sotho",
-  spa: "Spanish", srd: "Sardinian", srn: "Sranan Tongo", srp: "Serbian",
-  srr: "Serer", ssa: "Nilo-Saharan languages", ssw: "Swati", suk: "Sukuma",
-  sun: "Sundanese", sus: "Susu", sux: "Sumerian", swa: "Swahili",
-  swe: "Swedish", syc: "Classical Syriac", syr: "Syriac", tah: "Tahitian",
-  tai: "Tai languages", tam: "Tamil", tat: "Tatar", tel: "Telugu",
-  tem: "Timne", ter: "Tereno", tet: "Tetum", tgk: "Tajik",
-  tgl: "Tagalog", tha: "Thai", tib: "Tibetan", tig: "Tigre",
-  tir: "Tigrinya", tiv: "Tiv", tkl: "Tokelau", tlh: "Klingon; tlhIngan-Hol",
-  tli: "Tlingit", tmh: "Tamashek", tog: "Tonga (Nyasa)", ton: "Tonga",
-  tpi: "Tok Pisin", tsi: "Tsimshian", tsn: "Tswana", tso: "Tsonga",
-  tuk: "Turkmen", tum: "Tumbuka", tup: "Tupi languages", tur: "Turkish",
-  tut: "Altaic languages", tvl: "Tuvalu", twi: "Twi", tyv: "Tuvinian",
-  udm: "Udmurt", uga: "Ugaritic", uig: "Uyghur", ukr: "Ukrainian",
-  umb: "Umbundu", und: "Undetermined", urd: "Urdu", uzb: "Uzbek",
-  vai: "Vai", ven: "Venda", vie: "Vietnamese", vol: "Volapük",
-  vot: "Votic", wak: "Wakashan languages", wal: "Wolaitta; Wolaytta", war: "Waray",
-  was: "Washo", wel: "Welsh", wen: "Sorbian languages", wln: "Walloon",
-  wol: "Wolof", xal: "Kalmyk; Oirat", xho: "Xhosa", yao: "Yao",
-  yap: "Yapese", yid: "Yiddish", yor: "Yoruba", ypk: "Yupik languages",
-  zap: "Zapotec", zbl: "Blissymbols; Blissymbolics; Bliss", zen: "Zenaga", zgh: "Standard Moroccan Tamazight",
-  zha: "Zhuang", znd: "Zande languages", zul: "Zulu", zun: "Zuni",
-  zxx: "No linguistic content; Not applicable", zza: "Zaza; Dimili; Dimli; Kirdki; Kirmanjki; Zazaki",
-};
-
-const s65Country = {
-  AF: "Afghanistan", AX: "Åland Islands", AL: "Albania", DZ: "Algeria",
-  AS: "American Samoa", AD: "Andorra", AO: "Angola", AI: "Anguilla",
-  AQ: "Antarctica", AG: "Antigua and Barbuda", AR: "Argentina", AM: "Armenia",
-  AW: "Aruba", AU: "Australia", AT: "Austria", AZ: "Azerbaijan",
-  BS: "Bahamas", BH: "Bahrain", BD: "Bangladesh", BB: "Barbados",
-  BY: "Belarus", BE: "Belgium", BZ: "Belize", BJ: "Benin",
-  BM: "Bermuda", BT: "Bhutan", BO: "Bolivia, Plurinational State of", BQ: "Bonaire, Sint Eustatius and Saba",
-  BA: "Bosnia and Herzegovina", BW: "Botswana", BV: "Bouvet Island", BR: "Brazil",
-  IO: "British Indian Ocean Territory", BN: "Brunei Darussalam", BG: "Bulgaria", BF: "Burkina Faso",
-  BI: "Burundi", KH: "Cambodia", CM: "Cameroon", CA: "Canada",
-  CV: "Cape Verde", KY: "Cayman Islands", CF: "Central African Republic", TD: "Chad",
-  CL: "Chile", CN: "China", CX: "Christmas Island", CC: "Cocos (Keeling) Islands",
-  CO: "Colombia", KM: "Comoros", CG: "Congo", CD: "Congo, the Democratic Republic of the",
-  CK: "Cook Islands", CR: "Costa Rica", CI: "Côte d'Ivoire", HR: "Croatia",
-  CU: "Cuba", CW: "Curaçao", CY: "Cyprus", CZ: "Czech Republic",
-  DK: "Denmark", DJ: "Djibouti", DM: "Dominica", DO: "Dominican Republic",
-  EC: "Ecuador", EG: "Egypt", SV: "El Salvador", GQ: "Equatorial Guinea",
-  ER: "Eritrea", EE: "Estonia", ET: "Ethiopia", FK: "Falkland Islands (Malvinas)",
-  FO: "Faroe Islands", FJ: "Fiji", FI: "Finland", FR: "France",
-  GF: "French Guiana", PF: "French Polynesia", TF: "French Southern Territories", GA: "Gabon",
-  GM: "Gambia", GE: "Georgia", DE: "Germany", GH: "Ghana",
-  GI: "Gibraltar", GR: "Greece", GL: "Greenland", GD: "Grenada",
-  GP: "Guadeloupe", GU: "Guam", GT: "Guatemala", GG: "Guernsey",
-  GN: "Guinea", GW: "Guinea-Bissau", GY: "Guyana", HT: "Haiti",
-  HM: "Heard Island and McDonald Islands", VA: "Holy See (Vatican City State)", HN: "Honduras", HK: "Hong Kong",
-  HU: "Hungary", IS: "Iceland", IN: "India", ID: "Indonesia",
-  IR: "Iran, Islamic Republic of", IQ: "Iraq", IE: "Ireland", IM: "Isle of Man",
-  IL: "Israel", IT: "Italy", JM: "Jamaica", JP: "Japan",
-  JE: "Jersey", JO: "Jordan", KZ: "Kazakhstan", KE: "Kenya",
-  KI: "Kiribati", KP: "Korea, Democratic People's Republic of", KR: "Korea, Republic of", KW: "Kuwait",
-  KG: "Kyrgyzstan", LA: "Lao People's Democratic Republic", LV: "Latvia", LB: "Lebanon",
-  LS: "Lesotho", LR: "Liberia", LY: "Libya", LI: "Liechtenstein",
-  LT: "Lithuania", LU: "Luxembourg", MO: "Macao", MK: "Macedonia, the Former Yugoslav Republic of",
-  MG: "Madagascar", MW: "Malawi", MY: "Malaysia", MV: "Maldives",
-  ML: "Mali", MT: "Malta", MH: "Marshall Islands", MQ: "Martinique",
-  MR: "Mauritania", MU: "Mauritius", YT: "Mayotte", MX: "Mexico",
-  FM: "Micronesia, Federated States of", MD: "Moldova, Republic of", MC: "Monaco", MN: "Mongolia",
-  ME: "Montenegro", MS: "Montserrat", MA: "Morocco", MZ: "Mozambique",
-  MM: "Myanmar", NA: "Namibia", NR: "Nauru", NP: "Nepal",
-  NL: "Netherlands", NC: "New Caledonia", NZ: "New Zealand", NI: "Nicaragua",
-  NE: "Niger", NG: "Nigeria", NU: "Niue", NF: "Norfolk Island",
-  MP: "Northern Mariana Islands", NO: "Norway", OM: "Oman", PK: "Pakistan",
-  PW: "Palau", PS: "Palestine, State of", PA: "Panama", PG: "Papua New Guinea",
-  PY: "Paraguay", PE: "Peru", PH: "Philippines", PN: "Pitcairn",
-  PL: "Poland", PT: "Portugal", PR: "Puerto Rico", QA: "Qatar",
-  RE: "Réunion", RO: "Romania", RU: "Russian Federation", RW: "Rwanda",
-  BL: "Saint Barthélemy", SH: "Saint Helena, Ascension and Tristan da Cunha", KN: "Saint Kitts and Nevis", LC: "Saint Lucia",
-  MF: "Saint Martin (French part)", PM: "Saint Pierre and Miquelon", VC: "Saint Vincent and the Grenadines", WS: "Samoa",
-  SM: "San Marino", ST: "Sao Tome and Principe", SA: "Saudi Arabia", SN: "Senegal",
-  RS: "Serbia", SC: "Seychelles", SL: "Sierra Leone", SG: "Singapore",
-  SX: "Sint Maarten (Dutch part)", SK: "Slovakia", SI: "Slovenia", SB: "Solomon Islands",
-  SO: "Somalia", ZA: "South Africa", GS: "South Georgia and the South Sandwich Islands", SS: "South Sudan",
-  ES: "Spain", LK: "Sri Lanka", SD: "Sudan", SR: "Suriname",
-  SJ: "Svalbard and Jan Mayen", SZ: "Swaziland", SE: "Sweden", CH: "Switzerland",
-  SY: "Syrian Arab Republic", TW: "Taiwan", TJ: "Tajikistan", TZ: "Tanzania, United Republic of",
-  TH: "Thailand", TL: "Timor-Leste", TG: "Togo", TK: "Tokelau",
-  TO: "Tonga", TT: "Trinidad and Tobago", TN: "Tunisia", TR: "Turkey",
-  TM: "Turkmenistan", TC: "Turks and Caicos Islands", TV: "Tuvalu", UG: "Uganda",
-  UA: "Ukraine", AE: "United Arab Emirates", GB: "United Kingdom", US: "United States",
-  UM: "United States Minor Outlying Islands", UY: "Uruguay", UZ: "Uzbekistan", VU: "Vanuatu",
-  VE: "Venezuela, Bolivarian Republic of", VN: "Viet Nam", VG: "Virgin Islands, British", VI: "Virgin Islands, U.S.",
-  WF: "Wallis and Futuna", EH: "Western Sahara", YE: "Yemen", ZM: "Zambia",
-  ZW: "Zimbabwe",
-};
-
-function s65LocaleName(locale) {
-  if (!locale) return "";
-  const parts = locale.split("-");
-  if (parts.length > 1) {
-    const lang = s65Lang2[parts[0]] || s65Lang3[parts[0]] || parts[0];
-    const region = s65Country[parts[1]] || parts[1];
-    const extra = parts.slice(2).map((p) => "(" + p + ")").join("");
-    return lang + " (" + region + ")" + extra;
-  }
-  return parts.length > 0 ? s65Lang2[parts[0]] || s65Lang3[parts[0]] || s65Country[parts[0]] || parts[0] : "";
-}
-
 // ---- s90-format.js ----
 // Markdown formatting detection for the editor (selection.format, toggle commands).
 //
@@ -106315,451 +106979,6 @@ function onTooltipPointerOut(event, el) {
 function cancelTooltipDelay() { cancelDelay(); }
 function tooltipsDisabled(el) { return tooltipsDisabledFor(el); }
 
-// ---- vault-crypto.js ----
-// Vault encryption for remote sync: AES-SIV (RFC 5297) for v2/v3 vaults, plain AES-GCM for v0,
-// scrypt password stretching and HKDF key hashes. Every constant below (info strings, scrypt
-// parameters, IV layout, hex encodings) is part of the sync wire format and must not change.
-
-const subtle = () => globalThis.crypto.subtle;
-const randomBytes = () => globalThis.crypto.getRandomValues(new Uint8Array(16));
-
-// --- small buffer helpers -------------------------------------------------
-
-function utf8Bytes(str) {
-  const encoded = new TextEncoder().encode(str);
-  return encoded.buffer.slice(encoded.byteOffset, encoded.byteOffset + encoded.byteLength);
-}
-
-function utf8String(buf) {
-  return new TextDecoder().decode(new Uint8Array(buf));
-}
-
-function decodeBase64(b64) {
-  const bin = globalThis.atob(b64);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out.buffer;
-}
-
-function encodeBase64(buf) {
-  const bytes = new Uint8Array(buf);
-  let bin = "";
-  for (let i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
-  return globalThis.btoa(bin);
-}
-
-function sha256(data) {
-  return subtle().digest("SHA-256", new Uint8Array(data));
-}
-
-function randomSaltHex() {
-  return bufferToHex(randomBytes().buffer);
-}
-
-// --- GF(2^128) doubling for CMAC/S2V subkeys (R = 0x87) --------------------
-
-const BLOCK_SIZE = 16;
-const BLOCK_R = 135;
-
-class Block {
-  constructor() { this.data = new Uint8Array(BLOCK_SIZE); }
-  clear() { this.data.fill(0); }
-  clone() { const b = new Block(); b.data.set(this.data); return b; }
-  copy(other) { this.data.set(other.data); }
-  dbl() {
-    let carry = 0;
-    for (let i = BLOCK_SIZE - 1; i >= 0; i--) {
-      const next = this.data[i] >>> 7;
-      this.data[i] = ((this.data[i] << 1) | carry) & 255;
-      carry = next;
-    }
-    this.data[BLOCK_SIZE - 1] ^= (~(carry - 1) & BLOCK_R) | (carry - 1 & 0);
-  }
-}
-
-function constantTimeEqual(a, b) {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
-  return (1 & ((diff - 1) >>> 8)) !== 0;
-}
-
-class SivError extends Error {}
-function defineSivError() { return SivError; }
-
-// --- AES-CMAC (RFC 4493) on top of AES-CBC -------------------------------
-
-// HKDF salt/info used to derive the CMAC key: "ObsidianAesSivMac".
-class CbcMacCipher {
-  constructor(key) { this.key = key; this.iv = new Block(); }
-  static async importKey(hkdfKey, saltBytes) {
-    const key = await subtle().deriveKey(
-      { name: "HKDF", salt: saltBytes, info: utf8Bytes("ObsidianAesSivMac"), hash: "SHA-256" },
-      hkdfKey, { name: "AES-CBC", length: 256 }, false, ["encrypt"]);
-    return new CbcMacCipher(key);
-  }
-  encryptBlock(block) {
-    return subtle().encrypt({ name: "AES-CBC", iv: this.iv.data }, this.key, block.data)
-      .then((out) => { block.data.set(new Uint8Array(out, 0, BLOCK_SIZE)); });
-  }
-}
-
-class Cmac {
-  constructor(cipher, subkey1, subkey2) {
-    this.cipher = cipher;
-    this.subkey1 = subkey1;
-    this.subkey2 = subkey2;
-    this.bufferPos = 0;
-    this.finished = false;
-    this.buffer = new Block();
-  }
-  static async importKey(hkdfKey, saltBytes) {
-    const cipher = await CbcMacCipher.importKey(hkdfKey, saltBytes);
-    const l = new Block();
-    await cipher.encryptBlock(l);
-    l.dbl();
-    const k1 = l.clone();
-    k1.dbl();
-    return () => new Cmac(cipher, l, k1);
-  }
-  async update(data) {
-    if (this.finished) throw new Error("Cannot update finished CMAC");
-    const tail = BLOCK_SIZE - this.bufferPos;
-    let offset = 0;
-    let remaining = data.length;
-    if (remaining > tail) {
-      for (let i = 0; i < tail; i++) this.buffer.data[this.bufferPos + i] ^= data[i];
-      remaining -= tail; offset += tail;
-      await this.cipher.encryptBlock(this.buffer);
-      this.bufferPos = 0;
-    }
-    while (remaining > BLOCK_SIZE) {
-      for (let i = 0; i < BLOCK_SIZE; i++) this.buffer.data[i] ^= data[offset + i];
-      remaining -= BLOCK_SIZE; offset += BLOCK_SIZE;
-      await this.cipher.encryptBlock(this.buffer);
-    }
-    for (let i = 0; i < remaining; i++) this.buffer.data[this.bufferPos++] ^= data[offset + i];
-    return this;
-  }
-  async finish() {
-    if (!this.finished) {
-      const subkey = this.bufferPos < BLOCK_SIZE ? this.subkey2 : this.subkey1;
-      xorInto(this.buffer.data, subkey.data);
-      if (this.bufferPos < BLOCK_SIZE) this.buffer.data[this.bufferPos] ^= 128;
-      await this.cipher.encryptBlock(this.buffer);
-      this.finished = true;
-    }
-    return this.buffer.data;
-  }
-}
-
-// --- AES-CTR for SIV payload encryption ------------------------------------
-
-// HKDF info "ObsidianAesSivEnc" derives an AES-CTR key; counter = first arg block.
-class CtrCipher {
-  constructor(key) { this.key = key; }
-  static async importKey(hkdfKey, saltBytes) {
-    const key = await subtle().deriveKey(
-      { name: "HKDF", salt: saltBytes, info: utf8Bytes("ObsidianAesSivEnc"), hash: "SHA-256" },
-      hkdfKey, { name: "AES-CTR", length: 256 }, false, ["encrypt"]);
-    return new CtrCipher(key);
-  }
-  encryptCtr(counterBlock, data) {
-    return subtle().encrypt({ name: "AES-CTR", counter: counterBlock, length: 16 }, this.key, data)
-      .then((out) => new Uint8Array(out));
-  }
-}
-
-// --- AES-SIV (RFC 5297) ----------------------------------------------------
-
-class Siv {
-  constructor(cmacFactory, ctr) { this.cmacFactory = cmacFactory; this.ctr = ctr; }
-  static async importKey(hkdfKey, saltBytes) {
-    const cmacFactory = await Cmac.importKey(hkdfKey, saltBytes);
-    const ctr = await CtrCipher.importKey(hkdfKey, saltBytes);
-    return new Siv(cmacFactory, ctr);
-  }
-  async seal(plaintext) {
-    const pt = plaintext instanceof Uint8Array ? plaintext : new Uint8Array(plaintext);
-    const out = new Uint8Array(BLOCK_SIZE + pt.length);
-    const tag = await this.s2v(pt);
-    out.set(tag);
-    maskTagBits(tag);
-    out.set(await this.ctr.encryptCtr(tag, pt), BLOCK_SIZE);
-    return out;
-  }
-  async open(ciphertext) {
-    if (ciphertext.length < BLOCK_SIZE) throw new SivError("AES-SIV: ciphertext is truncated");
-    const tag = new Uint8Array(ciphertext.subarray(0, BLOCK_SIZE));
-    const masked = new Uint8Array(BLOCK_SIZE);
-    masked.set(tag);
-    maskTagBits(masked);
-    const plaintext = await this.ctr.encryptCtr(masked, ciphertext.subarray(BLOCK_SIZE));
-    const expected = await this.s2v(plaintext);
-    if (!constantTimeEqual(tag, expected)) {
-      zeroFill(plaintext);
-      throw new SivError("AES-SIV: ciphertext verification failure!");
-    }
-    return plaintext;
-  }
-  async s2v(msg) {
-    const cmac = this.cmacFactory();
-    const double = new Block();
-    const result = new Block();
-    await cmac.update(double.data);
-    result.data.set(await cmac.finish());
-    const cmac2 = this.cmacFactory();
-    double.clear();
-    if (msg.length >= BLOCK_SIZE) {
-      const head = msg.length - BLOCK_SIZE;
-      double.data.set(msg.subarray(head));
-      await cmac2.update(msg.subarray(0, head));
-    } else {
-      double.data.set(msg);
-      double.data[msg.length] = 128;
-      result.dbl();
-    }
-    xorInto(double.data, result.data);
-    await cmac2.update(double.data);
-    return cmac2.finish();
-  }
-}
-
-// Jb equivalent: clear the two bits S2V reserves in the tag.
-function maskTagBits(tag) {
-  tag[tag.length - 8] &= 127;
-  tag[tag.length - 4] &= 127;
-}
-
-// --- AES-GCM helpers (v0 vaults + generic payload encryption) --------------
-
-const AES_GCM = "AES-GCM";
-
-function importAesGcmKey(rawKey) {
-  return subtle().importKey("raw", rawKey, AES_GCM, false, ["encrypt", "decrypt"]);
-}
-
-// Encrypt: returns iv(12) || ciphertext. Caller may pass a fixed iv for deterministic mode.
-function aesGcmEncrypt(data, key, iv) {
-  const nonce = iv || globalThis.crypto.getRandomValues(new Uint8Array(12));
-  return subtle().encrypt({ name: AES_GCM, iv: nonce }, key, data).then((ct) => {
-    const out = new ArrayBuffer(nonce.byteLength + ct.byteLength);
-    const bytes = new Uint8Array(out);
-    bytes.set(new Uint8Array(nonce), 0);
-    bytes.set(new Uint8Array(ct), nonce.byteLength);
-    return out;
-  });
-}
-
-function aesGcmDecrypt(data, key) {
-  return (async () => {
-    if (data.byteLength < 12) throw new Error("Encrypted data is bad");
-    if (data.byteLength === 12) return new ArrayBuffer(0);
-    const iv = new Uint8Array(data, 0, 12);
-    const ct = new Uint8Array(data, 12);
-    return subtle().decrypt({ name: AES_GCM, iv }, key, ct);
-  })();
-}
-
-// --- scrypt password stretching --------------------------------------------
-
-const SCRYPT_N = 32768;
-const SCRYPT_PARAMS = { N: SCRYPT_N, r: 8, p: 1, maxmem: 67108864 };
-
-// Derive the 32-byte vault key from password + salt. Output is an ArrayBuffer.
-function deriveScryptKey(password, salt) {
-  const pwd = password.normalize("NFKC");
-  const slt = salt.normalize("NFKC");
-  return (async () => {
-    const nodeCrypto = globalThis.window && globalThis.window.require && globalThis.window.require("crypto");
-    if (nodeCrypto) {
-      return new Promise((resolve, reject) => {
-        nodeCrypto.scrypt(Buffer.from(pwd, "utf8"), Buffer.from(slt, "utf8"), 32, SCRYPT_PARAMS,
-          (err, key) => (err ? reject(err) : resolve(key.buffer.slice(key.byteOffset, key.byteOffset + key.byteLength))));
-      });
-    }
-    const out = await globalThis.window.scrypt.scrypt(
-      new Uint8Array(utf8Bytes(pwd)), new Uint8Array(utf8Bytes(slt)), SCRYPT_N, 8, 1, 32);
-    return ownBuffer(out);
-  })();
-}
-
-// --- key hash (what /vault/* calls carry instead of the password) -----------
-
-// HKDF info "ObsidianKeyHash": v0 hashes the raw key with SHA-256, v2/v3 derive via HKDF/AES-CBC.
-async function deriveKeyHash(keyBytes, salt, encryptionVersion) {
-  switch (encryptionVersion) {
-    case 0: {
-      const digest = await sha256(keyBytes);
-      return bufferToHex(digest);
-    }
-    case 2:
-    case 3: {
-      const hkdfKey = await subtle().importKey("raw", keyBytes, "HKDF", false, ["deriveKey"]);
-      const derived = await subtle().deriveKey(
-        { name: "HKDF", salt: utf8Bytes(salt), info: utf8Bytes("ObsidianKeyHash"), hash: "SHA-256" },
-        hkdfKey, { name: "AES-CBC", length: 256 }, true, ["encrypt"]);
-      const raw = await subtle().exportKey("raw", derived);
-      return bufferToHex(raw);
-    }
-    default:
-      throw new Error("Encryption version not supported");
-  }
-}
-
-// password + salt -> { key: 32-byte key, keyhash: hex string } for /vault/create.
-async function deriveVaultSecrets(password, salt, encryptionVersion) {
-  const key = await deriveScryptKey(password, salt);
-  const keyhash = await deriveKeyHash(key, salt, encryptionVersion);
-  return { key, keyhash };
-}
-
-// wk: password + salt -> keyhash hex only (what /vault/create and /vault/migrate carry).
-async function deriveVaultKeyhash(password, salt, encryptionVersion) {
-  const key = await deriveScryptKey(password, salt);
-  return deriveKeyHash(key, salt, encryptionVersion);
-}
-
-// --- cipher providers --------------------------------------------------------
-
-// v0: raw key is the AES-GCM key; keyhash is plain SHA-256 hex.
-class CipherV0 {
-  constructor(keyHash, cryptoKey) { this.encryptionVersion = 0; this.keyHash = keyHash; this.cryptoKey = cryptoKey; }
-  static async init(keyBytes) {
-    if (keyBytes.byteLength !== 32) throw new Error("Invalid encryption key");
-    const digest = await sha256(keyBytes);
-    const keyHash = bufferToHex(digest);
-    const cryptoKey = await importAesGcmKey(keyBytes);
-    return new CipherV0(keyHash, cryptoKey);
-  }
-  deterministicEncodeStr(str) {
-    const data = utf8Bytes(str);
-    return (async () => {
-      const digest = await sha256(data);
-      const iv = new Uint8Array(digest, 0, 12);
-      return bufferToHex(await aesGcmEncrypt(data, this.cryptoKey, iv));
-    })();
-  }
-  deterministicDecodeStr(hex) {
-    return (async () => {
-      const data = hexToBuffer(hex);
-      const plain = await aesGcmDecrypt(data, this.cryptoKey);
-      return utf8String(plain);
-    })();
-  }
-  encrypt(data) { return aesGcmEncrypt(data, this.cryptoKey); }
-  decrypt(data) { return aesGcmDecrypt(data, this.cryptoKey); }
-}
-
-// v2/v3: SIV for deterministic strings, AES-GCM for payloads.
-// keyHash = HKDF("ObsidianKeyHash")/AES-CBC export; siv + gcm keys derived from raw key + salt.
-class CipherV23 {
-  constructor(keyHash, cryptoKey, siv, encryptionVersion) {
-    this.keyHash = keyHash;
-    this.cryptoKey = cryptoKey;
-    this.siv = siv;
-    if (encryptionVersion !== 2 && encryptionVersion !== 3) throw new Error("Invalid encryption version");
-    this.encryptionVersion = encryptionVersion;
-  }
-  static async init(keyBytes, salt, encryptionVersion) {
-    if (keyBytes.byteLength !== 32) throw new Error("Invalid encryption key");
-    const hkdfKey = await subtle().importKey("raw", keyBytes, "HKDF", false, ["deriveKey"]);
-    const saltBytes = utf8Bytes(salt);
-    const hashDerived = await subtle().deriveKey(
-      { name: "HKDF", salt: saltBytes, info: utf8Bytes("ObsidianKeyHash"), hash: "SHA-256" },
-      hkdfKey, { name: "AES-CBC", length: 256 }, true, ["encrypt"]);
-    const keyHash = bufferToHex(await subtle().exportKey("raw", hashDerived));
-    const siv = await Siv.importKey(hkdfKey, saltBytes);
-    const gcmDerived = await subtle().deriveKey(
-      { name: "HKDF", salt: new Uint8Array(0), info: utf8Bytes("ObsidianAesGcm"), hash: "SHA-256" },
-      hkdfKey, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
-    return new CipherV23(keyHash, gcmDerived, siv, encryptionVersion);
-  }
-  deterministicEncodeStr(str) {
-    return this.siv.seal(utf8Bytes(str)).then((sealed) => bufferToHex(ownBuffer(sealed)));
-  }
-  deterministicDecodeStr(hex) {
-    return this.siv.open(new Uint8Array(hexToBuffer(hex))).then((opened) => utf8String(ownBuffer(opened)));
-  }
-  encrypt(data) { return aesGcmEncrypt(data, this.cryptoKey); }
-  decrypt(data) { return aesGcmDecrypt(data, this.cryptoKey); }
-}
-
-async function initCipher(encryptionVersion, keyBytes, salt) {
-  switch (encryptionVersion) {
-    case 0: return CipherV0.init(keyBytes);
-    case 2:
-    case 3: return CipherV23.init(keyBytes, salt, encryptionVersion);
-    default: throw new Error("Encryption version not supported");
-  }
-}
-
-// /vault/access call with a derived keyhash (used when joining an existing vault).
-async function requestVaultAccess(vaultUid, password, salt, host, encryptionVersion) {
-  const keyhash = await deriveVaultKeyhash(password, salt, encryptionVersion);
-  return acctVaultAccess(account.token, vaultUid, keyhash, host, encryptionVersion);
-}
-
-// obsidian:// callback URL parser (sync-setup deep links etc.). Kept for wire/URI compatibility.
-function parseCallbackUrl(url) {
-  if (!url.startsWith("obsidian://")) return null;
-  const params = {};
-  let rest = url.substr(11);
-  if (rest.startsWith("vault/")) {
-    const parts = rest.substr(6).split("/").map(decodeURIComponent);
-    params.action = "open";
-    params.vault = parts[0];
-    params.file = parts.slice(1).join("/");
-  } else {
-    let query = "", hash = "";
-    const qi = rest.indexOf("?");
-    const hi = rest.indexOf("#", Math.max(0, qi));
-    if (hi >= 0) { hash = rest.substr(hi + 1); rest = rest.substr(0, hi); params.hash = hash; }
-    if (qi >= 0) { query = rest.substr(qi + 1); rest = rest.substr(0, qi); }
-    const pairs = query.split("&");
-    for (let i = 0; i < pairs.length; i++) {
-      const kv = pairs[i].split("=");
-      let value = "true";
-      if (kv.length > 1) value = decodeURIComponent(kv[1]);
-      params[decodeURIComponent(kv[0])] = value;
-    }
-    params.action = rest.replace(/\/+$/g, "");
-  }
-  return params;
-}
-
-// Simple "**bold**" + newline renderer used by the onboarding screens.
-function renderFormattedDescription(containerEl, text) {
-  const bold = /(\*\*(.*?)\*\*)/g;
-  const lines = text.split("\n");
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    let last = 0, match;
-    const p = containerEl.createEl("p");
-    while ((match = bold.exec(line)) !== null) {
-      if (last < match.index) p.appendText(line.slice(last, match.index));
-      p.createEl("strong", { text: match[2] });
-      last = bold.lastIndex;
-    }
-    if (last < line.length) p.appendText(line.slice(last));
-  }
-}
-
-// Adds/removes "mod-loading" around an async action.
-
-// Feature-type sets shown in the sync settings summary.
-const SYNCABLE_FEATURE_TYPES = ["app", "appearance", "appearance-data", "hotkey", "core-plugin", "core-plugin-data"];
-const MEDIA_FEATURE_TYPES = ["image", "audio", "pdf", "video"];
-
-// Manifest factories: each returns the class the minified initializer produced.
-function defineBlock() { return Block; }
-function defineCbcMacCipher() { return CbcMacCipher; }
-function defineCtrCipher() { return CtrCipher; }
-function defineCmac() { return Cmac; }
-function defineSiv() { return Siv; }
-function defineCipherV0() { return CipherV0; }
-function defineCipherV23() { return CipherV23; }
-
 // ---- view-header.js ----
 // ViewHeader: the header row some panes put above their content (bookmarks, tags, file explorer):
 // a nav-buttons container on the left where views add their own buttons, plus a sort menu helper.
@@ -106955,287 +107174,6 @@ function defineUnknownView(host) {
   };
 
   return UnknownView;
-}
-
-// ---- view.js ----
-// View (what a leaf shows) and ItemView (a view with the standard header: back / forward, title, action buttons, more-options menu).
-
-function defineView(host) {
-  /**
-   * Base of all views. Owns `containerEl` (a child of the leaf's element), is loaded when the leaf shows it and unloaded when it
-   * leaves. State has two parts: `getState` / `setState` (persisted in the layout) and the ephemeral state (scroll position, focus ...).
-   */
-  function View(leaf) {
-    const self = host.Component.call(this) || this;
-    self.icon = "lucide-file";
-    self.navigation = false; // true when the view takes part in back / forward history
-    self.app = leaf.app;
-    self.leaf = leaf;
-    self.containerEl = leaf.containerEl.createDiv("workspace-leaf-content");
-    self.containerEl.setAttribute("data-type", self.getViewType());
-    return self;
-  }
-  inherit(View, host.Component);
-  const proto = View.prototype;
-
-  proto.open = async function (parentEl) {
-    parentEl.appendChild(this.containerEl);
-    this.load();
-    await this.onOpen();
-  };
-
-  proto.close = async function () {
-    this.containerEl.detach();
-    this.unload();
-    await this.onClose();
-  };
-
-  proto.onOpen = async function () {};
-  proto.onClose = async function () {};
-  proto.getState = function () { return {}; };
-  proto.setState = async function () {};
-  proto.getEphemeralState = function () { return {}; };
-  proto.setEphemeralState = function () {};
-  proto.getIcon = function () { return this.icon ? this.icon : "lucide-file"; };
-  proto.onResize = function () {};
-  proto.onPaneMenu = function () {};
-  proto.onHeaderMenu = function () {};
-
-  /** The close entries of the tab context menu (close, close others, close to the right, close all). */
-  proto.onTabMenu = function (menu) {
-    const leaf = this.leaf;
-    const tabs = leaf.parent;
-    const index = tabs.children.indexOf(leaf);
-    const closeEntry = (title, leaves) => menu.addItem((item) => item
-      .setSection("close")
-      .setTitle(title)
-      .setIcon("lucide-x")
-      .onClick(() => { for (const other of leaves) other.detach(); }));
-
-    menu.addItem((item) => item
-      .setSection("close")
-      .setTitle(host.t.interface.menu.close())
-      .setIcon("lucide-x")
-      .onClick(() => this.leaf.detach()));
-
-    const siblings = tabs.children.slice();
-    if (this.app.workspace.isInSidebar(leaf)) return;
-    const others = siblings.filter((other) => !other.pinned && other !== leaf);
-    if (others.length > 0) closeEntry(host.t.interface.menu.closeOthers(), others);
-    const after = siblings.slice(index + 1).filter((other) => !other.pinned);
-    if (after.length > 0) closeEntry(host.t.interface.menu.closeAfter(), after);
-    const all = siblings.filter((other) => !other.pinned);
-    if (all.length > 0 && (all.length !== 1 || all[0] !== leaf)) closeEntry(host.t.interface.menu.closeAll(), all);
-  };
-
-  /** Where a tooltip of a control in a side dock opens (away from the dock), undefined elsewhere. */
-  proto.getSideTooltipPlacement = function () {
-    const root = this.leaf.getRoot();
-    if (root.side === "left") return "right";
-    if (root.side === "right") return "left";
-    return undefined;
-  };
-
-  proto.handleCut = function () {};
-  proto.handleCopy = function () {};
-  proto.handlePaste = function () {};
-
-  return View;
-}
-
-function defineItemView(host) {
-  function ItemView(leaf) {
-    const self = host.View.call(this, leaf) || this;
-    self.canDropAnywhere = false; // false: files are only accepted on the header (or with a modifier key)
-    self.leftSidebarToggleEl = null;
-    const app = self.app;
-    const workspace = app.workspace;
-    const header = (self.headerEl = self.containerEl.createDiv("view-header"));
-    self.contentEl = self.containerEl.createDiv("view-content");
-
-    header.createDiv("view-header-left", (left) => {
-      if (host.Platform.isMobile) {
-        self.leftSidebarToggleEl = left.createEl(
-          "button",
-          "view-action clickable-icon mod-left-split-toggle mod-raised sidebar-toggle-button mod-left",
-          (button) => {
-            host.setTooltip(button, host.t.interface.sidebarExpand());
-            host.setIcon(button, "sidebar-toggle-button-icon");
-            button.addEventListener("click", () => {
-              navigator.vibrate(100);
-              self.app.workspace.leftSplit.toggle();
-            });
-          },
-        );
-      }
-      left.createDiv("view-header-nav-buttons", (nav) => {
-        self.backButtonEl = host.createNavButton(app, () => self.leaf, "backward");
-        host.setIcon(self.backButtonEl, "lucide-arrow-left");
-        nav.appendChild(self.backButtonEl);
-        self.forwardButtonEl = host.createNavButton(app, () => self.leaf, "forward");
-        host.setIcon(self.forwardButtonEl, "lucide-arrow-right");
-        nav.appendChild(self.forwardButtonEl);
-      });
-      self.updateNavButtons();
-    });
-
-    self.titleContainerEl = header.createDiv("view-header-title-container mod-at-start", (container) => {
-      self.titleParentEl = container.createDiv({ cls: "view-header-title-parent" });
-      self.titleEl = container.createDiv({ cls: "view-header-title" });
-    });
-    // a long title fades out at the edge it overflows; the classes follow the scroll position
-    const fadeEl = self.titleContainerEl;
-    const scrollEl = self.titleEl;
-    fadeEl.addClass("mod-fade");
-    const updateFade = () => {
-      const left = scrollEl.scrollLeft;
-      fadeEl.toggleClass("mod-at-start", left === 0);
-      fadeEl.toggleClass("mod-at-end", Math.ceil(left) >= scrollEl.scrollWidth - scrollEl.offsetWidth);
-    };
-    scrollEl.addEventListener("scroll", debounceCall(updateFade, 10));
-    updateFade();
-
-    self.actionsEl = header.createDiv("view-actions");
-    if (host.Platform.isPhone) self.actionsEl.addClass("mod-raised");
-    const openMoreOptions = (event) => {
-      if (!event.currentTarget.hasClass("has-active-menu")) self.onMoreOptions(event);
-    };
-    self.moreOptionsButtonEl = self.addAction("lucide-more-vertical", host.t.interface.menu.moreOptions(), openMoreOptions);
-    if (host.Platform.isMobile) {
-      self.moreOptionsButtonEl.addEventListener("contextmenu", (event) => {
-        if (host.Platform.isPhone) {
-          event.preventDefault();
-          workspace.rightSplit.expand();
-        }
-      });
-    }
-    app.dragManager.handleDrop(self.containerEl, self.handleDrop.bind(self));
-    return self;
-  }
-  inherit(ItemView, host.View);
-  const proto = ItemView.prototype;
-
-  /** Back / forward buttons are dimmed (aria-disabled) when there is nothing to go to. */
-  proto.updateNavButtons = function () {
-    const { backHistory, forwardHistory } = this.leaf.history;
-    this.backButtonEl.ariaDisabled = String(backHistory.length === 0);
-    this.forwardButtonEl.ariaDisabled = String(forwardHistory.length === 0);
-  };
-
-  proto.load = function () {
-    host.View.prototype.load.call(this);
-    const leaf = this.leaf;
-    this.titleEl.setText(this.getDisplayText());
-    this.registerEvent(leaf.on("group-change", this.onGroupChange, this));
-    this.registerEvent(leaf.on("history-change", this.updateNavButtons, this));
-  };
-
-  /** Drops on the view: accepted on the header, anywhere when `canDropAnywhere`, or with Shift (Alt on non-mac) held. */
-  proto.handleDrop = function (event, data, isPreview) {
-    if (this.canDropAnywhere || (host.isMacLike ? event.shiftKey : event.altKey) || this.headerEl.contains(event.target)) {
-      const hint = this.leaf.handleDrop(event, data, isPreview);
-      if (hint) {
-        hint.hoverEl = this.headerEl;
-        hint.hoverClass = "is-highlighted";
-        return hint;
-      }
-    }
-    return undefined;
-  };
-
-  proto.onGroupChange = function () {};
-
-  /** Adds an icon button to the header (left of the others); returns the button. Clicks with the left / middle mouse button only. */
-  proto.addAction = function (icon, title, callback) {
-    const button = createEl("button", "clickable-icon view-action");
-    this.actionsEl.prepend(button);
-    host.setIcon(button, icon);
-    host.setTooltip(button, title);
-    button.addEventListener("mousedown", (event) => event.preventDefault());
-    button.onClickEvent((event) => {
-      if (event.button === 0 || event.button === 1) return callback(event);
-      return undefined;
-    });
-    return button;
-  };
-
-  proto.onMoreOptions = function (event) {
-    event.preventDefault();
-    const menu = new host.Menu().addSections(["close", "pane", "open", "action", "find", "info", "info.copy", "view", "view.linked", "system", "", "danger"]);
-    menu.setSectionSubmenu("info.copy", { title: host.t.interface.menu.copyPath(), icon: "lucide-clipboard" });
-    menu.setSectionSubmenu("view.linked", { title: host.t.interface.menu.openLinkedView(), icon: "lucide-link" });
-    this.onPaneMenu(menu, "more-options");
-    this.onMoreOptionsMenu(menu);
-    this.app.workspace.trigger("leaf-menu", menu, this.leaf);
-    const button = event.target;
-    const rect = button.getBoundingClientRect();
-    menu.setParentElement(button).showAtPosition({ x: rect.x, y: rect.bottom, width: rect.width, overlap: true, left: true });
-  };
-
-  proto.onPaneMenu = function (menu, source) {
-    host.View.prototype.onPaneMenu.call(this, menu, source);
-    const app = this.app;
-    const leaf = this.leaf;
-    if (host.Platform.isPhone && source === "more-options") {
-      menu.addItem((item) => item.setSection("close").setTitle(host.t.interface.menu.close()).setIcon("lucide-x").onClick(() => this.leaf.detach()));
-      menu.addItem((item) => item
-        .setSection("action")
-        .setTitle(this.leaf.pinned ? host.t.interface.menu.unpin() : host.t.interface.menu.pin())
-        .setIcon(this.leaf.pinned ? "lucide-pin-off" : "lucide-pin")
-        .onClick(() => this.leaf.togglePinned()));
-    }
-    if (host.Platform.canSplit && leaf.canPin()) {
-      menu
-        .addItem((item) => item
-          .setSection("open")
-          .setTitle(host.tc.splitRight())
-          .setDisabled(app.workspace.isInSidebar(this.leaf))
-          .setIcon("lucide-separator-vertical")
-          .onClick(() => app.workspace.duplicateLeaf(leaf, "vertical")))
-        .addItem((item) => item
-          .setSection("open")
-          .setTitle(host.tc.splitDown())
-          .setIcon("lucide-separator-horizontal")
-          .onClick(() => app.workspace.duplicateLeaf(leaf, "horizontal")));
-    }
-  };
-
-  proto.onTabMenu = function (menu) {
-    host.View.prototype.onTabMenu.call(this, menu);
-    const app = this.app;
-    const leaf = this.leaf;
-    if (leaf.canPin()) {
-      menu.addItem((item) => item
-        .setSection("pane")
-        .setTitle(leaf.pinned ? host.t.interface.menu.unpin() : host.t.interface.menu.pin())
-        .setIcon("lucide-pin")
-        .onClick(() => leaf.togglePinned()));
-    }
-    if (leaf.group) {
-      menu.addItem((item) => item
-        .setSection("pane")
-        .setTitle(host.t.interface.menu.unlinkTab())
-        .setIcon("lucide-link")
-        .onClick(() => leaf.setGroup(null)));
-    } else if (leaf.canPin()) {
-      menu.addItem((item) => item
-        .setSection("pane")
-        .setTitle(host.t.interface.menu.linkTab())
-        .setIcon("lucide-link")
-        .onClick(() => app.workspace.onStartLink(leaf)));
-    }
-    if (host.Platform.canPopoutWindow) {
-      menu.addItem((item) => item
-        .setSection("open")
-        .setTitle(host.t.interface.menu.moveToNewWindow())
-        .setIcon("lucide-picture-in-picture")
-        .onClick(() => { app.workspace.moveLeafToPopout(leaf); }));
-    }
-  };
-
-  proto.onMoreOptionsMenu = function () {};
-
-  return ItemView;
 }
 
 // ---- workspace-tree.js ----

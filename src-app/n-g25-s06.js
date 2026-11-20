@@ -2,9 +2,7 @@
 // Spec: F:\orch\specs\g25.md Part C. env() names are the minified bundle bindings (lazy).
 
 import { env } from "./env.js";
-import {
-  lastSegment, baseName, displayName, withoutExtension, parseLinktext, escapeLinkChars,
-} from "./path.js";
+import { lastSegment, baseName, displayName, withoutExtension, parseLinktext, escapeLinkChars } from "./path.js";
 import { linkSafeHeading } from "./text.js";
 import { prepareQuery, fuzzyMatchJs } from "./search.js";
 import { shiftRanges, matchPenalty } from "./n-g25-misc.js";
