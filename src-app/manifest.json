@@ -2545,7 +2545,7 @@
     },
     {
       "orig": "zD",
-      "use": "defineWorkspaceTabs"
+      "use": "ng21DefineWorkspaceTabs"
     },
     {
       "orig": "dl",
