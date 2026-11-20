@@ -165,7 +165,7 @@
   function show(initial) {
     if (open) { open.input.focus(); return; }
     const wrap = document.createElement("div"); wrap.className = "bss-wrap";
-    wrap.innerHTML = '<div class="bss"><div class="bss-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="text" spellcheck="false" placeholder="Искать по заметкам и холстам…"></div><div class="bss-hint">path:папка · file:имя · tag:#метка · ext:canvas</div><div class="bss-list"></div><div class="bss-foot"><span class="bss-st"></span><span>↑↓ выбрать · Enter открыть · Ctrl+Enter в новой вкладке · Esc закрыть</span></div></div>';
+    wrap.innerHTML = '<div class="bss"><div class="bss-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M9 4H13L16 7V11L13 14H9L6 11V7Z M15 15L20 20"/></svg><input type="text" spellcheck="false" placeholder="Искать по заметкам и холстам…"></div><div class="bss-hint">path:папка · file:имя · tag:#метка · ext:canvas</div><div class="bss-list"></div><div class="bss-foot"><span class="bss-st"></span><span>↑↓ выбрать · Enter открыть · Ctrl+Enter в новой вкладке · Esc закрыть</span></div></div>';
     const input = wrap.querySelector("input"), list = wrap.querySelector(".bss-list"), st = wrap.querySelector(".bss-st");
     const prev = document.activeElement; let results = [], sel = 0;
     const close = () => { wrap.remove(); open = null; window.__bssOnProgress = null; try { prev && prev.focus && prev.focus(); } catch (e) { /* gone */ } };

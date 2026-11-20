@@ -11,7 +11,7 @@ import { env, hostEnv } from "./env.js";
 import { inherit } from "./inherit.js";
 import { containsAllWords, renderMatches } from "./search-simple.js";
 import { ng01CommunityPlugins, ng01CommunityPluginStats } from "./n-g01-table.js";
-import { s04CommunityThemes } from "./s04-themes.js";
+import { s04CommunityThemes } from "./n-g24-themes.js";
 import { isOlderVersion } from "./text.js";
 
 const ng14CE = () => hostEnv();

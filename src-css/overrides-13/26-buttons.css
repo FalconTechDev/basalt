@@ -1,0 +1,31 @@
+/* buttons: one chamfered face everywhere (design sheet "02 Controls").
+   Text buttons are filled, not framed: a hairline would be cut off by the chamfer clip-path.
+   Icon-only and inline chrome buttons (listed in :not) stay flat and square. */
+:where(button, .text-icon-button, .combobox-button, .document-search-button, .extra-setting-button):not(
+  .clickable-icon, .modal-close-button, .mod-raised, .titlebar-button, .workspace-tab-header-inner-close-button,
+  .sidebar-toggle-button, .search-input-clear-button, .combobox-clear-button, .multi-select-pill-remove-button,
+  .hotkey-filter-remove-button, .pdf-toolbar-button, .nav-action-button, .canvas-card-menu-button, .bstf-btn, .bsg-btn, .bs-ghost
+) {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: var(--interactive-normal);
+  clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md));
+}
+:where(button, .text-icon-button, .combobox-button, .document-search-button, .extra-setting-button):not(.clickable-icon, .modal-close-button, .mod-raised, .titlebar-button, .workspace-tab-header-inner-close-button, .sidebar-toggle-button, .search-input-clear-button, .combobox-clear-button, .multi-select-pill-remove-button, .hotkey-filter-remove-button, .pdf-toolbar-button, .nav-action-button, .canvas-card-menu-button, .bstf-btn, .bsg-btn, .bs-ghost) {
+  --text-color: var(--text-normal);
+}
+@media (hover: hover) {
+  button:not(.clickable-icon, .mod-cta, .mod-warning, .bs-ghost):hover { background-color: var(--interactive-hover); }
+}
+/* the small cut for small buttons (24-26 px high) */
+.bsg-panel .btns button, .bsd-edit, .modal-button-container button.mod-small { --bs-cut-md: var(--bs-cut-sm); }
+.bsg-panel .btns button { border: 0; background-color: var(--interactive-normal); clip-path: polygon(var(--bs-cut-sm) 0, 100% 0, 100% calc(100% - var(--bs-cut-sm)), calc(100% - var(--bs-cut-sm)) 100%, 0 100%, 0 var(--bs-cut-sm)); }
+/* ghost: transparent flat button for toolbars and inline actions */
+button.bs-ghost { border: 0; clip-path: none; background: transparent; --text-color: var(--text-muted); }
+@media (hover: hover) { button.bs-ghost:hover { background: var(--background-modifier-hover); --text-color: var(--text-normal); } }
+/* primary / danger keep their fills over the generic face */
+button.mod-cta { background-color: var(--interactive-accent); --text-color: var(--bs-on-accent); }
+button.mod-warning { background-color: var(--background-modifier-error); --text-color: var(--bs-on-accent); }
+button.mod-destructive { --text-color: var(--text-error); }
+button:focus-visible { outline: var(--focus-ring-outline); outline-offset: var(--size-2-1); }

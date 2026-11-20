@@ -127,10 +127,10 @@
     .workspace-tab-header.is-active .workspace-tab-header-inner-title { color: var(--text-normal); }
     .workspace-tab-header:not(.is-active) .workspace-tab-header-inner-title { color: var(--text-muted); }
     .workspace-tab-header-inner-icon { color: var(--interactive-accent); opacity: .85; }
-    .workspace-tab-header-inner-close-button { border-radius: 4px; opacity: 0; transition: opacity .12s; }
+    .workspace-tab-header-inner-close-button { border-radius: 0; opacity: 0; transition: opacity .12s; }
     .workspace-tab-header:hover .workspace-tab-header-inner-close-button, .workspace-tab-header.is-active .workspace-tab-header-inner-close-button { opacity: .7; }
     .workspace-tab-header-inner-close-button:hover { opacity: 1 !important; background: var(--background-modifier-hover); color: var(--text-normal); }
-    .workspace-tab-header-new-tab .clickable-icon { border-radius: 4px; }
+    .workspace-tab-header-new-tab .clickable-icon { border-radius: 0; }
     /* file lists: calm rows, the open file marked with an accent bar and a tint */
     .tree-item-self, .nav-file-title, .nav-folder-title { border-radius: var(--nav-item-radius); margin: var(--bs-hairline) var(--size-4-1); transition: background-color var(--bs-dur-fast) var(--bs-ease-standard), color var(--bs-dur-fast) var(--bs-ease-standard), box-shadow var(--bs-dur-fast) var(--bs-ease-standard); }
     .tree-item-self:hover, .nav-file-title:hover, .nav-folder-title:hover { background: var(--background-modifier-hover); }
@@ -143,7 +143,6 @@
     .nav-buttons-container { gap: var(--size-2-1); padding: var(--size-2-3) var(--size-4-2); }
     .workspace-tab-header-container { padding-top: 2px; }
     .workspace-leaf-content .view-header { border-bottom: 1px solid var(--background-modifier-border); }
-    button:not(.clickable-icon):not(.modal-close-button):not(.mod-raised) { box-shadow: none; clip-path: polygon(var(--bs-cut-sm) 0, 100% 0, 100% calc(100% - var(--bs-cut-sm)), calc(100% - var(--bs-cut-sm)) 100%, 0 100%, 0 var(--bs-cut-sm)); }
     .checkbox-container { border-radius: 2px; }
     .checkbox-container::after { border-radius: 1px; }
   `;
@@ -181,7 +180,6 @@
     .modal.mod-settings .vertical-tab-nav-item.is-active .vertical-tab-nav-item-icon { color: var(--interactive-accent); }
     .modal.mod-settings .setting-item-heading .setting-item-name { font-weight: 600; letter-spacing: .01em; }
     .modal.mod-settings .setting-item-description { color: var(--text-muted); }
-    .modal.mod-settings button:not(.clickable-icon):not(.modal-close-button) { border-radius: 0; box-shadow: none; clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md)); }
     .modal.mod-settings button.mod-cta { background: var(--interactive-accent); color: var(--text-on-accent); }
     .modal.mod-settings .checkbox-container { border-radius: 2px; }
     .modal.mod-settings .checkbox-container::after { border-radius: 1px; }
