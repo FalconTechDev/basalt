@@ -4867,7 +4867,7 @@
     },
     {
       "orig": "MI",
-      "use": "defineS06Combobox",
+      "use": "defineS20Combobox",
       "originalBytes": 5512
     },
     {
