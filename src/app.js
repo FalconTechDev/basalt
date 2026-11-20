@@ -71106,6 +71106,833 @@ function s04CssManager(host) {
 const ng24CommunityThemesUrl = s04CommunityThemesUrl;
 const ng24CommunityThemesEmpty = s04CommunityThemesEmpty;
 
+// ---- n-g25-adapter.js ----
+// g25 clean-room s04-mobile-adapter: CapacitorAdapter — mobile (Capacitor) DataAdapter
+// over the filesystem plugin bridge. Spec: F:\orch\specs\g25.md Part K.
+// files = vault-relative path -> {type:"file"|"folder", realpath, ctime?, mtime?, size?};
+// mutations serialised through a promise queue; watch events reconcile create/modify/delete.
+
+const NG25AD_TRASH_RETRY = 100;
+
+function s04CapacitorAdapter(host) {
+  void host;
+
+  class CapacitorAdapter {
+    constructor(basePath, fs) {
+      this.fs = fs;
+      this.basePath = basePath;
+      this.files = {};
+      this.promise = null;
+      this.handler = null;
+      this.insensitive = false;
+      this._dmHandler = null;
+    }
+
+    testInsensitive() {}
+
+    // Serial promise chain; a failing op must not break the chain.
+    queue(fn) {
+      const run = () => Promise.resolve().then(fn);
+      const p = (this.promise || Promise.resolve()).then(run, run);
+      this.promise = p.then(() => {}, () => {});
+      return p;
+    }
+
+    trigger(event, path, oldPath, stat) {
+      if (this.handler) this.handler(event, path, oldPath, stat);
+    }
+
+    // ---- path mapping ----
+
+    getName() { return lastSegment(this.basePath); }
+
+    // Deepest registered ancestor's realpath + the remaining suffix.
+    getRealPath(path) {
+      let p = collapseSlashes(path);
+      if (p === "/") return "/";
+      p = p.replace(/^\/+/, "");
+      if (!p) return "/";
+      const parts = p.split("/");
+      for (let i = parts.length; i >= 0; i--) {
+        const cand = i === 0 ? "/" : parts.slice(0, i).join("/");
+        const e = this.files[cand];
+        if (e) {
+          const base = e.realpath === "/" ? "" : String(e.realpath).replace(/^\/+|\/+$/g, "");
+          const tail = parts.slice(i).join("/");
+          return [base, tail].filter((s) => s).join("/") || "/";
+        }
+      }
+      return p;
+    }
+
+    getFullRealPath(p) { return collapseSlashes(this.basePath + "/" + p); }
+    getFullPath(path) { return this.getFullRealPath(this.getRealPath(path)); }
+
+    // ---- listing / watch ----
+
+    watchAndList() {
+      return this.queue(() => this._watchAndList());
+    }
+
+    async _watchAndList() {
+      this.files = { "/": { type: "folder", realpath: "/" } };
+      try {
+        const res = await this.fs.watchAndStatAll(this.basePath);
+        const children = res && res.children ? res.children : [];
+        for (const child of children) await this.quickList(child);
+      } catch (e) {
+        console.error("Failed to run quick list");
+        try { await this.fs.watch(this.basePath); } catch (e2) {}
+        await this._listRecursive("");
+      }
+    }
+
+    // Register one entry reported by watchAndStatAll / readdir.
+    async quickList(child) {
+      const name = child && child.name;
+      if (!name) return;
+      const norm = normalizePath(name);
+      if (norm === "/" || !norm) return;
+      this.trigger("raw", norm);
+      if (isHiddenPath(norm)) {
+        if (this.files[norm]) await this.reconcileDeletion(this.getRealPath(norm), norm, true);
+        return;
+      }
+      const type = child.type === "directory" || child.type === "folder" ? "folder" : "file";
+      if (type === "file") {
+        if (this.files[norm]) { await this.reconcileFileChanged(this.getRealPath(norm), norm); return; }
+        await this.reconcileFileCreation(this.getRealPath(norm), norm, child);
+        return;
+      }
+      await this.reconcileFolderCreation(this.getRealPath(norm), norm, null, false);
+    }
+
+    listRecursive(path) {
+      return this.queue(() => this._listRecursive(path));
+    }
+
+    async _listRecursive(path) {
+      const norm = normalizePath(path || "");
+      const full = norm === "/" || norm === "" ? this.basePath : this.getFullPath(norm);
+      let entries;
+      try { entries = await this.fs.readdir(full); } catch (e) { return; }
+      for (const child of entries || []) {
+        const name = child && child.name;
+        if (!name) continue;
+        const childPath = norm === "/" || norm === "" ? normalizePath(name) : normalizePath(norm + "/" + name);
+        if (isHiddenPath(childPath)) continue;
+        const type = child.type === "directory" || child.type === "folder" ? "folder" : "file";
+        this.trigger("raw", childPath);
+        if (type === "file") {
+          if (!this.files[childPath]) await this.reconcileFileCreation(this.getRealPath(childPath), childPath, child);
+        } else {
+          if (!this.files[childPath]) {
+            this.files[childPath] = { type: "folder", realpath: this.getRealPath(childPath) };
+            this.trigger("folder-created", childPath);
+          }
+          await this._listRecursive(childPath);
+        }
+      }
+    }
+
+    // ---- mutations (all queued) ----
+
+    mkdir(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try { await this.fs.mkdir(this.getFullPath(norm)); }
+        catch (e) { if (!/Directory exists/.test(String(e && e.message || e))) throw e; }
+        await this.reconcileInternalFile(norm);
+      });
+    }
+
+    trashSystem(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try {
+          await this.fs.trash(this.getFullPath(norm));
+          await this.reconcileFile(this.getRealPath(norm), norm, true);
+          return true;
+        } catch (e) { return false; }
+      });
+    }
+
+    trashLocal(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        const trashDir = ".trash";
+        try { await this.fs.mkdir(this.getFullPath(trashDir)); } catch (e) {}
+        const stem = baseName(norm);
+        const ext = extensionOf(norm);
+        let candidate = joinNameExt(stem, ext);
+        for (let n = 2; ; n++) {
+          const rel = trashDir + "/" + candidate;
+          let taken = false;
+          try { await this.fs.stat(this.getFullPath(rel)); taken = true; } catch (e) {}
+          if (!taken) break;
+          candidate = joinNameExt(stem + " " + n, ext);
+        }
+        const target = trashDir + "/" + candidate;
+        await this.fs.rename(this.getFullPath(norm), this.getFullPath(target));
+        await this.reconcileFile(this.getRealPath(target), target, true);
+      });
+    }
+
+    rmdir(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        const fn = this.fs.rmdir || this.fs.delete;
+        await fn.call(this.fs, this.getFullPath(norm));
+        await this.reconcileFile(this.getRealPath(norm), norm, true);
+      });
+    }
+
+    remove(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        await this.fs.delete(this.getFullPath(norm));
+        await this.reconcileFile(this.getRealPath(norm), norm, true);
+      });
+    }
+
+    update(path) {
+      return this.queue(() => this.reconcileInternalFile(path));
+    }
+
+    // ---- content ops ----
+
+    read(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try { return await this.fs.read(this.getFullPath(norm)); }
+        catch (e) { this._scheduleReconcile(norm); throw e; }
+      });
+    }
+
+    readBinary(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try { return await this.fs.readBinary(this.getFullPath(norm)); }
+        catch (e) { this._scheduleReconcile(norm); throw e; }
+      });
+    }
+
+    _scheduleReconcile(norm) {
+      setTimeout(() => { this.reconcileInternalFile(norm).catch(() => {}); }, 0);
+    }
+
+    async _readRaw(norm) {
+      return this.fs.read(this.getFullPath(norm));
+    }
+
+    async _readBinaryRaw(norm) {
+      return this.fs.readBinary(this.getFullPath(norm));
+    }
+
+    async _writeRaw(norm, data, options, op) {
+      const full = this.getFullPath(norm);
+      try {
+        if (op === "writeBinary") await this.fs.writeBinary(full, data);
+        else if (op === "append") await this.fs.append(full, data);
+        else if (op === "appendBinary") await this.fs.appendBinary(full, data);
+        else await this.fs.write(full, data);
+        if (options && (options.ctime || options.mtime)) {
+          await this.fs.setTimes(full, options.ctime, options.mtime);
+        }
+        if (options && options.immediate) options.immediate();
+      } catch (e) {
+        await this.reconcileInternalFile(norm).catch(() => {});
+        throw e;
+      }
+    }
+
+    write(path, data, options) { return this.queue(() => this._writeRaw(normalizePath(path), data, options, "write")); }
+    writeBinary(path, data, options) { return this.queue(() => this._writeRaw(normalizePath(path), data, options, "writeBinary")); }
+    append(path, data, options) { return this.queue(() => this._writeRaw(normalizePath(path), data, options, "append")); }
+    appendBinary(path, data, options) { return this.queue(() => this._writeRaw(normalizePath(path), data, options, "appendBinary")); }
+
+    process(path, fn, options) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try {
+          const contents = await this._readRaw(norm);
+          const next = await fn(contents);
+          if (next === contents) return contents;
+          await this._writeRaw(norm, next, options, "write");
+          return next;
+        } catch (e) {
+          await this.reconcileInternalFile(norm).catch(() => {});
+          throw e;
+        }
+      });
+    }
+
+    getResourcePath(path) { return this.fs.getUri(this.getFullPath(path)); }
+    getNativePath(path) { return this.fs.getNativeUri(this.getFullPath(path)); }
+    open(path) { return this.fs.open(this.getFullPath(path)); }
+
+    exists(path, strict) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try { await this.fs.stat(this.getFullPath(norm)); return true; }
+        catch (e) {
+          if (strict && this.insensitive) {
+            const parent = parentPath(norm);
+            try {
+              const entries = await this.fs.readdir(this.getFullPath(parent || "/"));
+              const want = normalizePath(lastSegment(norm));
+              return (entries || []).some((en) => en && normalizePath(en.name) === want);
+            } catch (e2) { return false; }
+          }
+          return false;
+        }
+      });
+    }
+
+    stat(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        let st;
+        try { st = await this.fs.stat(this.getFullPath(norm)); }
+        catch (e) {
+          if (e && (e.code === "ENOENT" || /ENOENT/.test(String(e && e.message || e)))) return null;
+          throw e;
+        }
+        const info = statFromCapacitor(st);
+        info.type = st.type === "directory" || st.type === "folder" ? "folder" : "file";
+        return info;
+      });
+    }
+
+    list(prefix) {
+      return this.queue(() => {
+        const pre = normalizePath(prefix || "");
+        const folders = new Set(), filesOut = new Set();
+        for (const key of Object.keys(this.files)) {
+          if (key === "/") continue;
+          if (pre && !(key === pre || key.startsWith(pre + "/"))) continue;
+          const rel = pre ? key.slice(pre.length).replace(/^\/+/, "") : key;
+          if (!rel) continue;
+          const first = rel.split("/")[0];
+          if (rel.includes("/")) { folders.add(first); continue; }
+          const e = this.files[key];
+          if (e && e.type === "folder") folders.add(first); else filesOut.add(first);
+        }
+        return { folders: [...folders].sort(), files: [...filesOut].sort() };
+      });
+    }
+
+    // ---- watch ----
+
+    async stopWatch() {
+      try {
+        const Dm = env().Dm;
+        if (Dm && Dm.stopWatch) await Dm.stopWatch();
+      } catch (e) {}
+    }
+
+    watch(handler) {
+      return this.queue(async () => {
+        await this.stopWatch();
+        this.handler = handler;
+        try {
+          const Dm = env().Dm;
+          if (Dm && Dm.addListener) {
+            this._dmHandler = await Dm.addListener("change", (event) => {
+              const p = event && event.path;
+              if (typeof p !== "string") return;
+              const rel = p.startsWith(this.basePath) ? p.slice(this.basePath.length) : p;
+              this.onFileChange(rel);
+            });
+          }
+        } catch (e) {}
+        await this._watchAndList();
+      });
+    }
+
+    onFileChange(path) {
+      setTimeout(() => {
+        const norm = normalizePath(String(path || "").replace(/^\/+/, ""));
+        if (!norm || norm === "/") return;
+        this.queue(() => this.reconcileFile(this.getRealPath(norm), norm, false));
+      }, 0);
+    }
+
+    // ---- reconcile ----
+
+    async reconcileInternalFile(path) {
+      const norm = normalizePath(path || "");
+      if (!norm || norm === "/") return;
+      let st;
+      try { st = await this.fs.stat(this.getFullPath(norm)); }
+      catch (e) {
+        if (e && (e.code === "ENOENT" || /ENOENT/.test(String(e && e.message || e)))) {
+          if (this.files[norm]) await this.reconcileDeletion(this.getRealPath(norm), norm, true);
+        }
+        return;
+      }
+      const isDir = st.type === "directory" || st.type === "folder";
+      const real = this.getRealPath(norm);
+      if (isDir) {
+        if (!this.files[norm]) {
+          this.files[norm] = { type: "folder", realpath: real };
+          this.trigger("folder-created", norm, norm, this.files[norm]);
+        } else {
+          this.files[norm].realpath = real;
+        }
+        return;
+      }
+      const info = statFromCapacitor(st);
+      const prev = this.files[norm];
+      if (!prev) {
+        this.files[norm] = { type: "file", realpath: real, ctime: info.ctime, mtime: info.mtime, size: info.size };
+        this.trigger("file-created", norm, norm, this.files[norm]);
+      } else if (prev.type !== "file" || prev.mtime !== info.mtime || prev.size !== info.size) {
+        prev.type = "file"; prev.realpath = real;
+        prev.ctime = info.ctime; prev.mtime = info.mtime; prev.size = info.size;
+        this.trigger("modified", norm, norm, { type: "file", realpath: real, ctime: info.ctime, mtime: info.mtime, size: info.size });
+      } else {
+        prev.realpath = real;
+      }
+    }
+
+    async reconcileFile(realPath, path, remove = true) {
+      const norm = normalizePath(path);
+      this.trigger("raw", norm);
+      if (isHiddenPath(norm)) { await this.reconcileDeletion(realPath, norm, remove); return; }
+      const parent = parentPath(norm);
+      if (parent && parent !== "/" && !this.files[parent]) {
+        await this.reconcileFile(this.getRealPath(parent), parent, remove);
+      }
+      if (this.insensitive && parent && parent !== "/") {
+        try {
+          const entries = await this.fs.readdir(this.getFullPath(parent));
+          const want = normalizePath(lastSegment(norm));
+          const found = (entries || []).some((en) => en && normalizePath(en.name) === want);
+          if (!found) { await this.reconcileDeletion(realPath, norm, remove); return; }
+        } catch (e) { await this.reconcileDeletion(realPath, norm, remove); return; }
+      }
+      let st;
+      try { st = await this.fs.stat(this.getFullPath(norm)); }
+      catch (e) {
+        if (e && (e.code === "ENOENT" || /ENOENT/.test(String(e && e.message || e)))) {
+          await this.reconcileDeletion(realPath, norm, remove);
+        } else {
+          console.error(e);
+        }
+        return;
+      }
+      const isDir = st.type === "directory" || st.type === "folder";
+      if (isDir) await this.reconcileFolderCreation(realPath, norm, st);
+      else await this.reconcileFileChanged(realPath, norm, st);
+    }
+
+    async reconcileFileChanged(realPath, path, st) {
+      const norm = normalizePath(path);
+      const prev = this.files[norm];
+      const real = realPath || this.getRealPath(norm);
+      if (!prev) { await this.reconcileFileCreation(real, norm, st); return; }
+      prev.realpath = real;
+      if (prev.type === "file" && st) {
+        const info = statFromCapacitor(st);
+        if (prev.mtime !== info.mtime || prev.size !== info.size) {
+          prev.ctime = info.ctime; prev.mtime = info.mtime; prev.size = info.size;
+          this.trigger("modified", norm, norm, { type: "file", realpath: real, ctime: info.ctime, mtime: info.mtime, size: info.size });
+        }
+      }
+    }
+
+    async reconcileFileCreation(realPath, path, info) {
+      const norm = normalizePath(path);
+      const real = realPath || this.getRealPath(norm);
+      let entry;
+      if (info && (info.type === "directory" || info.type === "folder")) {
+        entry = { type: "folder", realpath: real };
+      } else {
+        const ctime = Math.round(info && info.ctime != null ? info.ctime : (info && info.birthtime != null ? info.birthtime : 0));
+        const mtime = Math.round(info && info.mtime != null ? info.mtime : 0);
+        const size = info && info.size != null ? info.size : 0;
+        entry = { type: "file", realpath: real, ctime, mtime, size };
+      }
+      this.files[norm] = entry;
+      this.trigger(entry.type === "folder" ? "folder-created" : "file-created", norm, norm, entry);
+    }
+
+    async reconcileFolderCreation(realPath, path, info, recurse = true) {
+      const norm = normalizePath(path);
+      const real = realPath || this.getRealPath(norm);
+      const prev = this.files[norm];
+      if (!prev) {
+        this.files[norm] = { type: "folder", realpath: real };
+        this.trigger("folder-created", norm, norm, this.files[norm]);
+        if (recurse) await this._listRecursive(norm);
+        return;
+      }
+      prev.realpath = real;
+    }
+
+    async reconcileDeletion(realPath, path, remove = true) {
+      const norm = normalizePath(path);
+      if (norm === "/") { this.trigger("closed", norm); return; }
+      if (!remove) {
+        setTimeout(() => { this.reconcileDeletion(realPath, norm, true).catch(() => {}); }, NG25AD_TRASH_RETRY);
+        return;
+      }
+      const e = this.files[norm];
+      if (e && e.type === "folder") {
+        for (const k of Object.keys(this.files)) {
+          if (k !== norm && k.startsWith(norm + "/")) {
+            await this.removeFile(k, this.files[k] && this.files[k].type === "folder");
+          }
+        }
+      }
+      await this.removeFile(norm, e ? e.type === "folder" : false);
+    }
+
+    async removeFile(path, isFolder) {
+      const norm = normalizePath(path);
+      delete this.files[norm];
+      this.trigger(isFolder ? "folder-removed" : "file-removed", norm);
+    }
+
+    // ---- move / copy ----
+
+    rename(oldPath, newPath) {
+      return this.queue(async () => {
+        const o = normalizePath(oldPath);
+        const n = normalizePath(newPath);
+        if (o === n) return;
+        let destExists = false;
+        try { await this.fs.stat(this.getFullPath(n)); destExists = true; } catch (e) {}
+        if (destExists && (!this.insensitive || o.toLowerCase() !== n.toLowerCase())) {
+          throw new Error("Destination file already exists!");
+        }
+        const entry = this.files[o];
+        if (entry) {
+          this.files[n] = { ...entry, realpath: this.getRealPath(n) };
+          delete this.files[o];
+        }
+        this.trigger("renamed", n, o);
+        if (entry && entry.type === "folder") {
+          for (const k of Object.keys(this.files)) {
+            if (k !== n && k.startsWith(o + "/")) {
+              const nk = n + k.slice(o.length);
+              const e2 = this.files[k];
+              this.files[nk] = { ...e2, realpath: this.getRealPath(nk) };
+              delete this.files[k];
+              this.trigger("renamed", nk, k);
+            }
+          }
+        }
+      });
+    }
+
+    copy(oldPath, newPath) {
+      return this.queue(async () => {
+        const o = normalizePath(oldPath);
+        const n = normalizePath(newPath);
+        await this.fs.copy(this.getFullPath(o), this.getFullPath(n));
+        await this.reconcileInternalFile(n);
+      });
+    }
+  }
+
+  return CapacitorAdapter;
+}
+
+// ---- n-g25-app.js ----
+// g25 clean-room s17-app-class: the App class factory — constructor wiring every app
+// subsystem, debug/mobile-emulation localStorage switches, mobile tap highlight +
+// touch long-press context menu, tablet/phone media classes, iOS callout disabling,
+// service-worker neutering, startup progress flow. Spec: F:\orch\specs\g25.md Part H.
+// Prototype methods are attached from n-g15-app.js helpers (`this` = app instance).
+
+
+const s17IframeAllowlist = {
+  "encrypted-media": true, fullscreen: true, gamepad: true, hid: true,
+  "idle-detection": true, "oversized-images": true, "picture-in-picture": true, "sync-xhr": true,
+};
+const s17IframeSandbox = {
+  "allow-forms": true, "allow-modals": true, "allow-popups": true,
+  "allow-presentation": true, "allow-same-origin": true, "allow-scripts": true,
+};
+const s17EmulateMobileKey = "EmulateMobile";
+const s17DebugModeKey = "DebugMode";
+
+const NG25S17_TAP_SELECTOR = "a, button, .tappable, .is-clickable, .clickable-icon, .text-icon-button, .suggestion-item";
+const NG25S17_TABLET_QUERY = "(min-width:600px) and (min-height:600px)";
+
+const NG25S17_METHODS = {
+  nextFrame: appNextFrame, onNextFrame: appOnNextFrame, nextFrameOnceCallback: appNextFrameOnceCallback,
+  initializeWithAdapter: appInitializeWithAdapter, onConfigChanged: appOnConfigChanged,
+  registerCommands: appRegisterCommands, disableCssTransition: appDisableCssTransition,
+  enableCssTransition: appEnableCssTransition, getAppTitle: appGetAppTitle,
+  getWebviewPartition: appGetWebviewPartition, fixFileLinks: appFixFileLinks,
+  getTheme: appGetTheme, isDarkMode: appIsDarkMode, changeTheme: appChangeTheme,
+  updateTheme: appUpdateTheme, updateMobileFrameTheme: appUpdateMobileFrameTheme,
+  updateInlineTitleDisplay: appUpdateInlineTitleDisplay,
+  updateFloatingNavigationDisplay: appUpdateFloatingNavigationDisplay,
+  updateAutoFullScreenDisplay: appUpdateAutoFullScreenDisplay,
+  updateViewHeaderDisplay: appUpdateViewHeaderDisplay, updateRibbonDisplay: appUpdateRibbonDisplay,
+  updateFontFamily: appUpdateFontFamily, updateFontSize: appUpdateFontSize,
+  updateUseNativeMenu: appUpdateUseNativeMenu, updateTabSize: appUpdateTabSize,
+  showReleaseNotes: appShowReleaseNotes, updateAccentColor: appUpdateAccentColor,
+  getAccentColor: appGetAccentColor, setAccentColor: appSetAccentColor, garbleText: appGarbleText,
+  importAttachments: appImportAttachments, saveAttachment: appSaveAttachment,
+  openVaultChooser: appOpenVaultChooser, openHelp: appOpenHelp,
+  runOpeningBehavior: appRunOpeningBehavior, openWithDefaultApp: appOpenWithDefaultApp,
+  showInFolder: appShowInFolder, getObsidianUrl: appGetObsidianUrl,
+  copyObsidianUrl: appCopyObsidianUrl, registerQuitHook: appRegisterQuitHook,
+  loadLocalStorage: appLoadLocalStorage, saveLocalStorage: appSaveLocalStorage,
+  on: appOn, setTheme: appSetTheme, emulateMobile: appEmulateMobile, debugMode: appDebugMode,
+  getSpellcheckLanguages: appGetSpellcheckLanguages,
+  setSpellcheckLanguages: appSetSpellcheckLanguages, isVimEnabled: appIsVimEnabled,
+};
+
+function s17CreateApp(host) {
+
+  function s17StartupButtons(app, prominent) {
+    const S = host.i18n.interface.startUp;
+    const pluginsOn = app.plugins && app.plugins.isEnabled && app.plugins.isEnabled();
+    return [
+      { label: S.buttonReloadApp(), prominent, action: () => window.location.reload() },
+      {
+        label: S.buttonReloadAppInSafeMode(), prominent: true, hidden: !pluginsOn,
+        action: async () => {
+          if (app.plugins && app.plugins.setEnable) await app.plugins.setEnable(false);
+          window.location.reload();
+        },
+      },
+      { label: S.buttonOpenAnotherVault(), prominent, action: () => app.openVaultChooser() },
+    ];
+  }
+
+  function s17PersistStorage() {
+    try {
+      const p = navigator.storage && navigator.storage.persist ? navigator.storage.persist() : null;
+      if (p && p.catch) p.catch(() => console.error("Failed to persist local storages"));
+      else if (p && p.then) p.then(undefined, () => console.error("Failed to persist local storages"));
+    } catch (e) { console.error("Failed to persist local storages"); }
+  }
+
+  function s17Startup(app, adapter) {
+    const overlay = host.progressOverlay;
+    const watchdog = setTimeout(() => { try { overlay.show(); } catch (e) {} }, 20000);
+    (async () => {
+      try {
+        overlay.setContext(s17StartupButtons(app, false)).show();
+        overlay.setMessage(host.i18n.interface.startUp.loadingObsidian()).show();
+        await app.initializeWithAdapter(adapter);
+        overlay.hide();
+      } catch (e) {
+        try {
+          overlay.setMessage(host.i18n.interface.startUp.obsidianLoadError() + " " + (e && e.message || e));
+          overlay.setContext(s17StartupButtons(app, true));
+        } catch (e2) {}
+      } finally {
+        clearTimeout(watchdog);
+        try {
+          if (host.Platform.isMobileApp && host.s17SplashScreen) {
+            await app.nextFrame();
+            host.s17SplashScreen.hide({ fadeOutDuration: 0 });
+          }
+        } catch (e) {}
+      }
+    })();
+  }
+
+  function s17ApplyMobileChrome(platform, isMobile) {
+    const body = document.body;
+    if (isMobile) {
+      body.classList.add("is-mobile");
+      body.addEventListener("mouseover", (e) => {
+        if (host.isTouchSyntheticMouse && host.isTouchSyntheticMouse(e)) return;
+        const t = e.target && e.target.closest ? e.target.closest(NG25S17_TAP_SELECTOR) : null;
+        if (t) t.classList.add("mobile-tap");
+      });
+      body.addEventListener("mouseout", (e) => {
+        const t = e.target && e.target.closest ? e.target.closest(NG25S17_TAP_SELECTOR) : null;
+        if (t) t.classList.remove("mobile-tap");
+      });
+      let tapTimer = null, tapEl = null, tapX = 0, tapY = 0, tapStart = 0, tapId = null;
+      const finishTap = () => {
+        if (!tapEl) return;
+        const el = tapEl; tapEl = null;
+        setTimeout(() => el.classList.remove("mobile-tap"), Math.max(10, 300 - (Date.now() - tapStart)));
+      };
+      body.addEventListener("touchstart", (e) => {
+        if (!e.touches || e.touches.length !== 1) return;
+        const t = e.touches[0];
+        tapId = t.identifier; tapX = t.clientX; tapY = t.clientY; tapStart = Date.now();
+        tapEl = document.elementFromPoint(t.clientX, t.clientY);
+        tapTimer = setTimeout(() => { if (tapEl) tapEl.classList.add("mobile-tap"); }, 10);
+      }, { capture: true });
+      body.addEventListener("touchmove", (e) => {
+        for (const t of e.changedTouches || []) {
+          if (t.identifier !== tapId) continue;
+          const dx = t.clientX - tapX, dy = t.clientY - tapY;
+          if (dx * dx + dy * dy > 25) { clearTimeout(tapTimer); tapTimer = null; finishTap(); }
+        }
+      }, { capture: true });
+      const endTap = (e) => {
+        for (const t of e.changedTouches || []) {
+          if (t.identifier === tapId) { clearTimeout(tapTimer); tapTimer = null; finishTap(); tapId = null; }
+        }
+      };
+      body.addEventListener("touchend", endTap, { capture: true });
+      body.addEventListener("touchcancel", endTap, { capture: true });
+    }
+    if (!platform.isMacOS) body.classList.add("styled-scrollbars");
+  }
+
+  function s17ApplyTabletClasses(platform) {
+    if (typeof window.matchMedia !== "function") return;
+    const mq = window.matchMedia(NG25S17_TABLET_QUERY);
+    const apply = () => {
+      if (platform.mobileSoftKeyboardVisible) return;
+      const tablet = !!(mq && mq.matches);
+      platform.isTablet = tablet;
+      platform.isPhone = !tablet;
+      document.body.classList.toggle("is-tablet", tablet);
+      document.body.classList.toggle("is-phone", !tablet);
+    };
+    if (mq && mq.addEventListener) mq.addEventListener("change", host.debounce ? host.debounce(apply, 10) : apply);
+    else if (mq && mq.addListener) mq.addListener(host.debounce ? host.debounce(apply, 10) : apply);
+    apply();
+  }
+
+  function s17IosCalloutGuard(platform) {
+    if (!platform.isIosApp) return;
+    try { document.body.style.setProperty("-webkit-touch-callout", "none"); } catch (e) {}
+    let cancelTouch = null;
+    const onStart = (e) => {
+      if (e.touches.length > 1 || e.defaultPrevented) return;
+      const t = e.touches[0];
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      const delay = el && el.closest && el.closest('[draggable="true"]') ? 1200 : 800;
+      const timer = setTimeout(() => {
+        const me = new MouseEvent("contextmenu", {
+          bubbles: true, cancelable: true, clientX: t.clientX, clientY: t.clientY,
+          button: 0, buttons: 0, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey, altKey: e.altKey, metaKey: e.metaKey,
+        });
+        (el || document.body).dispatchEvent(me);
+        if (navigator.vibrate) navigator.vibrate(200);
+      }, delay);
+      const cancel = () => clearTimeout(timer);
+      cancelTouch = cancel;
+      if (host.s17SetTouchCancel) host.s17SetTouchCancel(cancel);
+      const onMove = (ev) => {
+        for (const c of ev.changedTouches || []) {
+          if (c.identifier === t.identifier &&
+              (c.clientX - t.clientX) ** 2 + (c.clientY - t.clientY) ** 2 > 25) cancel();
+        }
+      };
+      const onEnd = (ev) => {
+        for (const c of ev.changedTouches || []) {
+          if (c.identifier === t.identifier) {
+            cancel();
+            window.removeEventListener("touchmove", onMove, true);
+            window.removeEventListener("touchend", onEnd, true);
+            window.removeEventListener("touchcancel", onEnd, true);
+          }
+        }
+      };
+      window.addEventListener("touchmove", onMove, true);
+      window.addEventListener("touchend", onEnd, true);
+      window.addEventListener("touchcancel", onEnd, true);
+    };
+    document.body.addEventListener("touchstart", onStart, { capture: true, passive: true });
+    document.body.addEventListener("dragstart", () => { if (cancelTouch) { cancelTouch(); cancelTouch = null; } }, true);
+  }
+
+  function s17NeuterServiceWorker() {
+    try {
+      if (!("serviceWorker" in navigator)) return;
+      Object.defineProperty(navigator, "serviceWorker", {
+        configurable: true,
+        get() {
+          return {
+            register: () => Promise.reject(new Error("Service workers are disabled")),
+            getRegistration: () => Promise.resolve(undefined),
+            getRegistrations: () => Promise.resolve([]),
+            addEventListener: () => {},
+            ready: Promise.resolve(undefined),
+          };
+        },
+      });
+    } catch (e) {}
+  }
+
+  class App {
+    constructor(adapter, appId) {
+      const platform = host.Platform;
+      this.adapter = adapter;
+      this.embedRegistry = new host.s17EmbedRegistry();
+      this.viewRegistry = new host.s17ViewRegistry();
+      this.nextFrameEvents = [];
+      this.nextFrameTimer = null;
+      this.lastEvent = null;
+      console.log("%cBasalt Developer Console", "font-weight:bold");
+      this.title = document.title;
+      this.appId = appId;
+      this.keymap = host.Keymap.init();
+      this.scope = this.keymap.getRootScope();
+      this.commands = new host.s17Commands();
+      this.hotkeyManager = new host.s17HotkeyManager();
+      this.dragManager = new host.s17DragManager();
+      this.dom = new host.s17AppDom();
+      this.customCss = new host.s17CustomCss();
+      this.shareReceiver = new host.s17ShareReceiver();
+      this.renderContext = new host.s17RenderContext();
+      this.secretStorage = new host.SecretStorage();
+      this.cli = new host.s17Cli();
+      window.__bsApi = {
+        ItemView: host.ItemView, Modal: host.Modal, Notice: host.Notice,
+        Menu: host.Menu, setIcon: host.setIcon, Setting: host.Setting,
+      };
+      document.body.classList.add("basalt-app");
+
+      if (this.loadLocalStorage(s17DebugModeKey) === "1" || this.loadLocalStorage(s17DebugModeKey) === 1) {
+        host.s17SetBasaltDebug(true);
+        new host.Notice("Basalt debug mode enabled.");
+        console.debug("Basalt debug mode enabled.");
+      }
+
+      if (!platform.isMobile && localStorage.getItem(s17EmulateMobileKey)) {
+        platform.isMobile = true;
+        platform.isDesktop = false;
+        platform.hasPhysicalKeyboard = false;
+        document.body.classList.add("emulate-mobile");
+      }
+
+      this.isMobile = !!platform.isMobile;
+      s17ApplyMobileChrome(platform, this.isMobile);
+      if (this.isMobile) s17ApplyTabletClasses(platform);
+      s17IosCalloutGuard(platform);
+      s17NeuterServiceWorker();
+      if (host.keyboard && host.keyboard.hasPhysicalKeyboard) {
+        Promise.resolve()
+          .then(() => host.keyboard.hasPhysicalKeyboard())
+          .then((v) => { platform.hasPhysicalKeyboard = !!v; })
+          .catch(() => {});
+      }
+
+      s17PersistStorage();
+      s17Startup(this, adapter);
+    }
+
+    static getOverrideConfigDir(appId) {
+      const v = localStorage.getItem(appId + "-config");
+      return typeof v === "string" ? v : null;
+    }
+  }
+
+  for (const name of Object.keys(NG25S17_METHODS)) {
+    App.prototype[name] = NG25S17_METHODS[name];
+  }
+  return App;
+}
+
 // ---- n-g25-crypto.js ----
 // n-g25-crypto.js — clean-room vault crypto (spec g25 Part J).
 // AES-GCM via WebCrypto; AES-SIV (S2V/CMAC/CTR) built on AES-CBC single-block
@@ -73621,6 +74448,365 @@ function s12PropertiesLivePreviewPlugin(plugin) {
     const off = plugin.app.workspace.on("post-processor-change", () => s12cmRefreshDispatch(view));
     return { destroy() { off.e.offref(off); } };
   });
+}
+
+// ---- n-g25-syncsocket.js ----
+// g25 clean-room s16-sync-socket: SyncSocket — one WebSocket to the vault sync server.
+// Spec: F:\orch\specs\g25.md Part I. JSON control messages + binary data frames (2 MiB pieces),
+// heartbeat keepalive, deterministic path/hash encryption via the vault cipher provider.
+
+const NG25SS_PIECE = 2 * 1024 * 1024;
+const NG25SS_REQ_TIMEOUT = 60000;
+const NG25SS_HEARTBEAT = 20000;
+const NG25SS_IDLE_PING = 10000;
+const NG25SS_IDLE_DROP = 120000;
+
+function ng25ssNow() { return Date.now(); }
+
+function ng25ssDeferred() {
+  let resolve, reject;
+  const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
+  return { resolve, reject, promise };
+}
+
+// Close-code -> text classification (RFC 6455 ranges).
+function ng25ssCloseText(code) {
+  if (code >= 0 && code <= 999) return "(Unused)";
+  if (code >= 1016 && code <= 1999) return "(Standard)";
+  if (code >= 2000 && code <= 2999) return "(Extensions)";
+  if (code >= 3000 && code <= 3999) return "(Libraries)";
+  if (code >= 4000 && code <= 4999) return "(Applications)";
+  const known = {
+    1000: "Normal Closure", 1001: "Going Away", 1002: "Protocol Error", 1003: "Unsupported Data",
+    1005: "No Status", 1006: "Abnormal Closure", 1007: "Invalid Payload",
+    1008: "Policy Violation", 1009: "Message Too Big", 1010: "Extension Error",
+    1011: "Internal Error", 1012: "Service Restart", 1013: "Try Again Later",
+    1014: "Bad Gateway", 1015: "TLS Handshake",
+  };
+  return known[code] || "(Unknown)";
+}
+
+function defineSyncSocket(host) {
+  const SerialTaskQueue = host.SerialTaskQueue;
+
+  class SyncSocket {
+    constructor(encryptionProvider) {
+      this.socket = null;
+      this.queue = new SerialTaskQueue();
+      this.notifyQueue = new SerialTaskQueue();
+      this.perFileMax = 208666624;
+      this.userId = -1;
+      this.justPushed = null;
+      this.encryptionProvider = encryptionProvider;
+      this.heartbeat = null;
+      this.lastMessageTs = 0;
+      this.responsePromise = null;
+      this.dataPromise = null;
+      this.onReady = null;
+      this.onPush = null;
+      this.lastNetworkRequestTs = 0;
+    }
+
+    isConnecting() { return !!this.socket && this.socket.readyState === 0; }
+    isConnected() { return !!this.socket && this.socket.readyState === 1; }
+    hasConnection() { return this.socket !== null; }
+
+    send(msg) { this.socket.send(JSON.stringify(msg)); }
+    sendBinary(data) { this.socket.send(data); }
+
+    // Arms the deferred resolved by the next JSON response message; resolves with it.
+    response() {
+      const d = ng25ssDeferred();
+      this.responsePromise = d;
+      return d.promise;
+    }
+
+    // Arms the deferred resolved by the next binary message; resolves with the data.
+    dataResponse() {
+      const d = ng25ssDeferred();
+      this.dataPromise = d;
+      return d.promise;
+    }
+
+    // Sends a JSON request and resolves with the response message
+    // (rejects Error(response.err) when the server reports an error).
+    request(message, timeout = NG25SS_REQ_TIMEOUT) {
+      return new Promise((resolve, reject) => {
+        const slot = {
+          resolve: (m) => {
+            clearTimeout(timer);
+            if (m && m.err !== undefined) reject(new Error(m.err));
+            else resolve(m);
+          },
+          reject: (e) => { clearTimeout(timer); reject(e); },
+        };
+        const timer = setTimeout(() => {
+          if (this.responsePromise === slot) this.responsePromise = null;
+          reject(new Error("Timeout"));
+          this.disconnect();
+        }, timeout);
+        this.responsePromise = slot;
+        try { this.send(message); }
+        catch (e) {
+          clearTimeout(timer);
+          if (this.responsePromise === slot) this.responsePromise = null;
+          reject(e);
+        }
+      });
+    }
+
+    onMessage(event) {
+      this.lastMessageTs = ng25ssNow();
+      const data = event.data;
+      if (typeof data !== "string") {
+        if (this.dataPromise) {
+          const d = this.dataPromise; this.dataPromise = null;
+          d.resolve(data);
+        }
+        return;
+      }
+      let msg;
+      try { msg = JSON.parse(data); }
+      catch (e) {
+        console.error("Sync socket: unparseable message:", data);
+        this.disconnect();
+        return;
+      }
+      if (msg && msg.op === "pong") return;
+      if (msg && msg.op === "ready") {
+        if (this.onReady) this.onReady(msg.version);
+        return;
+      }
+      if (msg && msg.op === "push") {
+        this.onServerPush(msg);
+        return;
+      }
+      if (this.responsePromise) {
+        const d = this.responsePromise; this.responsePromise = null;
+        d.resolve(msg);
+      }
+    }
+
+    disconnect() {
+      const s = this.socket;
+      this.socket = null;
+      if (this.heartbeat) { clearInterval(this.heartbeat); this.heartbeat = null; }
+      for (const key of ["responsePromise", "dataPromise"]) {
+        const d = this[key];
+        this[key] = null;
+        if (d && d.reject) d.reject(new Error("Disconnected"));
+      }
+      if (s) {
+        try { s.onclose = null; s.onerror = null; s.onmessage = null; s.onopen = null; s.close(); } catch (e) {}
+      }
+    }
+
+    connect(url, token, id, version, initial, device, onReady, onPush) {
+      if (this.socket) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        let u;
+        try { u = new URL(url); } catch (e) { return reject(new Error("Unable to connect to server.")); }
+        const hostName = u.hostname;
+        if (!(hostName === "127.0.0.1" || hostName.endsWith(".basalt.md"))) {
+          return reject(new Error("Unable to connect to server."));
+        }
+        const ws = new WebSocket(u.toString());
+        ws.binaryType = "arraybuffer";
+        this.socket = ws;
+        this.onReady = onReady;
+        this.onPush = onPush;
+        this.lastMessageTs = ng25ssNow();
+        let handshake = true;
+        let settled = false;
+
+        const fail = (err) => {
+          if (settled) return;
+          settled = true;
+          this.disconnect();
+          reject(err);
+        };
+
+        ws.onopen = () => {
+          this.heartbeat = setInterval(() => {
+            const idle = ng25ssNow() - this.lastMessageTs;
+            if (idle > NG25SS_IDLE_DROP) { this.disconnect(); return; }
+            if (idle > NG25SS_IDLE_PING && this.socket) {
+              try { this.send({ op: "ping" }); } catch (e) {}
+            }
+          }, NG25SS_HEARTBEAT);
+          try {
+            this.send({
+              op: "init", token, id,
+              keyhash: this.encryptionProvider.keyHash,
+              version, initial, device,
+              encryption_version: this.encryptionProvider.encryptionVersion,
+            });
+          } catch (e) { fail(e); }
+        };
+
+        ws.onmessage = (event) => {
+          this.lastMessageTs = ng25ssNow();
+          const data = event.data;
+          if (handshake) {
+            if (typeof data !== "string") return fail(new Error("Server returned binary"));
+            let msg;
+            try { msg = JSON.parse(data); }
+            catch (e) { return fail(new Error("Server JSON failed to parse: " + data)); }
+            if (msg && msg.op === "pong") return;
+            if (msg && (msg.status === "err" || msg.res === "err")) {
+              return fail(new Error("Failed to authenticate: " + (msg.msg || msg.error || data)));
+            }
+            if (!msg || msg.res !== "ok") return fail(new Error("Did not respond to login request: " + data));
+            if (msg.perFileMax !== undefined) {
+              if (typeof msg.perFileMax !== "number" || !Number.isInteger(msg.perFileMax) || msg.perFileMax < 0) {
+                return fail(new Error("Unexpected value from server for max file size"));
+              }
+              this.perFileMax = msg.perFileMax;
+            }
+            if (msg.userId) this.userId = msg.userId;
+            handshake = false;
+            ws.onmessage = (ev) => this.onMessage(ev);
+            ws.onclose = () => this.disconnect();
+            ws.onerror = () => this.disconnect();
+            settled = true;
+            resolve();
+            return;
+          }
+          this.onMessage(event);
+        };
+
+        ws.onclose = (event) => {
+          if (handshake && !settled) {
+            const code = event ? event.code : -1;
+            fail(code === 1006
+              ? new Error("Unable to connect to server.")
+              : new Error("Disconnected. Code: " + code + " " + ng25ssCloseText(code)));
+          } else {
+            this.disconnect();
+          }
+        };
+        ws.onerror = () => { if (handshake) fail(new Error("Unable to connect to server.")); };
+      });
+    }
+
+    // ---- file operations (serial on queue) ----
+
+    pull(uid) {
+      return this.queue.queue(async () => {
+        const meta = await this.request({ op: "pull", uid });
+        if (meta.deleted) return null;
+        const size = meta.size || 0;
+        const out = new Uint8Array(size);
+        let offset = 0;
+        for (let i = 0; i < (meta.pieces || 0); i++) {
+          const chunk = await this.dataResponse();
+          const u8 = chunk instanceof Uint8Array ? chunk : new Uint8Array(chunk);
+          const n = Math.min(u8.length, size - offset);
+          out.set(u8.subarray(0, n), offset);
+          offset += u8.length;
+        }
+        const buf = out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength);
+        if (size > 0) return this.encryptionProvider.decrypt(buf);
+        return buf;
+      });
+    }
+
+    push(path, relatedPath, folder, deleted, ctime, mtime, hash, content) {
+      return this.queue.queue(async () => {
+        const enc = this.encryptionProvider;
+        const encPath = await enc.deterministicEncodeStr(path);
+        const msg = { op: "push", path: encPath };
+        if (relatedPath) msg.relatedpath = await enc.deterministicEncodeStr(relatedPath);
+        const seg = path.slice(path.lastIndexOf("/") + 1);
+        const dot = seg.lastIndexOf(".");
+        msg.extension = folder ? "" : (dot > 0 ? seg.slice(dot + 1) : "");
+        msg.folder = !!folder;
+        msg.deleted = !!deleted;
+
+        if (folder || deleted) {
+          msg.hash = ""; msg.ctime = 0; msg.mtime = 0;
+          this.justPushed = {
+            path: encPath, folder: msg.folder, deleted: msg.deleted, mtime,
+            hash: hash ? await enc.deterministicEncodeStr(hash) : "",
+          };
+          await this.request(msg);
+          return;
+        }
+
+        let payload = content;
+        if (payload && payload.byteLength) payload = await enc.encrypt(payload);
+        const encHash = hash ? await enc.deterministicEncodeStr(hash) : "";
+        const size = payload ? payload.byteLength : 0;
+        msg.size = size;
+        msg.pieces = Math.ceil(size / NG25SS_PIECE);
+        msg.hash = encHash;
+        msg.ctime = ctime || 0;
+        msg.mtime = mtime || 0;
+        this.justPushed = { path: encPath, folder: false, deleted: false, mtime, hash: encHash };
+        const res = await this.request(msg);
+        if (res && res.res === "ok") { this.justPushed = null; return; }
+        if (payload && size > 0) {
+          const u8 = payload instanceof Uint8Array ? payload : new Uint8Array(payload);
+          for (let off = 0; off < u8.length; off += NG25SS_PIECE) {
+            this.sendBinary(u8.subarray(off, off + NG25SS_PIECE));
+            await this.response();
+          }
+        }
+        this.justPushed = null;
+      });
+    }
+
+    listDeleted() {
+      return this.queue.queue(async () => {
+        const res = await this.request({ op: "deleted", suppressrenames: true });
+        const items = res && res.items ? res.items : [];
+        for (const it of items) {
+          if (it && it.path) it.path = await this.encryptionProvider.deterministicDecodeStr(it.path);
+        }
+        return items;
+      });
+    }
+
+    listHistory(path, last) {
+      return this.queue.queue(async () => {
+        const enc = await this.encryptionProvider.deterministicEncodeStr(path);
+        const res = await this.request({ op: "history", path: enc, last });
+        const items = res && res.items ? res.items : [];
+        for (const it of items) {
+          if (it && it.path) it.path = await this.encryptionProvider.deterministicDecodeStr(it.path);
+          if (it && it.relatedpath) it.relatedpath = await this.encryptionProvider.deterministicDecodeStr(it.relatedpath);
+        }
+        return res;
+      });
+    }
+
+    restore(uid) { return this.queue.queue(() => this.request({ op: "restore", uid })); }
+    getUsernames() { return this.queue.queue(() => this.request({ op: "usernames" })); }
+    purge() { return this.queue.queue(() => this.request({ op: "purge" })); }
+    size() { return this.queue.queue(() => this.request({ op: "size" })); }
+
+    onServerPush(message) {
+      const jp = this.justPushed;
+      if (jp && message &&
+          message.path === jp.path && message.folder === jp.folder &&
+          message.deleted === jp.deleted && message.mtime === jp.mtime &&
+          (message.hash || "") === (jp.hash || "")) {
+        this.justPushed = null;
+        message.wasJustPushed = true;
+      }
+      this.notifyQueue.queue(async () => {
+        if (message && message.path) {
+          try { message.path = await this.encryptionProvider.deterministicDecodeStr(message.path); } catch (e) {}
+        }
+        if (message && message.hash) {
+          try { message.hash = await this.encryptionProvider.deterministicDecodeStr(message.hash); } catch (e) {}
+        }
+        if (this.onPush) this.onPush(message);
+      });
+    }
+  }
+
+  return SyncSocket;
 }
 
 // ---- n-g25-view.js ----
@@ -76557,558 +77743,6 @@ async function s04ThemeVersion(repo, manifest) {
   } catch (err) {
     return null;
   }
-}
-
-// ---- s04-mobile-adapter.js ----
-// s04: own implementation of the mobile (Capacitor) data adapter (was `vk`).
-//
-// It presents the vault as a DataAdapter over the Capacitor filesystem plugin
-// (`this.fs`, the bridge created by the `pk` module). Files are tracked in a
-// `realpath` map so a directory can be materialised lazily by reconcile; all
-// mutating operations run through a serial promise queue.
-
-/** Own implementation of the Capacitor filesystem data adapter. */
-function s04CapacitorAdapter(host) {
-  class CapacitorAdapter {
-    constructor(basePath, fs) {
-      this.fs = fs;
-      this.basePath = basePath;
-      this.files = {};
-      this.promise = Promise.resolve();
-      this.handler = null;
-      this.insensitive = false;
-      // Platform adapters may override testInsensitive; on the base class it
-      // is a resolved no-op.
-      this.testInsensitive();
-    }
-
-    async testInsensitive() {}
-
-    getName() {
-      return lastSegment(this.basePath);
-    }
-
-    async watchAndList() {
-      this.files = {};
-      this.files["/"] = { type: "folder", realpath: "/" };
-      try {
-        const tree = await this.fs.watchAndStatAll(this.basePath);
-        if (tree.children) {
-          for (const child of tree.children) this.quickList("", child);
-        }
-      } catch (error) {
-        console.error("Failed to run quick list", error);
-        await this.fs.watch(this.basePath);
-        await this.listRecursive("");
-      }
-    }
-
-    quickList(prefix, node) {
-      const name = node.name;
-      const path = collapseSlashes(prefix === "" ? name : prefix + "/" + name);
-      const normalized = normalizePath(path);
-      this.trigger("raw", normalized);
-      if (isHiddenPath(normalized)) return;
-      if (node.type === "file") {
-        this.reconcileFileChanged(path, normalized, node);
-      } else if (node.type === "directory") {
-        if (this.files.hasOwnProperty(normalized)) return;
-        this.files[normalized] = { type: "folder", realpath: path };
-        this.trigger("folder-created", normalized);
-      }
-    }
-
-    async listRecursive(prefix) {
-      const full = this.getFullRealPath(prefix);
-      const entries = await this.fs.readdir(full);
-      const pending = [];
-      for (const entry of entries) pending.push(this.listRecursiveChild(prefix, entry));
-      await Promise.all(pending);
-    }
-
-    async listRecursiveChild(prefix, entry) {
-      const path = collapseSlashes(prefix === "" ? entry.name : prefix + "/" + entry.name);
-      const normalized = normalizePath(path);
-      this.trigger("raw", normalized);
-      if (isHiddenPath(normalized)) return this.reconcileDeletion(path, normalized);
-      if (entry.type === "file") {
-        this.reconcileFileChanged(path, normalized, entry);
-      } else if (entry.type === "directory") {
-        await this.reconcileFolderCreation(path, normalized);
-      }
-    }
-
-    mkdir(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.mkdir(full);
-        } catch (error) {
-          if (error.message !== "Directory exists") throw error;
-        }
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    trashSystem(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.trash(full);
-        } catch (error) {
-          return false;
-        }
-        await self.reconcileInternalFile(path);
-        return true;
-      });
-    }
-
-    trashLocal(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        const trash = self.getFullPath(".trash");
-        try {
-          await self.fs.mkdir(trash);
-        } catch (error) {
-          if (error.message !== "Directory exists") throw error;
-        }
-        const name = lastSegment(full);
-        const stem = withoutExtension(name);
-        const ext = extensionOf(name);
-        let target = trash + "/" + stem;
-        if (ext) target = target + "." + ext;
-        let count = 1;
-        while (await self._exists(target)) {
-          count++;
-          target = trash + "/" + stem + " " + count;
-          if (ext) target = target + "." + ext;
-        }
-        await self.fs.rename(full, target);
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    rmdir(path) {
-      const self = this;
-      return this.queue(async function () {
-        await self.fs.rmdir(self.getFullPath(path));
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    read(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          return await self.fs.read(full);
-        } catch (error) {
-          self.queue(function () { return self.reconcileInternalFile(path); });
-          throw error;
-        }
-      });
-    }
-
-    readBinary(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          return await self.fs.readBinary(full);
-        } catch (error) {
-          self.queue(function () { return self.reconcileInternalFile(path); });
-          throw error;
-        }
-      });
-    }
-
-    write(path, data, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.write(full, data);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-      });
-    }
-
-    writeBinary(path, data, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.writeBinary(full, data);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-      });
-    }
-
-    append(path, data, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.append(full, data);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-      });
-    }
-
-    appendBinary(path, data, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.appendBinary(full, data);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-      });
-    }
-
-    process(path, fn, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        const contents = await self.fs.read(full);
-        const next = fn(contents);
-        if (next === contents) return contents;
-        try {
-          await self.fs.write(full, next);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-        return next;
-      });
-    }
-
-    getResourcePath(path) {
-      return this.fs.getUri(this.getFullPath(path));
-    }
-
-    getNativePath(path) {
-      return this.fs.getNativeUri(this.getFullPath(path));
-    }
-
-    open(path) {
-      return this.fs.open(this.getFullPath(path));
-    }
-
-    remove(path) {
-      const self = this;
-      return this.queue(async function () {
-        await self.fs.delete(self.getFullPath(path));
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    update(path) {
-      const self = this;
-      return this.queue(async function () {
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    rename(oldPath, newPath) {
-      const self = this;
-      return (async function () {
-        if (oldPath === newPath) return;
-        await self.queue(async function () {
-          const oldFull = self.getFullPath(oldPath);
-          const newFull = self.getFullPath(newPath);
-          if (await self._exists(newFull, false) && (!self.insensitive || oldPath.toLowerCase() !== newPath.toLowerCase())) {
-            throw new Error("Destination file already exists!");
-          }
-          const entry = self.files[oldPath];
-          const oldReal = entry ? entry.realpath : null;
-          await self.fs.rename(oldFull, newFull);
-          if (!entry) return;
-          delete self.files[oldPath];
-          const newReal = self.getRealPath(newPath);
-          entry.realpath = newReal;
-          self.files[newPath] = entry;
-          self.trigger("renamed", newPath, oldPath);
-          if (entry.type === "folder") {
-            for (const key in self.files) {
-              if (!self.files.hasOwnProperty(key) || !key.startsWith(oldPath + "/")) continue;
-              const suffix = key.slice(oldPath.length);
-              const movedKey = newPath + suffix;
-              const moved = self.files[key];
-              delete self.files[key];
-              moved.realpath = newReal + moved.realpath.slice(oldReal.length);
-              self.files[movedKey] = moved;
-              self.trigger("renamed", movedKey, key);
-            }
-          }
-        });
-      })();
-    }
-
-    copy(oldPath, newPath) {
-      const self = this;
-      return (async function () {
-        await self.queue(async function () {
-          await self.fs.copy(self.getFullPath(oldPath), self.getFullPath(newPath));
-          await self.reconcileInternalFile(newPath);
-        });
-      })();
-    }
-
-    exists(path, strict) {
-      const self = this;
-      return this.queue(function () {
-        return self._exists(self.getFullPath(path), strict);
-      });
-    }
-
-    async _exists(fullPath, strict) {
-      try {
-        await this.fs.stat(fullPath);
-      } catch (error) {
-        return false;
-      }
-      if (strict && this.insensitive) {
-        const dir = parentPath(fullPath);
-        const name = lastSegment(fullPath);
-        const entries = await this.fs.readdir(dir);
-        if (entries.map((e) => e.name).indexOf(name) === -1) return false;
-      }
-      return true;
-    }
-
-    stat(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          const st = await self.fs.stat(full);
-          if (st.type === "file") return Object.assign({ type: "file" }, statFromCapacitor(st));
-          if (st.type === "directory") return Object.assign({ type: "folder" }, statFromCapacitor(st));
-        } catch (error) {
-          if (error.code !== "ENOENT") throw error;
-        }
-        return null;
-      });
-    }
-
-    list(prefix) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(prefix);
-        const entries = await self.fs.readdir(full);
-        const result = { folders: [], files: [] };
-        for (const entry of entries) {
-          const path = collapseSlashes(prefix === "" ? entry.name : prefix + "/" + entry.name);
-          const normalized = normalizePath(path);
-          if (entry.type === "file") result.files.push(normalized);
-          if (entry.type === "directory") result.folders.push(normalized);
-        }
-        return result;
-      });
-    }
-
-    async watch(handler) {
-      await this.stopWatch();
-      this.handler = handler;
-      await env().Dm.addListener("change", (event) => {
-        const raw = normalizePath(event.path);
-        const relative = normalizePath(raw.substr(this.basePath.length));
-        this.onFileChange(relative);
-      });
-      const self = this;
-      return this.queue(async function () {
-        await self.watchAndList();
-      });
-    }
-
-    async stopWatch() {
-      try {
-        await env().Dm.stopWatch();
-      } catch (error) {
-        // ignore
-      }
-      this.handler = null;
-    }
-
-    onFileChange(path) {
-      const self = this;
-      if (!path) return;
-      path = normalizePath(path);
-      setTimeout(function () {
-        const normalized = normalizePath(path);
-        self.queue(function () {
-          return self.reconcileFile(path, normalized, false);
-        });
-      }, 0);
-    }
-
-    reconcileInternalFile(path) {
-      const self = this;
-      return this.queue(async function () {
-        return self.reconcileFile(self.getRealPath(path), path);
-      });
-    }
-
-    async reconcileFile(realPath, path, remove = true) {
-      this.trigger("raw", path);
-      if (isHiddenPath(path)) return this.reconcileDeletion(realPath, path, remove);
-      const parent = parentPath(path);
-      if (parent && parent !== "/" && !this.files[path]) {
-        await this.reconcileFile(parentPath(realPath), parent, remove);
-      }
-      try {
-        const full = this.getFullRealPath(realPath);
-        if (this.insensitive) {
-          const dir = parentPath(full);
-          const name = lastSegment(path);
-          const entries = await this.fs.readdir(dir);
-          if (entries.map((e) => plainSpaces(e.name).normalize("NFC")).indexOf(name) === -1) {
-            return this.reconcileDeletion(realPath, path, remove);
-          }
-        }
-        const st = await this.fs.stat(full);
-        if (st.type === "file") {
-          this.reconcileFileChanged(realPath, path, st);
-        } else if (st.type === "directory") {
-          await this.reconcileFolderCreation(realPath, path);
-        }
-      } catch (error) {
-        if (error.code === "ENOENT") await this.reconcileDeletion(realPath, path, remove);
-        else console.error(error);
-      }
-    }
-
-    reconcileFileChanged(realPath, path, stat) {
-      const entry = this.files[path];
-      if (!entry) {
-        this.reconcileFileCreation(realPath, path, stat);
-        return;
-      }
-      entry.realpath = realPath;
-      if (entry.type !== "file") return;
-      if (entry.mtime !== Math.round(stat.mtime) || entry.size !== stat.size) {
-        entry.mtime = Math.round(stat.mtime);
-        entry.size = stat.size;
-        const info = statFromCapacitor(stat);
-        this.trigger("modified", path, path, info);
-      }
-    }
-
-    reconcileFileCreation(realPath, path, stat) {
-      const info = statFromCapacitor(stat);
-      if (this.files[path]) return;
-      const entry =
-        stat.type === "file"
-          ? {
-              type: "file",
-              realpath: realPath,
-              ctime: Math.round(stat.ctime),
-              mtime: Math.round(stat.mtime),
-              size: stat.size,
-            }
-          : stat.type === "directory"
-            ? { type: "folder", realpath: realPath }
-            : undefined;
-      this.files[path] = entry;
-      this.trigger("file-created", path, path, info);
-    }
-
-    async reconcileFolderCreation(realPath, path) {
-      if (!this.files.hasOwnProperty(path)) {
-        this.files[path] = { type: "folder", realpath: realPath };
-        this.trigger("folder-created", path);
-        await this.listRecursive(realPath);
-      } else {
-        this.files[path].realpath = realPath;
-      }
-    }
-
-    async reconcileDeletion(realPath, path, remove = true) {
-      if (path === "/") {
-        this.trigger("closed", path);
-        return;
-      }
-      const entry = this.files[path];
-      if (!entry) return;
-      if (!remove) {
-        const self = this;
-        setTimeout(function () {
-          self.queue(function () {
-            return self.reconcileFile(realPath, path);
-          });
-        }, 100);
-        return;
-      }
-      if (entry.type === "folder") {
-        for (const key in this.files) {
-          if (this.files.hasOwnProperty(key) && key.startsWith(path + "/")) this.removeFile(key);
-        }
-      }
-      this.removeFile(path);
-    }
-
-    trigger(event, path, oldPath, stat) {
-      if (this.handler) this.handler(event, path, oldPath, stat);
-    }
-
-    getRealPath(path) {
-      let current = path;
-      while (current) {
-        if (this.files.hasOwnProperty(current)) {
-          const suffix = path.substr(current.length);
-          return this.files[current].realpath + suffix;
-        }
-        current = parentPath(current);
-      }
-      return path;
-    }
-
-    getFullPath(path) {
-      return this.getFullRealPath(this.getRealPath(path));
-    }
-
-    getFullRealPath(path) {
-      return this.basePath + "/" + path;
-    }
-
-    queue(fn) {
-      const result = this.promise.then(fn, fn);
-      this.promise = result;
-      return result;
-    }
-
-    removeFile(path) {
-      const entry = this.files[path];
-      delete this.files[path];
-      if (!entry) return;
-      if (entry.type === "file") this.trigger("file-removed", path);
-      else if (entry.type === "folder") this.trigger("folder-removed", path);
-    }
-  }
-
-  return CapacitorAdapter;
 }
 
 // ---- s04-mobile-fs.js ----
@@ -86356,370 +86990,6 @@ function defineSettingsModal(host) {
   return SettingsModal;
 }
 
-// ---- s16-sync-socket.js ----
-// s16 slice: the sync WebSocket client — handshake, heartbeat, request/response and
-// binary data channels, plus the pull/push/list/history/restore/user/purge/size calls.
-
-const CHUNK_SIZE = 2 * 1024 * 1024; // server push/pull pieces are 2 MiB
-const REQUEST_TIMEOUT = 60000;
-const HEARTBEAT_INTERVAL = 20000;
-const HEARTBEAT_PING_AFTER = 10000;
-const HEARTBEAT_DROP_AFTER = 120000;
-
-function s16Deferred() {
-  const d = { promise: null, resolve: null, reject: null };
-  d.promise = new Promise((resolve, reject) => {
-    d.resolve = resolve;
-    d.reject = reject;
-  });
-  return d;
-}
-
-function closeCodeText(code) {
-  if (code >= 0 && code <= 999) return "(Unused)";
-  if (code >= 1016) {
-    if (code <= 1999) return "(For WebSocket standard)";
-    if (code <= 2999) return "(For WebSocket extensions)";
-    if (code <= 3999) return "(For libraries and frameworks)";
-    if (code <= 4999) return "(For applications)";
-  }
-  return Object.prototype.hasOwnProperty.call(s16CloseCodes, code) ? s16CloseCodes[code] : "(Unknown)";
-}
-
-/** hee: SyncSocket — one websocket to the sync server with JSON control + binary data frames. */
-function defineSyncSocket(host) {
-  function SyncSocket(encryptionProvider) {
-    this.socket = null;
-    this.queue = new host.SerialTaskQueue();
-    this.notifyQueue = new host.SerialTaskQueue();
-    this.perFileMax = 208666624;
-    this.userId = -1;
-    this.justPushed = null;
-    this.encryptionProvider = encryptionProvider;
-  }
-
-  const proto = SyncSocket.prototype;
-
-  proto.isConnecting = function () {
-    const socket = this.socket;
-    return socket && socket.readyState === s16WebSocket.CONNECTING;
-  };
-
-  proto.isConnected = function () {
-    const socket = this.socket;
-    return socket && socket.readyState === s16WebSocket.OPEN;
-  };
-
-  proto.hasConnection = function () {
-    return !!this.socket;
-  };
-
-  /**
-   * Opens the socket and performs the init handshake. Resolves once the server accepted
-   * the login (`res:"ok"`); rejects with a descriptive error otherwise.
-   */
-  proto.connect = function (url, token, id, version, initial, device, onReady, onPush) {
-    return (async () => {
-      if (this.hasConnection()) return;
-      this.onReady = onReady;
-      this.onPush = onPush;
-      const keyHash = this.encryptionProvider.keyHash;
-      await new Promise((resolve, reject) => {
-        let settled = false;
-        const fail = (error) => {
-          if (settled) return;
-          settled = true;
-          this.disconnect();
-          reject(error);
-        };
-        const parsed = new s16UrlClass(url);
-        const hostName = s16UrlHostnameGetter.call(parsed);
-        if (!s16EndsWith.call(hostName, ".basalt.md") && hostName !== "127.0.0.1") {
-          return reject(new Error("Unable to connect to server."));
-        }
-        const socket = this.socket = new s16WebSocket(parsed);
-        socket.binaryType = "arraybuffer";
-        socket.onclose = (event) => {
-          if (event.code === 1006) fail(new Error("Unable to connect to server."));
-          else fail(new Error("Disconnected. Code: " + event.code + " " + closeCodeText(event.code)));
-        };
-        socket.onopen = () => {
-          this.lastMessageTs = Date.now();
-          this.heartbeat = window.setInterval(() => {
-            const idle = Date.now() - this.lastMessageTs;
-            if (idle > HEARTBEAT_DROP_AFTER) this.disconnect();
-            else if (idle > HEARTBEAT_PING_AFTER) this.send({ op: "ping" });
-          }, HEARTBEAT_INTERVAL);
-          this.send({
-            op: "init",
-            token,
-            id,
-            keyhash: keyHash,
-            version,
-            initial,
-            device,
-            encryption_version: this.encryptionProvider.encryptionVersion,
-          });
-        };
-        socket.onmessage = (event) => {
-          const data = event.data;
-          if (typeof data !== "string") return fail(new Error("Server returned binary"));
-          let message;
-          try {
-            message = JSON.parse(data);
-          } catch (error) {
-            console.error(error);
-            return fail(new Error("Server JSON failed to parse: " + data));
-          }
-          if (message.op === "pong") return;
-          if (message.status === "err" || message.res === "err") return fail(new Error("Failed to authenticate: " + message.msg));
-          if (message.res !== "ok") return fail(new Error("Did not respond to login request: " + data));
-          if (Object.prototype.hasOwnProperty.call(message, "perFileMax")) {
-            const perFileMax = message.perFileMax;
-            if (!Number.isInteger(perFileMax) || isNaN(perFileMax) || perFileMax < 0) {
-              return fail(new Error("Unexpected value from server for max file size"));
-            }
-            this.perFileMax = perFileMax;
-          }
-          if (message.userId) this.userId = message.userId;
-          resolve();
-          settled = true;
-          socket.onmessage = this.onMessage.bind(this);
-          socket.onclose = this.disconnect.bind(this);
-          socket.onerror = this.disconnect.bind(this);
-        };
-      });
-    })();
-  };
-
-  proto.disconnect = function () {
-    if (this.socket) this.socket.close();
-    this.socket = null;
-    clearInterval(this.heartbeat);
-    this.heartbeat = null;
-    const error = new Error("Disconnected");
-    if (this.responsePromise) {
-      this.responsePromise.reject(error);
-      this.responsePromise = null;
-    }
-    if (this.dataPromise) {
-      this.dataPromise.reject(error);
-      this.dataPromise = null;
-    }
-  };
-
-  /** Downloads a file body: JSON pieces metadata, then `size` binary chunks, decrypted. */
-  proto.pull = function (uid) {
-    return (async () => {
-      return this.queue.queue(async () => {
-        this.lastNetworkRequestTs = Date.now();
-        const meta = await this.request({ op: "pull", uid });
-        if (meta.deleted) return null;
-        const size = meta.size;
-        const pieces = meta.pieces;
-        const buffer = new ArrayBuffer(size);
-        let offset = 0;
-        for (let i = 0; i < pieces; i++) {
-          const chunk = await this.dataResponse();
-          new Uint8Array(buffer, offset, chunk.byteLength).set(new Uint8Array(chunk));
-          offset += chunk.byteLength;
-        }
-        let data = buffer;
-        if (buffer.byteLength > 0) data = await this.encryptionProvider.decrypt(buffer);
-        return data;
-      });
-    })();
-  };
-
-  /** Uploads a file: metadata request, then the (encrypted) content in binary pieces. */
-  proto.push = function (path, relatedPath, folder, deleted, ctime, mtime, hash, content) {
-    return (async () => {
-      return this.queue.queue(async () => {
-        this.lastNetworkRequestTs = Date.now();
-        const encPath = await this.encryptionProvider.deterministicEncodeStr(path);
-        let encRelated = null;
-        if (relatedPath) encRelated = await this.encryptionProvider.deterministicEncodeStr(relatedPath);
-        const ext = folder ? "" : extensionOf(lastSegment(path));
-        if (folder || deleted) {
-          this.justPushed = { path: encPath, folder, deleted, mtime: 0, hash: "" };
-          await this.request({ op: "push", path: encPath, relatedpath: encRelated, extension: ext, hash: "", ctime: 0, mtime: 0, folder, deleted });
-          return;
-        }
-        if (content.byteLength > 0) content = await this.encryptionProvider.encrypt(content);
-        let encHash = null;
-        if (hash) encHash = await this.encryptionProvider.deterministicEncodeStr(hash);
-        const size = content.byteLength;
-        const pieces = Math.ceil(size / CHUNK_SIZE);
-        this.justPushed = { path: encPath, folder, deleted, mtime, hash: encHash };
-        const meta = await this.request({
-          op: "push",
-          path: encPath,
-          relatedpath: encRelated,
-          extension: ext,
-          hash: encHash,
-          ctime,
-          mtime,
-          folder,
-          deleted,
-          size,
-          pieces,
-        });
-        if (meta.res === "ok") {
-          this.justPushed = null;
-          return;
-        }
-        for (let i = 0; i < pieces; i++) {
-          const start = i * CHUNK_SIZE;
-          const end = Math.min(CHUNK_SIZE, size - start);
-          this.sendBinary(new Uint8Array(content, start, end));
-          await this.response();
-        }
-        this.justPushed = null;
-      });
-    })();
-  };
-
-  /** Lists remotely deleted paths (decrypting each path). */
-  proto.listDeleted = function () {
-    return (async () => {
-      return this.queue.queue(async () => {
-        const result = await this.request({ op: "deleted", suppressrenames: true });
-        const items = result.items;
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          item.path = await this.encryptionProvider.deterministicDecodeStr(item.path);
-        }
-        return items;
-      });
-    })();
-  };
-
-  /** Version history for one path; decrypts path and relatedpath of every entry. */
-  proto.listHistory = function (path, last) {
-    return (async () => {
-      return this.queue.queue(async () => {
-        const encPath = await this.encryptionProvider.deterministicEncodeStr(path);
-        const result = await this.request({ op: "history", path: encPath, last });
-        const items = result.items;
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          item.path = await this.encryptionProvider.deterministicDecodeStr(item.path);
-          if (item.relatedpath) item.relatedpath = await this.encryptionProvider.deterministicDecodeStr(item.relatedpath);
-        }
-        return result;
-      });
-    })();
-  };
-
-  proto.restore = function (uid) {
-    return this.queue.queue(() => this.request({ op: "restore", uid }));
-  };
-
-  proto.getUsernames = function () {
-    return this.queue.queue(() => this.request({ op: "usernames" }));
-  };
-
-  proto.purge = function () {
-    return this.queue.queue(() => this.request({ op: "purge" }));
-  };
-
-  proto.size = function () {
-    return this.queue.queue(() => this.request({ op: "size" }));
-  };
-
-  /** Server-initiated push: decrypts path/hash, flags echoes of our own just-pushed file. */
-  proto.onServerPush = function (message) {
-    const justPushed = this.justPushed;
-    if (justPushed
-      && justPushed.path === message.path
-      && justPushed.folder === message.folder
-      && justPushed.deleted === message.deleted
-      && justPushed.mtime === message.mtime
-      && justPushed.hash === message.hash) {
-      this.justPushed = null;
-      message.wasJustPushed = true;
-    }
-    return this.notifyQueue.queue(async () => {
-      message.path = await this.encryptionProvider.deterministicDecodeStr(message.path);
-      if (message.hash) message.hash = await this.encryptionProvider.deterministicDecodeStr(message.hash);
-      this.onPush(message);
-    });
-  };
-
-  proto.response = function () {
-    return (this.responsePromise = s16Deferred()).promise;
-  };
-
-  proto.dataResponse = function () {
-    return (this.dataPromise = s16Deferred()).promise;
-  };
-
-  /** Sends a JSON request and waits for its response (rejects after `timeout` ms). */
-  proto.request = function (message, timeout) {
-    timeout = timeout === undefined ? REQUEST_TIMEOUT : timeout;
-    return (async () => {
-      const deferred = this.responsePromise = s16Deferred();
-      this.send(message);
-      const timeoutError = new Error("Timeout");
-      const timer = window.setTimeout(() => deferred.reject(timeoutError), timeout);
-      try {
-        const response = await deferred.promise;
-        clearTimeout(timer);
-        if (response.err) throw new Error(response.err);
-        return response;
-      } catch (error) {
-        if (error === timeoutError) this.disconnect();
-        throw error;
-      }
-    })();
-  };
-
-  proto.onMessage = function (event) {
-    this.lastMessageTs = Date.now();
-    if (typeof event.data === "string") {
-      let message;
-      try {
-        message = JSON.parse(event.data);
-      } catch (error) {
-        console.log(event.data);
-        this.disconnect();
-        return;
-      }
-      const op = message.op;
-      if (op === "pong") return;
-      if (op === "ready") {
-        this.onReady(message.version);
-        return;
-      }
-      if (op === "push") {
-        this.onServerPush(message);
-        return;
-      }
-      const deferred = this.responsePromise;
-      if (deferred) {
-        this.responsePromise = null;
-        deferred.resolve(message);
-      }
-    } else {
-      const deferred = this.dataPromise;
-      if (deferred) {
-        this.dataPromise = null;
-        deferred.resolve(event.data);
-      }
-    }
-  };
-
-  proto.send = function (message) {
-    this.socket.send(JSON.stringify(message));
-  };
-
-  proto.sendBinary = function (data) {
-    this.socket.send(data);
-  };
-
-  return SyncSocket;
-}
-
 // ---- s16-tagpane.js ----
 // s16 slice: the tag-pane core plugin — registers the side leaf, its open command and view type.
 
@@ -87301,377 +87571,6 @@ function defineWorkspaceSuggestModal(host) {
   };
 
   return WorkspaceSuggestModal;
-}
-
-// ---- s17-app-class.js ----
-// Basalt app shell: constructor, mobile-emulation listeners, startup progress flow and the static
-// config-dir lookup. The prototype methods themselves live in app.js and are attached below.
-
-const s17IframeAllowlist = {
-  "encrypted-media": true,
-  fullscreen: true,
-  gamepad: true,
-  hid: true,
-  "idle-detection": true,
-  "oversized-images": true,
-  "picture-in-picture": true,
-  "sync-xhr": true,
-};
-
-const s17IframeSandbox = {
-  "allow-forms": true,
-  "allow-modals": true,
-  "allow-popups": true,
-  "allow-presentation": true,
-  "allow-same-origin": true,
-  "allow-scripts": true,
-};
-
-const s17EmulateMobileKey = "EmulateMobile";
-const s17DebugModeKey = "DebugMode";
-
-function s17TouchById(event, identifier) {
-  const touches = event.changedTouches;
-  for (let i = 0; i < touches.length; i++) if (touches[i].identifier === identifier) return touches[i];
-  return null;
-}
-
-function s17StartupButtons(host, app, prominent) {
-  const i18n = host.i18n.interface.startUp;
-  return function (el) {
-    el.createDiv("progress-bar-button-container", (box) => {
-      const reloadAttrs = prominent ? { cls: "mod-cta", text: i18n.buttonReloadApp() } : { text: i18n.buttonReloadApp() };
-      box.createEl("button", reloadAttrs, (button) => {
-        button.onClickEvent(() => window.location.reload());
-      });
-      if (app.plugins && app.plugins.isEnabled()) {
-        box.createEl("button", { cls: "mod-cta", text: i18n.buttonReloadAppInSafeMode() }, (button) => {
-          button.onClickEvent(async () => {
-            await app.plugins.setEnable(false);
-            window.location.reload();
-          });
-        });
-      }
-      const vaultAttrs = prominent ? { cls: "mod-cta", text: i18n.buttonOpenAnotherVault() } : { text: i18n.buttonOpenAnotherVault() };
-      box.createEl("button", vaultAttrs, (button) => {
-        button.onClickEvent(() => app.openVaultChooser());
-      });
-    });
-  };
-}
-
-async function s17Startup(host, app, adapter) {
-  const overlay = host.progressOverlay;
-  const splash = host.s17SplashScreen;
-  const watchdog = setTimeout(() => {
-    overlay.setContext(s17StartupButtons(host, app, false)).show();
-  }, 20000);
-  try {
-    overlay.setMessage(host.i18n.interface.startUp.loadingObsidian()).show();
-    await app.initializeWithAdapter(adapter);
-    overlay.hide();
-  } catch (error) {
-    console.error(error);
-    overlay
-      .setMessage(host.i18n.interface.startUp.obsidianLoadError() + " " + (error ? error.toString() : "unknown"))
-      .show();
-    overlay.setContext(s17StartupButtons(host, app, true));
-  } finally {
-    clearTimeout(watchdog);
-    if (host.Platform.isMobileApp && splash) {
-      await window.nextFrame();
-      splash.hide({ fadeOutDuration: 0 });
-    }
-  }
-}
-
-async function s17PersistStorage() {
-  try {
-    const storage = navigator.storage;
-    if (storage && storage.persist) await storage.persist();
-  } catch (error) {
-    console.log("Failed to persist local storages");
-  }
-}
-
-function s17CreateApp(host) {
-  const mobileTapSelector = "a, button, .tappable, .is-clickable, .clickable-icon, .text-icon-button, .suggestion-item";
-  const mobileTapClass = "mobile-tap";
-
-  function App(adapter, appId) {
-    const platform = host.Platform;
-    this.appMenuBarManager = null;
-    this.embedRegistry = new host.s17EmbedRegistry();
-    this.viewRegistry = new host.s17ViewRegistry();
-    this.nextFrameEvents = [];
-    this.nextFrameTimer = null;
-    this.isMobile = false;
-    this.mobileToolbar = null;
-    this.mobileNavbar = null;
-    this.mobileTabSwitcher = null;
-    this.mobileQuickActions = null;
-    this.lastEvent = null;
-    console.log("%cBasalt Developer Console", "color:#7f6df2; font-size:40px; font-weight:bold;");
-
-    const bodyEl = document.body;
-    this.title = document.title;
-    this.appId = appId;
-    this.keymap = host.Keymap.init();
-    this.scope = this.keymap.getRootScope();
-    this.commands = new host.s17Commands(this);
-    this.hotkeyManager = new host.s17HotkeyManager(this);
-    this.dragManager = new host.s17DragManager(this);
-    this.dom = new host.s17AppDom(bodyEl);
-    this.customCss = new host.s17CustomCss(this);
-    this.shareReceiver = new host.s17ShareReceiver(this);
-    this.renderContext = new host.s17RenderContext(this);
-    this.secretStorage = new host.SecretStorage(this);
-    window.__bsApi = {
-      ItemView: host.ItemView,
-      Modal: host.Modal,
-      Notice: host.Notice,
-      Menu: host.Menu,
-      setIcon: host.setIcon,
-      Setting: host.Setting,
-    };
-    this.cli = new host.s17Cli(this);
-    bodyEl.addClass("basalt-app");
-
-    if (this.loadLocalStorage(s17DebugModeKey) === "1") {
-      host.s17SetBasaltDebug(true);
-      new host.Notice("Basalt debug mode enabled.");
-      console.debug("[Basalt] Debug mode enabled. Run `app.debugMode(false)` to disable.");
-    }
-
-    if (!platform.isMobile && localStorage.getItem(s17EmulateMobileKey)) {
-      platform.isMobile = true;
-      platform.isDesktop = false;
-      platform.hasPhysicalKeyboard = false;
-      bodyEl.addClass("emulate-mobile");
-    }
-    if (platform.isMobile) {
-      {
-        let mobileTapEl = null;
-        bodyEl.on("mouseover", mobileTapSelector, (event, target) => {
-          if (host.pointerEntered(event, target) && !host.isTouchSyntheticMouse(event)) {
-            if (mobileTapEl) mobileTapEl.removeClass(mobileTapClass);
-            mobileTapEl = target;
-            target.addClass(mobileTapClass);
-          }
-        });
-        bodyEl.on("mouseout", mobileTapSelector, (event, target) => {
-          if (!host.isTouchSyntheticMouse(event) && host.pointerEntered(event, target)) {
-            if (mobileTapEl) mobileTapEl.removeClass(mobileTapClass);
-          }
-        });
-        document.addEventListener(
-          "touchstart",
-          (event) => {
-            if (event.touches.length !== 1) return;
-            const targetNode = event.targetNode;
-            let tapEl = null;
-            if (targetNode.instanceOf(Element)) {
-              tapEl = targetNode.matchParent(mobileTapSelector) || (targetNode.instanceOf(HTMLElement) ? targetNode : targetNode.parentElement);
-            }
-            if (!tapEl) return;
-            const startedAt = event.timeStamp;
-            const startTouch = event.touches[0];
-            const identifier = startTouch.identifier;
-            let fired = false;
-            const showTimer = window.setTimeout(() => {
-              if (!fired) tapEl.addClass(mobileTapClass);
-            }, 10);
-            const finish = (finishEvent) => {
-              fired = true;
-              removeListeners();
-              const elapsed = finishEvent.timeStamp - startedAt;
-              window.setTimeout(() => tapEl.removeClass(mobileTapClass), Math.max(10, 300 - elapsed));
-            };
-            const move = (moveEvent) => {
-              const touch = s17TouchById(moveEvent, identifier);
-              if (!touch || fired) return;
-              const dx = touch.clientX - startTouch.clientX;
-              const dy = touch.clientY - startTouch.clientY;
-              if (dx * dx + dy * dy > 25) finish(moveEvent);
-            };
-            const end = (endEvent) => {
-              for (let i = 0; i < endEvent.changedTouches.length; i++) {
-                if (endEvent.changedTouches[i].identifier === identifier) {
-                  finish(endEvent);
-                  return;
-                }
-              }
-            };
-            const removeListeners = () => {
-              document.removeEventListener("touchmove", move);
-              document.removeEventListener("touchcancel", finish);
-              document.removeEventListener("touchend", finish);
-            };
-            document.addEventListener("touchmove", move);
-            document.addEventListener("touchcancel", finish);
-            document.addEventListener("touchend", finish);
-          },
-          true
-        );
-      }
-
-      if (window.frameDom) window.frameDom.titleBarEl.hide();
-
-    const tabletQuery = window.matchMedia("(min-width: 600px) and (min-height: 600px)");
-    const updateDeviceClass = () => {
-      if (platform.mobileSoftKeyboardVisible) return;
-      platform.isTablet = tabletQuery.matches;
-      platform.isPhone = !tabletQuery.matches;
-      document.body.toggleClass("is-tablet", platform.isTablet);
-      document.body.toggleClass("is-phone", platform.isPhone);
-    };
-    tabletQuery.addEventListener("change", host.debounce(updateDeviceClass, 10));
-      updateDeviceClass();
-    }
-
-    const keyboard = host.keyboard;
-    if (keyboard) keyboard.hasPhysicalKeyboard().then((result) => { platform.hasPhysicalKeyboard = result.hasPhysicalKeyboard; });
-
-    this.isMobile = platform.isMobile;
-    if (platform.isMobile) bodyEl.addClass("is-mobile");
-    if (!platform.isMacOS) document.body.addClass("styled-scrollbars");
-
-    if (platform.isIosApp) {
-      document.body.style["-webkit-touch-callout"] = "none";
-      const win = window;
-      win.addEventListener("touchstart", (event) => {
-        if (event.touches.length > 1 || event.defaultPrevented) return;
-        const touch = event.touches[0];
-        const target = event.targetNode;
-        const startX = touch.clientX;
-        const startY = touch.clientY;
-        const identifier = touch.identifier;
-        let delay = 800;
-        if (target instanceof Element && target.matchParent('[draggable="true"]')) delay = 1200;
-        const timer = win.setTimeout(() => {
-          cancel();
-          target.dispatchEvent(
-            new MouseEvent("contextmenu", {
-              button: 0,
-              buttons: 0,
-              ctrlKey: event.ctrlKey,
-              altKey: event.altKey,
-              metaKey: event.metaKey,
-              shiftKey: event.shiftKey,
-              screenX: touch.screenX,
-              screenY: touch.screenY,
-              bubbles: true,
-              cancelable: true,
-              clientX: startX,
-              clientY: startY,
-            })
-          ) || navigator.vibrate(200);
-        }, delay);
-        const cancel = () => {
-          win.removeEventListener("touchcancel", onEnd, true);
-          win.removeEventListener("touchend", onEnd, true);
-          win.removeEventListener("touchmove", onMove, true);
-          win.removeEventListener("dragstart", onDrag, true);
-          win.clearTimeout(timer);
-          host.s17SetTouchCancel(null);
-        };
-        const onMove = (moveEvent) => {
-          for (let i = 0; i < moveEvent.changedTouches.length; i++) {
-            const changed = moveEvent.changedTouches[i];
-            if (changed.identifier !== identifier) continue;
-            const dx = changed.clientX - startX;
-            const dy = changed.clientY - startY;
-            if (dx * dx + dy * dy > 25) cancel();
-            return;
-          }
-        };
-        const onEnd = (endEvent) => {
-          for (let i = 0; i < endEvent.changedTouches.length; i++) {
-            if (endEvent.changedTouches[i].identifier === identifier) {
-              cancel();
-              return;
-            }
-          }
-        };
-        const onDrag = (dragEvent) => {
-          const dragTarget = dragEvent.targetNode;
-          if (dragTarget && (dragTarget === target || dragTarget.contains(target))) cancel();
-        };
-        win.addEventListener("touchcancel", onEnd, true);
-        win.addEventListener("touchend", onEnd, true);
-        win.addEventListener("touchmove", onMove, true);
-        win.addEventListener("dragstart", onDrag, true);
-        host.s17SetTouchCancel(cancel);
-      });
-    }
-
-    if (window.ServiceWorkerContainer) {
-      window.ServiceWorkerContainer.prototype.register = function () {
-        return new Promise(() => {});
-      };
-    }
-
-    s17Startup(host, this, adapter);
-    s17PersistStorage();
-  }
-
-  function getOverrideConfigDir(appId) {
-    const dir = localStorage.getItem(appId + "-config");
-    return typeof dir === "string" ? dir : null;
-  }
-
-  App.getOverrideConfigDir = getOverrideConfigDir;
-  App.prototype.nextFrame = appNextFrame;
-  App.prototype.onNextFrame = appOnNextFrame;
-  App.prototype.nextFrameOnceCallback = appNextFrameOnceCallback;
-  App.prototype.initializeWithAdapter = appInitializeWithAdapter;
-  App.prototype.onConfigChanged = appOnConfigChanged;
-  App.prototype.registerCommands = appRegisterCommands;
-  App.prototype.disableCssTransition = appDisableCssTransition;
-  App.prototype.enableCssTransition = appEnableCssTransition;
-  App.prototype.getAppTitle = appGetAppTitle;
-  App.prototype.getWebviewPartition = appGetWebviewPartition;
-  App.prototype.fixFileLinks = appFixFileLinks;
-  App.prototype.getTheme = appGetTheme;
-  App.prototype.isDarkMode = appIsDarkMode;
-  App.prototype.changeTheme = appChangeTheme;
-  App.prototype.updateTheme = appUpdateTheme;
-  App.prototype.updateMobileFrameTheme = appUpdateMobileFrameTheme;
-  App.prototype.updateInlineTitleDisplay = appUpdateInlineTitleDisplay;
-  App.prototype.updateFloatingNavigationDisplay = appUpdateFloatingNavigationDisplay;
-  App.prototype.updateAutoFullScreenDisplay = appUpdateAutoFullScreenDisplay;
-  App.prototype.updateViewHeaderDisplay = appUpdateViewHeaderDisplay;
-  App.prototype.updateRibbonDisplay = appUpdateRibbonDisplay;
-  App.prototype.updateFontFamily = appUpdateFontFamily;
-  App.prototype.updateFontSize = appUpdateFontSize;
-  App.prototype.updateUseNativeMenu = appUpdateUseNativeMenu;
-  App.prototype.updateTabSize = appUpdateTabSize;
-  App.prototype.showReleaseNotes = appShowReleaseNotes;
-  App.prototype.updateAccentColor = appUpdateAccentColor;
-  App.prototype.getAccentColor = appGetAccentColor;
-  App.prototype.setAccentColor = appSetAccentColor;
-  App.prototype.garbleText = appGarbleText;
-  App.prototype.importAttachments = appImportAttachments;
-  App.prototype.saveAttachment = appSaveAttachment;
-  App.prototype.openVaultChooser = appOpenVaultChooser;
-  App.prototype.openHelp = appOpenHelp;
-  App.prototype.runOpeningBehavior = appRunOpeningBehavior;
-  App.prototype.openWithDefaultApp = appOpenWithDefaultApp;
-  App.prototype.showInFolder = appShowInFolder;
-  App.prototype.getObsidianUrl = appGetObsidianUrl;
-  App.prototype.copyObsidianUrl = appCopyObsidianUrl;
-  App.prototype.registerQuitHook = appRegisterQuitHook;
-  App.prototype.loadLocalStorage = appLoadLocalStorage;
-  App.prototype.saveLocalStorage = appSaveLocalStorage;
-  App.prototype.on = appOn;
-  App.prototype.setTheme = appSetTheme;
-  App.prototype.emulateMobile = appEmulateMobile;
-  App.prototype.debugMode = appDebugMode;
-  App.prototype.getSpellcheckLanguages = appGetSpellcheckLanguages;
-  App.prototype.setSpellcheckLanguages = appSetSpellcheckLanguages;
-  App.prototype.isVimEnabled = appIsVimEnabled;
-
-  return App;
 }
 
 // ---- s20-bidi.js ----

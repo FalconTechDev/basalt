@@ -28,7 +28,7 @@ const srcDir = path.join(root, "src-app");
 const FIRST = ["path.js", "text.js", "frontmatter.js", "search.js"];
 // spec-test aliases: files kept under the original module names so the acceptance tests can
 // `import()` them; they only re-export the clean-room n-g25-* modules and must not be bundled
-const SHIMS = new Set(["misc.js", "s65-locale-name.js", "s06-util.js", "s05-utils.js", "s07-helpers.js", "s12-consts.js", "view.js", "vault-crypto.js"]);
+const SHIMS = new Set(["misc.js", "s65-locale-name.js", "s06-util.js", "s05-utils.js", "s07-helpers.js", "s12-consts.js", "view.js", "vault-crypto.js", "s17-app-class.js", "s16-sync-socket.js", "s04-mobile-adapter.js"]);
 export const JS_MODULES = [...FIRST, ...fs.readdirSync(srcDir).filter((f) => f.endsWith(".js") && !FIRST.includes(f) && !SHIMS.has(f) && !["core.js", "rust.js"].includes(f)).sort()];
 // the WebAssembly side (app-core): shipped only with --wasm, because on every function measured so far plain JS is as fast or faster
 export const WASM_MODULES = ["core.js", "rust.js"];
