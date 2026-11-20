@@ -587,7 +587,7 @@
     },
     {
       "orig": "jg",
-      "use": "closeAllMenus"
+      "use": "ng21CloseAllMenus"
     },
     {
       "orig": "Sy",
@@ -2657,15 +2657,15 @@
     },
     {
       "orig": "Hg",
-      "use": "defineMenuItem"
+      "use": "ng21DefineMenuItem"
     },
     {
       "orig": "zg",
-      "use": "defineMenuSeparator"
+      "use": "ng21DefineMenuSeparator"
     },
     {
       "orig": "Ug",
-      "use": "defineMenu"
+      "use": "ng21DefineMenu"
     },
     {
       "orig": "ob",

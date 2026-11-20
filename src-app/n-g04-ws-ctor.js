@@ -6,7 +6,7 @@ import { firstHeadingText } from "./path.js";
 import { ng04WsTree } from "./n-g04-ws-tree.js";
 import { ng04WsOps } from "./n-g04-ws-ops.js";
 import { parseCallbackUrl } from "./vault-crypto.js";
-import { closeAllMenus } from "./menu.js";
+import { ng21CloseAllMenus } from "./n-g21-menu.js";
 let Ng04HostRef = null;
 
 /**
@@ -183,7 +183,7 @@ function ng04WireListeners(ws, host) {
   const win = window;
 
   win.addEventListener("resize", () => ws.requestResize());
-  win.addEventListener("popstate", () => { closeAllMenus(); });
+  win.addEventListener("popstate", () => { ng21CloseAllMenus(); });
 
   // per-leaf history replaces the browser history API
   const leafHistory = (fn) => () => {
