@@ -4082,22 +4082,22 @@
     },
     {
       "orig": "BD",
-      "use": "defineTitlebar",
+      "use": "ng21DefineTitlebar",
       "originalBytes": 2964
     },
     {
       "orig": "_D",
-      "use": "defineFilesDrawer",
+      "use": "ng21DefineFilesDrawer",
       "originalBytes": 2025
     },
     {
       "orig": "GD",
-      "use": "defineInfoDrawer",
+      "use": "ng21DefineInfoDrawer",
       "originalBytes": 1425
     },
     {
       "orig": "WD",
-      "use": "defineMobileDrawer"
+      "use": "ng21DefineMobileDrawer"
     },
     {
       "orig": "AK",
