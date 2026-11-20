@@ -1,58 +1,291 @@
+// g16 clean-room link layer: renders a property value as a link chip when it is a
+// [[wikilink]], [text](url) markdown link, bare URL or e-mail address, plus the
+// three wired suggest classes (value links, editor [[…]] and #tag triggers).
 import { env } from "./env.js";
-import { inherit } from "./inherit.js";
-import { ng16HasMetadataEditor, ng16ActivePropertiesEditor, ng16TagSuggestions, ng16PathSuggestion } from "./n-g16-shared.js";
+import { containsAllWords } from "./search-simple.js";
+import { s06TagSuggestions } from "./s06-util.js";
+import { ng16TagText } from "./n-g16-shared.js";
 
+const MD_LINK_RE = /^\[([^\]]*)\]\(\s*(<[^>]+>|[^)\s]+)[^)]*\)$/;
+const SCHEME_RE = /^[a-z][a-z0-9+.-]*:/i;
+
+function ng16ParseLink(value) {
+  const text = String(value);
+  if (text.startsWith("[[") && text.endsWith("]]")) {
+    const inner = text.slice(2, -2);
+    let parsed = null;
+    try { parsed = env().iE ? env().iE(inner) : null; } catch (e) { parsed = null; }
+    const href = parsed && (parsed.href || parsed.path) || inner.split("|")[0].trim();
+    const alias = parsed && parsed.title !== undefined ? parsed.title : (inner.includes("|") ? inner.split("|").slice(1).join("|").trim() : "");
+    return { href, title: alias || href, internal: true };
+  }
+  const md = MD_LINK_RE.exec(text);
+  if (md) {
+    let href = md[2];
+    if (href.startsWith("<") && href.endsWith(">")) href = href.slice(1, -1);
+    const internal = !SCHEME_RE.test(href) && !href.startsWith("//");
+    return { href, title: md[1] || href, internal };
+  }
+  if (env().Qc && env().Qc(text)) return { href: text, title: text, internal: false };
+  if (env().Zc && env().Zc(text)) return { href: "mailto:" + text, title: text, internal: false };
+  return null;
+}
+
+/**
+ * (value, el, ctx, hoverParent) -> boolean. On success `el` becomes the anchor:
+ * internal-link/external-link class, data-href, is-unresolved for dead internal
+ * links; click opens the link, contextmenu shows the link menu.
+ */
 export function ng16RenderLinkValue(value, el, ctx, hoverParent, host) {
   if (value == null) return false;
-  const text = String(value); let href = null, title = text, internal = false, alias = "";
-  const wiki = /^\[\[([^\]|]+)(?:\|([^\]]+))?\]\]$/.exec(text);
-  if (wiki) { href = wiki[1].trim(); title = wiki[2] || href; internal = true; }
-  else { const md = /^\[([^\]]*)\]\((<[^>]+>|[^)]+)\)$/.exec(text); if (md) { href = md[2].replace(/^<|>$/g, ""); title = md[1] || href; internal = !/^[a-z][a-z0-9+.-]*:/i.test(href); } else if (env().Qc && env().Qc(text)) { href = text; title = text; internal = false; } else if (env().Zc && env().Zc(text)) { href = "mailto:" + text; title = text; internal = false; } }
-  if (!href) return false;
-  el.empty(); el.addClass(internal ? "internal-link" : "external-link"); el.dataset.href = href; el.setText(title); if (internal && ctx.app.metadataCache.getFirstLinkpathDest && !ctx.app.metadataCache.getFirstLinkpathDest(href, ctx.sourcePath)) el.addClass("is-unresolved");
-  el.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); const ws = ctx.app.workspace; if (internal) ws.openLinkText(href, ctx.sourcePath, host.Keymap.isModEvent(e)); else window.open(href, "_blank"); });
-  el.addEventListener("contextmenu", (e) => { e.preventDefault(); const m = new host.Menu(); m.addItem((i) => i.setTitle(internal ? "Open link" : "Open in browser").onClick(() => el.click())); m.showAtMouseEvent(e); });
+  const link = ng16ParseLink(value);
+  if (!link) return false;
+  const { href, title, internal } = link;
+  el.empty();
+  el.setText(title);
+  el.dataset.href = href;
+  el.addClass(internal ? "internal-link" : "external-link");
+  const cache = ctx && ctx.app && ctx.app.metadataCache;
+  if (internal && cache && cache.getFirstLinkpathDest && !cache.getFirstLinkpathDest(href, ctx.sourcePath)) {
+    el.addClass("is-unresolved");
+  }
+  const open = (event) => {
+    if (event && event.button !== undefined && event.button !== 0 && event.button !== 1) return;
+    if (event) { event.preventDefault(); event.stopPropagation(); }
+    if (internal) {
+      const ws = ctx.app.workspace;
+      ws.openLinkText(href, ctx.sourcePath, event ? host.Keymap.isModEvent(event) : false);
+    } else {
+      window.open(href, "_blank");
+    }
+  };
+  el.addEventListener("click", open);
+  el.addEventListener("auxclick", open);
+  el.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const menu = host.Menu.forEvent ? host.Menu.forEvent(event) : new host.Menu();
+    const im = host.t.interface && host.t.interface.menu;
+    const em = host.t.editor && host.t.editor.menu;
+    const label = internal ? (em && em.openLink ? em.openLink() : "Open link") : (im && im.openInBrowser ? im.openInBrowser() : "Open in browser");
+    menu.addItem((item) => item.setTitle(label).setIcon(internal ? "lucide-link" : "lucide-external-link").onClick(() => open(event)));
+    if (internal && ctx.app.workspace && ctx.app.workspace.trigger) {
+      try { ctx.app.workspace.trigger("hover-link", { event, source: ctx.hoverSource || "properties", hoverParent: hoverParent || null }); } catch (e) {}
+    }
+    menu.showAtMouseEvent(event);
+  });
+  if (internal && ctx.app && ctx.app.dragManager) {
+    try {
+      el.addEventListener("dragstart", (event) => {
+        ctx.app.dragManager.dragLink(event, href, ctx.sourcePath, event.dataTransfer);
+      });
+    } catch (e) {}
+  }
   return true;
 }
-export function ng16DefineValueLinkSuggest(host) { return function (ctx, inputEl, onSelectLink) { const s = new host.AbstractInputSuggest(ctx.app, inputEl); s.suggestEl.addClass("mod-property-value"); s.suggestEl.dataset.propertyKey = (ctx.key || "").toLowerCase(); s.getSuggestions = (q) => { if (q.includes("[[")) return []; const vals = ctx.app.metadataCache.getFrontmatterPropertyValuesForKey ? ctx.app.metadataCache.getFrontmatterPropertyValuesForKey(ctx.key) : []; return vals.filter((v) => !q || String(v).toLowerCase().includes(q.toLowerCase())).map((v) => ({ value: v })); }; s.renderSuggestion = (v, el) => el.setText(v.value); s.selectSuggestion = (v) => { if (v && v.value != null) onSelectLink && onSelectLink(v.value); s.close(); }; return s; }; }
-export function ng16DefineWikilinkSuggest(host) { return function (app) { const s = new host.EditorSuggest(app); s.onTrigger = () => null; s.getSuggestions = () => []; s.renderSuggestion = () => {}; s.selectSuggestion = () => {}; return s; }; }
-export function ng16DefineTagTriggerSuggest(host) { return function (app) { const s = new host.EditorSuggest(app); s.onTrigger = () => null; s.getSuggestions = () => []; s.renderSuggestion = () => {}; s.selectSuggestion = () => {}; return s; }; }
-export function ng16DefineValueBase(host) { return function () {}; }
-export function ng16DefineTextValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineDateBase(host) { return ng16DefineValueBase(host); }
-export function ng16DefineDateValue(host) { return ng16DefineDateBase(host); }
-export function ng16DefineDateTimeValue(host) { return ng16DefineDateBase(host); }
-export function ng16DefineFileValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineFolderValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineCheckboxValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineNumberValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineUnknownValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineMultitextValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineTagsValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineAliasesValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefinePropertyCombo(host) { return ng16DefineValueBase(host); }
-export function ng16DefinePropertyValue(host) { return ng16DefineValueBase(host); }
-export function ng16DefineTagValueSuggest(host) { return function (app, inputEl) { return new host.AbstractInputSuggest(app, inputEl); }; }
-export function ng16DefineTypeChangeModal(host) { return function () {}; }
-export function ng16DefineMultiSelect(host) { return function () {}; }
-export const ng16TagTriggerRe = /(^|\s)#[^ -⁯⸀-⹿'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\s]*$/g;
-export function ng16WidgetDesc(host, type, icon, nameKey) { return { name: () => host.t.properties.types[nameKey] || type, type, icon, validate: () => true, render: () => ({ focus() {}, setValue() {} }) }; }
-export function ng16WidgetText(host) { return ng16WidgetDesc(host, "text", "lucide-text", "optionText"); }
-export function ng16WidgetProperty(host) { return ng16WidgetDesc(host, "property", "lucide-info", "optionPropertyName"); }
-export function ng16WidgetAliases(host) { return ng16WidgetDesc(host, "aliases", "lucide-forward", "optionAliases"); }
-export function ng16WidgetTags(host) { return ng16WidgetDesc(host, "tags", "lucide-tags", "optionTags"); }
-export function ng16WidgetFolder(host) { return ng16WidgetDesc(host, "folder", "lucide-folder", "optionFolder"); }
-export function ng16WidgetFile(host) { return ng16WidgetDesc(host, "file", "lucide-file", "optionFile"); }
-export function ng16WidgetDate(host) { return ng16WidgetDesc(host, "date", "lucide-calendar", "optionDate"); }
-export function ng16WidgetDatetime(host) { return ng16WidgetDesc(host, "datetime", "lucide-clock", "optionDatetime"); }
-export function ng16WidgetNumber(host) { return ng16WidgetDesc(host, "number", "lucide-binary", "optionNumber"); }
-export function ng16WidgetCheckbox(host) { return ng16WidgetDesc(host, "checkbox", "lucide-check-square", "optionCheckbox"); }
-export function ng16WidgetMultitext(host) { return ng16WidgetDesc(host, "multitext", "lucide-list", "optionMultitext"); }
-export function ng16WidgetUnknown(host) { return ng16WidgetDesc(host, "unknown", "lucide-file-question", "optionUnknown"); }
 
+// ---- shared suggest plumbing ----------------------------------------------------------
 
+function ng16SuggestClasses(host, suggestEl, ctx) {
+  try { suggestEl.addClass("mod-property-value"); } catch (e) {}
+  try { if (ctx && ctx.key != null) suggestEl.dataset.propertyKey = String(ctx.key).toLowerCase(); } catch (e) {}
+}
 
+/** Existing frontmatter values for the same key, ranked by containsAllWords+matchScore. */
+function ng16PropertyValueItems(host, app, key, query) {
+  const q = String(query || "");
+  let values = [];
+  try {
+    values = app.metadataCache.getFrontmatterPropertyValuesForKey
+      ? app.metadataCache.getFrontmatterPropertyValuesForKey(key) || []
+      : [];
+  } catch (e) { values = []; }
+  const lower = q.toLowerCase();
+  const out = [];
+  for (const value of values) {
+    const s = String(value);
+    if (!q || containsAllWords(lower, s.toLowerCase())) {
+      out.push({ type: "text", value: s, score: hostMatchScore(host, q, s), matches: null });
+    }
+  }
+  out.sort((a, b) => b.score - a.score);
+  return out;
+}
+function hostMatchScore(host, q, s) {
+  try {
+    return host.matchScore ? host.matchScore(null, q.length, s.length, false) : 0;
+  } catch (e) { return 0; }
+}
 
+// ---- ValueLinkSuggest (DO): property text-value completion ----------------------------
 
+export function ng16DefineValueLinkSuggest(host) {
+  return function (ctx, inputEl, onSelectLink, suggestionFilter) {
+    const app = ctx && ctx.app;
+    const s = new host.AbstractInputSuggest(app, inputEl);
+    ng16SuggestClasses(host, s.suggestEl, ctx);
+    let manager = null;
+    let token = 0;
+    const getManager = () => {
+      if (!manager && env().WI) {
+        try { manager = new (env().WI)(app, () => (ctx && ctx.sourcePath) || ""); } catch (e) { manager = null; }
+      }
+      return manager;
+    };
+    s.getSuggestions = (query) => {
+      const q = String(query || "");
+      if (q.includes("[[")) {
+        const mgr = getManager();
+        if (!mgr || !mgr.getSuggestionsAsync) return [];
+        const inner = q.slice(q.indexOf("[[") + 2);
+        const my = ++token;
+        const context = { isCancelled: () => my !== token };
+        return (async () => {
+          const list = await mgr.getSuggestionsAsync(context, inner);
+          if (my !== token || !list || !list.length) return env().VI ? [env().VI] : [];
+          const sorted = list.slice().sort(env().BI || ((a, b) => b.score - a.score));
+          return sorted;
+        })();
+      }
+      const items = ng16PropertyValueItems(host, app, ctx && ctx.key, q);
+      if (suggestionFilter) return items.filter(suggestionFilter);
+      return items;
+    };
+    s.renderSuggestion = (value, el) => {
+      if (value && value.type === "text") { el.setText(value.value); return; }
+      try {
+        if (env().jI) { env().jI(value, el, false); return; }
+      } catch (e) {}
+      el.setText(value && (value.alias || value.path || value.value) || "");
+    };
+    s.selectSuggestion = (value, event) => {
+      if (!value) return;
+      s.close();
+      if (value.type === "text") {
+        if (onSelectLink) onSelectLink(value.value);
+        return;
+      }
+      // link suggestion: build the [[…]] replacement through the shared link-info helper
+      try {
+        const keepText = "";
+        const cursor = inputEl.selectionStart != null ? inputEl.selectionStart : 0;
+        const end = inputEl.selectionEnd != null ? inputEl.selectionEnd : cursor;
+        const replacement = env().UI
+          ? env().UI(app, value, keepText, "", { line: 0, ch: cursor }, end, ctx && ctx.sourcePath || "", event && event.key, "frontmatter")
+          : null;
+        void replacement;
+      } catch (e) {}
+      const text = value.alias || value.path || value.heading || value.display || "";
+      if (onSelectLink) onSelectLink(text);
+    };
+    return s;
+  };
+}
 
+// ---- WikilinkSuggest (_I): editor [[…]] suggestions ------------------------------------
 
+export function ng16DefineWikilinkSuggest(host) {
+  return function (app) {
+    const s = new host.EditorSuggest(app);
+    let manager = null;
+    let token = 0;
+    const getManager = () => {
+      if (!manager && env().WI) {
+        try { manager = new (env().WI)(app, () => ""); } catch (e) { manager = null; }
+      }
+      return manager;
+    };
+    s.onTrigger = (cursor, editor, file) => {
+      const line = editor.getLine(cursor.line);
+      const before = line.slice(0, cursor.ch);
+      const at = before.lastIndexOf("[[");
+      if (at === -1) return null;
+      const after = line.slice(cursor.ch);
+      if (after.startsWith("]]")) return null;
+      const query = before.slice(at + 2);
+      if (query.includes("\n")) return null;
+      return { start: { line: cursor.line, ch: at }, end: cursor, query };
+    };
+    s.getSuggestions = (context) => {
+      const mgr = getManager();
+      if (!mgr || !mgr.getSuggestionsAsync) return null;
+      const my = ++token;
+      const cancellable = { isCancelled: () => my !== token };
+      return (async () => {
+        const list = await mgr.getSuggestionsAsync(cancellable, context.query);
+        if (my !== token) return null;
+        if (!list || list.length === 0) return env().VI ? [env().VI] : null;
+        return list.slice().sort(env().BI || ((a, b) => b.score - a.score));
+      })();
+    };
+    s.renderSuggestion = (value, el) => {
+      try {
+        if (env().jI) { env().jI(value, el, mgrGlobal(mgrSafe(manager))); return; }
+      } catch (e) {}
+      el.setText(value && (value.alias || value.path || value.heading || value.display || "") || "");
+    };
+    function mgrSafe(m) { return m; }
+    function mgrGlobal(m) { return !!(m && m.global); }
+    s.selectSuggestion = (value, event) => {
+      const context = s.context;
+      if (!context) return;
+      s.close();
+      const editor = context.editor;
+      try {
+        const keepText = "";
+        const cursor = context.end;
+        const end = { line: cursor.line, ch: cursor.ch };
+        const src = context.file ? context.file.path : "";
+        const replacement = env().UI
+          ? env().UI(s.app, value, keepText, "", cursor, end, src, event && event.key, "markdown")
+          : null;
+        void replacement;
+      } catch (e) {}
+      const text = value && value.type === "none" ? "" : (value.alias || value.path || value.heading || value.display || "");
+      try {
+        editor.replaceRange("[[" + text + "]]", context.start, context.end);
+      } catch (e) {}
+      try { editor.focus(); } catch (e) {}
+    };
+    return s;
+  };
+}
+
+// ---- TagTriggerSuggest (YI): editor #tag suggestions -----------------------------------
+
+export function ng16DefineTagTriggerSuggest(host) {
+  const TAG_RE = /(^|\s)#[^ -⁯⸀-⹿'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\\s]*$/;
+  return function (app) {
+    const s = new host.EditorSuggest(app);
+    s.onTrigger = (cursor, editor, file) => {
+      const line = editor.getLine(cursor.line);
+      const before = line.slice(0, cursor.ch);
+      if (!TAG_RE.test(before)) return null;
+      const hashPos = before.lastIndexOf("#");
+      const query = before.slice(hashPos + 1);
+      const nextChar = line[cursor.ch];
+      if (nextChar === "#") return null;
+      return { start: { line: cursor.line, ch: hashPos }, end: cursor, query };
+    };
+    s.getSuggestions = (context) => {
+      try {
+        return s06TagSuggestions(app.metadataCache, context.query, false, host);
+      } catch (e) { return []; }
+    };
+    s.renderSuggestion = (value, el) => {
+      try { host.renderResults(el, value.tag, value.matches); } catch (e) { el.setText("#" + value.tag); }
+    };
+    s.selectSuggestion = (value, event) => {
+      const context = s.context;
+      if (!context) return;
+      s.close();
+      const tag = "#" + ng16TagText(value.tag);
+      const end = { line: context.end.line, ch: context.end.ch + (event && event.key === "Tab" ? 0 : 0) };
+      try {
+        context.editor.replaceRange(tag + " ", context.start, end);
+        context.editor.focus();
+      } catch (e) {}
+    };
+    return s;
+  };
+}

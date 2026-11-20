@@ -1,73 +1,458 @@
+// g16 clean-room: MetadataEditor — the collapsible frontmatter block shown above
+// a markdown note (and inside the file-properties view). Owns the row list,
+// selection, keyboard nav, clipboard and persistence through the owner.
 import { env } from "./env.js";
 import { inherit } from "./inherit.js";
-import { ng16EmptyValue, ng16Compare, ng16Widget, ng16PropT, ng16PluginT, ng16Reserved, ng16Has, ng16Lower, ng16SetMetadataCtor } from "./n-g16-shared.js";
+import { ng16PropT, ng16PluginT, ng16Lower, ng16Compare, ng16EmptyValue } from "./n-g16-shared.js";
+import { ng16DefinePropertyRow } from "./n-g16-row.js";
 
-export function ng16DefinePropertyKeySuggest(host) {
-  function S(app, inputEl, properties) { const s = new host.AbstractInputSuggest(app, inputEl); s.properties = properties; s.suggestEl.addClass("mod-property-key"); s.getSuggestions = (q) => { const used = new Set((s.properties || []).map((p) => ng16Lower(p.key))); const all = Object.values((app.metadataTypeManager.getAllProperties && app.metadataTypeManager.getAllProperties()) || {}); const out = []; for (const p of all) { const name = p.name || p; if (!used.has(ng16Lower(name)) && host.containsAllWords(ng16Lower(q), ng16Lower(name))) out.push({ name, score: host.matchScore(null, q.length, name.length, false) || 0 }); } out.sort((a,b)=>b.score-a.score); return out; }; s.renderSuggestion = (v, el) => el.setText(v.name); s.selectSuggestion = (v) => { if (v && v.name) { inputEl.value = v.name; inputEl.dispatchEvent(new Event("input", { bubbles: true })); } s.close(); }; return s; }
-  return S;
-}
-
-export function ng16DefinePropertyRow(host) {
-  function R(editor, entry) {
-    const self = host.Component.call(this) || this; self.editor = editor; self.entry = entry; self.containerEl = createDiv({ cls: "metadata-property", attr: { tabindex: "-1" } }); self.containerEl.dataset.propertyKey = entry.key; self.keyEl = self.containerEl.createDiv("metadata-property-key"); self.keyInputEl = self.keyEl.createEl("input", { cls: "metadata-property-key-input", type: "text", attr: { spellcheck: "false", placeholder: ng16PropT(host).msgEmptyPropertyName() } }); self.iconEl = self.containerEl.createDiv("metadata-property-icon clickable-icon"); self.valueEl = self.containerEl.createDiv({ cls: "metadata-property-value", attr: { "data-property-type": "text" } }); self.warningEl = self.containerEl.createDiv("metadata-property-warning-icon clickable-icon"); self.rendered = null; self.keyInputEl.value = entry.key; self.bindKey(); self.renderProperty(entry, true, true); return self;
-  }
-  inherit(R, host.Component); const p = R.prototype;
-  p.bindKey = function () { const s = new (ng16DefinePropertyKeySuggest(host))(this.editor.app, this.keyInputEl, this.editor.properties); this.keyInputEl.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); this.handleUpdateKey(this.keyInputEl.value); this.focusValue(); } if (e.key === "Escape") { this.keyInputEl.value = this.entry.key; this.editor.clearSelection(); } }); this.keyInputEl.addEventListener("blur", () => this.handlePropertyBlur()); this.keyInputEl.addEventListener("input", () => this.containerEl.dataset.propertyKey = this.keyInputEl.value.toLowerCase()); this.iconEl.addEventListener("click", (e) => this.showPropertyMenu(e)); this.containerEl.addEventListener("click", (e) => this.handleItemClick(e)); this.containerEl.addEventListener("contextmenu", (e) => this.showPropertyMenu(e)); };
-  p.setSelected = function (on) { this.containerEl.toggleClass("is-selected", on); };
-  p.focusKey = function () { this.keyInputEl.focus(); };
-  p.focusProperty = function () { this.containerEl.focus(); };
-  p.focusValue = function (pos) { this.rendered && this.rendered.focus && this.rendered.focus(pos || "both"); };
-  p.handleItemClick = function (e) { if (e.target === this.containerEl || e.target === this.keyEl) this.editor.selectProperty(this, e.shiftKey); };
-  p.handleUpdateKey = function (key) { key = String(key || "").trim(); const lower = ng16Lower(key); if (!key) return; for (const r of this.editor.rendered) if (r !== this && ng16Lower(r.entry.key) === lower) { this.containerEl.addClass("is-flashing"); setTimeout(() => this.containerEl.removeClass("is-flashing"), 750); return; } if (lower !== ng16Lower(this.entry.key)) { this.entry.key = key; this.containerEl.dataset.propertyKey = lower; this.editor.save(); } };
-  p.handleUpdateValue = function (v) { this.entry.value = ng16EmptyValue(v); this.editor.save(); this.renderProperty(this.entry, false, false); };
-  p.handlePropertyBlur = function () { const k = this.keyInputEl.value.trim(); if (!k && !this.entry.key) this.editor.removeProperties([this], false); else if (k !== this.entry.key) this.handleUpdateKey(k); };
-  p.renderProperty = function (entry, force = false, initial = false) {
-    const mgr = this.editor.app.metadataTypeManager; const info = mgr.getTypeInfo(entry.key, entry.value); this.typeInfo = info; const type = info.inferred || info.expected; this.valueEl.empty(); this.valueEl.dataset.propertyType = type.type; this.rendered = type.render(this.valueEl, entry.value, { app: this.editor.app, key: entry.key, onChange: (v) => this.handleUpdateValue(v), sourcePath: this.editor.owner.getFile && this.editor.owner.getFile().path, blur: () => this.editor.containerEl.focus(), hoverSource: this.editor.owner.getHoverSource && this.editor.owner.getHoverSource() }); host.setIcon(this.iconEl, type.icon || "lucide-text"); this.warningEl.toggle(!!(info.expected && info.inferred && info.expected.type !== info.inferred.type)); return this.rendered;
-  };
-  p.showPropertyMenu = function (e) { e.preventDefault(); e.stopPropagation(); const m = host.Menu.forEvent ? host.Menu.forEvent(e) : new host.Menu(); const key = ng16Lower(this.entry.key); m.addItem((i) => i.setSection("action").setTitle(ng16PropT(host).optionChangePropertyType ? ng16PropT(host).optionChangePropertyType() : "Type").setIcon("lucide-menu").setSubmenu ? i : i); if (!ng16Reserved[key]) { const widgets = Object.values(this.editor.app.metadataTypeManager.registeredTypeWidgets || {}); for (const w of widgets) { m.addItem((i) => i.setSection("action.changeType").setTitle(w.name()).setChecked(this.typeInfo && this.typeInfo.inferred === w).setDisabled(false).onClick(() => { this.editor.app.metadataTypeManager.setType(this.entry.key, w.type); this.renderProperty(this.entry, true, true); })); } } m.showAtMouseEvent(e); };
-  return R;
-}
+const ng16T = (host, path, fallback) => {
+  let node = host.t;
+  for (const part of path.split(".")) node = node && node[part];
+  try { return typeof node === "function" ? node() : (node || fallback); } catch (e) { return fallback; }
+};
 
 export function ng16DefineMetadataEditor(host) {
-  function E(app, owner) {
-    const self = host.Component.call(this) || this; self.app = app; self.owner = owner; self.properties = []; self.rendered = []; self.selectedLines = new Set(); self.collapsed = false; self.invalidFrontmatter = false; self.containerEl = createDiv("metadata-container"); self.containerEl.tabIndex = -1; self.errorEl = self.containerEl.createDiv("metadata-error-container"); self.errorEl.hide(); self.headingEl = self.containerEl.createDiv("metadata-properties-heading"); self.foldEl = self.headingEl.createDiv({ cls: "collapse-indicator collapse-icon", attr: { tabindex: "0" } }); host.setIcon(self.foldEl, "right-triangle"); self.headingEl.createSpan({ cls: "metadata-properties-title", text: ng16PropT(host).labelHeading() }); self.contentEl = self.containerEl.createDiv("metadata-content"); self.propertyListEl = self.contentEl.createDiv("metadata-properties"); self.addPropertyButtonEl = self.contentEl.createDiv({ cls: "metadata-add-button text-icon-button", attr: { tabindex: "0" } }); host.setIcon(self.addPropertyButtonEl, "lucide-plus"); host.setTooltip(self.addPropertyButtonEl, ng16PropT(host).labelAddPropertyButton()); self.containerEl.dataset.propertyCount = "0"; self.bind(); return self;
+  function MetadataEditor(app, owner) {
+    const self = host.Component.call(this) || this;
+    self.app = app;
+    self.owner = owner;
+    self.properties = [];
+    self.rendered = [];
+    self.selectedLines = new Set();
+    self.collapsed = false;
+    self.invalidFrontmatter = false;
+    self.containerEl = createDiv({ cls: "metadata-container", attr: { tabindex: "-1" } });
+    self.containerEl.dataset.propertyCount = "0";
+
+    self.errorEl = self.containerEl.createDiv("metadata-error-container");
+    self.errorEl.hide();
+
+    self.headingEl = self.containerEl.createDiv({ cls: "metadata-properties-heading", attr: { tabindex: "0" } });
+    self.foldEl = self.headingEl.createDiv({ cls: "collapse-indicator collapse-icon", attr: { tabindex: "0" } });
+    try { host.setIcon(self.foldEl, "right-triangle"); } catch (e) {}
+    self.headingEl.createSpan({ cls: "metadata-properties-title", text: ng16T(host, "properties.labelHeading", "Properties") });
+
+    self.contentEl = self.containerEl.createDiv("metadata-content");
+    self.propertyListEl = self.contentEl.createDiv("metadata-properties");
+    self.addPropertyButtonEl = self.contentEl.createDiv({ cls: "metadata-add-button text-icon-button", attr: { tabindex: "0" } });
+    try { host.setIcon(self.addPropertyButtonEl, "lucide-plus"); } catch (e) {}
+    try { host.setTooltip(self.addPropertyButtonEl, ng16T(host, "properties.labelAddPropertyButton", "Add property")); } catch (e) {}
+
+    self._bind();
+    return self;
   }
-  inherit(E, host.Component); ng16SetMetadataCtor(E); const p = E.prototype;
-  p.bind = function () { this.headingEl.addEventListener("click", () => this.toggleCollapse()); this.foldEl.addEventListener("click", (e) => { e.stopPropagation(); this.toggleCollapse(); }); this.addPropertyButtonEl.addEventListener("click", () => this.addProperty("")); this.containerEl.addEventListener("keydown", (e) => this.handleKeypress(e)); this.containerEl.addEventListener("copy", (e) => this.handleCopy(e)); this.containerEl.addEventListener("paste", (e) => this.handlePaste(e)); this.containerEl.addEventListener("cut", (e) => this.handleCut(e)); this.containerEl.addEventListener("contextmenu", (e) => { if (e.target === this.containerEl) this.showPropertiesMenu(e); }); };
-  p.onload = function () { this.registerEvent(this.app.metadataTypeManager.on("changed", (key) => { for (const r of this.rendered) if (ng16Lower(r.entry.key) === key) r.renderProperty(r.entry, true, true); })); };
-  Object.defineProperty(p, "focusedLine", { get: function () { return this.selectedLines.size ? [...this.selectedLines][0] : null; } });
-  p.hasFocus = function () { return this.containerEl.contains(activeDocument.activeElement); };
-  p.hasPropertyFocused = function () { return this.rendered.some((r) => r.containerEl.contains(activeDocument.activeElement)); };
-  p.focus = function (opts = {}) { if (!this.properties.length) return false; const r = opts.bottom ? this.rendered[this.rendered.length - 1] : this.rendered[0]; if (r) { r.focusProperty(); return true; } return false; };
-  p.focusProperty = function (key) { const r = this.rendered.find((x) => ng16Lower(x.entry.key) === ng16Lower(key)); if (r) r.focusProperty(); };
-  p.focusKey = function (key) { const r = this.rendered.find((x) => ng16Lower(x.entry.key) === ng16Lower(key)); if (r) r.focusKey(); };
-  p.focusValue = function (key, pos) { const r = this.rendered.find((x) => ng16Lower(x.entry.key) === ng16Lower(key)); if (r) r.focusValue(pos); };
-  p.focusPropertyAtIndex = function (i) { const r = this.rendered[i < 0 ? this.rendered.length - 1 : i]; if (r) r.focusProperty(); };
-  p.synchronize = function (props) {
-    this.invalidFrontmatter = props == null || typeof props !== "object" || Array.isArray(props); this.properties = this.invalidFrontmatter ? [] : Object.entries(props).map(([key, value]) => ({ key, value })); this.containerEl.toggleClass("mod-error", this.invalidFrontmatter); this.headingEl.style.display = this.invalidFrontmatter ? "none" : ""; this.addPropertyButtonEl.style.display = this.invalidFrontmatter ? "none" : ""; this.errorEl.style.display = this.invalidFrontmatter ? "" : "none"; if (this.invalidFrontmatter) { this.errorEl.empty(); this.errorEl.createDiv({ cls: "metadata-error-title", text: ng16PropT(host).labelInvalidHeading() }); const b = this.errorEl.createDiv({ cls: "metadata-show-source-button text-icon-button", text: ng16PropT(host).labelShowSource() }); b.addEventListener("click", () => { const f = this.owner.getFile && this.owner.getFile(); if (f && this.owner.app.workspace.openLinkText) this.owner.app.workspace.openLinkText(f.path, "", false); }); } this.propertyListEl.empty(); this.rendered = []; for (const entry of this.properties) { const row = new (ng16DefinePropertyRow(host))(this, entry); this.rendered.push(row); this.propertyListEl.appendChild(row.containerEl); } this.containerEl.dataset.propertyCount = String(this.properties.length); return this;
+  inherit(MetadataEditor, host.Component);
+  const proto = MetadataEditor.prototype;
+
+  proto._bind = function () {
+    const e = this;
+    this.headingEl.addEventListener("click", () => e.toggleCollapse());
+    this.headingEl.addEventListener("contextmenu", (ev) => e.showPropertiesMenu(ev));
+    this.headingEl.addEventListener("keydown", (ev) => {
+      if (ev.isComposing) return;
+      if (ev.key === "ArrowLeft") { ev.preventDefault(); e.setCollapse(true); }
+      else if (ev.key === "ArrowRight") { ev.preventDefault(); e.setCollapse(false); }
+      else if (ev.key === "ArrowUp") { ev.preventDefault(); e.owner && e.owner.shiftFocusBefore && e.owner.shiftFocusBefore(); }
+      else if (ev.key === "ArrowDown" || ev.key === "j") {
+        ev.preventDefault();
+        if (e.collapsed) { e.owner && e.owner.shiftFocusAfter && e.owner.shiftFocusAfter(); }
+        else e.focusPropertyAtIndex(0);
+      }
+    });
+    this.foldEl.addEventListener("click", (ev) => { ev.stopPropagation(); e.toggleCollapse(); });
+    this.addPropertyButtonEl.addEventListener("click", () => e.addProperty(""));
+    this.addPropertyButtonEl.addEventListener("keydown", (ev) => {
+      if (ev.isComposing) return;
+      if (ev.key === " " || ev.key === "Enter") { ev.preventDefault(); e.addProperty(""); }
+      else if (ev.key === "ArrowUp" || ev.key === "k" || ev.key === "Tab" && ev.shiftKey) {
+        ev.preventDefault();
+        if (e.rendered.length) e.rendered[e.rendered.length - 1].focusProperty(); else e.owner && e.owner.shiftFocusAfter && e.owner.shiftFocusAfter();
+      } else if (ev.key === "ArrowDown" || ev.key === "j" || ev.key === "Tab") {
+        ev.preventDefault(); e.owner && e.owner.shiftFocusAfter && e.owner.shiftFocusAfter();
+      } else e.handleKeypress(ev);
+    });
+    this.containerEl.addEventListener("keydown", (ev) => e.handleKeypress(ev));
+    this.containerEl.addEventListener("copy", (ev) => e.handleCopy(ev));
+    this.containerEl.addEventListener("cut", (ev) => e.handleCut(ev));
+    this.containerEl.addEventListener("paste", (ev) => e.handlePaste(ev));
+    this.containerEl.addEventListener("contextmenu", (ev) => {
+      if (ev.target === this.containerEl) e.showPropertiesMenu(ev);
+    });
   };
-  p.serialize = function () { const o = {}; for (const r of this.rendered) if (r.entry.key) o[r.entry.key] = r.entry.value; return o; };
-  p.clear = function () { this.selectedLines.clear(); this.containerEl.focus(); };
-  p.setCollapse = function (c, animate = true) { this.collapsed = c; this.containerEl.toggleClass("is-collapsed", c); if (animate && this.owner.onMarkdownFold) this.owner.onMarkdownFold(); };
-  p.toggleCollapse = function () { this.setCollapse(!this.collapsed); };
-  p.addProperty = function (key = "") { const entry = { key: String(key).toLowerCase(), value: null }; this.properties.push(entry); this.synchronize(Object.fromEntries(this.properties.map((x) => [x.key, x.value]))); const r = this.rendered[this.rendered.length - 1]; if (r) r.focusKey(); this.save(); return entry; };
-  p.removeProperties = function (rows, refocus = true) { const set = new Set(rows || this.rendered.filter((r) => this.selectedLines.has(r))); const keys = new Set([...set].map((r) => ng16Lower(r.entry.key))); this.properties = this.properties.filter((x) => !keys.has(ng16Lower(x.key))); this.selectedLines.clear(); this.synchronize(Object.fromEntries(this.properties.map((x) => [x.key, x.value]))); this.save(); if (refocus) this.focus(); };
-  p.insertProperties = function (obj) { for (const [k, v] of Object.entries(obj || {})) { const ex = this.properties.find((x) => ng16Lower(x.key) === ng16Lower(k)); if (ex) ex.value = v; else this.properties.push({ key: k, value: v }); } this.synchronize(Object.fromEntries(this.properties.map((x) => [x.key, x.value]))); this.save(); };
-  p.sortProperties = function (desc = false) { this.properties.sort((a, b) => { const c = ng16Compare(a.key, b.key); return desc ? -c : c; }); this.synchronize(Object.fromEntries(this.properties.map((x) => [x.key, x.value]))); this.save(); };
-  p.save = function () { if (this.owner.saveFrontmatter) this.owner.saveFrontmatter(this.serialize()); };
-  p.reorderKey = function (entry, i) { const at = this.properties.findIndex((x) => x === entry || ng16Lower(x.key) === ng16Lower(entry.key)); if (at >= 0) { const [x] = this.properties.splice(at, 1); this.properties.splice(i, 0, x); this.save(); } };
-  p.handleKeypress = function (e) { if (e.isComposing) return; const k = e.key; if (host.Keymap.isModEvent(e) && k.toLowerCase() === "a") { e.preventDefault(); this.selectAll(); return; } if (e.key === "Escape") { this.clearSelection(); return; } if (k === "Delete" || k === "Backspace") { let rows = [...this.selectedLines]; if (!rows.length) { const ae = activeDocument.activeElement; const row = this.rendered.find((r) => r.containerEl === ae || r.containerEl.contains(ae)); if (row) rows = [row]; } if (rows.length) { e.preventDefault(); this.removeProperties(rows); } return; } if (k === "o" && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); this.addProperty(""); return; } if (k.startsWith("Arrow")) { const rows = this.rendered; const cur = this.focusedLine; let idx = cur ? rows.indexOf(cur) : -1; if (e.shiftKey && this.selectedLines.size > 1) { const all = rows.every((r) => this.selectedLines.has(r)); if (all && cur) { this.selectedLines.delete(cur); cur.setSelected(false); } return; } if (k === "ArrowDown") idx = Math.min(rows.length - 1, idx + 1); if (k === "ArrowUp") idx = Math.max(0, idx - 1); if (idx >= 0 && rows[idx]) { this.clearSelection(); rows[idx].focusProperty(); } e.preventDefault(); } };
-  p.handleItemSelection = function (e, row) { this.selectProperty(row, e.shiftKey); };
-  p.selectProperty = function (row, add = false) { if (!add) this.clearSelection(); this.selectedLines.add(row); row.setSelected(true); row.focusProperty(); };
-  p.selectAll = function () { this.clearSelection(); for (const r of this.rendered) { this.selectedLines.add(r); r.setSelected(true); } };
-  p.clearSelection = function () { for (const r of this.selectedLines) r.setSelected(false); this.selectedLines.clear(); };
-  p.showPropertiesMenu = function (e) { e.preventDefault(); const m = host.Menu.forEvent ? host.Menu.forEvent(e) : new host.Menu(); m.addItem((i) => i.setSection("action").setTitle("Sort A-Z").setIcon("lucide-arrow-down-a-z").onClick(() => this.sortProperties(false))); m.addItem((i) => i.setSection("action").setTitle(ng16PropT(host).labelAddPropertyButton()).setIcon("lucide-plus").onClick(() => this.addProperty(""))); m.showAtMouseEvent(e); };
-  p.handleCut = function (e) { this.handleCopy(e); this.removeProperties(); };
-  p.handleCopy = function (e) { const data = JSON.stringify(this.serialize()); const yaml = host.yamlStringify(this.serialize()); e.clipboardData.setData("basalt/properties", data); e.clipboardData.setData("application/json", data); e.clipboardData.setData("Text", yaml); e.preventDefault(); };
-  p.handlePaste = function (e) { const raw = e.clipboardData.getData("basalt/properties"); if (!raw) return; try { const obj = JSON.parse(raw); this.insertProperties(obj); } catch (err) { console.error(err); } e.preventDefault(); };
-  return E;
+
+  proto.onload = function () {
+    try {
+      this.registerEvent(this.app.metadataTypeManager.on("changed", (key) => {
+        const lower = ng16Lower(key);
+        for (const row of this.rendered) {
+          if (ng16Lower(row.entry.key) === lower) row.renderProperty(row.entry, true, true);
+        }
+      }));
+    } catch (e) {}
+  };
+
+  // ---- focus / selection ---------------------------------------------------------------
+
+  proto._activeRow = function () {
+    const ae = env().activeDocument && env().activeDocument.activeElement;
+    if (!ae) return null;
+    return this.rendered.find((r) => r.containerEl === ae || r.containerEl.contains(ae)) || null;
+  };
+  proto.hasFocus = function () { const ae = env().activeDocument && env().activeDocument.activeElement; return !!(ae && this.containerEl.contains(ae)); };
+  proto.hasPropertyFocused = function () { return !!this._activeRow(); };
+  Object.defineProperty(proto, "focusedLine", { get() { return this._activeRow() || (this.selectedLines.size ? [...this.selectedLines][0] : null); } });
+
+  proto.focus = function (options = {}) {
+    if (!this.properties.length) return false;
+    if (this.collapsed || !options.bottom) { this.headingEl.focus(); return true; }
+    if (this.addPropertyButtonEl.style.display !== "none" && this.addPropertyButtonEl.isShown && this.addPropertyButtonEl.isShown()) { this.addPropertyButtonEl.focus(); return true; }
+    const last = this.rendered[this.rendered.length - 1];
+    if (last) { last.focusProperty(); return true; }
+    this.headingEl.focus();
+    return true;
+  };
+  proto.focusProperty = function (key) {
+    const row = this.rendered.find((r) => ng16Lower(r.entry.key) === ng16Lower(key));
+    if (row) { if (host.Platform.isPhone) row.containerEl.addClass("is-flashing"); row.focusProperty(); }
+  };
+  proto.focusKey = function (key) { const row = this.rendered.find((r) => r.entry.key === key); if (row) row.focusKey(); };
+  proto.focusValue = function (key, pos) { const row = this.rendered.find((r) => r.entry.key === key); if (row) row.focusValue(pos); };
+  proto.focusPropertyAtIndex = function (i) {
+    const row = this.rendered[i < 0 ? this.rendered.length - 1 : i];
+    if (row) row.focusProperty();
+  };
+
+  proto.selectAll = function () {
+    this.clearSelection();
+    for (const row of this.rendered) { this.selectedLines.add(row); row.setSelected(true); }
+  };
+  proto.clearSelection = function () {
+    for (const row of this.selectedLines) row.setSelected(false);
+    this.selectedLines.clear();
+  };
+  proto.handleItemSelection = function (event, row) {
+    row.focusProperty();
+    if (event.altKey) {
+      if (this.selectedLines.has(row)) { this.selectedLines.delete(row); row.setSelected(false); }
+      else { this.selectedLines.add(row); row.setSelected(true); }
+      return;
+    }
+    if (event.shiftKey) {
+      const focused = this.focusedLine && this.focusedLine !== row ? this.focusedLine : null;
+      const a = this.rendered.indexOf(focused || row);
+      const b = this.rendered.indexOf(row);
+      const [lo, hi] = a < b ? [a, b] : [b, a];
+      const both = this.rendered.slice(lo, hi + 1).every((r) => this.selectedLines.has(r));
+      if (both && lo <= hi) {
+        for (const r of this.rendered.slice(lo, hi + 1)) { this.selectedLines.delete(r); r.setSelected(false); }
+        return;
+      }
+      for (let i = lo; i <= hi; i++) { const r = this.rendered[i]; if (r && !this.selectedLines.has(r)) { this.selectedLines.add(r); r.setSelected(true); } }
+      return;
+    }
+    if (this.selectedLines.size === 1 && this.selectedLines.has(row)) return;
+    this.clearSelection();
+  };
+  proto.selectProperty = proto.handleItemSelection;
+
+  // ---- render / serialize / persist -----------------------------------------------------
+
+  proto.synchronize = function (props) {
+    const invalid = props == null || typeof props !== "object" || Array.isArray(props);
+    this.invalidFrontmatter = invalid;
+    const Row = ng16DefinePropertyRow(host);
+    const oldByKey = new Map();
+    for (const row of this.rendered) if (row.entry && row.entry.key !== "") oldByKey.set(row.entry.key, row);
+    const pending = this.rendered.find((r) => r.entry && r.entry.key === "" && r.containerEl.contains(env().activeDocument.activeElement));
+
+    const entries = [];
+    const rows = [];
+    if (!invalid) {
+      for (const [key, value] of Object.entries(props)) {
+        let row = oldByKey.get(key);
+        if (row) { row.entry.value = value; entries.push(row.entry); }
+        else { const entry = { key, value }; row = new Row(this, entry); entries.push(entry); }
+        rows.push(row);
+        oldByKey.delete(key);
+      }
+    }
+    if (pending && !invalid) { rows.push(pending); entries.push(pending.entry); }
+    for (const row of oldByKey.values()) row.unload && row.unload();
+
+    this.properties = entries;
+    this.rendered = rows;
+    this.propertyListEl.setChildrenInPlace(rows.map((r) => r.containerEl));
+    this.containerEl.dataset.propertyCount = String(entries.length);
+
+    this.containerEl.toggleClass("mod-error", invalid);
+    const show = !invalid;
+    this.headingEl.style.display = show ? "" : "none";
+    this.addPropertyButtonEl.style.display = show ? "" : "none";
+    this.errorEl.style.display = invalid ? "" : "none";
+    if (invalid) this._renderError();
+    else this.errorEl.empty();
+    return this;
+  };
+
+  proto._renderError = function () {
+    this.errorEl.empty();
+    this.errorEl.createDiv({ cls: "metadata-error-title", text: ng16T(host, "properties.labelInvalidHeading", "Invalid properties") });
+    const btn = this.errorEl.createDiv({ cls: "text-icon-button metadata-show-source-button", text: ng16T(host, "properties.labelShowSource", "Show source") });
+    btn.addEventListener("click", () => {
+      const file = this.owner && this.owner.getFile ? this.owner.getFile() : null;
+      if (!file) return;
+      const leaf = this.app.workspace.getLeaf && this.app.workspace.getLeaf();
+      if (!leaf) return;
+      leaf.openFile(file).then((view) => {
+        try {
+          if (view && view.setEphemeralState) view.setEphemeralState({ focus: true, cursor: { from: { line: 0, ch: 0 }, to: { line: 0, ch: 0 } } });
+          if (view && view.modes && view.modes.source) { /* source mode preferred */ }
+        } catch (e) {}
+      });
+    });
+  };
+
+  proto.serialize = function () {
+    const out = {};
+    for (const row of this.rendered) {
+      const key = row.entry.key;
+      if (key) out[key] = row.entry.value;
+    }
+    return out;
+  };
+  proto.save = function () {
+    if (this.owner && this.owner.saveFrontmatter) this.owner.saveFrontmatter(this.serialize());
+  };
+
+  // ---- mutations ------------------------------------------------------------------------
+
+  proto.addProperty = function (key = "") {
+    if (this.invalidFrontmatter) {
+      try { new host.Notice(ng16T(host, "properties.msgInvalidProperties", "Invalid properties")); } catch (e) {}
+      return null;
+    }
+    key = String(key);
+    const data = this.serialize();
+    if (!Object.prototype.hasOwnProperty.call(data, key)) data[key] = null;
+    // the "" row is transient: it is fed through synchronize as a fake entry and
+    // only survives later synchronizes while it holds DOM focus
+    const syncObj = key === "" ? Object.assign({}, data, { "": null }) : data;
+    this.synchronize(syncObj);
+    // named keys persist immediately; the "" row is transient until named
+    if (key !== "") this.owner && this.owner.saveFrontmatter && this.owner.saveFrontmatter(data);
+    const row = this.rendered[this.rendered.length - 1];
+    if (row) { key === "" ? row.focusKey() : row.focusValue(key, "both"); }
+    return { key, value: null };
+  };
+
+  proto.removeProperties = function (rows, refocus = true) {
+    const targets = (rows && rows.length ? rows : this.rendered.filter((r) => this.selectedLines.has(r)));
+    if (!targets || !targets.length) return;
+    const keys = new Set(targets.map((r) => r.entry.key));
+    const data = {};
+    for (const row of this.rendered) if (row.entry.key && !keys.has(row.entry.key)) data[row.entry.key] = row.entry.value;
+    const focusIndex = this.rendered.indexOf(this.focusedLine);
+    let removedBefore = 0;
+    for (const row of targets) { const i = this.rendered.indexOf(row); if (i >= 0 && i < focusIndex) removedBefore++; }
+    this.synchronize(data);
+    if (refocus) {
+      if (this.rendered.length) this.focusPropertyAtIndex(Math.max(0, focusIndex - removedBefore));
+      else this.owner && this.owner.shiftFocusAfter && this.owner.shiftFocusAfter();
+    }
+    if (this.owner && this.owner.saveFrontmatter) this.owner.saveFrontmatter(data);
+  };
+
+  proto.insertProperties = function (obj) {
+    if (!obj || typeof obj !== "object") return;
+    for (const [key, value] of Object.entries(obj)) {
+      const existing = this.properties.find((e) => e.key === key);
+      if (existing) existing.value = value;
+      else this.properties.push({ key, value });
+    }
+    const data = {};
+    for (const e of this.properties) if (e.key) data[e.key] = e.value;
+    this.synchronize(data);
+    this.save();
+  };
+
+  proto.sortProperties = function (descending = false) {
+    const data = this.serialize();
+    const keys = Object.keys(data).sort(ng16Compare);
+    if (descending) keys.reverse();
+    const sorted = {};
+    for (const k of keys) sorted[k] = data[k];
+    this.synchronize(sorted);
+    // deliberately no save: order persists on the next edit
+  };
+
+  proto.reorderKey = function (entry, targetIndex) {
+    const at = this.properties.findIndex((e) => e === entry || e.key === entry.key);
+    if (at < 0) return;
+    const [item] = this.properties.splice(at, 1);
+    const rest = this.properties.length;
+    this.properties.splice(targetIndex >= rest ? rest : targetIndex, 0, item);
+    const data = {};
+    for (const e of this.properties) if (e.key) data[e.key] = e.value;
+    this.synchronize(data);
+    if (this.owner && this.owner.saveFrontmatter) this.owner.saveFrontmatter(data);
+  };
+
+  proto.clear = function () {
+    this.clearSelection();
+    if (this.hasFocus() && host.blurAndClearSelection) { try { host.blurAndClearSelection(); } catch (e) {} }
+    try { this.containerEl.focus({ preventScroll: true }); } catch (e) { this.containerEl.focus(); }
+  };
+
+  // ---- keyboard ---------------------------------------------------------------------------
+
+  proto.handleKeypress = function (event) {
+    if (!event || event.isComposing) return;
+    if (event.defaultPrevented) return;
+    const key = event.key;
+    const mod = host.Keymap.isModEvent(event);
+    if (mod && key.toLowerCase() === "a") { event.preventDefault(); this.selectAll(); return; }
+    if (mod && key.toLowerCase() === "z") {
+      if (this.owner && (event.shiftKey ? this.owner.redo : this.owner.undo)) {
+        event.preventDefault();
+        (event.shiftKey ? this.owner.redo : this.owner.undo).call(this.owner);
+      }
+      return;
+    }
+    if (key === "Escape") { if (this.selectedLines.size) { event.preventDefault(); this.clearSelection(); } return; }
+    if (key === "Delete" || (key === "Backspace" && host.Platform.isMacOS && mod)) {
+      const rows = this.selectedLines.size ? [...this.selectedLines] : (this._activeRow() ? [this._activeRow()] : []);
+      if (rows.length) { event.preventDefault(); this.removeProperties(rows); }
+      return;
+    }
+    if (key === "o" && !mod && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+      event.preventDefault(); this.addProperty(""); return;
+    }
+    if (key === "Home" || (event.altKey && key === "ArrowDown")) {
+      event.preventDefault(); this.owner && this.owner.shiftFocusAfter && this.owner.shiftFocusAfter(); return;
+    }
+    if (key === "ArrowUp" || key === "k" || (key === "Tab" && event.shiftKey)) {
+      if (!event.shiftKey || key !== "ArrowUp") { /* fallthrough below handles plain nav */ }
+      if (key === "ArrowUp" && event.shiftKey) { this._extendSelection(-1, event); return; }
+      event.preventDefault();
+      this.clearSelection();
+      const idx = this.rendered.indexOf(this.focusedLine);
+      if (idx > 0) this.rendered[idx - 1].focusProperty();
+      else this.headingEl.focus();
+      return;
+    }
+    if (key === "ArrowDown" || key === "j" || (key === "Tab" && !event.shiftKey)) {
+      if (key === "ArrowDown" && event.shiftKey) { this._extendSelection(1, event); return; }
+      event.preventDefault();
+      this.clearSelection();
+      const idx = this.rendered.indexOf(this.focusedLine);
+      const next = this.rendered[idx + 1];
+      if (next) next.focusProperty();
+      else if (this.addPropertyButtonEl.style.display !== "none") this.addPropertyButtonEl.focus();
+      else this.owner && this.owner.shiftFocusAfter && this.owner.shiftFocusAfter();
+      return;
+    }
+  };
+
+  proto._extendSelection = function (dir, event) {
+    event.preventDefault();
+    const focused = this.focusedLine;
+    if (!focused) return;
+    const idx = this.rendered.indexOf(focused);
+    const next = this.rendered[idx + dir];
+    if (!next) return;
+    if (this.selectedLines.has(focused) && this.selectedLines.has(next)) {
+      this.selectedLines.delete(focused);
+      focused.setSelected(false);
+      return;
+    }
+    for (const row of this.rendered) {
+      const i = this.rendered.indexOf(row);
+      if ((dir > 0 && i >= idx && i <= idx + 1) || (dir < 0 && i >= idx - 1 && i <= idx)) {
+        this.selectedLines.add(row);
+        row.setSelected(true);
+      }
+    }
+    next.focusProperty();
+  };
+
+  // ---- menus / clipboard ---------------------------------------------------------------
+
+  proto._clipboardRows = function () {
+    if (this.selectedLines.size) return [...this.selectedLines];
+    const row = this._activeRow();
+    return row ? [row] : [];
+  };
+  proto._copyToClipboard = function (data, rows) {
+    const obj = {};
+    for (const row of rows) if (row.entry.key) obj[row.entry.key] = row.entry.value;
+    const json = JSON.stringify(obj);
+    let yaml = json;
+    try { yaml = host.yamlStringify(obj); } catch (e) {}
+    try { data.setData("basalt/properties", json); } catch (e) {}
+    try { data.setData("application/json", json); } catch (e) {}
+    try { data.setData("Text", yaml); } catch (e) {}
+    try { data.setData("text/plain", yaml); } catch (e) {}
+  };
+  proto.handleCopy = function (event) {
+    if (!this.hasPropertyFocused()) return;
+    const rows = this._clipboardRows();
+    if (!rows.length || !event.clipboardData) return;
+    this._copyToClipboard(event.clipboardData, rows);
+    event.preventDefault();
+  };
+  proto.handleCut = function (event) {
+    if (!this.hasPropertyFocused()) return;
+    const rows = this._clipboardRows();
+    if (!rows.length || !event.clipboardData) return;
+    this._copyToClipboard(event.clipboardData, rows);
+    event.preventDefault();
+    this.removeProperties(rows, false);
+    this.focusPropertyAtIndex(0);
+  };
+  proto.handlePaste = function (event) {
+    const raw = event.clipboardData && event.clipboardData.getData("basalt/properties");
+    if (!raw) return;
+    let obj;
+    try { obj = JSON.parse(raw); } catch (e) { console.error(e); return; }
+    this.insertProperties(obj);
+    event.preventDefault();
+  };
+
+  proto.showPropertiesMenu = function (event) {
+    event.preventDefault();
+    const menu = host.Menu.forEvent ? host.Menu.forEvent(event) : new host.Menu();
+    menu.addSections(["title", "action-primary", "action", "action.sort", "", "danger"]);
+    if (host.Platform.isPhone) {
+      menu.addItem((item) => item.setSection("title").setTitle(ng16T(host, "properties.labelHeading", "Properties")).setIsLabel());
+    }
+    const cmd = (path, fallback) => ng16T(host, "commands." + path, fallback);
+    menu.addItem((item) => item.setSection("action-primary").setTitle(cmd("addProperty", "Add property")).setIcon("lucide-plus").onClick(() => this.addProperty("")));
+    menu.setSectionSubmenu("action.sort", { title: ng16T(host, "properties.optionSort", "Sort"), icon: "lucide-sort-asc" });
+    menu.addItem((item) => item.setSection("action.sort").setTitle(cmd("labelSortPropertyAToZ", "Sort A to Z")).onClick(() => this.sortProperties(false)));
+    menu.addItem((item) => item.setSection("action.sort").setTitle(cmd("labelSortPropertyZToA", "Sort Z to A")).onClick(() => this.sortProperties(true)));
+    menu.addItem((item) => item.setSection("danger").setTitle(cmd("clearProperties", "Clear properties")).setIcon("lucide-trash-2").setWarning(true).onClick(() => this.removeProperties(this.rendered.slice())));
+    try { menu.setParentElement(this.headingEl); } catch (e) {}
+    menu.showAtMouseEvent(event);
+    try {
+      if (this.owner && this.owner.getFile && this.app.workspace.trigger) {
+        this.app.workspace.trigger("markdown-properties-menu", menu, this.owner.getFile());
+      }
+    } catch (e) {}
+  };
+
+  // ---- collapse -------------------------------------------------------------------------
+
+  proto.setCollapse = function (collapsed, animate = true) {
+    this.collapsed = collapsed;
+    this.containerEl.toggleClass("is-collapsed", collapsed);
+    this.headingEl.toggleClass("is-collapsed", collapsed);
+    this.foldEl.toggleClass("is-collapsed", collapsed);
+    try { if (host.collapseElement) host.collapseElement(this.contentEl, collapsed, animate); } catch (e) {}
+    if (animate && this.owner && this.owner.onMarkdownFold) this.owner.onMarkdownFold();
+  };
+  proto.toggleCollapse = function () { this.setCollapse(!this.collapsed); };
+
+  return MetadataEditor;
 }
-
-
-
-
+void ng16PropT; void ng16PluginT; void ng16EmptyValue;
