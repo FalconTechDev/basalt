@@ -2577,75 +2577,75 @@
     },
     {
       "orig": "jk",
-      "use": "defineBaseComponent"
+      "use": "ng21DefineBaseComponent"
     },
     {
       "orig": "Uk",
-      "use": "defineValueComponent"
+      "use": "ng21DefineValueComponent"
     },
     {
       "orig": "Wk",
-      "use": "defineButtonComponent"
+      "use": "ng21DefineButtonComponent"
     },
     {
       "orig": "_k",
-      "use": "defineExtraButtonComponent"
+      "use": "ng21DefineExtraButtonComponent"
     },
     {
       "orig": "Gk",
-      "use": "defineToggleComponent"
+      "use": "ng21DefineToggleComponent"
     },
     {
       "orig": "Kk",
-      "use": "defineAbstractTextComponent"
+      "use": "ng21DefineAbstractTextComponent"
     },
     {
       "orig": "Yk",
-      "use": "defineTextComponent"
+      "use": "ng21DefineTextComponent"
     },
     {
       "orig": "Qk",
-      "use": "defineSearchComponent"
+      "use": "ng21DefineSearchComponent"
     },
     {
       "orig": "Xk",
-      "use": "defineTextAreaComponent"
+      "use": "ng21DefineTextAreaComponent"
     },
     {
       "orig": "Zk",
-      "use": "defineMomentFormatComponent"
+      "use": "ng21DefineMomentFormatComponent"
     },
     {
       "orig": "Jk",
-      "use": "defineDropdownComponent"
+      "use": "ng21DefineDropdownComponent"
     },
     {
       "orig": "eC",
-      "use": "defineProgressBarComponent"
+      "use": "ng21DefineProgressBarComponent"
     },
     {
       "orig": "tC",
-      "use": "defineSliderComponent"
+      "use": "ng21DefineSliderComponent"
     },
     {
       "orig": "nC",
-      "use": "defineColorComponent"
+      "use": "ng21DefineColorComponent"
     },
     {
       "orig": "zk",
-      "use": "defineSetting"
+      "use": "ng21DefineSetting"
     },
     {
       "orig": "qk",
-      "use": "defineSettingGroup"
+      "use": "ng21DefineSettingGroup"
     },
     {
       "orig": "_1",
-      "use": "defineSettingTab"
+      "use": "ng21DefineSettingTab"
     },
     {
       "orig": "K0",
-      "use": "definePluginSettingTab"
+      "use": "ng21DefinePluginSettingTab"
     },
     {
       "orig": "fb",
@@ -3070,7 +3070,7 @@
     },
     {
       "orig": "Y0",
-      "use": "defineInstanceSettingTab"
+      "use": "ng21DefineInstanceSettingTab"
     },
     {
       "orig": "U2",
