@@ -894,46 +894,7 @@ function focusWhenShown(el, callback) {
 const stringCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
 
 // ---- frontmatter.js ----
-// Reading well-known properties (tags, aliases ...) out of parsed frontmatter.
-
-const hasOwn = Object.prototype.hasOwnProperty;
-
-/** Value of a frontmatter key given as exact name or as a regex matched against the keys; null if absent. */
-function frontmatterEntry(frontmatter, key) {
-  if (!frontmatter) return null;
-  if (typeof key === "string") return hasOwn.call(frontmatter, key) ? frontmatter[key] : null;
-  for (const name in frontmatter) {
-    if (hasOwn.call(frontmatter, name) && key.test(name)) return frontmatter[name];
-  }
-  return null;
-}
-
-/** A string or list-of-strings property as a trimmed string array (non-strings in lists are dropped); null otherwise. */
-function frontmatterStrings(frontmatter, key) {
-  const value = frontmatterEntry(frontmatter, key);
-  if (!value) return null;
-  if (typeof value === "string") return [value.trim()];
-  if (Array.isArray(value)) return value.filter((v) => typeof v === "string").map((v) => v.trim());
-  return null;
-}
-
-/** The `tags` property as "#tag" strings (entries with spaces or empty ones are dropped). */
-function frontmatterTags(frontmatter) {
-  if (!frontmatter) return null;
-  const tags = frontmatterStrings(frontmatter, /^tags$/i);
-  if (!tags) return tags;
-  const kept = tags.filter((t) => !!t && !t.includes(" "));
-  for (let i = 0; i < kept.length; i++) {
-    if (kept[i].charAt(0) !== "#") kept[i] = "#" + kept[i];
-  }
-  return kept;
-}
-
-/** The `aliases` property without blank entries. */
-function frontmatterAliases(frontmatter) {
-  const aliases = frontmatterStrings(frontmatter, /^aliases$/i);
-  return aliases ? aliases.map((a) => a.trim()).filter((a) => !!a) : null;
-}
+// g27: implementation lives in n-g27-frontmatter.js; shim for existing importers.
 
 // ---- search.js ----
 // Quick-switcher style fuzzy matching in plain JS (the same scoring also exists in app-core, see rust.js).
@@ -3518,1155 +3479,15 @@ function defineDocumentSearch(host) {
   return DocumentSearch;
 }
 
-// ---- edit-mode-base.js ----
-// Base class for markdown edit modes (source / live preview). Owns the
-// scroll DOM rearrangement (sizer/contentContainer/gutters), scroll
-// position math between CM coordinates and fractional lines, the in-editor
-// search bar, mode keymaps (Enter list continuation, Tab indent) and the
-// dynamic CodeMirror extension set (line numbers, indent guides, folding,
-// bracket pairing, live-preview decorations).
-function defineEditModeBase(host) {
-  function EditModeBase(app, contentEl, owner) {
-    const self = host.CodeMirrorEditor.call(this, app, contentEl, owner) || this;
-    self.isScrolling = false;
-    self.cssClasses = [];
-    const cm = self.cm;
-    cm.contentDOM.detach();
-    const sizerEl = self.sizerEl = cm.scrollDOM.createDiv("cm-sizer");
-    const container = sizerEl.createDiv("cm-contentContainer");
-    const gutters = cm.scrollDOM.find(".cm-gutters");
-    if (gutters) container.appendChild(gutters);
-    container.appendChild(cm.contentDOM);
-    cm.scrollDOM.addEventListener("scroll", () => self.onScroll());
-    self.search = new host.EditorSearchBar(self.editor, self.editorEl, (scope) => {
-      if (scope !== self.scope) {
-        if (self.scope) app.keymap.popScope(self.scope);
-        if (scope) app.keymap.pushScope(scope);
-        self.scope = scope;
-      }
-    });
-    self.editorEl.addEventListener("click", self.onViewClick.bind(self));
-    return self;
-  }
-  inherit(EditModeBase, host.CodeMirrorEditor);
-  methods(EditModeBase, {
-    onScroll() {
-      this.editorSuggest.reposition();
-      if (this.isScrolling) this.isScrolling = false;
-      else this.handleScroll();
-    },
-    handleScroll() {
-      this.owner.syncScroll();
-    },
-    show() {
-      this.editorEl.show();
-    },
-    hide() {
-      this.editorEl.hide();
-      this.editorSuggest.close();
-      this.search.hide();
-    },
-    focus() {
-      const editor = this.editor;
-      const scroll = editor.getScrollInfo();
-      editor.focus();
-      editor.scrollTo(scroll.left, scroll.top);
-      if (host.Platform.isMobileApp && host.keyboard) host.keyboard.show();
-    },
-    // Fractional line position (can be between lines) derived from scrollTop.
-    getScroll() {
-      const cm = this.cm;
-      const contentTop = cm.contentDOM.offsetTop;
-      const scrollTop = cm.scrollDOM.scrollTop;
-      const block = cm.lineBlockAtHeight(Math.max(scrollTop - contentTop, 0));
-      const startLine = cm.state.doc.lineAt(block.from).number - 1;
-      const lineSpan = cm.state.doc.lineAt(block.to).number - 1 - startLine + 1;
-      let offset = scrollTop - block.top;
-      let height = block.height;
-      if (startLine === 0) height += contentTop;
-      else offset -= contentTop;
-      return startLine + lineSpan * Math.max(0, offset) / Math.max(1, height);
-    },
-    applyScroll(scroll) {
-      if (!Number.isNumber(scroll) || isNaN(scroll)) return;
-      const cm = this.cm;
-      if (scroll < 0) scroll = 0;
-      if (scroll >= cm.state.doc.lines) scroll = cm.state.doc.lines - 0.99;
-      const line = Math.floor(scroll);
-      const fraction = scroll - line;
-      const docLine = cm.state.doc.line(line + 1);
-      const computeTop = () => {
-        const block = cm.lineBlockAt(docLine.from);
-        const blockStart = cm.state.doc.lineAt(block.from).number - 1;
-        const lineSpan = cm.state.doc.lineAt(block.to).number - 1 - blockStart + 1;
-        const inner = line - blockStart;
-        let top = block.top;
-        let height = block.height;
-        const contentTop = cm.contentDOM.offsetTop;
-        if (blockStart === 0) height += contentTop;
-        else top += contentTop;
-        return top + (inner + fraction) * (height / lineSpan);
-      };
-      if (cm.visibleRanges.some((range) => range.from <= docLine.from && docLine.from <= range.to)) {
-        this.isScrolling = true;
-        cm.scrollDOM.scrollTop = computeTop();
-        return;
-      }
-      this.isScrolling = true;
-      cm.dispatch({ effects: host.cmView.scrollIntoView(docLine.from, { y: "nearest" }) });
-      cm.requestMeasure({
-        read() {},
-        write() {
-          cm.requestMeasure({
-            read() { return computeTop(); },
-            write(top) {
-              this.isScrolling = true;
-              cm.scrollDOM.scrollTop = top;
-            },
-          });
-        },
-      });
-    },
-    showSearch(reveal) {
-      if (reveal === undefined) reveal = false;
-      this.destroyTableCell();
-      this.search.show(reveal);
-    },
-    buildLocalExtensions() {
-      const self = this;
-      const extensions = host.CodeMirrorEditor.prototype.buildLocalExtensions.call(this);
-      extensions.push(host.hypermdMode);
-      extensions.push(host.cmLiveDecorations);
-      extensions.push(host.cmView.scrollHandler.of((update, range) => {
-        const cell = self.tableCell;
-        return cell && cell.containerEl.isShown() && cell.table.containsRange(range.anchor, range.head);
-      }));
-      extensions.push(host.cmKeymapFacet.of([{
-        key: "Enter",
-        run() {
-          if (self.app.vault.getConfig("smartIndentList")) {
-            const state = self.editor.cm.state;
-            const pos = state.selection.main.from;
-            if (host.isSmartIndentTarget(state, state.doc.lineAt(pos))) {
-              self.editor.newlineAndIndentOnly();
-              return true;
-            }
-            self.editor.newlineAndIndentContinueMarkdownList();
-            return true;
-          }
-          return false;
-        },
-        shift() {
-          if (!self.app.vault.getConfig("smartIndentList")) return false;
-          self.editor.newlineAndIndentOnly();
-          return true;
-        },
-        preventDefault: true,
-      }, {
-        key: "Tab",
-        run() {
-          self.editor.indentList();
-          return true;
-        },
-        shift() {
-          self.editor.unindentList();
-          return true;
-        },
-      }]));
-      return extensions;
-    },
-    onConfigChanged(configKey) {
-      host.CodeMirrorEditor.prototype.onConfigChanged.call(this, configKey);
-      if (configKey === "showLineNumber" || configKey === "showIndentGuide" || configKey === "foldHeading" || configKey === "foldIndent" || configKey === "propertiesInDocument") {
-        this.updateOptions();
-      }
-    },
-    getDynamicExtensions() {
-      const extensions = host.CodeMirrorEditor.prototype.getDynamicExtensions.call(this);
-      const vault = this.app.vault;
-      if (vault.getConfig("showLineNumber")) {
-        extensions.push(host.cmLineNumbersFixed({ fixed: false }));
-        extensions.push(host.cmLineNumbersCompute);
-        extensions.push(host.cmLineNumbersField());
-      }
-      if (vault.getConfig("smartIndentList")) extensions.push(host.cmTableCellFilter(this));
-      if (vault.getConfig("showIndentGuide")) extensions.push(host.cmIndentGuides);
-      const foldHeading = vault.getConfig("foldHeading");
-      const foldIndent = vault.getConfig("foldIndent");
-      const folding = foldHeading || foldIndent;
-      this.editorEl.toggleClass("is-folding", folding);
-      if (folding) {
-        extensions.push(host.cmFoldGutter());
-        extensions.push(host.cmFoldDecorations);
-        if (foldHeading) extensions.push(host.cmFoldHeading);
-        if (foldIndent) extensions.push(host.cmFoldIndent);
-        extensions.push(host.cmFoldFrontmatter);
-      }
-      const autoPairBrackets = vault.getConfig("autoPairBrackets");
-      const autoPairMarkdown = vault.getConfig("autoPairMarkdown");
-      if (autoPairBrackets || autoPairMarkdown) extensions.push([host.cmAutoPair]);
-      this.editorEl.toggleClass("show-properties", vault.getConfig("propertiesInDocument") === "visible");
-      return extensions;
-    },
-    setCssClass(classes) {
-      const editorEl = this.editorEl;
-      editorEl.removeClasses(this.cssClasses);
-      if (classes && classes.length > 0) {
-        const classList = editorEl.classList;
-        classes = classes.filter((cls) => !classList.contains(cls));
-        editorEl.addClasses(classes);
-      } else {
-        classes = [];
-      }
-      this.cssClasses = classes;
-    },
-    onCssChange() {
-      this.cm.dispatch({ effects: host.cmClearCacheEffect.of() });
-      this.editor.refresh();
-    },
-    onViewClick(event) {
-      const self = this;
-      if (event.defaultPrevented) return;
-      this.editorSuggest.close();
-      setTimeout(() => self.editor.removeHighlights(), 0);
-    },
-    onUpdate(update, isUserEvent) {
-      host.CodeMirrorEditor.prototype.onUpdate.call(this, update, isUserEvent);
-      if (update.docChanged) this.app.workspace.trigger("editor-change", this.editor, this.owner);
-      if (update.selectionSet || isUserEvent || update.focusChanged) {
-        this.app.workspace.trigger("editor-selection-change", this.editor, this.owner);
-      }
-    },
-  });
-  return EditModeBase;
-}
-
-// ---- edit-mode.js ----
-// MarkdownEditMode (j6): the "source" edit mode of a MarkdownView. Extends
-// the edit-mode base (aZ) and wires the mode into the view: inline title,
-// properties editor and backlinks elements are reparented into the editor
-// sizer on show(); ephemeral cursor/scroll/property-match state; fold info
-// including the properties block; live-preview properties extension;
-// bottom padding for the backlinks pane and mobile keyboard/toolbar.
-
-// doc offset -> {line, ch} (0-based line).
-function offsetToPos(doc, offset) {
-  offset = Math.clamp(offset, 0, doc.length);
-  const line = doc.lineAt(offset);
-  return { line: line.number - 1, ch: offset - line.from };
-}
-
-// Character offsets (from search matches) -> editor positions.
-function offsetsToRanges(text, offsets) {
-  const result = [];
-  let line = 0;
-  let lineStart = 0;
-  let newline = text.indexOf("\n");
-  for (let i = 0; i < offsets.length; i++) {
-    const offset = offsets[i];
-    while (newline < offset) {
-      if (newline === -1) {
-        newline = text.length;
-        break;
-      }
-      line++;
-      lineStart = newline + 1;
-      newline = text.indexOf("\n", lineStart);
-    }
-    result.push({ line, ch: offset - lineStart });
-  }
-  return result;
-}
-
-// Any transaction in the list carries the given effect?
-function transactionHasEffect(transactions, effect) {
-  return transactions.some((tr) => tr.effects.some((e) => e.is(effect)));
-}
-
-// parseFloat with fallback for CSS custom properties.
-function cssPixels(value, fallback) {
-  const parsed = parseFloat(value);
-  return isNaN(parsed) ? fallback : parsed;
-}
-
-function defineMarkdownEditMode(host) {
-  function MarkdownEditMode(view) {
-    const self = host.EditModeBase.call(this, view.app, view.contentEl, view) || this;
-    self.type = "source";
-    self.requestOnInternalDataChange = host.debounce(() => self.view.onInternalDataChange(), 10);
-    self.requestSaveFolds = host.debounce(() => self.view.onMarkdownFold(), 500);
-    self.view = view;
-    self.app = view.app;
-    self.search.applyScope = (scope) => {
-      self.view.scope = scope;
-    };
-    view.addChild(self);
-    self.updateReadableLineLength();
-    self.updateOptions();
-    self.cm.scrollDOM.addEventListener("contextmenu", (event) => {
-      if (event.defaultPrevented || !event.isTrusted || (event instanceof PointerEvent && event.pointerType === "touch")) return;
-      const target = event.targetNode;
-      if (!self.sizerEl.contains(target) || target.parentElement.closest(".cm-gutters")) return;
-      self.app.workspace.trigger("markdown-viewport-menu", host.Menu.forEvent(event).addSections(["view", ""]), view, "source", "gutter");
-    });
-    return self;
-  }
-  inherit(MarkdownEditMode, host.EditModeBase);
-  methods(MarkdownEditMode, {
-    show() {
-      host.EditModeBase.prototype.show.call(this);
-      this.sizerEl.prepend(this.view.metadataEditor.containerEl);
-      this.sizerEl.prepend(this.view.inlineTitleEl);
-      this.sizerEl.appendChild(this.view.backlinksEl);
-    },
-    set(content, ...rest) {
-      host.EditModeBase.prototype.set.call(this, content, ...rest);
-    },
-    clear() {
-      host.EditModeBase.prototype.clear.call(this);
-      this.propertiesExtension = null;
-    },
-    destroy() {
-      host.EditModeBase.prototype.destroy.call(this);
-      this.propertiesExtension = null;
-    },
-    getSelection() {
-      return this.editor.getSelection();
-    },
-    beforeUnload() {
-      this.requestOnInternalDataChange.cancel();
-      this.requestSaveFolds.run();
-      this.saveHistory();
-    },
-    getEphemeralState(state) {
-      const cm = this.cm;
-      const doc = cm.state.doc;
-      const anchor = offsetToPos(doc, cm.state.selection.main.anchor);
-      const head = offsetToPos(doc, cm.state.selection.main.head);
-      state.cursor = { from: { line: anchor.line, ch: anchor.ch }, to: { line: head.line, ch: head.ch } };
-    },
-    setEphemeralState(state) {
-      this.setState(state);
-      this.setHighlight(state);
-    },
-    setState(state) {
-      const editor = this.editor;
-      const cursor = state.cursor;
-      const scroll = editor.getScrollInfo();
-      let focus = state.focus && (!host.Platform.isMobile || state.focusOnMobile);
-      if (cursor && cursor.from) {
-        if (host.Platform.isDesktop) focus = true;
-        editor.setSelection(cursor.from, cursor.to);
-        editor.scrollTo(scroll.left, scroll.top);
-      }
-      if (state.focusMetadata) {
-        const metadataEditor = this.view.metadataEditor;
-        if (this.view.canShowProperties() && metadataEditor && metadataEditor.properties.length > 0) {
-          metadataEditor.focus();
-          focus = false;
-        } else {
-          focus = true;
-        }
-      }
-      if (focus) this.focus();
-      if (state.hasOwnProperty("scroll")) this.applyScroll(state.scroll);
-    },
-    handleScroll() {
-      host.EditModeBase.prototype.handleScroll.call(this);
-      if (this.app.mobileNavbar) this.app.mobileNavbar.onScroll(this.cm.scrollDOM, this.getScroll());
-    },
-    setHighlight(state) {
-      const self = this;
-      const editor = this.editor;
-      if (state.startLoc !== undefined && state.endLoc !== undefined) {
-        const from = { line: state.startLoc.line, ch: state.startLoc.col };
-        const to = state.endLoc
-          ? { line: state.endLoc.line, ch: state.endLoc.col }
-          : { line: editor.lastLine(), ch: editor.getLine(editor.lastLine()).length };
-        this.highlightSearchMatches([{ from, to }]);
-        this.isScrolling = true;
-        this.onScroll();
-      } else if (state.line !== undefined && state.line >= 0) {
-        const line = state.line;
-        const from = { line, ch: 0 };
-        const to = { line, ch: editor.getLine(line).length };
-        editor.setSelection(to, to);
-        this.highlightSearchMatches([{ from, to }]);
-        this.isScrolling = true;
-        this.onScroll();
-      } else if (state.propertyMatches !== undefined) {
-        const matches = state.propertyMatches;
-        if (matches.length > 0) {
-          if (this.app.vault.getConfig("propertiesInDocument") === "hidden" || this.view.canShowProperties()) {
-            (async () => {
-              const plugin = await host.propertiesPlugin(this.app);
-              if (plugin) plugin.focusProperty(matches[0].key);
-            })();
-          } else {
-            editor.setSelection({ line: 0, ch: 0 });
-            this.isScrolling = true;
-            this.onScroll();
-          }
-        }
-      } else if (state.match !== undefined) {
-        const match = state.match;
-        const flat = [];
-        for (const m of match.matches) flat.push(m[0], m[1]);
-        const positions = offsetsToRanges(match.content, flat);
-        const ranges = [];
-        for (let i = 0; i < match.matches.length; i++) {
-          ranges.push({ from: positions[i * 2], to: positions[i * 2 + 1] });
-        }
-        this.highlightSearchMatches(ranges);
-        this.isScrolling = true;
-        this.onScroll();
-      }
-    },
-    highlightSearchMatches(ranges, scroll, moveCursor, flash) {
-      if (scroll === undefined) scroll = true;
-      if (moveCursor === undefined) moveCursor = true;
-      if (flash === undefined) flash = true;
-      const editor = this.editor;
-      if (ranges.length !== 0) {
-        editor.addHighlights(ranges, "is-flashing", flash, true);
-        const first = ranges[0];
-        if (moveCursor) editor.setCursor(first.from);
-        if (scroll) editor.scrollIntoView({ from: first.to, to: first.from }, true);
-      } else {
-        editor.removeHighlights("is-flashing");
-      }
-    },
-    getFoldInfo() {
-      const base = host.EditModeBase.prototype.getFoldInfo.call(this);
-      let folds = base && base.folds ? base.folds : [];
-      const lines = base && base.lines !== undefined ? base.lines : this.editor.lineCount();
-      const metadataEditor = this.view.metadataEditor;
-      if (this.view.canShowProperties() && metadataEditor.properties.length > 0) {
-        folds = folds.filter((fold) => fold.from !== 0);
-        if (metadataEditor.collapsed) folds.unshift({ from: 0, to: 0 });
-      }
-      return { folds, lines };
-    },
-    getDynamicExtensions() {
-      const extensions = host.EditModeBase.prototype.getDynamicExtensions.call(this);
-      if (!this.sourceMode) {
-        let propertiesExtension = this.propertiesExtension;
-        if (!propertiesExtension) {
-          propertiesExtension = this.propertiesExtension = host.propertiesExtensionFactory(this, this.view);
-        }
-        extensions.push(propertiesExtension);
-      }
-      return extensions;
-    },
-    onUpdate(update, isUserEvent) {
-      host.EditModeBase.prototype.onUpdate.call(this, update, isUserEvent);
-      const transactions = update.transactions;
-      if (isUserEvent) {
-        this.view.requestSave();
-        this.requestSaveFolds();
-        this.requestOnInternalDataChange();
-      }
-      if (transactionHasEffect(transactions, host.cmFoldEffect) || transactionHasEffect(transactions, host.cmUnfoldEffect)) {
-        this.requestSaveFolds();
-      }
-    },
-    onResize() {
-      host.EditModeBase.prototype.onResize.call(this);
-      const container = this.containerEl;
-      if (container.offsetParent) this.updateBottomPadding(container.clientHeight);
-    },
-    updateBottomPadding(height) {
-      const backlinksEl = this.view.backlinksEl;
-      let padding = Math.round(height / 2) + "px";
-      if (host.Platform.isMobile) {
-        const keyboardHeight = cssPixels(document.documentElement.getCssPropertyValue("--keyboard-height"), 0);
-        const toolbarHeight = this.app.mobileToolbar.isVisible
-          ? cssPixels(document.body.getCssPropertyValue("--mobile-toolbar-height"), 0)
-          : 0;
-        padding = Math.round((height + keyboardHeight + toolbarHeight) / 2) + "px";
-      }
-      if (backlinksEl.isShown()) {
-        padding = "100px";
-        backlinksEl.style.minHeight = Math.max(0, height / 2 - 100) + "px";
-      }
-      this.cm.contentDOM.style.paddingBottom = padding;
-    },
-    updateReadableLineLength() {
-      const readable = this.app.vault.getConfig("readableLineLength");
-      this.editorEl.toggleClass("is-readable-line-width", readable);
-    },
-    onConfigChanged(configKey) {
-      host.EditModeBase.prototype.onConfigChanged.call(this, configKey);
-      if (configKey === "readableLineLength") this.updateReadableLineLength();
-    },
-  });
-  return MarkdownEditMode;
-}
-
 // ---- env.js ----
-// Shared lazy access to application-scope values.
-//
-// Some own modules need names that live in the application scope of the bundle (platform info, the lazy `require`
-// shim, markdown parser entry points, yaml helpers, ...). The manifest's `envBind` installs a thunk here once,
-// and every use reads it lazily so late-bound bundle variables stay correct.
-let thunk = () => ({});
-
-/** Installs the thunk that resolves host values; called once by the generated bundle. */
-function bindEnv(t) { thunk = t; }
-
-/** The current host environment object. */
-function env() { return thunk(); }
-/** The late-bound host values for any own module (alias used by the settings and sync modules). */
-const hostEnv = env;
+// g27: implementation lives in n-g27-env.js; this shim keeps the historic
+// module path working for the ~190 importers and the spec-test HTTP loader.
 
 // ---- events.js ----
-// Events (a tiny named-event emitter) and Component (load/unload lifecycle with owned children and cleanups).
-// These two are the base of nearly every class in the application and of every community plugin, so the observable
-// behaviour is kept exactly: reference objects returned by `on`, errors in handlers surfacing asynchronously, load/unload ordering.
-
-/** Factory called once at the place of the original class; `host` gives access to the rest of the application. */
-function defineEvents() {
-  function Events() {
-    // event name -> list of subscription records; the field name is read by older plugins, keep it
-    this._ = {};
-  }
-
-  /** Subscribes `callback` (called with `context` as `this`); returns the subscription reference. */
-  Events.prototype.on = function (name, callback, context) {
-    let list = this._[name];
-    if (!list) list = this._[name] = [];
-    const ref = { e: this, name, fn: callback, ctx: context };
-    list.push(ref);
-    return ref;
-  };
-
-  /** Removes every subscription of `name` whose callback is `callback`. */
-  Events.prototype.off = function (name, callback) {
-    const list = this._[name];
-    const kept = [];
-    if (list && callback) for (const sub of list) if (sub.fn !== callback) kept.push(sub);
-    if (kept.length > 0) this._[name] = kept;
-    else delete this._[name];
-  };
-
-  /** Removes the single subscription a reference stands for. */
-  Events.prototype.offref = function (ref) {
-    if (!ref) return;
-    const list = this._[ref.name];
-    const kept = [];
-    if (list) for (const sub of list) if (sub !== ref) kept.push(sub);
-    if (kept.length) this._[ref.name] = kept;
-    else delete this._[ref.name];
-  };
-
-  /** Calls every subscriber of `name`; the list is copied first, so handlers may subscribe or unsubscribe while running. */
-  Events.prototype.trigger = function (name, ...args) {
-    const list = this._[name];
-    if (!list) return;
-    for (const sub of list.slice()) this.tryTrigger(sub, args);
-  };
-
-  /** Runs one subscriber; an exception is rethrown on a fresh stack so it cannot break the other subscribers. */
-  Events.prototype.tryTrigger = function (sub, args) {
-    try {
-      sub.fn.apply(sub.ctx, args);
-    } catch (err) {
-      setTimeout(() => { throw err; }, 0);
-    }
-  };
-
-  return Events;
-}
-
-function defineComponent() {
-  function Component() {
-    this._loaded = false;
-    this._events = []; // cleanup functions, run in reverse order on unload
-    this._children = [];
-  }
-
-  /** Loads the component and then its children; returns a promise only when something asynchronous was started. */
-  Component.prototype.load = function () {
-    if (this._loaded) return;
-    this._loaded = true;
-    const pending = [];
-    const own = this.onload();
-    if (own) pending.push(own);
-    for (const child of this._children.slice()) {
-      const result = child.load();
-      if (result) pending.push(result);
-    }
-    return pending.length > 0 ? Promise.all(pending).then() : undefined;
-  };
-  Component.prototype.onload = function () {};
-
-  /** Unloads children (last added first), then runs cleanups (last registered first), then calls onunload. */
-  Component.prototype.unload = function () {
-    if (!this._loaded) return;
-    this._loaded = false;
-    const children = this._children;
-    const cleanups = this._events;
-    while (children.length > 0) children.pop().unload();
-    while (cleanups.length > 0) cleanups.pop()();
-    this.onunload();
-  };
-  Component.prototype.onunload = function () {};
-
-  Component.prototype.addChild = function (child) {
-    this._children.push(child);
-    if (this._loaded) child.load();
-    return child;
-  };
-
-  Component.prototype.removeChild = function (child) {
-    const at = this._children.indexOf(child);
-    if (at !== -1) {
-      this._children.splice(at, 1);
-      child.unload();
-    }
-    return child;
-  };
-
-  /** Registers a cleanup to run when the component unloads. */
-  Component.prototype.register = function (cleanup) {
-    this._events.push(cleanup);
-  };
-
-  Component.prototype.registerEvent = function (ref) {
-    this.register(() => ref.e.offref(ref));
-  };
-
-  Component.prototype.registerDomEvent = function (target, type, listener, options) {
-    target.addEventListener(type, listener, options);
-    this.register(() => target.removeEventListener(type, listener, options));
-  };
-
-  Component.prototype.registerScopeEvent = function (handler) {
-    this.register(() => handler.scope.unregister(handler));
-  };
-
-  Component.prototype.registerInterval = function (id) {
-    this.register(() => clearInterval(id));
-    return id;
-  };
-
-  return Component;
-}
-
-// ---- fileview.js ----
-// FileView (an ItemView that shows one file: breadcrumbs, rename / delete handling, linked-tab sync) and ViewRegistry (view types and
-// the file extensions they open).
-
-function defineFileView(host) {
-  function FileView(leaf) {
-    const self = host.ItemView.call(this, leaf) || this;
-    self.allowNoFile = false; // false: when the file is gone the leaf goes back / closes
-    self.navigation = true;
-    return self;
-  }
-  inherit(FileView, host.ItemView);
-  const proto = FileView.prototype;
-
-  /** Folder names above the title; each one reveals the folder in the file explorer, has a context menu and can be dragged. */
-  proto.renderBreadcrumbs = function () {
-    const app = this.app;
-    this.titleParentEl.empty();
-    const folder = this.file && this.file.parent ? this.file.parent.path : undefined;
-    if (!folder || folder === "/") return;
-    const parts = folder.split("/");
-    parts.forEach((name, index) => {
-      const path = parts.slice(0, index + 1).join("/");
-      const crumb = this.titleParentEl.createSpan({ cls: "view-header-breadcrumb", text: name });
-      if (!host.Platform.isMobile) host.setTooltip(crumb, name);
-      crumb.addEventListener("click", () => {
-        const explorer = app.internalPlugins.getEnabledPluginById("file-explorer");
-        if (!explorer) return;
-        const target = app.vault.getFolderByPath(normalizePath(path));
-        if (target) explorer.revealInFolder(target);
-      });
-      crumb.addEventListener("contextmenu", (event) => {
-        const { fileManager, vault, workspace } = app;
-        const target = vault.getFolderByPath(normalizePath(path));
-        if (!target) return;
-        const menu = host.Menu.forEvent(event).addSections(["title", "open", "action-primary", "action", "info", "info.copy", "view", "system", "", "danger"]);
-        menu.addItem((item) => item
-          .setSection("action-primary")
-          .setTitle(host.t.plugins.fileExplorer.menuOptNewNote())
-          .setIcon("lucide-edit")
-          .onClick(async (clickEvent) => {
-            const note = await fileManager.createNewMarkdownFile(target);
-            workspace.getLeaf(host.Keymap.isModEvent(clickEvent)).openFile(note, { active: true, state: { mode: "source" }, eState: { rename: "all" } });
-          }));
-        menu.setParentElement(crumb);
-        app.workspace.trigger("file-menu", menu, target, "file-explorer-context-menu");
-      });
-      app.dragManager.handleDrag(crumb, (event) => {
-        const target = app.vault.getFolderByPath(normalizePath(path));
-        if (!target) return null;
-        app.dragManager.updateSource([crumb], "is-being-dragged");
-        return app.dragManager.dragFolder(event, target);
-      });
-      this.titleParentEl.createSpan({ cls: "view-header-breadcrumb-separator", text: "/" });
-    });
-  };
-
-  proto.getDisplayText = function () {
-    return this.file ? this.file.basename : host.t.interface.noFile();
-  };
-
-  proto.onload = function () {
-    host.ItemView.prototype.onload.call(this);
-    const vault = this.app.vault;
-    this.registerEvent(vault.on("rename", this.onRename.bind(this)));
-    this.registerEvent(vault.on("delete", this.onDelete.bind(this)));
-  };
-
-  proto.getState = function () {
-    const state = host.ItemView.prototype.getState.call(this);
-    if (this.file) state.file = this.file.path;
-    return state;
-  };
-
-  /** Linked tabs (same group) open the same file as this one. */
-  proto.syncState = function () {
-    const leaf = this.leaf;
-    const group = leaf.group;
-    if (!group) return;
-    for (const other of this.app.workspace.getGroupLeaves(group)) {
-      if (other !== leaf && other.view instanceof FileView) other.view.receiveSyncState(this);
-    }
-  };
-
-  proto.receiveSyncState = function (source) {
-    if (source.file !== this.file) this.leaf.openFile(source.file);
-  };
-
-  proto.setState = async function (state, result) {
-    let changed = false;
-    if (state.hasOwnProperty("file")) {
-      const file = this.app.vault.getAbstractFileByPath(state.file);
-      changed = file instanceof host.TFile ? await this.loadFile(file) : await this.loadFile(null);
-    }
-    if (!this.file && !this.allowNoFile) result.close = true;
-    if (changed) {
-      result.layout = true;
-      result.history = true;
-    }
-    await host.ItemView.prototype.setState.call(this, state, result);
-    if (!state.sync && (result.layout || result.history)) result.done = () => this.syncState();
-  };
-
-  proto.onClose = async function () {
-    this.contentEl.empty();
-    await this.loadFile(null);
-  };
-
-  /** Switches to `file` (null = none); returns false when it already was the file. A failing onLoadFile leaves the view without file. */
-  proto.loadFile = async function (file) {
-    const current = this.file;
-    if (current === file) return false;
-    if (current) await this.onUnloadFile(current);
-    this.file = null;
-    if (file) {
-      try {
-        this.file = file;
-        await this.onLoadFile(file);
-      } catch (err) {
-        this.file = null;
-        new host.Notice(host.t.interface.msgFailedToLoadFile({ plugin: file.path }));
-        console.error(err);
-      }
-    }
-    this.renderBreadcrumbs();
-    this.titleEl.setText(this.getDisplayText());
-    const leaf = this.leaf;
-    const workspace = leaf.workspace;
-    if (workspace.activeLeaf === leaf) workspace.requestActiveLeafEvents();
-    this.leaf.updateHeader();
-    return true;
-  };
-
-  proto.onLoadFile = async function () {};
-  proto.onUnloadFile = async function () {};
-
-  proto.onRename = async function (file) {
-    if (file !== this.file) return;
-    this.renderBreadcrumbs();
-    this.titleEl.setText(file.basename);
-    this.app.workspace.onLayoutChange();
-    this.leaf.updateHeader();
-  };
-
-  /** The file was deleted: show nothing, go back in history, or turn the leaf into an empty one (closing it if it has siblings). */
-  proto.onDelete = async function (file) {
-    if (file === this.file) {
-      if (this.allowNoFile) {
-        await this.loadFile(null);
-      } else {
-        const leaf = this.leaf;
-        if (leaf.history.backHistory.length > 0) await leaf.history.back();
-        else await leaf.open(null);
-        // (the inherited code assumed the leaf is still in the tree here; it may already be gone)
-        if (this.leaf.view instanceof host.EmptyView && leaf.parent && leaf.parent.children.length > 1) leaf.detach();
-      }
-      this.app.workspace.onLayoutChange();
-    }
-  };
-
-  proto.canAcceptExtension = function () { return false; };
-
-  return FileView;
-}
-
-function defineViewRegistry(host) {
-  /**
-   * view type -> creator(leaf), file extension -> view type. Emits "view-registered" / "view-unregistered" / "extensions-updated".
-   */
-  function ViewRegistry() {
-    const self = host.Events.call(this) || this;
-    self.viewByType = {};
-    self.typeByExtension = {};
-    // the views the app ships with, and what they open
-    const builtIn = [
-      [host.markdownExtensions, host.MarkdownView],
-      [host.imageExtensions, host.ImageView],
-      [host.audioExtensions, host.AudioView],
-      [host.videoExtensions, host.VideoView],
-      [host.pdfExtensions, host.PdfView],
-    ];
-    for (const [extensions, View] of builtIn) self.registerViewWithExtensions(extensions, View.VIEW_TYPE, (leaf) => new View(leaf));
-    self.registerView(host.releaseNotesType, (leaf) => new host.ReleaseNotesView(leaf));
-    return self;
-  }
-  inherit(ViewRegistry, host.Events);
-  const proto = ViewRegistry.prototype;
-
-  proto.registerView = function (type, creator) {
-    if (this.viewByType.hasOwnProperty(type)) throw new Error(`Attempting to register an existing view type "${type}"`);
-    this.viewByType[type] = creator;
-    this.trigger("view-registered", type);
-  };
-
-  proto.unregisterView = function (type) {
-    if (this.viewByType.hasOwnProperty(type)) {
-      delete this.viewByType[type];
-      this.trigger("view-unregistered", type);
-    }
-  };
-
-  /** All-or-nothing: throws when any extension is taken already. */
-  proto.registerExtensions = function (extensions, type) {
-    for (const extension of extensions) {
-      if (this.typeByExtension.hasOwnProperty(extension)) throw new Error(`Attempting to register an existing file extension "${extension}"`);
-    }
-    for (const extension of extensions) this.typeByExtension[extension] = type;
-    this.trigger("extensions-updated");
-  };
-
-  proto.unregisterExtensions = function (extensions) {
-    for (const extension of extensions) delete this.typeByExtension[extension];
-    this.trigger("extensions-updated");
-  };
-
-  proto.registerViewWithExtensions = function (extensions, type, creator) {
-    this.registerView(type, creator);
-    this.registerExtensions(extensions, type);
-  };
-
-  proto.getViewCreatorByType = function (type) { return this.viewByType[type]; };
-  proto.getTypeByExtension = function (extension) { return this.typeByExtension[extension]; };
-  proto.isExtensionRegistered = function (extension) { return this.typeByExtension.hasOwnProperty(extension); };
-
-  proto.trigger = function (name, ...args) {
-    host.Events.prototype.trigger.apply(this, [name, ...args]);
-  };
-  proto.on = function (name, callback, context) {
-    return host.Events.prototype.on.call(this, name, callback, context);
-  };
-
-  return ViewRegistry;
-}
-
-// ---- hover-popover.js ----
-// HoverPopover: the floating preview that appears when the pointer rests on a link or a tab and stays while the pointer is over the
-// target or the popover (or a popover opened from inside it). All popovers share one global tracker: while any is shown a 500 ms
-// poll checks where the pointer is, and a click anywhere (outside) closes the popovers that are not focused.
-
-/** popovers waiting to appear (the show timer is running) */
-const pending = [];
-/** popovers on screen */
-const shown = [];
-let pollTimer = 0;
-/** where the pointer is, { x, y, doc } of the last mouse move while any popover is shown */
-let pointer = null;
-
-function trackPointer(event) {
-  pointer = { x: event.clientX, y: event.clientY, doc: event.doc };
-}
-
-/** A click closes the popovers waiting to show and, a moment later, the shown ones that did not get the click or focus. */
-function onGlobalClick(event) {
-  for (const popover of pending) popover.hide();
-  const target = event.targetNode;
-  const closing = [];
-  for (const popover of shown) {
-    if (popover.isFocused || popover.hoverEl.contains(target)) continue;
-    if (popover.childHovers.some((child) => child.hoverEl.contains(target))) continue;
-    closing.push(popover);
-  }
-  event.win.setTimeout(() => { closing.forEach((popover) => popover.hide()); }, 5);
-}
-
-/** Every 500 ms: let each popover look at what is under the pointer and move on in its state machine. */
-function poll() {
-  if (shown.length === 0) {
-    window.removeEventListener("click", onGlobalClick, { capture: true });
-    window.removeEventListener("contextmenu", onGlobalClick, { capture: true });
-    window.removeEventListener("mousemove", trackPointer);
-    clearInterval(pollTimer);
-    pollTimer = 0;
-    pointer = null;
-    return;
-  }
-  if (!pointer) return;
-  const under = pointer.doc.elementFromPoint(pointer.x, pointer.y);
-  for (const popover of shown) popover.detect(under);
-  for (const popover of shown) popover.transition();
-}
-
-function ensureTracking() {
-  if (pollTimer) return;
-  window.addEventListener("click", onGlobalClick, { capture: true });
-  window.addEventListener("contextmenu", onGlobalClick, { capture: true });
-  window.addEventListener("mousemove", trackPointer);
-  pollTimer = window.setInterval(poll, 500);
-}
-
-function defineHoverPopover(host) {
-  const State = host.PopoverState;
-
-  /**
-   * `parent` owns the popover (`parent.hoverPopover`); `targetEl` is what the pointer rests on (null for a free-standing popover);
-   * it shows after `waitTime` ms, optionally at the fixed screen position `staticPos` { x, y }.
-   */
-  function HoverPopover(parent, targetEl, waitTime = 300, staticPos = null) {
-    const self = host.Component.call(this) || this;
-    self.onTarget = true;   // pointer is on the target
-    self.onHover = false;   // pointer is on the popover
-    self.isFocused = false;
-    self.staticPos = null;
-    self.parent = parent;
-    self.targetEl = targetEl;
-    self.waitTime = waitTime;
-    self.state = State.Showing;
-    self.staticPos = staticPos;
-    const hoverEl = (self.hoverEl = createDiv("popover hover-popover"));
-    const onMouseIn = (self.onMouseIn = self.onMouseIn.bind(self));
-    const onMouseOut = (self.onMouseOut = self.onMouseOut.bind(self));
-    if (targetEl) {
-      targetEl.addEventListener("mouseover", onMouseIn);
-      targetEl.addEventListener("mouseout", onMouseOut);
-    }
-    hoverEl.addEventListener("mouseover", (event) => {
-      if (host.pointerEntered(event, hoverEl)) { self.onHover = true; self.transition(); }
-    });
-    hoverEl.addEventListener("mouseout", (event) => {
-      if (host.pointerEntered(event, hoverEl)) { self.onHover = false; self.transition(); }
-    });
-    self.timer = activeWindow.setTimeout(self.show.bind(self), waitTime);
-    pending.push(self);
-    ensureTracking();
-    return self;
-  }
-  inherit(HoverPopover, host.Component);
-  const proto = HoverPopover.prototype;
-
-  // `pointerEntered(event, el)` is true when the event crosses the boundary of `el` (not just moves between its children)
-  proto.onMouseIn = function (event) {
-    if (this.targetEl && !host.pointerEntered(event, this.targetEl)) return;
-    this.onTarget = true;
-    this.transition();
-  };
-  proto.onMouseOut = function (event) {
-    if (this.targetEl && !host.pointerEntered(event, this.targetEl)) return;
-    this.onTarget = false;
-    this.transition();
-  };
-
-  /** Sets onTarget / onHover from the element that is under the pointer. */
-  proto.detect = function (el) {
-    const { targetEl, hoverEl } = this;
-    if (targetEl) this.onTarget = el === targetEl || targetEl.contains(el);
-    this.onHover = el === hoverEl || hoverEl.contains(el);
-  };
-
-  proto.shouldShow = function () { return this.shouldShowSelf() || this.shouldShowChild(); };
-  proto.shouldShowSelf = function () {
-    const el = this.hoverEl;
-    return this.onTarget || this.onHover || this.isFocused || el.contains(el.doc.activeElement);
-  };
-
-  /** Shown popovers that were opened from something inside this popover. */
-  Object.defineProperty(proto, "childHovers", {
-    get() { return shown.filter((other) => other !== this && other.targetEl && this.hoverEl.contains(other.targetEl)); },
-    enumerable: false,
-    configurable: true,
-  });
-
-  proto.shouldShowChild = function () { return this.childHovers.some((child) => child.shouldShow()); };
-  proto.setIsFocused = function (focused) { this.isFocused = focused; };
-
-  /** State machine: Showing -> (hide at once if the pointer left) ; Shown -> Hiding (after waitTime) -> Hidden ; Hiding -> Shown when wanted again. */
-  proto.transition = function () {
-    const wanted = this.shouldShow();
-    const state = this.state;
-    if (wanted) {
-      if (state === State.Hiding) {
-        this.state = State.Shown;
-        clearTimeout(this.timer);
-      }
-    } else if (state === State.Showing) {
-      this.hide();
-    } else if (state === State.Shown) {
-      this.state = State.Hiding;
-      this.timer = activeWindow.setTimeout(() => {
-        if (this.shouldShow()) this.transition();
-        else this.hide();
-      }, this.waitTime);
-    }
-  };
-
-  proto.show = function () {
-    const target = this.targetEl;
-    if (target && !target.doc.body.contains(target)) {
-      this.hide();
-      return;
-    }
-    this.state = State.Shown;
-    this.timer = 0;
-    this.position();
-    this.onShow();
-    pending.remove(this);
-    shown.push(this);
-    ensureTracking();
-    this.load();
-    runTransition(this.hoverEl, new host.Transition({ fn: "var(--anim-motion-swing)", duration: 80 }).addProp("opacity", "0", "1", ""));
-  };
-
-  proto.hide = function () {
-    const { hoverEl, targetEl, timer } = this;
-    this.state = State.Hidden;
-    pending.remove(this);
-    shown.remove(this);
-    clearTimeout(timer);
-    hoverEl.detach();
-    if (targetEl) {
-      targetEl.removeEventListener("mouseover", this.onMouseIn);
-      targetEl.removeEventListener("mouseout", this.onMouseOut);
-    }
-    this.onTarget = false;
-    this.onHover = false;
-    // popovers that were opened from inside this one lose their ground
-    for (const other of shown) {
-      if (!other.shouldShowSelf() && other.targetEl && this.hoverEl.contains(other.targetEl)) other.hide();
-    }
-    this.onHide();
-    this.unload();
-  };
-
-  /** Becomes the parent's current popover (replacing, and hiding, the previous one). */
-  proto.onShow = function () {
-    const parent = this.parent;
-    if (parent.hoverPopover) parent.hoverPopover.hide();
-    parent.hoverPopover = this;
-    host.hideTooltip();
-  };
-
-  proto.onHide = function () {
-    const parent = this.parent;
-    if (parent.hoverPopover === this) parent.hoverPopover = null;
-  };
-
-  /** Places the popover beside the target (or at the pointer for tall targets and static positions). */
-  proto.position = function () {
-    const { hoverEl, targetEl } = this;
-    const fixed = this.staticPos;
-    const point = fixed || pointer;
-    let rect;
-    if (!fixed && targetEl) {
-      if (pointer && targetEl.offsetHeight > 300) {
-        // a tall target (a whole note): anchor at the pointer instead
-        this.staticPos = pointer;
-        rect = { top: pointer.y - 10, bottom: pointer.y + 10, left: pointer.x, right: pointer.x };
-      } else {
-        const box = targetEl.getBoundingClientRect();
-        rect = { top: box.top, bottom: box.top + targetEl.offsetHeight, left: box.left, right: box.left + targetEl.offsetWidth };
-      }
-    } else if (point) {
-      rect = { top: point.y - 10, bottom: point.y + 10, left: point.x, right: point.x };
-      this.staticPos = point;
-    } else {
-      rect = { top: 0, bottom: 0, left: 0, right: 0 };
-    }
-    let doc = activeDocument;
-    let rtl = false;
-    if (targetEl) {
-      rtl = getComputedStyle(targetEl).direction === "rtl";
-      const mapped = host.rectInTopWindow(rect, targetEl.win);
-      rect = mapped.rect;
-      doc = mapped.win.document;
-    }
-    if (hoverEl.parentElement !== doc.body) doc.body.appendChild(hoverEl);
-    host.positionNear(rect, hoverEl, { gap: 10, preventOverlap: true, horizontalAlignment: rtl ? "right" : "left" });
-  };
-
-  /** Re-positions when `el` changes size (content loading), at most 10 times. */
-  proto.watchResize = function (el) {
-    if (!this.observer) {
-      let count = 0;
-      this.observer = new ResizeObserver(() => {
-        if (this.state !== State.Shown) return;
-        if (++count >= 10) {
-          if (this.observer) this.observer.disconnect();
-          this.observer = null;
-          return;
-        }
-        this.position();
-      });
-    }
-    this.observer.observe(el);
-  };
-
-  proto.onunload = function () {
-    host.Component.prototype.onunload.call(this);
-    if (this.observer) this.observer.disconnect();
-    this.observer = null;
-  };
-
-  return HoverPopover;
-}
+// g27: implementation lives in n-g27-events.js; shim for the spec-test loader.
 
 // ---- inherit.js ----
-// Class plumbing for the own classes that replace the application's ES5-style class bodies.
-//
-// The remaining (inherited) classes of the bundle derive from each other with plain constructor functions:
-// `var self = Base.call(this) || this`. A native `class` cannot be called that way, so every own class that is
-// subclassed from inherited code is written as a constructor function and linked with `inherit`.
-
-/** Makes `Child` derive from `Parent`: prototype chain for instances, and the constructor chain for static members. */
-function inherit(Child, Parent) {
-  Object.setPrototypeOf(Child, Parent);
-  Child.prototype = Object.create(Parent.prototype, {
-    constructor: { value: Child, writable: true, configurable: true },
-  });
-  return Child;
-}
-
-/** Defines the given functions as (non-enumerable-by-convention) prototype methods of `Class`. */
-function methods(Class, table) {
-  for (const name of Object.keys(table)) Class.prototype[name] = table[name];
-  return Class;
-}
+// g27: implementation lives in n-g27-inherit.js; shim for existing importers.
 
 // ---- keymap.js ----
 // Keyboard handling: Scope (a set of key bindings with an optional parent), a Scope variant whose parent is looked up on every key
@@ -20302,7 +19123,11 @@ function ng04WsTree(host) {
 
   M.getActiveViewOfType = function (type) {
     const leaf = this.activeLeaf;
-    return leaf && leaf.view instanceof type ? leaf.view : null;
+    if (!leaf || !leaf.view) return null;
+    if (typeof type === "string") {
+      return leaf.view.getViewType && leaf.view.getViewType() === type ? leaf.view : null;
+    }
+    return leaf.view instanceof type ? leaf.view : null;
   };
 
   M.getActiveLeafOfViewType = function (type) {
@@ -71489,6 +70314,1393 @@ function s04CssManager(host) {
 // g24 manifest declarator aliases.
 const ng24CommunityThemesUrl = s04CommunityThemesUrl;
 const ng24CommunityThemesEmpty = s04CommunityThemesEmpty;
+
+// ---- n-g27-edit-mode-base.js ----
+// g27 edit-mode-base: EditModeBase (orig aZ) — base of the source edit modes.
+// Owns the scrollDOM rearrangement (.cm-sizer > .cm-contentContainer >
+// gutters + content), the fractional-line scroll protocol, the in-editor
+// search bar scope bridging, mode keymaps and the dynamic extension set.
+
+function defineEditModeBase(host) {
+
+  function EditModeBase(app, contentEl, owner) {
+    const self = host.CodeMirrorEditor.call(this, app, contentEl, owner) || this;
+    self.isScrolling = false;
+    self.cssClasses = [];
+    const cm = self.cm;
+    const scrollDOM = cm.scrollDOM;
+    const contentDOM = cm.contentDOM;
+    contentDOM.detach();
+    const sizerEl = self.sizerEl = scrollDOM.createDiv("cm-sizer");
+    const containerEl = sizerEl.createDiv("cm-contentContainer");
+    const gutters = scrollDOM.querySelector(".cm-gutters");
+    if (gutters) containerEl.appendChild(gutters);
+    containerEl.appendChild(contentDOM);
+    scrollDOM.addEventListener("scroll", () => self.onScroll());
+    self.scope = null;
+    self.search = new host.EditorSearchBar(self.editor, self.editorEl, (scope) => {
+      if (self.scope) app.keymap.popScope(self.scope);
+      self.scope = scope || null;
+      if (self.scope) app.keymap.pushScope(self.scope);
+    });
+    self.editorEl.addEventListener("click", (event) => self.onViewClick(event));
+    return self;
+  }
+  inherit(EditModeBase, host.CodeMirrorEditor);
+
+  methods(EditModeBase, {
+
+    onScroll() {
+      this.editorSuggest.reposition();
+      if (this.isScrolling) {
+        this.isScrolling = false;
+        return;
+      }
+      this.handleScroll();
+    },
+
+    handleScroll() {
+      this.owner.syncScroll();
+    },
+
+    show() {
+      this.editorEl.show();
+    },
+
+    hide() {
+      this.editorEl.hide();
+      this.editorSuggest.close();
+      this.search.hide();
+    },
+
+    focus() {
+      const info = this.editor.getScrollInfo();
+      this.editor.focus();
+      this.editor.scrollTo(info.left, info.top);
+      if (host.Platform.isMobileApp && host.keyboard) host.keyboard.show();
+    },
+
+    // ------------------------------------------- fractional-line scroll math
+
+    getScroll() {
+      const cm = this.cm;
+      const doc = cm.state.doc;
+      const contentTop = cm.contentDOM.offsetTop;
+      const scrollTop = cm.scrollDOM.scrollTop;
+      const block = cm.lineBlockAtHeight(Math.max(scrollTop - contentTop, 0));
+      const start1 = doc.lineAt(block.from).number;
+      const end1 = doc.lineAt(Math.max(block.from, block.to - 1)).number;
+      const startLine = start1 - 1;
+      const lineSpan = Math.max(1, end1 - start1 + 1);
+      let offset = scrollTop - block.top;
+      let height = block.height;
+      if (startLine === 0) height += contentTop;
+      else offset -= contentTop;
+      return startLine + (lineSpan * Math.max(offset, 0)) / Math.max(1, height);
+    },
+
+    applyScroll(scroll) {
+      if (typeof scroll !== "number" || isNaN(scroll)) return;
+      const cm = this.cm;
+      const doc = cm.state.doc;
+      const clamped = scroll < 0 ? 0 : scroll >= doc.lines ? doc.lines - 0.99 : scroll;
+      const line = Math.floor(clamped);
+      const fraction = clamped - line;
+      const docLine = doc.line(line + 1);
+      const computeTop = () => {
+        const block = cm.lineBlockAt(docLine.from);
+        const start1 = doc.lineAt(block.from).number;
+        const end1 = doc.lineAt(Math.max(block.from, block.to - 1)).number;
+        const lineSpan = Math.max(1, end1 - start1 + 1);
+        const inner = (line + 1) - start1;
+        const contentTop = cm.contentDOM.offsetTop;
+        let top = block.top;
+        let height = block.height;
+        if (start1 === 1) height += contentTop;
+        else top += contentTop;
+        return top + ((inner + fraction) * height) / lineSpan;
+      };
+      const inView = (cm.visibleRanges || []).some(
+        (range) => docLine.from >= range.from && docLine.from <= range.to
+      );
+      this.isScrolling = true;
+      if (inView) {
+        cm.scrollDOM.scrollTop = computeTop();
+        return;
+      }
+      cm.dispatch({
+        effects: [host.CMEditorView.scrollIntoView(docLine.from, { y: "nearest" })],
+      });
+      cm.requestMeasure({
+        read: () => null,
+        write: () => {
+          const top = computeTop();
+          cm.requestMeasure({
+            read: () => top,
+            write: (value) => { cm.scrollDOM.scrollTop = value; },
+          });
+        },
+      });
+    },
+  });
+
+  methods(EditModeBase, {
+
+    showSearch(reveal) {
+      if (reveal === undefined) reveal = false;
+      this.destroyTableCell();
+      this.search.show(reveal);
+    },
+
+    // -------------------------------------------------------- extensions
+
+    buildLocalExtensions() {
+      const extensions = host.CodeMirrorEditor.prototype.buildLocalExtensions.call(this);
+      const self = this;
+      extensions.push(host.hypermdMode);
+      extensions.push(host.cmLiveDecorations);
+      extensions.push(host.cmView.scrollHandler.of((update, range) => {
+        const cell = self.tableCell;
+        return !!(
+          cell &&
+          cell.containerEl.isShown() &&
+          cell.table &&
+          cell.table.containsRange(range.anchor, range.head)
+        );
+      }));
+      extensions.push(host.cmKeymapFacet.of([
+        {
+          key: "Enter",
+          preventDefault: true,
+          run() {
+            if (!self.app.vault.getConfig("smartIndentList")) return false;
+            const state = self.cm.state;
+            const pos = state.selection.main.from;
+            if (host.isSmartIndentTarget(state, state.doc.lineAt(pos))) {
+              self.editor.newlineAndIndentOnly();
+            } else {
+              self.editor.newlineAndIndentContinueMarkdownList();
+            }
+            return true;
+          },
+          shift() {
+            if (!self.app.vault.getConfig("smartIndentList")) return false;
+            self.editor.newlineAndIndentOnly();
+            return true;
+          },
+        },
+        {
+          key: "Tab",
+          run() {
+            self.editor.indentList();
+            return true;
+          },
+          shift() {
+            self.editor.unindentList();
+            return true;
+          },
+        },
+      ]));
+      return extensions;
+    },
+
+    getDynamicExtensions() {
+      const extensions = host.CodeMirrorEditor.prototype.getDynamicExtensions.call(this);
+      const vault = this.app.vault;
+      const editorEl = this.editorEl;
+      if (vault.getConfig("showLineNumber")) {
+        extensions.push(host.cmLineNumbersFixed({ fixed: false }));
+        extensions.push(host.cmLineNumbersCompute);
+        extensions.push(host.cmLineNumbersField());
+      }
+      if (vault.getConfig("smartIndentList")) extensions.push(host.cmTableCellFilter(this));
+      if (vault.getConfig("showIndentGuide")) extensions.push(host.cmIndentGuides);
+      const foldHeading = vault.getConfig("foldHeading");
+      const foldIndent = vault.getConfig("foldIndent");
+      const folding = foldHeading || foldIndent;
+      editorEl.toggleClass("is-folding", folding);
+      if (folding) {
+        extensions.push(host.cmFoldGutter());
+        extensions.push(host.cmFoldDecorations);
+        if (foldHeading) extensions.push(host.cmFoldHeading);
+        if (foldIndent) extensions.push(host.cmFoldIndent);
+        extensions.push(host.cmFoldFrontmatter);
+      }
+      if (vault.getConfig("autoPairBrackets") || vault.getConfig("autoPairMarkdown")) {
+        extensions.push([host.cmAutoPair]);
+      }
+      editorEl.toggleClass("show-properties", vault.getConfig("propertiesInDocument") === "visible");
+      return extensions;
+    },
+
+    setCssClass(classes) {
+      const editorEl = this.editorEl;
+      editorEl.removeClasses(this.cssClasses);
+      let rest = [];
+      if (classes && classes.length) {
+        rest = classes.filter((cls) => !editorEl.hasClass(cls));
+        if (rest.length) editorEl.addClasses(rest);
+      }
+      this.cssClasses = rest;
+    },
+
+    onCssChange() {
+      this.cm.dispatch({ effects: [host.cmClearCacheEffect.of()] });
+      this.editor.refresh();
+    },
+
+    onViewClick(event) {
+      if (event.defaultPrevented) return;
+      this.editorSuggest.close();
+      setTimeout(() => this.editor.removeHighlights(), 0);
+    },
+
+    onUpdate(update, isUserEvent) {
+      host.CodeMirrorEditor.prototype.onUpdate.call(this, update, isUserEvent);
+      const workspace = this.app.workspace;
+      if (update.docChanged) workspace.trigger("editor-change", this.editor, this.owner);
+      if (update.selectionSet || isUserEvent || update.focusChanged) {
+        workspace.trigger("editor-selection-change", this.editor, this.owner);
+      }
+    },
+
+    onConfigChanged(configKey) {
+      host.CodeMirrorEditor.prototype.onConfigChanged.call(this, configKey);
+      if (
+        configKey === "showLineNumber" || configKey === "showIndentGuide" ||
+        configKey === "foldHeading" || configKey === "foldIndent" ||
+        configKey === "propertiesInDocument"
+      ) {
+        this.updateOptions();
+      }
+    },
+  });
+
+  return EditModeBase;
+}
+
+// ---- n-g27-edit-mode.js ----
+// g27 edit-mode: MarkdownEditMode (orig j6) — the "source" edit mode of a
+// MarkdownView. Extends EditModeBase; reparents title/properties/backlinks into
+// the editor sizer, keeps ephemeral cursor/scroll/highlight state, computes
+// fold info including the properties block, adds the live-preview properties
+// extension, sizes bottom padding and debounces save/fold/internal changes.
+
+function defineMarkdownEditMode(host) {
+
+  // char offset inside a text block -> {line (0-based), ch}
+  function ng27TextPos(content, offset) {
+    offset = Math.max(0, Math.min(offset, content.length));
+    let line = 0;
+    let lineStart = 0;
+    for (let i = 0; i < offset; i++) {
+      if (content.charCodeAt(i) === 10) {
+        line++;
+        lineStart = i + 1;
+      }
+    }
+    return { line, ch: offset - lineStart };
+  }
+
+  function ng27CssPx(el, name, doc) {
+    const view = doc || (el && el.ownerDocument) || document;
+    const raw = view.defaultView.getComputedStyle(view.documentElement).getPropertyValue(name);
+    const value = parseFloat(raw);
+    return isNaN(value) ? 0 : value;
+  }
+
+  function MarkdownEditMode(view) {
+    const self = host.EditModeBase.call(this, view.app, view.contentEl, view) || this;
+    self.type = "source";
+    self.view = view;
+    self.app = view.app;
+    self.requestOnInternalDataChange = host.debounce(() => view.onInternalDataChange(), 10);
+    self.requestSaveFolds = host.debounce(() => view.onMarkdownFold(), 500);
+    self.propertiesExtension = null;
+    self.search.applyScope = (scope) => { view.scope = scope; };
+    view.addChild(self);
+    self.updateReadableLineLength();
+    self.updateOptions();
+    self.cm.scrollDOM.addEventListener("contextmenu", (event) => self.onViewportMenu(event));
+    return self;
+  }
+  inherit(MarkdownEditMode, host.EditModeBase);
+
+  methods(MarkdownEditMode, {
+
+    show() {
+      host.EditModeBase.prototype.show.call(this);
+      const sizer = this.sizerEl;
+      sizer.prepend(this.view.metadataEditor.containerEl);
+      sizer.prepend(this.view.inlineTitleEl);
+      sizer.appendChild(this.view.backlinksEl);
+    },
+
+    set() {
+      return host.EditModeBase.prototype.set.apply(this, arguments);
+    },
+
+    clear() {
+      host.EditModeBase.prototype.clear.call(this);
+      this.propertiesExtension = null;
+    },
+
+    destroy() {
+      host.EditModeBase.prototype.destroy.call(this);
+      this.propertiesExtension = null;
+    },
+
+    getSelection() {
+      return this.editor.getSelection();
+    },
+
+    beforeUnload() {
+      this.requestOnInternalDataChange.cancel();
+      this.requestSaveFolds.run();
+      this.saveHistory();
+    },
+
+    // ------------------------------------------------ ephemeral state
+
+    getEphemeralState(state) {
+      const sel = this.cm.state.selection.main;
+      state.cursor = {
+        from: this.editor.offsetToPos(sel.anchor),
+        to: this.editor.offsetToPos(sel.head),
+      };
+      return state;
+    },
+
+    setEphemeralState(state) {
+      this.setState(state);
+      this.setHighlight(state);
+    },
+
+    setState(state) {
+      state = state || {};
+      let focus = false;
+      const cursor = state.cursor;
+      if (cursor && cursor.from) {
+        const info = this.editor.getScrollInfo();
+        this.editor.setSelection(cursor.from, cursor.to);
+        this.editor.scrollTo(info.left, info.top);
+        if (host.Platform.isDesktop) focus = true;
+      } else {
+        focus = !!state.focus && (!host.Platform.isMobile || !!state.focusOnMobile);
+      }
+      if (state.focusMetadata) {
+        const metadata = this.view.metadataEditor;
+        if (this.view.canShowProperties() && metadata && metadata.properties && metadata.properties.length > 0) {
+          metadata.focus();
+          focus = false;
+        } else {
+          focus = true;
+        }
+      }
+      if (Object.prototype.hasOwnProperty.call(state, "scroll")) this.applyScroll(state.scroll);
+      if (focus) this.focus();
+    },
+
+    // ------------------------------------------------------- highlights
+
+    setHighlight(state) {
+      if (!state) return;
+      const doc = this.cm.state.doc;
+      if (state.startLoc != null && state.endLoc !== undefined) {
+        const start = { line: state.startLoc.line, ch: state.startLoc.col };
+        const end = state.endLoc
+          ? { line: state.endLoc.line, ch: state.endLoc.col }
+          : { line: doc.lines - 1, ch: doc.line(doc.lines).length };
+        this.editor.addHighlights([{ from: start, to: end }], "is-flashing", true, true);
+        this.isScrolling = true;
+        this.onScroll();
+        return;
+      }
+      if (state.line !== undefined && state.line >= 0) {
+        const line = doc.line(Math.min(state.line + 1, doc.lines));
+        const from = { line: state.line, ch: 0 };
+        const to = { line: state.line, ch: line.text.length };
+        this.editor.setSelection(to);
+        this.editor.addHighlights([{ from, to }], "is-flashing", true, true);
+        this.isScrolling = true;
+        this.onScroll();
+        return;
+      }
+      const propertyMatches = state.propertyMatches;
+      if (propertyMatches !== undefined) {
+        if (!propertyMatches || propertyMatches.length === 0) return;
+        if (this.app.vault.getConfig("propertiesInDocument") === "hidden" || this.view.canShowProperties()) {
+          host.propertiesPlugin(this.app).then((plugin) => {
+            host.focusWhenShown(plugin.containerEl, () => plugin.focusProperty(propertyMatches[0].key));
+          });
+        } else {
+          this.editor.setSelection({ line: 0, ch: 0 });
+          this.isScrolling = true;
+          this.onScroll();
+        }
+        return;
+      }
+      const match = state.match;
+      if (match && match.content && match.matches) {
+        const ranges = [];
+        for (const pair of match.matches) {
+          ranges.push({ from: ng27TextPos(match.content, pair[0]), to: ng27TextPos(match.content, pair[1]) });
+        }
+        if (ranges.length) {
+          this.editor.addHighlights(ranges, "is-flashing", true, true);
+          this.isScrolling = true;
+          this.onScroll();
+        }
+      }
+    },
+
+    highlightSearchMatches(ranges, scroll, moveCursor, flash) {
+      if (scroll === undefined) scroll = true;
+      if (moveCursor === undefined) moveCursor = true;
+      if (flash === undefined) flash = true;
+      if (!ranges || ranges.length === 0) {
+        this.editor.removeHighlights("is-flashing");
+        return;
+      }
+      this.editor.addHighlights(ranges, "is-flashing", flash, true);
+      const first = ranges[0];
+      if (moveCursor) this.editor.setSelection(first.from);
+      if (scroll) this.editor.scrollIntoView({ from: first.to, to: first.from }, true);
+    },
+  });
+
+  methods(MarkdownEditMode, {
+
+    // ------------------------------------------------------------- folds
+
+    getFoldInfo() {
+      const info = host.EditModeBase.prototype.getFoldInfo.call(this);
+      const view = this.view;
+      const metadata = view.metadataEditor;
+      if (view.canShowProperties() && metadata && metadata.properties && metadata.properties.length > 0) {
+        info.folds = (info.folds || []).filter((fold) => fold.from !== 0);
+        if (metadata.collapsed) info.folds.unshift({ from: 0, to: 0 });
+      }
+      return info;
+    },
+
+    getDynamicExtensions() {
+      const extensions = host.EditModeBase.prototype.getDynamicExtensions.call(this);
+      if (!this.sourceMode) {
+        if (!this.propertiesExtension) {
+          this.propertiesExtension = host.propertiesExtensionFactory(this, this.view);
+        }
+        extensions.push(this.propertiesExtension);
+      }
+      return extensions;
+    },
+
+    onUpdate(update, isUserEvent) {
+      host.EditModeBase.prototype.onUpdate.call(this, update, isUserEvent);
+      if (isUserEvent) {
+        this.view.requestSave();
+        this.requestSaveFolds();
+        this.requestOnInternalDataChange();
+      }
+      const transactions = update.transactions || [];
+      let foldChanged = false;
+      for (const tr of transactions) {
+        if (tr.effects && tr.effects.some((e) => e.is(host.cmFoldEffect) || e.is(host.cmUnfoldEffect))) {
+          foldChanged = true;
+          break;
+        }
+      }
+      if (foldChanged) this.requestSaveFolds();
+    },
+
+    onResize() {
+      host.EditModeBase.prototype.onResize.call(this);
+      if (this.containerEl.offsetParent) this.updateBottomPadding(this.containerEl.clientHeight);
+    },
+
+    updateBottomPadding(height) {
+      const view = this.view;
+      const contentDOM = this.cm.contentDOM;
+      const doc = contentDOM.ownerDocument;
+      let padding;
+      if (host.Platform.isMobile) {
+        let extra = ng27CssPx(doc.documentElement, "--keyboard-height", doc);
+        if (this.app.mobileToolbar && this.app.mobileToolbar.isVisible) {
+          extra += ng27CssPx(doc.body, "--mobile-toolbar-height", doc);
+        }
+        padding = Math.round((height + extra) / 2) + "px";
+      } else {
+        padding = Math.round(height / 2) + "px";
+      }
+      if (view.backlinksEl && view.backlinksEl.isShown()) {
+        padding = "100px";
+        view.backlinksEl.style.minHeight = Math.max(0, height / 2 - 100) + "px";
+      }
+      contentDOM.style.paddingBottom = padding;
+    },
+
+    updateReadableLineLength() {
+      this.editorEl.toggleClass("is-readable-line-width", !!this.app.vault.getConfig("readableLineLength"));
+    },
+
+    onConfigChanged(configKey) {
+      host.EditModeBase.prototype.onConfigChanged.call(this, configKey);
+      if (configKey === "readableLineLength") this.updateReadableLineLength();
+    },
+
+    // ------------------------------------------------------- viewport menu
+
+    onViewportMenu(event) {
+      if (event.defaultPrevented || !event.isTrusted) return;
+      if (typeof PointerEvent !== "undefined" && event instanceof PointerEvent && event.pointerType === "touch") return;
+      const target = event.targetNode || event.target;
+      if (!this.sizerEl.contains(target)) return;
+      const parent = target.parentElement;
+      if (parent && parent.classList && parent.classList.contains("cm-gutters")) return;
+      const menu = host.Menu.forEvent(event).addSections(["view", ""]);
+      this.app.workspace.trigger("markdown-viewport-menu", menu, this.view, "source", "gutter");
+    },
+  });
+
+  return MarkdownEditMode;
+}
+
+// ---- n-g27-env.js ----
+// g27 env: single lazy access point to application-scope (bundle) values.
+// bindEnv installs one thunk exactly once at bundle init; env() invokes the
+// thunk on EVERY call and returns its result — never cached, so late-bound
+// bundle variables stay correct. Before binding, env() yields {}.
+
+let ng27EnvThunk = () => ({});
+
+function bindEnv(t) {
+  ng27EnvThunk = t;
+}
+
+function env() {
+  return ng27EnvThunk();
+}
+
+const hostEnv = env;
+
+// ---- n-g27-events.js ----
+// g27 events: Events (named-event emitter, orig VT) and Component
+// (load/unload lifecycle base, orig jm). Frozen plugin-facing surface:
+// Events stores subscriptions in `this._` as {e,name,fn,ctx} records;
+// Component owns `_loaded`, `_events` (LIFO cleanups) and `_children`.
+
+
+function defineEvents() {
+  function Events() {
+    this._ = {};
+  }
+
+  methods(Events, {
+    on(name, callback, context) {
+      const ref = { e: this, name, fn: callback, ctx: context };
+      const list = this._[name] || (this._[name] = []);
+      list.push(ref);
+      return ref;
+    },
+
+    off(name, callback) {
+      const list = this._[name];
+      if (!list) return;
+      if (!callback) {
+        delete this._[name];
+        return;
+      }
+      for (let i = list.length - 1; i >= 0; i--) {
+        if (list[i].fn === callback) list.splice(i, 1);
+      }
+      if (list.length === 0) delete this._[name];
+    },
+
+    offref(ref) {
+      if (!ref) return;
+      const list = this._[ref.name];
+      if (!list) return;
+      const i = list.indexOf(ref);
+      if (i >= 0) list.splice(i, 1);
+      if (list.length === 0) delete this._[ref.name];
+    },
+
+    trigger(name) {
+      const list = this._[name];
+      if (!list || list.length === 0) return;
+      const args = Array.prototype.slice.call(arguments, 1);
+      const subs = list.slice();
+      for (let i = 0; i < subs.length; i++) this.tryTrigger(subs[i], args);
+    },
+
+    tryTrigger(sub, args) {
+      try {
+        sub.fn.apply(sub.ctx, args);
+      } catch (err) {
+        // surface on a fresh macrotask: escapes promise machinery, cannot
+        // break the remaining subscribers or the trigger caller
+        setTimeout(() => { throw err; }, 0);
+      }
+    },
+  });
+
+  return Events;
+}
+
+function defineComponent() {
+  function Component() {
+    this._loaded = false;
+    this._events = [];
+    this._children = [];
+  }
+
+  methods(Component, {
+    onload() {},
+
+    onunload() {},
+
+    load() {
+      if (this._loaded) return;
+      this._loaded = true;
+      const pending = [];
+      const own = this.onload();
+      if (own && typeof own.then === "function") pending.push(own);
+      const children = this._children.slice();
+      for (let i = 0; i < children.length; i++) {
+        const result = children[i].load();
+        if (result && typeof result.then === "function") pending.push(result);
+      }
+      if (pending.length > 0) return Promise.all(pending).then(() => {});
+    },
+
+    unload() {
+      if (!this._loaded) return;
+      this._loaded = false;
+      while (this._children.length > 0) this._children.pop().unload();
+      while (this._events.length > 0) this._events.pop()();
+      this.onunload();
+    },
+
+    addChild(child) {
+      this._children.push(child);
+      if (this._loaded) child.load();
+      return child;
+    },
+
+    removeChild(child) {
+      const i = this._children.indexOf(child);
+      if (i >= 0) {
+        this._children.splice(i, 1);
+        child.unload();
+      }
+      return child;
+    },
+
+    register(cleanup) {
+      this._events.push(cleanup);
+    },
+
+    registerEvent(ref) {
+      this.register(() => ref.e.offref(ref));
+    },
+
+    registerDomEvent(target, type, listener, options) {
+      target.addEventListener(type, listener, options);
+      this.register(() => target.removeEventListener(type, listener, options));
+    },
+
+    registerScopeEvent(handler) {
+      this.register(() => handler.scope.unregister(handler));
+    },
+
+    registerInterval(id) {
+      this.register(() => clearInterval(id));
+      return id;
+    },
+  });
+
+  return Component;
+}
+
+// ---- n-g27-fileview.js ----
+// g27 fileview: FileView (orig MD) — an ItemView bound to one vault file.
+// Owns the file binding, header breadcrumbs, rename/delete reaction, view-state
+// persistence (state.file) and linked-tab sync inside a tab group.
+
+function defineFileView(host) {
+  function FileView(leaf) {
+    const self = host.ItemView.call(this, leaf) || this;
+    self.allowNoFile = false;
+    self.navigation = true;
+    self.file = null;
+    return self;
+  }
+  inherit(FileView, host.ItemView);
+
+  methods(FileView, {
+
+    getDisplayText() {
+      return this.file ? this.file.basename : host.t.interface.noFile();
+    },
+
+    // ------------------------------------------------------------ breadcrumbs
+
+    renderBreadcrumbs() {
+      const parentEl = this.titleParentEl;
+      parentEl.empty();
+      const file = this.file;
+      const folder = file && file.parent;
+      if (!folder || folder.path === "/") return;
+      const app = this.app;
+      const vault = app.vault;
+      const segments = folder.path.split("/").filter((s) => s.length > 0);
+      let prefix = "";
+      for (const segment of segments) {
+        prefix = prefix ? prefix + "/" + segment : segment;
+        const crumb = parentEl.createEl("span", { cls: "view-header-breadcrumb" });
+        crumb.setText(segment);
+        const dir = vault.getAbstractFileByPath(prefix);
+        if (!host.Platform.isMobile) host.setTooltip(crumb, segment);
+        crumb.addEventListener("click", () => {
+          const explorer = app.internalPlugins.getEnabledPluginById("file-explorer");
+          if (explorer && explorer.revealInFolder && dir) explorer.revealInFolder(dir);
+        });
+        crumb.addEventListener("contextmenu", (event) => {
+          if (!dir) return;
+          const menu = host.Menu.forEvent(event);
+          menu.addSections(["title", "open", "action-primary", "action", "info", "info.copy", "view", "system", "", "danger"]);
+          menu.addItem((item) => item
+            .setSection("action-primary")
+            .setTitle(host.t.plugins.fileExplorer.menuOptNewNote())
+            .setIcon("lucide-edit")
+            .onClick(async (clickEvent) => {
+              const created = await app.fileManager.createNewMarkdownFile(dir, null);
+              if (!created) return;
+              const leaf = app.workspace.getLeaf(host.Keymap.isModEvent(clickEvent));
+              await leaf.openFile(created, { active: true, state: { mode: "source" }, eState: { rename: "all" } });
+            }));
+          menu.setParentElement(crumb);
+          app.workspace.trigger("file-menu", menu, dir, "file-explorer-context-menu");
+        });
+        app.dragManager.handleDrag(crumb, (evt) => {
+          const target = vault.getAbstractFileByPath(prefix);
+          if (!(target instanceof host.TFolder)) return null;
+          app.dragManager.updateSource([crumb], "is-being-dragged");
+          return app.dragManager.dragFolder(evt, target, "file-explorer");
+        });
+        parentEl.createEl("span", { cls: "view-header-breadcrumb-separator", text: "/" });
+      }
+    },
+
+    // ------------------------------------------------------------ lifecycle
+
+    onload() {
+      host.ItemView.prototype.onload.call(this);
+      this.registerEvent(this.app.vault.on("rename", this.onRename, this));
+      this.registerEvent(this.app.vault.on("delete", this.onDelete, this));
+    },
+
+    getState() {
+      const state = host.ItemView.prototype.getState.call(this);
+      if (this.file) state.file = this.file.path;
+      return state;
+    },
+
+    setState(state, result) {
+      return (async () => {
+        state = state || {};
+        let changed = false;
+        if (Object.prototype.hasOwnProperty.call(state, "file")) {
+          const resolved = this.app.vault.getAbstractFileByPath(state.file);
+          if (resolved instanceof host.TFile) changed = await this.loadFile(resolved);
+          else changed = await this.loadFile(null);
+        }
+        if (!this.file && !this.allowNoFile) result.close = true;
+        if (changed) {
+          result.layout = true;
+          result.history = true;
+        }
+        await host.ItemView.prototype.setState.call(this, state, result);
+        if (!state.sync && (result.layout || result.history)) {
+          result.done = () => this.syncState();
+        }
+      })();
+    },
+
+    onClose() {
+      return (async () => {
+        this.contentEl.empty();
+        await this.loadFile(null);
+      })();
+    },
+
+    /** false when `file` is already bound; true after any (re)bind attempt. */
+    async loadFile(file) {
+      if (file === this.file) return false;
+      const previous = this.file;
+      if (previous) await this.onUnloadFile(previous);
+      this.file = null;
+      if (file) {
+        try {
+          this.file = file;
+          await this.onLoadFile(file);
+        } catch (err) {
+          this.file = null;
+          new host.Notice(host.t.interface.msgFailedToLoadFile({ plugin: file.path }));
+          console.error(err);
+        }
+      }
+      this.renderBreadcrumbs();
+      this.titleEl.setText(this.getDisplayText());
+      if (this.leaf.isActiveLeaf()) this.app.workspace.requestActiveLeafEvents();
+      this.leaf.updateHeader();
+      return true;
+    },
+
+    async onLoadFile(file) {},
+    async onUnloadFile(file) {},
+
+    // ------------------------------------------------------------ vault events
+
+    async onRename(file) {
+      if (file !== this.file) return;
+      this.renderBreadcrumbs();
+      this.titleEl.setText(file.basename);
+      this.app.workspace.onLayoutChange();
+      this.leaf.updateHeader();
+    },
+
+    async onDelete(file) {
+      if (file !== this.file) return;
+      const leaf = this.leaf;
+      if (this.allowNoFile) {
+        await this.loadFile(null);
+      } else if (leaf.history.backHistory.length > 0) {
+        await leaf.history.back();
+      } else {
+        await leaf.open(null);
+      }
+      if (this.leaf.view instanceof host.EmptyView && leaf.parent && leaf.parent.children.length > 1) {
+        leaf.detach();
+      }
+      this.app.workspace.onLayoutChange();
+    },
+
+    // ------------------------------------------------------------ linked tabs
+
+    syncState() {
+      const group = this.leaf.group;
+      if (!group) return;
+      for (const leaf of this.app.workspace.getGroupLeaves(group)) {
+        if (leaf === this.leaf) continue;
+        const view = leaf.view;
+        if (view instanceof FileView) view.receiveSyncState(this);
+      }
+    },
+
+    receiveSyncState(source) {
+      if (source.file !== this.file) this.leaf.openFile(source.file);
+    },
+
+    canAcceptExtension() {
+      return false;
+    },
+  });
+
+  return FileView;
+}
+
+// ---- n-g27-frontmatter.js ----
+// g27 frontmatter: readers for well-known properties of a PARSED frontmatter
+// object (plain JS object from the YAML parser — never raw text).
+// frontmatterEntry(frontmatter, key): string key = own property lookup
+// (hasOwnProperty — inherited names never match); RegExp key = first own
+// enumerable key (in enumeration order) that test()s true.
+// frontmatterStrings: scalar string -> [trimmed]; array -> trimmed string
+// elements only (other types dropped, [] possible); anything else -> null.
+// frontmatterTags: /^tags$/i via frontmatterStrings, drop empties and entries
+// containing a space, prefix "#" unless already present.
+// frontmatterAliases: /^aliases$/i via frontmatterStrings, trim again, drop
+// empties.
+
+function ng27FmLookup(frontmatter, key) {
+  if (frontmatter == null) return null;
+  if (typeof key === "string") {
+    return Object.prototype.hasOwnProperty.call(frontmatter, key) ? frontmatter[key] : null;
+  }
+  for (const name of Object.keys(frontmatter)) {
+    if (key.test(name)) return frontmatter[name];
+  }
+  return null;
+}
+
+function frontmatterEntry(frontmatter, key) {
+  return ng27FmLookup(frontmatter, key);
+}
+
+function frontmatterStrings(frontmatter, key) {
+  const value = ng27FmLookup(frontmatter, key);
+  if (!value) return null;
+  if (typeof value === "string") return [value.trim()];
+  if (Array.isArray(value)) {
+    const out = [];
+    for (const item of value) {
+      if (typeof item === "string") out.push(item.trim());
+    }
+    return out;
+  }
+  return null;
+}
+
+function frontmatterTags(frontmatter) {
+  const list = frontmatterStrings(frontmatter, /^tags$/i);
+  if (list == null) return null;
+  const out = [];
+  for (const tag of list) {
+    if (!tag || tag.indexOf(" ") >= 0) continue;
+    out.push(tag.charAt(0) === "#" ? tag : "#" + tag);
+  }
+  return out;
+}
+
+function frontmatterAliases(frontmatter) {
+  const list = frontmatterStrings(frontmatter, /^aliases$/i);
+  if (list == null) return null;
+  const out = [];
+  for (const alias of list) {
+    const trimmed = alias.trim();
+    if (trimmed) out.push(trimmed);
+  }
+  return out;
+}
+
+// ---- n-g27-hover-popover.js ----
+// g27 hover-popover: HoverPopover (orig rX) — delayed floating preview with a
+// shared global tracker (pending + shown lists, pointer poll, global click).
+
+function defineHoverPopover(host) {
+
+  // ---- shared tracker (module singleton, shared by every instance) --------
+  const pending = [];
+  const shown = [];
+  let pointer = null;      // {x, y, doc} of the last tracked mousemove
+  let pollTimer = 0;
+  let tracking = false;
+
+  function trackPointer(event) {
+    const target = event.targetNode || event.target;
+    pointer = {
+      x: event.clientX,
+      y: event.clientY,
+      doc: event.doc || (target && target.ownerDocument) || document,
+    };
+  }
+
+  function onGlobalClick(event) {
+    for (const pop of pending.slice()) pop.hide();
+    const target = event.targetNode || event.target;
+    const win = event.win
+      || (target && target.ownerDocument && target.ownerDocument.defaultView)
+      || window;
+    for (const pop of shown.slice()) {
+      let keep = pop.isFocused;
+      if (!keep && target) {
+        keep = pop.hoverEl.contains(target);
+        if (!keep) {
+          for (const child of pop.childHovers) {
+            if (child.hoverEl.contains(target)) { keep = true; break; }
+          }
+        }
+      }
+      if (!keep) win.setTimeout(() => pop.hide(), 5);
+    }
+  }
+
+  function poll() {
+    if (!pointer) return;
+    const under = pointer.doc.elementFromPoint(pointer.x, pointer.y);
+    for (const pop of shown.slice()) {
+      pop.detect(under);
+      pop.transition();
+    }
+  }
+
+  function ensureTracking() {
+    if (tracking) return;
+    tracking = true;
+    window.addEventListener("click", onGlobalClick, true);
+    window.addEventListener("contextmenu", onGlobalClick, true);
+    window.addEventListener("mousemove", trackPointer);
+    pollTimer = window.setInterval(poll, 500);
+  }
+
+  function stopTracking() {
+    if (!tracking) return;
+    tracking = false;
+    window.removeEventListener("click", onGlobalClick, true);
+    window.removeEventListener("contextmenu", onGlobalClick, true);
+    window.removeEventListener("mousemove", trackPointer);
+    window.clearInterval(pollTimer);
+    pollTimer = 0;
+    pointer = null;
+  }
+
+  // ---- the popover ---------------------------------------------------------
+
+  function HoverPopover(parent, targetEl, waitTime, staticPos) {
+    const self = host.Component.call(this) || this;
+    self.parent = parent;
+    self.targetEl = targetEl;
+    self.waitTime = waitTime === undefined ? 300 : waitTime;
+    self.staticPos = staticPos || null;
+    self.onTarget = true;
+    self.onHover = false;
+    self.isFocused = false;
+    self.state = host.PopoverState.Showing;
+    self.timer = 0;
+    self.observer = null;
+    self.hoverEl = createDiv("popover hover-popover");
+    self._targetIn = (event) => self.onMouseIn(event);
+    self._targetOut = (event) => self.onMouseOut(event);
+    self._hoverIn = (event) => {
+      if (host.pointerEntered(event, self.hoverEl)) {
+        self.onHover = true;
+        self.transition();
+      }
+    };
+    self._hoverOut = (event) => {
+      if (host.pointerEntered(event, self.hoverEl)) {
+        self.onHover = false;
+        self.transition();
+      }
+    };
+    if (targetEl) {
+      targetEl.addEventListener("mouseover", self._targetIn);
+      targetEl.addEventListener("mouseout", self._targetOut);
+    }
+    self.hoverEl.addEventListener("mouseover", self._hoverIn);
+    self.hoverEl.addEventListener("mouseout", self._hoverOut);
+    self.timer = host.activeWindow.setTimeout(() => {
+      self.timer = 0;
+      self.show();
+    }, self.waitTime);
+    pending.push(self);
+    ensureTracking();
+    return self;
+  }
+  inherit(HoverPopover, host.Component);
+
+  methods(HoverPopover, {
+
+    onMouseIn(event) {
+      if (this.targetEl && !host.pointerEntered(event, this.targetEl)) return;
+      this.onTarget = true;
+      this.transition();
+    },
+
+    onMouseOut(event) {
+      if (this.targetEl && !host.pointerEntered(event, this.targetEl)) return;
+      this.onTarget = false;
+      this.transition();
+    },
+
+    detect(el) {
+      const targetEl = this.targetEl;
+      if (targetEl) this.onTarget = el === targetEl || targetEl.contains(el);
+      this.onHover = el === this.hoverEl || this.hoverEl.contains(el);
+    },
+
+    shouldShow() {
+      return this.shouldShowSelf() || this.shouldShowChild();
+    },
+
+    shouldShowSelf() {
+      const doc = this.hoverEl.doc || this.hoverEl.ownerDocument || document;
+      return this.onTarget || this.onHover || this.isFocused || this.hoverEl.contains(doc.activeElement);
+    },
+
+    shouldShowChild() {
+      for (const child of this.childHovers) if (child.shouldShow()) return true;
+      return false;
+    },
+
+    setIsFocused(focused) {
+      this.isFocused = focused;
+    },
+
+    clearTimer() {
+      if (this.timer) {
+        host.activeWindow.clearTimeout(this.timer);
+        this.timer = 0;
+      }
+    },
+
+    transition() {
+      const wanted = this.shouldShow();
+      if (wanted) {
+        if (this.state === host.PopoverState.Hiding) {
+          this.state = host.PopoverState.Shown;
+          this.clearTimer();
+        }
+        return;
+      }
+      if (this.state === host.PopoverState.Showing) {
+        this.hide();
+        return;
+      }
+      if (this.state === host.PopoverState.Shown) {
+        this.state = host.PopoverState.Hiding;
+        this.timer = host.activeWindow.setTimeout(() => {
+          this.timer = 0;
+          if (this.shouldShow()) this.transition();
+          else this.hide();
+        }, this.waitTime);
+      }
+    },
+  });
+
+  methods(HoverPopover, {
+
+    show() {
+      const targetEl = this.targetEl;
+      if (targetEl) {
+        const doc = targetEl.doc || targetEl.ownerDocument || document;
+        if (!doc.body.contains(targetEl)) {
+          this.hide();
+          return;
+        }
+      }
+      this.state = host.PopoverState.Shown;
+      this.timer = 0;
+      this.position();
+      this.onShow();
+      const pi = pending.indexOf(this);
+      if (pi >= 0) pending.splice(pi, 1);
+      if (shown.indexOf(this) < 0) shown.push(this);
+      ensureTracking();
+      this.load();
+      runTransition(
+        this.hoverEl,
+        new host.Transition({ fn: "var(--anim-motion-swing)", duration: 80 }).addProp("opacity", "0", "1", "")
+      );
+    },
+
+    hide() {
+      this.state = host.PopoverState.Hidden;
+      const pi = pending.indexOf(this);
+      if (pi >= 0) pending.splice(pi, 1);
+      const si = shown.indexOf(this);
+      if (si >= 0) shown.splice(si, 1);
+      if (!pending.length && !shown.length) stopTracking();
+      this.clearTimer();
+      this.hoverEl.detach();
+      const targetEl = this.targetEl;
+      if (targetEl) {
+        targetEl.removeEventListener("mouseover", this._targetIn);
+        targetEl.removeEventListener("mouseout", this._targetOut);
+      }
+      this.onTarget = true;
+      this.onHover = false;
+      const hoverEl = this.hoverEl;
+      for (const pop of shown.slice()) {
+        if (pop === this) continue;
+        if (pop.targetEl && hoverEl.contains(pop.targetEl) && !pop.shouldShowSelf()) pop.hide();
+      }
+      this.onHide();
+      this.unload();
+    },
+
+    onShow() {
+      const prev = this.parent && this.parent.hoverPopover;
+      if (prev && prev !== this) prev.hide();
+      if (this.parent) this.parent.hoverPopover = this;
+      host.hideTooltip();
+    },
+
+    onHide() {
+      if (this.parent && this.parent.hoverPopover === this) this.parent.hoverPopover = null;
+    },
+  });
+
+  methods(HoverPopover, {
+
+    position() {
+      const targetEl = this.targetEl;
+      const point = (p) => ({ top: p.y - 10, bottom: p.y + 10, left: p.x, right: p.x });
+      let rect;
+      if (this.staticPos) {
+        rect = point(this.staticPos);
+      } else if (targetEl) {
+        if (targetEl.offsetHeight > 300 && pointer) {
+          this.staticPos = { x: pointer.x, y: pointer.y };
+          rect = point(this.staticPos);
+        } else {
+          const box = targetEl.getBoundingClientRect();
+          rect = {
+            top: box.top,
+            bottom: box.top + targetEl.offsetHeight,
+            left: box.left,
+            right: box.left + targetEl.offsetWidth,
+          };
+        }
+      } else if (pointer) {
+        rect = point(pointer);
+      } else {
+        rect = { top: 0, bottom: 0, left: 0, right: 0 };
+      }
+      const win = targetEl
+        ? (targetEl.win || (targetEl.ownerDocument && targetEl.ownerDocument.defaultView) || window)
+        : ((pointer && pointer.doc && pointer.doc.defaultView) || window);
+      let rtl = false;
+      if (targetEl) {
+        try { rtl = win.getComputedStyle(targetEl).direction === "rtl"; } catch (e) { /* cross-window */ }
+      }
+      const mapped = host.rectInTopWindow(rect, win) || { rect, win };
+      const topWin = mapped.win || win;
+      topWin.document.body.appendChild(this.hoverEl);
+      host.positionNear(mapped.rect || rect, this.hoverEl, {
+        gap: 10,
+        preventOverlap: true,
+        horizontalAlignment: rtl ? "right" : "left",
+      });
+    },
+
+    watchResize(el) {
+      if (!this.observer) {
+        let fires = 0;
+        const self = this;
+        this.observer = new ResizeObserver(() => {
+          if (self.state !== host.PopoverState.Shown) return;
+          self.position();
+          fires++;
+          if (fires >= 10) {
+            self.observer.disconnect();
+            self.observer = null;
+          }
+        });
+      }
+      this.observer.observe(el);
+    },
+
+    onunload() {
+      host.Component.prototype.onunload.call(this);
+      if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;
+      }
+    },
+  });
+
+  Object.defineProperty(HoverPopover.prototype, "childHovers", {
+    get() {
+      const hoverEl = this.hoverEl;
+      return shown.filter((pop) => pop !== this && pop.targetEl && hoverEl.contains(pop.targetEl));
+    },
+  });
+
+  return HoverPopover;
+}
+
+// ---- n-g27-inherit.js ----
+// g27 inherit: ES5-style class plumbing.
+// inherit(Child, Parent) links BOTH the static chain (Child -> Parent) and the
+// instance chain (Child.prototype -> Parent.prototype) with a non-enumerable
+// `constructor` own property, and returns Child.
+// methods(Class, table) bulk-assigns own enumerable keys onto Class.prototype
+// with plain assignment semantics (writable/configurable/enumerable) and
+// returns Class.
+
+function inherit(Child, Parent) {
+  Child.prototype = Object.create(Parent.prototype, {
+    constructor: { value: Child, writable: true, configurable: true },
+  });
+  Object.setPrototypeOf(Child, Parent);
+  return Child;
+}
+
+function methods(Class, table) {
+  for (const name of Object.keys(table)) Class.prototype[name] = table[name];
+  return Class;
+}
+
+// ---- n-g27-registry.js ----
+// g27 registry: ViewRegistry (orig p0) — app.viewRegistry. Maps view-type
+// names to creator functions and file extensions to view types; seeds itself
+// with the built-in views. An Events subclass so on/off/trigger/offref work.
+
+function defineViewRegistry(host) {
+  function ViewRegistry() {
+    const self = host.Events.call(this) || this;
+    self.viewByType = {};
+    self.typeByExtension = {};
+    const builtins = [
+      [host.markdownExtensions, host.MarkdownView, host.MarkdownView.VIEW_TYPE],
+      [host.imageExtensions, host.ImageView, host.ImageView.VIEW_TYPE],
+      [host.audioExtensions, host.AudioView, host.AudioView.VIEW_TYPE],
+      [host.videoExtensions, host.VideoView, host.VideoView.VIEW_TYPE],
+      [host.pdfExtensions, host.PdfView, host.PdfView.VIEW_TYPE],
+      [null, host.ReleaseNotesView, host.releaseNotesType],
+    ];
+    for (const [extensions, ViewClass, type] of builtins) {
+      const creator = (leaf) => new ViewClass(leaf);
+      if (extensions) self.registerViewWithExtensions(extensions, type, creator);
+      else self.registerView(type, creator);
+    }
+    return self;
+  }
+  inherit(ViewRegistry, host.Events);
+
+  methods(ViewRegistry, {
+    registerView(type, creator) {
+      if (Object.prototype.hasOwnProperty.call(this.viewByType, type)) {
+        throw new Error('Attempting to register an existing view type "' + type + '"');
+      }
+      this.viewByType[type] = creator;
+      this.trigger("view-registered", type);
+    },
+
+    unregisterView(type) {
+      if (!Object.prototype.hasOwnProperty.call(this.viewByType, type)) return;
+      delete this.viewByType[type];
+      this.trigger("view-unregistered", type);
+    },
+
+    registerExtensions(extensions, type) {
+      // all-or-nothing: validate every extension before writing any
+      for (const ext of extensions) {
+        if (Object.prototype.hasOwnProperty.call(this.typeByExtension, ext)) {
+          throw new Error('Attempting to register an existing file extension "' + ext + '"');
+        }
+      }
+      for (const ext of extensions) this.typeByExtension[ext] = type;
+      this.trigger("extensions-updated");
+    },
+
+    unregisterExtensions(extensions) {
+      for (const ext of extensions) delete this.typeByExtension[ext];
+      this.trigger("extensions-updated");
+    },
+
+    registerViewWithExtensions(extensions, type, creator) {
+      this.registerView(type, creator);
+      if (extensions) this.registerExtensions(extensions, type);
+    },
+
+    getViewCreatorByType(type) {
+      return this.viewByType[type];
+    },
+
+    getTypeByExtension(ext) {
+      return this.typeByExtension[ext];
+    },
+
+    isExtensionRegistered(ext) {
+      return Object.prototype.hasOwnProperty.call(this.typeByExtension, ext);
+    },
+  });
+
+  return ViewRegistry;
+}
 
 // ---- notice.js ----
 // Notice: the toast messages in the corner of the window.
