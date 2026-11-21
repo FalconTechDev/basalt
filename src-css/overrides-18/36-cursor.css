@@ -1,0 +1,11 @@
+/* Basalt pointer: a copper arrow for the interface and a hand for things you can press; text areas keep the system text cursor */
+:root {
+	--bs-cursor-arrow: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2226%22 height=%2226%22 viewBox=%220 0 26 26%22%3E%3Cpath d=%22M5 3.5v17.2l4.7-4.2 3.4 7.2 3-1.4-3.3-6.9h6.5L5 3.5z%22 fill=%22%23c98d5b%22 stroke=%22%2314110f%22 stroke-width=%221.5%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E") 5 3, default;
+	--bs-cursor-hand: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2226%22 height=%2226%22 viewBox=%220 0 26 26%22%3E%3Cpath d=%22M11 3c1 0 1.8.8 1.8 1.8V11h.4c.5-.6 1.4-.9 2.1-.5.5-.5 1.4-.6 2-.2.6-.3 1.5-.1 1.9.5l.3 6.3c.1 2.4-1.7 4.4-4.1 4.4H12c-1.2 0-2.3-.6-3-1.6L5.6 15c-.5-.8-.3-1.8.5-2.3.7-.4 1.6-.3 2.2.3l1 1V4.8C9.3 3.8 10 3 11 3z%22 fill=%22%23e0a877%22 stroke=%22%2314110f%22 stroke-width=%221.5%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E") 11 3, pointer;
+	--cursor: var(--bs-cursor-arrow);
+	--cursor-link: var(--bs-cursor-hand);
+}
+.side-dock-ribbon, .workspace-ribbon, .titlebar, .workspace-tab-header-container, .mod-left-split, .mod-right-split, .view-header, .status-bar, .menu, .modal, .suggestion-container, .nav-header, .bset, .canvas-controls, .canvas-menu, .canvas-card-menu, .notice, .tooltip, .popover, .bsh, .prompt { cursor: var(--bs-cursor-arrow); }
+button, [role="button"], .clickable-icon, a, a.internal-link, a.external-link, summary, label[for], select, .menu-item, .suggestion-item, .tree-item-self, .nav-file-title, .nav-folder-title, .workspace-tab-header, .workspace-tab-header-new-tab, .side-dock-ribbon-action, .bsf-tree > *, .bsm-card, .bsm-go, .bsh-tile, .bsh-search, .bset-n, .checkbox-container, .status-bar-item.mod-clickable, .canvas-control-item, .canvas-card-menu-button, .bp-top, .bp-clear, .workspace-drawer-vault-switcher, .modal-close-button, .notice { cursor: var(--bs-cursor-hand) !important; }
+input[type="text"], input[type="search"], input[type="number"], input[type="password"], textarea, [contenteditable="true"], .cm-content, .cm-line { cursor: text; }
+button:disabled, .is-disabled, [aria-disabled="true"] { cursor: not-allowed; }

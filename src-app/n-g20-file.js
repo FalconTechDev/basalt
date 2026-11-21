@@ -212,7 +212,8 @@ export function defineNg20FileNode(host) {
       const menu = new host.Menu();
       const ti = env().gm.plugins.canvas;
       const self = this;
-      menu.addSections(["title", "action", "clipboard", "danger"]);
+      menu.addSections(["edit", "view", "action", "clipboard", "danger"]);
+      this.addCardActions(menu);
       // a translation call that finds no key answers with the key itself: fall back to a plain label then
       const tr = (fn, fallback) => {
         try { const v = fn && fn(); return typeof v === "string" && v && !/^plugins\.|action-|^interface\./.test(v) ? v : fallback; } catch (e) { return fallback; }

@@ -5,7 +5,7 @@
 @keyframes bs-slide-left { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
 @keyframes bs-drop-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
-@media (prefers-reduced-motion: no-preference) {
+@media all { /* always on: Windows animation effects set to off must not hide them */
 	/* windows and their dim background */
 	.modal-bg { animation: bs-fade-in .18s ease-out; }
 	.modal { animation: bs-pop-in .2s cubic-bezier(.2, .8, .3, 1); }
@@ -37,7 +37,7 @@
 }
 
 /* more life: presses, hovers, small movements */
-@media (prefers-reduced-motion: no-preference) {
+@media all { /* always on: Windows animation effects set to off must not hide them */
 	button:active:not(:disabled), .clickable-icon:active, .nav-action-button:active, .bsf-bar button:active, .canvas-card-menu-button:active, .canvas-control-item:active { transform: scale(.88); filter: brightness(.9); }
 	button, .clickable-icon, .canvas-control-item, .canvas-card-menu-button { transition: background-color .14s ease, color .14s ease, border-color .14s ease, box-shadow .14s ease, transform .12s cubic-bezier(.3, 1.6, .5, 1), filter .12s ease; }
 	.modal-close-button svg, .vault-actions svg, .workspace-drawer-vault-actions .clickable-icon svg { transition: transform .25s cubic-bezier(.3, 1.4, .5, 1); }

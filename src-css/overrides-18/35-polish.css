@@ -96,3 +96,11 @@ select:hover, .dropdown:hover { border-color: var(--interactive-accent); }
 .workspace-tab-header-container-inner { scroll-behavior: smooth; }
 .workspace-tab-header-container-inner, .workspace-tab-header-container { scrollbar-width: none; }
 .workspace-tab-header-container-inner::-webkit-scrollbar, .workspace-tab-header-container::-webkit-scrollbar { display: none; height: 0; }
+/* ---- nothing is cut off: long text in settings wraps instead of being clipped ---- */
+.bset-main { min-width: 0; overflow-x: hidden; }
+.bset-row { flex-wrap: wrap; row-gap: 8px; min-width: 0; }
+.bset-row .bset-t { flex: 1 1 260px; min-width: 0; }
+.bset-row .bset-t small, .bset-row .bset-t b { overflow-wrap: anywhere; word-break: break-word; }
+.bset-row .bset-c { flex: 0 1 auto; max-width: 100%; flex-wrap: wrap; justify-content: flex-end; }
+.bset-row .bset-c select, .bset-row .bset-c input[type=text] { max-width: 100%; min-width: 120px; }
+.setting-item-description, .setting-item-name { overflow-wrap: anywhere; }

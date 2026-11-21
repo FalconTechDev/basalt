@@ -17665,11 +17665,6 @@ button:focus-visible{
         transform:none
     }
 }
-@media (prefers-reduced-motion:reduce){
-    .menu{
-        animation:none
-    }
-}
 .modal.mod-settings .vertical-tab-nav-item{
     position:relative;
     border-radius:0;
@@ -18327,7 +18322,7 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
         transform:none
     }
 }
-@media (prefers-reduced-motion:no-preference){
+@media all{
     .modal-bg{
         animation:bs-fade-in .18s ease-out
     }
@@ -18413,7 +18408,7 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
         transition:background-color .16s ease,left .16s ease
     }
 }
-@media (prefers-reduced-motion:no-preference){
+@media all{
     button:active:not(:disabled),.clickable-icon:active,.nav-action-button:active,.bsf-bar button:active,.canvas-card-menu-button:active,.canvas-control-item:active{
         transform:scale(.88);
         filter:brightness(.9)
@@ -18884,5 +18879,53 @@ select:hover,.dropdown:hover{
 .workspace-tab-header-container-inner::-webkit-scrollbar,.workspace-tab-header-container::-webkit-scrollbar{
     display:none;
     height:0
+}
+.bset-main{
+    min-width:0;
+    overflow-x:hidden
+}
+.bset-row{
+    flex-wrap:wrap;
+    row-gap:8px;
+    min-width:0
+}
+.bset-row .bset-t{
+    flex:1 1 260px;
+    min-width:0
+}
+.bset-row .bset-t small,.bset-row .bset-t b{
+    overflow-wrap:anywhere;
+    word-break:break-word
+}
+.bset-row .bset-c{
+    flex:0 1 auto;
+    max-width:100%;
+    flex-wrap:wrap;
+    justify-content:flex-end
+}
+.bset-row .bset-c select,.bset-row .bset-c input[type=text]{
+    max-width:100%;
+    min-width:120px
+}
+.setting-item-description,.setting-item-name{
+    overflow-wrap:anywhere
+}
+:root{
+    --bs-cursor-arrow:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2226%22 height=%2226%22 viewBox=%220 0 26 26%22%3E%3Cpath d=%22M5 3.5v17.2l4.7-4.2 3.4 7.2 3-1.4-3.3-6.9h6.5L5 3.5z%22 fill=%22%23c98d5b%22 stroke=%22%2314110f%22 stroke-width=%221.5%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E") 5 3,default;
+    --bs-cursor-hand:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2226%22 height=%2226%22 viewBox=%220 0 26 26%22%3E%3Cpath d=%22M11 3c1 0 1.8.8 1.8 1.8V11h.4c.5-.6 1.4-.9 2.1-.5.5-.5 1.4-.6 2-.2.6-.3 1.5-.1 1.9.5l.3 6.3c.1 2.4-1.7 4.4-4.1 4.4H12c-1.2 0-2.3-.6-3-1.6L5.6 15c-.5-.8-.3-1.8.5-2.3.7-.4 1.6-.3 2.2.3l1 1V4.8C9.3 3.8 10 3 11 3z%22 fill=%22%23e0a877%22 stroke=%22%2314110f%22 stroke-width=%221.5%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E") 11 3,pointer;
+    --cursor:var(--bs-cursor-arrow);
+    --cursor-link:var(--bs-cursor-hand)
+}
+.side-dock-ribbon,.workspace-ribbon,.titlebar,.workspace-tab-header-container,.mod-left-split,.mod-right-split,.view-header,.status-bar,.menu,.modal,.suggestion-container,.nav-header,.bset,.canvas-controls,.canvas-menu,.canvas-card-menu,.notice,.tooltip,.popover,.bsh,.prompt{
+    cursor:var(--bs-cursor-arrow)
+}
+button,[role="button"],.clickable-icon,a,a.internal-link,a.external-link,summary,label[for],select,.menu-item,.suggestion-item,.tree-item-self,.nav-file-title,.nav-folder-title,.workspace-tab-header,.workspace-tab-header-new-tab,.side-dock-ribbon-action,.bsf-tree > *,.bsm-card,.bsm-go,.bsh-tile,.bsh-search,.bset-n,.checkbox-container,.status-bar-item.mod-clickable,.canvas-control-item,.canvas-card-menu-button,.bp-top,.bp-clear,.workspace-drawer-vault-switcher,.modal-close-button,.notice{
+    cursor:var(--bs-cursor-hand)!important
+}
+input[type="text"],input[type="search"],input[type="number"],input[type="password"],textarea,[contenteditable="true"],.cm-content,.cm-line{
+    cursor:text
+}
+button:disabled,.is-disabled,[aria-disabled="true"]{
+    cursor:not-allowed
 }
 

@@ -231,7 +231,7 @@
     try {
       const want = (localStorage.getItem("language") || navigator.language || "").split("-")[0];
       if (!want || want === "en" || !window.i18next || !i18next.store) return;
-      if (!i18next.store.data[want] && !sessionStorage.getItem("bs-lang-retry")) { sessionStorage.setItem("bs-lang-retry", "1"); location.reload(); }
+      if (!i18next.store.data[want] && !sessionStorage.getItem("bs-lang-retry")) { sessionStorage.setItem("bs-lang-retry", "1"); window.onbeforeunload = null; location.reload(); }
     } catch (e) { /* no i18n here */ }
   }, 6000);
 })();

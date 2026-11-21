@@ -63248,7 +63248,8 @@ function defineNg20FileNode(host) {
       const menu = new host.Menu();
       const ti = env().gm.plugins.canvas;
       const self = this;
-      menu.addSections(["title", "action", "clipboard", "danger"]);
+      menu.addSections(["edit", "view", "action", "clipboard", "danger"]);
+      this.addCardActions(menu);
       // a translation call that finds no key answers with the key itself: fall back to a plain label then
       const tr = (fn, fallback) => {
         try { const v = fn && fn(); return typeof v === "string" && v && !/^plugins\.|action-|^interface\./.test(v) ? v : fallback; } catch (e) { return fallback; }
@@ -64736,15 +64737,50 @@ function defineNg20CanvasNode(host) {
       this.startEditing({ x: evt.clientX, y: evt.clientY });
     }
 
+    // the everyday actions of a card; shared by every kind of card
+    addCardActions(menu) {
+      const canvas_ = this.canvas, self = this;
+      const rt = (ru, en) => (window.__bsLang === "ru" ? ru : en);
+      const target = () => (canvas_.selection && canvas_.selection.has(self) ? new Set(canvas_.selection) : new Set([self]));
+      if (!canvas_.readonly && self.getData && self.getData().type === "text") {
+        menu.addItem((item) => item.setSection("edit").setTitle(rt("Редактировать", "Edit")).setIcon("lucide-pencil").onClick(() => { canvas_.selectOnly(self); self.startEditing(); }));
+      }
+      if (!canvas_.readonly) {
+        menu.addItem((item) => item.setSection("edit").setTitle(rt("Дублировать", "Duplicate")).setIcon("lucide-copy").onClick(() => {
+          const data = canvas_.getSelectionData(target()), cloned = canvas_.cloneData(data, { x: 32, y: 32 });
+          const imported = canvas_.importData(cloned, false) || new Set();
+          canvas_.deselectAll(); imported.forEach((n) => canvas_.select(n)); canvas_.requestSave();
+        }));
+      }
+      const text = self.getData && self.getData().type === "text" ? self.getData().text : "";
+      if (text) menu.addItem((item) => item.setSection("edit").setTitle(rt("Копировать текст", "Copy text")).setIcon("lucide-clipboard-copy").onClick(() => { try { navigator.clipboard.writeText(text); } catch (e) { /* no clipboard */ } }));
+      menu.addItem((item) => item.setSection("view").setTitle(rt("Приблизить к карточке", "Zoom to card")).setIcon("lucide-zoom-in").onClick(() => { canvas_.selectOnly(self); canvas_.zoomToSelection(); }));
+      if (!canvas_.readonly) {
+        menu.addItem((item) => {
+          item.setSection("view").setTitle(rt("Цвет", "Color")).setIcon("lucide-palette");
+          const sub = item.setSubmenu();
+          const cur = self.getData && self.getData().color;
+          for (const [c, ru, en] of [["", "Без цвета", "No color"], ["1", "Красный", "Red"], ["2", "Оранжевый", "Orange"], ["3", "Жёлтый", "Yellow"], ["4", "Зелёный", "Green"], ["5", "Бирюзовый", "Cyan"], ["6", "Фиолетовый", "Purple"]]) {
+            sub.addItem((x) => x.setTitle(rt(ru, en)).setChecked((cur || "") === c).onClick(() => { for (const n of target()) if (n.setColor) n.setColor(c || undefined, true); canvas_.requestSave(); }));
+          }
+        });
+        menu.addItem((item) => item.setSection("view").setTitle(rt("На передний план", "Bring to front")).setIcon("lucide-chevrons-up").onClick(() => self.updateZIndex()));
+        menu.addItem((item) => item.setSection("view").setTitle(rt("На задний план", "Send to back")).setIcon("lucide-chevrons-down").onClick(() => {
+          let min = Infinity; for (const n of canvas_.nodes.values()) if (n !== self && n.zIndex < min) min = n.zIndex;
+          if (isFinite(min)) { self.zIndex = min - 1; if (self.nodeEl) self.nodeEl.style.zIndex = String(self.zIndex); canvas_.requestSave(); }
+        }));
+      }
+    }
+
     showMenu(evt) {
       const canvas_ = this.canvas;
       const menu = new host.Menu();
       const ti = env().gm.plugins.canvas;
       const self = this;
-      menu.addSections(["title", "action", "clipboard", "danger"]);
-      menu.addItem((item) => item.setSection("action").setTitle(ti.actionBringToFront ? ti.actionBringToFront() : "Bring to front").setIcon("lucide-chevrons-up").onClick(() => self.updateZIndex()));
+      menu.addSections(["edit", "view", "action", "clipboard", "danger"]);
+      this.addCardActions(menu);
       if (!canvas_.readonly) {
-        menu.addItem((item) => item.setSection("danger").setTitle(ti.actionRemove ? ti.actionRemove() : "Remove").setIcon("lucide-trash-2").setWarning(true).onClick(() => canvas_.removeNode(self)));
+        menu.addItem((item) => item.setSection("danger").setTitle(ti.actionRemove ? ti.actionRemove() : "Remove").setIcon("lucide-trash-2").setWarning(true).onClick(() => { if (canvas_.selection && canvas_.selection.has(self) && canvas_.selection.size > 1) canvas_.deleteSelection(); else canvas_.removeNode(self); }));
       }
       canvas_.app.workspace.trigger("canvas:node-menu", menu, this);
       if (window.__fpNodeMenu) window.__fpNodeMenu(menu, this);
