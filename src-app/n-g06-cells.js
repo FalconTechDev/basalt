@@ -116,7 +116,7 @@ export function ng06DefineTableGroup(host) {
 export function ng06DefineHeaderRow(host) {
   function HeaderRow(view) {
     const self = host.s13TableRow.call(this, view) || this;
-    self.el.addClass("bases-thead-row");
+    self.el.dataset.ignoreSwipe = "true";
     return self;
   }
   inherit(HeaderRow, host.s13TableRow);
