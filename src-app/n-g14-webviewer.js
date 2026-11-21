@@ -333,7 +333,7 @@ export function defineWebviewerView(host) {
       this.addressBar = env().s30HJ ? env().s30HJ(this, container) : null;
     } catch (err) { this.addressBar = null; }
     this.contentEl.addClass("webviewer-content");
-    this.searchContainerEl = this.contentEl.createDiv("webviewer-search-container");
+    this.searchContainerEl = this.contentEl.createDiv("search-in-page");
     this.searchContainerEl.hide();
     this.errorEl = this.contentEl.createDiv("error-notice");
     this.errorEl.hide();
