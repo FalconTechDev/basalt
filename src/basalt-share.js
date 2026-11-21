@@ -127,6 +127,15 @@
     app.commands.addCommand({ id: "basalt:share-vault", name: "Общая папка: поделиться всем vault", icon: "lucide-users", callback: () => dialog("/") });
     app.commands.addCommand({ id: "basalt:share-join", name: "Общая папка: подключиться по коду", icon: "lucide-user-plus", callback: joinDialog });
     app.workspace.on("file-menu", (menu, f) => { if (f && f.children) menu.addItem((i) => i.setTitle(shares.has(f.path === "/" ? "" : f.path) ? "Общая папка…" : "Поделиться папкой…").setIcon("lucide-users").onClick(() => dialog(f.path))); });
+    const menu = (e) => {
+      const m = new window.__bsApi.Menu(), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)), f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null;
+      it("Поделиться всем vault", "lucide-share-2", () => dialog("/"));
+      if (dir) it("Поделиться папкой «" + dir.split("/").pop() + "»", "lucide-folder-up", () => dialog(dir));
+      it("Подключиться по коду", "lucide-user-plus", joinDialog);
+      if (shares.size) { m.addSeparator(); for (const [k, s] of shares) it("Открыть: " + (k ? k.split("/").pop() : "весь vault") + (s.peers.length ? " · " + (s.peers.length + 1) + " чел." : ""), "lucide-users", () => dialog(k || "/")); }
+      if (e && e.clientX != null) m.showAtMouseEvent(e); else m.showAtPosition({ x: 56, y: 240 });
+    };
+    try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", menu); } catch (e) { /* no ribbon */ }
     window.__bsShare = { forPath, host, stop, dialog, join: joinDialog, begin, shares };
     Promise.all(store().map((x) => begin(x.folder || "/", x.room, x.pass).catch((e) => console.error(e)))).then(resolveReady, resolveReady);
   }, 600);

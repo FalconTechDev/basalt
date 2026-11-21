@@ -38,7 +38,7 @@
         const btn = (icon, tip, fn) => { const x = bar.createDiv({ cls: "osb-btn", attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; };
         btn("lucide-square-plus", "Новая карточка", () => this.addCard());
         btn("lucide-maximize", "Показать всё", () => this.fit());
-        this.share = btn("lucide-users", "Совместная работа", () => this.shareDialog());
+        this.share = document.createElement("div");
         this.palette = bar.createDiv({ cls: "osb-pal" });
         COLORS.forEach((col) => { const d = this.palette.createDiv({ cls: "osb-sw" }); d.style.background = col || "var(--background-modifier-border)"; d.onclick = () => this.setColor(col); });
         this.people = c.createDiv({ cls: "osb-people" });
@@ -160,7 +160,7 @@
           } else {
             it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30));
             it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
-            m.addSeparator(); it("Показать всё", "lucide-maximize", () => this.fit()); it("Совместная работа", "lucide-users", () => this.shareDialog());
+            m.addSeparator(); it("Показать всё", "lucide-maximize", () => this.fit());
           }
           m.showAtMouseEvent(e);
         });
