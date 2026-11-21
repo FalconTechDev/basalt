@@ -47,6 +47,15 @@
       // ---------- data ----------
       async openBoard() {
         const L = window.__bsY, Y = L && L.Y; if (!Y) { new api.Notice("Не загружен модуль синхронизации"); return; }
+        if (window.__bsShareReady) await window.__bsShareReady;
+        const sh = window.__bsShare && window.__bsShare.forPath(this.path);
+        if (sh) { const rel = sh.rel(this.path); if (!sh.files.has(rel)) await sh.fromDisk(rel); const e = sh.files.get(rel);
+          if (e && e.get("t") === "board") {
+            this.sh = sh; this.relPath = rel; this.doc = sh.doc; this.yn = e.get("nodes"); this.ye = e.get("edges"); this.ym = sh.meta;
+            this.yn.observeDeep(() => this.sync()); this.ye.observeDeep(() => this.syncEdges());
+            this.aw = sh.aw; this.pc = () => { this.peers = sh.peers.filter((u) => u.board === rel); this.paintPeers(); }; if (sh.aw) sh.aw.on("change", this.pc); this.pc();
+            this.sync(); this.fit(); this.share.classList.add("is-on"); return;
+          } }
         let raw = null; try { raw = await app.vault.adapter.read(this.path); } catch (e) { /* new */ }
         this.doc = new Y.Doc(); this.yn = this.doc.getMap("nodes"); this.ye = this.doc.getMap("edges"); this.ym = this.doc.getMap("meta");
         let meta = {}; try { meta = raw ? JSON.parse(raw) : {}; } catch (e) { meta = {}; }
@@ -57,9 +66,9 @@
         this.sync(); this.fit();
         if (this.ym.get("room")) this.connect(this.ym.get("room"), this.ym.get("pass") || "");
       }
-      queueSave() { clearTimeout(this.saveT); this.saveT = setTimeout(() => this.save(), 400); }
+      queueSave() { if (this.sh) return; clearTimeout(this.saveT); this.saveT = setTimeout(() => this.save(), 400); }
       async save() {
-        if (!this.doc || !this.path) return; const Y = window.__bsY.Y;
+        if (this.sh || !this.doc || !this.path) return; const Y = window.__bsY.Y;
         const nodes = {}; this.yn.forEach((m, id) => { nodes[id] = { x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "" }; });
         const out = { v: 2, id: this.ym.get("id"), room: this.ym.get("room") || null, nodes, edges: this.ye.toJSON(), ydoc: b64(Y.encodeStateAsUpdate(this.doc)) };
         try { await app.vault.adapter.write(this.path, JSON.stringify(out, null, 1)); } catch (e) { console.error(e); }
@@ -160,7 +169,7 @@
       }
       drawTemp(w) { const NS = "http://www.w3.org/2000/svg"; if (!this.temp) { this.temp = document.createElementNS(NS, "line"); this.temp.setAttribute("class", "osb-el osb-temp"); this.svg.appendChild(this.temp); } if (!this.center(this.drag.from)) return; const p = this.anchor(this.drag.from, w); this.temp.setAttribute("x1", p.x); this.temp.setAttribute("y1", p.y); this.temp.setAttribute("x2", w.x); this.temp.setAttribute("y2", w.y); }
       // ---------- people ----------
-      publish(extra) { if (!this.aw) return; if (extra) this.extra = Object.assign(this.extra || {}, extra); this.aw.setLocalStateField("user", Object.assign({ name: me.name, color: me.color, cur: this.myCur || null, sel: Array.from(this.sel) }, this.extra || {})); }
+      publish(extra) { if (this.sh) { this.sh.publish(Object.assign({ board: this.relPath, cur: this.myCur || null, sel: Array.from(this.sel) }, extra || {})); return; } if (!this.aw) return; if (extra) this.extra = Object.assign(this.extra || {}, extra); this.aw.setLocalStateField("user", Object.assign({ name: me.name, color: me.color, cur: this.myCur || null, sel: Array.from(this.sel) }, this.extra || {})); }
       connect(room, pass) {
         const L = window.__bsY; if (this.prov) this.prov.destroy();
         this.prov = new L.WebrtcProvider("basalt-board-" + room, this.doc, { password: pass || undefined, signaling: signalingList() });
@@ -179,7 +188,7 @@
         for (const [i, c] of this.cursors) if (!live.has(i)) { c.remove(); this.cursors.delete(i); }
       }
       shareDialog() {
-        if (!this.doc) return; let room = this.ym.get("room"), pass = this.ym.get("pass");
+        if (!this.doc) return; if (this.sh) { window.__bsShare.dialog(this.sh.folder || "/"); return; } let room = this.ym.get("room"), pass = this.ym.get("pass");
         if (!room) { room = this.ym.get("id"); pass = uid() + uid(); this.doc.transact(() => { this.ym.set("room", room); this.ym.set("pass", pass); }); this.connect(room, pass); }
         const M = new api.Modal(app); M.titleEl.setText("Совместная работа"); const c = M.contentEl;
         c.createEl("p", { text: "Код приглашения. Каждый, кто его введёт, получает полную копию доски и сам начинает её раздавать: если ваш компьютер выключится, остальные продолжат работать." });
@@ -188,7 +197,7 @@
         c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me.name; n.onchange = () => { me.name = n.value || me.name; try { localStorage.setItem("board-me", JSON.stringify(me)); } catch (e) { /* private */ } this.publish(); };
         M.open();
       }
-      async onClose() { clearTimeout(this.saveT); await this.save(); if (this.prov) this.prov.destroy(); if (this.ro) this.ro.disconnect(); if (this.doc) this.doc.destroy(); }
+      async onClose() { clearTimeout(this.saveT); await this.save(); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.ro) this.ro.disconnect(); }
     };
   }
 
