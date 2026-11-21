@@ -672,15 +672,24 @@ export function ng04WsOps(host) {
         if (node.children) node.children.forEach((child) => collect(child, touchesTop));
       };
       collect(root, true);
-      for (const g of groups) {
-        g.node.containerEl.removeClass("mod-top", "mod-top-left-space", "mod-top-right-space");
-      }
+      const isMain = root === this.rootSplit;
+      const clear = (n) => { if (n && n.containerEl) n.containerEl.removeClass("mod-top", "mod-top-left-space", "mod-top-right-space"); };
+      for (const g of groups) clear(g.node);
+      let first = null, last = null;
       const topGroups = groups.filter((g) => g.touchesTop);
-      if (topGroups.length > 0 && !host.Platform.isMobile) {
-        topGroups[0].node.containerEl.addClass("mod-top", "mod-top-left-space");
-        topGroups[topGroups.length - 1].node.containerEl.addClass("mod-top", "mod-top-right-space");
-      } else if (topGroups.length > 0) {
-        for (const g of topGroups) g.node.containerEl.addClass("mod-top");
+      for (const g of topGroups) g.node.containerEl.addClass("mod-top");
+      if (topGroups.length > 0) { first = topGroups[0].node; last = topGroups[topGroups.length - 1].node; }
+      if (isMain) {
+        // the sidebars own the window corners while they are open
+        const ls = this.leftSplit, rs = this.rightSplit;
+        const l0 = ls && ls.children && ls.children[0], r0 = rs && rs.children[0];
+        [l0, r0].forEach(clear);
+        if (l0 instanceof host.WorkspaceTabs) { l0.containerEl.addClass("mod-top"); if (!ls.collapsed) first = l0; }
+        if (r0 instanceof host.WorkspaceTabs) { r0.containerEl.addClass("mod-top"); if (!rs.collapsed) last = r0; }
+      }
+      if (!host.Platform.isMobile) {
+        if (first) first.containerEl.addClass("mod-top-left-space");
+        if (last) last.containerEl.addClass("mod-top-right-space");
       }
     }
     // re-parent the sidebar toggle buttons for the main root
