@@ -70,7 +70,8 @@ export function ng26DefinePluginWrapper(host) {
     this.enabled = false;
     const app = this.app;
     const inst = this.instance;
-    if (inst.onDisable) await inst.onDisable(app, this);
+    const pending = inst.onDisable ? inst.onDisable(app, this) : null;
+    if (pending && typeof pending.then === "function") await pending;
     if (byUser && inst.onUserDisable) inst.onUserDisable(app);
     for (const command of this.commands) app.commands.removeCommand(command.id);
     for (const el of this.addedButtonEls) el.detach();
