@@ -394,7 +394,7 @@
     document.addEventListener("keydown", key, true);
     function stop() { wrap.removeEventListener("dblclick", noDbl, true); wrap.removeEventListener("drop", noDbl, true); wrap.removeEventListener("pointermove", hover, true); document.removeEventListener("keydown", key, true); wrap.removeEventListener("pointerdown", down, true); window.removeEventListener("pointermove", move, true); window.removeEventListener("pointerup", up, true); window.removeEventListener("pointercancel", up, true); wrap.classList.remove("bsink-on"); drawer.cancel(); tb.destroy(); modes.delete(canvas); }
     modes.set(canvas, { stop });
-    new window.__bsApi.Notice("Рисование включено. Клавиши: кнопка справки на панели", 3500);
+
   }
 
   // ======================================================================== blocks in notes
