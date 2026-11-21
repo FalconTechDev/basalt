@@ -111,179 +111,179 @@
     },
     {
       "orig": "Pf",
-      "use": "formatBytes"
+      "use": "ng39FormatBytes"
     },
     {
       "orig": "rm",
-      "use": "toKebab"
+      "use": "ng39ToKebab"
     },
     {
       "orig": "gc",
-      "use": "ellipsize"
+      "use": "ng39Ellipsize"
     },
     {
       "orig": "u7",
-      "use": "endWithBlankLine"
+      "use": "ng39EndWithBlankLine"
     },
     {
       "orig": "pP",
-      "use": "squeezeNewlines"
+      "use": "ng39SqueezeNewlines"
     },
     {
       "orig": "yA",
-      "use": "escapeTablePipes"
+      "use": "ng39EscapeTablePipes"
     },
     {
       "orig": "xW",
-      "use": "withHash"
+      "use": "ng39WithHash"
     },
     {
       "orig": "zL",
-      "use": "isShortLine"
+      "use": "ng39IsShortLine"
     },
     {
       "orig": "ZI",
-      "use": "toStringList"
+      "use": "ng39ToStringList"
     },
     {
       "orig": "YA",
-      "use": "emptyToNull"
+      "use": "ng39EmptyToNull"
     },
     {
       "orig": "Ree",
-      "use": "parseCommaList"
+      "use": "ng39ParseCommaList"
     },
     {
       "orig": "Bee",
-      "use": "formatCommaList"
+      "use": "ng39FormatCommaList"
     },
     {
       "orig": "kq",
-      "use": "countQuoteMarks"
+      "use": "ng39CountQuoteMarks"
     },
     {
       "orig": "Cq",
-      "use": "quoteIndentDepth"
+      "use": "ng39QuoteIndentDepth"
     },
     {
       "orig": "Vj",
-      "use": "dropWordsContaining"
+      "use": "ng39DropWordsContaining"
     },
     {
       "orig": "FQ",
-      "use": "formDecode"
+      "use": "ng39FormDecode"
     },
     {
       "orig": "NQ",
-      "use": "formEncode"
+      "use": "ng39FormEncode"
     },
     {
       "orig": "RQ",
-      "use": "formEncodePath"
+      "use": "ng39FormEncodePath"
     },
     {
       "orig": "NX",
-      "use": "linesOf"
+      "use": "ng39LinesOf"
     },
     {
       "orig": "Ej",
-      "use": "hasLatinLetter"
+      "use": "ng39HasLatinLetter"
     },
     {
       "orig": "zx",
-      "use": "parseImageSize"
+      "use": "ng39ParseImageSize"
     },
     {
       "orig": "WZ",
-      "use": "intOrNull"
+      "use": "ng39IntOrNull"
     },
     {
       "orig": "Vl",
-      "use": "floatOr"
+      "use": "ng39FloatOr"
     },
     {
       "orig": "f_",
-      "use": "joinClasses"
+      "use": "ng39JoinClasses"
     },
     {
       "orig": "Js",
-      "use": "ninesAtLeast"
+      "use": "ng39NinesAtLeast"
     },
     {
       "orig": "uc",
-      "use": "newlinesBefore"
+      "use": "ng39NewlinesBefore"
     },
     {
       "orig": "Dv",
-      "use": "lineBounds"
+      "use": "ng39LineBounds"
     },
     {
       "orig": "Nb",
-      "use": "keyLabel"
+      "use": "ng39KeyLabel"
     },
     {
       "orig": "Fb",
-      "use": "makeHotkey"
+      "use": "ng39MakeHotkey"
     },
     {
       "orig": "my",
-      "use": "valueIgnoringCase"
+      "use": "ng39ValueIgnoringCase"
     },
     {
       "orig": "qV",
-      "use": "keyIgnoringCase"
+      "use": "ng39KeyIgnoringCase"
     },
     {
       "orig": "vy",
-      "use": "parseVersion"
+      "use": "ng39ParseVersion"
     },
     {
       "orig": "gy",
-      "use": "isOlderVersion"
+      "use": "ng39IsOlderVersion"
     },
     {
       "orig": "P1",
-      "use": "severityRank"
+      "use": "ng39SeverityRank"
     },
     {
       "orig": "L1",
-      "use": "worstSeverity"
+      "use": "ng39WorstSeverity"
     },
     {
       "orig": "rD",
-      "use": "chromeVersion"
+      "use": "ng39ChromeVersion"
     },
     {
       "orig": "tY",
-      "use": "parsePropertyId"
+      "use": "ng39ParsePropertyId"
     },
     {
       "orig": "nY",
-      "use": "propertyId"
+      "use": "ng39PropertyId"
     },
     {
       "orig": "SY",
-      "use": "shortPropertyId"
+      "use": "ng39ShortPropertyId"
     },
     {
       "orig": "xY",
-      "use": "longPropertyId"
+      "use": "ng39LongPropertyId"
     },
     {
       "orig": "PY",
-      "use": "uniqueName"
+      "use": "ng39UniqueName"
     },
     {
       "orig": "LT",
-      "use": "plainHeading"
+      "use": "ng39PlainHeading"
     },
     {
       "orig": "IT",
-      "use": "linkSafeHeading"
+      "use": "ng39LinkSafeHeading"
     },
     {
       "orig": "kA",
-      "use": "describeCliOptions"
+      "use": "ng39DescribeCliOptions"
     },
     {
       "orig": "cA",
@@ -563,15 +563,15 @@
     },
     {
       "orig": "My",
-      "use": "prepareQuery"
+      "use": "ng39PrepareQuery"
     },
     {
       "orig": "Dy",
-      "use": "fuzzyMatchJs"
+      "use": "ng39FuzzyMatchJs"
     },
     {
       "orig": "xy",
-      "use": "matchScore"
+      "use": "ng39MatchScore"
     },
     {
       "orig": "wc",
@@ -591,35 +591,35 @@
     },
     {
       "orig": "Sy",
-      "use": "prepareFuzzyFinder"
+      "use": "ng39PrepareFuzzyFinder"
     },
     {
       "orig": "Oy",
-      "use": "prepareSimpleFinder"
+      "use": "ng39PrepareSimpleFinder"
     },
     {
       "orig": "Ly",
-      "use": "containsAllWords"
+      "use": "ng39ContainsAllWords"
     },
     {
       "orig": "Iy",
-      "use": "simpleMatch"
+      "use": "ng39SimpleMatch"
     },
     {
       "orig": "wy",
-      "use": "mergeSpans"
+      "use": "ng39MergeSpans"
     },
     {
       "orig": "Ny",
-      "use": "renderMatches"
+      "use": "ng39RenderMatches"
     },
     {
       "orig": "Fy",
-      "use": "renderResults"
+      "use": "ng39RenderResults"
     },
     {
       "orig": "FT",
-      "use": "resolveSubpath"
+      "use": "ng39ResolveSubpath"
     },
     {
       "orig": "pv",
@@ -2387,119 +2387,119 @@
     },
     {
       "orig": "hf",
-      "use": "s90TrimWhitespace"
+      "use": "ng39TrimWhitespace"
     },
     {
       "orig": "pf",
-      "use": "s90CursorToContentSide"
+      "use": "ng39CursorToContentSide"
     },
     {
       "orig": "df",
-      "use": "s90DetectFormatting"
+      "use": "ng39DetectFormatting"
     },
     {
       "orig": "Kf",
-      "use": "s92ApplySpellcheckerLanguages",
+      "use": "ng39ApplySpellcheckerLanguages",
       "originalBytes": 267
     },
     {
       "orig": "Yf",
-      "use": "s92RevealInFolder",
+      "use": "ng39RevealInFolder",
       "originalBytes": 74
     },
     {
       "orig": "Qf",
-      "use": "s92ClipboardBridge",
+      "use": "ng39ClipboardBridge",
       "originalBytes": 72
     },
     {
       "orig": "sm",
-      "use": "s92CurrentLanguage",
+      "use": "ng39CurrentLanguage",
       "originalBytes": 77
     },
     {
       "orig": "lm",
-      "use": "s92StoreLanguage",
+      "use": "ng39StoreLanguage",
       "originalBytes": 88
     },
     {
       "orig": "cm",
-      "use": "s92DetectLanguage",
+      "use": "ng39DetectLanguage",
       "originalBytes": 115
     },
     {
       "orig": "ff",
-      "use": "s91FormatSkips",
+      "use": "ng39FormatSkips",
       "host": true,
       "originalBytes": 236
     },
     {
       "orig": "mf",
-      "use": "s91FormatLineRange",
+      "use": "ng39FormatLineRange",
       "host": true,
       "originalBytes": 369
     },
     {
       "orig": "vf",
-      "use": "s91FormatRemoveMarks",
+      "use": "ng39FormatRemoveMarks",
       "host": true,
       "originalBytes": 278
     },
     {
       "orig": "gf",
-      "use": "s91FormatInnerMark",
+      "use": "ng39FormatInnerMark",
       "host": true,
       "originalBytes": 256
     },
     {
       "orig": "yf",
-      "use": "s91FormatNodeRange",
+      "use": "ng39FormatNodeRange",
       "host": true,
       "originalBytes": 435
     },
     {
       "orig": "If",
-      "use": "s91Require",
+      "use": "ng39Require",
       "originalBytes": 32
     },
     {
       "orig": "Of",
-      "use": "s91WithElectron",
+      "use": "ng39WithElectron",
       "originalBytes": 44
     },
     {
       "orig": "Ff",
-      "use": "s91ReadFileIfExists",
+      "use": "ng39ReadFileIfExists",
       "originalBytes": 236
     },
     {
       "orig": "Nf",
-      "use": "s91FetchUrl",
+      "use": "ng39FetchUrl",
       "originalBytes": 298
     },
     {
       "orig": "jf",
-      "use": "s91PrintToPdf",
+      "use": "ng39PrintToPdf",
       "originalBytes": 122
     },
     {
       "orig": "Uf",
-      "use": "s91IsMacOS",
+      "use": "ng39IsMacOS",
       "originalBytes": 48
     },
     {
       "orig": "Wf",
-      "use": "s91SetVibrancy",
+      "use": "ng39SetVibrancy",
       "originalBytes": 129
     },
     {
       "orig": "_f",
-      "use": "s91IsWebviewElement",
+      "use": "ng39IsWebviewElement",
       "originalBytes": 59
     },
     {
       "orig": "Gf",
-      "use": "s91ContextMenuInfo",
+      "use": "ng39ContextMenuInfo",
       "originalBytes": 434
     }
   ],
@@ -2542,7 +2542,7 @@
     },
     {
       "orig": "FD",
-      "use": "defineWorkspaceSidedock"
+      "use": "ng39DefineWorkspaceSidedock"
     },
     {
       "orig": "zD",
@@ -2763,7 +2763,7 @@
     },
     {
       "orig": "Nee",
-      "use": "defineStatusBar"
+      "use": "ng39DefineStatusBar"
     },
     {
       "orig": "i2",
@@ -3416,7 +3416,7 @@
     },
     {
       "orig": "mte",
-      "use": "defineCorePluginsTab"
+      "use": "ng39DefineCorePluginsTab"
     },
     {
       "orig": "ite",
@@ -9226,127 +9226,127 @@
     },
     {
       "orig": "uf",
-      "expr": "__basaltOwn.s90FormatSpecs",
+      "expr": "__basaltOwn.ng39S90FormatSpecs",
       "sha1": "657de48c2bc76c3c7cb693ed54ad8636d195424d",
       "originalBytes": 405
     },
     {
       "orig": "Xf",
-      "expr": "__basaltOwn.s92LanguageStorageKey",
+      "expr": "__basaltOwn.ng39LanguageStorageKey",
       "sha1": "26ff207d62ada6071477ccf783d69895f828d8a7",
       "originalBytes": 10
     },
     {
       "orig": "$f",
-      "expr": "__basaltOwn.s92FallbackLanguage",
+      "expr": "__basaltOwn.ng39FallbackLanguage",
       "sha1": "c2906cd829a408386dca12515ce063811ad16cc3",
       "originalBytes": 4
     },
     {
       "orig": "Zf",
-      "expr": "__basaltOwn.s92LanguageNames",
+      "expr": "__basaltOwn.ng39LanguageNames",
       "sha1": "bd173c4b551cef598d4f16ecc18a3e03e9e6c8d3",
       "originalBytes": 27
     },
     {
       "orig": "Jf",
-      "expr": "__basaltOwn.s92SupportedLanguages",
+      "expr": "__basaltOwn.ng39SupportedLanguages",
       "sha1": "a44b367a65b24091071ce8513a43cff82276a1e2",
       "originalBytes": 22
     },
     {
       "orig": "em",
-      "expr": "__basaltOwn.s92LocaleAliasMap",
+      "expr": "__basaltOwn.ng39LocaleAliasMap",
       "sha1": "bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f",
       "originalBytes": 2
     },
     {
       "orig": "tm",
-      "expr": "__basaltOwn.s92RtlLanguages",
+      "expr": "__basaltOwn.ng39RtlLanguages",
       "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
       "originalBytes": 2
     },
     {
       "orig": "nm",
-      "expr": "__basaltOwn.s92InterpolationOverride",
+      "expr": "__basaltOwn.ng39InterpolationOverride",
       "sha1": "5a39c46f5d0dd34f35c4def8ac3e0cf3d1821caf",
       "originalBytes": 45
     },
     {
       "orig": "im",
-      "expr": "__basaltOwn.s92ResourceNamespace",
+      "expr": "__basaltOwn.ng39ResourceNamespace",
       "sha1": "2be8cb975411eb0f90d1895ca0092067ad7615e3",
       "originalBytes": 9
     },
     {
       "orig": "om",
-      "expr": "__basaltOwn.s92I18nResourceBundle()",
+      "expr": "__basaltOwn.ng39I18nResourceBundle()",
       "sha1": "7a073c5daf53a92efa6f303ee85dd8284c5bbca2",
       "originalBytes": 145
     },
     {
       "orig": "um",
-      "expr": "__basaltOwn.s92InitReady",
+      "expr": "__basaltOwn.ng39InitReady",
       "sha1": "47b038849d964f2910c38df87756eeab2c33c845",
       "originalBytes": 17
     },
     {
       "orig": "hm",
-      "expr": "__basaltOwn.s92CurrentLanguage()",
+      "expr": "__basaltOwn.ng39CurrentLanguage()",
       "sha1": "370c22d307762b0421640646432dde65469eb10f",
       "originalBytes": 4
     },
     {
       "orig": "gm",
-      "expr": "__basaltOwn.s92CreateI18nProxy()",
+      "expr": "__basaltOwn.ng39CreateI18nProxy()",
       "sha1": "3dbeb29c5bef5718cfc0fd29fe5caea27b3a2f99",
       "originalBytes": 237
     },
     {
       "orig": "xf",
-      "expr": "__basaltOwn.s91CryptoSubtle()",
+      "expr": "__basaltOwn.ng39CryptoSubtle()",
       "sha1": "076048f2217adccb871d7a336de43fb2072d73c7",
       "originalBytes": 20
     },
     {
       "orig": "Lf",
-      "expr": "__basaltOwn.s91WindowRequire()",
+      "expr": "__basaltOwn.ng39WindowRequire()",
       "sha1": "ff0ce8d53f0c830d17ea9d2e5587e803321b2ec5",
       "originalBytes": 14
     },
     {
       "orig": "Rf",
-      "expr": "__basaltOwn.s91DevFlagInit()",
+      "expr": "__basaltOwn.ng39DevFlagInit()",
       "sha1": "229db9bc4ef680cb90e1ef2793d6c761a444884f",
       "originalBytes": 2
     },
     {
       "orig": "Bf",
-      "expr": "__basaltOwn.s91ElectronVersionInit()",
+      "expr": "__basaltOwn.ng39ElectronVersionInit()",
       "sha1": "7594d89ff2b5acfa4bb8f662f700f1b6627d178d",
       "originalBytes": 7
     },
     {
       "orig": "Vf",
-      "expr": "__basaltOwn.s91ElectronMajorInit()",
+      "expr": "__basaltOwn.ng39ElectronMajorInit()",
       "sha1": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
       "originalBytes": 1
     },
     {
       "orig": "Hf",
-      "expr": "__basaltOwn.s91DevFlagSnapshot(Rf)",
+      "expr": "__basaltOwn.ng39DevFlagSnapshot(Rf)",
       "sha1": "c6dae5d6f50189df8b795e0380c81ffdd486103f",
       "originalBytes": 2
     },
     {
       "orig": "zf",
-      "expr": "__basaltOwn.s91VersionSnapshot(Bf)",
+      "expr": "__basaltOwn.ng39VersionSnapshot(Bf)",
       "sha1": "8edeebd80a656ae4fce670684d3ca3ce34ec356e",
       "originalBytes": 2
     },
     {
       "orig": "qf",
-      "expr": "__basaltOwn.s91MajorSnapshot(Vf)",
+      "expr": "__basaltOwn.ng39MajorSnapshot(Vf)",
       "sha1": "85d40c2f9de777cba80df079e9e94af8bdb30c10",
       "originalBytes": 2
     }
@@ -9811,7 +9811,7 @@
     },
     {
       "find": "function am(){i18next.addResourceBundle($f,im,om);if(window.BASALT_I18N_RU){var rr=function e(t){var i={};for(var n in t)if(t.hasOwnProperty(n)){var m=/^(.*)_plural([012])$/.exec(n),o=m?rm(m[1])+\"_\"+m[2]:rm(n),a=t[n];i[o]=String.isString(a)?a:e(a)}return i};i18next.addResourceBundle(\"ru\",im,rr(window.BASALT_I18N_RU));\"ru\"===sm()&&i18next.changeLanguage(\"ru\")}}",
-      "replace": "function am(){return/*own*/__basaltOwn.s92RegisterDefaultBundle()}",
+      "replace": "function am(){return/*own*/__basaltOwn.ng39RegisterDefaultBundle()}",
       "note": "s92: am drifted from base ca5acac (Basalt added the ru bundle); replaced wholesale with own i18n registration"
     }
   ]

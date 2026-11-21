@@ -620,7 +620,7 @@ export function createVault(EventsClass) {
   };
 
   proto.cachedRead = async function (file) {
-    return ng13TextCache.has(file) ? ng13TextCache.get(file) : null;
+    return ng13TextCache.has(file) ? ng13TextCache.get(file) : this.read(file);
   };
 
   proto.readBinary = async function (file) {
