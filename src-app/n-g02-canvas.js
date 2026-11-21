@@ -579,6 +579,8 @@ export function ng02CanvasView(host) {
           this.zoom += zoomDelta * amount;
           this.scale = Math.pow(2, this.zoom);
         }
+        // the zoom eases geometrically and would never equal its target exactly: snap, or the frame loop (and the mod-animating look) never stops
+        if (this.zoom !== this.tZoom && Math.abs(this.tZoom - this.zoom) < s13ZoomStep) { this.zoom = this.tZoom; this.scale = Math.pow(2, this.zoom); }
         this.x += (this.tx - this.x) * amount;
         if (this.tx !== this.x && Math.abs(this.tx - this.x) < s13ZoomStep) this.x = this.tx;
         this.y += (this.ty - this.y) * amount;

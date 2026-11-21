@@ -994,7 +994,10 @@
   function drawFarEdgeLabels(canvas, st, o) {
     const v = st.view; if (!v || !(st.zooming || v.scale < o.edgeScale)) return;
     const ctx = st.ctx, sc = v.scale, dark = document.body.classList.contains("theme-dark");
-    const font = getComputedStyle(document.body).getPropertyValue("--font-interface").trim() || "system-ui, sans-serif", fs = Math.max(7, Math.min(13 * sc, 12));
+    // the interface font is read at most once a second: getComputedStyle on every frame forced a style recalculation each time
+    const now = performance.now();
+    if (!drawFarEdgeLabels.fontAt || now - drawFarEdgeLabels.fontAt > 1000) { drawFarEdgeLabels.font = getComputedStyle(document.body).getPropertyValue("--font-interface").trim() || "system-ui, sans-serif"; drawFarEdgeLabels.fontAt = now; }
+    const font = drawFarEdgeLabels.font, fs = Math.max(7, Math.min(13 * sc, 12));
     ctx.font = `500 ${fs}px ${font}`; ctx.textBaseline = "middle"; ctx.textAlign = "center";
     let n = 0;
     for (const e of canvas.edges.values()) {

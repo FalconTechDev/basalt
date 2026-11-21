@@ -678,6 +678,7 @@ module.exports = function start(resources, events) {
 				req.end();
 			} catch (err) { e.reply(channel, { error: err }); }
 		});
+		ipcMain.on('show-in-folder', (e, p) => { try { shell.showItemInFolder(path.normalize(String(p))); } catch (err) { console.log(err); } });
 		ipcMain.on('trash', async (e, p) => { try { await shell.trashItem(p); e.returnValue = true; } catch (err) { console.log(err); e.returnValue = false; } });
 		ipcMain.on('set-menu', (e, { template }) => { const win = BrowserWindow.fromWebContents(e.sender); if (!win) return; win.appMenu = buildMenu(template); if (MAC) applyMenu(); else win.setMenu(win.appMenu); });
 		ipcMain.on('update-menu-items', (e, items, refresh) => { const win = BrowserWindow.fromWebContents(e.sender), menu = menuOf(win); if (menu !== fallbackMenu) { for (const { itemId, eState } of items) setMenuItem(menu, itemId, eState); if (refresh) applyMenu(); } });

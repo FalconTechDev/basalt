@@ -436,15 +436,11 @@ export function defineNg20ContentMountNode(host) {
       if (this.isContentMounted || this.destroyed) return;
       this.isContentMounted = true;
       this.renderContent();
-      if (this._scroll) {
-        host.restoreScrollPositions(this.contentEl, this._scroll);
-        this._scroll = null;
-      }
     }
 
     unmountContent() {
       if (!this.isContentMounted) return;
-      this._scroll = host.saveScrollPositions(this.contentEl);
+      // no scroll bookkeeping here: the content is rebuilt from scratch on mount (walking every element for computed styles made zooming out crawl)
       this.isContentMounted = false;
       this.unloadChildSafe();
       this.child = null;

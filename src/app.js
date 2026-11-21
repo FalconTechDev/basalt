@@ -3433,6 +3433,8 @@ function ng02CanvasView(host) {
           this.zoom += zoomDelta * amount;
           this.scale = Math.pow(2, this.zoom);
         }
+        // the zoom eases geometrically and would never equal its target exactly: snap, or the frame loop (and the mod-animating look) never stops
+        if (this.zoom !== this.tZoom && Math.abs(this.tZoom - this.zoom) < s13ZoomStep) { this.zoom = this.tZoom; this.scale = Math.pow(2, this.zoom); }
         this.x += (this.tx - this.x) * amount;
         if (this.tx !== this.x && Math.abs(this.tx - this.x) < s13ZoomStep) this.x = this.tx;
         this.y += (this.ty - this.y) * amount;
@@ -64870,15 +64872,11 @@ function defineNg20ContentMountNode(host) {
       if (this.isContentMounted || this.destroyed) return;
       this.isContentMounted = true;
       this.renderContent();
-      if (this._scroll) {
-        host.restoreScrollPositions(this.contentEl, this._scroll);
-        this._scroll = null;
-      }
     }
 
     unmountContent() {
       if (!this.isContentMounted) return;
-      this._scroll = host.saveScrollPositions(this.contentEl);
+      // no scroll bookkeeping here: the content is rebuilt from scratch on mount (walking every element for computed styles made zooming out crawl)
       this.isContentMounted = false;
       this.unloadChildSafe();
       this.child = null;

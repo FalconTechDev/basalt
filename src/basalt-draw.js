@@ -332,11 +332,20 @@
     for (const s of L.strokes) { const pts = ptsOf(s), b = bboxOf(pts); if (b.x1 + (s.w || 0) < vx0 || b.x0 - (s.w || 0) > vx1 || b.y1 + (s.w || 0) < vy0 || b.y0 - (s.w || 0) > vy1) continue; paint(ctx, s); }
   }
   // the drawing follows the board's own camera, read live (a board that lives inside a card, like a nested canvas, may not report its view on every change)
-  const liveView = (canvas, v0) => { const wrap = canvas.wrapperEl; return { cx: canvas.x, cy: canvas.y, scale: canvas.scale, vw: (wrap && wrap.clientWidth) || (v0 && v0.vw) || 1, vh: (wrap && wrap.clientHeight) || (v0 && v0.vh) || 1 }; };
+  // the size of the board is kept by a ResizeObserver: reading clientWidth/clientHeight every frame forced a layout each time
+  const sizeOf = (canvas, wrap) => {
+    let d = canvas.__bsDim;
+    if (!d && wrap) {
+      d = canvas.__bsDim = { w: wrap.clientWidth, h: wrap.clientHeight };
+      try { new ResizeObserver(() => { d.w = wrap.clientWidth; d.h = wrap.clientHeight; }).observe(wrap); } catch (e) { /* no observer */ }
+    }
+    return d;
+  };
+  const liveView = (canvas, v0) => { const wrap = canvas.wrapperEl, d = sizeOf(canvas, wrap); return { cx: canvas.x, cy: canvas.y, scale: canvas.scale, vw: (d && d.w) || (v0 && v0.vw) || 1, vh: (d && d.h) || (v0 && v0.vh) || 1 }; };
   window.__bsInkFrame = (canvas, v0) => {
     const L = layerOf(canvas); if (!L) return;
     const v = liveView(canvas, v0); L.view = v;
-    if (!L.poll) { L.poll = true; const tick = () => { const w = canvas.wrapperEl; if (!w || !w.isConnected) { L.poll = false; return; } try { window.__bsInkFrame(canvas, null); } catch (e) { /* gone */ } requestAnimationFrame(tick); }; requestAnimationFrame(tick); } const sig = [v.cx, v.cy, v.scale, v.vw, v.vh, L.strokes.length].join("|");
+    if (!L.poll) { L.poll = true; const tick = () => { const w = canvas.wrapperEl; if (!w || !w.isConnected) { L.poll = false; return; } try { window.__bsInkFrame(canvas, null); } catch (e) { /* gone */ } if ((L.strokes && L.strokes.length) || modes.has(canvas)) requestAnimationFrame(tick); else setTimeout(tick, 250); /* no drawing here: poll slowly instead of every frame */ }; requestAnimationFrame(tick); } const sig = [v.cx, v.cy, v.scale, v.vw, v.vh, L.strokes.length].join("|");
     if (L.dirty || sig !== L.sig) { L.sig = sig; L.dirty = false; repaint(L); }
   };
 
