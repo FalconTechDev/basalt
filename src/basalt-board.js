@@ -174,6 +174,17 @@
 
   async function openBoard(path) { const leaf = app.workspace.getLeaf("tab"); await leaf.setViewState({ type: VIEW, active: true, state: { path } }); app.workspace.setActiveLeaf(leaf, { focus: true }); }
   async function newBoard() { let i = 0, p; do { p = "Доска" + (i ? " " + i : "") + "." + EXT; i++; } while (await app.vault.adapter.exists(p)); await app.vault.adapter.write(p, "{}"); await openBoard(p); return p; }
+  async function convertCanvas(file) {
+    const Y = window.__bsY.Y; let j; try { j = JSON.parse(await app.vault.adapter.read(file.path)); } catch (e) { new window.__bsApi.Notice("Не удалось прочитать холст"); return; }
+    const CM = { "1": "#e5484d", "2": "#f59f3b", "3": "#d6b43c", "4": "#46a758", "5": "#3fa7d6", "6": "#8e6bd8" }, d = new Y.Doc(), yn = d.getMap("nodes"), ye = d.getMap("edges"), ym = d.getMap("meta");
+    d.transact(() => {
+      ym.set("id", uid() + uid());
+      for (const n of j.nodes || []) { const m = new Y.Map(), t = new Y.Text(); const txt = n.type === "file" ? "[[" + String(n.file || "").replace(/\.md$/, "") + "]]" : n.type === "link" ? (n.url || "") : n.type === "group" ? (n.label || "") : (n.text || ""); t.insert(0, txt); m.set("x", n.x || 0); m.set("y", n.y || 0); m.set("w", n.width || 260); m.set("h", n.height || 110); m.set("color", CM[n.color] || (/^#/.test(n.color || "") ? n.color : "")); m.set("by", me.name); m.set("text", t); yn.set(n.id || uid(), m); }
+      for (const e of j.edges || []) { if (!e.fromNode || !e.toNode) continue; const m = new Y.Map(); m.set("a", e.fromNode); m.set("b", e.toNode); m.set("label", e.label || ""); ye.set(e.id || uid(), m); }
+    });
+    let i = 0, p; do { p = file.path.replace(/\.canvas$/, "") + (i ? " " + i : "") + "." + EXT; i++; } while (await app.vault.adapter.exists(p));
+    await app.vault.adapter.write(p, JSON.stringify({ v: 2, ydoc: b64(Y.encodeStateAsUpdate(d)) })); await openBoard(p);
+  }
   async function joinBoard() {
     const code = await ask("Код приглашения"); const m = code && /^basalt-board:([^:]+):(.+)$/.exec(code.trim()); if (!m) return;
     const p = "Доска (подключена " + m[1].slice(0, 4) + ")." + EXT; const Y = window.__bsY.Y, d = new Y.Doc(); d.getMap("meta").set("id", m[1]); d.getMap("meta").set("room", m[1]); d.getMap("meta").set("pass", m[2]);
@@ -188,6 +199,8 @@
     try { app.viewRegistry.registerExtensions([EXT], VIEW); } catch (e) { /* opened by command */ }
     app.commands.addCommand({ id: "basalt:board-new", name: "Новая доска", icon: "lucide-layout-dashboard", callback: newBoard });
     app.commands.addCommand({ id: "basalt:board-join", name: "Подключиться к доске по коду", icon: "lucide-users", callback: joinBoard });
-    window.__bsBoard = { open: openBoard, create: newBoard, join: joinBoard };
+    app.commands.addCommand({ id: "basalt:board-from-canvas", name: "Преобразовать холст в доску", icon: "lucide-layout-dashboard", checkCallback: (chk) => { const f = app.workspace.getActiveFile(); if (!f || f.extension !== "canvas") return false; if (!chk) convertCanvas(f); return true; } });
+    app.workspace.on("file-menu", (menu, f) => { if (f && f.extension === "canvas") menu.addItem((i) => i.setTitle("Преобразовать в доску").setIcon("lucide-layout-dashboard").onClick(() => convertCanvas(f))); });
+    window.__bsBoard = { convert: convertCanvas, open: openBoard, create: newBoard, join: joinBoard };
   }, 500);
 })();
