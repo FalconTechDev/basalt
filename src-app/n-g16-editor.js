@@ -455,4 +455,3 @@ export function ng16DefineMetadataEditor(host) {
 
   return MetadataEditor;
 }
-void ng16PropT; void ng16PluginT; void ng16EmptyValue;

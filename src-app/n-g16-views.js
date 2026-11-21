@@ -36,8 +36,9 @@ export function ng16AllPropertiesView(host) {
 }
 
 export function ng16FilePropertiesView(host) {
-  function V(leaf, plugin) { const self = host.ItemView.call(this, leaf) || this; self.plugin = plugin; self.icon = "lucide-info"; self.file = null; self.rawFrontmatter = null; self.frontmatter = null; self.modifyingFile = null; self.metadataEditor = new host.MetadataEditor(self.app, self); self.contentEl.appendChild(self.metadataEditor.containerEl); self.emptyEl = self.contentEl.createDiv({ cls: "pane-empty", text: "No properties" }); self.metadataEditor.containerEl.style.display = "none"; self.contentEl.addEventListener("click", (e) => { if (e.target === self.contentEl) self.metadataEditor.containerEl.focus(); }); self.contentEl.addEventListener("contextmenu", (e) => { if (e.target === self.contentEl && self.canShowProperties()) self.metadataEditor.showPropertiesMenu(e); }); return self; }
-  inherit(V, host.ItemView); const p = V.prototype;
+  const Base = host.LinkPaneView || host.FileView || host.ItemView;
+  function V(leaf, plugin) { const self = Base.call(this, leaf) || this; self.plugin = plugin; self.icon = "lucide-info"; self.file = null; self.rawFrontmatter = null; self.frontmatter = null; self.modifyingFile = null; self.metadataEditor = new host.MetadataEditor(self.app, self); self.contentEl.appendChild(self.metadataEditor.containerEl); self.emptyEl = self.contentEl.createDiv({ cls: "pane-empty", text: "No properties" }); self.metadataEditor.containerEl.style.display = "none"; self.contentEl.addEventListener("click", (e) => { if (e.target === self.contentEl) self.metadataEditor.containerEl.focus(); }); self.contentEl.addEventListener("contextmenu", (e) => { if (e.target === self.contentEl && self.canShowProperties()) self.metadataEditor.showPropertiesMenu(e); }); return self; }
+  inherit(V, Base); const p = V.prototype;
   p.getViewType = function () { return "file-properties"; };
   p.getDisplayText = function () { return this.file ? ng16PluginT(host).tabTitle({ displayText: this.file.basename }) : ng16PluginT(host).nameLocal(); };
   p.getFile = function () { return this.file; };
@@ -48,11 +49,11 @@ export function ng16FilePropertiesView(host) {
   p.isSupportedFile = function (f) { return !!f && f.extension === "md"; };
   p.readSupportedFile = async function (f) { try { return await this.app.vault.cachedRead(f); } catch { return ""; } };
   p.saveFrontmatter = async function (obj) { const f = this.file; if (!f || f.extension !== "md" || f !== this.modifyingFile) return; const content = await this.app.vault.read(f); const data = host.spliceFrontmatter(content, obj); await this.app.vault.process(f, () => data); };
-  p.updateFrontmatter = function (file, content) { if (!this.isSupportedFile(file)) { this.frontmatter = null; return; } const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(content || ""); const raw = m ? m[1] : ""; if (raw === this.rawFrontmatter) return; this.rawFrontmatter = raw; try { const parsed = host.parseYaml(raw) ?? {}; this.frontmatter = (parsed && typeof parsed === "object" && !Array.isArray(parsed)) ? parsed : null; } catch { this.frontmatter = null; } };
-  p.update = function () { this.metadataEditor.synchronize(this.frontmatter); this.updateEmptyState(); };
+  p.updateFrontmatter = function (file, content) { if (!this.isSupportedFile(file)) { this.frontmatter = {}; this.rawFrontmatter = null; return; } const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(content || ""); const raw = m ? m[1] : ""; if (raw === this.rawFrontmatter) return; this.rawFrontmatter = raw; try { const parsed = host.parseYaml(raw) ?? {}; this.frontmatter = (parsed && typeof parsed === "object" && !Array.isArray(parsed)) ? parsed : {}; } catch { this.frontmatter = {}; } };
+  p.update = function () { this.metadataEditor.synchronize(this.frontmatter || {}); this.updateEmptyState(); };
   p.updateEmptyState = function () { const empty = !this.frontmatter || Object.keys(this.frontmatter).length === 0; this.emptyEl.style.display = empty ? "" : "none"; this.metadataEditor.containerEl.style.display = empty ? "none" : ""; };
-  p.onLoadFile = async function (file) { this.file = file; const content = await this.readSupportedFile(file); this.updateFrontmatter(file, content); this.modifyingFile = file.extension === "md" ? file : null; this.update(); if (host.ItemView.prototype.onLoadFile) return host.ItemView.prototype.onLoadFile.call(this, file); };
-  p.onUnloadFile = function (file) { if (file === this.file) { this.modifyingFile = null; this.rawFrontmatter = null; this.updateFrontmatter(null, ""); this.metadataEditor.clear(); } if (host.ItemView.prototype.onUnloadFile) return host.ItemView.prototype.onUnloadFile.call(this, file); };
+  p.onLoadFile = async function (file) { this.file = file; const content = await this.readSupportedFile(file); this.updateFrontmatter(file, content); this.modifyingFile = file.extension === "md" ? file : null; this.update(); };
+  p.onUnloadFile = function (file) { if (file === this.file) { this.modifyingFile = null; this.rawFrontmatter = null; this.updateFrontmatter(null, ""); this.update(); this.metadataEditor.clear(); } };
   p.onFileChange = function (file) { if (file === this.file) this.onLoadFile(file); };
   p.onQuickPreview = p.onFileChange;
   p.handleCut = function (e) { this.metadataEditor.handleCut(e); }; p.handleCopy = function (e) { this.metadataEditor.handleCopy(e); }; p.handlePaste = function (e) { if (e.clipboardData.getData("basalt/properties")) this.metadataEditor.handlePaste(e); };

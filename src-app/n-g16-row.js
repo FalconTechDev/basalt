@@ -179,7 +179,11 @@ function buildPropertyRow(host) {
   proto.handleUpdateValue = function (value) {
     this.entry.value = ng16EmptyValue(value);
     this.editor.save();
-    this.renderProperty(this.entry, false, false);
+    const row = this;
+    // Defer the rebuild: commits usually arrive from a blur/Enter handler, and
+    // emptying the value container synchronously would remove the node that is
+    // still dispatching that event.
+    setTimeout(() => { if (row.containerEl.isConnected !== false) row.renderProperty(row.entry, false, false); }, 0);
   };
 
   proto.renderProperty = function (entry, force = false, isInitial = false) {
@@ -279,7 +283,6 @@ function buildPropertyRow(host) {
 
   return PropertyRow;
 }
-void buildPropertyRow;
 
 function ng16SameEntry(a, b) {
   if (a === b) return true;
@@ -291,4 +294,3 @@ function ng16SameEntry(a, b) {
   }
   return false;
 }
-void ng16Compare; void ng16Widget;

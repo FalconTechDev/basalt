@@ -4,11 +4,11 @@ import { stringCollator } from "./misc.js";
 import { tagValid } from "./metadata-helpers.js";
 import { inferPropertyWidget } from "./metadata-types.js";
 import { lastSegment } from "./path.js";
-import { s06TagSuggestions, s06DateRe } from "./s06-util.js";
+import { s06TagSuggestions } from "./s06-util.js";
 import { env } from "./env.js";
 
 export const ng16Reserved = Object.freeze({ aliases: true, cssclasses: true, tags: true });
-export const ng16DateRe = s06DateRe;
+export const ng16DateRe = /^\d{4}-[01]\d-[0-3]\d$/;
 export const ng16DateTimeRe = /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d(:[0-5]\d)?$/;
 export const ng16TagTriggerRe = /(^|\s)#[^ -⁯⸀-⹿'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\\s]*$/g;
 

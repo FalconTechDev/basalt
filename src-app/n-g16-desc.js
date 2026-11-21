@@ -41,4 +41,3 @@ export { ng16S06TextDesc as s06PropertyOptionText, ng16S06PropertyDesc as s06Pro
 
 // manifest class export aliases (the widget constructors live in the widget files)
 export { ng16DefineS06ValueItem as s06PropClassValueItem };
-void ng16DefineS06MultiSelect; void ng16DefineS06TypeCombobox; void ng16PropT;
