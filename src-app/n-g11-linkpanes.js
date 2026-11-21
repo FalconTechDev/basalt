@@ -922,7 +922,10 @@ const LinkPaneViewProto = {
       if (LPH().FileView.prototype.onGroupChange) LPH().FileView.prototype.onGroupChange.call(this);
       const group = this.leaf.group;
       if (group) {
-        for (const sibling of group.children) {
+        const siblings = this.app.workspace.getGroupLeaves
+          ? this.app.workspace.getGroupLeaves(group)
+          : (group.children || []);
+        for (const sibling of siblings) {
           if (sibling !== this.leaf && sibling.view instanceof LPH().FileView && sibling.view.file) {
             this.loadFile(sibling.view.file);
             return;

@@ -37220,7 +37220,7 @@ function defineMarkdownPreviewRenderer(host) {
   // ------------------------------------------------------------- lifecycle --
 
   proto.set = function (text) {
-    this.text = text;
+    this.text = text == null ? "" : text;
     this.queueRender();
   };
 
@@ -38116,7 +38116,8 @@ function defineMarkdownPreviewRenderer(host) {
   proto.applyFoldInfo = function (info) {
     const self = this;
     const apply = () => {
-      const lines = self.text === "" ? 0 : self.text.split("\n").length;
+      const text = self.text || "";
+      const lines = text === "" ? 0 : text.split("\n").length;
       if (info && info.lines !== undefined && info.lines !== lines) return;
       const wanted = new Set();
       if (info && info.folds) for (const f of info.folds) wanted.add(f.from);
@@ -41864,7 +41865,10 @@ const LinkPaneViewProto = {
       if (LPH().FileView.prototype.onGroupChange) LPH().FileView.prototype.onGroupChange.call(this);
       const group = this.leaf.group;
       if (group) {
-        for (const sibling of group.children) {
+        const siblings = this.app.workspace.getGroupLeaves
+          ? this.app.workspace.getGroupLeaves(group)
+          : (group.children || []);
+        for (const sibling of siblings) {
           if (sibling !== this.leaf && sibling.view instanceof LPH().FileView && sibling.view.file) {
             this.loadFile(sibling.view.file);
             return;

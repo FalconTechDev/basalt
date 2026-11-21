@@ -204,7 +204,7 @@ export function defineMarkdownPreviewRenderer(host) {
   // ------------------------------------------------------------- lifecycle --
 
   proto.set = function (text) {
-    this.text = text;
+    this.text = text == null ? "" : text;
     this.queueRender();
   };
 
@@ -1100,7 +1100,8 @@ export function defineMarkdownPreviewRenderer(host) {
   proto.applyFoldInfo = function (info) {
     const self = this;
     const apply = () => {
-      const lines = self.text === "" ? 0 : self.text.split("\n").length;
+      const text = self.text || "";
+      const lines = text === "" ? 0 : text.split("\n").length;
       if (info && info.lines !== undefined && info.lines !== lines) return;
       const wanted = new Set();
       if (info && info.folds) for (const f of info.folds) wanted.add(f.from);
