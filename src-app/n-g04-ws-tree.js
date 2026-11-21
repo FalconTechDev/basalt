@@ -178,7 +178,11 @@ export function ng04WsTree(host) {
 
   M.getActiveViewOfType = function (type) {
     const leaf = this.activeLeaf;
-    return leaf && leaf.view instanceof type ? leaf.view : null;
+    if (!leaf || !leaf.view) return null;
+    if (typeof type === "string") {
+      return leaf.view.getViewType && leaf.view.getViewType() === type ? leaf.view : null;
+    }
+    return leaf.view instanceof type ? leaf.view : null;
   };
 
   M.getActiveLeafOfViewType = function (type) {
