@@ -2330,7 +2330,7 @@
    "optionBackgroundCover": "Заполнить",
    "optionBackgroundRatio": "Сохранять пропорции",
    "optionBackgroundRepeat": "Повторять",
-   "actionBringToFront":"На передний план","actionOpen":"Открыть","actionCopyLink":"Скопировать ссылку","actionReload":"Перезагрузить","labelExportPngProgress":"Экспорт картинки…","menuColor":"Цвет","menuAlign":"Выровнять","menuArrange":"Расположить","menuDistribute":"Распределить","menuJustify":"По ширине","menuEdgeDirection":"Направление связи","menuBackground":"Фон","actionNewCanvas": "Новый холст",
+   "actionBringToFront":"На передний план","actionOpen":"Открыть","actionCopyLink":"Скопировать ссылку","actionReload":"Перезагрузить","labelExportPngProgress":"Экспорт картинки…","menuColor":"Цвет","menuAlign":"Выровнять","menuArrange":"Расположить","menuDistribute":"Распределить","menuJustify":"По ширине","menuEdgeDirection":"Направление связи","menuBackground":"Фон","actionNewCanvas": "Новая доска",
    "actionDuplicate": "Дублировать",
    "actionRemove": "Удалить",
    "actionNarrowHeading": "Сузить до заголовка...",

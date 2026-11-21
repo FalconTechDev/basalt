@@ -85861,7 +85861,6 @@ function ng26DefineTransition(host) {
 // the metadata index + localStorage data cache and forwards renames to the
 // batch repair queue (n-g26-canvas-renames.js).
 
-
 function ng26Strings(host) {
   return host.canvasI18n;
 }
@@ -86013,7 +86012,7 @@ function ng26DefineCanvasPlugin(host) {
     }
 
     createNewCanvasFile(folder, name, contents) {
-      return this.app.fileManager.createNewFile(folder, name, "canvas", contents);
+      return this.app.fileManager.createNewFile(folder, name, "board", "{}");
     }
 
     saveOptions() { return this.plugin.saveData(this.options); }

@@ -161,7 +161,7 @@ export function ng26DefineCanvasPlugin(host) {
     }
 
     createNewCanvasFile(folder, name, contents) {
-      return this.app.fileManager.createNewFile(folder, name, "canvas", contents);
+      return this.app.fileManager.createNewFile(folder, name, "board", "{}");
     }
 
     saveOptions() { return this.plugin.saveData(this.options); }
