@@ -73249,7 +73249,7 @@ function ng35BasesView(host) {
     doc.removeEventListener("copy", onCopy);
     area.remove();
     const gm = env().gm.interface;
-    new (env().Notice)(ok ? gm.copied({ context: "generic" }) : gm.copy_failed());
+    new host.Notice(ok ? gm.copied({ context: "generic" }) : gm.copy_failed());
   };
 
   // Renderer registry: file.name -> file link, note.* -> metadata widget,
