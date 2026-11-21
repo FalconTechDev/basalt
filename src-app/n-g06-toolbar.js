@@ -11,6 +11,19 @@ import { s09IsCustomProperty, s09PropertyToRef, s09FiltersToFrontmatter, s09Form
 
 const ng06B = () => env().gm.plugins.bases;
 
+// fallback for `zY` (s09BasesToolbarButton): `bases-toolbar-item` > `text-icon-button`
+function ng06FallbackToolbarButton(parentEl, extraCls, title, icon, onClick) {
+  const item = parentEl.createDiv({ cls: "bases-toolbar-item " + extraCls });
+  const btn = item.createDiv("text-icon-button");
+  btn.createSpan("text-button-icon", (el) => ng06Icon(el, icon));
+  btn.createSpan({ cls: "text-button-label", text: title });
+  btn.addEventListener("click", onClick);
+  item.buttonEl = btn;
+  item.button = { buttonEl: btn };
+  item.containerEl = item;
+  return item;
+}
+
 // `WX` — base class of toolbar dropdown pages.
 export function ng06ToolbarPage(host) {
   function ToolbarPage(controller) {
@@ -139,7 +152,7 @@ export function ng06ViewChooser(host) {
     this.chooser = null;
     this.handleSelect = null;
     this.handleNext = null;
-    this._itemsEl = this.containerEl.createDiv("bases-toolbar-menu-items");
+    this._itemsEl = this.containerEl.createDiv("bases-toolbar-items");
     return this;
   }
   ViewChooser.prototype.scope = null;
@@ -256,7 +269,7 @@ export function ng06ViewConfigPage(host) {
     const nameRow = this.formEl.createDiv("input-row");
     nameRow.createDiv({ cls: "input-row-label", text: ng06B().labelViewName() });
     const nameContent = nameRow.createDiv("input-row-content");
-    const input = this._nameInput = nameContent.createEl("input", { type: "text", cls: "settings-input" });
+    const input = this._nameInput = nameContent.createEl("input", { type: "text" });
     input.value = view.name || "";
     input.addEventListener("input", () => this._validateName(input));
     input.addEventListener("keydown", (e) => {
@@ -323,7 +336,7 @@ export function ng06ViewConfigPage(host) {
         break;
       }
       case "text": {
-        const inp = content.createEl("input", { type: "text", cls: "settings-input" });
+        const inp = content.createEl("input", { type: "text" });
         inp.value = get() || "";
         inp.placeholder = opt.placeholder || "";
         inp.addEventListener("change", () => set(inp.value || null));
@@ -334,13 +347,13 @@ export function ng06ViewConfigPage(host) {
         break;
       }
       case "property": {
-        const inp = content.createEl("input", { type: "text", cls: "settings-input" });
+        const inp = content.createEl("input", { type: "text" });
         inp.value = get() || "";
         inp.addEventListener("change", () => set(inp.value || null));
         break;
       }
       case "file": case "folder": {
-        const inp = content.createEl("input", { type: "text", cls: "settings-input" });
+        const inp = content.createEl("input", { type: "text" });
         inp.value = get() || "";
         inp.addEventListener("change", () => set(inp.value || null));
         break;
@@ -354,7 +367,7 @@ export function ng06ViewConfigPage(host) {
         break;
       }
       default: {
-        const inp = content.createEl("input", { type: "text", cls: "settings-input" });
+        const inp = content.createEl("input", { type: "text" });
         inp.value = get() == null ? "" : String(get());
         inp.addEventListener("change", () => set(inp.value));
       }
@@ -456,8 +469,7 @@ export function ng06ResultsMenu(host) {
       this.toolbarItem = new Button(parentEl, ng06B().nouns ? "" : "", "lucide-list-filter", () => this.toggle());
       this.toolbarItem.addContainerClass ? this.toolbarItem.addContainerClass("bases-toolbar-results-menu") : this.toolbarItem.addClass("bases-toolbar-results-menu");
     } else {
-      this.toolbarItem = parentEl.createDiv({ cls: "bases-toolbar-item bases-toolbar-results-menu" });
-      this.toolbarItem.createDiv({ cls: "bases-toolbar-button" });
+      this.toolbarItem = ng06FallbackToolbarButton(parentEl, "bases-toolbar-results-menu", "", "lucide-list-filter", () => this.toggle());
     }
     this.app = app;
     this.controller = controller;
@@ -477,7 +489,7 @@ export function ng06ResultsMenu(host) {
     // limit row
     const limitRow = scroll.createDiv("input-row");
     limitRow.createDiv({ cls: "input-row-label", text: ng06B().labelLimit() });
-    const input = limitRow.createDiv("input-row-content").createEl("input", { type: "number", cls: "settings-input" });
+    const input = limitRow.createDiv("input-row-content").createEl("input", { type: "number" });
     input.value = limit || "";
     input.placeholder = ng06B().placeholderLimit ? ng06B().placeholderLimit() : "";
     const commit = () => {
@@ -564,7 +576,7 @@ export function ng06SortRowBase(host) {
   SortRowBase.prototype.render = function (containerEl) {
     this.rowEl = containerEl.createDiv("base-toolbar-sort-item");
     this.wrapperEl = this.rowEl.createDiv("metadata-property bases-sort-property-container");
-    const propInput = this.wrapperEl.createEl("input", { type: "text", cls: "settings-input bases-sort-property" });
+    const propInput = this.wrapperEl.createEl("input", { type: "text", cls: "bases-sort-property" });
     propInput.placeholder = ng06B().labelPropertyKey();
     propInput.value = this.property || "";
     propInput.addEventListener("change", () => { this.property = propInput.value || null; this.handleSave(); });
@@ -629,8 +641,7 @@ export function ng06SortMenu(host) {
       this.toolbarItem = new Button(parentEl, ng06B().labelSort(), "lucide-arrow-up-down", () => self.toggle());
       this.toolbarItem.addContainerClass ? this.toolbarItem.addContainerClass("bases-toolbar-sort-menu") : this.toolbarItem.addClass("bases-toolbar-sort-menu");
     } else {
-      this.toolbarItem = parentEl.createDiv({ cls: "bases-toolbar-item bases-toolbar-sort-menu" });
-      this.toolbarItem.createDiv({ cls: "bases-toolbar-button", text: ng06B().labelSort() });
+      this.toolbarItem = ng06FallbackToolbarButton(parentEl, "bases-toolbar-sort-menu", ng06B().labelSort(), "lucide-arrow-up-down", () => self.toggle());
     }
     this.flairEl = this.toolbarItem.buttonEl ? this.toolbarItem.buttonEl.createDiv("flair toolbar-badge") : null;
     this._menu = null;
@@ -755,8 +766,7 @@ export function ng06FilterMenu(host) {
       this.toolbarItem = new Button(parentEl, ng06B().labelFilter(), "lucide-list-filter", () => self.toggle());
       this.toolbarItem.addContainerClass ? this.toolbarItem.addContainerClass("bases-toolbar-filter-menu") : this.toolbarItem.addClass("bases-toolbar-filter-menu");
     } else {
-      this.toolbarItem = parentEl.createDiv({ cls: "bases-toolbar-item bases-toolbar-filter-menu" });
-      this.toolbarItem.createDiv({ cls: "bases-toolbar-button", text: ng06B().labelFilter() });
+      this.toolbarItem = ng06FallbackToolbarButton(parentEl, "bases-toolbar-filter-menu", ng06B().labelFilter(), "lucide-list-filter", () => self.toggle());
     }
     this.flairEl = this.toolbarItem.flairEl || null;
     this._menu = null;
@@ -800,8 +810,8 @@ export function ng06FilterMenu(host) {
     const section = (title, open, builder) => {
       const box = scroll.createDiv("bases-toolbar-section");
       const header = box.createDiv("bases-toolbar-section-header");
-      header.createDiv({ cls: "collapse-icon" + (open ? "" : " is-collapsed"), text: "▸" });
-      header.createDiv({ cls: "bases-toolbar-section-header-text", text: title });
+      header.createDiv({ cls: "tree-item-icon collapse-icon" + (open ? "" : " is-collapsed") }, (icon) => ng06Icon(icon, "right-triangle"));
+      header.createSpan({ text: title });
       const content = box.createDiv("bases-toolbar-section-content");
       content.style.display = open ? "" : "none";
       header.addEventListener("click", () => {
@@ -905,7 +915,7 @@ export function ng06PropertyForm(host) {
     // display name row
     const nameRow = form.createDiv("input-row");
     nameRow.createDiv({ cls: "input-row-label", text: ng06B().labelDisplayName() });
-    const nameInput = nameRow.createDiv("input-row-content").createEl("input", { type: "text", cls: "settings-input" });
+    const nameInput = nameRow.createDiv("input-row-content").createEl("input", { type: "text" });
     nameInput.value = displayName || "";
     const commitName = () => {
       const value = nameInput.value.trim();
@@ -995,7 +1005,7 @@ export function ng06PropertyListPage(host) {
     this.chooser = null;
     this.handleSelect = null;
     this.handleNext = null;
-    this._listEl = this.containerEl.createDiv("bases-toolbar-menu-items");
+    this._listEl = this.containerEl.createDiv("bases-toolbar-items");
     return this;
   }
   PropertyListPage.prototype.scope = null;
@@ -1017,7 +1027,7 @@ export function ng06PropertyListPage(host) {
     for (const { id } of items) {
       const parsed = parsePropertyId(id);
       const row = el.createDiv({ cls: "bases-toolbar-menu-item" });
-      const cb = row.createEl("input", { type: "checkbox", cls: "metadata-property-checkbox" });
+      const cb = row.createEl("input", { type: "checkbox", prepend: true });
       const inOrder = view && view.getOrder && view.getOrder().includes(id);
       cb.checked = !!inOrder;
       cb.addEventListener("change", () => {
@@ -1196,9 +1206,9 @@ export function ng06SearchMenu(host) {
   function SearchMenu(app, controller, parentEl, headerEl) {
     this.app = app;
     this.queryController = controller;
-    this.headerEl = headerEl || parentEl;
-    this._rowEl = parentEl;
-    this.searchBarEl = null;
+    this._buttonParentEl = parentEl;
+    this._rowEl = headerEl || parentEl;
+    this.searchBarEl = this._rowEl;
     this.inputEl = null;
     this.countEl = null;
     this.button = null;
@@ -1209,28 +1219,35 @@ export function ng06SearchMenu(host) {
   }
   SearchMenu.prototype._build = function () {
     const row = this._rowEl;
-    this.button = row.createDiv({ cls: "bases-toolbar-button", text: ng06B().labelSearch() });
-    ng06Icon(this.button.createDiv ? this.button : this.button, "lucide-search");
-    this.button.addEventListener("click", () => this.toggle());
-    this.searchBarEl = row.createDiv("document-search-container");
+    const Button = host.s09BasesToolbarButton || env().zY;
+    if (Button) {
+      this.button = new Button(this._buttonParentEl, ng06B().labelSearch(), "lucide-search", () => this.toggle());
+      this.button.containerEl.addClass("bases-toolbar-search");
+    } else {
+      this.button = ng06FallbackToolbarButton(this._buttonParentEl, "bases-toolbar-search", ng06B().labelSearch(), "lucide-search", () => this.toggle());
+    }
     this.searchBarEl.hide();
     const SearchComponent = host.SearchComponent;
     if (SearchComponent) {
-      this.inputEl = new SearchComponent(this.searchBarEl);
-      this.inputEl.inputEl && this.inputEl.inputEl.addClass("document-search-input");
-      this.inputEl.setPlaceholder(env().gm.editor.search.placeholderFind());
-      this.inputEl.onChange(debounceCall((v) => {
-        this.countEl && this.countEl.toggleClass("mod-hidden", !v);
-        this.queryController.updateSearchQuery(v || "");
+      const comp = new SearchComponent(row).setClass("document-search-input");
+      comp.setPlaceholder(env().gm.editor.search.placeholderFind());
+      comp.onChange(debounceCall((v) => {
+        this.countEl && this.countEl.toggle(!!v);
+        this.queryController.updateSearchQuery(v);
       }, 0));
+      this.inputEl = comp.inputEl;
+      this.countEl = comp.containerEl.createDiv("document-search-count");
+      this.countEl.hide();
     } else {
-      this.inputEl = this.searchBarEl.createEl("input", { type: "text", cls: "document-search-input" });
+      const wrap = row.createDiv("search-input-container document-search-input");
+      this.inputEl = wrap.createEl("input", { type: "text" });
       this.inputEl.addEventListener("input", debounceCall(() => {
-        this.countEl && this.countEl.toggleClass("mod-hidden", !this.inputEl.value);
+        this.countEl && this.countEl.toggle(!!this.inputEl.value);
         this.queryController.updateSearchQuery(this.inputEl.value);
       }, 0));
+      this.countEl = wrap.createDiv("document-search-count");
+      this.countEl.hide();
     }
-    this.countEl = this.searchBarEl.createDiv({ cls: "document-search-count mod-hidden" });
   };
   SearchMenu.prototype.open = function () {
     if (this._isOpen) return;
@@ -1238,7 +1255,7 @@ export function ng06SearchMenu(host) {
     const current = this.queryController.getSearchQuery();
     const input = this.inputEl.inputEl || this.inputEl;
     if (input && input.value !== undefined) input.value = current || "";
-    this._rowEl.addClass("is-active");
+    if (this.button && this.button.buttonEl) this.button.buttonEl.addClass("is-active");
     this.searchBarEl.show();
     this.app.keymap.pushScope(this.scope);
     this.scope.register && this.scope.register([], "Escape", () => this.close());
@@ -1247,7 +1264,7 @@ export function ng06SearchMenu(host) {
   SearchMenu.prototype.close = function () {
     if (!this._isOpen) return;
     this._isOpen = false;
-    this._rowEl.removeClass("is-active");
+    if (this.button && this.button.buttonEl) this.button.buttonEl.removeClass("is-active");
     this.searchBarEl.hide();
     this.app.keymap.popScope(this.scope);
     this.queryController.updateSearchQuery();
@@ -1255,10 +1272,9 @@ export function ng06SearchMenu(host) {
   SearchMenu.prototype.toggle = function () { this._isOpen ? this.close() : this.open(); };
   SearchMenu.prototype.updateCount = function (results) {
     const n = results ? results.length : 0;
-    const input = this.inputEl.inputEl || this.inputEl;
-    const has = !!(input && input.value);
     this.countEl && this.countEl.setText(ng06B().labelSearchResults({ count: n }));
-    this.countEl && this.countEl.toggleClass("mod-hidden", !has);
+    const input = this.inputEl.inputEl || this.inputEl;
+    this.countEl && this.countEl.toggle(!!(input && input.value));
   };
   SearchMenu.prototype.onunload = function () { this.close(); };
   return SearchMenu;
@@ -1430,7 +1446,7 @@ export function ng06FormulaEditor(host) {
     this.editorEl = this.containerEl.createDiv("formula-editor");
     this.statusEl = this.containerEl.createDiv("formula-editor-status");
     this._iconEl = this.statusEl.createDiv("status-icon");
-    this._labelEl = this.statusEl.createDiv("status-label");
+    this._labelEl = this.statusEl.createSpan();
     this._options = options;
     this._view = null;
     this._build(initial);
