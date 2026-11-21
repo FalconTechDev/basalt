@@ -11030,7 +11030,7 @@ function ng04RegisterEventMenus(ws) {
     if (isFile) {
       menu.addItem((item) => item
         .setSection("info.copy")
-        .setTitle(T().interface.menu.copyObsidianUrl())
+        .setTitle(T().interface.menu.copyUrl ? T().interface.menu.copyUrl() : T().interface.menu.copyObsidianUrl())
         .setIcon("lucide-link")
         .onClick(() => app.copyObsidianUrl(file)));
       menu.addItem((item) => item
@@ -11038,6 +11038,13 @@ function ng04RegisterEventMenus(ws) {
         .setTitle(Ng04HostRef.Platform.isMobile ? T().plugins.openWithDefaultApp.actionOpenFileMobile() : T().plugins.openWithDefaultApp.actionOpenFile())
         .setIcon("lucide-arrow-up-right")
         .onClick(() => app.openWithDefaultApp(file.path)));
+      if (Ng04HostRef.Platform.isDesktopApp) {
+        menu.addItem((item) => item
+          .setSection("system")
+          .setTitle(Ng04HostRef.Platform.isMacOS ? T().plugins.openWithDefaultApp.actionShowInFolderMac() : T().plugins.openWithDefaultApp.actionShowInFolder())
+          .setIcon("lucide-folder-open")
+          .onClick(() => app.showInFolder(file)));
+      }
       if (Ng04HostRef.Platform.canPopoutWindow) {
         menu.addItem((item) => item
           .setSection("open")
@@ -11075,7 +11082,7 @@ function ng04RegisterEventMenus(ws) {
           .setSection("system")
           .setTitle(Ng04HostRef.Platform.isMacOS ? T().plugins.openWithDefaultApp.actionShowInFolderMac() : T().plugins.openWithDefaultApp.actionShowInFolder())
           .setIcon("lucide-folder-open")
-          .onClick(() => app.showInFolder(file.path)));
+          .onClick(() => app.showInFolder(file)));
       }
     }
   });
@@ -63229,12 +63236,19 @@ function defineNg20FileNode(host) {
       const ti = env().gm.plugins.canvas;
       const self = this;
       menu.addSections(["title", "action", "clipboard", "danger"]);
+      // a translation call that finds no key answers with the key itself: fall back to a plain label then
+      const tr = (fn, fallback) => {
+        try { const v = fn && fn(); return typeof v === "string" && v && !/^plugins\.|action-|^interface\./.test(v) ? v : fallback; } catch (e) { return fallback; }
+      };
       if (self.file) {
-        menu.addItem((item) => item.setSection("action").setTitle(ti.actionOpen ? ti.actionOpen() : "Open").setIcon("lucide-external-link").onClick(() => self.app.workspace.getLeaf().openFile(self.file)));
-        menu.addItem((item) => item.setSection("action").setTitle(ti.actionReveal ? ti.actionReveal() : "Reveal in explorer").setIcon("lucide-folder-open").onClick(() => self.app.workspace.trigger("file-explorer:reveal-path", self.file.path)));
+        const file = self.file;
+        const tm = host.t.interface.menu;
+        menu.addItem((item) => item.setSection("action").setTitle(tr(tm.openInNewTab && tm.openInNewTab.bind(tm), "Open in a new tab")).setIcon("lucide-file-plus").onClick(() => self.app.workspace.getLeaf("tab").openFile(file)));
+        menu.addItem((item) => item.setSection("action").setTitle(tr(env().gm.plugins.fileExplorer.actionRevealFile, "Show file in navigation")).setIcon("lucide-folder-search").onClick(() => self.app.workspace.trigger("file-explorer:reveal-path", file.path)));
+        menu.addItem((item) => item.setSection("action").setTitle("Show in system explorer").setIcon("lucide-folder-open").onClick(() => { try { self.app.showInFolder(file); } catch (e) { /* not available */ } }));
       }
       if (!canvas_.readonly) {
-        menu.addItem((item) => item.setSection("danger").setTitle(ti.actionRemove ? ti.actionRemove() : "Remove").setIcon("lucide-trash-2").setWarning(true).onClick(() => canvas_.removeNode(self)));
+        menu.addItem((item) => item.setSection("danger").setTitle(tr(ti.actionRemove, "Remove")).setIcon("lucide-trash-2").setWarning(true).onClick(() => canvas_.removeNode(self)));
       }
       canvas_.app.workspace.trigger("canvas:node-menu", menu, this);
       if (window.__fpNodeMenu) window.__fpNodeMenu(menu, this);

@@ -34,3 +34,6 @@
   align-items: center;
   display: flex;
 }
+
+/* an edge label sits above the cards it crosses (cards are z-index 1) */
+.canvas-path-label-wrapper { z-index: 2; }

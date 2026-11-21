@@ -361,7 +361,7 @@ function ng04RegisterEventMenus(ws) {
     if (isFile) {
       menu.addItem((item) => item
         .setSection("info.copy")
-        .setTitle(T().interface.menu.copyObsidianUrl())
+        .setTitle(T().interface.menu.copyUrl ? T().interface.menu.copyUrl() : T().interface.menu.copyObsidianUrl())
         .setIcon("lucide-link")
         .onClick(() => app.copyObsidianUrl(file)));
       menu.addItem((item) => item
@@ -369,6 +369,13 @@ function ng04RegisterEventMenus(ws) {
         .setTitle(Ng04HostRef.Platform.isMobile ? T().plugins.openWithDefaultApp.actionOpenFileMobile() : T().plugins.openWithDefaultApp.actionOpenFile())
         .setIcon("lucide-arrow-up-right")
         .onClick(() => app.openWithDefaultApp(file.path)));
+      if (Ng04HostRef.Platform.isDesktopApp) {
+        menu.addItem((item) => item
+          .setSection("system")
+          .setTitle(Ng04HostRef.Platform.isMacOS ? T().plugins.openWithDefaultApp.actionShowInFolderMac() : T().plugins.openWithDefaultApp.actionShowInFolder())
+          .setIcon("lucide-folder-open")
+          .onClick(() => app.showInFolder(file)));
+      }
       if (Ng04HostRef.Platform.canPopoutWindow) {
         menu.addItem((item) => item
           .setSection("open")
@@ -406,7 +413,7 @@ function ng04RegisterEventMenus(ws) {
           .setSection("system")
           .setTitle(Ng04HostRef.Platform.isMacOS ? T().plugins.openWithDefaultApp.actionShowInFolderMac() : T().plugins.openWithDefaultApp.actionShowInFolder())
           .setIcon("lucide-folder-open")
-          .onClick(() => app.showInFolder(file.path)));
+          .onClick(() => app.showInFolder(file)));
       }
     }
   });

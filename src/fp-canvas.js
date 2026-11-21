@@ -1186,7 +1186,8 @@
       return;
     }
     if (!canvas || canvas.readonly || node.nodeEl.classList.contains("canvas-node-group")) return;
-    menu.addItem((item) => {
+    const isPicture = !!(node.file && IMG_EXT.test(node.file.extension || ""));
+    if (!isPicture) menu.addItem((item) => {
       item.setSection("canvas").setTitle("Перевести карточки…").setIcon("lucide-languages").onClick(() => {
         const targets = canvas.selection.has(node) && canvas.selection.size > 1
           ? Array.from(canvas.selection).filter((x) => x.nodeEl && !x.nodeEl.classList.contains("canvas-node-group"))
@@ -1773,7 +1774,7 @@
     };
     const LANG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>';
     const UNDO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>';
-    tbtn("Перевести карточки", LANG_SVG, (b) => trPickLang(b, (tl, sl, hooks) => translateCanvas(canvas, tl, sel, sl, hooks), trDefaultLang()));
+    if (!sel.every((n) => n.file && IMG_EXT.test(n.file.extension || ""))) tbtn("Перевести карточки", LANG_SVG, (b) => trPickLang(b, (tl, sl, hooks) => translateCanvas(canvas, tl, sel, sl, hooks), trDefaultLang()));
     if (sel.some((n) => n.unknownData && (typeof n.unknownData.fpTrOrig === "string" || typeof n.unknownData.fpTrOrigFile === "string"))) {
       tbtn("Вернуть оригинал", UNDO_SVG, () => restoreOriginals(canvas, sel));
     }
