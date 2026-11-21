@@ -337,6 +337,7 @@ export function ng04WorkspaceLeaf(host) {
       type = app.viewRegistry.getTypeByExtension(extension);
     }
     if (!type) {
+      if (options.active !== false) app.workspace.setActiveLeaf(this, { focus: false });
       app.openWithDefaultApp(file.path);
       return;
     }
