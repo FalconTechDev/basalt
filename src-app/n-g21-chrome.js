@@ -155,7 +155,7 @@ export function ng21VaultProfile(host) {
     let nodePath = null;
     try { nodePath = window.require && window.require("path"); } catch (e) { nodePath = null; }
 
-    this.el = containerEl.createDiv("workspace-drawer-vault-profile");
+    this.el = containerEl.createDiv("workspace-sidedock-vault-profile");
     const row = this.el.createDiv("workspace-drawer-vault-switcher");
     const icon = row.createDiv("workspace-drawer-vault-switcher-icon");
     host.setIcon(icon, "lucide-chevrons-up-down");
@@ -302,11 +302,12 @@ function ng21MakeMobileDrawer(host) {
     this.tabContainerEl = this.innerEl.createDiv("workspace-drawer-tab-container");
     const activeBox = this.tabContainerEl.createDiv("workspace-drawer-active-tab-container");
     this.tabOptionsEl = activeBox.createDiv("workspace-drawer-tab-options");
-    const activeHeader = this.tabOptionsEl.createDiv("workspace-drawer-active-tab-header workspace-tab-header workspace-drawer-tab-select");
+    const activeHeader = this.tabOptionsEl.createDiv("workspace-tab-header workspace-drawer-tab-select");
     activeHeader.setAttribute("data-ignore-swipe", "");
-    this.activeTabHeaderIconEl = activeHeader.createSpan();
-    this.activeTabHeaderTitleEl = activeHeader.createSpan();
-    const chevron = activeHeader.createSpan("workspace-tab-header-inner-chevron");
+    const headerInner = activeHeader.createDiv("workspace-tab-header-inner");
+    this.activeTabHeaderIconEl = headerInner.createSpan("workspace-tab-header-inner-icon");
+    this.activeTabHeaderTitleEl = headerInner.createSpan("workspace-tab-header-inner-title");
+    const chevron = headerInner.createDiv("workspace-tab-header-inner-chevron");
     host.setIcon(chevron, "lucide-chevrons-up-down");
     this.activeTabHeaderEl = activeHeader;
     this.activeTabEl = activeHeader;
@@ -669,11 +670,11 @@ function ng21MakeFilesDrawer(host) {
     const left = this.headerEl.createDiv("workspace-drawer-header-left");
     const nameWrap = left.createDiv("workspace-drawer-header-name");
     const label = nameWrap.createEl("label", "workspace-drawer-header-switcher");
-    const nameText = label.createSpan();
+    const nameText = label.createSpan("workspace-drawer-header-name-text");
     nameText.setText(app.vault.getName());
-    const chev = label.createSpan();
+    const chev = label.createSpan("workspace-drawer-header-name-chevron");
     host.setIcon(chev, "lucide-chevron-down");
-    this._vaultSelect = nameWrap.createEl("select", "workspace-drawer-header-vault-select");
+    this._vaultSelect = label.createEl("select");
     this._infoEl = this.headerEl.createDiv("workspace-drawer-header-info");
     this.addHeaderButton("lucide-pin", () => this.togglePinned(), "mod-pin");
     this.addHeaderButton("lucide-settings", () => app.setting.open(), "mod-settings");
