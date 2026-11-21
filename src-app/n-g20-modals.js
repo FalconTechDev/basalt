@@ -247,82 +247,132 @@ export function defineNg20ViewTypeSuggest(host) {
 // ---- markdown embed settings sync (O5) ------------------------------------------------------------
 
 export function defineNg20MarkdownEmbed(host) {
-  class MarkdownEmbed {
-    constructor(app, file, containerEl) {
-      this.app = ng20OwnerApp(app);
-      this.file = file;
-      this.containerEl = containerEl;
-      this.scope = "";
-      this.folded = false;
-      this.saveMode = false;
+  /** Markdown preview/editor mounted inside a canvas text node (orig O5). */
+  class CanvasMarkdownEmbed extends host.MarkdownEmbedBase {
+    constructor(node) {
+      super(node.app, node.contentEl, null);
+      this.editable = true;
+      this.useIframe = true;
+      this.scope = null;
+      this.node = node;
+      this.containerEl.addClass("markdown-embed");
     }
 
-    loadSettings() {
-      const key = this.app.appId + "-canvas-embed-" + (this.file ? this.file.path : "");
-      const raw = this.app.loadLocalStorage(key);
-      if (!raw) return;
-      try {
-        const d = JSON.parse(raw);
-        if (d) { this.scope = d.scope || ""; this.folded = !!d.folded; this.saveMode = !!d.saveMode; }
-      } catch (e) { /* corrupt -> defaults */ }
+    save(content, force) {
+      super.save(content, force);
+      if (force && this.node.text !== content) {
+        this.node.text = content;
+        this.node.canvas.requestSave();
+      }
     }
 
-    saveSettings() {
-      const key = this.app.appId + "-canvas-embed-" + (this.file ? this.file.path : "");
-      this.app.saveLocalStorage(key, JSON.stringify({ scope: this.scope, folded: this.folded, saveMode: this.saveMode }));
+    applyScope(scope) {
+      if (scope === this.scope) return;
+      if (this.scope) this.app.keymap.popScope(this.scope);
+      if (scope) this.app.keymap.pushScope(scope);
+      this.scope = scope;
     }
 
-    setScope(scope) { this.scope = scope || ""; this.saveSettings(); }
-    setFolded(f) { this.folded = !!f; this.containerEl && this.containerEl.toggleClass("is-folded", this.folded); this.saveSettings(); }
-    setSaveMode(m) { this.saveMode = !!m; this.saveSettings(); }
+    onunload() {
+      super.onunload();
+      this.applyScope(null);
+    }
+
+    get linktext() {
+      const node = this.node;
+      const file = node.canvas.view && node.canvas.view.file;
+      return (file ? file.path : "") + "#^" + node.id;
+    }
+
+    getFoldInfo() {
+      return this.app.foldManager.loadPath(this.linktext);
+    }
+
+    onMarkdownFold() {
+      const info = this.getMode() === "preview"
+        ? this.previewMode.renderer.getFoldInfo()
+        : this.editMode.getFoldInfo();
+      this.app.foldManager.savePath(this.linktext, info);
+    }
   }
-  canvas.MarkdownEmbed = MarkdownEmbed;
-  return MarkdownEmbed;
+  canvas.MarkdownEmbed = CanvasMarkdownEmbed;
+  return CanvasMarkdownEmbed;
 }
 
 // ---- empty embed retry (N5) ------------------------------------------------------------------------
 
 export function defineNg20EmptyEmbed(host) {
-  class EmptyEmbed {
-    constructor(app, file) {
-      this.app = ng20OwnerApp(app);
-      this.file = file;
-      this.containerEl = createDiv("canvas-embed-empty");
-      this.retries = 0;
+  /** Shown inside a file node when its target file does not exist yet (orig N5). */
+  class EmptyEmbed extends host.Component {
+    constructor(ctx, node, reload) {
+      super();
+      this.app = ctx.app;
+      this.file = null;
+      this.ctx = ctx;
+      this.node = node;
+      this.reload = reload;
+      this.containerEl = ctx.containerEl;
     }
 
-    load() {
-      this.render();
-      this.scheduleRetry();
+    async loadFile() {
+      const containerEl = this.containerEl;
+      const ctx = this.ctx;
+      const app = ctx.app;
+      const linktext = ctx.linktext;
+      const sourcePath = ctx.sourcePath;
+      const node = this.node;
+      const canvas_ = node.canvas;
+      if (node.contentBlockerEl) node.contentBlockerEl.detach();
+      const path = (linktext || "").split("#")[0].split("|")[0];
+      const ext = path.includes(".") ? path.split(".").pop().toLowerCase() : "";
+      containerEl.createDiv("canvas-empty-embed-container", (el) => {
+        el.createDiv({ cls: "canvas-empty-embed-label", text: ng20CanvasStrings().labelEmptyEmbed ? ng20CanvasStrings().labelEmptyEmbed({ linktext }) : "Empty embed" });
+        el.createDiv("canvas-empty-embed-action-list", (list) => {
+          if (ext === "md" || ext === "") {
+            list.createEl("button", { cls: "empty-state-action", text: ng20InterfaceStrings().emptyState.createNewFile() }, (btn) => {
+              btn.addEventListener("click", () => {
+                app.fileManager.createNewMarkdownFileFromLinktext(linktext, sourcePath);
+              });
+            });
+          }
+          list.createEl("button", { cls: "empty-state-action", text: ng20CanvasStrings().actionSwapFile ? ng20CanvasStrings().actionSwapFile() : "Swap file" }, (btn) => {
+            btn.addEventListener("click", () => {
+              new canvas.FileSuggest(canvas_, (file) => {
+                node.setFile(file, "", canvas_.requestSave());
+              }).open();
+            });
+          });
+          list.createEl("button", { cls: "empty-state-action mod-warning", text: ng20CanvasStrings().actionRemove ? ng20CanvasStrings().actionRemove() : "Remove" }, (btn) => {
+            btn.addEventListener("click", () => {
+              canvas_.removeNode(node);
+              canvas_.requestSave();
+            });
+          });
+        });
+      });
+      containerEl.addClass("mod-canvas-empty");
     }
 
-    render() {
-      this.containerEl.empty();
-      this.containerEl.createDiv("canvas-embed-empty-text").setText("Canvas file missing — retrying…");
-      const retry = this.containerEl.createDiv("canvas-embed-empty-retry");
-      retry.setText("Retry");
-      retry.addEventListener("click", () => this.retry());
-    }
-
-    scheduleRetry() {
-      if (this.retries >= 5) return;
-      this.retries++;
-      setTimeout(() => this.retry(), 1000 * this.retries);
-    }
-
-    retry() {
-      const path = this.file && this.file.path ? this.file.path : this.file;
-      const file = this.app.vault.getAbstractFileByPath(path);
-      if (file) {
-        this.containerEl.empty();
-        const embed = new canvas.CanvasEmbed({ app: this.app, containerEl: this.containerEl }, file, "");
-        embed.load();
-        return;
+    onload() {
+      const ctx = this.ctx;
+      const app = ctx.app;
+      const linktext = ctx.linktext;
+      const onFileEvent = () => {
+        const parsedPath = (linktext || "").split("#")[0].split("|")[0];
+        const file = app.vault.getAbstractFileByPath(parsedPath);
+        if (file && file.path === parsedPath) {
+          this.node.setFile(file, "", true);
+        }
+      };
+      if (app.vault && app.vault.on) {
+        this.registerEvent(app.vault.on("create", onFileEvent));
+        this.registerEvent(app.vault.on("rename", onFileEvent));
       }
-      if (this.app.metadataCache && typeof this.app.metadataCache.trigger === "function") {
-        this.app.metadataCache.trigger("changed");
-      }
-      if (this.retries < 5) this.scheduleRetry();
+    }
+
+    onClick(evt) {
+      const ctx = this.ctx;
+      ctx.app.workspace.openLinkText(ctx.linktext, ctx.sourcePath, host.Keymap.isModEvent(evt));
     }
   }
   canvas.EmptyEmbed = EmptyEmbed;

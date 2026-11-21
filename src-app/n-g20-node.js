@@ -55,7 +55,7 @@ export function defineNg20CanvasNode(host) {
       this.contentBlockerEl = this.containerEl.createDiv("canvas-node-content-blocker");
       this.contentBlockerEl.hide();
       this.placeholderEl = this.containerEl.createDiv("canvas-node-placeholder");
-      this.labelEl = this.containerEl.createDiv("canvas-node-label");
+      this.labelEl = this.nodeEl.createDiv(this.labelClass());
       this.labelEl.hide();
       this.labelEl.setAttribute("contenteditable", "false");
       this.labelEl.addEventListener("blur", () => this.commitLabel());
@@ -204,6 +204,8 @@ export function defineNg20CanvasNode(host) {
 
     updateBreakpoint() {}
 
+    labelClass() { return "canvas-node-label"; }
+
     // ---------- label ----------
 
     renderLabel() {
@@ -215,8 +217,11 @@ export function defineNg20CanvasNode(host) {
 
     updateNodeLabel(text) {
       this.labelElText = text || "";
-      if (this.labelEl.getAttribute("contenteditable") !== "true") this.labelEl.setText(this.labelElText);
-      this.labelEl.toggle(this.labelElText.length > 0 || this.labelEl.getAttribute("contenteditable") === "true");
+      const labelEl = this.labelEl;
+      const visibility = this.canvas.options && this.canvas.options.cardLabelVisibility;
+      labelEl.toggleClass("mod-hover-label", visibility === "hover");
+      if (labelEl.getAttribute("contenteditable") !== "true") labelEl.setText(this.labelElText);
+      labelEl.toggle(this.labelElText.length > 0 || labelEl.getAttribute("contenteditable") === "true");
     }
 
     /** Focuses the node label for inline renaming (group nodes). */
@@ -233,6 +238,7 @@ export function defineNg20CanvasNode(host) {
       const text = (this.labelEl.innerText || "").trim();
       if (typeof this.setLabel === "function") this.setLabel(text);
       else this.updateNodeLabel(this.labelText());
+      this.canvas.requestSave();
     }
 
     // ---------- selection ----------
@@ -466,7 +472,10 @@ export function defineNg20DummyNode(host) {
       this.type = "dummy";
       this.width = 0;
       this.height = 0;
-      this.nodeEl.addClass("canvas-node-dummy");
+      this.nodeEl.addClass("is-dummy");
+      this.placeholderEl.hide();
+      this.contentBlockerEl.hide();
+      this.labelEl.hide();
     }
 
     getData() {
@@ -475,7 +484,6 @@ export function defineNg20DummyNode(host) {
 
     render() {
       super.render();
-      this.nodeEl.toggleClass("is-empty", this.width === 0 && this.height === 0);
     }
   }
   canvas.DummyNode = DummyNode;
@@ -492,7 +500,7 @@ export function defineNg20EditableNode(host) {
       this.alwaysKeepLoaded = true;
     }
 
-    isEditable() { return true; }
+    isEditable() { return this.child instanceof host.MarkdownEmbedBase; }
 
     setIsEditing(editing) {
       this.isEditing = !!editing;
@@ -501,12 +509,32 @@ export function defineNg20EditableNode(host) {
       if (!this.isEditing) this.canvas.markDirty(this);
     }
 
-    startEditing(point_) {
-      this.setIsEditing(true);
+    blur() {
+      super.blur();
       const child = this.child;
-      if (child && typeof child.focus === "function") child.focus();
-      else if (this.contentEl) this.contentEl.focus();
-      void point_;
+      if (child instanceof canvas.MarkdownEmbed || child instanceof host.StatefulEmbedBase) {
+        child.showPreview(true);
+        if (child.applyScope) child.applyScope(null);
+      }
+    }
+
+    focus() {
+      super.focus();
+      const workspace = this.app.workspace;
+      const editor = this.child instanceof host.MarkdownEmbedBase ? this.child : null;
+      if (workspace) workspace.activeEditor = editor;
+      let file = null;
+      if (this instanceof canvas.FileNode) file = this.file;
+      this.canvas.requestUpdateFileOpen(file);
+    }
+
+    startEditing(point_) {
+      if (this.canvas.readonly) return;
+      const child = this.child;
+      if (child instanceof host.MarkdownEmbedBase) {
+        child.showEditor(point_);
+        this.setIsEditing(true);
+      }
     }
 
     onDoubleClick(evt) {
@@ -529,7 +557,6 @@ export function defineNg20TextNode(host) {
       super(canvas_, id);
       this.type = "text";
       this.text = "";
-      this.editEl = null;
     }
 
     getData() {
@@ -542,47 +569,36 @@ export function defineNg20TextNode(host) {
       super.setData(data);
       if (typeof data.text === "string") {
         this.text = data.text;
-        if (this.editEl) this.editEl.setText(this.text);
+        if (this.child) this.child.set(this.text);
       }
     }
 
     setText(text) {
+      if (this.text === text) return;
       this.text = text || "";
+      if (this.child) this.child.set(this.text);
       this.canvas.markDirty(this);
       this.canvas.requestSave();
     }
 
     renderContent() {
       super.renderContent();
-      const el = this.contentEl.createEl("div", { cls: "canvas-node-text", attr: { contenteditable: "true", spellcheck: "false" } });
-      el.setText(this.text);
-      this.editEl = el;
-      el.addEventListener("input", () => this.setText(el.innerText));
-      el.addEventListener("blur", () => this.setIsEditing(false));
-      el.addEventListener("pointerdown", (evt) => evt.stopPropagation());
-      el.addEventListener("keydown", (evt) => {
-        evt.stopPropagation();
-        if (evt.key === "Escape") { this.setIsEditing(false); el.blur(); }
-      });
-      if (this.isEditing) el.focus();
+      if (!this.placeholderEl.firstChild) {
+        host.setIcon(this.placeholderEl.createDiv("canvas-icon-placeholder"), "lucide-align-left");
+      }
+      if (!this.child) {
+        this.child = new canvas.MarkdownEmbed(this);
+        this.child.set(this.text);
+        if (typeof this.child.load === "function") this.child.load();
+      }
     }
 
     startEditing(point_) {
       super.startEditing(point_);
-      if (this.editEl) {
-        this.editEl.focus();
-        host.focusAndSelectContents(this.editEl);
-      }
-      void point_;
-    }
-
-    setIsEditing(editing) {
-      super.setIsEditing(editing);
-      if (this.editEl) this.editEl.setAttribute("contenteditable", editing ? "true" : "false");
     }
 
     unmountContent() {
-      this.editEl = null;
+      this.child = null;
       super.unmountContent();
     }
 

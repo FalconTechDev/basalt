@@ -9,6 +9,7 @@ import { defineNg20CanvasNode, defineNg20EditableNode, defineNg20ContentMountNod
 import { ng20CanvasPreview } from "./n-g20-edge.js";
 import { normalizePath } from "./path.js";
 import { copyText } from "./misc.js";
+import { isLightColor } from "./n-g25-misc.js";
 
 // ---- file node (P5) -----------------------------------------------------------------------------
 
@@ -82,16 +83,30 @@ export function defineNg20FileNode(host) {
       this.updateNodeLabel((path || "").split("/").pop() || "missing");
       if (this.isContentMounted) {
         this.contentEl.empty();
-        const el = this.contentEl.createDiv("canvas-node-missing");
-        el.createDiv("canvas-node-missing-icon");
-        el.createDiv("canvas-node-missing-text").setText(path || "missing file");
+        this.child = null;
+        const ctx = {
+          app: this.app,
+          linktext: this.filePath + (this.subpath || ""),
+          sourcePath: this.canvas.view && this.canvas.view.file ? this.canvas.view.file.path : "",
+          containerEl: this.contentEl,
+          depth: 0,
+        };
+        this.child = new canvas.EmptyEmbed(ctx, this, () => this.render());
+        if (typeof this.child.loadFile === "function") this.child.loadFile();
         this.placeholderEl.hide();
       }
     }
 
+    labelText() {
+      if (!this.file) return this.filePath || "";
+      let label = this.file.basename || this.filePath || "";
+      if (this.subpath && this.file.extension === "md") label += " › " + this.subpath.substring(1);
+      return label;
+    }
+
     isEditable() { return false; }
 
-    /** Renders through the app embed registry so md/media/pdf/canvas all work. */
+    /** Renders through host.EmbedLoader so md/media/pdf/canvas embeds all work. */
     renderContent() {
       super.renderContent();
       const file = this.file;
@@ -100,36 +115,48 @@ export function defineNg20FileNode(host) {
       this.contentEl.empty();
       this.child = null;
       this.embedEl = null;
-      const registry = this.app.embedRegistry;
-      const creator = registry && typeof registry.getEmbedCreator === "function" ? registry.getEmbedCreator(file) : null;
-      if (creator) {
-        const viewFile = this.canvas && this.canvas.view && this.canvas.view.file;
-        const ctx = {
-          app: this.app,
-          containerEl: this.contentEl,
-          linktext: file.path + (this.subpath || ""),
-          sourcePath: viewFile ? viewFile.path : "",
-          state: {},
-          displayMode: false,
-          showInline: false,
-          editable: false,
-        };
-        try {
-          const embed = creator(ctx, file, this.subpath || undefined);
-          this.child = embed;
-          if (embed && embed.containerEl && embed.containerEl !== this.contentEl) {
-            // creator already owns containerEl (ctx.containerEl) in most cases
-          }
-          if (embed && typeof embed.loadFile === "function") embed.loadFile();
-          else if (embed && typeof embed.load === "function") embed.load();
-          else if (embed && typeof embed.onload === "function") embed.onload();
-        } catch (err) {
-          this.contentEl.setText(file.basename);
-        }
+      const ctx = {
+        app: this.app,
+        linktext: this.filePath + (this.subpath || ""),
+        sourcePath: this.canvas.view && this.canvas.view.file ? this.canvas.view.file.path : "",
+        containerEl: this.contentEl,
+        depth: 0,
+      };
+      let child;
+      if (host.EmbedLoader && typeof host.EmbedLoader.load === "function") {
+        child = host.EmbedLoader.load(ctx);
       } else {
-        this.contentEl.createDiv("canvas-node-generic").setText(file.basename);
+        const creator = this.app.embedRegistry && this.app.embedRegistry.getEmbedCreator(file);
+        child = creator ? creator(ctx, file, this.subpath || undefined) : null;
       }
-      this.updateNodeLabel(file.basename);
+      if (child) {
+        this.child = child;
+        if (child instanceof host.StatefulEmbedBase) {
+          child.useLocalPropertiesFoldState = true;
+          child.editable = true;
+          child.useIframe = true;
+        }
+        if (this.isFocused) {
+          const workspace = this.app.workspace;
+          if (workspace) workspace.activeEditor = child instanceof host.MarkdownEmbedBase ? child : null;
+          this.canvas.requestUpdateFileOpen(this.file);
+        }
+        if (typeof child.load === "function") child.load();
+        if (typeof child.loadFile === "function") child.loadFile();
+      } else {
+        this.child = new canvas.EmptyEmbed(ctx, this, () => this.render());
+        if (typeof this.child.loadFile === "function") this.child.loadFile();
+      }
+      this.updateNodeLabel(this.labelText());
+    }
+
+    render() {
+      super.render();
+      if (!this.isContentMounted) {
+        const label = this.file ? (this.file.basename || this.filePath) : (this.filePath || "");
+        this.placeholderEl.setText(label);
+        this.placeholderEl.show();
+      }
     }
 
     onDoubleClick(evt) {
@@ -179,26 +206,42 @@ export function defineNg20GroupNode(host) {
       super(canvas_, id);
       this.type = "group";
       this.label = "";
-      this.background = "";
-      this.backgroundStyle = null;
-      this.isTransparent = false;
-      this.labelEl.show();
+      this.bgPath = "";
+      this.bgFile = null;
+      this.bgStyle = "";
+      this.nodeEl.addClass("canvas-node-group");
+      this.placeholderEl.hide();
+      this.contentBlockerEl.hide();
     }
+
+    labelClass() { return "canvas-group-label"; }
 
     getData() {
       const out = super.getData();
       out.type = "group";
       if (this.label) out.label = this.label;
-      if (this.background) out.background = this.background;
-      if (this.backgroundStyle) out.backgroundStyle = this.backgroundStyle;
+      if (this.bgPath) {
+        out.background = this.bgFile ? this.bgFile.path : this.bgPath;
+        if (this.bgStyle && this.bgStyle !== "cover") out.backgroundStyle = this.bgStyle;
+      }
       return out;
     }
 
     setData(data) {
       super.setData(data);
-      if (typeof data.label === "string") this.label = data.label;
-      if (typeof data.background === "string") this.background = data.background;
-      if (data.backgroundStyle && typeof data.backgroundStyle === "object") this.backgroundStyle = data.backgroundStyle;
+      if (typeof data.label === "string") this.setLabel(data.label);
+      const bg = typeof data.background === "string" ? data.background : "";
+      const bgStyle = typeof data.backgroundStyle === "string" ? data.backgroundStyle : "";
+      if (bg) {
+        this.bgPath = bg;
+        const resolved = this.app.vault.getAbstractFileByPath(bg);
+        this.bgFile = resolved && resolved.path ? resolved : null;
+        this.bgStyle = bgStyle;
+      } else {
+        this.bgPath = "";
+        this.bgFile = null;
+        this.bgStyle = "";
+      }
       this.render();
     }
 
@@ -208,15 +251,68 @@ export function defineNg20GroupNode(host) {
       this.label = label || "";
       this.updateNodeLabel(this.label);
       this.canvas.markDirty(this);
-      this.canvas.requestSave();
+    }
+
+    setBackgroundFile(file) {
+      const path = file ? file.path : "";
+      if (this.bgPath === path && this.bgFile === file) return;
+      this.bgPath = path;
+      this.bgFile = file || null;
+      if (!file) this.bgStyle = "";
+      this.render();
+      this.canvas.markDirty(this);
+    }
+
+    setBackgroundStyle(style) {
+      if (!this.bgPath) style = "";
+      if (this.bgStyle !== style) {
+        this.bgStyle = style;
+        this.render();
+        this.canvas.markDirty(this);
+      }
     }
 
     render() {
       super.render();
-      this.nodeEl.addClass("canvas-node-group");
-      this.nodeEl.toggleClass("canvas-node-group-transparent", this.isTransparent);
-      if (this.backgroundStyle) this.containerEl.setCssStyles(this.backgroundStyle);
       this.updateNodeLabel(this.label);
+      // foreground legibility classes for themed groups
+      let light = false, dark = false;
+      const color = this.color;
+      if (color) {
+        const parsed = /^\d+$/.test(color)
+          ? host.s13ParseColor("rgb(" + this.labelEl.getCssPropertyValue("--canvas-color-" + color) + ")")
+          : host.s13ParseColor(color);
+        if (parsed) {
+          if (isLightColor(parsed)) dark = true;
+          else light = true;
+        }
+      }
+      this.labelEl.toggleClass("mod-foreground-light", light);
+      this.labelEl.toggleClass("mod-foreground-dark", dark);
+      const contentEl = this.contentEl;
+      if (this.bgFile) {
+        const styles = {
+          backgroundImage: `url("${CSS.escape(this.app.vault.getResourcePath(this.bgFile))}")`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center center",
+          backgroundSize: "cover",
+        };
+        if (this.bgStyle === "repeat") {
+          styles.backgroundRepeat = "repeat";
+          styles.backgroundPosition = "top left";
+          styles.backgroundSize = "auto";
+        }
+        contentEl.setCssStyles(styles);
+      } else {
+        contentEl.setCssStyles({ backgroundImage: "", backgroundRepeat: "", backgroundPosition: "", backgroundSize: "" });
+      }
+    }
+
+    updateZIndex() { this.renderZIndex(); }
+
+    renderZIndex() {
+      this.zIndex = Math.round(-this.width * this.height);
+      this.nodeEl.style.zIndex = String(this.zIndex);
     }
 
     attach() {

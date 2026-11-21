@@ -262,51 +262,75 @@ export function defineNg20InteractionLayer(host) {
     constructor(canvas_) {
       this.canvas = canvas_;
       this.target = null;
-      this.interactionEl = createDiv("canvas-node-interaction-layer");
-      this.dotsEl = this.interactionEl.createDiv("canvas-node-interaction-layer-dots");
-      this.handlesEl = this.interactionEl.createDiv("canvas-node-interaction-layer-handles");
-      this.interactionEl.hide();
-      canvas_.canvasEl.appendChild(this.interactionEl);
-      this.buildDots();
-    }
+      const layer = (this.interactionEl = createDiv("canvas-node-interaction-layer"));
+      layer.hide();
 
-    buildDots() {
-      for (const side of ["top", "right", "bottom", "left"]) {
-        const dot = this.dotsEl.createDiv(`canvas-node-interaction-dot mod-${side}`);
-        dot.setAttr("data-side", side);
-        dot.addEventListener("pointerdown", (evt) => {
-          if (this.target) this.target.onConnectionPointerdown(evt, side);
-        });
-      }
-      for (const side of ["top", "right", "bottom", "left", "topleft", "topright", "bottomleft", "bottomright"]) {
-        const handle = this.handlesEl.createDiv(`canvas-node-interaction-handle mod-resize-${side}`);
-        handle.setAttr("data-resize", side);
+      const sides = ["top", "right", "bottom", "left"];
+      for (const side of sides) {
+        const handle = createDiv({ cls: "canvas-node-resizer", attr: { "data-resize": side } });
         handle.addEventListener("pointerdown", (evt) => {
-          if (this.target && !this.canvas.readonly) this.target.onResizePointerdown(evt, side);
+          const target = this.target;
+          if (evt.targetNode === handle && evt.pointerType === "mouse" && target) {
+            target.onResizePointerdown(evt, side);
+          }
         });
-        handle.addEventListener("dblclick", (evt) => {
-          if (this.target) this.target.onResizeDblclick(evt);
+        handle.addEventListener("click", (evt) => {
+          const target = this.target;
+          if (target) target.onClick(evt);
         });
+        if (side !== "bottom" && side !== "right") {
+          handle.addEventListener("dblclick", (evt) => {
+            const target = this.target;
+            if (target) target.onResizeDblclick(evt, side);
+          });
+        }
+        handle.createDiv({ cls: "canvas-node-connection-point", attr: { "data-side": side } })
+          .addEventListener("pointerdown", (evt) => {
+            const target = this.target;
+            if (target) target.onConnectionPointerdown(evt, side);
+          });
+        layer.appendChild(handle);
       }
+
+      const corners = ["topright", "bottomright", "bottomleft", "topleft"];
+      for (const corner of corners) {
+        const handle = createDiv({ cls: "canvas-node-resizer", attr: { "data-resize": corner } });
+        handle.addEventListener("pointerdown", (evt) => {
+          const target = this.target;
+          if (target) target.onResizePointerdown(evt, corner);
+        });
+        handle.addEventListener("click", (evt) => {
+          const target = this.target;
+          if (target) target.onClick(evt);
+        });
+        layer.appendChild(handle);
+      }
+      canvas_.canvasEl.appendChild(layer);
     }
 
     setTarget(node) {
-      if (this.target === node) return;
-      this.target = node;
-      this.render();
+      if (this.target !== node) {
+        this.target = node;
+        this.render();
+      }
     }
 
     render() {
-      const node = this.target;
-      const show = !!node && !this.canvas.readonly && !node.destroyed;
-      this.interactionEl.toggle(show);
-      if (!show) return;
-      const b = node.getBBox();
-      this.interactionEl.style.left = b.minX + "px";
-      this.interactionEl.style.top = b.minY + "px";
-      this.interactionEl.style.width = (b.maxX - b.minX) + "px";
-      this.interactionEl.style.height = (b.maxY - b.minY) + "px";
-      this.handlesEl.toggle(!node.isEditable || node.width > 30);
+      const canvas_ = this.canvas;
+      const target = this.target;
+      const layer = this.interactionEl;
+      if (!target || target.destroyed || canvas_.readonly) {
+        if (layer.parentNode) layer.detach();
+        return;
+      }
+      if (!layer.parentNode) canvas_.canvasEl.appendChild(layer);
+      layer.show();
+      layer.setCssStyles({
+        transform: "translate(" + target.x + "px, " + target.y + "px)",
+        width: target.width + "px",
+        height: target.height + "px",
+        zIndex: String(canvas_.zIndexCounter + 1),
+      });
     }
   }
   canvas.InteractionLayer = NodeInteractionLayer;

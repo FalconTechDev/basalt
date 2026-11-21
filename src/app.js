@@ -62982,16 +62982,30 @@ function defineNg20FileNode(host) {
       this.updateNodeLabel((path || "").split("/").pop() || "missing");
       if (this.isContentMounted) {
         this.contentEl.empty();
-        const el = this.contentEl.createDiv("canvas-node-missing");
-        el.createDiv("canvas-node-missing-icon");
-        el.createDiv("canvas-node-missing-text").setText(path || "missing file");
+        this.child = null;
+        const ctx = {
+          app: this.app,
+          linktext: this.filePath + (this.subpath || ""),
+          sourcePath: this.canvas.view && this.canvas.view.file ? this.canvas.view.file.path : "",
+          containerEl: this.contentEl,
+          depth: 0,
+        };
+        this.child = new canvas.EmptyEmbed(ctx, this, () => this.render());
+        if (typeof this.child.loadFile === "function") this.child.loadFile();
         this.placeholderEl.hide();
       }
     }
 
+    labelText() {
+      if (!this.file) return this.filePath || "";
+      let label = this.file.basename || this.filePath || "";
+      if (this.subpath && this.file.extension === "md") label += " › " + this.subpath.substring(1);
+      return label;
+    }
+
     isEditable() { return false; }
 
-    /** Renders through the app embed registry so md/media/pdf/canvas all work. */
+    /** Renders through host.EmbedLoader so md/media/pdf/canvas embeds all work. */
     renderContent() {
       super.renderContent();
       const file = this.file;
@@ -63000,36 +63014,48 @@ function defineNg20FileNode(host) {
       this.contentEl.empty();
       this.child = null;
       this.embedEl = null;
-      const registry = this.app.embedRegistry;
-      const creator = registry && typeof registry.getEmbedCreator === "function" ? registry.getEmbedCreator(file) : null;
-      if (creator) {
-        const viewFile = this.canvas && this.canvas.view && this.canvas.view.file;
-        const ctx = {
-          app: this.app,
-          containerEl: this.contentEl,
-          linktext: file.path + (this.subpath || ""),
-          sourcePath: viewFile ? viewFile.path : "",
-          state: {},
-          displayMode: false,
-          showInline: false,
-          editable: false,
-        };
-        try {
-          const embed = creator(ctx, file, this.subpath || undefined);
-          this.child = embed;
-          if (embed && embed.containerEl && embed.containerEl !== this.contentEl) {
-            // creator already owns containerEl (ctx.containerEl) in most cases
-          }
-          if (embed && typeof embed.loadFile === "function") embed.loadFile();
-          else if (embed && typeof embed.load === "function") embed.load();
-          else if (embed && typeof embed.onload === "function") embed.onload();
-        } catch (err) {
-          this.contentEl.setText(file.basename);
-        }
+      const ctx = {
+        app: this.app,
+        linktext: this.filePath + (this.subpath || ""),
+        sourcePath: this.canvas.view && this.canvas.view.file ? this.canvas.view.file.path : "",
+        containerEl: this.contentEl,
+        depth: 0,
+      };
+      let child;
+      if (host.EmbedLoader && typeof host.EmbedLoader.load === "function") {
+        child = host.EmbedLoader.load(ctx);
       } else {
-        this.contentEl.createDiv("canvas-node-generic").setText(file.basename);
+        const creator = this.app.embedRegistry && this.app.embedRegistry.getEmbedCreator(file);
+        child = creator ? creator(ctx, file, this.subpath || undefined) : null;
       }
-      this.updateNodeLabel(file.basename);
+      if (child) {
+        this.child = child;
+        if (child instanceof host.StatefulEmbedBase) {
+          child.useLocalPropertiesFoldState = true;
+          child.editable = true;
+          child.useIframe = true;
+        }
+        if (this.isFocused) {
+          const workspace = this.app.workspace;
+          if (workspace) workspace.activeEditor = child instanceof host.MarkdownEmbedBase ? child : null;
+          this.canvas.requestUpdateFileOpen(this.file);
+        }
+        if (typeof child.load === "function") child.load();
+        if (typeof child.loadFile === "function") child.loadFile();
+      } else {
+        this.child = new canvas.EmptyEmbed(ctx, this, () => this.render());
+        if (typeof this.child.loadFile === "function") this.child.loadFile();
+      }
+      this.updateNodeLabel(this.labelText());
+    }
+
+    render() {
+      super.render();
+      if (!this.isContentMounted) {
+        const label = this.file ? (this.file.basename || this.filePath) : (this.filePath || "");
+        this.placeholderEl.setText(label);
+        this.placeholderEl.show();
+      }
     }
 
     onDoubleClick(evt) {
@@ -63079,26 +63105,42 @@ function defineNg20GroupNode(host) {
       super(canvas_, id);
       this.type = "group";
       this.label = "";
-      this.background = "";
-      this.backgroundStyle = null;
-      this.isTransparent = false;
-      this.labelEl.show();
+      this.bgPath = "";
+      this.bgFile = null;
+      this.bgStyle = "";
+      this.nodeEl.addClass("canvas-node-group");
+      this.placeholderEl.hide();
+      this.contentBlockerEl.hide();
     }
+
+    labelClass() { return "canvas-group-label"; }
 
     getData() {
       const out = super.getData();
       out.type = "group";
       if (this.label) out.label = this.label;
-      if (this.background) out.background = this.background;
-      if (this.backgroundStyle) out.backgroundStyle = this.backgroundStyle;
+      if (this.bgPath) {
+        out.background = this.bgFile ? this.bgFile.path : this.bgPath;
+        if (this.bgStyle && this.bgStyle !== "cover") out.backgroundStyle = this.bgStyle;
+      }
       return out;
     }
 
     setData(data) {
       super.setData(data);
-      if (typeof data.label === "string") this.label = data.label;
-      if (typeof data.background === "string") this.background = data.background;
-      if (data.backgroundStyle && typeof data.backgroundStyle === "object") this.backgroundStyle = data.backgroundStyle;
+      if (typeof data.label === "string") this.setLabel(data.label);
+      const bg = typeof data.background === "string" ? data.background : "";
+      const bgStyle = typeof data.backgroundStyle === "string" ? data.backgroundStyle : "";
+      if (bg) {
+        this.bgPath = bg;
+        const resolved = this.app.vault.getAbstractFileByPath(bg);
+        this.bgFile = resolved && resolved.path ? resolved : null;
+        this.bgStyle = bgStyle;
+      } else {
+        this.bgPath = "";
+        this.bgFile = null;
+        this.bgStyle = "";
+      }
       this.render();
     }
 
@@ -63108,15 +63150,68 @@ function defineNg20GroupNode(host) {
       this.label = label || "";
       this.updateNodeLabel(this.label);
       this.canvas.markDirty(this);
-      this.canvas.requestSave();
+    }
+
+    setBackgroundFile(file) {
+      const path = file ? file.path : "";
+      if (this.bgPath === path && this.bgFile === file) return;
+      this.bgPath = path;
+      this.bgFile = file || null;
+      if (!file) this.bgStyle = "";
+      this.render();
+      this.canvas.markDirty(this);
+    }
+
+    setBackgroundStyle(style) {
+      if (!this.bgPath) style = "";
+      if (this.bgStyle !== style) {
+        this.bgStyle = style;
+        this.render();
+        this.canvas.markDirty(this);
+      }
     }
 
     render() {
       super.render();
-      this.nodeEl.addClass("canvas-node-group");
-      this.nodeEl.toggleClass("canvas-node-group-transparent", this.isTransparent);
-      if (this.backgroundStyle) this.containerEl.setCssStyles(this.backgroundStyle);
       this.updateNodeLabel(this.label);
+      // foreground legibility classes for themed groups
+      let light = false, dark = false;
+      const color = this.color;
+      if (color) {
+        const parsed = /^\d+$/.test(color)
+          ? host.s13ParseColor("rgb(" + this.labelEl.getCssPropertyValue("--canvas-color-" + color) + ")")
+          : host.s13ParseColor(color);
+        if (parsed) {
+          if (isLightColor(parsed)) dark = true;
+          else light = true;
+        }
+      }
+      this.labelEl.toggleClass("mod-foreground-light", light);
+      this.labelEl.toggleClass("mod-foreground-dark", dark);
+      const contentEl = this.contentEl;
+      if (this.bgFile) {
+        const styles = {
+          backgroundImage: `url("${CSS.escape(this.app.vault.getResourcePath(this.bgFile))}")`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center center",
+          backgroundSize: "cover",
+        };
+        if (this.bgStyle === "repeat") {
+          styles.backgroundRepeat = "repeat";
+          styles.backgroundPosition = "top left";
+          styles.backgroundSize = "auto";
+        }
+        contentEl.setCssStyles(styles);
+      } else {
+        contentEl.setCssStyles({ backgroundImage: "", backgroundRepeat: "", backgroundPosition: "", backgroundSize: "" });
+      }
+    }
+
+    updateZIndex() { this.renderZIndex(); }
+
+    renderZIndex() {
+      this.zIndex = Math.round(-this.width * this.height);
+      this.nodeEl.style.zIndex = String(this.zIndex);
     }
 
     attach() {
@@ -63813,82 +63908,132 @@ function defineNg20ViewTypeSuggest(host) {
 // ---- markdown embed settings sync (O5) ------------------------------------------------------------
 
 function defineNg20MarkdownEmbed(host) {
-  class MarkdownEmbed {
-    constructor(app, file, containerEl) {
-      this.app = ng20OwnerApp(app);
-      this.file = file;
-      this.containerEl = containerEl;
-      this.scope = "";
-      this.folded = false;
-      this.saveMode = false;
+  /** Markdown preview/editor mounted inside a canvas text node (orig O5). */
+  class CanvasMarkdownEmbed extends host.MarkdownEmbedBase {
+    constructor(node) {
+      super(node.app, node.contentEl, null);
+      this.editable = true;
+      this.useIframe = true;
+      this.scope = null;
+      this.node = node;
+      this.containerEl.addClass("markdown-embed");
     }
 
-    loadSettings() {
-      const key = this.app.appId + "-canvas-embed-" + (this.file ? this.file.path : "");
-      const raw = this.app.loadLocalStorage(key);
-      if (!raw) return;
-      try {
-        const d = JSON.parse(raw);
-        if (d) { this.scope = d.scope || ""; this.folded = !!d.folded; this.saveMode = !!d.saveMode; }
-      } catch (e) { /* corrupt -> defaults */ }
+    save(content, force) {
+      super.save(content, force);
+      if (force && this.node.text !== content) {
+        this.node.text = content;
+        this.node.canvas.requestSave();
+      }
     }
 
-    saveSettings() {
-      const key = this.app.appId + "-canvas-embed-" + (this.file ? this.file.path : "");
-      this.app.saveLocalStorage(key, JSON.stringify({ scope: this.scope, folded: this.folded, saveMode: this.saveMode }));
+    applyScope(scope) {
+      if (scope === this.scope) return;
+      if (this.scope) this.app.keymap.popScope(this.scope);
+      if (scope) this.app.keymap.pushScope(scope);
+      this.scope = scope;
     }
 
-    setScope(scope) { this.scope = scope || ""; this.saveSettings(); }
-    setFolded(f) { this.folded = !!f; this.containerEl && this.containerEl.toggleClass("is-folded", this.folded); this.saveSettings(); }
-    setSaveMode(m) { this.saveMode = !!m; this.saveSettings(); }
+    onunload() {
+      super.onunload();
+      this.applyScope(null);
+    }
+
+    get linktext() {
+      const node = this.node;
+      const file = node.canvas.view && node.canvas.view.file;
+      return (file ? file.path : "") + "#^" + node.id;
+    }
+
+    getFoldInfo() {
+      return this.app.foldManager.loadPath(this.linktext);
+    }
+
+    onMarkdownFold() {
+      const info = this.getMode() === "preview"
+        ? this.previewMode.renderer.getFoldInfo()
+        : this.editMode.getFoldInfo();
+      this.app.foldManager.savePath(this.linktext, info);
+    }
   }
-  canvas.MarkdownEmbed = MarkdownEmbed;
-  return MarkdownEmbed;
+  canvas.MarkdownEmbed = CanvasMarkdownEmbed;
+  return CanvasMarkdownEmbed;
 }
 
 // ---- empty embed retry (N5) ------------------------------------------------------------------------
 
 function defineNg20EmptyEmbed(host) {
-  class EmptyEmbed {
-    constructor(app, file) {
-      this.app = ng20OwnerApp(app);
-      this.file = file;
-      this.containerEl = createDiv("canvas-embed-empty");
-      this.retries = 0;
+  /** Shown inside a file node when its target file does not exist yet (orig N5). */
+  class EmptyEmbed extends host.Component {
+    constructor(ctx, node, reload) {
+      super();
+      this.app = ctx.app;
+      this.file = null;
+      this.ctx = ctx;
+      this.node = node;
+      this.reload = reload;
+      this.containerEl = ctx.containerEl;
     }
 
-    load() {
-      this.render();
-      this.scheduleRetry();
+    async loadFile() {
+      const containerEl = this.containerEl;
+      const ctx = this.ctx;
+      const app = ctx.app;
+      const linktext = ctx.linktext;
+      const sourcePath = ctx.sourcePath;
+      const node = this.node;
+      const canvas_ = node.canvas;
+      if (node.contentBlockerEl) node.contentBlockerEl.detach();
+      const path = (linktext || "").split("#")[0].split("|")[0];
+      const ext = path.includes(".") ? path.split(".").pop().toLowerCase() : "";
+      containerEl.createDiv("canvas-empty-embed-container", (el) => {
+        el.createDiv({ cls: "canvas-empty-embed-label", text: ng20CanvasStrings().labelEmptyEmbed ? ng20CanvasStrings().labelEmptyEmbed({ linktext }) : "Empty embed" });
+        el.createDiv("canvas-empty-embed-action-list", (list) => {
+          if (ext === "md" || ext === "") {
+            list.createEl("button", { cls: "empty-state-action", text: ng20InterfaceStrings().emptyState.createNewFile() }, (btn) => {
+              btn.addEventListener("click", () => {
+                app.fileManager.createNewMarkdownFileFromLinktext(linktext, sourcePath);
+              });
+            });
+          }
+          list.createEl("button", { cls: "empty-state-action", text: ng20CanvasStrings().actionSwapFile ? ng20CanvasStrings().actionSwapFile() : "Swap file" }, (btn) => {
+            btn.addEventListener("click", () => {
+              new canvas.FileSuggest(canvas_, (file) => {
+                node.setFile(file, "", canvas_.requestSave());
+              }).open();
+            });
+          });
+          list.createEl("button", { cls: "empty-state-action mod-warning", text: ng20CanvasStrings().actionRemove ? ng20CanvasStrings().actionRemove() : "Remove" }, (btn) => {
+            btn.addEventListener("click", () => {
+              canvas_.removeNode(node);
+              canvas_.requestSave();
+            });
+          });
+        });
+      });
+      containerEl.addClass("mod-canvas-empty");
     }
 
-    render() {
-      this.containerEl.empty();
-      this.containerEl.createDiv("canvas-embed-empty-text").setText("Canvas file missing — retrying…");
-      const retry = this.containerEl.createDiv("canvas-embed-empty-retry");
-      retry.setText("Retry");
-      retry.addEventListener("click", () => this.retry());
-    }
-
-    scheduleRetry() {
-      if (this.retries >= 5) return;
-      this.retries++;
-      setTimeout(() => this.retry(), 1000 * this.retries);
-    }
-
-    retry() {
-      const path = this.file && this.file.path ? this.file.path : this.file;
-      const file = this.app.vault.getAbstractFileByPath(path);
-      if (file) {
-        this.containerEl.empty();
-        const embed = new canvas.CanvasEmbed({ app: this.app, containerEl: this.containerEl }, file, "");
-        embed.load();
-        return;
+    onload() {
+      const ctx = this.ctx;
+      const app = ctx.app;
+      const linktext = ctx.linktext;
+      const onFileEvent = () => {
+        const parsedPath = (linktext || "").split("#")[0].split("|")[0];
+        const file = app.vault.getAbstractFileByPath(parsedPath);
+        if (file && file.path === parsedPath) {
+          this.node.setFile(file, "", true);
+        }
+      };
+      if (app.vault && app.vault.on) {
+        this.registerEvent(app.vault.on("create", onFileEvent));
+        this.registerEvent(app.vault.on("rename", onFileEvent));
       }
-      if (this.app.metadataCache && typeof this.app.metadataCache.trigger === "function") {
-        this.app.metadataCache.trigger("changed");
-      }
-      if (this.retries < 5) this.scheduleRetry();
+    }
+
+    onClick(evt) {
+      const ctx = this.ctx;
+      ctx.app.workspace.openLinkText(ctx.linktext, ctx.sourcePath, host.Keymap.isModEvent(evt));
     }
   }
   canvas.EmptyEmbed = EmptyEmbed;
@@ -64112,7 +64257,7 @@ function defineNg20CanvasNode(host) {
       this.contentBlockerEl = this.containerEl.createDiv("canvas-node-content-blocker");
       this.contentBlockerEl.hide();
       this.placeholderEl = this.containerEl.createDiv("canvas-node-placeholder");
-      this.labelEl = this.containerEl.createDiv("canvas-node-label");
+      this.labelEl = this.nodeEl.createDiv(this.labelClass());
       this.labelEl.hide();
       this.labelEl.setAttribute("contenteditable", "false");
       this.labelEl.addEventListener("blur", () => this.commitLabel());
@@ -64261,6 +64406,8 @@ function defineNg20CanvasNode(host) {
 
     updateBreakpoint() {}
 
+    labelClass() { return "canvas-node-label"; }
+
     // ---------- label ----------
 
     renderLabel() {
@@ -64272,8 +64419,11 @@ function defineNg20CanvasNode(host) {
 
     updateNodeLabel(text) {
       this.labelElText = text || "";
-      if (this.labelEl.getAttribute("contenteditable") !== "true") this.labelEl.setText(this.labelElText);
-      this.labelEl.toggle(this.labelElText.length > 0 || this.labelEl.getAttribute("contenteditable") === "true");
+      const labelEl = this.labelEl;
+      const visibility = this.canvas.options && this.canvas.options.cardLabelVisibility;
+      labelEl.toggleClass("mod-hover-label", visibility === "hover");
+      if (labelEl.getAttribute("contenteditable") !== "true") labelEl.setText(this.labelElText);
+      labelEl.toggle(this.labelElText.length > 0 || labelEl.getAttribute("contenteditable") === "true");
     }
 
     /** Focuses the node label for inline renaming (group nodes). */
@@ -64290,6 +64440,7 @@ function defineNg20CanvasNode(host) {
       const text = (this.labelEl.innerText || "").trim();
       if (typeof this.setLabel === "function") this.setLabel(text);
       else this.updateNodeLabel(this.labelText());
+      this.canvas.requestSave();
     }
 
     // ---------- selection ----------
@@ -64523,7 +64674,10 @@ function defineNg20DummyNode(host) {
       this.type = "dummy";
       this.width = 0;
       this.height = 0;
-      this.nodeEl.addClass("canvas-node-dummy");
+      this.nodeEl.addClass("is-dummy");
+      this.placeholderEl.hide();
+      this.contentBlockerEl.hide();
+      this.labelEl.hide();
     }
 
     getData() {
@@ -64532,7 +64686,6 @@ function defineNg20DummyNode(host) {
 
     render() {
       super.render();
-      this.nodeEl.toggleClass("is-empty", this.width === 0 && this.height === 0);
     }
   }
   canvas.DummyNode = DummyNode;
@@ -64549,7 +64702,7 @@ function defineNg20EditableNode(host) {
       this.alwaysKeepLoaded = true;
     }
 
-    isEditable() { return true; }
+    isEditable() { return this.child instanceof host.MarkdownEmbedBase; }
 
     setIsEditing(editing) {
       this.isEditing = !!editing;
@@ -64558,12 +64711,32 @@ function defineNg20EditableNode(host) {
       if (!this.isEditing) this.canvas.markDirty(this);
     }
 
-    startEditing(point_) {
-      this.setIsEditing(true);
+    blur() {
+      super.blur();
       const child = this.child;
-      if (child && typeof child.focus === "function") child.focus();
-      else if (this.contentEl) this.contentEl.focus();
-      void point_;
+      if (child instanceof canvas.MarkdownEmbed || child instanceof host.StatefulEmbedBase) {
+        child.showPreview(true);
+        if (child.applyScope) child.applyScope(null);
+      }
+    }
+
+    focus() {
+      super.focus();
+      const workspace = this.app.workspace;
+      const editor = this.child instanceof host.MarkdownEmbedBase ? this.child : null;
+      if (workspace) workspace.activeEditor = editor;
+      let file = null;
+      if (this instanceof canvas.FileNode) file = this.file;
+      this.canvas.requestUpdateFileOpen(file);
+    }
+
+    startEditing(point_) {
+      if (this.canvas.readonly) return;
+      const child = this.child;
+      if (child instanceof host.MarkdownEmbedBase) {
+        child.showEditor(point_);
+        this.setIsEditing(true);
+      }
     }
 
     onDoubleClick(evt) {
@@ -64586,7 +64759,6 @@ function defineNg20TextNode(host) {
       super(canvas_, id);
       this.type = "text";
       this.text = "";
-      this.editEl = null;
     }
 
     getData() {
@@ -64599,47 +64771,36 @@ function defineNg20TextNode(host) {
       super.setData(data);
       if (typeof data.text === "string") {
         this.text = data.text;
-        if (this.editEl) this.editEl.setText(this.text);
+        if (this.child) this.child.set(this.text);
       }
     }
 
     setText(text) {
+      if (this.text === text) return;
       this.text = text || "";
+      if (this.child) this.child.set(this.text);
       this.canvas.markDirty(this);
       this.canvas.requestSave();
     }
 
     renderContent() {
       super.renderContent();
-      const el = this.contentEl.createEl("div", { cls: "canvas-node-text", attr: { contenteditable: "true", spellcheck: "false" } });
-      el.setText(this.text);
-      this.editEl = el;
-      el.addEventListener("input", () => this.setText(el.innerText));
-      el.addEventListener("blur", () => this.setIsEditing(false));
-      el.addEventListener("pointerdown", (evt) => evt.stopPropagation());
-      el.addEventListener("keydown", (evt) => {
-        evt.stopPropagation();
-        if (evt.key === "Escape") { this.setIsEditing(false); el.blur(); }
-      });
-      if (this.isEditing) el.focus();
+      if (!this.placeholderEl.firstChild) {
+        host.setIcon(this.placeholderEl.createDiv("canvas-icon-placeholder"), "lucide-align-left");
+      }
+      if (!this.child) {
+        this.child = new canvas.MarkdownEmbed(this);
+        this.child.set(this.text);
+        if (typeof this.child.load === "function") this.child.load();
+      }
     }
 
     startEditing(point_) {
       super.startEditing(point_);
-      if (this.editEl) {
-        this.editEl.focus();
-        host.focusAndSelectContents(this.editEl);
-      }
-      void point_;
-    }
-
-    setIsEditing(editing) {
-      super.setIsEditing(editing);
-      if (this.editEl) this.editEl.setAttribute("contenteditable", editing ? "true" : "false");
     }
 
     unmountContent() {
-      this.editEl = null;
+      this.child = null;
       super.unmountContent();
     }
 
@@ -65441,51 +65602,75 @@ function defineNg20InteractionLayer(host) {
     constructor(canvas_) {
       this.canvas = canvas_;
       this.target = null;
-      this.interactionEl = createDiv("canvas-node-interaction-layer");
-      this.dotsEl = this.interactionEl.createDiv("canvas-node-interaction-layer-dots");
-      this.handlesEl = this.interactionEl.createDiv("canvas-node-interaction-layer-handles");
-      this.interactionEl.hide();
-      canvas_.canvasEl.appendChild(this.interactionEl);
-      this.buildDots();
-    }
+      const layer = (this.interactionEl = createDiv("canvas-node-interaction-layer"));
+      layer.hide();
 
-    buildDots() {
-      for (const side of ["top", "right", "bottom", "left"]) {
-        const dot = this.dotsEl.createDiv(`canvas-node-interaction-dot mod-${side}`);
-        dot.setAttr("data-side", side);
-        dot.addEventListener("pointerdown", (evt) => {
-          if (this.target) this.target.onConnectionPointerdown(evt, side);
-        });
-      }
-      for (const side of ["top", "right", "bottom", "left", "topleft", "topright", "bottomleft", "bottomright"]) {
-        const handle = this.handlesEl.createDiv(`canvas-node-interaction-handle mod-resize-${side}`);
-        handle.setAttr("data-resize", side);
+      const sides = ["top", "right", "bottom", "left"];
+      for (const side of sides) {
+        const handle = createDiv({ cls: "canvas-node-resizer", attr: { "data-resize": side } });
         handle.addEventListener("pointerdown", (evt) => {
-          if (this.target && !this.canvas.readonly) this.target.onResizePointerdown(evt, side);
+          const target = this.target;
+          if (evt.targetNode === handle && evt.pointerType === "mouse" && target) {
+            target.onResizePointerdown(evt, side);
+          }
         });
-        handle.addEventListener("dblclick", (evt) => {
-          if (this.target) this.target.onResizeDblclick(evt);
+        handle.addEventListener("click", (evt) => {
+          const target = this.target;
+          if (target) target.onClick(evt);
         });
+        if (side !== "bottom" && side !== "right") {
+          handle.addEventListener("dblclick", (evt) => {
+            const target = this.target;
+            if (target) target.onResizeDblclick(evt, side);
+          });
+        }
+        handle.createDiv({ cls: "canvas-node-connection-point", attr: { "data-side": side } })
+          .addEventListener("pointerdown", (evt) => {
+            const target = this.target;
+            if (target) target.onConnectionPointerdown(evt, side);
+          });
+        layer.appendChild(handle);
       }
+
+      const corners = ["topright", "bottomright", "bottomleft", "topleft"];
+      for (const corner of corners) {
+        const handle = createDiv({ cls: "canvas-node-resizer", attr: { "data-resize": corner } });
+        handle.addEventListener("pointerdown", (evt) => {
+          const target = this.target;
+          if (target) target.onResizePointerdown(evt, corner);
+        });
+        handle.addEventListener("click", (evt) => {
+          const target = this.target;
+          if (target) target.onClick(evt);
+        });
+        layer.appendChild(handle);
+      }
+      canvas_.canvasEl.appendChild(layer);
     }
 
     setTarget(node) {
-      if (this.target === node) return;
-      this.target = node;
-      this.render();
+      if (this.target !== node) {
+        this.target = node;
+        this.render();
+      }
     }
 
     render() {
-      const node = this.target;
-      const show = !!node && !this.canvas.readonly && !node.destroyed;
-      this.interactionEl.toggle(show);
-      if (!show) return;
-      const b = node.getBBox();
-      this.interactionEl.style.left = b.minX + "px";
-      this.interactionEl.style.top = b.minY + "px";
-      this.interactionEl.style.width = (b.maxX - b.minX) + "px";
-      this.interactionEl.style.height = (b.maxY - b.minY) + "px";
-      this.handlesEl.toggle(!node.isEditable || node.width > 30);
+      const canvas_ = this.canvas;
+      const target = this.target;
+      const layer = this.interactionEl;
+      if (!target || target.destroyed || canvas_.readonly) {
+        if (layer.parentNode) layer.detach();
+        return;
+      }
+      if (!layer.parentNode) canvas_.canvasEl.appendChild(layer);
+      layer.show();
+      layer.setCssStyles({
+        transform: "translate(" + target.x + "px, " + target.y + "px)",
+        width: target.width + "px",
+        height: target.height + "px",
+        zIndex: String(canvas_.zIndexCounter + 1),
+      });
     }
   }
   canvas.InteractionLayer = NodeInteractionLayer;
