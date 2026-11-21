@@ -152,10 +152,10 @@ export function ng12mPublishManageSitesSection(host) {
       const modal = this.parentModal;
 
       const rowFor = (site, isShared) => {
-        const row = list.createDiv("site-list-item");
+        const row = list.createDiv("site-list-item list-item");
         const slug = this.slugs[site.id || site.uid] || site.id || site.uid;
-        row.createSpan({ cls: "site-slug", text: slug });
-        const choose = row.createEl("button", { cls: "mod-cta", text: ng12mT("buttonChoose", "Choose") });
+        row.createDiv({ cls: "list-item-part mod-extended", text: slug });
+        const choose = row.createEl("button", { text: ng12mT("buttonChoose", "Choose") });
         choose.addEventListener("click", async () => {
           await plugin.setup(site.id || site.uid, site.host);
           modal.openReviewChanges();
@@ -248,9 +248,9 @@ export function ng12mPublishManageSitesSection(host) {
         el.createDiv({ cls: "setting-item-name", text: ng12mT("labelSitesSharedWithYou", "Sites shared with you") });
         const sharedList = el.createDiv("site-list-container");
         for (const site of this.shared) {
-          const row = sharedList.createDiv("site-list-item");
-          row.createSpan({ cls: "site-slug", text: this.slugs[site.id || site.uid] || site.id || site.uid });
-          const choose = row.createEl("button", { cls: "mod-cta", text: ng12mT("buttonChoose", "Choose") });
+          const row = sharedList.createDiv("site-list-item list-item");
+          row.createDiv({ cls: "list-item-part mod-extended", text: this.slugs[site.id || site.uid] || site.id || site.uid });
+          const choose = row.createEl("button", { text: ng12mT("buttonChoose", "Choose") });
           choose.addEventListener("click", async () => {
             await plugin.setup(site.id || site.uid, site.host);
             modal.openReviewChanges();
@@ -477,9 +477,10 @@ function ng12mPublishTreeItemBaseClass(host) {
       this.children = [];
       this.parent = null;
       this.checked = false;
-      this.el = section.childrenEl.createDiv("publish-tree-item");
-      this.selfEl = this.el.createDiv("publish-tree-item-self");
-      this.innerEl = this.selfEl.createDiv("publish-tree-item-inner");
+      this.el = section.childrenEl.createDiv("tree-item");
+      this.selfEl = this.el.createDiv("tree-item-self");
+      this.innerEl = this.selfEl.createDiv("tree-item-inner");
+      this.innerEl.addClass("file-tree-item");
     }
     setChecked(c) { this.checked = !!c; if (this.checkboxEl) this.checkboxEl.checked = this.checked; }
     setVisible(v) { this.visible = !!v; this.el.toggleVisibility(this.visible); }
@@ -508,11 +509,16 @@ export function ng12mPublishFileItem(host) {
       this.diff = diff;
       this.path = diff.path;
       this.name = withoutMd(lastSegment(diff.path));
-      this.checkboxEl = this.selfEl.createEl("input", { attr: { type: "checkbox" } });
+      this.selfEl.addClass("mod-file", "mod-" + (diff.type || "changed"));
+      this.checkboxEl = this.innerEl.createEl("input", { cls: "file-tree-item-checkbox", attr: { type: "checkbox" } });
       this.checkboxEl.checked = !!diff.checked;
-      this.innerEl.setText(this.name);
+      this.checkboxEl.addEventListener("change", () => this.updateChecked());
+      this.innerEl.createDiv("file-tree-item-icon", (icon) => env().tv(icon, "lucide-file"));
+      this.innerEl.createDiv({ cls: "file-tree-item-title", text: this.name });
+      const flair = this.innerEl.createDiv("tree-item-flair-outer").createSpan({ cls: "tree-item-flair", text: diff.type === "to-delete" ? "To delete" : (diff.type || "") });
+      this._flairEl = flair;
+      this.updateChecked();
       this.setChecked(!!diff.checked);
-      this.el.addClass("publish-file-item");
       this.el.addEventListener("click", (e) => this.onSelfClick(e));
       this.el.addEventListener("contextmenu", (e) => this.onContextMenu(e));
     }
@@ -549,9 +555,12 @@ export function ng12mPublishFolderItem(host) {
       super(section);
       this.path = path;
       this.name = lastSegment(path);
-      this.checkboxEl = this.selfEl.createEl("input", { attr: { type: "checkbox" } });
-      this.childrenEl = this.el.createDiv("publish-tree-children");
-      this.el.addClass("publish-folder-item");
+      this.selfEl.addClass("mod-folder");
+      this.checkboxEl = this.innerEl.createEl("input", { cls: "file-tree-item-checkbox", attr: { type: "checkbox" } });
+      this.checkboxEl.addEventListener("change", () => this.updateChecked());
+      this.innerEl.createDiv("file-tree-item-icon", (icon) => env().tv(icon, "lucide-folder-open"));
+      this.innerEl.createDiv({ cls: "file-tree-item-title", text: this.name });
+      this.childrenEl = this.el.createDiv("tree-item-children");
       this.setChecked(false);
     }
     getChecked() {
@@ -620,20 +629,23 @@ export function ng12mPublishTreeSection(host) {
       this.collapsed = false;
       this.folders = {};
       this.files = {};
-      this.childrenEl = this.el.createDiv("publish-tree-children");
-      const header = this.el.createDiv("publish-tree-header");
+      this.el.addClass("file-tree");
+      const header = this.el.createDiv("publish-section-header");
       this.headerEl = header;
-      const titleEl = header.createDiv({ cls: "publish-tree-title", text: title });
-      this.selectedEl = header.createSpan("publish-tree-selected");
-      this.selectedCountEl = header.createSpan("publish-tree-count");
-      const checkAllBtn = header.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-      env().tv(checkAllBtn, "lucide-check-check");
-      env().Mv(checkAllBtn, "Check all");
-      checkAllBtn.addEventListener("click", () => this.checkAll());
-      const uncheckAllBtn = header.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-      env().tv(uncheckAllBtn, "lucide-square");
-      env().Mv(uncheckAllBtn, "Uncheck all");
-      uncheckAllBtn.addEventListener("click", () => this.uncheckAll());
+      const toggleBtn = header.createDiv("publish-section-header-toggle-collapsed-button collapse-icon");
+      env().tv(toggleBtn, "right-triangle");
+      toggleBtn.addEventListener("click", () => this.toggleCollapsed(true));
+      const titleEl = header.createDiv({ cls: "publish-section-header-text", text: title });
+      titleEl.addEventListener("click", () => this.toggleCollapsed(true));
+      this.selectedEl = header.createDiv("publish-section-header-selected", (sel) => {
+        this.selectedCountEl = sel.createSpan({ cls: "publish-section-header-selected-count", text: "0" });
+        sel.createSpan({ text: ng12mT("labelFileSelected", "file selected") });
+      });
+      header.createDiv({ cls: "publish-section-header-action button", text: ng12mT("buttonSelectAllFiles", "Select all files") })
+        .addEventListener("click", () => this.checkAll());
+      header.createDiv({ cls: "publish-section-header-action", text: ng12mT("buttonDeselectAllFiles", "Deselect all files") })
+        .addEventListener("click", () => this.uncheckAll());
+      this.childrenEl = this.el.createDiv("publish-change-list");
     }
 
     folderFor(path) {
@@ -761,18 +773,20 @@ export function ng12mPublishReviewSection(host) {
 
       // header
       const header = this.el.createDiv("publish-changes-info");
-      header.createSpan(ng12mT("labelPublishingTo", "Publishing to"));
+      header.createDiv({ cls: "publish-changes-info-publishing-to", text: ng12mT("labelPublishingTo", "Publishing to") });
       this.currentlyPublishedToSiteNameEl = header.createEl("a", {
-        cls: "internal-link",
+        cls: "publish-changes-current-site-name",
         text: plugin.siteId || "",
         attr: { href: ng12PublishUrl + "/" + plugin.siteId, target: "_blank" },
       });
-      const icons = header.createDiv("publish-changes-icons");
+      const icons = header.createDiv("publish-changes-switch-site");
       const mkIcon = (icon, tip, fn) => {
-        const b = icons.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-        env().tv(b, icon);
-        env().Mv(b, tip);
-        b.addEventListener("click", fn);
+        const b = icons.createSpan("clickable-icon", (el) => {
+          env().tv(el, icon);
+          env().Mv(el, tip);
+          el.addEventListener("click", fn);
+        });
+        return b;
       };
       mkIcon("lucide-repeat", ng12mT("tooltipSwitchSite", "Switch site"), () => modal.openManageSites());
       mkIcon("lucide-settings", "Options", () => modal.openSection(modal.siteOptionsSection));
@@ -927,10 +941,15 @@ export function ng12mPublishUploadSection(host) {
       this.pathToEl = {};
       for (const change of this.changes) {
         const row = this.el.createDiv("publish-upload-item list-item");
-        row.createDiv({ cls: "file-icon" });
-        row.createDiv({ cls: "publish-upload-title", text: withoutExtension(lastSegment(change.path)) });
-        const flair = row.createDiv({ cls: "publish-upload-status" });
-        this.pathToEl[change.path] = { row, flair, change };
+        const iconPart = row.createDiv("list-item-part");
+        env().tv(iconPart, "lucide-file");
+        row.createDiv({ cls: "list-item-part mod-extended publish-upload-item-title", text: withoutExtension(lastSegment(change.path)) });
+        let flairEl = null;
+        const statusPart = row.createDiv("list-item-part", (p) => {
+          flairEl = p.createSpan("flair");
+          flairEl.setText(change.type === "new" || change.type === "changed" ? ng12mT("labelStatusToPublish", "To publish") : change.type === "deleted" ? ng12mT("labelStatusToDelete", "To delete") : (change.type || ""));
+        });
+        this.pathToEl[change.path] = { row, flair: flairEl, statusPart, change };
       }
       const row = this.el.createDiv("modal-button-container");
       this.doneButton = row.createEl("button", { cls: "mod-cta", text: ng12mT("buttonStop", "Stop") });
@@ -962,7 +981,7 @@ export function ng12mPublishUploadSection(host) {
             attr: { href: ng12PublishUrl + "/" + plugin.siteId, target: "_blank" },
           });
           self.siteLinkEl = link;
-          const msg = self.el.createDiv("publish-upload-success");
+          const msg = self.el.createDiv();
           msg.createDiv({ cls: "paragraph", text: ng12mT("labelClearCache", "Clear your cache") });
           msg.createDiv({ cls: "paragraph", text: ng12mT("labelVisitSite", "Visit your site") });
           self.successMessageEl = msg;
@@ -1090,12 +1109,13 @@ export function ng12mPublishPasswordsSection(host) {
         ng12mPara(this.el, null, ng12mT("labelHavePassword", "A password is set."));
         this.el.createEl("hr");
         const list = Array.isArray(this.passwords) ? this.passwords : [];
+        const wrap = this.el.createDiv("passwords-container");
         list.forEach((pw, index) => {
-          const row = this.el.createDiv("password-item list-item");
-          row.createSpan({ text: pw.name || ng12mT("labelUntitledPassword", "Untitled password") });
-          row.createSpan({ cls: "password-time", text: ng12mT("labelPasswordCreatedTime", "Created {time}", { time: "" }) });
-          const del = row.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-          env().tv(del, "lucide-trash-2");
+          const row = wrap.createDiv("list-item password-item");
+          row.createDiv({ cls: "list-item-part", text: pw.name || ng12mT("labelUntitledPassword", "Untitled password") });
+          row.createDiv({ cls: "u-muted u-small list-item-part mod-extended", text: ng12mT("labelPasswordCreatedTime", "Created {time}", { time: pw.ts ? window.moment(pw.ts).fromNow() : "" }) });
+          const del = row.createDiv({ cls: "list-item-part clickable-icon", attr: { role: "button" } });
+          env().tv(del, "lucide-x");
           del.addEventListener("click", async () => {
             try {
               await modal.plugin.apiDelPassword(index);
@@ -1259,13 +1279,13 @@ export function ng12mPublishShareModal(host) {
         this.contentEl.createDiv({ cls: "paragraph", text: ng12mT("labelNotSharing", "Not sharing with anyone.") });
       }
       for (const share of this.shares) {
-        const row = this.contentEl.createDiv("share-item list-item");
-        row.createSpan({ text: share.name ? share.name + " <" + (share.email || "") + ">" : (share.email || "") });
+        const row = this.contentEl.createDiv("list-item");
+        row.createDiv({ cls: "list-item-part", text: share.name ? share.name + " <" + (share.email || "") + ">" : (share.email || "") });
         if (share.pending || share.status === "pending") {
-          row.createSpan({ cls: "share-pending", text: ng12mT("labelInvitePending", "Pending") });
+          row.createSpan({ cls: "flair", text: ng12mT("labelInvitePending", "Pending") });
         }
-        const del = row.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-        env().tv(del, "lucide-trash-2");
+        const del = row.createDiv({ cls: "list-item-part clickable-icon", attr: { role: "button" } });
+        env().tv(del, "lucide-x");
         del.addEventListener("click", async () => {
           try {
             await acctRemovePublishShare(account.token, this.siteId, share.uid || share.id);
