@@ -85,7 +85,7 @@ export function ng21DefineMenuItem(host) {
     this.checked = !!b;
     this.dom.toggleClass("mod-checked", this.checked);
     if (this.checked && !this.checkIconEl) {
-      this.checkIconEl = this.dom.createDiv("menu-item-check");
+      this.checkIconEl = this.dom.createDiv("menu-item-icon mod-checked");
       host.setIcon(this.checkIconEl, "lucide-check");
     } else if (!this.checked && this.checkIconEl) {
       this.checkIconEl.detach();
