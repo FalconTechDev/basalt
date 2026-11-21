@@ -33,7 +33,7 @@ export function ng12PublishGraphView() {
       const header = outerContainerEl.createDiv("list-item published-section-header");
       const iconEl = header.createSpan("published-section-header-icon");
       env().tv(iconEl, "lucide-git-fork");
-      header.createSpan({ cls: "published-section-header-text", text: "Interactive graph" });
+      header.createSpan({ text: "Interactive graph" });
       this.outerEl = outerContainerEl.createDiv("graph-view-container");
       this.containerEl = this.outerEl.createDiv("graph-view");
 
@@ -563,12 +563,12 @@ export function ng12PublishPageView() {
         const footerEl = self.footerEl;
         if (!footerEl) return;
         footerEl.empty();
-        const section = footerEl.createDiv("published-section");
+        const section = footerEl.createDiv("backlinks");
         section.appendChild((() => {
-          const header = env().createDiv("list-item published-section-header");
+          const header = env().createDiv("published-section-header");
           const iconEl = header.createSpan("published-section-header-icon");
           env().tv(iconEl, "lucide-link");
-          header.createSpan({ cls: "published-section-header-text", text: "Links to this page" });
+          header.createSpan({ text: "Links to this page" });
           return header;
         })());
         const container = section.createDiv("backlink-items-container");
