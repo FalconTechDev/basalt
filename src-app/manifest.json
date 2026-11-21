@@ -1601,53 +1601,53 @@
     },
     {
       "orig": "p3",
-      "use": "s13DomRect",
+      "use": "ng30DomRect",
       "originalBytes": 216
     },
     {
       "orig": "u4",
-      "use": "s13VisibleRect",
+      "use": "ng30VisibleRect",
       "originalBytes": 828
     },
     {
       "orig": "c4",
-      "use": "s13ScrollWatch",
+      "use": "ng30ScrollWatch",
       "originalBytes": 432
     },
     {
       "orig": "y4",
-      "use": "s13PaddingBox",
+      "use": "ng30PaddingBox",
       "originalBytes": 137
     },
     {
       "orig": "u3",
-      "use": "s13KeyNames",
+      "use": "ng30KeyNames",
       "host": true,
       "originalBytes": 144
     },
     {
       "orig": "C3",
-      "use": "s13AnchorRect",
+      "use": "ng30AnchorRect",
       "originalBytes": 262
     },
     {
       "orig": "E3",
-      "use": "s13ResizeOrigin",
+      "use": "ng30ResizeOrigin",
       "originalBytes": 311
     },
     {
       "orig": "A3",
-      "use": "s13NearestSide",
+      "use": "ng30NearestSide",
       "originalBytes": 313
     },
     {
       "orig": "O3",
-      "use": "s13MatchSpans",
+      "use": "ng30MatchSpans",
       "originalBytes": 805
     },
     {
       "orig": "B3",
-      "use": "s13ApplyCanvasColor",
+      "use": "ng30ApplyCanvasColor",
       "host": true,
       "originalBytes": 421
     },
@@ -2100,7 +2100,7 @@
     },
     {
       "orig": "d6",
-      "use": "s12ImageContextMenuEntry"
+      "use": "ng30ImageContextMenuEntry"
     },
     {
       "orig": "jZ",
@@ -2361,15 +2361,15 @@
     },
     {
       "orig": "gZ",
-      "use": "s11TrackWindowFocus"
+      "use": "ng30TrackWindowFocus"
     },
     {
       "orig": "yZ",
-      "use": "s11InstallEnhance"
+      "use": "ng30InstallEnhance"
     },
     {
       "orig": "bZ",
-      "use": "s11AttachElectron"
+      "use": "ng30AttachElectron"
     },
     {
       "orig": "RV",
@@ -4963,7 +4963,7 @@
     },
     {
       "orig": "B0",
-      "use": "defineS12RecentFiles"
+      "use": "ng30RecentFiles"
     },
     {
       "orig": "BZ",
@@ -5047,19 +5047,19 @@
     },
     {
       "orig": "dq",
-      "use": "defineMarkdownEmbedView"
+      "use": "ng30MarkdownEmbedView"
     },
     {
       "orig": "NV",
-      "use": "defineEmbedSectionBase"
+      "use": "ng30EmbedSectionBase"
     },
     {
       "orig": "FV",
-      "use": "defineEmbedWidget"
+      "use": "ng30EmbedWidget"
     },
     {
       "orig": "mq",
-      "use": "defineQueryEmbedView"
+      "use": "ng30QueryEmbedView"
     },
     {
       "orig": "XL",
@@ -5323,11 +5323,11 @@
     },
     {
       "orig": "MZ",
-      "use": "s11AudioView"
+      "use": "ng30AudioView"
     },
     {
       "orig": "xZ",
-      "use": "s11ImageView"
+      "use": "ng30ImageView"
     },
     {
       "orig": "LZ",

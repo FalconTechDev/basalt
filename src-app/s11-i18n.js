@@ -1,9 +1,8 @@
-// Lazily-evaluated i18n string tables. The bundle keeps aliases like `DZ = gm.pdf`;
-// own code resolves the same tables through env() at call time.
-import { env } from "./env.js";
+// Compatibility shim: the implementation lives in n-g30-i18n.js.
+import {ng30PdfStrings, ng30SearchStrings, ng30GraphStrings, ng30BookmarkStrings, ng30WebViewerStrings,} from "./n-g30-i18n.js";
 
-export function s11PdfStrings() { return env().gm.pdf; }
-export function s11SearchStrings() { return env().gm.plugins.search; }
-export function s11GraphStrings() { return env().gm.plugins.graphView; }
-export function s11BookmarkStrings() { return env().gm.plugins.bookmarks; }
-export function s11WebViewerStrings() { return env().gm.plugins.webViewer; }
+export const s11PdfStrings = ng30PdfStrings;
+export const s11SearchStrings = ng30SearchStrings;
+export const s11GraphStrings = ng30GraphStrings;
+export const s11BookmarkStrings = ng30BookmarkStrings;
+export const s11WebViewerStrings = ng30WebViewerStrings;
