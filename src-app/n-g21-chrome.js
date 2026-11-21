@@ -191,7 +191,7 @@ export function ng21VaultProfile(host) {
       try { currentPath = (ipc.sendSync("vault") || {}).path || ""; } catch (e) { /* no vault info */ }
       let registry = {};
       try { registry = ipc.sendSync("vault-list") || {}; } catch (e) { registry = {}; }
-      const menu = host.Menu.forEvent(event);
+      const menu = new host.Menu();
       for (const key of Object.keys(registry)) {
         const entry = registry[key];
         const title = nodePath ? nodePath.basename(entry.path) : String(entry.path).split(/[\\/]/).pop();
@@ -211,6 +211,9 @@ export function ng21VaultProfile(host) {
         .setIcon("open-vault")
         .onClick(() => app.openVaultChooser()));
       menu.setParentElement(row);
+      // anchored to the switcher button; the menu flips above it when there is no room below
+      const rect = row.getBoundingClientRect();
+      menu.showAtPosition({ x: rect.left, y: rect.top });
     });
 
     row.addEventListener("contextmenu", (event) => {
@@ -243,7 +246,7 @@ export function ng21VaultProfile(host) {
     host.setIcon(help, "help");
     help.addEventListener("click", () => app.openHelp());
     const settings = actions.createDiv("clickable-icon");
-    host.setIcon(settings, "lucide-settings");
+    host.setIcon(settings, "lucide-sliders-horizontal");
     settings.addEventListener("click", () => app.setting.open());
     return this;
   }

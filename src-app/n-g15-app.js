@@ -181,7 +181,7 @@ export function appUpdateUseNativeMenu() {
   const Menu = env().Ug;
   if (!Menu) return;
   let value = this.vault.getConfig("nativeMenus");
-  if (value === null || value === undefined) value = true; // on macOS null means enabled
+  if (value === null || value === undefined) value = !!(env().Yl && env().Yl.isMacOS); // unset means native menus on macOS only
   Menu.useNativeMenu = !!value;
 }
 

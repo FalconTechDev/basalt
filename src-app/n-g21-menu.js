@@ -605,14 +605,22 @@ export function ng21DefineMenu(host) {
 
     ng21ActiveMenu = this;
     const self = this;
+    this.load(); // the opening event has already passed the window capture phase, so listening now is safe
     win.setTimeout(() => self.load(), 0);
     return this;
   };
 
   /** Desktop placement: measure, fit inside the viewport, scroll with the wheel. */
   proto._placeDesktop = function (position, win) {
+    this._placeNow(position, win);
+    // sizes can still be zero before the first layout (items render lazily): place once more on the next frame
+    const self = this;
+    win.setTimeout(() => { if (self.dom.parentNode) self._placeNow(position, win); }, 30);
+  };
+
+  proto._placeNow = function (position, win) {
     const dom = this.dom;
-    const width = dom.offsetWidth, height = dom.offsetHeight;
+    const width = dom.offsetWidth, height = dom.offsetHeight || dom.scrollHeight;
     const viewWidth = win.innerWidth, viewHeight = win.innerHeight;
     let rightEdge, leftEdge;
     if (position.width != null) {

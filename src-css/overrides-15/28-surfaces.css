@@ -21,3 +21,16 @@
 .menu-item.is-warning:not(.is-disabled).selected { background: color-mix(in srgb, var(--text-error) 14%, transparent); box-shadow: inset 2px 0 0 var(--text-error); }
 .menu-separator { margin: var(--size-2-3) 0; border-top: 1px solid var(--background-modifier-border); }
 .notice { border-left: 2px solid var(--interactive-accent); }
+
+/* menus ease in instead of popping */
+.menu {
+	animation: bs-menu-in 130ms cubic-bezier(0.2, 0.8, 0.3, 1);
+	transform-origin: top left;
+}
+@keyframes bs-menu-in {
+	from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+	to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.menu { animation: none; }
+}
