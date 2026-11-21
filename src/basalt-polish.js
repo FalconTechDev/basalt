@@ -102,6 +102,40 @@
     };
     setInterval(watchSettings, 800);
 
+    // 14. icons play a small move of their own when a button is pressed or switched on (pencil wiggles, gear turns, bin shakes ...)
+    const ICON_MOVES = [
+      [/pencil|pen|edit|brush|highlighter|signature/, "wiggle"],
+      [/settings|sliders|cog|wrench/, "spin-half"],
+      [/refresh|rotate-cw|rotate-ccw|loader|sync|repeat/, "spin"],
+      [/trash|eraser|delete/, "shake"],
+      [/plus|^x$|circle-x|close|circle-plus|square-plus/, "turn"],
+      [/search|scan|zoom|focus|magnif/, "wobble"],
+      [/undo|arrow-left|chevron-left|corner-up-left|back/, "nudge-l"],
+      [/redo|arrow-right|chevron-right|corner-up-right|forward/, "nudge-r"],
+      [/eye/, "blink"],
+      [/folder|file|image|download|upload|archive|inbox/, "hop"],
+      [/languages|translate|arrow-left-right|arrow-up-down|flip|repeat-2/, "flip"],
+      [/lock|key|shield|magnet|pin/, "tilt"],
+      [/git|network|share|workflow|waypoints|link/, "swing"],
+    ];
+    const playIcon = (btn) => {
+      const svg = btn.querySelector && btn.querySelector("svg"); if (!svg || svg.__bsAnimating) return;
+      const cls = Array.from(svg.classList).find((c) => c.startsWith("lucide-")) || ""; const name = cls.replace("lucide-", "");
+      let move = "pop"; for (const [rx, m] of ICON_MOVES) if (rx.test(name)) { move = m; break; }
+      svg.__bsAnimating = true; svg.classList.add("bs-ic-" + move);
+      const done = () => { svg.classList.remove("bs-ic-" + move); svg.__bsAnimating = false; svg.removeEventListener("animationend", done); };
+      svg.addEventListener("animationend", done); setTimeout(done, 900);
+    };
+    const BTN = "button, .clickable-icon, .canvas-control-item, .side-dock-ribbon-action, .view-action, .canvas-card-menu-button, .nav-action-button, .bsd-tb button";
+    document.addEventListener("click", (e) => { const b = e.target.closest && e.target.closest(BTN); if (b) playIcon(b); }, true);
+    new MutationObserver((list) => {
+      for (const m of list) {
+        const t = m.target; if (!t.matches || !t.matches(BTN)) continue;
+        const was = m.oldValue || "", now = t.className || "";
+        for (const tok of ["is-active", "mod-active", "is-on", "on", "is-checked", "is-enabled"]) { if (typeof now === "string" && now.split(/\s+/).includes(tok) && !was.split(/\s+/).includes(tok)) { playIcon(t); break; } }
+      }
+    }).observe(document.body, { attributes: true, attributeFilter: ["class"], attributeOldValue: true, subtree: true });
+
     // 11. the mouse wheel over the tab strip scrolls the tabs sideways
     document.addEventListener("wheel", (e) => {
       const strip = e.target.closest && e.target.closest(".workspace-tab-header-container-inner"); if (!strip || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;

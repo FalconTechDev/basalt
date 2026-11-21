@@ -15,7 +15,11 @@
     /* the drawing lies under the controls of the board: it never covers the buttons, the minimap or the toolbars */
     .canvas-wrapper .canvas-controls, .canvas-wrapper .fp-minimap, .canvas-wrapper .canvas-card-menu, .canvas-wrapper .canvas-menu-container, .canvas-wrapper .canvas-selection-menu { z-index: 40 !important; }
     .canvas-wrapper { overflow: hidden; }
-    .bsink-on, .bsink-on * { cursor: crosshair !important; }
+    .bsink-on, .bsink-on .canvas, .bsink-on .canvas-node, .bsink-on .canvas-node * { cursor: var(--bs-draw-cursor, crosshair) !important; }
+    .bsink-on .bsd-tb, .bsink-on .bsd-tb *, .bsink-on .bsd-pop, .bsink-on .bsd-pop *, .bsink-on .canvas-controls, .bsink-on .canvas-controls *, .bsink-on .canvas-menu-container, .bsink-on .canvas-menu-container *, .bsink-on .fp-minimap, .bsink-on .fp-minimap *, .bsink-on .canvas-selection-menu, .bsink-on .canvas-selection-menu * { cursor: var(--bs-cursor-arrow, default) !important; }
+    .bsink-on .bsd-tb button, .bsink-on .bsd-tb button *, .bsink-on .bsd-pop button, .bsink-on .bsd-pop .bsd-c, .bsink-on .bsd-pop label, .bsink-on .canvas-controls .canvas-control-item, .bsink-on .canvas-controls .canvas-control-item *, .bsink-on .canvas-menu-container .clickable-icon, .bsink-on .canvas-menu-container .clickable-icon * { cursor: var(--bs-cursor-hand, pointer) !important; }
+    .bsink-on .bsd-pop input[type=range] { cursor: ew-resize !important; }
+    .bsink-on textarea, .bsink-on .bsd-text { cursor: text !important; }
     .bsink-on .canvas-card-menu { display: none !important; }
     .bsd { position: relative; margin: 4px 0; line-height: 0; } .bsd svg { width: 100%; height: auto; display: block; }
     .bsd-edit { position: absolute; top: 4px; right: 4px; line-height: 1; padding: 3px 8px; font-size: 12px; opacity: 0; transition: opacity .12s; z-index: 2; }
@@ -377,6 +381,26 @@
     wrap.addEventListener("pointermove", hover, true);
     wrap.addEventListener("pointerdown", down, true); window.addEventListener("pointermove", move, true); window.addEventListener("pointerup", up, true); window.addEventListener("pointercancel", up, true);
     wrap.classList.add("bsink-on");
+    // the pointer over the drawing is the tool: a ring of the real stroke width for brushes, a dashed ring for the eraser, a fine cross for shapes
+    const svgCursor = (svg, hx, hy, fb) => "url(\"data:image/svg+xml," + encodeURIComponent(svg) + "\") " + hx + " " + hy + ", " + fb;
+    const ring = (d, col, extra) => { const n = Math.max(12, Math.ceil(d) + 6), c = n / 2, r = Math.max(2, d / 2); return [n, svgCursor(`<svg xmlns="http://www.w3.org/2000/svg" width="${n}" height="${n}"><circle cx="${c}" cy="${c}" r="${r + 0.8}" fill="none" stroke="#000" stroke-opacity=".55" stroke-width="2.4"/><circle cx="${c}" cy="${c}" r="${r}" fill="${extra || "none"}" stroke="#fff" stroke-width="1.3"${extra === "dash" ? ' stroke-dasharray="3 3" fill="none"' : ""}/><circle cx="${c}" cy="${c}" r="1.4" fill="${col || "#fff"}" stroke="#000" stroke-opacity=".6" stroke-width=".8"/></svg>`, c, c, "crosshair")]; };
+    let curKey = "";
+    const curTick = () => {
+      if (!wrap.isConnected || !wrap.classList.contains("bsink-on")) return;
+      const k = canvas.scale || 1, key = [state.tool, state.width, state.color, Math.round(k * 20)].join("|");
+      if (key !== curKey) {
+        curKey = key; let v;
+        if (state.tool === "select") v = "var(--bs-cursor-arrow, default)";
+        else if (state.tool === "text") v = "text";
+        else if (state.tool === "erase") v = ring(Math.max(14, Math.min(120, 22 * Math.max(1, k))), null, "dash")[1];
+        else if (state.tool === "hl") v = ring(Math.min(120, Math.max(10, state.width * 4) * k), state.color || themeColor())[1];
+        else if (state.tool === "pen") v = ring(Math.min(120, Math.max(5, state.width * k)), state.color || themeColor())[1];
+        else v = svgCursor(`<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"><path d="M14 2v9M14 17v9M2 14h9M17 14h9" stroke="#000" stroke-opacity=".55" stroke-width="3.2" stroke-linecap="round"/><path d="M14 2v9M14 17v9M2 14h9M17 14h9" stroke="${state.color || "#fff"}" stroke-width="1.6" stroke-linecap="round"/></svg>`, 14, 14, "crosshair");
+        wrap.style.setProperty("--bs-draw-cursor", v);
+      }
+      setTimeout(curTick, 140);
+    };
+    curTick();
     const tb = toolbar(state, wrap, {
       undo: () => { state.sel = null; canvas.undo(); L.dirty = true; drawer.hover({ clientX: -1e5, clientY: -1e5 }); }, redo: () => { state.sel = null; canvas.redo(); L.dirty = true; }, done: () => stop(),
       recolor: (c) => { if (state.sel) { state.sel.c = c; drawer.refresh(); } }, rewidth: (w) => { if (state.sel) { state.sel.w = state.sel.o ? Math.max(10, w * 4) : w; drawer.refresh(); } },
