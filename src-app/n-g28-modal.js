@@ -223,11 +223,13 @@ function ng28DefineModalImpl(host) {
       }
     }
     const focusEl = saved.active;
-    const isEl = focusEl.instanceOf
-      ? focusEl.instanceOf(selWin.HTMLElement) || focusEl.instanceOf(selWin.SVGElement)
-      : (focusEl instanceof selWin.HTMLElement || focusEl instanceof selWin.SVGElement);
-    if (focusEl && isEl && inWindow(focusEl)) {
-      host.focusElement(focusEl, { preventScroll: true });
+    if (focusEl) {
+      const isEl = focusEl.instanceOf
+        ? focusEl.instanceOf(selWin.HTMLElement) || focusEl.instanceOf(selWin.SVGElement)
+        : (focusEl instanceof selWin.HTMLElement || focusEl instanceof selWin.SVGElement);
+      if (isEl && inWindow(focusEl)) {
+        host.focusElement(focusEl, { preventScroll: true });
+      }
     }
   };
 
