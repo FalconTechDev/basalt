@@ -349,7 +349,6 @@ export function defineQuickSwitcherModalBase(host) {
   };
   inherit(QuickSwitcherModalBase, host.SuggestModal);
   ng23Sw.ModalBase = QuickSwitcherModalBase;
-  host.s13QuickSwitcherModalBase = QuickSwitcherModalBase;
   return QuickSwitcherModalBase;
 }
 
