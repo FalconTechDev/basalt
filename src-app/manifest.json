@@ -111,179 +111,179 @@
     },
     {
       "orig": "Pf",
-      "use": "formatBytes"
+      "use": "ng39FormatBytes"
     },
     {
       "orig": "rm",
-      "use": "toKebab"
+      "use": "ng39ToKebab"
     },
     {
       "orig": "gc",
-      "use": "ellipsize"
+      "use": "ng39Ellipsize"
     },
     {
       "orig": "u7",
-      "use": "endWithBlankLine"
+      "use": "ng39EndWithBlankLine"
     },
     {
       "orig": "pP",
-      "use": "squeezeNewlines"
+      "use": "ng39SqueezeNewlines"
     },
     {
       "orig": "yA",
-      "use": "escapeTablePipes"
+      "use": "ng39EscapeTablePipes"
     },
     {
       "orig": "xW",
-      "use": "withHash"
+      "use": "ng39WithHash"
     },
     {
       "orig": "zL",
-      "use": "isShortLine"
+      "use": "ng39IsShortLine"
     },
     {
       "orig": "ZI",
-      "use": "toStringList"
+      "use": "ng39ToStringList"
     },
     {
       "orig": "YA",
-      "use": "emptyToNull"
+      "use": "ng39EmptyToNull"
     },
     {
       "orig": "Ree",
-      "use": "parseCommaList"
+      "use": "ng39ParseCommaList"
     },
     {
       "orig": "Bee",
-      "use": "formatCommaList"
+      "use": "ng39FormatCommaList"
     },
     {
       "orig": "kq",
-      "use": "countQuoteMarks"
+      "use": "ng39CountQuoteMarks"
     },
     {
       "orig": "Cq",
-      "use": "quoteIndentDepth"
+      "use": "ng39QuoteIndentDepth"
     },
     {
       "orig": "Vj",
-      "use": "dropWordsContaining"
+      "use": "ng39DropWordsContaining"
     },
     {
       "orig": "FQ",
-      "use": "formDecode"
+      "use": "ng39FormDecode"
     },
     {
       "orig": "NQ",
-      "use": "formEncode"
+      "use": "ng39FormEncode"
     },
     {
       "orig": "RQ",
-      "use": "formEncodePath"
+      "use": "ng39FormEncodePath"
     },
     {
       "orig": "NX",
-      "use": "linesOf"
+      "use": "ng39LinesOf"
     },
     {
       "orig": "Ej",
-      "use": "hasLatinLetter"
+      "use": "ng39HasLatinLetter"
     },
     {
       "orig": "zx",
-      "use": "parseImageSize"
+      "use": "ng39ParseImageSize"
     },
     {
       "orig": "WZ",
-      "use": "intOrNull"
+      "use": "ng39IntOrNull"
     },
     {
       "orig": "Vl",
-      "use": "floatOr"
+      "use": "ng39FloatOr"
     },
     {
       "orig": "f_",
-      "use": "joinClasses"
+      "use": "ng39JoinClasses"
     },
     {
       "orig": "Js",
-      "use": "ninesAtLeast"
+      "use": "ng39NinesAtLeast"
     },
     {
       "orig": "uc",
-      "use": "newlinesBefore"
+      "use": "ng39NewlinesBefore"
     },
     {
       "orig": "Dv",
-      "use": "lineBounds"
+      "use": "ng39LineBounds"
     },
     {
       "orig": "Nb",
-      "use": "keyLabel"
+      "use": "ng39KeyLabel"
     },
     {
       "orig": "Fb",
-      "use": "makeHotkey"
+      "use": "ng39MakeHotkey"
     },
     {
       "orig": "my",
-      "use": "valueIgnoringCase"
+      "use": "ng39ValueIgnoringCase"
     },
     {
       "orig": "qV",
-      "use": "keyIgnoringCase"
+      "use": "ng39KeyIgnoringCase"
     },
     {
       "orig": "vy",
-      "use": "parseVersion"
+      "use": "ng39ParseVersion"
     },
     {
       "orig": "gy",
-      "use": "isOlderVersion"
+      "use": "ng39IsOlderVersion"
     },
     {
       "orig": "P1",
-      "use": "severityRank"
+      "use": "ng39SeverityRank"
     },
     {
       "orig": "L1",
-      "use": "worstSeverity"
+      "use": "ng39WorstSeverity"
     },
     {
       "orig": "rD",
-      "use": "chromeVersion"
+      "use": "ng39ChromeVersion"
     },
     {
       "orig": "tY",
-      "use": "parsePropertyId"
+      "use": "ng39ParsePropertyId"
     },
     {
       "orig": "nY",
-      "use": "propertyId"
+      "use": "ng39PropertyId"
     },
     {
       "orig": "SY",
-      "use": "shortPropertyId"
+      "use": "ng39ShortPropertyId"
     },
     {
       "orig": "xY",
-      "use": "longPropertyId"
+      "use": "ng39LongPropertyId"
     },
     {
       "orig": "PY",
-      "use": "uniqueName"
+      "use": "ng39UniqueName"
     },
     {
       "orig": "LT",
-      "use": "plainHeading"
+      "use": "ng39PlainHeading"
     },
     {
       "orig": "IT",
-      "use": "linkSafeHeading"
+      "use": "ng39LinkSafeHeading"
     },
     {
       "orig": "kA",
-      "use": "describeCliOptions"
+      "use": "ng39DescribeCliOptions"
     },
     {
       "orig": "cA",
