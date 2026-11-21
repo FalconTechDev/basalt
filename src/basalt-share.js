@@ -124,77 +124,98 @@
     fs.mkdirSync(target, { recursive: true }); fs.writeFileSync(pa.join(target, STATE), JSON.stringify({ room: m[1], pass: m[2], state: "" }));
     new window.__bsApi.Notice("Открываю проект «" + baseName(target) + "»…"); r.sendSync("vault-open", target, false); return true;
   }
-  let panelEl = null;
-  function panel() {
-    if (panelEl) { panelEl.close(); return; }
-    const api = window.__bsApi, M = new api.Modal(app); panelEl = M; M.modalEl.classList.add("bsp-modal"); M.titleEl.setText("Совместная работа"); const c = M.contentEl; c.classList.add("bsp");
-    const copy = (t) => { try { navigator.clipboard.writeText(t); new api.Notice("Код скопирован"); } catch (e) { /* none */ } };
-    // the layout is built once; only the two live lists are redrawn, and only when their content really changed
-    const secP = c.createDiv({ cls: "bsp-sec" }); secP.createDiv({ cls: "bsp-h", text: "Проекты" }); const listP = secP.createDiv();
-    const secW = c.createDiv({ cls: "bsp-sec" }); secW.createDiv({ cls: "bsp-h", text: "Сейчас в сети" }); const listW = secW.createDiv();
-    const secA = c.createDiv({ cls: "bsp-sec" }); secA.createDiv({ cls: "bsp-h", text: "Действия" }); const bar = secA.createDiv({ cls: "bsp-bar" });
-    const jr = secA.createDiv({ cls: "bsp-join" }); const inp = jr.createEl("input", { attr: { placeholder: "Код приглашения: basalt-share:…" } }); const jb = jr.createEl("button", { text: "Подключиться", cls: "mod-cta" });
-    jb.onclick = async () => { if (await joinCode(inp.value)) M.close(); }; inp.onkeydown = (e) => { if (e.key === "Enter") jb.click(); };
-    const det = c.createEl("details", { cls: "bsp-set" }); det.createEl("summary", { text: "Имя и серверы" });
-    det.createEl("p", { text: "Ваше имя" }); const nm = det.createEl("input"); nm.value = me().name;
-    nm.onchange = () => { const m2 = me(); m2.name = nm.value.trim() || m2.name; try { localStorage.setItem("board-me", JSON.stringify(m2)); } catch (e) { /* private */ } for (const sh of shares.values()) sh.publish(); refresh(); };
-    det.createEl("p", { text: "Свои relay-серверы Nostr, через запятую (необязательно)" }); const sg = det.createEl("input"); sg.value = signaling().join(", ");
-    sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
+  // ---- the side panel "Совместная работа" (an ordinary pane in the right sidebar; built once, live parts update in place)
+  const VIEW = "basalt-collab";
+  function makeCollabView(api) {
+    return class CollabView extends api.ItemView {
+      getViewType() { return VIEW; }
+      getDisplayText() { return "Совместная работа"; }
+      getIcon() { return "lucide-users"; }
+      async onOpen() { this.mount(); }
+      async onClose() { if (this.off) this.off(); }
+      mount() {
+        const c = this.contentEl; c.empty(); c.classList.add("bsc");
+        const copy = (t) => { try { navigator.clipboard.writeText(t); new api.Notice("Код скопирован"); } catch (e) { /* none */ } };
+        // status card
+        const card = c.createDiv({ cls: "bsc-card" }); const dot = card.createSpan({ cls: "bsc-dot" }); const ct = card.createDiv({ cls: "bsc-ct" }); const c1 = ct.createDiv({ cls: "bsc-c1" }), c2 = ct.createDiv({ cls: "bsc-c2" });
+        const invite = card.createEl("button", { text: "Пригласить", cls: "mod-cta bsc-inv" });
+        const sec = (t) => { const s = c.createDiv({ cls: "bsc-sec" }); s.createDiv({ cls: "bsc-h", text: t }); return s.createDiv({ cls: "bsc-list" }); };
+        const listW = sec("Участники"), listP = sec("Проекты");
+        const acts = c.createDiv({ cls: "bsc-acts" });
+        const join = c.createDiv({ cls: "bsc-join" }); join.createDiv({ cls: "bsc-h", text: "Подключиться по коду" });
+        const jr = join.createDiv({ cls: "bsc-jr" }); const inp = jr.createEl("input", { attr: { placeholder: "basalt-share:…" } }); const jb = jr.createEl("button", { text: "Войти", cls: "mod-cta" });
+        jb.onclick = async () => { if (await joinCode(inp.value)) inp.value = ""; }; inp.onkeydown = (e) => { if (e.key === "Enter") jb.click(); };
+        const det = c.createEl("details", { cls: "bsc-set" }); det.createEl("summary", { text: "Имя и серверы" });
+        det.createEl("label", { text: "Ваше имя" }); const nm = det.createEl("input"); nm.value = me().name;
+        nm.onchange = () => { const m2 = me(); m2.name = nm.value.trim() || m2.name; try { localStorage.setItem("board-me", JSON.stringify(m2)); } catch (e) { /* private */ } for (const sh of shares.values()) sh.publish(); refresh(); };
+        det.createEl("label", { text: "Свои relay-серверы Nostr, через запятую" }); const sg = det.createEl("input", { attr: { placeholder: "по умолчанию — публичные" } }); sg.value = signaling().join(", ");
+        sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
 
-    let sigP = "", sigW = "", sigA = "";
-    const statusOf = (sh) => { const n = sh.peers.length, st = sh.prov ? sh.prov.status : "connecting"; return n ? { cls: "is-live", text: "Онлайн: " + (n + 1) } : st === "connecting" ? { cls: "is-wait", text: "Поиск…" } : { cls: "", text: "Один в сети" }; };
-    const refresh = () => {
-      // projects
-      const rows = []; for (const [k, sh] of shares) rows.push({ key: k, name: k ? k.split("/").pop() : app.vault.getName(), sub: k ? "папка этого хранилища" : "это хранилище", sh });
-      for (const v of otherVaults()) rows.push({ name: v.name, sub: "другое хранилище", v });
-      const sp = rows.map((r) => r.name + "|" + r.sub).join(";");
-      if (sp !== sigP) {
-        sigP = sp; listP.empty(); r_status.length = 0;
-        if (!rows.length) listP.createDiv({ cls: "bsp-empty", text: "Пока нет общих проектов" });
-        for (const r of rows) {
-          const row = listP.createDiv({ cls: "bsp-row" }); const tx = row.createDiv({ cls: "bsp-tx" }); tx.createDiv({ cls: "bsp-n", text: r.name }); tx.createDiv({ cls: "bsp-s", text: r.sub });
-          if (r.sh) { const st = row.createDiv({ cls: "bsp-st" }); st.createSpan({ cls: "bsh-dot" }); const t = st.createSpan(); r_status.push({ sh: r.sh, st, t }); }
-          const act = row.createDiv({ cls: "bsp-act" }); const btn = (t, fn) => { const b = act.createEl("button", { text: t, cls: "bsp-b" }); b.onclick = fn; };
-          if (r.sh) { btn("Код", () => copy(r.sh.code())); btn("Прекратить", async () => { await stop(r.key || "/"); refresh(); }); } else btn("Открыть", () => { const rr = ipc(); if (rr) rr.sendSync("vault-open", r.v.path, false); });
-        }
-      }
-      for (const x of r_status) { const s = statusOf(x.sh); x.st.className = "bsp-st " + s.cls; if (x.t.textContent !== s.text) x.t.textContent = s.text; }
-      // people
-      const af = app.workspace.getActiveFile(), people = [{ u: me(), self: true, what: af ? "«" + af.basename + "»" : "в сети" }], seen = new Set();
-      for (const sh of shares.values()) for (const u of sh.peers) { const k = u.name + u.color; if (!seen.has(k)) { seen.add(k); people.push({ u, self: false, what: where(u) + " · " + (sh.folder ? sh.folder.split("/").pop() : app.vault.getName()) }); } }
-      const sw = people.map((p) => p.u.name + "|" + p.u.color + "|" + p.what + "|" + p.self).join(";");
-      if (sw !== sigW) {
-        sigW = sw; listW.empty();
-        for (const p of people) { const row = listW.createDiv({ cls: "bsp-person" }); const d = row.createSpan({ cls: "bsp-pd" }); d.style.background = p.u.color; const tx = row.createDiv({ cls: "bsp-tx" }); tx.createSpan({ cls: "bsp-n", text: p.u.name + (p.self ? " (вы)" : "") }); tx.createSpan({ cls: "bsp-s", text: "  " + p.what }); }
-        if (people.length === 1) listW.createDiv({ cls: "bsp-empty", text: shares.size ? "Пока никого рядом. Отправьте код приглашения." : "Подключений нет" });
-      }
-      // action buttons
-      const f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null;
-      const sa = (shares.has("") ? "1" : "0") + "|" + (dir && !shares.has(dir) ? dir : "");
-      if (sa !== sigA) {
-        sigA = sa; bar.empty();
-        const big = (t, ic, fn) => { const b = bar.createDiv({ cls: "bsp-big" }); const i2 = b.createSpan({ cls: "bsp-bi" }); api.setIcon(i2, ic); b.createSpan({ text: t }); b.onclick = fn; };
-        if (!shares.has("")) big("Поделиться хранилищем", "lucide-share-2", async () => { await host("/"); refresh(); });
-        if (dir && !shares.has(dir)) big("Поделиться папкой «" + dir.split("/").pop() + "»", "lucide-folder-up", async () => { await host(dir); refresh(); });
-        bar.style.display = bar.children.length ? "" : "none";
+        const live = []; let sigP = "", sigW = "", sigA = "";
+        const statusOf = (sh) => { const n = sh.peers.length, st = sh.prov ? sh.prov.status : "connecting"; return n ? { cls: "is-live", text: "Онлайн: " + (n + 1) } : st === "connecting" ? { cls: "is-wait", text: "Поиск…" } : { cls: "", text: "Один в сети" }; };
+        const refresh = () => {
+          const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), searching = all.some((s) => s.prov && s.prov.status === "connecting");
+          card.className = "bsc-card " + (!all.length ? "is-off" : n ? "is-live" : searching ? "is-wait" : "is-alone");
+          const t1 = !all.length ? "Совместная работа выключена" : n ? "Онлайн: " + (n + 1) : searching ? "Поиск участников…" : "Вы один в сети", t2 = !all.length ? "Поделитесь хранилищем или подключитесь по коду" : all.length === 1 ? (all[0].folder ? all[0].folder.split("/").pop() : app.vault.getName()) : all.length + " проекта";
+          if (c1.textContent !== t1) c1.textContent = t1; if (c2.textContent !== t2) c2.textContent = t2; invite.style.display = all.length ? "" : "none";
+          // people
+          const af = app.workspace.getActiveFile(), people = [{ u: me(), self: true, what: af ? "«" + af.basename + "»" : "в сети" }], seen = new Set();
+          for (const sh of all) for (const u of sh.peers) { const k = u.name + u.color; if (!seen.has(k)) { seen.add(k); people.push({ u, self: false, what: where(u) }); } }
+          const sw = people.map((p) => p.u.name + "|" + p.u.color + "|" + p.what + "|" + p.self).join(";");
+          if (sw !== sigW) {
+            sigW = sw; listW.empty();
+            for (const p of people) { const row = listW.createDiv({ cls: "bsc-p" }); const d = row.createSpan({ cls: "bsc-pd" }); d.style.background = p.u.color; const tx = row.createDiv({ cls: "bsc-tx" }); tx.createDiv({ cls: "bsc-n", text: p.u.name + (p.self ? " (вы)" : "") }); tx.createDiv({ cls: "bsc-s", text: p.what }); }
+            if (people.length === 1 && all.length) listW.createDiv({ cls: "bsc-empty", text: "Пока никого рядом. Отправьте код — кнопка «Пригласить»." });
+          }
+          // projects
+          const rows = []; for (const [k, sh] of shares) rows.push({ key: k, name: k ? k.split("/").pop() : app.vault.getName(), sub: k ? "папка этого хранилища" : "это хранилище", sh });
+          for (const v of otherVaults()) rows.push({ name: v.name, sub: "другое хранилище", v });
+          const sp = rows.map((r) => r.name + "|" + r.sub).join(";");
+          if (sp !== sigP) {
+            sigP = sp; listP.empty(); live.length = 0;
+            if (!rows.length) listP.createDiv({ cls: "bsc-empty", text: "Нет общих проектов" });
+            for (const r of rows) {
+              const row = listP.createDiv({ cls: "bsc-pr" }); const top = row.createDiv({ cls: "bsc-prt" }); const tx = top.createDiv({ cls: "bsc-tx" }); tx.createDiv({ cls: "bsc-n", text: r.name }); tx.createDiv({ cls: "bsc-s", text: r.sub });
+              if (r.sh) { const st = top.createDiv({ cls: "bsc-st" }); st.createSpan({ cls: "bsc-sd" }); const t = st.createSpan(); live.push({ sh: r.sh, st, t }); }
+              const act = row.createDiv({ cls: "bsc-pa" }); const btn = (txt, fn) => { const b = act.createEl("button", { text: txt }); b.onclick = fn; };
+              if (r.sh) { btn("Копировать код", () => copy(r.sh.code())); btn("Прекратить", async () => { await stop(r.key || "/"); refresh(); }); } else btn("Открыть", () => { const rr = ipc(); if (rr) rr.sendSync("vault-open", r.v.path, false); });
+            }
+          }
+          for (const x of live) { const s = statusOf(x.sh); x.st.className = "bsc-st " + s.cls; if (x.t.textContent !== s.text) x.t.textContent = s.text; }
+          // share buttons
+          const f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null, sa = (shares.has("") ? "1" : "0") + "|" + (dir && !shares.has(dir) ? dir : "");
+          if (sa !== sigA) {
+            sigA = sa; acts.empty();
+            const big = (t, fn) => { const b = acts.createEl("button", { text: t, cls: "bsc-big" }); b.onclick = fn; };
+            if (!shares.has("")) big("Поделиться хранилищем", async () => { await host("/"); refresh(); });
+            if (dir && !shares.has(dir)) big("Поделиться папкой «" + dir.split("/").pop() + "»", async () => { await host(dir); refresh(); });
+            acts.style.display = acts.children.length ? "" : "none";
+          }
+        };
+        invite.onclick = () => { const s = shares.get("") || Array.from(shares.values())[0]; if (s) copy(s.code()); };
+        document.addEventListener("basalt-share-peers", refresh); const iv = setInterval(refresh, 1500); this.off = () => { document.removeEventListener("basalt-share-peers", refresh); clearInterval(iv); };
+        refresh();
       }
     };
-    const r_status = [];
-    document.addEventListener("basalt-share-peers", refresh); const iv = setInterval(refresh, 1500);
-    M.onClose = () => { document.removeEventListener("basalt-share-peers", refresh); clearInterval(iv); panelEl = null; };
-    refresh(); M.open();
   }
+  async function panel() {
+    const ws = app.workspace, ex = ws.getLeavesOfType(VIEW);
+    if (ex.length) { ws.revealLeaf(ex[0]); return; }
+    const leaf = ws.getRightLeaf(false); await leaf.setViewState({ type: VIEW, active: true }); ws.revealLeaf(leaf);
+  }
+  async function togglePanel() { const ex = app.workspace.getLeavesOfType(VIEW); if (ex.length) { ex.forEach((l) => l.detach()); return; } await panel(); }
   async function dialog() { panel(); }
   const joinDialog = panel;
 
   const t = setInterval(() => {
     if (!window.app || !app.workspace || !app.workspace.layoutReady || !app.commands || !window.__bsApi || !window.__bsY || !app.vault) return;
     clearInterval(t);
+    { const V = makeCollabView(window.__bsApi), creator = (leaf) => new V(leaf); try { app.viewRegistry.registerView(VIEW, creator); } catch (e) { app.viewRegistry.viewByType[VIEW] = creator; } }
     app.commands.addCommand({ id: "basalt:share-folder", name: "Общая папка: поделиться этой папкой", icon: "lucide-users", callback: () => panel() });
     app.commands.addCommand({ id: "basalt:share-vault", name: "Общая папка: поделиться всем vault", icon: "lucide-users", callback: () => panel() });
     app.commands.addCommand({ id: "basalt:share-join", name: "Общая папка: подключиться по коду", icon: "lucide-user-plus", callback: () => panel() });
     app.workspace.on("file-menu", (menu, f) => { if (f && f.children) menu.addItem((i) => i.setTitle(shares.has(f.path === "/" ? "" : f.path) ? "Общая папка…" : "Поделиться папкой…").setIcon("lucide-users").onClick(() => dialog(f.path))); });
-    try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", () => panel()); } catch (e) { /* no ribbon */ }
+    try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", () => togglePanel()); } catch (e) { /* no ribbon */ }
     if (app.statusBar && app.statusBar.registerStatusBarItem) {
       const chip = app.statusBar.registerStatusBarItem(); chip.classList.add("bsh-chip"); chip.style.display = "none";
       const upd = () => { const all = Array.from(shares.values()); if (!all.length) { chip.style.display = "none"; return; } const n = all.reduce((a, s) => a + s.peers.length, 0), st = all.some((s) => s.prov && s.prov.status === "connecting"); chip.style.display = ""; chip.classList.toggle("is-searching", st && !n); chip.classList.toggle("is-live", n > 0); chip.textContent = ""; const d = document.createElement("span"); d.className = "bsh-dot"; chip.append(d, n ? "Онлайн: " + (n + 1) : st ? "Поиск участников…" : "Один в сети"); chip.title = all.map((s) => (s.folder || "весь vault") + ": " + (s.peers.length ? s.peers.map((p) => p.name).join(", ") : "никого рядом")).join(String.fromCharCode(10)); };
