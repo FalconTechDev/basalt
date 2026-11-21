@@ -1419,7 +1419,7 @@ body{
     --code-white-space:pre-wrap;
     --collapse-icon-color:var(--text-faint);
     --collapse-icon-color-collapsed:var(--text-accent);
-    --corner-shape:bevel;
+    --corner-shape:round;
     --cursor:default;
     --cursor-link:pointer;
     --dialog-max-height:85vh;
@@ -18048,14 +18048,14 @@ button:focus-visible{
     --radius-l:12px
 }
 button:not(.bset-n):not(.titlebar-button),.dropdown,select{
-    border-radius:var(--radius-m);
+    border-radius:8px;
     transition:background-color .15s ease,box-shadow .15s ease,color .15s ease
 }
 input[type="text"],input[type="search"],input[type="number"],input[type="password"],textarea{
-    border-radius:var(--radius-m)
+    border-radius:8px
 }
 .clickable-icon,.nav-action-button,.view-action,.bsf-bar button,.bsd-tb button,.canvas-card-menu-button{
-    border-radius:var(--radius-m);
+    border-radius:8px;
     transition:background-color .15s ease,color .15s ease
 }
 .menu,.suggestion-container,.popover,.tooltip,.notice{
@@ -18084,7 +18084,7 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
     border-radius:8px 8px 0 0
 }
 .search-input-container input,.bsf-find input,.bset-find input{
-    border-radius:var(--radius-m)
+    border-radius:8px
 }
 .checkbox-container,.bset .checkbox-container{
     border-radius:11px
@@ -18229,5 +18229,14 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
     height:32px;
     padding:0 16px;
     border-radius:8px
+}
+.modal,.menu,.suggestion-container,.notice,.tooltip,.popover,button,.dropdown,select,input,textarea,.bsh-search,.bsh-tile,.canvas-card-menu,.canvas-control-group,.bsm-card,.bsm-go,.setting-item-control button,.modal-close-button,.mod-cta{
+    clip-path:none
+}
+.modal::after,.menu::after,.suggestion-container::after,.tooltip::after,.notice::after{
+    display:none
+}
+.bsm-go{
+    border:0
 }
 

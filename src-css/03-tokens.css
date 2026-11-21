@@ -302,7 +302,7 @@ body {
   --collapse-icon-color: var(--text-faint);
   --collapse-icon-color-collapsed: var(--text-accent);
 
-  --corner-shape: bevel;
+  --corner-shape: round;
 
   --cursor: default;
   --cursor-link: pointer;

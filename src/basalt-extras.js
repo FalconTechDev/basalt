@@ -34,7 +34,7 @@
     .bsx-scroll { max-height: 56vh; overflow: auto; }
     /* ---- admonitions and callouts */
     .bsx-ad, .markdown-rendered .callout, .markdown-source-view .callout { --bsx-c: var(--interactive-accent); border: 0; border-left: 3px solid var(--bsx-c); background: color-mix(in srgb, var(--bsx-c) 9%, var(--background-primary));
-      border-radius: 0; margin: 12px 0; padding: 0; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); mix-blend-mode: normal; }
+      border-radius: 0; margin: 12px 0; padding: 0; clip-path: none; mix-blend-mode: normal; }
     .bsx-ad-title { display: flex; align-items: center; gap: 8px; padding: 8px 14px; font-weight: 700; color: var(--bsx-c); text-transform: none; }
     .bsx-ad-body { padding: 0 14px 10px; } .bsx-ad-body > :first-child { margin-top: 0; } .bsx-ad-body > :last-child { margin-bottom: 0; }
     .callout[data-callout="note"], .bsx-ad[data-t="note"] { --bsx-c: #7b8cff; } .callout[data-callout="info"], .bsx-ad[data-t="info"] { --bsx-c: #5ad1e6; }

@@ -17,7 +17,7 @@
   css.textContent = `
     .bss-wrap { position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.45); display: flex; justify-content: center; align-items: flex-start; padding-top: 11vh; }
     .bss { width: min(760px, 94vw); max-height: 74vh; display: flex; flex-direction: column; background: var(--background-secondary); color: var(--text-normal);
-      clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px); }
+      clip-path: none; }
     .bss-in { display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--background-modifier-border); }
     .bss-in svg { width: 18px; height: 18px; color: var(--text-muted); flex: none; }
     .bss-in input { flex: 1; border: 0; background: transparent; box-shadow: none; font-size: 17px; color: var(--text-normal); padding: 4px 0; height: auto; }

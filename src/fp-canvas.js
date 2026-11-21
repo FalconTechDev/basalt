@@ -160,7 +160,7 @@
     .fp-type-row:hover { background: var(--background-modifier-hover); }
     .fp-type-ico { width: 40px; display: flex; justify-content: center; }
     .fp-type-ico i { display: block; border: 1.5px solid var(--interactive-accent); background: color-mix(in srgb, var(--interactive-accent) 18%, transparent);
-      clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+      clip-path: none; }
     .fp-type-name { flex: 1; }
     .fp-type-row small { color: var(--text-faint); }
     .fp-type-row.is-active .fp-type-name { color: var(--interactive-accent); }
@@ -200,12 +200,12 @@
     .fp-tr-restore:hover { border-color: var(--interactive-accent); color: var(--interactive-accent); }
     .fp-tr-restore svg { color: var(--interactive-accent); flex: none; }
     .fp-preview { position: fixed; z-index: 1001; pointer-events: none; background: var(--background-secondary); color: var(--text-normal); padding: 6px; box-shadow: none;
-      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); }
+      clip-path: none; }
     .fp-nested { position: absolute; inset: 0; background: var(--background-primary); pointer-events: none; z-index: 2; display: flex; align-items: center; justify-content: center; }
     .fp-nested canvas { display: block; }
     .fp-preview-head { font-size: var(--font-ui-smaller); color: var(--text-muted); padding: 2px 6px 4px; }
     .fp-present { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 30; display: flex; gap: 10px; align-items: center; padding: 8px 14px; background: var(--background-secondary); color: var(--text-normal);
-      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+      clip-path: none; }
     .fp-present button { padding: 4px 14px; } .fp-pv-n { min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; }
     .fp-shape-item.is-active { color: var(--interactive-accent); background: var(--background-modifier-hover); }
   `;

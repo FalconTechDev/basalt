@@ -43,7 +43,7 @@
     .bsh-stat div { border-radius: 0; display: flex; justify-content: space-between; padding: 11px 12px; background: var(--background-secondary); border-left: 2px solid var(--background-modifier-border); }
     .bsh-stat b { color: var(--text-normal); } .bsh-stat span { color: var(--text-muted); }
     .bsh-close { color: var(--text-faint); font-size: var(--font-ui-smaller); cursor: pointer; align-self: flex-start; } .bsh-close:hover { color: var(--text-normal); }
-    .bsh-search, .bsh-tile { border: 0; clip-path: polygon(var(--bs-cut-md) 0, 100% 0, 100% calc(100% - var(--bs-cut-md)), calc(100% - var(--bs-cut-md)) 100%, 0 100%, 0 var(--bs-cut-md)); background: var(--interactive-normal); }
+    .bsh-search, .bsh-tile { border: 0; clip-path: none; background: var(--interactive-normal); }
     .bsh-search:hover, .bsh-tile:hover { background: var(--interactive-hover); box-shadow: inset 2px 0 0 var(--interactive-accent); border: 0; }
     .bsh-tile .bsh-ti, .bsh-tile svg { border-radius: 0; }
     .bsh kbd { border-radius: 0; }
