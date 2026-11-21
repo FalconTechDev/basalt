@@ -89,7 +89,7 @@
     const tiles = [
       ["folder", "Открыть папку", "", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
       ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
-      ["canvas", "Новый холст", "", () => cmd("canvas:new-file")],
+      ["canvas", "Новая доска", "", () => cmd("canvas:new-file")],
       ["graph", "Граф", "", () => cmd("graph:open")],
     ];
     const tl = el.querySelector(".bsh-tiles");

@@ -221,7 +221,7 @@
   }
   const NEW_TAB_ITEMS = [
     ["Новая заметка", "lucide-file-plus", async (leaf) => { const f = await app.vault.create(uniqueName("Без названия", "md"), ""); await leaf.openFile(f); }],
-    ["Новый холст", "lucide-layout-dashboard", async (leaf) => { const f = await app.vault.create(uniqueName("Без названия", "canvas"), JSON.stringify({ nodes: [], edges: [] })); await leaf.openFile(f); }],
+    ["Новая доска", "lucide-layout-dashboard", async (leaf) => { const f = await app.vault.create(uniqueName("Доска", "board"), "{}"); await leaf.openFile(f); }],
     null,
     ["Граф", "lucide-git-fork", (leaf) => leaf.setViewState({ type: "graph", active: true, state: {} })],
     ["Локальный граф", "lucide-git-fork", (leaf) => { const f = app.workspace.getActiveFile(); return leaf.setViewState({ type: "localgraph", active: true, state: f ? { file: f.path } : {} }); }],
