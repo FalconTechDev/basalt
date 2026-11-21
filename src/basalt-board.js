@@ -8,7 +8,7 @@
   const b64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
   const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
   const uid = () => Math.random().toString(36).slice(2, 10);
-  const signalingList = () => { try { const j = JSON.parse(localStorage.getItem("board-signaling") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return ["wss://signaling.yjs.dev"]; };
+  const signalingList = () => { try { const j = JSON.parse(localStorage.getItem("board-signaling") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return []; };
   const me = (() => { try { const j = JSON.parse(localStorage.getItem("board-me") || "null"); if (j) return j; } catch (e) { /* none */ } const j = { name: "Участник " + uid().slice(0, 3), color: PEER[Math.floor(Math.random() * PEER.length)] }; try { localStorage.setItem("board-me", JSON.stringify(j)); } catch (e) { /* private */ } return j; })();
   const ask = (title, def) => new Promise((res) => {
     const M = new window.__bsApi.Modal(app); M.titleEl.setText(title); let done = false; const fin = (v) => { if (!done) { done = true; res(v); } };
@@ -172,7 +172,7 @@
       publish(extra) { if (this.sh) { this.sh.publish(Object.assign({ board: this.relPath, cur: this.myCur || null, sel: Array.from(this.sel) }, extra || {})); return; } if (!this.aw) return; if (extra) this.extra = Object.assign(this.extra || {}, extra); this.aw.setLocalStateField("user", Object.assign({ name: me.name, color: me.color, cur: this.myCur || null, sel: Array.from(this.sel) }, this.extra || {})); }
       connect(room, pass) {
         const L = window.__bsY; if (this.prov) this.prov.destroy();
-        this.prov = new L.WebrtcProvider("basalt-board-" + room, this.doc, { password: pass || undefined, signaling: signalingList() });
+        this.prov = new L.TrysteroProvider("basalt-board-" + room, this.doc, { password: pass || undefined, relayUrls: signalingList() });
         this.aw = this.prov.awareness; this.publish();
         this.aw.on("change", () => { this.peers = Array.from(this.aw.getStates().entries()).filter(([id]) => id !== this.aw.clientID).map(([, s]) => s.user).filter(Boolean); this.paintPeers(); });
         this.share.classList.add("is-on");
@@ -193,7 +193,7 @@
         const M = new api.Modal(app); M.titleEl.setText("Совместная работа"); const c = M.contentEl;
         c.createEl("p", { text: "Код приглашения. Каждый, кто его введёт, получает полную копию доски и сам начинает её раздавать: если ваш компьютер выключится, остальные продолжат работать." });
         const i = c.createEl("input", { attr: { readonly: "true", style: "width:100%" } }); i.value = "basalt-board:" + room + ":" + pass; i.onfocus = () => i.select();
-        c.createEl("p", { text: "Серверы сигнализации (через запятую; нужны только чтобы участники нашли друг друга):" }); const sg = c.createEl("input", { attr: { style: "width:100%" } }); sg.value = signalingList().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
+        c.createEl("p", { text: "Свои relay-серверы Nostr (необязательно):" }); const sg = c.createEl("input", { attr: { style: "width:100%" } }); sg.value = signalingList().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
         c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me.name; n.onchange = () => { me.name = n.value || me.name; try { localStorage.setItem("board-me", JSON.stringify(me)); } catch (e) { /* private */ } this.publish(); };
         M.open();
       }

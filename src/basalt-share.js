@@ -9,7 +9,7 @@
   const uid = () => Math.random().toString(36).slice(2, 10);
   const PEER = ["#e5484d", "#f59f3b", "#3fa7d6", "#46a758", "#8e6bd8", "#c0699f", "#d6b43c"];
   const me = () => { try { const j = JSON.parse(localStorage.getItem("board-me") || "null"); if (j) return j; } catch (e) { /* none */ } const j = { name: "Участник " + uid().slice(0, 3), color: PEER[Math.floor(Math.random() * PEER.length)] }; try { localStorage.setItem("board-me", JSON.stringify(j)); } catch (e) { /* private */ } return j; };
-  const signaling = () => { try { const j = JSON.parse(localStorage.getItem("board-signaling") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return ["wss://signaling.yjs.dev"]; };
+  const signaling = () => { try { const j = JSON.parse(localStorage.getItem("board-signaling") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return []; };
   const join = (a, b) => (!a || a === "/" ? "" : a.replace(/\/$/, "") + "/") + b;
   const shares = new Map();
   let resolveReady; window.__bsShareReady = new Promise((r) => { resolveReady = r; });
@@ -29,7 +29,7 @@
       await this.scan();
       this.files.observeDeep((evs) => { for (const ev of evs) { const p = ev.path; if (p.length === 0) { for (const k of ev.keysChanged) this.toDisk(k); } else this.toDisk(p[0]); } this.queueSave(); });
       this.doc.on("update", () => this.queueSave());
-      const L = window.__bsY; this.prov = new L.WebrtcProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, signaling: signaling() });
+      const L = window.__bsY; this.prov = new L.TrysteroProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, relayUrls: signaling() }); this.prov.onStatus(() => document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })));
       this.aw = this.prov.awareness; this.publish();
       this.aw.on("change", () => { this.peers = Array.from(this.aw.getStates().entries()).filter(([id]) => id !== this.aw.clientID).map(([, s]) => s.user).filter(Boolean); document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })); });
       this.onVault = (type) => (f, old) => this.vaultEvent(type, f, old);
@@ -108,7 +108,7 @@
     const s = await host(folder); const M = new window.__bsApi.Modal(app); M.titleEl.setText("Общая папка: " + (s.folder || "весь vault")); const c = M.contentEl;
     c.createEl("p", { text: "Вся папка (заметки, доски, файлы) синхронизируется между всеми, кто введёт этот код. У каждого полная копия: если ваш компьютер выключится, остальные продолжат работать и смогут приглашать новых людей." });
     const i = c.createEl("input", { attr: { readonly: "true", style: "width:100%" } }); i.value = s.code(); i.onfocus = () => i.select();
-    c.createEl("p", { text: "Серверы сигнализации (через запятую; нужны только чтобы участники нашли друг друга):" }); const sg = c.createEl("input", { attr: { style: "width:100%" } }); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
+    c.createEl("p", { text: "Свои relay-серверы Nostr (через запятую, необязательно — по умолчанию используются публичные):" }); const sg = c.createEl("input", { attr: { style: "width:100%" } }); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
     c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me().name; n.onchange = () => { const m = me(); m.name = n.value || m.name; try { localStorage.setItem("board-me", JSON.stringify(m)); } catch (e) { /* private */ } s.publish(); };
     const row = c.createDiv({ attr: { style: "margin-top:14px;display:flex;justify-content:flex-end" } }); const st = row.createEl("button", { text: "Прекратить обмен" }); st.onclick = async () => { await stop(folder); M.close(); };
     M.open();
@@ -136,6 +136,11 @@
       if (e && e.clientX != null) m.showAtMouseEvent(e); else m.showAtPosition({ x: 56, y: 240 });
     };
     try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", menu); } catch (e) { /* no ribbon */ }
+    if (app.statusBar && app.statusBar.registerStatusBarItem) {
+      const chip = app.statusBar.registerStatusBarItem(); chip.classList.add("bsh-chip"); chip.style.display = "none";
+      const upd = () => { const all = Array.from(shares.values()); if (!all.length) { chip.style.display = "none"; return; } const n = all.reduce((a, s) => a + s.peers.length, 0), st = all.some((s) => s.prov && s.prov.status === "connecting"); chip.style.display = ""; chip.classList.toggle("is-searching", st && !n); chip.classList.toggle("is-live", n > 0); chip.textContent = ""; const d = document.createElement("span"); d.className = "bsh-dot"; chip.append(d, n ? "Онлайн: " + (n + 1) : st ? "Поиск участников…" : "Один в сети"); chip.title = all.map((s) => (s.folder || "весь vault") + ": " + (s.peers.length ? s.peers.map((p) => p.name).join(", ") : "никого рядом")).join(String.fromCharCode(10)); };
+      document.addEventListener("basalt-share-peers", upd); setInterval(upd, 2000); upd();
+    }
     window.__bsShare = { forPath, host, stop, dialog, join: joinDialog, begin, shares };
     Promise.all(store().map((x) => begin(x.folder || "/", x.room, x.pass).catch((e) => console.error(e)))).then(resolveReady, resolveReady);
   }, 600);
