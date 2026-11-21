@@ -51,8 +51,8 @@ export function ng06BasesController(host) {
     self.sortMenu = new (env().e$)(app, self, toolbarEl);
     self.filterMenu = new (env().AX)(app, self, toolbarEl);
     self.propertyMenu = new (env().GX)(app, self, toolbarEl);
-    const searchRow = toolbarEl.createDiv({ cls: "bases-search-row bases-toolbar-search" });
-    self.searchMenu = new (env().ZX)(app, self, searchRow, headerEl);
+    const searchRow = headerEl.createDiv({ cls: "bases-search-row" });
+    self.searchMenu = new (env().ZX)(app, self, toolbarEl, searchRow);
     const newItemWrap = toolbarEl.createDiv({ cls: "bases-toolbar-item bases-toolbar-new-item-menu" });
     self.newItemMenu = new (env().jX)(app, self, newItemWrap);
     self.errorEl = containerEl.createDiv({ cls: "bases-error", attr: { style: "display:none" } });
