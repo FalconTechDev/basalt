@@ -112,7 +112,7 @@ export function defineWorkspacesPlugin(host) {
 
   WorkspacesPlugin.prototype.saveWorkspace = function (name) {
     const layout = this.app.workspace.getLayout();
-    layout.mtime = ng33wMoment().format();
+    layout.mtime = ng33wMoment()().format();
     this.workspaces[name] = layout;
     this.saveData();
   };

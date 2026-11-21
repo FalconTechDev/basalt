@@ -9,7 +9,8 @@ import { s16UniqueNoteFormat } from "./s16-constants.js";
 const NG33U_UNITS = ["m", "h", "d", "w", "M", "y"];
 
 function ng33uMoment() {
-  return (typeof window !== "undefined" && window.moment) || globalThis.moment;
+  const m = (typeof window !== "undefined" && window.moment) || globalThis.moment;
+  return typeof m === "function" ? m() : m;
 }
 
 export function defineUniqueNotePlugin(host) {
