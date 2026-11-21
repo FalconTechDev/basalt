@@ -2080,12 +2080,12 @@
     },
     {
       "orig": "R0",
-      "use": "s12leafTypeOrFalse",
+      "use": "ng36PaneType",
       "originalBytes": 79
     },
     {
       "orig": "V0",
-      "use": "s12requireDesktopApp",
+      "use": "ng36DesktopOnly",
       "originalBytes": 184
     },
     {
@@ -2095,12 +2095,12 @@
     },
     {
       "orig": "h6",
-      "use": "s12appendImageSizeText",
+      "use": "ng36EmbedLinkText",
       "originalBytes": 370
     },
     {
       "orig": "d6",
-      "use": "ng30ImageContextMenuEntry"
+      "use": "ng36ImageContextMenu"
     },
     {
       "orig": "jZ",
@@ -4873,27 +4873,27 @@
     },
     {
       "orig": "n6",
-      "use": "defineS12BlockquoteBorderWidget",
+      "use": "ng36CmBlockquoteWidget",
       "originalBytes": 194
     },
     {
       "orig": "r6",
-      "use": "defineS12HrWidget",
+      "use": "ng36CmHrWidget",
       "originalBytes": 523
     },
     {
       "orig": "l6",
-      "use": "defineS12TaskCheckboxWidget",
+      "use": "ng36CmTaskWidget",
       "originalBytes": 1192
     },
     {
       "orig": "c6",
-      "use": "defineS12StyleSpanWidget",
+      "use": "ng36CmStyleWidget",
       "originalBytes": 256
     },
     {
       "orig": "u6",
-      "use": "defineS12CodeFlairWidget",
+      "use": "ng36CmCodeFlairWidget",
       "originalBytes": 658
     },
     {
@@ -4913,7 +4913,7 @@
     },
     {
       "orig": "f6",
-      "use": "defineS12ImageWidget",
+      "use": "ng36CmImageEmbedWidget",
       "originalBytes": 959
     },
     {
@@ -4943,7 +4943,7 @@
     },
     {
       "orig": "p6",
-      "use": "defineS12NoteComposerSuggest",
+      "use": "ng36CmFileSuggestModal",
       "originalBytes": 801
     },
     {
@@ -4963,7 +4963,7 @@
     },
     {
       "orig": "B0",
-      "use": "ng30RecentFiles"
+      "use": "ng36RecentFileTracker"
     },
     {
       "orig": "BZ",
@@ -5153,22 +5153,22 @@
     },
     {
       "orig": "u0",
-      "use": "defineReleaseNotesView",
+      "use": "ng36ReleaseNotesView",
       "originalBytes": 4127
     },
     {
       "orig": "d0",
-      "use": "defineFootnoteSuggest",
+      "use": "ng36FootnoteSuggest",
       "originalBytes": 1718
     },
     {
       "orig": "f0",
-      "use": "defineEditorSuggestManager",
+      "use": "ng36EditorSuggestManager",
       "originalBytes": 858
     },
     {
       "orig": "g0",
-      "use": "defineMoveFolderModal",
+      "use": "ng36MoveFolderModal",
       "originalBytes": 2165
     },
     {
@@ -5223,7 +5223,7 @@
     },
     {
       "orig": "Z0",
-      "use": "defineTrustFolderModal",
+      "use": "ng36TrustFolderModal",
       "originalBytes": 1052
     },
     {
@@ -8140,38 +8140,32 @@
     },
     {
       "orig": "J1",
-      "expr": "__basaltOwn.s12SecretsWarningKey()",
-      "sha1": "0f851c87d64079d6c948ffcb4daa2f6e8b811cf3",
+      "expr": "__basaltOwn.ng36SecretsWarningDismissedKey",
       "originalBytes": 38
     },
     {
       "orig": "e0",
-      "expr": "__basaltOwn.s12SecretsDirName()",
-      "sha1": "150d157a469cbbc19514c9caf3b4dc52e9a88274",
+      "expr": "__basaltOwn.ng36SecretsKey",
       "originalBytes": 9
     },
     {
       "orig": "t0",
-      "expr": "__basaltOwn.s12SecretsEncryptedName()",
-      "sha1": "1a47df2d58a258dec3b9080cc8f223d8b5a7e374",
+      "expr": "__basaltOwn.ng36SecretsEncryptedKey",
       "originalBytes": 19
     },
     {
       "orig": "n0",
-      "expr": "__basaltOwn.s12SecretsMetaName()",
-      "sha1": "5a03d746761f89764f8727ab2f21d2de67da2efb",
+      "expr": "__basaltOwn.ng36SecretsMetaKey",
       "originalBytes": 14
     },
     {
       "orig": "s0",
-      "expr": "__basaltOwn.s12ReleaseNotesViewType()",
-      "sha1": "7fba9562dd793b1e0cb40b74c665c2cf013d7f7c",
+      "expr": "__basaltOwn.ng36ReleaseNotesViewType",
       "originalBytes": 15
     },
     {
       "orig": "l0",
-      "expr": "__basaltOwn.s12ReleaseNotesRepo()",
-      "sha1": "a692bdd7efca2a33e1417da59d04957485efa376",
+      "expr": "__basaltOwn.ng36ReleaseNotesRepo",
       "originalBytes": 26
     },
     {
@@ -8212,9 +8206,9 @@
     },
     {
       "orig": "J0",
-      "expr": "__basaltHost.i18n.setting.thirdPartyPlugin",
-      "sha1": "df95dae967e943b16b2e6f92988091474187b4d5",
-      "originalBytes": 27
+      "expr": "__basaltOwn.ng36ThirdPartyPluginI18n()",
+      "originalBytes": 42,
+      "sha1": "f63de7e18444dc8528fb739545d2f9231087d86d"
     },
     {
       "orig": "x0",
@@ -8224,92 +8218,78 @@
     },
     {
       "orig": "F0",
-      "expr": "__basaltOwn.s12WorkspaceLayoutFile()",
-      "sha1": "495ccecf066613e6532fb21351014c659ec761b9",
+      "expr": "__basaltOwn.ng36WorkspaceFileName",
       "originalBytes": 16
     },
     {
       "orig": "N0",
-      "expr": "__basaltOwn.s12WorkspaceMobileLayoutFile()",
-      "sha1": "6bf13484fd2d55fd160d33b6babeeb7f43fa304b",
+      "expr": "__basaltOwn.ng36WorkspaceMobileFileName",
       "originalBytes": 23
     },
     {
       "orig": "z0",
-      "expr": "__basaltOwn.s12CmIterateErrorDetail()",
-      "sha1": "86cec7b5cbf120eb6bf7b4ec75576a1676903d51",
+      "expr": "__basaltOwn.ng36CmIterateErrorText",
       "originalBytes": 153
     },
     {
       "orig": "q0",
-      "expr": "__basaltHost.s12cmTreeIterate",
-      "sha1": "bd765b67061dee9fdc1887d550bb04be73513546",
-      "originalBytes": 20
+      "expr": "__basaltOwn.ng36CmTreeIterate()",
+      "originalBytes": 29,
+      "sha1": "6007a935beb085183dbf4209f50191719539bcef"
     },
     {
       "orig": "j0",
-      "expr": "__basaltOwn.s12CmIterateCompat",
-      "sha1": "e06e85e090abdb4d8baa46f06a1d64775fc39108",
+      "expr": "__basaltOwn.ng36CmIterateWrapper",
       "originalBytes": 144
     },
     {
       "orig": "U0",
-      "expr": "__basaltOwn.s12CmEmptyFieldConfig()",
-      "sha1": "547baf08e441efaa445b6132e9ca3738ec0b55da",
+      "expr": "__basaltOwn.ng36CmPluginFieldStub",
       "originalBytes": 19
     },
     {
       "orig": "W0",
-      "expr": "__basaltOwn.s12PluginRequireMap()",
-      "sha1": "b150fe40717b6a8a787acfac7fb58c17d075d38b",
+      "expr": "__basaltOwn.ng36CmRequireMap()",
       "originalBytes": 275
     },
     {
       "orig": "_0",
-      "expr": "__basaltOwn.s12PluginDeprecatedRequireMap()",
-      "sha1": "7ea2c53feeb37e0e7ce6426aa45289dacb17b182",
+      "expr": "__basaltOwn.ng36CmRequireMapDeprecated()",
       "originalBytes": 318
     },
     {
       "orig": "Q0",
-      "expr": "__basaltOwn.s12InlineSourcemapPattern()",
-      "sha1": "9d5c1e42e3bc28d1e18ea98f62fd16dbc246393b",
+      "expr": "__basaltOwn.ng36CmSourceMapPattern",
       "originalBytes": 86
     },
     {
       "orig": "X0",
-      "expr": "__basaltOwn.s12NoSourcemapMarker()",
-      "sha1": "588d15252c21d4b8dc507961a19905c21d4355d6",
+      "expr": "__basaltOwn.ng36CmNoSourceMap",
       "originalBytes": 21
     },
     {
       "orig": "e2",
-      "expr": "__basaltOwn.s12DeprecationIndexUrl()",
-      "sha1": "79dda8ab905fba514a31b7bb0a181d3f942acb31",
+      "expr": "__basaltOwn.ng36DeprecationManifestUrl()",
       "originalBytes": 70
     },
     {
       "orig": "t2",
-      "expr": "__basaltOwn.s12EmptyWebviewerOptions()",
-      "sha1": "bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f",
+      "expr": "__basaltOwn.ng36DeprecationManifestData",
       "originalBytes": 2
     },
     {
       "orig": "n2",
-      "expr": "__basaltOwn.s12PluginSortLabels()",
-      "sha1": "309bba3c514295dcb3ada12bcb200c5b803b7fe0",
+      "expr": "__basaltOwn.ng36PluginSortLabels()",
       "originalBytes": 217
     },
     {
       "orig": "u2",
-      "expr": "__basaltOwn.s12DropIndicatorElement()",
-      "sha1": "6eba17c7e760237df361932094138ce8fa12cca0",
+      "expr": "__basaltOwn.ng36DropIndicatorEl()",
       "originalBytes": 37
     },
     {
       "orig": "h2",
-      "expr": "__basaltOwn.s12DropIndicatorUpdater()",
-      "sha1": "15e9b24508e84fd2adfb594c5a7b818f3712a178",
+      "expr": "__basaltOwn.ng36PositionDropIndicator(__basaltOwn.ng36DropIndicatorEl())",
       "originalBytes": 112
     },
     {
@@ -8386,86 +8366,72 @@
     },
     {
       "orig": "W2",
-      "expr": "__basaltOwn.s12CalloutTypeLabels()",
-      "sha1": "dc465897966ce250ab8d89e018f97501e26771ad",
+      "expr": "__basaltOwn.ng36CalloutTypeMap()",
       "originalBytes": 245
     },
     {
       "orig": "_2",
-      "expr": "__basaltOwn.s12CalloutTypeNames()",
-      "sha1": "c51659ddb9bf95b05113b05fb609b91a4818afa0",
+      "expr": "__basaltOwn.ng36CalloutTypeNames()",
       "originalBytes": 202
     },
     {
       "orig": "G2",
-      "expr": "__basaltOwn.s12CmPostprocessEffect()",
-      "sha1": "31041be5deb4e5ce0ba0b5c5db6fa99078526c95",
+      "expr": "__basaltOwn.ng36CmClearCacheEffect()",
       "originalBytes": 11
     },
     {
       "orig": "K2",
-      "expr": "__basaltOwn.s12CmMouseDownPlugin()",
-      "sha1": "78d63dfe0b10d8f3070b0603fab1035cd9d789ed",
+      "expr": "__basaltOwn.ng36CmMousePlugin()",
       "originalBytes": 45
     },
     {
       "orig": "Y2",
-      "expr": "__basaltOwn.s12LivepreviewSyntaxTags()",
-      "sha1": "7b9d0a67260be5084dd756d5e722b8e81c136c49",
+      "expr": "__basaltOwn.ng36CmInlineMarkNames",
       "originalBytes": 141
     },
     {
       "orig": "Q2",
-      "expr": "__basaltOwn.s12CodeblockFencePattern()",
-      "sha1": "495526034b4b531bc07969e8875645bad126cc8f",
+      "expr": "__basaltOwn.ng36CmFencePattern",
       "originalBytes": 43
     },
     {
       "orig": "X2",
-      "expr": "__basaltOwn.s12cmEmptyReplace()",
-      "sha1": "8b2e761d8999262c47d1273aa63d97de3d6c591b",
+      "expr": "__basaltOwn.ng36CmEmptyReplace()",
       "originalBytes": 14
     },
     {
       "orig": "$2",
-      "expr": "__basaltOwn.s12cmEmptyReplace()",
-      "sha1": "8b2e761d8999262c47d1273aa63d97de3d6c591b",
+      "expr": "__basaltOwn.ng36CmEmptyReplace()",
       "originalBytes": 14
     },
     {
       "orig": "Z2",
-      "expr": "__basaltOwn.s12cmEmptyReplace()",
-      "sha1": "8b2e761d8999262c47d1273aa63d97de3d6c591b",
+      "expr": "__basaltOwn.ng36CmEmptyReplace()",
       "originalBytes": 14
     },
     {
       "orig": "J2",
-      "expr": "__basaltOwn.s12CmUnderlineMark()",
-      "sha1": "b60bccebab0be5dacd45ad4692c1b0af9b315edf",
+      "expr": "__basaltOwn.ng36CmUnderlineMark()",
       "originalBytes": 75
     },
     {
       "orig": "e6",
-      "expr": "__basaltOwn.s12CmTransparentMark()",
-      "sha1": "a1b43223b1a963686377e6e5b740ab51ad5b5b04",
+      "expr": "__basaltOwn.ng36CmTransparentMark()",
       "originalBytes": 33
     },
     {
       "orig": "t6",
-      "expr": "__basaltOwn.s12CmUnresolvedMark()",
-      "sha1": "8f0096eac0a82841e8a1ec4ef5460388e274e95a",
+      "expr": "__basaltOwn.ng36CmUnresolvedMark()",
       "originalBytes": 32
     },
     {
       "orig": "a6",
-      "expr": "__basaltOwn.s12CmListBulletMark()",
-      "sha1": "e105e257ca7aa26f8f099a9052545eae77f8f38b",
+      "expr": "__basaltOwn.ng36CmListBulletMark()",
       "originalBytes": 30
     },
     {
       "orig": "s6",
-      "expr": "__basaltOwn.s12CmListNumberMark()",
-      "sha1": "4593e63c41893f6cfad3e8efa73963ee7110556f",
+      "expr": "__basaltOwn.ng36CmListNumberMark()",
       "originalBytes": 30
     },
     {
@@ -8494,8 +8460,7 @@
     },
     {
       "orig": "U1",
-      "expr": "__basaltOwn.s12RegisterSecureStorage()",
-      "sha1": "e42082858871ba0a5a02e60cbbd41df607be776f",
+      "expr": "__basaltOwn.ng36SecureStoreNative()",
       "originalBytes": 304
     },
     {
@@ -8512,14 +8477,12 @@
     },
     {
       "orig": "i6",
-      "expr": "__basaltOwn.s12cmBlockquoteBorderDeco()",
-      "sha1": "e99f8e309ad099eb9d016d889706ee56345b56e8",
+      "expr": "__basaltOwn.ng36CmBlockquoteBorderDeco()",
       "originalBytes": 27
     },
     {
       "orig": "o6",
-      "expr": "__basaltOwn.s12cmHrWidgetInstance()",
-      "sha1": "eb166adf8670bcd5dc02baeed2d223a28d398703",
+      "expr": "__basaltOwn.ng36CmHrWidgetInstance()",
       "originalBytes": 6
     },
     {
