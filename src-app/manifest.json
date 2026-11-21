@@ -2541,7 +2541,7 @@
     },
     {
       "orig": "FD",
-      "use": "defineWorkspaceSidedock"
+      "use": "ng39DefineWorkspaceSidedock"
     },
     {
       "orig": "zD",
@@ -2762,7 +2762,7 @@
     },
     {
       "orig": "Nee",
-      "use": "defineStatusBar"
+      "use": "ng39DefineStatusBar"
     },
     {
       "orig": "i2",
@@ -3415,7 +3415,7 @@
     },
     {
       "orig": "mte",
-      "use": "defineCorePluginsTab"
+      "use": "ng39DefineCorePluginsTab"
     },
     {
       "orig": "ite",
