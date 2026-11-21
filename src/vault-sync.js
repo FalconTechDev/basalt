@@ -1267,7 +1267,16 @@
   async function boot() {
     loadConfig();
     loadState();
-    const tab = app.setting.pluginTabs.find((t) => t.id === "sync");
+    let tab = app.setting.pluginTabs.find((t) => t.id === "sync");
+    if (!tab && typeof app.setting.addSettingTab === "function" && app.setting.pluginTabs.length) {
+      // the core "Sync" module is not part of this build: the git sync gets its own page in Settings > Modules.
+      // Settings accepts only real setting tabs, so the new one is made from the class of an existing one.
+      const proto = Object.getPrototypeOf(app.setting.pluginTabs[0]);
+      tab = Object.create(proto);
+      Object.assign(tab, { app, id: "sync", name: "Синхронизация (git)", icon: "lucide-refresh-cw", containerEl: document.createElement("div"),
+        display() { renderSettings(this.containerEl); }, hide() { this.containerEl.textContent = ""; } });
+      try { app.setting.addSettingTab(tab); } catch (e) { console.error("[vault-sync] settings tab", e); tab = null; }
+    }
     if (tab) {
       tab.name = "Синхронизация (git)";
       tab.display = function () { renderSettings(this.containerEl); };

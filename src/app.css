@@ -18239,4 +18239,138 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
 .bsm-go{
     border:0
 }
+@keyframes bs-fade-in{
+    from{
+        opacity:0
+    }
+    to{
+        opacity:1
+    }
+}
+@keyframes bs-rise-in{
+    from{
+        opacity:0;
+        transform:translateY(8px)
+    }
+    to{
+        opacity:1;
+        transform:none
+    }
+}
+@keyframes bs-pop-in{
+    from{
+        opacity:0;
+        transform:translateY(10px) scale(.965)
+    }
+    to{
+        opacity:1;
+        transform:none
+    }
+}
+@keyframes bs-slide-left{
+    from{
+        opacity:0;
+        transform:translateX(18px)
+    }
+    to{
+        opacity:1;
+        transform:none
+    }
+}
+@keyframes bs-drop-in{
+    from{
+        opacity:0;
+        transform:translateY(-6px)
+    }
+    to{
+        opacity:1;
+        transform:none
+    }
+}
+@media (prefers-reduced-motion:no-preference){
+    .modal-bg{
+        animation:bs-fade-in .18s ease-out
+    }
+    .modal{
+        animation:bs-pop-in .2s cubic-bezier(.2,.8,.3,1)
+    }
+    .prompt,.suggestion-container{
+        animation:bs-drop-in .16s cubic-bezier(.2,.8,.3,1)
+    }
+    .notice{
+        animation:bs-slide-left .22s cubic-bezier(.2,.8,.3,1)
+    }
+    .popover,.tooltip{
+        animation:bs-fade-in .12s ease-out
+    }
+    .workspace-tab-container > .workspace-leaf > .workspace-leaf-content{
+        animation:bs-fade-in .16s ease-out
+    }
+    .workspace-tab-header{
+        animation:bs-fade-in .18s ease-out
+    }
+    .bsf-tree > *,.tree-item-children > .tree-item{
+        animation:bs-drop-in .12s ease-out
+    }
+    .bset-main > *{
+        animation:bs-rise-in .22s cubic-bezier(.2,.8,.3,1) both
+    }
+    .bset-main > *:nth-child(2){
+        animation-delay:.02s
+    }
+    .bset-main > *:nth-child(3){
+        animation-delay:.04s
+    }
+    .bset-main > *:nth-child(4){
+        animation-delay:.06s
+    }
+    .bset-main > *:nth-child(n+5){
+        animation-delay:.08s
+    }
+    .bsm-card{
+        animation:bs-rise-in .26s cubic-bezier(.2,.8,.3,1) both
+    }
+    .bsm-card:nth-child(2){
+        animation-delay:.03s
+    }
+    .bsm-card:nth-child(3){
+        animation-delay:.06s
+    }
+    .bsm-card:nth-child(4){
+        animation-delay:.09s
+    }
+    .bsm-card:nth-child(n+5){
+        animation-delay:.12s
+    }
+    .bsh-search,.bsh-tile,.bsh-recent{
+        animation:bs-rise-in .3s cubic-bezier(.2,.8,.3,1) both
+    }
+    .bsh-tile:nth-child(2){
+        animation-delay:.04s
+    }
+    .bsh-tile:nth-child(3){
+        animation-delay:.08s
+    }
+    .bsh-tile:nth-child(4){
+        animation-delay:.12s
+    }
+    .bsh-recent{
+        animation-delay:.16s
+    }
+    button,.clickable-icon,.bset-nav button.bset-n,.menu-item,.suggestion-item,.nav-file-title,.tree-item-self,.bsf-tree > *{
+        transition:background-color .14s ease,color .14s ease,border-color .14s ease,box-shadow .14s ease,transform .1s ease
+    }
+    button:active:not(:disabled),.clickable-icon:active{
+        transform:scale(.96)
+    }
+    .bsm-card:hover{
+        transform:translateY(-1px)
+    }
+    .canvas-card-menu,.canvas-controls{
+        animation:bs-rise-in .25s cubic-bezier(.2,.8,.3,1) both
+    }
+    .checkbox-container,.checkbox-container::after{
+        transition:background-color .16s ease,left .16s ease
+    }
+}
 
