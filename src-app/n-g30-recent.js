@@ -6,9 +6,9 @@ const NG30_QUOTAS = { md: 25, canvas: 10, image: 10, other: 10 };
 
 function ng30KindOf(path) {
   const ext = env().su(path);
-  if (env().s12extMarkdown.contains(ext)) return "md";
-  if (env().s12extCanvas.contains(ext)) return "canvas";
-  if (env().s12extImage.contains(ext)) return "image";
+  if (env().s12extMarkdown.includes(ext)) return "md";
+  if (env().s12extCanvas.includes(ext)) return "canvas";
+  if (env().s12extImage.includes(ext)) return "image";
   return "other";
 }
 
@@ -82,7 +82,7 @@ function ng30RecentFilesClass() {
       let keep;
       if (ext === "md") keep = o.showMarkdown;
       else if (ext === "canvas" || ext === "base") keep = o.showNonAttachments;
-      else if (env().s12extImage.contains(ext)) keep = o.showImages;
+      else if (env().s12extImage.includes(ext)) keep = o.showImages;
       else keep = o.showNonImageAttachments;
       if (keep) out.push(path);
       if (out.length >= o.maxCount) break;
