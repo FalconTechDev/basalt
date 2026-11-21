@@ -481,7 +481,7 @@ export function ng21DefineWorkspaceTabs(host) {
     }
 
     if (isPreview) {
-      if (app.dragManager && app.dragManager.showOverlay) app.dragManager.showOverlay(event, "copy");
+      if (app.dragManager && app.dragManager.showOverlay) app.dragManager.showOverlay(event.doc || document, loc.marker ? { x: loc.marker.left, y: loc.marker.top, width: loc.marker.width, height: loc.marker.height } : this.tabHeaderContainerEl.getBoundingClientRect());
       return { action: ui.openAsTab ? ui.openAsTab() : "", dropEffect: "copy" };
     }
 
@@ -517,7 +517,7 @@ export function ng21DefineWorkspaceTabs(host) {
       }
     }
     this.selectTabIndex(Math.min(index - 1, this.children.length - 1));
-    if (app.dragManager && app.dragManager.showOverlay) app.dragManager.showOverlay(event, "copy");
+    if (app.dragManager && app.dragManager.showOverlay) app.dragManager.showOverlay(event.doc || document, loc.marker ? { x: loc.marker.left, y: loc.marker.top, width: loc.marker.width, height: loc.marker.height } : this.tabHeaderContainerEl.getBoundingClientRect());
     return { action: ui.openAsTab ? ui.openAsTab() : "", dropEffect: "copy" };
   };
 

@@ -46224,7 +46224,8 @@ const ng13TextCache = new WeakMap();
 
 const NG13_MD_EXT = "md";
 const NG13_CONTROL_CHARS = /[\u0000-\u001f]/g;
-const NG13_TYPED_NAME = /.[A-Za-z][A-Za-z0-9]*$/;
+// a name that already ends in ".ext" keeps it; any other name gets the file's own extension appended
+const NG13_TYPED_NAME = /\.[A-Za-z][A-Za-z0-9]{0,9}$/;
 
 function ng13NodeRequire(name) {
   try {
@@ -46312,8 +46313,6 @@ function ng13DefineFileClasses() {
 
   TFile.prototype.getNewPathAfterRename = function (name) {
     let newName = String(name == null ? "" : name).replace(NG13_CONTROL_CHARS, " ").trim();
-    // Quirk kept from the observable contract: a trailing "any char + ASCII
-    // letter + alphanumerics" is treated as already typed and kept verbatim.
     if (!NG13_TYPED_NAME.test(newName)) {
       newName = joinNameExt(newName, this.extension);
     }
@@ -69878,7 +69877,7 @@ function ng21DefineWorkspaceTabs(host) {
     }
 
     if (isPreview) {
-      if (app.dragManager && app.dragManager.showOverlay) app.dragManager.showOverlay(event, "copy");
+      if (app.dragManager && app.dragManager.showOverlay) app.dragManager.showOverlay(event.doc || document, loc.marker ? { x: loc.marker.left, y: loc.marker.top, width: loc.marker.width, height: loc.marker.height } : this.tabHeaderContainerEl.getBoundingClientRect());
       return { action: ui.openAsTab ? ui.openAsTab() : "", dropEffect: "copy" };
     }
 
@@ -69914,7 +69913,7 @@ function ng21DefineWorkspaceTabs(host) {
       }
     }
     this.selectTabIndex(Math.min(index - 1, this.children.length - 1));
-    if (app.dragManager && app.dragManager.showOverlay) app.dragManager.showOverlay(event, "copy");
+    if (app.dragManager && app.dragManager.showOverlay) app.dragManager.showOverlay(event.doc || document, loc.marker ? { x: loc.marker.left, y: loc.marker.top, width: loc.marker.width, height: loc.marker.height } : this.tabHeaderContainerEl.getBoundingClientRect());
     return { action: ui.openAsTab ? ui.openAsTab() : "", dropEffect: "copy" };
   };
 
