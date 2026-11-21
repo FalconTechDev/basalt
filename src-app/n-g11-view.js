@@ -452,7 +452,8 @@ function SearchView(leaf) {
   self._restartSearch = debounceCall(() => self.startSearch(), 0);
 
   const containerEl = self.containerEl;
-  self.dom = new V.SearchResults(app, containerEl.createDiv({ cls: "search-result-container mod-global-search" }), ng11SearchStrings().labelNoMatches(), containerEl);
+  const ng11ResultsEl = containerEl.createDiv({ cls: "search-result-container mod-global-search" });
+  self.dom = new V.SearchResults(app, ng11ResultsEl, ng11SearchStrings().labelNoMatches(), containerEl);
 
   const row = containerEl.createDiv("search-row");
   self.searchComponent = new (VH().SearchComponent)(row);
@@ -516,6 +517,7 @@ function SearchView(leaf) {
     for (const key of group) sortDD.addOption(key, ng11SearchSortLabel(key));
   }
   sortDD.setValue(self.sortOrder).onChange((v) => self.setSortOrder(v));
+  containerEl.appendChild(ng11ResultsEl); // the result list comes after the input row, params and info rows
 
   self.queueComponent = new V.SearchQueueComponent ? new V.SearchQueueComponent(app, self.dom) : null;
   self.scope = new (VH().Scope)(app.scope);
