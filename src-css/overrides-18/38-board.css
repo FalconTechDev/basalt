@@ -118,3 +118,24 @@
 .bsm-crow { display: flex; gap: 8px; }
 .bsm-crow input { flex: 1; min-width: 0; }
 .bsm-sub { margin: 16px 0 8px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
+/* ---- loading card, who-is-where markers, carets of other people ---- */
+.bsh-load { position: fixed; left: 50%; top: 40%; z-index: 1000; width: 320px; translate: -50% -50%; padding: 20px 22px; border-radius: 16px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); box-shadow: 0 18px 60px rgba(0, 0, 0, .55); opacity: 0; scale: .94; transition: opacity .25s ease, scale .25s cubic-bezier(.2, 1.3, .4, 1); }
+.bsh-load.is-on { opacity: 1; scale: 1; }
+.bsh-load-t { font-weight: 600; font-size: 15px; }
+.bsh-load-s { font-size: 12px; color: var(--text-muted); margin: 4px 0 14px; }
+.bsh-load-bar { height: 6px; border-radius: 4px; background: var(--background-modifier-border); overflow: hidden; }
+.bsh-load-bar > div { height: 100%; width: 8%; border-radius: 4px; background: var(--interactive-accent); transition: width .3s ease; }
+.bsh-load.is-wait .bsh-load-bar > div { animation: bsh-slide 1.2s ease-in-out infinite; width: 30% !important; }
+@keyframes bsh-slide { 0% { translate: -100% 0; } 100% { translate: 340% 0; } }
+.bsh-who { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: middle; }
+.bsh-wd { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex: none; animation: osb-pop .25s cubic-bezier(.2, 1.4, .4, 1) backwards; }
+.bsh-cursors { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; z-index: 5; }
+.bsh-caret { position: absolute; width: 2px; border-radius: 1px; transition: left .12s linear, top .12s linear; }
+.bsh-caret span { position: absolute; left: 0; bottom: 100%; margin-bottom: 1px; font-size: 11px; line-height: 1.5; color: #fff; padding: 0 6px; border-radius: 6px 6px 6px 0; white-space: nowrap; animation: osb-fade .2s ease backwards; }
+.bsh-badge { position: absolute; top: 8px; right: 14px; z-index: 6; display: flex; gap: 6px; pointer-events: none; }
+.bsh-bc { display: flex; align-items: center; gap: 5px; font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); animation: osb-slide .25s ease backwards; }
+.bsm-opt.is-pick { border-color: var(--interactive-accent); background: color-mix(in srgb, var(--interactive-accent) 12%, var(--background-secondary)); }
+.bsm-go { margin-top: 6px; padding: 9px; width: 100%; }
+.bsm-act { margin-top: 14px; }
+.bsm-ev { display: flex; gap: 10px; font-size: 13px; padding: 3px 0; color: var(--text-muted); animation: osb-slide .25s ease backwards; }
+.bsm-evt { font-variant-numeric: tabular-nums; color: var(--text-faint); }
