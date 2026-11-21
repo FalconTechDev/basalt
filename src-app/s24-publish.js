@@ -1,8 +1,7 @@
-// Compatibility entry for tests/tools that import the publish module path.
-// g12: implementation lives in n-g12-s24-site.js / n-g12-s24-app.js (clean-room rewrite).
-import { ng12PublishSite } from "./n-g12-s24-site.js";
-import { ng12PublishSearch, ng12PublishApp } from "./n-g12-s24-app.js";
+// Compatibility shim: the implementation lives in n-g35-publish.js. Tests and
+// historical importers address this module by its original file name.
+import { ng35PublishSite, ng35PublishSearch, ng35PublishApp } from "./n-g35-publish.js";
 
-export { ng12PublishSite as s24PublishSite };
-export { ng12PublishSearch as s24PublishSearch };
-export { ng12PublishApp as s24PublishApp };
+export const s24PublishSite = ng35PublishSite;
+export const s24PublishSearch = ng35PublishSearch;
+export const s24PublishApp = ng35PublishApp;
