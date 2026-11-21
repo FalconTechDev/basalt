@@ -155,7 +155,7 @@ export function ng21VaultProfile(host) {
     let nodePath = null;
     try { nodePath = window.require && window.require("path"); } catch (e) { nodePath = null; }
 
-    this.el = containerEl.createDiv("workspace-drawer-vault-profile");
+    this.el = containerEl.createDiv("workspace-sidedock-vault-profile");
     const row = this.el.createDiv("workspace-drawer-vault-switcher");
     const icon = row.createDiv("workspace-drawer-vault-switcher-icon");
     host.setIcon(icon, "lucide-chevrons-up-down");
