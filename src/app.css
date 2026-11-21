@@ -17891,6 +17891,17 @@ button:focus-visible{
     opacity:0;
     inset:0
 }
+.workspace-tab-header-new-tab .clickable-icon,.workspace-tab-header-new-tab .clickable-icon:hover,.workspace-tab-header-new-tab:hover .clickable-icon{
+    border:0;
+    box-shadow:none;
+    outline:0;
+    clip-path:none;
+    border-radius:var(--radius-s);
+    margin-inline-start:var(--size-2-2)
+}
+.workspace-tab-header-new-tab .clickable-icon:hover{
+    background:var(--background-modifier-hover)
+}
 .canvas-node-container{
     --bs-edge:rgb(var(--canvas-color));
     border-radius:0;

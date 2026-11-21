@@ -1,0 +1,12 @@
+/* the new-tab button: a plain hover fill, no framed square that overlaps the neighbouring tab */
+.workspace-tab-header-new-tab .clickable-icon,
+.workspace-tab-header-new-tab .clickable-icon:hover,
+.workspace-tab-header-new-tab:hover .clickable-icon {
+	border: 0;
+	box-shadow: none;
+	outline: 0;
+	clip-path: none;
+	border-radius: var(--radius-s);
+	margin-inline-start: var(--size-2-2);
+}
+.workspace-tab-header-new-tab .clickable-icon:hover { background: var(--background-modifier-hover); }

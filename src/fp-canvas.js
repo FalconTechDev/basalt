@@ -483,7 +483,8 @@
   function needsPick(st) {
     const a = st.pickedAt, v = st.view;
     if (st.needPick || !a) return true;
-    if (Math.abs(v.scale / a.scale - 1) > 0.02 || v.vw !== a.vw) return true;
+    // a window resize changes the width every frame: re-pick only after a big change, the rest waits for a pause (see draw)
+    if (Math.abs(v.scale / a.scale - 1) > 0.02 || Math.abs(v.vw / a.vw - 1) > 0.12) return true;
     return Math.hypot(v.cx - a.cx, v.cy - a.cy) * v.scale > v.vw * 0.08;
   }
 
@@ -1109,6 +1110,10 @@
     const w = Math.max(1, Math.round(v.vw * dpr)), h = Math.max(1, Math.round(v.vh * dpr));
     if (st.el.width !== w || st.el.height !== h) { st.el.width = w; st.el.height = h; }
     const t0 = performance.now();
+    if (st.pickedAt && st.pickedAt.vw !== v.vw) {
+      clearTimeout(st.vwT);
+      st.vwT = setTimeout(() => { try { st.needPick = true; st.dirty = true; canvas.viewportChanged = true; canvas.requestFrame(); } catch (e) { /* closed */ } }, 180);
+    }
     if (!st.zooming && needsPick(st)) {
       pickDom(canvas, st);
       st.needPick = false;
