@@ -80,6 +80,14 @@
         this.find.addEventListener("input", () => { this.filter = this.find.value.trim().toLowerCase(); if (this.ws()) this.wsSearch(); else this.render(); });
         this.find.addEventListener("keydown", (e) => { if (e.key === "Escape") { this.find.value = ""; this.filter = ""; this.render(); this.root.focus(); } });
         this.root.addEventListener("keydown", (e) => this.onKey(e));
+        this.keyUndo = (e) => {
+          if (!(e.ctrlKey || e.metaKey) || this.ws()) return;
+          const act = app.workspace.activeLeaf; if (!act || act.view !== this) return;
+          if (/INPUT|TEXTAREA/.test((e.target && e.target.tagName) || "")) return;
+          if (e.code === "KeyZ" && !e.shiftKey) { e.preventDefault(); e.stopPropagation(); this.undoOp(); }
+          else if (e.code === "KeyY" || (e.code === "KeyZ" && e.shiftKey)) { e.preventDefault(); e.stopPropagation(); this.redoOp(); }
+        };
+        window.addEventListener("keydown", this.keyUndo, true);
         this.treeEl.addEventListener("contextmenu", (e) => { if (e.target === this.treeEl) { e.preventDefault(); const ws = this.ws(); if (ws && ws.rootNode()) this.wsMenu(ws.rootNode(), e); else this.menuFor(app.vault.getRoot(), e); } });
         this.treeEl.addEventListener("dragover", (e) => { if (e.target === this.treeEl && this.dragging) { e.preventDefault(); } });
         this.treeEl.addEventListener("drop", (e) => { if (e.target === this.treeEl) this.dropOn(app.vault.getRoot(), e); });
@@ -90,7 +98,7 @@
         this._wsOff = window.__bsWorkspace ? window.__bsWorkspace.onChange(() => this.render()) : null;
         this.render();
       }
-      async onClose() { clearTimeout(this.t); if (this._wsOff) this._wsOff(); }
+      async onClose() { if (this.keyUndo) window.removeEventListener("keydown", this.keyUndo, true); clearTimeout(this.t); if (this._wsOff) this._wsOff(); }
       save() { try { localStorage.setItem(keyOf(), JSON.stringify({ open: Array.from(this.open), sort: this.sort })); } catch (e) { /* full */ } }
 
       // ---- toolbar
@@ -272,7 +280,7 @@
           const f = app.vault.getAbstractFileByPath(p); if (!f || (f.parent && f.parent.path === folder.path)) continue;
           const dest = (folder.path === "/" ? "" : folder.path + "/") + f.name;
           if (app.vault.getAbstractFileByPath(dest)) { new api.Notice(`«${f.name}» уже есть в «${folder.name || "корне"}»`); continue; }
-          try { await app.fileManager.renameFile(f, dest); } catch (err) { new api.Notice("Не удалось переместить: " + err.message); }
+          try { { const fromPath = f.path; await app.fileManager.renameFile(f, dest); this.pushOp({ t: "rename", from: fromPath, to: dest }); } } catch (err) { new api.Notice("Не удалось переместить: " + err.message); }
         }
         if (folder.path !== "/") { this.open.add(folder.path); this.save(); }
         this.render();
@@ -283,7 +291,7 @@
         const folder = this.targetFolder() || app.vault.getRoot();
         const base = ext === "md" ? "Без названия" : "Без названия", join = (n) => (folder.path === "/" ? "" : folder.path + "/") + n;
         let n = base, i = 1; while (app.vault.getAbstractFileByPath(join(`${n}.${ext}`))) n = `${base} ${++i}`;
-        const f = await app.vault.create(join(`${n}.${ext}`), ext === "canvas" ? '{"nodes":[],"edges":[]}' : ext === "base" ? "views:\n  - type: table\n    name: Table\n" : "");
+        const f = await app.vault.create(join(`${n}.${ext}`), ext === "canvas" ? '{"nodes":[],"edges":[]}' : ext === "base" ? "views:\n  - type: table\n    name: Table\n" : ""); this.pushOp({ t: "create", path: f.path, folder: false });
         if (folder.path !== "/") { this.open.add(folder.path); this.save(); }
         this.focus = f.path; this.sel = new Set([f.path]); this.render(); this.openFile(f, false); setTimeout(() => this.rename(f), 150);
       }
@@ -291,7 +299,7 @@
         if (this.ws()) return;
         const folder = this.targetFolder() || app.vault.getRoot(), join = (n) => (folder.path === "/" ? "" : folder.path + "/") + n;
         let n = "Новая папка", i = 1; while (app.vault.getAbstractFileByPath(join(n))) n = `Новая папка ${++i}`;
-        await app.vault.createFolder(join(n)); const f = app.vault.getAbstractFileByPath(join(n));
+        await app.vault.createFolder(join(n)); const f = app.vault.getAbstractFileByPath(join(n)); this.pushOp({ t: "create", path: join(n), folder: true });
         if (folder.path !== "/") this.open.add(folder.path); this.save(); this.focus = f.path; this.render(); setTimeout(() => this.rename(f), 200);
       }
       rename(f) {
@@ -305,17 +313,47 @@
           if (done) return; done = true; this.renaming = false;
           const v = input.value.trim().replace(/[\\/:*?"<>|]/g, "");
           const typedExt = !f.children && /\.(md|py|pyw|js|mjs|cjs|jsx|ts|tsx|json|jsonc|txt|css|scss|html|htm|yml|yaml|toml|ini|cfg|conf|sh|bat|cmd|ps1|rs|go|java|kt|c|cc|cpp|h|hpp|cs|rb|php|lua|sql|xml|csv|tsv|log|canvas|base|png|jpe?g|gif|svg|webp|avif|pdf|zip)$/i.test(v), newName = typedExt ? v : v + ext;
-          if (ok && /^\./.test(newName) && !/^\./.test(f.name)) new api.Notice("Имя не может начинаться с точки (такой файл станет скрытым)"); else if (ok && v && newName !== f.name) { const dest = (f.parent && f.parent.path !== "/" ? f.parent.path + "/" : "") + newName; if (app.vault.getAbstractFileByPath(dest)) new api.Notice("Такое имя уже занято"); else { try { await app.fileManager.renameFile(f, dest); } catch (err) { new api.Notice("Не удалось переименовать: " + err.message); } } }
+          if (ok && /^\./.test(newName) && !/^\./.test(f.name)) new api.Notice("Имя не может начинаться с точки (такой файл станет скрытым)"); else if (ok && v && newName !== f.name) { const dest = (f.parent && f.parent.path !== "/" ? f.parent.path + "/" : "") + newName; if (app.vault.getAbstractFileByPath(dest)) new api.Notice("Такое имя уже занято"); else { try { { const fromPath = f.path; await app.fileManager.renameFile(f, dest); this.pushOp({ t: "rename", from: fromPath, to: dest }); } } catch (err) { new api.Notice("Не удалось переименовать: " + err.message); } } }
           this.render(); this.root.focus();
         };
         input.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") finish(true); else if (e.key === "Escape") finish(false); });
         input.addEventListener("blur", () => finish(true)); input.addEventListener("click", (e) => e.stopPropagation()); input.addEventListener("dblclick", (e) => e.stopPropagation());
       }
+      // ---- undo / redo of file operations (Ctrl+Z / Ctrl+Y while the file list is the active panel)
+      pushOp(op) { (this.undoOps = this.undoOps || []).push(op); if (this.undoOps.length > 100) this.undoOps.shift(); this.redoOps = []; }
+      async snapshotOf(f) {
+        if (!f.children) return { path: f.path, folder: false, data: await app.vault.adapter.readBinary(f.path) };
+        const kids = []; const budget = { n: 0, bytes: 0 };
+        const walk = async (d) => { for (const c of d.children) { if (c.children) { kids.push({ path: c.path, folder: true }); await walk(c); } else { if (budget.n++ > 500 || budget.bytes > 50e6) return; const data = await app.vault.adapter.readBinary(c.path); budget.bytes += data.byteLength; kids.push({ path: c.path, folder: false, data }); } } };
+        await walk(f); return { path: f.path, folder: true, kids };
+      }
+      async restoreSnap(snap) {
+        if (snap.folder) { try { await app.vault.createFolder(snap.path); } catch (e) { /* exists */ } for (const k of snap.kids) { try { if (k.folder) await app.vault.createFolder(k.path); else await app.vault.createBinary(k.path, k.data); } catch (e) { /* exists */ } } }
+        else await app.vault.createBinary(snap.path, snap.data);
+      }
+      async undoOp() {
+        const op = (this.undoOps || []).pop(); if (!op) { new api.Notice("Нечего отменять"); return; }
+        try {
+          if (op.t === "rename") { const f = app.vault.getAbstractFileByPath(op.to); if (f) await app.fileManager.renameFile(f, op.from); }
+          else if (op.t === "delete") { for (const snap of op.snaps) await this.restoreSnap(snap); }
+          else if (op.t === "create") { const f = app.vault.getAbstractFileByPath(op.path); if (f) { op.snap = await this.snapshotOf(f); await app.fileManager.trashFile(f); } }
+          (this.redoOps = this.redoOps || []).push(op); new api.Notice("Отменено"); this.render();
+        } catch (err) { new api.Notice("Не удалось отменить: " + err.message); }
+      }
+      async redoOp() {
+        const op = (this.redoOps || []).pop(); if (!op) { new api.Notice("Нечего повторять"); return; }
+        try {
+          if (op.t === "rename") { const f = app.vault.getAbstractFileByPath(op.from); if (f) await app.fileManager.renameFile(f, op.to); }
+          else if (op.t === "delete") { for (const snap of op.snaps) { const f = app.vault.getAbstractFileByPath(snap.path); if (f) await app.fileManager.trashFile(f); } }
+          else if (op.t === "create") { if (op.snap) await this.restoreSnap(op.snap); }
+          (this.undoOps = this.undoOps || []).push(op); new api.Notice("Повторено"); this.render();
+        } catch (err) { new api.Notice("Не удалось повторить: " + err.message); }
+      }
       async remove(files) {
         if (this.ws()) return;
         const names = files.map((f) => f.name).slice(0, 4).join(", ") + (files.length > 4 ? "…" : "");
         if (!(await window.__bsConfirm(`Удалить в корзину: ${names}?`, { title: "Удаление", ok: "Удалить", danger: true }))) return;
-        for (const f of files) { try { await app.fileManager.trashFile(f); } catch (err) { new api.Notice("Не удалось удалить: " + err.message); } }
+        const snaps = []; for (const f of files) { try { let snap = null; try { snap = await this.snapshotOf(f); } catch (e) { /* too big or unreadable: no undo for this one */ } await app.fileManager.trashFile(f); if (snap) snaps.push(snap); } catch (err) { new api.Notice("Не удалось удалить: " + err.message); } } if (snaps.length) this.pushOp({ t: "delete", snaps });
         this.sel.clear(); this.render();
       }
       menuFor(f, e) {

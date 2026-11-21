@@ -62,7 +62,7 @@
     add("general", "Общие", "gen", (h) => {
       const sc = window.__bsUiScale;
       if (sc) row(h, "Масштаб интерфейса", "Размер всего текста и элементов. Уменьшите, если всё кажется крупным, или увеличьте для лучшей читаемости.", [slider(70, 150, 5, () => Math.round(sc.get() * 100), (v) => sc.set(v / 100), (v) => v + "%"), button("Сбросить", () => { sc.set(sc.DEF); S.render(); })]);
-      row(h, "Язык", "Применяется после перезагрузки окна.", select([["ru", "Русский"], ["en", "English"]], () => { const l = localStorage.getItem("language") || (navigator.language || "ru").split("-")[0]; return l === "ru" ? "ru" : "en"; }, (v) => { localStorage.setItem("language", v); window.__bsConfirm("Перезагрузить окно, чтобы применить язык?").then((ok) => { if (ok) location.reload(); }); }));
+      row(h, "Язык", "Применяется после перезагрузки окна.", select([["ru", "Русский"], ["en", "English"]], () => { const l = localStorage.getItem("language") || (navigator.language || "ru").split("-")[0]; return l === "ru" ? "ru" : "en"; }, (v) => { localStorage.setItem("language", v); sessionStorage.removeItem("bs-lang-retry"); try { new window.__bsApi.Notice(v === "ru" ? "Применяю язык…" : "Applying the language…", 1500); } catch (e) { /* no notice */ } setTimeout(() => location.reload(), 350); }));
       row(h, "Папка хранилища", app.vault.adapter.basePath, button("Открыть в Проводнике", () => window.require("electron").shell.openPath(app.vault.adapter.basePath)));
       row(h, "Показывать ленту слева", "Узкая полоса значков слева.", toggle(() => cfg("showRibbon") !== false, (v) => { setCfg("showRibbon", v); }));
       row(h, "Подтверждать удаление файлов", null, toggle(() => cfg("promptDelete") !== false, (v) => setCfg("promptDelete", v)));

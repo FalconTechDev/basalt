@@ -1180,7 +1180,10 @@ export function createFileSystemAdapter() {
 
   proto.writeBinary = async function (path, data, options) {
     return this.queue(() => this.changeFile(path, async (full) => {
-      await this.fs.promises.writeFile(full, data);
+      // fs accepts typed arrays and Buffers, not a bare ArrayBuffer (pasted images, attachments, restored files)
+      const bytes = data instanceof ArrayBuffer ? new Uint8Array(data) : data;
+      await this.fs.promises.mkdir(full.slice(0, Math.max(full.lastIndexOf("/"), full.lastIndexOf("\\"))) || ".", { recursive: true });
+      await this.fs.promises.writeFile(full, bytes);
     }, options));
   };
 
@@ -1192,7 +1195,7 @@ export function createFileSystemAdapter() {
 
   proto.appendBinary = async function (path, data, options) {
     return this.queue(() => this.changeFile(path, async (full) => {
-      await this.fs.promises.appendFile(full, data);
+      await this.fs.promises.appendFile(full, data instanceof ArrayBuffer ? new Uint8Array(data) : data);
     }, options));
   };
 

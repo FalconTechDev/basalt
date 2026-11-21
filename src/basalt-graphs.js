@@ -276,6 +276,16 @@
         this.legend = document.createElement("div"); this.legend.className = "bsg-legend"; body.appendChild(this.legend);
         this.msg = document.createElement("div"); this.msg.className = "bsg-msg"; body.appendChild(this.msg);
         this.bind(); this.syncSeg();
+        this.undoStack = []; this.redoStack = [];
+        for (const name of ["hideNode", "showAllNodes", "focusNode", "setDirTree", "toggleDir", "toggleAllDirs"]) { const orig = this[name]; if (typeof orig === "function") this[name] = (...args) => { this.pushUndo(); return orig.apply(this, args); }; }
+        this.keyUndo = (e) => {
+          if (!(e.ctrlKey || e.metaKey)) return;
+          const act = app.workspace.activeLeaf; if (!act || act.view !== this) return;
+          if (/INPUT|TEXTAREA/.test((e.target && e.target.tagName) || "")) return;
+          if (e.code === "KeyZ" && !e.shiftKey) { e.preventDefault(); e.stopPropagation(); this.undo(); }
+          else if (e.code === "KeyY" || (e.code === "KeyZ" && e.shiftKey)) { e.preventDefault(); e.stopPropagation(); this.redo(); }
+        };
+        window.addEventListener("keydown", this.keyUndo, true);
         this.ro = new ResizeObserver(() => { this.resize(); this.draw(); }); this.ro.observe(body);
         this.built = true; await this.load();
       }
@@ -323,6 +333,18 @@
       loadTags() { this.tags = new Map(); try { for (const [k, v] of Object.entries(JSON.parse(localStorage.getItem(this.tagKey()) || "{}"))) this.tags.set(k, v); } catch (e) { /* none */ } }
       saveTags() { try { localStorage.setItem(this.tagKey(), JSON.stringify(Object.fromEntries(this.tags))); } catch (e) { /* ok */ } }
       setTag(n, c) { const all = n.kind === "dir" ? this.g.nodes.filter((m) => { for (let u = m; u; u = u.up) if (u === n) return true; return false; }) : [n]; for (const m of all) { if (c) this.tags.set(m.id, c); else this.tags.delete(m.id); } this.saveTags(); this.draw(); }
+      // ---- undo / redo of what is done to the picture: hide, focus, collapse, pin
+      snap() { const pins = {}; if (this.g) for (const n of this.g.nodes) if (n.pinned) pins[n.id] = [n.x, n.y]; return JSON.stringify({ hidden: Array.from(this.hidden), collapsed: Array.from(this.collapsed), focus: this.focusSet ? Array.from(this.focusSet).map((n) => n.id) : null, pins }); }
+      pushUndo() { if (!this.g) return; const s = this.snap(); if (this.undoStack[this.undoStack.length - 1] === s) return; this.undoStack.push(s); if (this.undoStack.length > 100) this.undoStack.shift(); this.redoStack = []; }
+      restoreSnap(s) {
+        const j = JSON.parse(s), byId = new Map(this.g.nodes.map((n) => [n.id, n]));
+        this.hidden = new Set(j.hidden); this.collapsed = new Set(j.collapsed);
+        this.focusSet = j.focus ? new Set(j.focus.map((id) => byId.get(id)).filter(Boolean)) : null;
+        for (const n of this.g.nodes) { if (j.pins[n.id]) { n.pinned = true; n.x = j.pins[n.id][0]; n.y = j.pins[n.id][1]; } else if (n.pinned) n.pinned = false; }
+        this.rebuildView(); this.applyLayout(false); this.draw(); this.saveLayout();
+      }
+      undo() { const cur = this.snap(); while (this.undoStack.length) { const s = this.undoStack.pop(); if (s !== cur) { this.redoStack.push(cur); this.restoreSnap(s); return true; } } return false; }
+      redo() { const cur = this.snap(); while (this.redoStack.length) { const s = this.redoStack.pop(); if (s !== cur) { this.undoStack.push(cur); this.restoreSnap(s); return true; } } return false; }
       hideNode(n) { this.hidden.add(n.id); this.rebuildView(); this.userView = true; this.applyLayout(false); }
       showAllNodes() { this.hidden.clear(); this.focusSet = null; this.rebuildView(); this.userView = false; this.refit = false; this.applyLayout(false); }
       focusNode(n) {
@@ -531,7 +553,7 @@
       hit(wx, wy) { const g = this.g; if (!g) return null; if (this.layout === "3d" && this.mode === "files") return this.hit3d(); let best = null, bd = 1e9; for (const n of this.vnodes) { const d = Math.hypot(n.x - wx, n.y - wy); if (d < n.r + 4 / this.scale && d < bd) { best = n; bd = d; } } return best; }
       bind() {
         const cv = this.cv; let pan = null, down = null;
-        cv.addEventListener("pointerdown", (e) => { if (e.button !== 0) return; /* a right press only opens the menu: it must not count as a click on the node */ cv.setPointerCapture(e.pointerId); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); down = { x: e.clientX, y: e.clientY, moved: false, n }; if (n && !(this.layout === "3d" && this.mode === "files")) { this.dragNode = n; this.dragging = true; this.alpha = Math.max(this.alpha, .3); this.loop(); } else pan = { x: e.clientX, y: e.clientY, ox: this.ox, oy: this.oy, yaw: this.yaw, pitch: this.pitch }; cv.style.cursor = "grabbing"; });
+        cv.addEventListener("pointerdown", (e) => { if (e.button !== 0) return; this.pushUndo(); /* a right press only opens the menu: it must not count as a click on the node */ cv.setPointerCapture(e.pointerId); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy); down = { x: e.clientX, y: e.clientY, moved: false, n }; if (n && !(this.layout === "3d" && this.mode === "files")) { this.dragNode = n; this.dragging = true; this.alpha = Math.max(this.alpha, .3); this.loop(); } else pan = { x: e.clientX, y: e.clientY, ox: this.ox, oy: this.oy, yaw: this.yaw, pitch: this.pitch }; cv.style.cursor = "grabbing"; });
         cv.addEventListener("pointermove", (e) => {
           if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) down.moved = true;
           if (this.dragNode && down && down.moved) { const [wx, wy] = this.toWorld(e); this.dragNode.x = wx; this.dragNode.y = wy; this.dragNode.pinned = true; this.alpha = Math.max(this.alpha, .25); this.tip.style.display = "none"; return; }
@@ -542,7 +564,7 @@
         cv.addEventListener("pointerup", () => { if (down && !down.moved && down.n) { if (this.dragNode) { this.dragNode = null; } this.openNode(down.n); } if (this.dragNode) { this.dragNode = null; this.saveLayout(); } this.dragging = false; pan = null; down = null; cv.style.cursor = "grab"; if (this.g) this.saveLayout(); });
         cv.addEventListener("pointerleave", () => { if (!down) { this.hover = null; this.tip.style.display = "none"; this.draw(); } });
         cv.addEventListener("contextmenu", (e) => {
-          e.preventDefault(); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy), M = window.__bsApi && window.__bsApi.Menu; if (!M) return;
+          e.preventDefault(); this.pushUndo(); const [wx, wy] = this.toWorld(e), n = this.hit(wx, wy), M = window.__bsApi && window.__bsApi.Menu; if (!M) return;
           const m = new M(), item = (t, ic, fn, chk) => m.addItem((i) => { i.setTitle(t).setIcon(ic).onClick(fn); if (chk) i.setChecked(true); });
           const abs = (x) => (x.kind === "dir" ? path.join(this.rootPath, x.path) : x.abs), copy = (t) => navigator.clipboard.writeText(t).catch(() => {});
           if (n) {
@@ -581,7 +603,7 @@
         const f = app.vault.getAbstractFileByPath(n.path); const go = async () => { const leaf = app.workspace.getLeaf("tab"); if (f) await leaf.openFile(f); else if (window.__bsTextFile) await window.__bsTextFile.open(n.path);
           if (n.line) setTimeout(() => { const l = app.workspace.getLeavesOfType("basalt-textfile").find((x) => x.view && x.view.path === n.path); const cm = l && l.view.cm; if (cm) { cm.setCursor({ line: n.line - 1, ch: 0 }); cm.scrollIntoView({ line: n.line - 1, ch: 0 }, 160); cm.focus(); } }, 500); }; go();
       }
-      async onClose() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; if (this.ro) this.ro.disconnect(); this.g = null; }
+      async onClose() { if (this.keyUndo) window.removeEventListener("keydown", this.keyUndo, true); if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; if (this.ro) this.ro.disconnect(); this.g = null; }
     };
   }
 
