@@ -1814,8 +1814,6 @@
     { id: "link", name: "Ссылка", w: 400, h: 190, kind: "link" },
     { id: "file", name: "Файл", w: 340, h: 110, kind: "file" },
     { id: "canvas", name: "Вложенный холст", w: 360, h: 240, kind: "file", ext: "canvas" },
-    { id: "code", name: "Код (запуск)", w: 460, h: 300, kind: "text", text: "```js\nconsole.log(\"Привет, Basalt!\");\n```" },
-    { id: "terminal", name: "Терминал", w: 560, h: 320, kind: "text", text: "```basalt-terminal\n```" },
   ];
   // ---- auto layout: grid / tree / force-directed over the selected cards (or all of them), animated
   const GAP = 48;

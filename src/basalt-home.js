@@ -90,7 +90,7 @@
       ["folder", "Открыть папку", "", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
       ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
       ["canvas", "Новый холст", "", () => cmd("canvas:new-file")],
-      ["term", "Терминал", "", () => leaf && leaf.setViewState({ type: "basalt-terminal", active: true })],
+      ["graph", "Граф", "", () => cmd("graph:open")],
     ];
     const tl = el.querySelector(".bsh-tiles");
     const LI = { folder: "folder-open", note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };

@@ -40,3 +40,5 @@
 .bset .checkbox-container.is-enabled { background: var(--interactive-accent); border-color: var(--interactive-accent); }
 .bset .checkbox-container.is-enabled::after { left: 20px; background: var(--text-on-accent); transform: none; }
 .bset .checkbox-container input { position: absolute; opacity: 0; inset: 0; }
+.bset-nav button.bset-n:focus, .bset-nav button.bset-n:focus-visible { outline: 0; box-shadow: none; }
+.bset-nav button.bset-n.is-on:focus-visible { background: var(--bs-accent-soft, color-mix(in srgb, var(--interactive-accent) 16%, transparent)); }

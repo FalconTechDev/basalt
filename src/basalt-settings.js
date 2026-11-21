@@ -188,6 +188,7 @@
         // the module draws its own page into a container; it is placed here and restyled by .bset-legacy
         try { const c = t.containerEl || document.createElement("div"); c.textContent = ""; box.appendChild(c); t.display(); } catch (e) { box.textContent = "Не удалось показать страницу: " + e.message; }
       };
+      row(grid, "Граф", "Граф заметок и холстов, граф файлов проекта.", button("Открыть", () => { try { app.setting.close(); } catch (e) { /* closed */ } app.commands.executeCommandById("graph:open"); }));
       for (const t of tabs) row(grid, t.name || t.id, "", button("Открыть", () => openTab(t)));
       view.style.display = "none"; h.append(grid, view);
       if (pendingTab) { const t = tabs.find((x) => x.id === pendingTab); pendingTab = null; if (t) openTab(t); }

@@ -14,7 +14,7 @@
   };
   const baseName = (p) => p.split(/[\\/]/).pop();
   const has = (c) => { try { return ncp.spawnSync(WIN ? "where" : "which", [c], { windowsHide: true }).status === 0; } catch (e) { return false; } };
-  const RUNNABLE = new Set(["js", "mjs", "cjs", "ts", "py", "rs", "go", "java", "dart", "rb", "php", "lua", "sh", "bat", "cmd", "ps1", "html", "htm"]);
+  const RUNNABLE = new Set(); // Basalt does not run files any more: this is an editor
   const store = {
     get(k, d) { try { const v = localStorage.getItem("bstf." + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem("bstf." + k, JSON.stringify(v)); } catch (e) { /* private mode */ } },
@@ -166,7 +166,7 @@
         const bar = el("div", "bstf-bar"); const crumbs = el("span", "bstf-path"); this.shownPath().split(/[\\/]/).forEach((seg, k, arr) => { if (k) crumbs.appendChild(el("i", null, "›")); crumbs.appendChild(el(k === arr.length - 1 ? "b" : "span", null, seg)); }); bar.appendChild(crumbs);
         this.stateEl = el("span", "bstf-state", ""); bar.appendChild(this.stateEl);
         const ext0 = (this.path.split(".").pop() || "").toLowerCase();
-        if (!this.runAction) { try { this.runAction = this.addAction("lucide-play", "Запустить файл (F5)", () => this.run()); this.runAction.classList.add("bstf-run-action"); } catch (e) { this.runAction = null; } }
+        this.runAction = null;
         if (this.runAction) { this.runAction.style.display = RUNNABLE.has(ext0) ? "" : "none"; this.runBtn = RUNNABLE.has(ext0) ? this.runAction : null; }
         const mkBtn = (label, title, fn) => { const b = el("button", "bstf-btn", label); b.title = title; b.addEventListener("click", fn); return b; };
         this.btnFind = mkBtn("Найти", "Найти (Ctrl+F)", () => this.openFind(false));

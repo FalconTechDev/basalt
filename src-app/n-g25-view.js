@@ -109,7 +109,10 @@ export function defineView(host) {
 
   View.prototype.open = async function (parentEl) {
     parentEl.appendChild(this.containerEl);
-    await this.load();
+    // load() is not awaited (as in the original): views that define their own async load() build their DOM in onOpen
+    // and would otherwise fail here before it ran
+    const loading = this.load();
+    if (loading && typeof loading.catch === "function") loading.catch(() => {});
     await this.onOpen();
   };
 
