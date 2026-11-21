@@ -35,3 +35,35 @@
 	.canvas-card-menu, .canvas-controls { animation: bs-rise-in .25s cubic-bezier(.2, .8, .3, 1) both; }
 	.checkbox-container, .checkbox-container::after { transition: background-color .16s ease, left .16s ease; }
 }
+
+/* more life: presses, hovers, small movements */
+@media (prefers-reduced-motion: no-preference) {
+	button:active:not(:disabled), .clickable-icon:active, .nav-action-button:active, .bsf-bar button:active, .canvas-card-menu-button:active, .canvas-control-item:active { transform: scale(.88); filter: brightness(.9); }
+	button, .clickable-icon, .canvas-control-item, .canvas-card-menu-button { transition: background-color .14s ease, color .14s ease, border-color .14s ease, box-shadow .14s ease, transform .12s cubic-bezier(.3, 1.6, .5, 1), filter .12s ease; }
+	.modal-close-button svg, .vault-actions svg, .workspace-drawer-vault-actions .clickable-icon svg { transition: transform .25s cubic-bezier(.3, 1.4, .5, 1); }
+	.modal-close-button:hover svg { transform: rotate(90deg); }
+	.workspace-drawer-vault-actions .clickable-icon:hover svg { transform: rotate(30deg); }
+	.workspace-tab-header { transition: background-color .14s ease, transform .14s ease; }
+	.workspace-tab-header:not(.is-active):hover { transform: translateY(-1px); }
+	.bset-nav button.bset-n { transition: background-color .14s ease, color .14s ease, transform .14s ease; }
+	.bset-nav button.bset-n:hover { transform: translateX(3px); }
+	.bsh-tile { transition: transform .18s cubic-bezier(.2, .8, .3, 1), box-shadow .18s ease, background-color .14s ease; }
+	.bsh-tile:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0, 0, 0, .35); }
+	.bsh-search { transition: box-shadow .18s ease, background-color .14s ease; }
+	.bsh-search:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, .3); }
+	.tree-item-self .collapse-icon svg, .nav-folder-collapse-indicator svg, .bsf-tree .bsf-chev { transition: transform .16s ease; }
+	input[type="text"], input[type="search"], textarea, select, .dropdown { transition: border-color .16s ease, box-shadow .16s ease, background-color .14s ease; }
+	input[type="text"]:focus, input[type="search"]:focus, textarea:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 28%, transparent); }
+	.menu-item { transition: background-color .1s ease, padding-left .12s ease; }
+	.menu-item:hover:not(.is-disabled) { padding-left: calc(var(--size-4-2) + 3px); }
+	.status-bar-item, .bmd-status > span { transition: background-color .14s ease, color .14s ease; }
+	.canvas-node { transition: box-shadow .16s ease; }
+	.bsm-card { transition: transform .18s cubic-bezier(.2, .8, .3, 1), border-color .15s ease, box-shadow .18s ease, background-color .15s ease; }
+	.bsm-card:hover { transform: translateY(-2px); }
+	.bsm-card:active { transform: scale(.985); }
+	/* the vault switcher and ribbon icons nudge on hover */
+	.side-dock-ribbon-action:hover svg { transform: scale(1.12); }
+	.side-dock-ribbon-action svg { transition: transform .16s cubic-bezier(.3, 1.6, .5, 1); }
+	/* toggle knob bounces */
+	.bset .checkbox-container::after { transition: left .2s cubic-bezier(.3, 1.5, .5, 1), background-color .16s ease; }
+}

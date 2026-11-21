@@ -103143,6 +103143,11 @@ function ng39FlattenRuBundle(node) {
  * when it is the detected UI language (was am).
  */
 function ng39RegisterDefaultBundle() {
+  // a string nobody translated reads as words ("Bring to front"), never as its internal key ("plugins.canvas.action-bring-to-front")
+  i18next.options.parseMissingKeyHandler = (key) => {
+    const last = String(key).split(".").pop().replace(/^(action|menu|label|tooltip|option|command|msg|setting|title)-/, "").replace(/[-_]+/g, " ").trim();
+    return last ? last.charAt(0).toUpperCase() + last.slice(1) : String(key);
+  };
   i18next.addResourceBundle(ng39FallbackLanguage, ng39ResourceNamespace, ng39I18nResourceBundle());
   if (window.BASALT_I18N_RU) {
     i18next.addResourceBundle("ru", ng39ResourceNamespace, ng39FlattenRuBundle(window.BASALT_I18N_RU));
