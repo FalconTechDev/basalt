@@ -46279,6 +46279,8 @@ function ng13DefineFileClasses() {
 
   TAbstractFile.prototype.getNewPathAfterRename = function (name) {
     let newName = String(name == null ? "" : name).replace(NG13_CONTROL_CHARS, " ").trim();
+    // an empty name must never turn into ".ext" (a hidden dot-file that vanishes from the explorer)
+    if (!String(name == null ? "" : name).replace(NG13_CONTROL_CHARS, " ").trim()) return this.path;
     const parent = this.parent;
     if (!parent) return "";
     if (parent.path === "/") return newName;

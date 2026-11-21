@@ -65,11 +65,38 @@
   };
 
   // ---------------------------------------------------------------- the vault as a graph
+  // links that live inside canvases (file cards, [[wikilinks]] in text cards): the metadata cache does not index canvases, so they are read here
+  const CANVAS_LINKS = { map: new Map(), state: 0 };
+  function canvasLinkScan(app) {
+    if (CANVAS_LINKS.state) return;
+    CANVAS_LINKS.state = 1;
+    const one = async (f) => {
+      try {
+        const j = JSON.parse(await app.vault.cachedRead(f)), out = new Set();
+        for (const n of j.nodes || []) {
+          if (n.type === "file" && n.file && app.vault.getAbstractFileByPath(n.file)) out.add(n.file);
+          else if (n.type === "text" && n.text) for (const m of n.text.matchAll(/\[\[([^\]|#]+)/g)) { const d = app.metadataCache.getFirstLinkpathDest(m[1].trim(), f.path); if (d) out.add(d.path); }
+        }
+        out.delete(f.path); CANVAS_LINKS.map.set(f.path, out);
+      } catch (e) { CANVAS_LINKS.map.delete(f.path); }
+    };
+    const changed = () => { try { app.metadataCache.trigger("resolved"); } catch (e) { /* no listeners */ } };
+    (async () => { for (const f of app.vault.getFiles()) if (f.extension === "canvas") await one(f); CANVAS_LINKS.state = 2; changed(); })();
+    app.vault.on("modify", (f) => { if (f && f.extension === "canvas") one(f).then(changed); });
+    app.vault.on("delete", (f) => { if (f && CANVAS_LINKS.map.delete(f.path)) changed(); });
+  }
+  function resolvedWithCanvases(app) {
+    canvasLinkScan(app);
+    const out = Object.assign({}, app.metadataCache.resolvedLinks || {});
+    for (const [src, set] of CANVAS_LINKS.map) { const o = Object.assign({}, out[src]); for (const d of set) o[d] = (o[d] || 0) + 1; out[src] = o; }
+    return out;
+  }
   function vaultGraph(app, c, anchor, local) {
     const IMGX = /^(png|jpe?g|gif|webp|bmp|avif|svg)$/i;
-    const linkedTo = new Set(); if (c.images) for (const dests of Object.values(app.metadataCache.resolvedLinks || {})) for (const d of Object.keys(dests)) linkedTo.add(d);
+    const resolved = resolvedWithCanvases(app);
+    const linkedTo = new Set(); if (c.images) for (const dests of Object.values(resolved)) for (const d of Object.keys(dests)) linkedTo.add(d);
     const files = app.vault.getFiles().filter((f) => (f.extension === "md" || (c.canvases && f.extension === "canvas") || (c.images && IMGX.test(f.extension) && linkedTo.has(f.path))));
-    const resolved = app.metadataCache.resolvedLinks || {}, unres = app.metadataCache.unresolvedLinks || {};
+    const unres = app.metadataCache.unresolvedLinks || {};
     const idx = new Map(), nodes = [];
     const add = (key, name, extra) => { if (idx.has(key)) return idx.get(key); const i = nodes.length; idx.set(key, i); nodes.push(Object.assign({ key, name, file: null, unresolved: false, folder: "" }, extra)); return i; };
     for (const f of files) add(f.path, f.basename, { kind: f.extension === "canvas" ? "canvas" : f.extension === "md" ? "note" : "img", file: f, folder: f.parent && f.parent.path !== "/" ? f.parent.path.split("/")[0] : "" });

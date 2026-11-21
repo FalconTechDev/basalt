@@ -305,7 +305,7 @@
           if (done) return; done = true; this.renaming = false;
           const v = input.value.trim().replace(/[\\/:*?"<>|]/g, "");
           const typedExt = !f.children && /\.(md|py|pyw|js|mjs|cjs|jsx|ts|tsx|json|jsonc|txt|css|scss|html|htm|yml|yaml|toml|ini|cfg|conf|sh|bat|cmd|ps1|rs|go|java|kt|c|cc|cpp|h|hpp|cs|rb|php|lua|sql|xml|csv|tsv|log|canvas|base|png|jpe?g|gif|svg|webp|avif|pdf|zip)$/i.test(v), newName = typedExt ? v : v + ext;
-          if (ok && v && newName !== f.name) { const dest = (f.parent && f.parent.path !== "/" ? f.parent.path + "/" : "") + newName; if (app.vault.getAbstractFileByPath(dest)) new api.Notice("Такое имя уже занято"); else { try { await app.fileManager.renameFile(f, dest); } catch (err) { new api.Notice("Не удалось переименовать: " + err.message); } } }
+          if (ok && /^\./.test(newName) && !/^\./.test(f.name)) new api.Notice("Имя не может начинаться с точки (такой файл станет скрытым)"); else if (ok && v && newName !== f.name) { const dest = (f.parent && f.parent.path !== "/" ? f.parent.path + "/" : "") + newName; if (app.vault.getAbstractFileByPath(dest)) new api.Notice("Такое имя уже занято"); else { try { await app.fileManager.renameFile(f, dest); } catch (err) { new api.Notice("Не удалось переименовать: " + err.message); } } }
           this.render(); this.root.focus();
         };
         input.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") finish(true); else if (e.key === "Escape") finish(false); });

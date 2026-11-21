@@ -17974,4 +17974,65 @@ button:focus-visible{
     font-size:var(--font-ui-smaller);
     letter-spacing:.02em
 }
+.canvas-card-menu{
+    gap:2px;
+    padding:4px;
+    border:0;
+    border-radius:8px;
+    clip-path:none;
+    background:var(--background-secondary);
+    box-shadow:0 2px 10px rgba(0,0,0,.35)
+}
+.canvas-card-menu-button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;
+    height:34px;
+    margin:0;
+    padding:0;
+    border:0;
+    border-radius:6px;
+    box-shadow:none;
+    background:transparent;
+    color:var(--icon-color)
+}
+.canvas-card-menu-button:hover{
+    background:var(--background-modifier-hover);
+    color:var(--icon-color-hover,var(--text-normal))
+}
+.canvas-controls .canvas-control-group{
+    border:0;
+    border-radius:8px;
+    clip-path:none;
+    box-shadow:0 2px 10px rgba(0,0,0,.3);
+    overflow:hidden
+}
+.canvas-controls .canvas-control-item{
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    background:var(--background-secondary)
+}
+.canvas-controls .canvas-control-item + .canvas-control-item{
+    border-top:1px solid var(--background-modifier-border)
+}
+.canvas-controls .canvas-control-item:hover{
+    background:var(--background-modifier-hover)
+}
+.mod-left-split .workspace-tab-header,.mod-right-split .workspace-tab-header{
+    box-shadow:none;
+    border-radius:6px;
+    clip-path:none
+}
+.mod-left-split .workspace-tab-header.is-active,.mod-right-split .workspace-tab-header.is-active{
+    background:var(--background-modifier-hover);
+    box-shadow:none
+}
+.mod-left-split .workspace-tab-header.is-active .workspace-tab-header-inner-icon,.mod-right-split .workspace-tab-header.is-active .workspace-tab-header-inner-icon{
+    color:var(--interactive-accent)
+}
+.mod-left-split .workspace-tab-header::before,.mod-left-split .workspace-tab-header::after,.mod-right-split .workspace-tab-header::before,.mod-right-split .workspace-tab-header::after{
+    display:none
+}
 
