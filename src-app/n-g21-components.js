@@ -576,6 +576,10 @@ export function ng21DefineSettingGroup(host) {
     }
     return this;
   };
+  p.addHeading = function (textOrFn) {
+    const text = typeof textOrFn === "function" ? textOrFn() : textOrFn;
+    return this.setHeading(text);
+  };
   p.addClass = function (cls) { this.groupEl.addClass(cls); return this; };
   p.addSetting = function (cb) { cb(new (ng21C.Setting || host.Setting)(this.listEl)); return this; };
   p.addSearch = function (cb) {
