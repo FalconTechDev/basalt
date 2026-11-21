@@ -4,7 +4,7 @@
 // service-worker neutering, startup progress flow. Spec: F:\orch\specs\g25.md Part H.
 // Prototype methods are attached from n-g15-app.js helpers (`this` = app instance).
 
-import { appNextFrame, appOnNextFrame, appNextFrameOnceCallback, appInitializeWithAdapter, appOnConfigChanged, appRegisterCommands, appDisableCssTransition, appEnableCssTransition, appGetAppTitle, appGetWebviewPartition, appFixFileLinks, appGetTheme, appIsDarkMode, appChangeTheme, appUpdateTheme, appUpdateMobileFrameTheme, appUpdateInlineTitleDisplay, appUpdateFloatingNavigationDisplay, appUpdateAutoFullScreenDisplay, appUpdateViewHeaderDisplay, appUpdateRibbonDisplay, appUpdateFontFamily, appUpdateFontSize, appUpdateUseNativeMenu, appUpdateTabSize, appShowReleaseNotes, appUpdateAccentColor, appGetAccentColor, appSetAccentColor, appGarbleText, appImportAttachments, appSaveAttachment, appOpenVaultChooser, appOpenHelp, appRunOpeningBehavior, appOpenWithDefaultApp, appShowInFolder, appGetObsidianUrl, appCopyObsidianUrl, appRegisterQuitHook, appLoadLocalStorage, appSaveLocalStorage, appOn, appSetTheme, appEmulateMobile, appDebugMode, appGetSpellcheckLanguages, appSetSpellcheckLanguages, appIsVimEnabled } from "./n-g15-app.js";
+import { appNextFrame, appOnNextFrame, appNextFrameOnceCallback, appInitializeWithAdapter, appOnConfigChanged, appRegisterCommands, appDisableCssTransition, appEnableCssTransition, appGetAppTitle, appGetWebviewPartition, appFixFileLinks, appGetTheme, appIsDarkMode, appChangeTheme, appUpdateTheme, appUpdateMobileFrameTheme, appUpdateInlineTitleDisplay, appUpdateFloatingNavigationDisplay, appUpdateAutoFullScreenDisplay, appUpdateViewHeaderDisplay, appUpdateRibbonDisplay, appUpdateFontFamily, appUpdateFontSize, appUpdateUseNativeMenu, appUpdateTabSize, appShowReleaseNotes, appUpdateAccentColor, appGetAccentColor, appSetAccentColor, appGarbleText, appImportAttachments, appSaveAttachment, appOpenVaultChooser, appOpenHelp, appRunOpeningBehavior, appOpenWithDefaultApp, appShowInFolder, appGetVaultUrl, appCopyVaultUrl, appRegisterQuitHook, appLoadLocalStorage, appSaveLocalStorage, appOn, appSetTheme, appEmulateMobile, appDebugMode, appGetSpellcheckLanguages, appSetSpellcheckLanguages, appIsVimEnabled } from "./n-g15-app.js";
 
 export const s17IframeAllowlist = {
   "encrypted-media": true, fullscreen: true, gamepad: true, hid: true,
@@ -39,8 +39,8 @@ const NG25S17_METHODS = {
   importAttachments: appImportAttachments, saveAttachment: appSaveAttachment,
   openVaultChooser: appOpenVaultChooser, openHelp: appOpenHelp,
   runOpeningBehavior: appRunOpeningBehavior, openWithDefaultApp: appOpenWithDefaultApp,
-  showInFolder: appShowInFolder, getObsidianUrl: appGetObsidianUrl,
-  copyObsidianUrl: appCopyObsidianUrl, registerQuitHook: appRegisterQuitHook,
+  showInFolder: appShowInFolder, getObsidianUrl: appGetVaultUrl,
+  copyObsidianUrl: appCopyVaultUrl, registerQuitHook: appRegisterQuitHook,
   loadLocalStorage: appLoadLocalStorage, saveLocalStorage: appSaveLocalStorage,
   on: appOn, setTheme: appSetTheme, emulateMobile: appEmulateMobile, debugMode: appDebugMode,
   getSpellcheckLanguages: appGetSpellcheckLanguages,
@@ -81,13 +81,13 @@ export function s17CreateApp(host) {
     (async () => {
       try {
         overlay.setContext(s17StartupButtons(app, false)).show();
-        overlay.setMessage(host.i18n.interface.startUp.loadingObsidian()).show();
+        overlay.setMessage(host.i18n.interface.startUp.loadingApp()).show();
         await app.initializeWithAdapter(adapter);
         overlay.hide();
       } catch (e) {
         console.error("Basalt startup failed:", e);
         try {
-          overlay.setMessage(host.i18n.interface.startUp.obsidianLoadError() + " " + (e && e.message || e));
+          overlay.setMessage(host.i18n.interface.startUp.appLoadError() + " " + (e && e.message || e));
           overlay.setContext(s17StartupButtons(app, true));
         } catch (e2) {}
       } finally {

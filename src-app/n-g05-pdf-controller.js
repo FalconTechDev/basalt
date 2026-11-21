@@ -168,7 +168,7 @@ export function ng05BuildController(host) {
     viewerContainerEl.addEventListener("pointerdown", (evt) => this.onAnnotationPointerDown(evt));
     sidebarContainerEl.addEventListener("contextmenu", (evt) => this.onThumbnailContextMenu(evt));
 
-    const app = this.pdfViewer = viewerNs.createObsidianPDFViewer({
+    const app = this.pdfViewer = viewerNs.createPDFViewer({
       baseConfig: host.s27PdfConfig,
       l10n: new host.s27PdfL10n(),
       eventBus: this.eventBus,

@@ -867,11 +867,11 @@ export function createVault(EventsClass) {
       delete merged.editorFontFamily;
     }
     this.config = merged;
-    await this.copyObsidianSettings();
+    await this.copyVaultSettings();
     this.requestSaveConfig();
   };
 
-  proto.copyObsidianSettings = async function () {
+  proto.copyVaultSettings = async function () {
     try {
       if (await this.adapter.exists(".obsidian")) {
         const targetExists = await this.adapter.exists(this.configDir);

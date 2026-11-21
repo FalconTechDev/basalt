@@ -22,7 +22,7 @@ const NG36_REQ_KEYS = [
 ];
 
 const NG36_REQ_ENV = [
-  "s12reqObsidian", "s12reqAutocomplete", "s12reqCollab", "s12reqCommands", "s12reqLanguage",
+  "s12reqHost", "s12reqAutocomplete", "s12reqCollab", "s12reqCommands", "s12reqLanguage",
   "s12reqLint", "s12reqSearch", "s12reqState", "s12reqState", "s12reqView",
   "s12reqLezerCommon", "s12reqLezerLr", "s12reqLezerHighlight",
 ];

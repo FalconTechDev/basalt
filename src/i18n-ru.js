@@ -886,8 +886,8 @@
    "goForward": "Вперёд"
   },
   "startUp": {
-   "loadingObsidian": "Basalt загружается...",
-   "obsidianLoadError": "При загрузке Basalt что-то пошло не так.",
+   "loadingApp": "Basalt загружается...",
+   "appLoadError": "При загрузке Basalt что-то пошло не так.",
    "buttonReloadApp": "Перезагрузить приложение",
    "buttonReloadAppInSafeMode": "Перезагрузить в безопасном режиме",
    "buttonOpenAnotherVault": "Открыть другое хранилище",

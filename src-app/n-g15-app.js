@@ -508,14 +508,14 @@ export async function appShowInFolder(file) {
   new (env().fb)("Не удалось открыть файловый менеджер");
 }
 
-export function appGetObsidianUrl(file) {
+export function appGetVaultUrl(file) {
   const vaultName = encodeURIComponent(this.vault.getName());
   let path = file.path || "";
   path = path.replace(/\.md$/i, "");
   return "obsidian://open?vault=" + vaultName + "&file=" + encodeURIComponent(path);
 }
 
-export function appCopyObsidianUrl(file) {
+export function appCopyVaultUrl(file) {
   env().Ec(this.getObsidianUrl(file));
   new (env().fb)(env().gm.interface.notice.linkCopied ? env().gm.interface.notice.linkCopied() : "Copied");
 }

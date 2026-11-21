@@ -33,7 +33,7 @@ export function s12CmIterateCompat(inner) {
 export function s12CmEmptyFieldConfig() { return { from() {} }; }
 
 const S12REQ_SPEC = [
-  ["obsidian", "s12reqObsidian"],
+  ["obsidian", "s12reqHost"],
   ["@codemirror/autocomplete", "s12reqAutocomplete"],
   ["@codemirror/collab", "s12reqCollab"],
   ["@codemirror/commands", "s12reqCommands"],

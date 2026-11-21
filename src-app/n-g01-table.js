@@ -109,7 +109,7 @@ export function ng01DefineTable() {
       return lines.join("\n");
     }
 
-    toObsidianTableClipboard() {
+    toTableClipboard() {
       return JSON.stringify({ header: this.header, rows: this.body, alignment: new Array(this.header.length).fill(null) });
     }
   };

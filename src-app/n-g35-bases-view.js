@@ -109,7 +109,7 @@ export function ng35BasesView(host) {
       "text/plain": table.toTSV(),
       "text/markdown": markdown,
       "text/html": host.treeToHtml(host.markdownTree(markdown)),
-      "basalt/table": table.toObsidianTableClipboard(),
+      "basalt/table": table.toTableClipboard(),
     };
     const doc = env().activeDocument;
     const area = doc.createElement("textarea");
