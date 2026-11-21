@@ -579,11 +579,11 @@
     },
     {
       "orig": "vl",
-      "use": "cancelTransition"
+      "use": "ng26CancelTransition"
     },
     {
       "orig": "yl",
-      "use": "runTransition"
+      "use": "ng26RunTransition"
     },
     {
       "orig": "jg",
@@ -2549,7 +2549,7 @@
     },
     {
       "orig": "dl",
-      "use": "defineTransition"
+      "use": "ng26DefineTransition"
     },
     {
       "orig": "P0",
@@ -2697,11 +2697,11 @@
     },
     {
       "orig": "Y6",
-      "use": "defineCommands"
+      "use": "ng26DefineCommands"
     },
     {
       "orig": "zb",
-      "use": "defineHotkeyManager"
+      "use": "ng26DefineHotkeyManager"
     },
     {
       "orig": "G0",
@@ -2766,12 +2766,12 @@
     },
     {
       "orig": "i2",
-      "use": "definePluginWrapper",
+      "use": "ng26DefinePluginWrapper",
       "originalBytes": 4325
     },
     {
       "orig": "o2",
-      "use": "defineInternalPlugins",
+      "use": "ng26DefineInternalPlugins",
       "originalBytes": 2271
     },
     {
@@ -3194,7 +3194,7 @@
     },
     {
       "orig": "i8",
-      "use": "defineCanvasPlugin"
+      "use": "ng26DefineCanvasPlugin"
     },
     {
       "orig": "w5",
@@ -3286,7 +3286,7 @@
     },
     {
       "orig": "lz",
-      "use": "defineDocumentSearch"
+      "use": "ng26DefineDocumentSearch"
     },
     {
       "orig": "fq",
@@ -3342,7 +3342,7 @@
     },
     {
       "orig": "AL",
-      "use": "defineClipboardManager"
+      "use": "ng26DefineClipboardManager"
     },
     {
       "orig": "uZ",
