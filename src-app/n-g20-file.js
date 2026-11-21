@@ -24,6 +24,15 @@ export function defineNg20FileNode(host) {
       this.subpath = "";
       this.isMissing = false;
       this.embedEl = null;
+      this.labelEl.addEventListener("click", (evt) => {
+        if (!this.filePath) return;
+        const leafType = host.Keymap.isModEvent(evt);
+        if (leafType) this.app.workspace.getLeaf(leafType).openLinkText(this.filePath + this.subpath, "");
+      });
+      this.labelEl.addEventListener("dblclick", (evt) => {
+        evt.stopPropagation();
+        if (this.filePath) this.app.workspace.getLeaf(false).openLinkText(this.filePath + this.subpath, "");
+      });
     }
 
     getData() {
@@ -80,7 +89,7 @@ export function defineNg20FileNode(host) {
       this.file = null;
       this.isMissing = true;
       this.missingPath = path || "";
-      this.updateNodeLabel((path || "").split("/").pop() || "missing");
+      this.updateNodeLabel((path || "") || "missing");
       if (this.isContentMounted) {
         this.contentEl.empty();
         this.child = null;
@@ -105,6 +114,11 @@ export function defineNg20FileNode(host) {
     }
 
     isEditable() { return false; }
+
+    blur() {
+      super.blur();
+      this.canvas.requestUpdateFileOpen(null);
+    }
 
     /** Renders through host.EmbedLoader so md/media/pdf/canvas embeds all work. */
     renderContent() {
@@ -141,8 +155,32 @@ export function defineNg20FileNode(host) {
           if (workspace) workspace.activeEditor = child instanceof host.MarkdownEmbedBase ? child : null;
           this.canvas.requestUpdateFileOpen(this.file);
         }
-        if (typeof child.load === "function") child.load();
-        if (typeof child.loadFile === "function") child.loadFile();
+        child.load();
+        (async () => {
+          try { await child.loadFile(); } catch (err) { /* embed reports its own errors */ }
+          const first = this.contentEl.firstChild;
+          if (!first) return;
+          let size = null;
+          if (first instanceof HTMLImageElement) {
+            size = { width: first.naturalWidth, height: first.naturalHeight };
+            first.draggable = false;
+          } else if (first instanceof HTMLVideoElement) {
+            size = { width: first.videoWidth, height: first.videoHeight };
+          } else if (first instanceof HTMLAudioElement) {
+            const fix = () => this.resize({ width: this.width, height: first.clientHeight || 42 });
+            if (first.isShown && first.isShown()) fix();
+            else if (first.onNodeInserted) first.onNodeInserted(fix, true);
+            fix();
+          }
+          if (size && size.height !== 0) {
+            const ratio = size.width / size.height;
+            const { width, height } = this;
+            if (width / height !== ratio) {
+              this.resize({ width: Math.min(width, height * ratio), height: Math.min(height, width / ratio) });
+              if (this.canvas.overrideHistory) this.canvas.overrideHistory();
+            }
+          }
+        })();
       } else {
         this.child = new canvas.EmptyEmbed(ctx, this, () => this.render());
         if (typeof this.child.loadFile === "function") this.child.loadFile();
@@ -212,6 +250,11 @@ export function defineNg20GroupNode(host) {
       this.nodeEl.addClass("canvas-node-group");
       this.placeholderEl.hide();
       this.contentBlockerEl.hide();
+      this.labelEl.spellcheck = false;
+      this.labelEl.addEventListener("dblclick", (evt) => {
+        evt.stopPropagation();
+        this.focusLabel();
+      });
     }
 
     labelClass() { return "canvas-group-label"; }

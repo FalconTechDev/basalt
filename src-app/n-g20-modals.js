@@ -7,6 +7,7 @@
 import { env } from "./env.js";
 import { canvas, ng20CanvasStrings } from "./n-g20-shared.js";
 import { normalizePath } from "./path.js";
+import { pointOfEvent } from "./misc.js";
 
 const NG20_NAME_RE = /[\\/:*?"<>|#^[\]]/;
 
@@ -125,38 +126,96 @@ export function defineNg20SectionSuggest(host) {
   return SectionSuggest;
 }
 
-// ---- edge label editor (K5) ----------------------------------------------------------------------
+// ---- edge label (K5) -----------------------------------------------------------------------------
+// Inline contenteditable label pinned to the edge midpoint (orig K5).
 
 export function defineNg20EdgeLabel(host) {
-  class EdgeLabel extends host.Modal {
-    constructor(app, edge, onSubmit) {
-      super(ng20OwnerApp(app));
+  class EdgeLabel {
+    constructor(edge) {
+      this.isEditing = false;
+      this.initialTextState = "";
       this.edge = edge;
-      this.onSubmit = onSubmit;
-    }
-
-    onOpen() {
-      const { contentEl } = this;
-      contentEl.addClass("canvas-edge-label-modal");
-      const input = contentEl.createEl("input", { type: "text", cls: "canvas-edge-label-input" });
-      input.value = this.edge ? this.edge.label || "" : "";
-      input.placeholder = "Label";
-      const ok = contentEl.createEl("button", { cls: "mod-cta", text: "OK" });
-      const commit = () => {
-        const v = (input.value || "").trim();
-        if (this.edge) this.edge.setLabel(v);
-        if (this.onSubmit) this.onSubmit(v);
-        this.close();
-      };
-      ok.addEventListener("click", commit);
-      input.addEventListener("keydown", (evt) => {
-        if (evt.key === "Enter") commit();
-        else if (evt.key === "Escape") this.close();
+      const canvas_ = edge.canvas;
+      this.wrapperEl = canvas_.canvasEl.createDiv("canvas-path-label-wrapper");
+      this.wrapperEl.addEventListener("click", (evt) => {
+        if (canvas_.readonly) return;
+        if (evt.shiftKey) {
+          this.blur();
+          canvas_.toggleSelect(edge);
+          return;
+        }
+        const selection = canvas_.selection;
+        if (selection.size === 1 && selection.has(edge)) {
+          if (!this.isEditing) this.focus(pointOfEvent(evt));
+        } else {
+          canvas_.selectOnly(edge);
+        }
       });
-      setTimeout(() => { input.focus(); input.select(); }, 0);
+      this.textareaEl = this.wrapperEl.createDiv(
+        { cls: "canvas-path-label", text: edge.label || "", attr: { contenteditable: "false", "data-placeholder": ng20CanvasStrings().promptAddText ? ng20CanvasStrings().promptAddText() : "Add text" } },
+        (el) => {
+          el.addEventListener("input", () => {
+            this.edge.label = el.innerText;
+            this.edge.canvas.requestSave(false);
+          });
+          if (!edge.label) setTimeout(() => this.focus());
+        },
+      );
+      this.render();
     }
 
-    onClose() { this.contentEl.empty(); }
+    setText(text) {
+      this.textareaEl.setText(text || "");
+    }
+
+    focus(point) {
+      const el = this.textareaEl;
+      this.isEditing = true;
+      el.setAttr("contenteditable", "true");
+      el.addClass("is-editing");
+      let range;
+      if (point) {
+        range = el.doc.caretRangeFromPoint(point.x, point.y);
+      } else {
+        range = el.doc.createRange();
+        range.selectNodeContents(el);
+      }
+      const selection = el.win.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      el.focus();
+      this.initialTextState = this.edge.label || "";
+    }
+
+    blur() {
+      const el = this.textareaEl;
+      this.isEditing = false;
+      el.blur();
+      el.setAttr("contenteditable", "false");
+      el.removeClass("is-editing");
+      if (this.edge.label) {
+        if (this.initialTextState !== this.edge.label) this.edge.canvas.requestSave();
+      } else {
+        this.destroy();
+      }
+      this.initialTextState = "";
+    }
+
+    render() {
+      const el = this.wrapperEl;
+      const center = this.edge.getCenter();
+      el.style.transform = `translate(${center.x}px, ${center.y}px)`;
+      if (host.applyCanvasColor) host.applyCanvasColor(el, this.edge.color);
+      el.toggleClass("is-themed", !!this.edge.color);
+    }
+
+    destroy(keepLabel) {
+      const edge = this.edge;
+      if (edge.label && !keepLabel) delete edge.label;
+      if (this.initialTextState && !keepLabel) edge.canvas.requestSave();
+      this.wrapperEl.remove();
+      edge.labelElement = null;
+    }
   }
   canvas.EdgeLabel = EdgeLabel;
   return EdgeLabel;

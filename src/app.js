@@ -3058,11 +3058,9 @@ function ng02CanvasView(host) {
       };
       const addButton = (group, icon, tooltip, onclick) => {
         const item = env().createDiv("canvas-control-item");
-        const btn = env().createEl("button", "canvas-control-button");
-        env().tv(btn, icon);
-        env().Mv(btn, tooltip);
-        btn.addEventListener("click", (evt) => onclick(evt));
-        item.appendChild(btn);
+        env().tv(item, icon);
+        env().Mv(item, tooltip);
+        item.addEventListener("click", (evt) => onclick(evt));
         group.appendChild(item);
         return item;
       };
@@ -3100,7 +3098,7 @@ function ng02CanvasView(host) {
     }
 
     syncReadonlyUi() {
-      const btn = this.quickSettingsButton && this.quickSettingsButton.querySelector("button");
+      const btn = this.quickSettingsButton;
       if (btn) {
         const ti = s13CanvasI18n();
         env().tv(btn, this.readonly ? "lucide-settings" : "lucide-lock");
@@ -4480,7 +4478,7 @@ function ng02InstallExport(proto, host) {
     let watermark = null;
     if (showLogo) {
       watermark = doc.createElement("div");
-      watermark.className = "canvas-export-watermark";
+      watermark.className = "canvas-watermark";
       watermark.style.cssText = "position:absolute;right:16px;bottom:16px;font-size:14px;color:var(--text-muted);user-select:none;";
       watermark.textContent = "Basalt";
       stage.appendChild(watermark);
@@ -62575,25 +62573,17 @@ function defineNg20CanvasEdge(host) {
       this.destroyed = false;
       this.zIndex = canvas_.getZIndex();
 
-      this.lineGroupEl = createSvg("g", "canvas-edge");
+      this.lineGroupEl = createSvg("g");
       this.interactionPathEl = this.lineGroupEl.createSvg("path", { cls: "canvas-interaction-path" });
       this.pathEl = this.lineGroupEl.createSvg("path", { cls: "canvas-display-path" });
-      this.lineEndGroupEl = createSvg("g", "canvas-edge-ends");
-      this.fromEndEl = this.lineEndGroupEl.createSvg("path", { cls: "canvas-edge-end canvas-path-end" });
-      this.toEndEl = this.lineEndGroupEl.createSvg("path", { cls: "canvas-edge-end canvas-path-end" });
+      this.lineEndGroupEl = createSvg("g");
+      this.fromLineEnd = null;
+      this.toLineEnd = null;
+      this.labelElement = null;
 
-      this.labelElement = createDiv("canvas-path-label-wrapper");
-      this.labelElement.style.pointerEvents = "none";
-      this.labelTextEl = this.labelElement.createDiv("canvas-path-label");
-      this.labelInputEl = this.labelElement.createEl("textarea", { cls: "canvas-path-label-input" });
-      this.labelInputEl.setAttribute("rows", "1"); this.labelInputEl.setAttribute("placeholder", "");
-      this.isEditingLabel = false;
-      this.labelInputEl.hide();
-
-      this.lineGroupEl.addEventListener("pointerdown", (evt) => this.onPointerdown(evt));
       this.lineGroupEl.addEventListener("click", (evt) => this.onClick(evt));
       this.lineGroupEl.addEventListener("contextmenu", (evt) => this.onContextMenu(evt));
-      this.interactionPathEl.addEventListener("pointerdown", (evt) => this.onConnectionPointerdown(evt));
+      this.lineGroupEl.addEventListener("pointerdown", (evt) => this.onConnectionPointerdown(evt));
 
       canvas_.markDirty(this);
     }
@@ -62653,7 +62643,7 @@ function defineNg20CanvasEdge(host) {
 
     setLabel(label) {
       this.label = label || "";
-      this.labelTextEl.setText(this.label);
+      if (this.labelElement) this.labelElement.setText(this.label);
       this.canvas.markDirty(this);
     }
 
@@ -62662,62 +62652,67 @@ function defineNg20CanvasEdge(host) {
     anchorFor(endpoint) {
       const node = endpoint.node;
       if (!node || typeof node.getBBox !== "function") return null;
-      const b = node.getBBox();
-      const mid = sideMidpoint(b, endpoint.side);
-      return ng20EdgeOutset(mid, endpoint.side);
+      return sideMidpoint(node.getBBox(), endpoint.side);
     }
 
     updatePath() {
-      const a = this.anchorFor(this.from);
-      const b = this.anchorFor(this.to);
-      if (!a || !b) {
+      const from = this.from;
+      const to = this.to;
+      const anchorFrom = this.anchorFor(from);
+      const anchorTo = this.anchorFor(to);
+      if (!anchorFrom || !anchorTo) {
         this.bezier = null;
         this.path = null;
         this.pathEl.setAttr("d", "");
         this.interactionPathEl.setAttr("d", "");
         return;
       }
-      const bez = bezierEdge(a, this.from.side, b, this.to.side);
-      this.bezier = bez;
-      this.path = bez.path;
-      this.pathEl.setAttr("d", bez.path);
-      this.interactionPathEl.setAttr("d", bez.path);
-      const stroke = this.color || "var(--canvas-edge, var(--text-muted))";
-      this.pathEl.setAttr("stroke", stroke);
-      this.interactionPathEl.setAttr("stroke", "transparent");
-      this.interactionPathEl.setAttr("stroke-width", "20");
-      this.interactionPathEl.setAttr("pointer-events", "stroke");
-      this.lineGroupEl.toggleClass("is-themed", !!this.color);
-      this.positionLabel(bez);
-      this.positionEnds(a, b);
+      const start = ng20EdgeOutset(anchorFrom, from.side);
+      const end = ng20EdgeOutset(anchorTo, to.side);
+      const curve = (this.bezier = bezierEdge(start, from.side, end, to.side));
+      this.path = curve.path;
+
+      let fromEnd = this.fromLineEnd;
+      if (from.end !== (fromEnd && fromEnd.type)) {
+        if (fromEnd) fromEnd.el.remove();
+        fromEnd = this.fromLineEnd = this.createEdgeEnd(from.end);
+      }
+      let toEnd = this.toLineEnd;
+      if (to.end !== (toEnd && toEnd.type)) {
+        if (toEnd) toEnd.el.remove();
+        toEnd = this.toLineEnd = this.createEdgeEnd(to.end);
+      }
+
+      let d = curve.path;
+      if (fromEnd) {
+        fromEnd.el.style.transform = `translate(${anchorFrom.x}px, ${anchorFrom.y}px) rotate(${ng20EdgeEndRotation[from.side] || "0"}deg)`;
+      } else {
+        d = `M${anchorFrom.x} ${anchorFrom.y} L${start.x} ${start.y} ${d}`;
+      }
+      if (toEnd) {
+        toEnd.el.style.transform = `translate(${anchorTo.x}px, ${anchorTo.y}px) rotate(${ng20EdgeEndRotation[to.side] || "0"}deg)`;
+      } else {
+        d = `${d} M${end.x} ${end.y} L${anchorTo.x} ${anchorTo.y}`;
+      }
+      this.pathEl.setAttr("d", d);
+      this.interactionPathEl.setAttr("d", d);
+      this.positionLabel(curve);
+    }
+
+    /** Arrow/marker element for an edge end (`g > polygon.canvas-path-end`), or null for "none". */
+    createEdgeEnd(end) {
+      if (end === ng20EdgeEndNone) return null;
+      const custom = window.__fpEndPoints && window.__fpEndPoints(end);
+      const points = custom || "0,0 6.5,10.4 -6.5,10.4";
+      const g = this.lineEndGroupEl.createSvg("g");
+      g.createSvg("polygon", { cls: "canvas-path-end", attr: { points } });
+      return { el: g, type: end };
     }
 
     positionLabel(bez) {
-      const mid = ng20Cubic(bez.from, bez.cp1, bez.cp2, bez.to, 0.5);
-      const angle = ng20CubicTangent(bez.from, bez.cp1, bez.cp2, bez.to, 0.5);
       const el = this.labelElement;
-      el.style.left = mid.x + "px";
-      el.style.top = mid.y + "px";
-      el.style.transform = `translate(-50%,-50%) rotate(${angle}deg)`;
-      const show = !!this.label || this.isEditingLabel;
-      el.style.display = show ? "" : "none";
-      if (!this.isEditingLabel) this.labelInputEl.hide(), this.labelTextEl.show();
-    }
-
-    positionEnds(a, b) {
-      const draw = (endpoint, anchor, pathEl) => {
-        const isArrow = endpoint.end === ng20EdgeEndArrow;
-        pathEl.style.display = isArrow ? "" : "none";
-        if (!isArrow) return;
-        const rot = ng20EdgeEndRotation[endpoint.side] || "0";
-        const size = 10;
-        // small filled arrow head pointing along the side normal, rotated per side
-        pathEl.setAttr("d", `M0,0 L${-size},${-size * 0.6} L${-size},${size * 0.6} Z`);
-        pathEl.setAttr("transform", `translate(${anchor.x},${anchor.y}) rotate(${rot})`);
-        pathEl.setAttr("fill", this.color || "var(--canvas-edge, var(--text-muted))");
-      };
-      draw(this.from, a, this.fromEndEl);
-      draw(this.to, b, this.toEndEl);
+      if (el) el.render();
+      void bez;
     }
 
     update(from, to) {
@@ -62750,6 +62745,16 @@ function defineNg20CanvasEdge(host) {
 
     render() {
       this.updatePath();
+      if (this.labelElement && !this.label) this.labelElement.destroy(true);
+      if (this.label) {
+        if (!this.labelElement && canvas.EdgeLabel) this.labelElement = new canvas.EdgeLabel(this);
+        if (this.labelElement) this.labelElement.setText(this.label);
+      }
+      if (this.labelElement) this.labelElement.render();
+      s13ApplyCanvasColor(this.lineGroupEl, this.color, host);
+      s13ApplyCanvasColor(this.lineEndGroupEl, this.color, host);
+      this.lineGroupEl.toggleClass("is-themed", !!this.color);
+      this.lineEndGroupEl.toggleClass("is-themed", !!this.color);
     }
 
     // ---------- lifecycle ----------
@@ -62758,74 +62763,51 @@ function defineNg20CanvasEdge(host) {
       if (this.isAttached) return;
       this.canvas.edgeContainerEl.appendChild(this.lineGroupEl);
       this.canvas.edgeEndContainerEl.appendChild(this.lineEndGroupEl);
-      this.canvas.canvasEl.appendChild(this.labelElement);
+      if (this.labelElement) this.canvas.canvasEl.appendChild(this.labelElement.wrapperEl);
       this.render();
     }
 
     detach() {
       this.lineGroupEl.detach();
       this.lineEndGroupEl.detach();
-      this.labelElement.detach();
+      if (this.labelElement) this.labelElement.wrapperEl.detach();
     }
 
     destroy() {
       if (this.destroyed) return;
       this.destroyed = true;
       this.detach();
-      this.labelElement.remove();
+      if (this.labelElement) this.labelElement.destroy();
     }
 
     // ---------- selection ----------
 
-    focus() { this.lineGroupEl.addClass("is-focused"); }
-    blur() { this.lineGroupEl.removeClass("is-focused"); }
-    select() { this.lineGroupEl.addClass("is-selected"); }
-    deselect() { this.lineGroupEl.removeClass("is-selected"); }
-
-    // ---------- label editing ----------
-
-    editLabel() {
-      this.isEditingLabel = true;
-      this.labelElement.style.pointerEvents = "auto";
-      this.labelTextEl.hide();
-      this.labelInputEl.show();
-      this.labelInputEl.value = this.label || "";
-      this.labelInputEl.focus();
-      host.focusAndSelectContents(this.labelInputEl);
-      const commit = () => {
-        this.labelInputEl.removeEventListener("blur", commit);
-        this.labelInputEl.removeEventListener("keydown", onKey);
-        this.isEditingLabel = false;
-        this.labelElement.style.pointerEvents = "none";
-        this.setLabel(this.labelInputEl.value.trim());
-        this.render();
-      };
-      const onKey = (evt) => {
-        if (evt.key === "Enter" && !evt.shiftKey) { evt.preventDefault(); commit(); }
-        else if (evt.key === "Escape") { this.labelInputEl.value = this.label || ""; commit(); }
-      };
-      this.labelInputEl.addEventListener("blur", commit);
-      this.labelInputEl.addEventListener("keydown", onKey);
-      this.render();
-    }
+    focus() { this.lineGroupEl.addClass("is-focused"); this.lineEndGroupEl.addClass("is-focused"); }
+    blur() { this.lineGroupEl.removeClass("is-focused"); this.lineEndGroupEl.removeClass("is-focused"); }
+    select() { this.lineGroupEl.addClass("is-selected"); this.lineEndGroupEl.addClass("is-selected"); }
+    deselect() { this.lineGroupEl.removeClass("is-selected"); this.lineEndGroupEl.removeClass("is-selected"); }
 
     // ---------- pointer / menus ----------
 
-    onPointerdown(evt) {
-      if (evt.button !== 0 || !evt.isPrimary) return;
-      const canvas_ = this.canvas;
-      if (canvas_.selection.has(this)) return;
-      canvas_.selectOnly(this);
-      evt.stopPropagation();
-    }
-
     onClick(evt) {
-      void evt;
-      this.canvas.selectOnly(this);
+      const canvas_ = this.canvas;
+      if (evt.button !== 0 || canvas_.readonly) return;
+      if (evt.shiftKey) { canvas_.toggleSelect(this); return; }
+      if (canvas_.selection.size === 1 && canvas_.selection.has(this) && this.labelElement && !this.labelElement.isEditing) {
+        this.labelElement.focus(pointOfEvent(evt));
+      } else {
+        canvas_.selectOnly(this);
+      }
     }
 
     onContextMenu(evt) {
       if (evt.defaultPrevented) return;
+      const canvas_ = this.canvas;
+      if (canvas_.selection.has(this) && canvas_.selection.size > 1) {
+        canvas_.onSelectionContextMenu(evt);
+        return;
+      }
+      if (!canvas_.readonly) canvas_.selectOnly(this);
       evt.preventDefault();
       this.showMenu(evt);
     }
@@ -62836,7 +62818,10 @@ function defineNg20CanvasEdge(host) {
       const ti = ng20CanvasStrings();
       const self = this;
       menu.addSections(["title", "action", "danger"]);
-      menu.addItem((item) => item.setSection("action").setTitle(ti.actionEditLabel ? ti.actionEditLabel() : "Edit label").setIcon("lucide-edit").onClick(() => self.editLabel()));
+      menu.addItem((item) => item.setSection("action").setTitle(ti.actionEditLabel ? ti.actionEditLabel() : "Edit label").setIcon("lucide-edit").onClick(() => {
+        if (!self.labelElement && canvas.EdgeLabel) self.labelElement = new canvas.EdgeLabel(self);
+        if (self.labelElement) self.labelElement.focus();
+      }));
       menu.addItem((item) => item.setSection("action").setTitle(ti.actionZoomToFit ? ti.actionZoomToFit() : "Zoom to fit").setIcon("lucide-maximize").onClick(() => canvas_.zoomToBbox(self.getBBox())));
       if (window.__fpEdgeMenu) window.__fpEdgeMenu(menu, this);
       canvas_.app.workspace.trigger("canvas:edge-menu", menu, this);
@@ -62846,44 +62831,59 @@ function defineNg20CanvasEdge(host) {
       menu.showAtMouseEvent(evt);
     }
 
-    /** Drag an edge end dot to re-anchor it to the nearest node side. */
+    /**
+     * Dragging an edge re-targets its nearest end; dropping on empty canvas removes
+     * the edge. Live preview follows the pointer through a zero-size dummy node.
+     */
     onConnectionPointerdown(evt) {
-      if (evt.button !== 0 || !evt.isPrimary || this.canvas.readonly) return;
-      evt.preventDefault();
-      evt.stopPropagation();
+      if (window.__fpEdgeGrab && window.__fpEdgeGrab(this, evt)) return;
       const canvas_ = this.canvas;
-      canvas_.wrapperEl.addClass("is-connecting");
-      const endpoint = evt.target && evt.target.dataset && evt.target.dataset.end === "from" ? "from" : "to";
-      const other = endpoint === "from" ? this.to : this.from;
-      const start = canvas_.posFromEvt(evt);
-      let target = null;
-      let side = null;
-      host.dragWithThreshold(evt, () => ({
-        move: (moveEvt) => {
-          const p = canvas_.posFromEvt(moveEvt);
-          const node = canvas_.hitTestNode(p, canvas_.snapDistance);
-          if (node && node !== other.node) {
-            target = node;
-            side = ng20EdgeDirection(node, other.node) === undefined ? "right" : ng20EdgeSideOf(node, other.node, p);
-          } else {
-            target = null;
-            side = null;
-          }
-        },
-        end: () => {
-          canvas_.wrapperEl.removeClass("is-connecting");
-          if (target) {
-            this[endpoint] = { node: target, side: side || ng20EdgeDirection(target, other.node), end: this[endpoint].end };
-            canvas_.markMoved(this);
+      if (!evt.isPrimary || evt.button !== 0 || canvas_.readonly) return;
+      if (evt.pointerType === "touch" && !canvas_.selection.has(this)) return;
+      evt.preventDefault();
+      host.dragWithThreshold(evt, () => {
+        const from = this.from;
+        const to = this.to;
+        const pos = canvas_.posFromEvt(evt);
+        const fromAnchor = this.anchorFor(from);
+        const toAnchor = this.anchorFor(to);
+        if (!fromAnchor || !toAnchor) return;
+        const dragged = distance(pos, fromAnchor) > distance(pos, toAnchor) ? "to" : "from";
+        const fixed = dragged === "from" ? to : from;
+        const dummy = new canvas_.DummyNode(canvas_);
+        let snapped = null;
+        canvas_.canvasEl.addClass("is-connecting");
+        canvas_.deselectAll();
+        canvas_.handleDragWithPan(evt, {
+          move: (moveEvt) => {
+            const p = canvas_.posFromEvt(moveEvt);
+            dummy.x = p.x;
+            dummy.y = p.y;
+            dummy.width = 0;
+            dummy.height = 0;
+            const candidates = canvas_.getIntersectingNodes(boxGrow(dummy.getBBox(), canvas_.config.objectSnapDistance));
+            const at = candidates.indexOf(fixed.node);
+            if (at >= 0) candidates.splice(at, 1);
+            snapped = s13NearestSide(p, candidates, canvas_.config.objectSnapDistance);
+            if (dragged === "from") {
+              if (snapped) this.update({ side: snapped.side, node: snapped.node, end: from.end }, to);
+              else this.update({ side: from.side, node: dummy, end: from.end }, to);
+            } else {
+              if (snapped) this.update(from, { side: snapped.side, node: snapped.node, end: to.end });
+              else this.update(from, { side: to.side, node: dummy, end: to.end });
+            }
+          },
+          end: () => {
+            if (!snapped) canvas_.removeEdge(this);
             canvas_.requestSave();
-          } else {
-            canvas_.removeEdge(this);
-            canvas_.requestSave();
-          }
-        },
-        cleanup: () => canvas_.wrapperEl.removeClass("is-connecting"),
-      }), 0);
-      void start;
+          },
+          cancel: () => this.update(from, to),
+          cleanup: () => {
+            canvas_.canvasEl.removeClass("is-connecting");
+            ng08SuppressNextEvent(this.lineGroupEl, "click");
+          },
+        });
+      });
     }
   }
 
@@ -62923,6 +62923,15 @@ function defineNg20FileNode(host) {
       this.subpath = "";
       this.isMissing = false;
       this.embedEl = null;
+      this.labelEl.addEventListener("click", (evt) => {
+        if (!this.filePath) return;
+        const leafType = host.Keymap.isModEvent(evt);
+        if (leafType) this.app.workspace.getLeaf(leafType).openLinkText(this.filePath + this.subpath, "");
+      });
+      this.labelEl.addEventListener("dblclick", (evt) => {
+        evt.stopPropagation();
+        if (this.filePath) this.app.workspace.getLeaf(false).openLinkText(this.filePath + this.subpath, "");
+      });
     }
 
     getData() {
@@ -62979,7 +62988,7 @@ function defineNg20FileNode(host) {
       this.file = null;
       this.isMissing = true;
       this.missingPath = path || "";
-      this.updateNodeLabel((path || "").split("/").pop() || "missing");
+      this.updateNodeLabel((path || "") || "missing");
       if (this.isContentMounted) {
         this.contentEl.empty();
         this.child = null;
@@ -63004,6 +63013,11 @@ function defineNg20FileNode(host) {
     }
 
     isEditable() { return false; }
+
+    blur() {
+      super.blur();
+      this.canvas.requestUpdateFileOpen(null);
+    }
 
     /** Renders through host.EmbedLoader so md/media/pdf/canvas embeds all work. */
     renderContent() {
@@ -63040,8 +63054,32 @@ function defineNg20FileNode(host) {
           if (workspace) workspace.activeEditor = child instanceof host.MarkdownEmbedBase ? child : null;
           this.canvas.requestUpdateFileOpen(this.file);
         }
-        if (typeof child.load === "function") child.load();
-        if (typeof child.loadFile === "function") child.loadFile();
+        child.load();
+        (async () => {
+          try { await child.loadFile(); } catch (err) { /* embed reports its own errors */ }
+          const first = this.contentEl.firstChild;
+          if (!first) return;
+          let size = null;
+          if (first instanceof HTMLImageElement) {
+            size = { width: first.naturalWidth, height: first.naturalHeight };
+            first.draggable = false;
+          } else if (first instanceof HTMLVideoElement) {
+            size = { width: first.videoWidth, height: first.videoHeight };
+          } else if (first instanceof HTMLAudioElement) {
+            const fix = () => this.resize({ width: this.width, height: first.clientHeight || 42 });
+            if (first.isShown && first.isShown()) fix();
+            else if (first.onNodeInserted) first.onNodeInserted(fix, true);
+            fix();
+          }
+          if (size && size.height !== 0) {
+            const ratio = size.width / size.height;
+            const { width, height } = this;
+            if (width / height !== ratio) {
+              this.resize({ width: Math.min(width, height * ratio), height: Math.min(height, width / ratio) });
+              if (this.canvas.overrideHistory) this.canvas.overrideHistory();
+            }
+          }
+        })();
       } else {
         this.child = new canvas.EmptyEmbed(ctx, this, () => this.render());
         if (typeof this.child.loadFile === "function") this.child.loadFile();
@@ -63111,6 +63149,11 @@ function defineNg20GroupNode(host) {
       this.nodeEl.addClass("canvas-node-group");
       this.placeholderEl.hide();
       this.contentBlockerEl.hide();
+      this.labelEl.spellcheck = false;
+      this.labelEl.addEventListener("dblclick", (evt) => {
+        evt.stopPropagation();
+        this.focusLabel();
+      });
     }
 
     labelClass() { return "canvas-group-label"; }
@@ -63786,38 +63829,96 @@ function defineNg20SectionSuggest(host) {
   return SectionSuggest;
 }
 
-// ---- edge label editor (K5) ----------------------------------------------------------------------
+// ---- edge label (K5) -----------------------------------------------------------------------------
+// Inline contenteditable label pinned to the edge midpoint (orig K5).
 
 function defineNg20EdgeLabel(host) {
-  class EdgeLabel extends host.Modal {
-    constructor(app, edge, onSubmit) {
-      super(ng20OwnerApp(app));
+  class EdgeLabel {
+    constructor(edge) {
+      this.isEditing = false;
+      this.initialTextState = "";
       this.edge = edge;
-      this.onSubmit = onSubmit;
-    }
-
-    onOpen() {
-      const { contentEl } = this;
-      contentEl.addClass("canvas-edge-label-modal");
-      const input = contentEl.createEl("input", { type: "text", cls: "canvas-edge-label-input" });
-      input.value = this.edge ? this.edge.label || "" : "";
-      input.placeholder = "Label";
-      const ok = contentEl.createEl("button", { cls: "mod-cta", text: "OK" });
-      const commit = () => {
-        const v = (input.value || "").trim();
-        if (this.edge) this.edge.setLabel(v);
-        if (this.onSubmit) this.onSubmit(v);
-        this.close();
-      };
-      ok.addEventListener("click", commit);
-      input.addEventListener("keydown", (evt) => {
-        if (evt.key === "Enter") commit();
-        else if (evt.key === "Escape") this.close();
+      const canvas_ = edge.canvas;
+      this.wrapperEl = canvas_.canvasEl.createDiv("canvas-path-label-wrapper");
+      this.wrapperEl.addEventListener("click", (evt) => {
+        if (canvas_.readonly) return;
+        if (evt.shiftKey) {
+          this.blur();
+          canvas_.toggleSelect(edge);
+          return;
+        }
+        const selection = canvas_.selection;
+        if (selection.size === 1 && selection.has(edge)) {
+          if (!this.isEditing) this.focus(pointOfEvent(evt));
+        } else {
+          canvas_.selectOnly(edge);
+        }
       });
-      setTimeout(() => { input.focus(); input.select(); }, 0);
+      this.textareaEl = this.wrapperEl.createDiv(
+        { cls: "canvas-path-label", text: edge.label || "", attr: { contenteditable: "false", "data-placeholder": ng20CanvasStrings().promptAddText ? ng20CanvasStrings().promptAddText() : "Add text" } },
+        (el) => {
+          el.addEventListener("input", () => {
+            this.edge.label = el.innerText;
+            this.edge.canvas.requestSave(false);
+          });
+          if (!edge.label) setTimeout(() => this.focus());
+        },
+      );
+      this.render();
     }
 
-    onClose() { this.contentEl.empty(); }
+    setText(text) {
+      this.textareaEl.setText(text || "");
+    }
+
+    focus(point) {
+      const el = this.textareaEl;
+      this.isEditing = true;
+      el.setAttr("contenteditable", "true");
+      el.addClass("is-editing");
+      let range;
+      if (point) {
+        range = el.doc.caretRangeFromPoint(point.x, point.y);
+      } else {
+        range = el.doc.createRange();
+        range.selectNodeContents(el);
+      }
+      const selection = el.win.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      el.focus();
+      this.initialTextState = this.edge.label || "";
+    }
+
+    blur() {
+      const el = this.textareaEl;
+      this.isEditing = false;
+      el.blur();
+      el.setAttr("contenteditable", "false");
+      el.removeClass("is-editing");
+      if (this.edge.label) {
+        if (this.initialTextState !== this.edge.label) this.edge.canvas.requestSave();
+      } else {
+        this.destroy();
+      }
+      this.initialTextState = "";
+    }
+
+    render() {
+      const el = this.wrapperEl;
+      const center = this.edge.getCenter();
+      el.style.transform = `translate(${center.x}px, ${center.y}px)`;
+      if (host.applyCanvasColor) host.applyCanvasColor(el, this.edge.color);
+      el.toggleClass("is-themed", !!this.edge.color);
+    }
+
+    destroy(keepLabel) {
+      const edge = this.edge;
+      if (edge.label && !keepLabel) delete edge.label;
+      if (this.initialTextState && !keepLabel) edge.canvas.requestSave();
+      this.wrapperEl.remove();
+      edge.labelElement = null;
+    }
   }
   canvas.EdgeLabel = EdgeLabel;
   return EdgeLabel;
@@ -64266,7 +64367,10 @@ function defineNg20CanvasNode(host) {
         if (evt.key === "Enter") { evt.preventDefault(); this.labelEl.blur(); }
         else if (evt.key === "Escape") { this.labelEl.setText(this.labelText()); this.labelEl.blur(); }
       });
-      this.labelEl.addEventListener("pointerdown", (evt) => evt.stopPropagation());
+      this.labelEl.addEventListener("pointerdown", (evt) => {
+        this.onPointerdown(evt);
+        evt.stopPropagation();
+      });
 
       this.nodeEl.addEventListener("pointerdown", (evt) => this.onPointerdown(evt));
       this.nodeEl.addEventListener("click", (evt) => this.onClick(evt));
@@ -64380,7 +64484,8 @@ function defineNg20CanvasNode(host) {
       el.style.width = this.width + "px";
       el.style.height = this.height + "px";
       el.style.zIndex = String(this.zIndex);
-      s13ApplyCanvasColor(this.containerEl, this.color, host);
+      el.setCssProps({ "--canvas-node-width": this.width + "px", "--canvas-node-height": this.height + "px" });
+      s13ApplyCanvasColor(this.nodeEl, this.color, host);
       this.renderZIndex();
       this.renderLabel();
     }
@@ -64423,7 +64528,8 @@ function defineNg20CanvasNode(host) {
       const visibility = this.canvas.options && this.canvas.options.cardLabelVisibility;
       labelEl.toggleClass("mod-hover-label", visibility === "hover");
       if (labelEl.getAttribute("contenteditable") !== "true") labelEl.setText(this.labelElText);
-      labelEl.toggle(this.labelElText.length > 0 || labelEl.getAttribute("contenteditable") === "true");
+      const editing = labelEl.getAttribute("contenteditable") === "true";
+      labelEl.toggle((this.labelElText.length > 0 && visibility !== "never") || editing);
     }
 
     /** Focuses the node label for inline renaming (group nodes). */
@@ -64700,6 +64806,21 @@ function defineNg20EditableNode(host) {
     constructor(canvas_, id) {
       super(canvas_, id);
       this.alwaysKeepLoaded = true;
+      this.resizeDirty = false;
+      const self = this;
+      this.containerEl.addEventListener("dblclick", (evt) => {
+        if (evt.defaultPrevented) return;
+        const child = self.child;
+        if (child instanceof host.MarkdownEmbedBase && !child.editMode && !host.isEditableTarget(evt.targetNode)) {
+          self.startEditing({ x: evt.clientX, y: evt.clientY });
+        }
+      });
+      if (host.nativeDblClick) {
+        host.nativeDblClick(this.contentEl, (evt) => {
+          if (self.destroyed || host.isEditableTarget(evt.targetNode)) return;
+          self.startEditing({ x: evt.clientX, y: evt.clientY });
+        });
+      }
     }
 
     isEditable() { return this.child instanceof host.MarkdownEmbedBase; }
@@ -64714,7 +64835,7 @@ function defineNg20EditableNode(host) {
     blur() {
       super.blur();
       const child = this.child;
-      if (child instanceof canvas.MarkdownEmbed || child instanceof host.StatefulEmbedBase) {
+      if (child instanceof host.StatefulEmbedBase || (canvas.MarkdownEmbed && child instanceof canvas.MarkdownEmbed)) {
         child.showPreview(true);
         if (child.applyScope) child.applyScope(null);
       }
@@ -64744,6 +64865,23 @@ function defineNg20EditableNode(host) {
       if (evt.defaultPrevented) return;
       if (host.isEditableTarget(evt.targetNode)) return;
       this.startEditing({ x: evt.clientX, y: evt.clientY });
+    }
+
+    moveAndResize(rect_) {
+      const child = this.child;
+      if (child instanceof host.MarkdownEmbedBase && rect_ && (this.width !== rect_.width || this.height !== rect_.height)) {
+        this.resizeDirty = true;
+      }
+      super.moveAndResize(rect_);
+    }
+
+    render() {
+      super.render();
+      const child = this.child;
+      if (this.resizeDirty && child instanceof host.MarkdownEmbedBase && child.previewMode && child.previewMode.renderer) {
+        child.previewMode.renderer.onResize();
+      }
+      this.resizeDirty = false;
     }
   }
   canvas.EditableNode = EditableNode;
@@ -64844,6 +64982,13 @@ function defineNg20LinkNode(host) {
       this.url = "";
       this.frameEl = null;
       this.pageTitle = "";
+      this.labelEl.addEventListener("click", (evt) => {
+        if (host.Keymap.isModifier(evt, "Mod") && this.url) window.open(this.url, "_blank");
+      });
+      this.labelEl.addEventListener("dblclick", (evt) => {
+        evt.stopPropagation();
+        if (this.url) window.open(this.url, "_blank");
+      });
     }
 
     getData() {
@@ -64876,12 +65021,12 @@ function defineNg20LinkNode(host) {
       const wrap = this.contentEl;
       if (env().Yl.isMobile) {
         const framed = host.normalizeEmbedUrl ? host.normalizeEmbedUrl(this.url) : null;
-        const f = wrap.createEl("iframe", { cls: "canvas-node-frame" });
+        const f = wrap.createEl("iframe", { cls: "canvas-node-frame canvas-link" });
         f.setAttr("src", framed || this.url);
         f.setAttr("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups");
         this.frameEl = f;
       } else {
-        const w = wrap.createEl("webview", { cls: "canvas-node-frame" });
+        const w = wrap.createEl("webview", { cls: "canvas-node-frame canvas-link" });
         w.setAttr("src", this.url);
         w.setAttr("partition", "persist:canvas");
         w.addEventListener("page-title-updated", (evt) => {
@@ -64938,8 +65083,14 @@ function defineNg20LinkNode(host) {
 //
 // Replaces orig z3 (canvas-selection) and U3 (canvas-menu).
 
-const NG20_HANDLES = ["top", "topright", "right", "bottomright", "bottom", "bottomleft", "left", "topleft"];
 const NG20_GROUP_BACKGROUNDS = ["", "solid", "translucent", "pattern"];
+
+function ng20HexToRgbTriple(hex) {
+  hex = (hex || "").replace("#", "");
+  if (hex.length === 3) hex = hex.split("").map((c) => c + c).join("");
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return null;
+  return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(",");
+}
 
 function ng20SelectionBBox(items) {
   const boxes = [];
@@ -64987,6 +65138,7 @@ function defineNg20CanvasMenu(host) {
       };
       this.selectionEl = null;
       this.handleEls = {};
+      this.containerEl = null;
       this.menuEl = null;
       this.submenuEl = null;
       this.renderedFor = null;
@@ -65013,13 +65165,20 @@ function defineNg20CanvasMenu(host) {
         this.selectionEl = createDiv("canvas-selection");
         this.selectionEl.hide();
         canvas_.canvasEl.appendChild(this.selectionEl);
-        const handles = this.selectionEl.createDiv("canvas-selection-handles");
-        for (const side of NG20_HANDLES) {
-          const h = handles.createDiv(`canvas-selection-handle mod-${side}`);
-          h.setAttr("data-resize", side);
-          h.addEventListener("pointerdown", (evt) => this.onHandlePointerdown(evt, side));
-          this.handleEls[side] = h;
-        }
+        const addSide = (name) => {
+          const h = this.selectionEl.createDiv({ cls: "canvas-node-resizer", attr: { "data-resize": name } });
+          h.addEventListener("pointerdown", (evt) => {
+            if (evt.target === h && evt.pointerType === "mouse") this.onHandlePointerdown(evt, name);
+          });
+          this.handleEls[name] = h;
+        };
+        for (const side of ["top", "right", "bottom", "left"]) addSide(side);
+        const addCorner = (name) => {
+          const h = this.selectionEl.createDiv({ cls: "canvas-node-resizer", attr: { "data-resize": name } });
+          h.addEventListener("pointerdown", (evt) => this.onHandlePointerdown(evt, name));
+          this.handleEls[name] = h;
+        };
+        for (const corner of ["topright", "bottomright", "bottomleft", "topleft"]) addCorner(corner);
       }
       this.selectionEl.toggle(show);
       if (!show) return;
@@ -65068,84 +65227,123 @@ function defineNg20CanvasMenu(host) {
     renderMenuPopup(sel) {
       const canvas_ = this.canvas;
       const show = sel.size > 0;
-      if (!this.menuEl) {
-        this.menuEl = createDiv("canvas-menu-container");
-        this.menuEl.hide();
-        canvas_.canvasEl.appendChild(this.menuEl);
+      if (!this.containerEl) {
+        this.containerEl = createDiv("canvas-menu-container");
+        this.containerEl.hide();
+        canvas_.wrapperEl.appendChild(this.containerEl);
+        this.menuEl = this.containerEl.createDiv("canvas-menu");
       }
-      this.menuEl.toggle(show);
-      if (!show) { this.menuEl.empty(); return; }
+      this.containerEl.toggle(show);
+      if (!show) { this.menuEl.empty(); this.closeSubmenu(); return; }
       // rebuild only when the selection signature changed (renderedFor already gates)
       this.menuEl.empty();
+      this.submenuEl = null;
       const ti = ng20CanvasStrings();
       const nodes = [...sel].filter((i) => i && i.moveAndResize);
-      const groups = nodes.filter((n) => n.type === "group");
-      const btn = (cls, icon, title, fn) => {
-        const b = this.menuEl.createDiv(`canvas-menu-button ${cls}`);
+      const btn = (icon, title, fn) => {
+        const b = this.menuEl.createEl("button", { cls: "clickable-icon" });
+        try { host.setIcon(b, "lucide-" + icon); } catch (e) { /* icon optional */ }
         b.setAttr("aria-label", title);
         b.setAttr("title", title);
-        if (icon) { const ic = b.createDiv("canvas-menu-icon"); try { window.__bsApi.setIcon(ic, "lucide-" + icon); } catch (e) { ic.setText(icon); } }
-        b.addEventListener("click", (evt) => { evt.stopPropagation(); fn(); });
+        b.addEventListener("click", (evt) => { evt.stopPropagation(); fn(evt, b); });
         return b;
       };
-      btn("canvas-menu-color", "palette", ti.menuColor ? ti.menuColor() : "Color", () => this.openSubmenu("color"));
-      btn("canvas-menu-align", "align-left", ti.menuAlign ? ti.menuAlign() : "Align", () => this.openSubmenu("align"));
-      btn("canvas-menu-arrange", "layout-grid", ti.menuArrange ? ti.menuArrange() : "Arrange", () => this.openSubmenu("arrange"));
-      btn("canvas-menu-distribute", "distribute-horizontal", ti.menuDistribute ? ti.menuDistribute() : "Distribute", () => this.openSubmenu("distribute"));
-      btn("canvas-menu-justify", "align-horizontal-distribute-center", ti.menuJustify ? ti.menuJustify() : "Justify", () => this.openSubmenu("justify"));
-      btn("canvas-menu-direction", "arrow-right", ti.menuEdgeDirection ? ti.menuEdgeDirection() : "Edge direction", () => this.openSubmenu("direction"));
-      btn("canvas-menu-background", "image", ti.menuBackground ? ti.menuBackground() : "Background", () => this.openSubmenu("background"));
-      // position near the selection box, inside canvas coordinates
+      btn("trash-2", ti.actionRemove ? ti.actionRemove() : "Remove", () => canvas_.deleteSelection());
+      btn("palette", ti.menuColor ? ti.menuColor() : "Color", (evt) => this.openColorSubmenu(evt));
+      btn("align-start-vertical", ti.menuAlign ? ti.menuAlign() : "Align", (evt) => this.openPopupMenu(evt, "align"));
+      btn("layout-grid", ti.menuArrange ? ti.menuArrange() : "Arrange", (evt) => this.openPopupMenu(evt, "arrange"));
+      btn("distribute-horizontal", ti.menuDistribute ? ti.menuDistribute() : "Distribute", (evt) => this.openPopupMenu(evt, "distribute"));
+      btn("align-horizontal-distribute-center", ti.menuJustify ? ti.menuJustify() : "Justify", (evt) => this.openPopupMenu(evt, "justify"));
+      btn("arrow-right", ti.menuEdgeDirection ? ti.menuEdgeDirection() : "Edge direction", (evt) => this.openPopupMenu(evt, "direction"));
+      btn("image", ti.menuBackground ? ti.menuBackground() : "Background", (evt) => this.openPopupMenu(evt, "background"));
+      // position near the selection box (canvas coordinates, container is a 0-size anchor)
       const b = this.selection.bbox;
       if (b) {
-        this.menuEl.style.left = ((b.minX + b.maxX) / 2) + "px";
-        this.menuEl.style.top = (b.maxY + 8) + "px";
-        this.menuEl.style.transform = "translateX(-50%)";
+        const cx = (b.minX + b.maxX) / 2;
+        const cy = b.maxY + 8;
+        this.containerEl.style.transform = "translate(" + cx + "px, " + cy + "px)";
+        this.containerEl.style.left = "0px";
+        this.containerEl.style.top = "0px";
       }
     }
 
-    openSubmenu(kind) {
+    /** Inline `.canvas-submenu` colour picker (orig colour submenu contract). */
+    openColorSubmenu(evt) {
       this.closeSubmenu();
-      const sub = createDiv("canvas-menu-submenu");
+      const canvas_ = this.canvas;
+      const sub = this.menuEl.createDiv("canvas-submenu");
+      this.submenuEl = sub;
+      const selColor = () => {
+        const last = [...canvas_.selection].filter((i) => i && i.color !== undefined).pop();
+        return last ? last.color : "";
+      };
+      const current = selColor();
+      const apply = (color, rerender = true) => {
+        for (const item of canvas_.selection) if (item && item.setColor) item.setColor(color, rerender);
+        if (rerender) canvas_.requestSave();
+      };
+      let hasActive = false;
+      const swatch = (color, cls) => {
+        const el = sub.createDiv("canvas-color-picker-item" + (cls ? " " + cls : ""));
+        if (current === color || (color === "" && !current)) { el.addClass("is-active"); hasActive = true; }
+        el.addEventListener("click", () => { apply(color); this.closeSubmenu(); });
+        return el;
+      };
+      swatch("");
+      for (let n = 1; n <= 6; n++) {
+        const el = swatch(String(n), "mod-canvas-color-" + n);
+        void el;
+      }
+      const custom = sub.createDiv("canvas-color-picker-item canvas-color-picker-custom");
+      const input = custom.createEl("input", { type: "color" });
+      custom.style.setProperty("--canvas-color", "0,0,0");
+      const hex = typeof current === "string" && current.startsWith("#") ? current : "";
+      if (hex) {
+        input.value = hex.length === 4 ? "#" + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3] : hex;
+        const rgb = ng20HexToRgbTriple(input.value);
+        if (rgb) custom.style.setProperty("--canvas-color", rgb);
+        custom.addClass("is-active");
+        hasActive = true;
+      } else if (!hasActive) {
+        custom.addClass("is-active");
+      }
+      input.addEventListener("change", () => apply(input.value));
+      input.addEventListener("input", () => apply(input.value, false));
+      void evt;
+    }
+
+    /** Dropdown entries rendered through the app Menu popup (orig Ug menus). */
+    openPopupMenu(evt, kind) {
       const canvas_ = this.canvas;
       const ti = ng20CanvasStrings();
-      const add = (label, fn) => {
-        const row = sub.createDiv("canvas-menu-submenu-item");
-        row.setText(label);
-        row.addEventListener("click", (evt) => { evt.stopPropagation(); this.closeSubmenu(); fn(); });
+      const menu = new host.Menu();
+      const add = (section, title, fn) => {
+        menu.addItem((item) => item.setSection(section).setTitle(title).onClick(() => { fn(); canvas_.requestSave(); }));
       };
-      if (kind === "color") {
-        for (const c of ["", "1", "2", "3", "4", "5", "6", "#e03131", "#2f9e44", "#1971c2", "#f08c00", "#ae3ec9"]) {
-          add(c === "" ? (ti.colorNone || "None") : c, () => {
-            for (const item of canvas_.selection) if (item && item.setColor) item.setColor(c);
-            canvas_.requestSave();
-          });
-        }
-      } else if (kind === "align") {
-        const ops = [
-          ["left", ti.alignLeft], ["center-h", ti.alignCenter], ["right", ti.alignRight],
-          ["top", ti.alignTop], ["center-v", ti.alignMiddle], ["bottom", ti.alignBottom],
-        ];
-        for (const [k, labelFn] of ops) add(labelFn ? labelFn() : k, () => this.align(k));
+      if (kind === "align") {
+        const ops = [["left", ti.alignLeft], ["center", ti.alignCenter], ["right", ti.alignRight],
+          ["top", ti.alignTop], ["middle", ti.alignMiddle], ["bottom", ti.alignBottom]];
+        for (const [k, labelFn] of ops) add("action", labelFn ? labelFn() : k, () => this.align(k === "middle" ? "center-v" : k === "center" ? "center-h" : k));
       } else if (kind === "arrange") {
         const ops = [["grid", ti.arrangeGrid], ["row", ti.arrangeRow], ["column", ti.arrangeColumn]];
-        for (const [k, labelFn] of ops) add(labelFn ? labelFn() : k, () => this.distribute(k));
+        for (const [k, labelFn] of ops) add("action", labelFn ? labelFn() : k, () => this.distribute(k));
       } else if (kind === "distribute") {
         const ops = [["row", ti.distributeRow || "Row"], ["column", ti.distributeColumn || "Column"]];
-        for (const [k, labelFn] of ops) add(labelFn, () => this.distribute(k));
+        for (const [k, labelFn] of ops) add("action", labelFn, () => this.distribute(k));
       } else if (kind === "justify") {
         const ops = [["left", ti.justifyLeft], ["center", ti.justifyCenter], ["right", ti.justifyRight], ["space-between", ti.justifySpace]];
-        for (const [k, labelFn] of ops) add(labelFn ? labelFn() : k, () => this.justify(k));
+        for (const [k, labelFn] of ops) add("action", labelFn ? labelFn() : k, () => this.justify(k));
       } else if (kind === "direction") {
         const ops = [["right", ti.directionRight], ["left", ti.directionLeft], ["down", ti.directionDown], ["up", ti.directionUp]];
-        for (const [k, labelFn] of ops) add(labelFn ? labelFn() : k, () => this.setEdgeDirection(k));
+        for (const [k, labelFn] of ops) add("action", labelFn ? labelFn() : k, () => this.setEdgeDirection(k));
       } else if (kind === "background") {
         for (const bg of NG20_GROUP_BACKGROUNDS) {
-          add(bg === "" ? (ti.bgNone || "None") : bg, () => this.setGroupBackground(bg));
+          add("action", bg === "" ? (ti.bgNone || "None") : bg, () => this.setGroupBackground(bg));
         }
       }
-      this.menuEl.appendChild(sub);
-      this.submenuEl = sub;
+      const doc = (evt && evt.doc) || (this.containerEl && this.containerEl.ownerDocument) || document;
+      const rect = evt && evt.target && evt.target.getBoundingClientRect ? evt.target.getBoundingClientRect() : null;
+      menu.showAtPosition(rect ? { x: rect.left, y: rect.bottom + 4 } : { x: 0, y: 0 }, doc);
     }
 
     closeSubmenu() {

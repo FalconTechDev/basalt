@@ -10,8 +10,14 @@ import { env } from "./env.js";
 import { canvas, ng20CanvasStrings } from "./n-g20-shared.js";
 import { box, boxUnion } from "./misc.js";
 
-const NG20_HANDLES = ["top", "topright", "right", "bottomright", "bottom", "bottomleft", "left", "topleft"];
 const NG20_GROUP_BACKGROUNDS = ["", "solid", "translucent", "pattern"];
+
+function ng20HexToRgbTriple(hex) {
+  hex = (hex || "").replace("#", "");
+  if (hex.length === 3) hex = hex.split("").map((c) => c + c).join("");
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return null;
+  return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(",");
+}
 
 function ng20SelectionBBox(items) {
   const boxes = [];
@@ -59,6 +65,7 @@ export function defineNg20CanvasMenu(host) {
       };
       this.selectionEl = null;
       this.handleEls = {};
+      this.containerEl = null;
       this.menuEl = null;
       this.submenuEl = null;
       this.renderedFor = null;
@@ -85,13 +92,20 @@ export function defineNg20CanvasMenu(host) {
         this.selectionEl = createDiv("canvas-selection");
         this.selectionEl.hide();
         canvas_.canvasEl.appendChild(this.selectionEl);
-        const handles = this.selectionEl.createDiv("canvas-selection-handles");
-        for (const side of NG20_HANDLES) {
-          const h = handles.createDiv(`canvas-selection-handle mod-${side}`);
-          h.setAttr("data-resize", side);
-          h.addEventListener("pointerdown", (evt) => this.onHandlePointerdown(evt, side));
-          this.handleEls[side] = h;
-        }
+        const addSide = (name) => {
+          const h = this.selectionEl.createDiv({ cls: "canvas-node-resizer", attr: { "data-resize": name } });
+          h.addEventListener("pointerdown", (evt) => {
+            if (evt.target === h && evt.pointerType === "mouse") this.onHandlePointerdown(evt, name);
+          });
+          this.handleEls[name] = h;
+        };
+        for (const side of ["top", "right", "bottom", "left"]) addSide(side);
+        const addCorner = (name) => {
+          const h = this.selectionEl.createDiv({ cls: "canvas-node-resizer", attr: { "data-resize": name } });
+          h.addEventListener("pointerdown", (evt) => this.onHandlePointerdown(evt, name));
+          this.handleEls[name] = h;
+        };
+        for (const corner of ["topright", "bottomright", "bottomleft", "topleft"]) addCorner(corner);
       }
       this.selectionEl.toggle(show);
       if (!show) return;
@@ -140,84 +154,123 @@ export function defineNg20CanvasMenu(host) {
     renderMenuPopup(sel) {
       const canvas_ = this.canvas;
       const show = sel.size > 0;
-      if (!this.menuEl) {
-        this.menuEl = createDiv("canvas-menu-container");
-        this.menuEl.hide();
-        canvas_.canvasEl.appendChild(this.menuEl);
+      if (!this.containerEl) {
+        this.containerEl = createDiv("canvas-menu-container");
+        this.containerEl.hide();
+        canvas_.wrapperEl.appendChild(this.containerEl);
+        this.menuEl = this.containerEl.createDiv("canvas-menu");
       }
-      this.menuEl.toggle(show);
-      if (!show) { this.menuEl.empty(); return; }
+      this.containerEl.toggle(show);
+      if (!show) { this.menuEl.empty(); this.closeSubmenu(); return; }
       // rebuild only when the selection signature changed (renderedFor already gates)
       this.menuEl.empty();
+      this.submenuEl = null;
       const ti = ng20CanvasStrings();
       const nodes = [...sel].filter((i) => i && i.moveAndResize);
-      const groups = nodes.filter((n) => n.type === "group");
-      const btn = (cls, icon, title, fn) => {
-        const b = this.menuEl.createDiv(`canvas-menu-button ${cls}`);
+      const btn = (icon, title, fn) => {
+        const b = this.menuEl.createEl("button", { cls: "clickable-icon" });
+        try { host.setIcon(b, "lucide-" + icon); } catch (e) { /* icon optional */ }
         b.setAttr("aria-label", title);
         b.setAttr("title", title);
-        if (icon) { const ic = b.createDiv("canvas-menu-icon"); try { window.__bsApi.setIcon(ic, "lucide-" + icon); } catch (e) { ic.setText(icon); } }
-        b.addEventListener("click", (evt) => { evt.stopPropagation(); fn(); });
+        b.addEventListener("click", (evt) => { evt.stopPropagation(); fn(evt, b); });
         return b;
       };
-      btn("canvas-menu-color", "palette", ti.menuColor ? ti.menuColor() : "Color", () => this.openSubmenu("color"));
-      btn("canvas-menu-align", "align-left", ti.menuAlign ? ti.menuAlign() : "Align", () => this.openSubmenu("align"));
-      btn("canvas-menu-arrange", "layout-grid", ti.menuArrange ? ti.menuArrange() : "Arrange", () => this.openSubmenu("arrange"));
-      btn("canvas-menu-distribute", "distribute-horizontal", ti.menuDistribute ? ti.menuDistribute() : "Distribute", () => this.openSubmenu("distribute"));
-      btn("canvas-menu-justify", "align-horizontal-distribute-center", ti.menuJustify ? ti.menuJustify() : "Justify", () => this.openSubmenu("justify"));
-      btn("canvas-menu-direction", "arrow-right", ti.menuEdgeDirection ? ti.menuEdgeDirection() : "Edge direction", () => this.openSubmenu("direction"));
-      btn("canvas-menu-background", "image", ti.menuBackground ? ti.menuBackground() : "Background", () => this.openSubmenu("background"));
-      // position near the selection box, inside canvas coordinates
+      btn("trash-2", ti.actionRemove ? ti.actionRemove() : "Remove", () => canvas_.deleteSelection());
+      btn("palette", ti.menuColor ? ti.menuColor() : "Color", (evt) => this.openColorSubmenu(evt));
+      btn("align-start-vertical", ti.menuAlign ? ti.menuAlign() : "Align", (evt) => this.openPopupMenu(evt, "align"));
+      btn("layout-grid", ti.menuArrange ? ti.menuArrange() : "Arrange", (evt) => this.openPopupMenu(evt, "arrange"));
+      btn("distribute-horizontal", ti.menuDistribute ? ti.menuDistribute() : "Distribute", (evt) => this.openPopupMenu(evt, "distribute"));
+      btn("align-horizontal-distribute-center", ti.menuJustify ? ti.menuJustify() : "Justify", (evt) => this.openPopupMenu(evt, "justify"));
+      btn("arrow-right", ti.menuEdgeDirection ? ti.menuEdgeDirection() : "Edge direction", (evt) => this.openPopupMenu(evt, "direction"));
+      btn("image", ti.menuBackground ? ti.menuBackground() : "Background", (evt) => this.openPopupMenu(evt, "background"));
+      // position near the selection box (canvas coordinates, container is a 0-size anchor)
       const b = this.selection.bbox;
       if (b) {
-        this.menuEl.style.left = ((b.minX + b.maxX) / 2) + "px";
-        this.menuEl.style.top = (b.maxY + 8) + "px";
-        this.menuEl.style.transform = "translateX(-50%)";
+        const cx = (b.minX + b.maxX) / 2;
+        const cy = b.maxY + 8;
+        this.containerEl.style.transform = "translate(" + cx + "px, " + cy + "px)";
+        this.containerEl.style.left = "0px";
+        this.containerEl.style.top = "0px";
       }
     }
 
-    openSubmenu(kind) {
+    /** Inline `.canvas-submenu` colour picker (orig colour submenu contract). */
+    openColorSubmenu(evt) {
       this.closeSubmenu();
-      const sub = createDiv("canvas-menu-submenu");
+      const canvas_ = this.canvas;
+      const sub = this.menuEl.createDiv("canvas-submenu");
+      this.submenuEl = sub;
+      const selColor = () => {
+        const last = [...canvas_.selection].filter((i) => i && i.color !== undefined).pop();
+        return last ? last.color : "";
+      };
+      const current = selColor();
+      const apply = (color, rerender = true) => {
+        for (const item of canvas_.selection) if (item && item.setColor) item.setColor(color, rerender);
+        if (rerender) canvas_.requestSave();
+      };
+      let hasActive = false;
+      const swatch = (color, cls) => {
+        const el = sub.createDiv("canvas-color-picker-item" + (cls ? " " + cls : ""));
+        if (current === color || (color === "" && !current)) { el.addClass("is-active"); hasActive = true; }
+        el.addEventListener("click", () => { apply(color); this.closeSubmenu(); });
+        return el;
+      };
+      swatch("");
+      for (let n = 1; n <= 6; n++) {
+        const el = swatch(String(n), "mod-canvas-color-" + n);
+        void el;
+      }
+      const custom = sub.createDiv("canvas-color-picker-item canvas-color-picker-custom");
+      const input = custom.createEl("input", { type: "color" });
+      custom.style.setProperty("--canvas-color", "0,0,0");
+      const hex = typeof current === "string" && current.startsWith("#") ? current : "";
+      if (hex) {
+        input.value = hex.length === 4 ? "#" + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3] : hex;
+        const rgb = ng20HexToRgbTriple(input.value);
+        if (rgb) custom.style.setProperty("--canvas-color", rgb);
+        custom.addClass("is-active");
+        hasActive = true;
+      } else if (!hasActive) {
+        custom.addClass("is-active");
+      }
+      input.addEventListener("change", () => apply(input.value));
+      input.addEventListener("input", () => apply(input.value, false));
+      void evt;
+    }
+
+    /** Dropdown entries rendered through the app Menu popup (orig Ug menus). */
+    openPopupMenu(evt, kind) {
       const canvas_ = this.canvas;
       const ti = ng20CanvasStrings();
-      const add = (label, fn) => {
-        const row = sub.createDiv("canvas-menu-submenu-item");
-        row.setText(label);
-        row.addEventListener("click", (evt) => { evt.stopPropagation(); this.closeSubmenu(); fn(); });
+      const menu = new host.Menu();
+      const add = (section, title, fn) => {
+        menu.addItem((item) => item.setSection(section).setTitle(title).onClick(() => { fn(); canvas_.requestSave(); }));
       };
-      if (kind === "color") {
-        for (const c of ["", "1", "2", "3", "4", "5", "6", "#e03131", "#2f9e44", "#1971c2", "#f08c00", "#ae3ec9"]) {
-          add(c === "" ? (ti.colorNone || "None") : c, () => {
-            for (const item of canvas_.selection) if (item && item.setColor) item.setColor(c);
-            canvas_.requestSave();
-          });
-        }
-      } else if (kind === "align") {
-        const ops = [
-          ["left", ti.alignLeft], ["center-h", ti.alignCenter], ["right", ti.alignRight],
-          ["top", ti.alignTop], ["center-v", ti.alignMiddle], ["bottom", ti.alignBottom],
-        ];
-        for (const [k, labelFn] of ops) add(labelFn ? labelFn() : k, () => this.align(k));
+      if (kind === "align") {
+        const ops = [["left", ti.alignLeft], ["center", ti.alignCenter], ["right", ti.alignRight],
+          ["top", ti.alignTop], ["middle", ti.alignMiddle], ["bottom", ti.alignBottom]];
+        for (const [k, labelFn] of ops) add("action", labelFn ? labelFn() : k, () => this.align(k === "middle" ? "center-v" : k === "center" ? "center-h" : k));
       } else if (kind === "arrange") {
         const ops = [["grid", ti.arrangeGrid], ["row", ti.arrangeRow], ["column", ti.arrangeColumn]];
-        for (const [k, labelFn] of ops) add(labelFn ? labelFn() : k, () => this.distribute(k));
+        for (const [k, labelFn] of ops) add("action", labelFn ? labelFn() : k, () => this.distribute(k));
       } else if (kind === "distribute") {
         const ops = [["row", ti.distributeRow || "Row"], ["column", ti.distributeColumn || "Column"]];
-        for (const [k, labelFn] of ops) add(labelFn, () => this.distribute(k));
+        for (const [k, labelFn] of ops) add("action", labelFn, () => this.distribute(k));
       } else if (kind === "justify") {
         const ops = [["left", ti.justifyLeft], ["center", ti.justifyCenter], ["right", ti.justifyRight], ["space-between", ti.justifySpace]];
-        for (const [k, labelFn] of ops) add(labelFn ? labelFn() : k, () => this.justify(k));
+        for (const [k, labelFn] of ops) add("action", labelFn ? labelFn() : k, () => this.justify(k));
       } else if (kind === "direction") {
         const ops = [["right", ti.directionRight], ["left", ti.directionLeft], ["down", ti.directionDown], ["up", ti.directionUp]];
-        for (const [k, labelFn] of ops) add(labelFn ? labelFn() : k, () => this.setEdgeDirection(k));
+        for (const [k, labelFn] of ops) add("action", labelFn ? labelFn() : k, () => this.setEdgeDirection(k));
       } else if (kind === "background") {
         for (const bg of NG20_GROUP_BACKGROUNDS) {
-          add(bg === "" ? (ti.bgNone || "None") : bg, () => this.setGroupBackground(bg));
+          add("action", bg === "" ? (ti.bgNone || "None") : bg, () => this.setGroupBackground(bg));
         }
       }
-      this.menuEl.appendChild(sub);
-      this.submenuEl = sub;
+      const doc = (evt && evt.doc) || (this.containerEl && this.containerEl.ownerDocument) || document;
+      const rect = evt && evt.target && evt.target.getBoundingClientRect ? evt.target.getBoundingClientRect() : null;
+      menu.showAtPosition(rect ? { x: rect.left, y: rect.bottom + 4 } : { x: 0, y: 0 }, doc);
     }
 
     closeSubmenu() {
