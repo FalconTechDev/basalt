@@ -1923,7 +1923,7 @@
     },
     {
       "orig": "VJ",
-      "use": "s28TitleToFileName",
+      "use": "ng35TitleToFileName",
       "originalBytes": 119
     },
     {
@@ -2373,7 +2373,7 @@
     },
     {
       "orig": "RV",
-      "use": "s22HasSearch",
+      "use": "ng35HasSearch",
       "originalBytes": 65
     },
     {
@@ -4762,17 +4762,17 @@
     },
     {
       "orig": "HJ",
-      "use": "s28WebViewerAddressBar",
+      "use": "ng35WebViewerAddressBar",
       "originalBytes": 694
     },
     {
       "orig": "zJ",
-      "use": "s28WebViewerAddressSuggest",
+      "use": "ng35WebViewerAddressSuggest",
       "originalBytes": 2651
     },
     {
       "orig": "qJ",
-      "use": "s28WebViewerFindBar",
+      "use": "ng35WebViewerFindBar",
       "originalBytes": 1253
     },
     {
@@ -5173,12 +5173,12 @@
     },
     {
       "orig": "m0",
-      "use": "defineDebugInfoModal",
+      "use": "ng35DefineDebugInfoModal",
       "originalBytes": 2590
     },
     {
       "orig": "w0",
-      "use": "defineHotkeyFilterChip",
+      "use": "ng35DefineHotkeyFilterChip",
       "originalBytes": 741
     },
     {
@@ -5397,7 +5397,7 @@
     },
     {
       "orig": "h$",
-      "use": "s26BasesView",
+      "use": "ng35BasesView",
       "originalBytes": 4567
     },
     {
@@ -5407,17 +5407,17 @@
     },
     {
       "orig": "d$",
-      "use": "s26MetadataValueRenderer",
+      "use": "ng35MetadataValueRenderer",
       "originalBytes": 926
     },
     {
       "orig": "f$",
-      "use": "s26FileValueRenderer",
+      "use": "ng35FileValueRenderer",
       "originalBytes": 364
     },
     {
       "orig": "m$",
-      "use": "s26FormulaValueRenderer",
+      "use": "ng35FormulaValueRenderer",
       "originalBytes": 1487
     },
     {
@@ -8932,25 +8932,25 @@
     },
     {
       "orig": "jV",
-      "expr": "__basaltOwn.s22UnicodeLetterSource",
+      "expr": "__basaltOwn.ng35UnicodeLetterSource",
       "sha1": "420562ed7bbb10ad5268cf06782a949c28cb6b17",
       "originalBytes": 4108
     },
     {
       "orig": "UV",
-      "expr": "__basaltOwn.s22UnicodeWordSource",
+      "expr": "__basaltOwn.ng35UnicodeWordSource",
       "sha1": "90f88a8fa932f9ab62f8c6315080a16b53967894",
       "originalBytes": 151
     },
     {
       "orig": "WV",
-      "expr": "__basaltOwn.s22WordCharSource",
+      "expr": "__basaltOwn.ng35WordCharSource",
       "sha1": "6236fca0334d197ecbf763d7c2180e2617d82365",
       "originalBytes": 490
     },
     {
       "orig": "_V",
-      "expr": "__basaltOwn.s22WordCharRegex",
+      "expr": "__basaltOwn.ng35WordCharRegex",
       "sha1": "e0035cc61ddfd9a24f9f2952d631f4d2c17f598d",
       "originalBytes": 30
     },
@@ -9022,7 +9022,7 @@
     },
     {
       "orig": "p$",
-      "expr": "__basaltOwn.s26ValueRendererBase",
+      "expr": "__basaltOwn.ng35ValueRendererBase",
       "sha1": "2ead8fea772e5697daeb646d5674d7f8ba7b740a",
       "originalBytes": 50
     },
