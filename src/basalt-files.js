@@ -129,7 +129,7 @@
           const m = new api.Menu();
           m.addItem((i) => i.setTitle("Новая заметка").setIcon("lucide-square-pen").onClick(() => this.create("md")));
           m.addItem((i) => i.setTitle("Новая папка").setIcon("lucide-folder-open").onClick(() => this.createFolder()));
-          m.addItem((i) => i.setTitle("Новый холст").setIcon("lucide-layout-dashboard").onClick(() => this.create("canvas")));
+          m.addItem((i) => i.setTitle("Новая доска").setIcon("lucide-layout-dashboard").onClick(() => this.create("board")));
           m.addItem((i) => i.setTitle("Создать базу данных").setIcon("lucide-layout-list").onClick(() => this.create("base")));
           m.showAtMouseEvent(e);
         });
@@ -291,7 +291,7 @@
         const folder = this.targetFolder() || app.vault.getRoot();
         const base = ext === "md" ? "Без названия" : "Без названия", join = (n) => (folder.path === "/" ? "" : folder.path + "/") + n;
         let n = base, i = 1; while (app.vault.getAbstractFileByPath(join(`${n}.${ext}`))) n = `${base} ${++i}`;
-        const f = await app.vault.create(join(`${n}.${ext}`), ext === "canvas" ? '{"nodes":[],"edges":[]}' : ext === "base" ? "views:\n  - type: table\n    name: Table\n" : ""); this.pushOp({ t: "create", path: f.path, folder: false });
+        const f = await app.vault.create(join(`${n}.${ext}`), ext === "canvas" ? '{"nodes":[],"edges":[]}' : ext === "board" ? "{}" : ext === "base" ? "views:\n  - type: table\n    name: Table\n" : ""); this.pushOp({ t: "create", path: f.path, folder: false });
         if (folder.path !== "/") { this.open.add(folder.path); this.save(); }
         this.focus = f.path; this.sel = new Set([f.path]); this.render(); this.openFile(f, false); setTimeout(() => this.rename(f), 150);
       }
