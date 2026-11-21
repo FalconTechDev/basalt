@@ -1,14 +1,14 @@
 // ng10 — clean-room adapters for the s12-livepreview manifest surface.
 //
 // The widget classes, decoration plugins and extension factories themselves are
-// implemented by the already-clean-room s30/s31 own modules; this file only
+// implemented by the clean-room s30/g17 own modules; this file only
 // exposes them under the manifest `use` names and provides the shared
 // decoration singletons (identity matters: the deco plugins compare them).
 // Class vars are not env-bound, so each factory stashes the class it returns.
 
 import { env } from "./env.js";
 import { defineCmBlockquoteWidget, defineCmHrWidget, defineCmTaskWidget, defineCmStyleWidget, defineCmCodeFlairWidget, defineCmImageEmbedWidget, defineCmFileSuggestModal, s30ImageContextMenu } from "./s30-cm6.js";
-import { s31EmbedBlockWidget, s31InternalEmbedWidget, s31CodeBlockWidget, s31MathWidget, s31HtmlEmbedWidget, s31EmptyWidget, s31CalloutWidget, s31CalloutTypeSuggest, s31FoldDecorations, s31SelectionDecorations, s31TaskDecorations, s31SelectionField, s31TaskField, s31EditorExtensions } from "./s31-widgets.js";
+import { ng17EmbedBlockWidget, ng17InternalEmbedWidget, ng17CodeBlockWidget, ng17MathWidget, ng17HtmlEmbedWidget, ng17EmptyWidget, ng17CalloutWidget, ng17CalloutTypeSuggest, ng17FoldDecorations, ng17SelectionDecorations, ng17TaskDecorations, ng17SelectionField, ng17TaskField, ng17EditorExtensions } from "./n-g17-widgets.js";
 
 // ---- simple CM widget types (parent: the inherited widget-type base) ------
 let ng10ClsQuote = null, ng10ClsHr = null, ng10ClsEmpty = null;
@@ -17,23 +17,23 @@ export function defineS12HrWidget(host) { return (ng10ClsHr = defineCmHrWidget(h
 export function defineS12TaskCheckboxWidget(host) { return defineCmTaskWidget(host); }
 export function defineS12StyleSpanWidget(host) { return defineCmStyleWidget(host); }
 export function defineS12CodeFlairWidget(host) { return defineCmCodeFlairWidget(host); }
-export function defineS12EmptyWidgetType(host) { return (ng10ClsEmpty = s31EmptyWidget(host)); }
+export function defineS12EmptyWidgetType(host) { return (ng10ClsEmpty = ng17EmptyWidget(host)); }
 
 // ---- embeddable block widgets ----------------------------------------------
-export function defineS12MathWidget(host) { return s31MathWidget(host); }
-export function defineS12HtmlWidget(host) { return s31HtmlEmbedWidget(host); }
+export function defineS12MathWidget(host) { return ng17MathWidget(host); }
+export function defineS12HtmlWidget(host) { return ng17HtmlEmbedWidget(host); }
 export function defineS12ImageWidget(host) { return defineCmImageEmbedWidget(host); }
-export function defineS12InternalEmbedWidget(host) { return s31InternalEmbedWidget(host); }
-export function defineS12CodeblockWidget(host) { return s31CodeBlockWidget(host); }
-export function defineS12CalloutBaseWidget(host) { return s31EmbedBlockWidget(host); }
-export function defineS12CalloutWidget(host) { return s31CalloutWidget(host); }
-export function defineS12CalloutOtherSuggest(host) { return s31CalloutTypeSuggest(host); }
+export function defineS12InternalEmbedWidget(host) { return ng17InternalEmbedWidget(host); }
+export function defineS12CodeblockWidget(host) { return ng17CodeBlockWidget(host); }
+export function defineS12CalloutBaseWidget(host) { return ng17EmbedBlockWidget(host); }
+export function defineS12CalloutWidget(host) { return ng17CalloutWidget(host); }
+export function defineS12CalloutOtherSuggest(host) { return ng17CalloutTypeSuggest(host); }
 export function defineS12NoteComposerSuggest(host) { return defineCmFileSuggestModal(host); }
 
 // ---- decoration view plugins ----------------------------------------------
-export function defineS12BaseDecoPlugin(host) { return s31FoldDecorations(host); }
-export function defineS12SearchDecoPlugin(host) { return s31SelectionDecorations(host); }
-export function defineS12TaskLineDecoPlugin(host) { return s31TaskDecorations(host); }
+export function defineS12BaseDecoPlugin(host) { return ng17FoldDecorations(host); }
+export function defineS12SearchDecoPlugin(host) { return ng17SelectionDecorations(host); }
+export function defineS12TaskLineDecoPlugin(host) { return ng17TaskDecorations(host); }
 
 // ---- shared decoration singletons (created once; identity is observable) ---
 
@@ -64,13 +64,13 @@ export function s12cmEmptyWidgetDeco() {
 }
 
 /** L6: the search/selection highlight view-plugin extension. */
-export function s12SearchHighlightPlugin() { return s31SelectionField(); }
+export function s12SearchHighlightPlugin() { return ng17SelectionField(); }
 
 /** I6: the task-line data-task decoration extension. */
-export function s12TaskLinePlugin() { return s31TaskField(); }
+export function s12TaskLinePlugin() { return ng17TaskField(); }
 
 /** A6: mobile drag-selection guard extensions (view plugin + dom handlers). */
-export function s12MobileDragExtensions(host) { return s31EditorExtensions(); }
+export function s12MobileDragExtensions(host) { return ng17EditorExtensions(); }
 
 /** d6 support: shared image context menu + resize corner (used by s12-plugins). */
 export function s12imageContextMenu(widget, view, containerEl, imgEl, wrapperEl) {

@@ -1356,12 +1356,12 @@
     },
     {
       "orig": "Vee",
-      "use": "s16FontAvailable",
+      "use": "ng32FontAvailable",
       "originalBytes": 228
     },
     {
       "orig": "bte",
-      "use": "s16CheckApiVersion",
+      "use": "ng32CheckApiVersion",
       "host": true,
       "originalBytes": 33
     },
@@ -1923,7 +1923,7 @@
     },
     {
       "orig": "VJ",
-      "use": "s28TitleToFileName",
+      "use": "ng35TitleToFileName",
       "originalBytes": 119
     },
     {
@@ -2075,7 +2075,7 @@
     },
     {
       "orig": "kte",
-      "use": "s36WindowChrome",
+      "use": "ng38WindowChrome",
       "originalBytes": 55245
     },
     {
@@ -2355,8 +2355,9 @@
     },
     {
       "orig": "oO",
-      "use": "s21RenderLinkValue",
-      "originalBytes": 1421
+      "use": "ng16RenderLinkValue",
+      "originalBytes": 1421,
+      "host": true
     },
     {
       "orig": "gZ",
@@ -2372,12 +2373,12 @@
     },
     {
       "orig": "RV",
-      "use": "s22HasSearch",
+      "use": "ng35HasSearch",
       "originalBytes": 65
     },
     {
       "orig": "EV",
-      "use": "s40FoldedRangeAt",
+      "use": "ng38FoldedRangeAt",
       "originalBytes": 105
     },
     {
@@ -3310,15 +3311,15 @@
     },
     {
       "orig": "tO",
-      "use": "defineMetadataEditor"
+      "use": "ng16DefineMetadataEditor"
     },
     {
       "orig": "nO",
-      "use": "definePropertyRow"
+      "use": "ng16DefinePropertyRow"
     },
     {
       "orig": "AO",
-      "use": "definePropertyKeySuggest"
+      "use": "ng16DefinePropertyKeySuggest"
     },
     {
       "orig": "cP",
@@ -3672,23 +3673,23 @@
     },
     {
       "orig": "Y9",
-      "use": "defineNavItemBase"
+      "use": "ng32DefineNavItemBase"
     },
     {
       "orig": "Q9",
-      "use": "defineNavFolder"
+      "use": "ng32DefineNavFolder"
     },
     {
       "orig": "X9",
-      "use": "defineNavMoreButton"
+      "use": "ng32DefineNavMoreButton"
     },
     {
       "orig": "$9",
-      "use": "defineSyncNavFile"
+      "use": "ng32DefineSyncNavFile"
     },
     {
       "orig": "Z9",
-      "use": "defineBackoff"
+      "use": "ng32DefineBackoff"
     },
     {
       "orig": "dee",
@@ -3716,19 +3717,19 @@
     },
     {
       "orig": "dte",
-      "use": "defineQuickActionSuggest"
+      "use": "ng32DefineQuickActionSuggest"
     },
     {
       "orig": "fte",
-      "use": "defineMobileToolbarTab"
+      "use": "ng32DefineMobileToolbarTab"
     },
     {
       "orig": "qee",
-      "use": "defineFontSuggest"
+      "use": "ng32DefineFontSuggest"
     },
     {
       "orig": "zee",
-      "use": "defineFontListModal"
+      "use": "ng32DefineFontListModal"
     },
     {
       "orig": "ete",
@@ -3736,7 +3737,7 @@
     },
     {
       "orig": "lte",
-      "use": "defineFeedbackBanner"
+      "use": "ng32DefineFeedbackBanner"
     },
     {
       "orig": "vte",
@@ -4581,22 +4582,22 @@
     },
     {
       "orig": "k9",
-      "use": "defineSlashCommandPlugin",
+      "use": "ng32DefineSlashCommandPlugin",
       "originalBytes": 484
     },
     {
       "orig": "E9",
-      "use": "defineSlashCommandSuggest",
+      "use": "ng32DefineSlashCommandSuggest",
       "originalBytes": 1563
     },
     {
       "orig": "S9",
-      "use": "defineSlidesPlugin",
+      "use": "ng32DefineSlidesPlugin",
       "originalBytes": 782
     },
     {
       "orig": "x9",
-      "use": "defineSlidesView",
+      "use": "ng32DefineSlidesView",
       "originalBytes": 2468
     },
     {
@@ -4761,113 +4762,113 @@
     },
     {
       "orig": "HJ",
-      "use": "s28WebViewerAddressBar",
+      "use": "ng35WebViewerAddressBar",
       "originalBytes": 694
     },
     {
       "orig": "zJ",
-      "use": "s28WebViewerAddressSuggest",
+      "use": "ng35WebViewerAddressSuggest",
       "originalBytes": 2651
     },
     {
       "orig": "qJ",
-      "use": "s28WebViewerFindBar",
+      "use": "ng35WebViewerFindBar",
       "originalBytes": 1253
     },
     {
       "orig": "iO",
-      "use": "defineS06ValueItem"
+      "use": "ng16DefineS06ValueItem"
     },
     {
       "orig": "LO",
-      "use": "defineS06UnknownValue"
+      "use": "ng16DefineS06UnknownValue"
     },
     {
       "orig": "mO",
-      "use": "defineS06CheckboxValue"
+      "use": "ng16DefineS06CheckboxValue"
     },
     {
       "orig": "dO",
-      "use": "defineS06FileValue"
+      "use": "ng16DefineS06FileValue"
     },
     {
       "orig": "fO",
-      "use": "defineS06FolderValue"
+      "use": "ng16DefineS06FolderValue"
     },
     {
       "orig": "uO",
-      "use": "defineS06DateValue"
+      "use": "ng16DefineS06DateValue"
     },
     {
       "orig": "pO",
-      "use": "defineS06DateTimeValue"
+      "use": "ng16DefineS06DateTimeValue"
     },
     {
       "orig": "hO",
-      "use": "defineS06DailyNoteDateValue"
+      "use": "ng16DefineS06DailyNoteDateValue"
     },
     {
       "orig": "SO",
-      "use": "defineS06NumberValue"
+      "use": "ng16DefineS06NumberValue"
     },
     {
       "orig": "OO",
-      "use": "defineS06TagValueSuggest"
+      "use": "ng16DefineS06TagValueSuggest"
     },
     {
       "orig": "DI",
-      "use": "defineS06FilteredFileSuggest"
+      "use": "ng16DefineS06FilteredFileSuggest"
     },
     {
       "orig": "TI",
-      "use": "defineS06MarkdownFileSuggest"
+      "use": "ng16DefineS06MarkdownFileSuggest"
     },
     {
       "orig": "PI",
-      "use": "defineS06FolderSuggest"
+      "use": "ng16DefineS06FolderSuggest"
     },
     {
       "orig": "FO",
-      "use": "defineS06ChangeTypeModal"
+      "use": "ng16DefineS06ChangeTypeModal"
     },
     {
       "orig": "aO",
-      "use": "defineS06TextValue",
+      "use": "ng16DefineS06TextValue",
       "originalBytes": 1721
     },
     {
       "orig": "sO",
-      "use": "defineS06MultiTextValue",
+      "use": "ng16DefineS06MultiTextValue",
       "originalBytes": 1211
     },
     {
       "orig": "lO",
-      "use": "defineS06TagsValue",
+      "use": "ng16DefineS06TagsValue",
       "originalBytes": 1294
     },
     {
       "orig": "cO",
-      "use": "defineS06AliasesValue",
+      "use": "ng16DefineS06AliasesValue",
       "originalBytes": 767
     },
     {
       "orig": "gO",
-      "use": "defineS06PropertyKeyValue",
+      "use": "ng16DefineS06PropertyKeyValue",
       "originalBytes": 384
     },
     {
       "orig": "vO",
-      "use": "defineS06TypeCombobox",
+      "use": "ng16DefineS06TypeCombobox",
       "originalBytes": 303
     },
     {
       "orig": "XI",
-      "use": "defineS06MultiSelect",
+      "use": "ng16DefineS06MultiSelect",
       "originalBytes": 6415
     },
     {
       "orig": "MI",
-      "use": "defineS06Combobox",
+      "use": "ng16DefineS06Combobox",
       "originalBytes": 5512
     },
     {
@@ -5172,12 +5173,12 @@
     },
     {
       "orig": "m0",
-      "use": "defineDebugInfoModal",
+      "use": "ng35DefineDebugInfoModal",
       "originalBytes": 2590
     },
     {
       "orig": "w0",
-      "use": "defineHotkeyFilterChip",
+      "use": "ng35DefineHotkeyFilterChip",
       "originalBytes": 741
     },
     {
@@ -5303,17 +5304,17 @@
     },
     {
       "orig": "DO",
-      "use": "s21DefineValueLinkSuggest",
+      "use": "ng16DefineValueLinkSuggest",
       "originalBytes": 3809
     },
     {
       "orig": "_I",
-      "use": "s21DefineWikilinkSuggest",
+      "use": "ng16DefineWikilinkSuggest",
       "originalBytes": 2935
     },
     {
       "orig": "YI",
-      "use": "s21DefineTagTriggerSuggest",
+      "use": "ng16DefineTagTriggerSuggest",
       "originalBytes": 920
     },
     {
@@ -5396,7 +5397,7 @@
     },
     {
       "orig": "h$",
-      "use": "s26BasesView",
+      "use": "ng35BasesView",
       "originalBytes": 4567
     },
     {
@@ -5406,17 +5407,17 @@
     },
     {
       "orig": "d$",
-      "use": "s26MetadataValueRenderer",
+      "use": "ng35MetadataValueRenderer",
       "originalBytes": 926
     },
     {
       "orig": "f$",
-      "use": "s26FileValueRenderer",
+      "use": "ng35FileValueRenderer",
       "originalBytes": 364
     },
     {
       "orig": "m$",
-      "use": "s26FormulaValueRenderer",
+      "use": "ng35FormulaValueRenderer",
       "originalBytes": 1487
     },
     {
@@ -5506,72 +5507,72 @@
     },
     {
       "orig": "f7",
-      "use": "definePagePreviewPlugin",
+      "use": "ng38PagePreviewPlugin",
       "originalBytes": 2307
     },
     {
       "orig": "m7",
-      "use": "definePagePreviewSettingTab",
+      "use": "ng38PagePreviewSettingTab",
       "originalBytes": 612
     },
     {
       "orig": "k7",
-      "use": "definePropertiesPlugin",
+      "use": "ng38PropertiesPlugin",
       "originalBytes": 3383
     },
     {
       "orig": "C7",
-      "use": "s35PropertyItem",
+      "use": "ng16PropertyItem",
       "originalBytes": 4574
     },
     {
       "orig": "E7",
-      "use": "s35AllPropertiesView",
+      "use": "ng16AllPropertiesView",
       "originalBytes": 6788
     },
     {
       "orig": "M7",
-      "use": "s35FilePropertiesView",
+      "use": "ng16FilePropertiesView",
       "originalBytes": 3993
     },
     {
       "orig": "P7",
-      "use": "s35PublishNavTree",
+      "use": "ng38PublishNavTree",
       "originalBytes": 1696
     },
     {
       "orig": "T7",
-      "use": "s35PublishNavItem",
+      "use": "ng38PublishNavItem",
       "originalBytes": 1098
     },
     {
       "orig": "A7",
-      "use": "s35PublishNavFolderItem",
+      "use": "ng38PublishNavFolderItem",
       "originalBytes": 334
     },
     {
       "orig": "D7",
-      "use": "s35PublishNavFileItem",
+      "use": "ng38PublishNavFileItem",
       "originalBytes": 275
     },
     {
       "orig": "x7",
-      "use": "s35PublishNavModal",
+      "use": "ng38PublishNavModal",
       "originalBytes": 1310
     },
     {
       "orig": "L7",
-      "use": "s35StartupStat",
+      "use": "ng38StartupStat",
       "originalBytes": 520
     },
     {
       "orig": "I7",
-      "use": "s35StartupModal",
+      "use": "ng38StartupModal",
       "originalBytes": 3943
     },
     {
       "orig": "V7",
-      "use": "s35FolderSuggestBase",
+      "use": "ng38FolderSuggestBase",
       "originalBytes": 1695
     },
     {
@@ -5581,17 +5582,17 @@
     },
     {
       "orig": "z7",
-      "use": "s35PublishChangesModal",
+      "use": "ng38PublishChangesModal",
       "originalBytes": 5627
     },
     {
       "orig": "MV",
-      "use": "s40FoldIndicator",
+      "use": "ng38FoldIndicator",
       "originalBytes": 669
     },
     {
       "orig": "TV",
-      "use": "s40FoldViewPlugin",
+      "use": "ng38FoldViewPlugin",
       "originalBytes": 719
     },
     {
@@ -6669,37 +6670,37 @@
     },
     {
       "orig": "tee",
-      "expr": "__basaltOwn.s16SyncWorkerName",
+      "expr": "__basaltOwn.ng32SyncWorkerName",
       "sha1": "564168c335fad7d6d6dd5e01050eae8e1dcfbae7",
       "originalBytes": 6
     },
     {
       "orig": "nee",
-      "expr": "__basaltOwn.s16WebSocket",
+      "expr": "__basaltOwn.ng32WebSocket",
       "sha1": "e934001b5b078fcc45ec5ef2e732d3df71e68d36",
       "originalBytes": 16
     },
     {
       "orig": "iee",
-      "expr": "__basaltOwn.s16UrlClass",
+      "expr": "__basaltOwn.ng32UrlClass",
       "sha1": "918fb4e8f3cb2964e3a87bc208f001b26d35b907",
       "originalBytes": 10
     },
     {
       "orig": "ree",
-      "expr": "__basaltOwn.s16UrlHostnameGetter",
+      "expr": "__basaltOwn.ng32UrlHostnameGetter",
       "sha1": "60957fd68459dc9c56326f8b0fb35fd4215b5d2f",
       "originalBytes": 61
     },
     {
       "orig": "oee",
-      "expr": "__basaltOwn.s16EndsWith",
+      "expr": "__basaltOwn.ng32EndsWith",
       "sha1": "457cfba080232acdb2b0b20f8c4bb574b10cdc90",
       "originalBytes": 25
     },
     {
       "orig": "aee",
-      "expr": "__basaltOwn.s16PlatformTag",
+      "expr": "__basaltOwn.ng32PlatformTag",
       "sha1": "c7a0f46b6b292505a68326cf1ed4f22da9d05912",
       "originalBytes": 39
     },
@@ -6723,13 +6724,13 @@
     },
     {
       "orig": "fee",
-      "expr": "__basaltOwn.s16TagViewType",
+      "expr": "__basaltOwn.ng32TagViewType",
       "sha1": "91a56b7e4cb88fa4ab9fc022b48f0b5eb7ca253f",
       "originalBytes": 5
     },
     {
       "orig": "mee",
-      "expr": "__basaltOwn.s16TagSortModes",
+      "expr": "__basaltOwn.ng32TagSortModes",
       "sha1": "9f37d4c684c2c4404339a895f84b3057246c77a3",
       "originalBytes": 73
     },
@@ -6769,31 +6770,31 @@
     },
     {
       "orig": "Wee",
-      "expr": "__basaltOwn.s16FontProbeSeen",
+      "expr": "__basaltOwn.ng32FontProbeSeen",
       "sha1": "bf7b3ff1f51f26b5f1e26e5c1b857df97419ea40",
       "originalBytes": 7
     },
     {
       "orig": "_ee",
-      "expr": "__basaltOwn.s16SettledPromise",
+      "expr": "__basaltOwn.ng32SettledPromise",
       "sha1": "47b038849d964f2910c38df87756eeab2c33c845",
       "originalBytes": 17
     },
     {
       "orig": "Qee",
-      "expr": "__basaltOwn.s16PngChunkIds",
+      "expr": "__basaltOwn.ng32PngChunkIds",
       "sha1": "7ffabcec5a1aa53bab2bd392260cc2290a858a80",
       "originalBytes": 43
     },
     {
       "orig": "Xee",
-      "expr": "__basaltOwn.s16PngSignature",
+      "expr": "__basaltOwn.ng32PngSignature",
       "sha1": "9370310bbc305126799dddd13fa5583d61fe9daf",
       "originalBytes": 26
     },
     {
       "orig": "$ee",
-      "expr": "__basaltOwn.s16PngIHDR",
+      "expr": "__basaltOwn.ng32PngIHDR",
       "sha1": "359deaea7c828042b9bacb2f701d5d7430ba8f0a",
       "originalBytes": 13
     },
@@ -6805,19 +6806,19 @@
     },
     {
       "orig": "Jee",
-      "expr": "__basaltOwn.s16ThemeList",
+      "expr": "__basaltOwn.ng32ThemeList",
       "sha1": "c1b8ef558eaa47afad6df8a6fe67eec3e8e65c8f",
       "originalBytes": 115
     },
     {
       "orig": "gte",
-      "expr": "__basaltOwn.s16ApiVersion",
+      "expr": "__basaltOwn.ng32ApiVersion",
       "sha1": "a182735d8b5218b5358c324317e385a8047491ca",
       "originalBytes": 8
     },
     {
       "orig": "yte",
-      "expr": "__basaltOwn.s16InstallerMinVersion",
+      "expr": "__basaltOwn.ng32InstallerMinVersion",
       "sha1": "66d6b06c8522ecc54043c69c37fc897a1a2d7140",
       "originalBytes": 8
     },
@@ -6829,7 +6830,7 @@
     },
     {
       "orig": "ate",
-      "expr": "__basaltOwn.s16MobileFeedbackFlag",
+      "expr": "__basaltOwn.ng32MobileFeedbackFlag",
       "sha1": "e6f5aef9f1e1ac52edab50cc811cb0f45e89480d",
       "originalBytes": 26
     },
@@ -6865,13 +6866,13 @@
     },
     {
       "orig": "wte",
-      "expr": "__basaltOwn.s16AppContainer",
+      "expr": "__basaltOwn.ng32AppContainer",
       "sha1": "262cae368f5889de67cc6f559b3a99d971be692b",
       "originalBytes": 283
     },
     {
       "orig": "jee",
-      "expr": "__basaltOwn.s16SystemFontList",
+      "expr": "__basaltOwn.ng32SystemFontList",
       "sha1": "67266d07995d8f05b07d94ef54305d65d25bbe96",
       "originalBytes": 1680
     },
@@ -6879,7 +6880,7 @@
       "orig": "eee",
       "sha1": "44873d15410efd96edf5586cb435ce82738e3abe",
       "originalBytes": 364,
-      "expr": "__basaltOwn.s16CloseCodes"
+      "expr": "__basaltOwn.ng32CloseCodes"
     },
     {
       "orig": "HW",
@@ -7867,7 +7868,7 @@
     },
     {
       "orig": "C9",
-      "expr": "__basaltOwn.s15SlashCommandPattern",
+      "expr": "__basaltOwn.ng32SlashCommandPattern",
       "sha1": "09e390eef3edd19da22641e46189bd9acaf95601",
       "originalBytes": 21
     },
@@ -8061,73 +8062,73 @@
     },
     {
       "orig": "rO",
-      "expr": "__basaltOwn.s06PropertyOptionText(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06TextDesc(__basaltHost)",
       "sha1": "83eaca695d398d5b6c18b4e52882e3a11faa8aef",
       "originalBytes": 297
     },
     {
       "orig": "yO",
-      "expr": "__basaltOwn.s06PropertyOptionPropertyName(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06PropertyDesc(__basaltHost)",
       "sha1": "0ae89a6264b979b4e326f27d58bfcd169cd3d920",
       "originalBytes": 188
     },
     {
       "orig": "bO",
-      "expr": "__basaltOwn.s06PropertyOptionAliases(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06AliasesDesc(__basaltHost)",
       "sha1": "4a9da8b69f50194f8b63a124fc0e18a78f5e9462",
       "originalBytes": 208
     },
     {
       "orig": "wO",
-      "expr": "__basaltOwn.s06PropertyOptionTags(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06TagsDesc(__basaltHost)",
       "sha1": "17c630f325fd65070c00896a3d1ea42024901054",
       "originalBytes": 196
     },
     {
       "orig": "kO",
-      "expr": "__basaltOwn.s06PropertyOptionFolder(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06FolderDesc(__basaltHost)",
       "sha1": "14da60069a39869bac0ae942ede7432d578d3d8c",
       "originalBytes": 182
     },
     {
       "orig": "CO",
-      "expr": "__basaltOwn.s06PropertyOptionFile(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06FileDesc(__basaltHost)",
       "sha1": "f398196acf117b1fecaa5dfd28506a5a39bf5c9c",
       "originalBytes": 176
     },
     {
       "orig": "EO",
-      "expr": "__basaltOwn.s06PropertyOptionDate(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06DateDesc(__basaltHost)",
       "sha1": "858d20b1ee776dd52a7ef5793f854dc17be96792",
       "originalBytes": 179
     },
     {
       "orig": "MO",
-      "expr": "__basaltOwn.s06PropertyOptionDatetime(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06DateTimeDesc(__basaltHost)",
       "sha1": "b484cded7c6d343dedfbb9fdd55d99d2c4cd4985",
       "originalBytes": 184
     },
     {
       "orig": "xO",
-      "expr": "__basaltOwn.s06PropertyOptionNumber(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06NumberDesc(__basaltHost)",
       "sha1": "6a0d48865c6ad15ef4677f6cf0a24932302d1ee3",
       "originalBytes": 167
     },
     {
       "orig": "TO",
-      "expr": "__basaltOwn.s06PropertyOptionCheckbox(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06CheckboxDesc(__basaltHost)",
       "sha1": "09f3acad7084b0653758c042ef24f59623d2933e",
       "originalBytes": 177
     },
     {
       "orig": "PO",
-      "expr": "__basaltOwn.s06PropertyOptionMultitext(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06MultitextDesc(__basaltHost)",
       "sha1": "aa4eb4f9b595848af59fa333d3e879ad85410311",
       "originalBytes": 184
     },
     {
       "orig": "IO",
-      "expr": "__basaltOwn.s06PropertyOptionUnknownDescriptor(__basaltHost)",
+      "expr": "__basaltOwn.ng16S06UnknownDesc(__basaltHost)",
       "sha1": "99baa6211fe0adbc985770ee7ebd377141554f7c",
       "originalBytes": 157
     },
@@ -8931,25 +8932,25 @@
     },
     {
       "orig": "jV",
-      "expr": "__basaltOwn.s22UnicodeLetterSource",
+      "expr": "__basaltOwn.ng35UnicodeLetterSource",
       "sha1": "420562ed7bbb10ad5268cf06782a949c28cb6b17",
       "originalBytes": 4108
     },
     {
       "orig": "UV",
-      "expr": "__basaltOwn.s22UnicodeWordSource",
+      "expr": "__basaltOwn.ng35UnicodeWordSource",
       "sha1": "90f88a8fa932f9ab62f8c6315080a16b53967894",
       "originalBytes": 151
     },
     {
       "orig": "WV",
-      "expr": "__basaltOwn.s22WordCharSource",
+      "expr": "__basaltOwn.ng35WordCharSource",
       "sha1": "6236fca0334d197ecbf763d7c2180e2617d82365",
       "originalBytes": 490
     },
     {
       "orig": "_V",
-      "expr": "__basaltOwn.s22WordCharRegex",
+      "expr": "__basaltOwn.ng35WordCharRegex",
       "sha1": "e0035cc61ddfd9a24f9f2952d631f4d2c17f598d",
       "originalBytes": 30
     },
@@ -9021,7 +9022,7 @@
     },
     {
       "orig": "p$",
-      "expr": "__basaltOwn.s26ValueRendererBase",
+      "expr": "__basaltOwn.ng35ValueRendererBase",
       "sha1": "2ead8fea772e5697daeb646d5674d7f8ba7b740a",
       "originalBytes": 50
     },
@@ -9129,25 +9130,25 @@
     },
     {
       "orig": "g7",
-      "expr": "__basaltOwn.s34ViewTypeAllProperties",
+      "expr": "__basaltOwn.ng38ViewTypeAllProperties",
       "sha1": "ea095ef63d46e8013d0263142d854da62a37a270",
       "originalBytes": 16
     },
     {
       "orig": "y7",
-      "expr": "__basaltOwn.s34ViewTypeFileProperties",
+      "expr": "__basaltOwn.ng38ViewTypeFileProperties",
       "sha1": "427c02538799e0915827cfc216e9b50e350ee589",
       "originalBytes": 17
     },
     {
       "orig": "b7",
-      "expr": "__basaltOwn.s34PropertySortOrders",
+      "expr": "__basaltOwn.ng38PropertySortOrders",
       "sha1": "9f37d4c684c2c4404339a895f84b3057246c77a3",
       "originalBytes": 73
     },
     {
       "orig": "w7",
-      "expr": "__basaltOwn.s34PropertySortLabels(__basaltHost.t.plugins.properties)",
+      "expr": "__basaltOwn.ng38PropertySortLabels(__basaltHost.t.plugins.properties)",
       "sha1": "65b62c00cef89016a779da28cbe0f0996f584849",
       "originalBytes": 173
     },
@@ -9177,49 +9178,49 @@
     },
     {
       "orig": "SV",
-      "expr": "__basaltOwn.s40FoldedDeco(__basaltHost)",
+      "expr": "__basaltOwn.ng38FoldedDeco(__basaltHost)",
       "sha1": "d498acf260fcc3312da6618c8b892eed1848608e",
       "originalBytes": 30
     },
     {
       "orig": "xV",
-      "expr": "__basaltOwn.s40FoldableDeco(__basaltHost)",
+      "expr": "__basaltOwn.ng38FoldableDeco(__basaltHost)",
       "sha1": "21bf5f5a7e9cab20a4e4e194e620f094d4a0388a",
       "originalBytes": 30
     },
     {
       "orig": "DV",
-      "expr": "__basaltOwn.s40FoldTransactionFilter(__basaltHost)",
+      "expr": "__basaltOwn.ng38FoldTransactionFilter(__basaltHost)",
       "sha1": "7f4826fa0d785556bf63d427ddfd4e430128e173",
       "originalBytes": 263
     },
     {
       "orig": "AV",
-      "expr": "__basaltOwn.s40FoldDecorations(__basaltHost)",
+      "expr": "__basaltOwn.ng38FoldDecorations(__basaltHost)",
       "sha1": "2d58b88298688307155d1909d6e261df92135df1",
       "originalBytes": 149
     },
     {
       "orig": "PV",
-      "expr": "__basaltOwn.s40IndentMarkPlain(__basaltHost)",
+      "expr": "__basaltOwn.ng38IndentMarkPlain(__basaltHost)",
       "sha1": "087c3be34bae6277e532c96e8f7fb4f50b2ad74e",
       "originalBytes": 28
     },
     {
       "orig": "LV",
-      "expr": "__basaltOwn.s40IndentMarkActive(__basaltHost)",
+      "expr": "__basaltOwn.ng38IndentMarkActive(__basaltHost)",
       "sha1": "b719655a56789945fd68521c8a258b0a0cc8f487",
       "originalBytes": 45
     },
     {
       "orig": "IV",
-      "expr": "__basaltOwn.s40IndentMarkSpacing(__basaltHost)",
+      "expr": "__basaltOwn.ng38IndentMarkSpacing(__basaltHost)",
       "sha1": "6ad5765617c7c767ea401fcd83f9eb50a74b8586",
       "originalBytes": 36
     },
     {
       "orig": "OV",
-      "expr": "__basaltOwn.s40IndentGuides(__basaltHost)",
+      "expr": "__basaltOwn.ng38IndentGuides(__basaltHost)",
       "sha1": "9fca539e7d2b7988b631341c874561b9daa4f8d3",
       "originalBytes": 1296
     },
