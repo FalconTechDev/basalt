@@ -32,7 +32,7 @@ const NG30_VIEWS = [
 
 function ng30MediaView(host, spec) {
   function MediaView() {
-    const self = host.EditableFileView.call(this) || this;
+    const self = host.EditableFileView.apply(this, arguments) || this;
     self.icon = spec.icon;
     return self;
   }
