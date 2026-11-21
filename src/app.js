@@ -38968,7 +38968,6 @@ function ng11DefineSearchResults(host) {
 // toggles, sort dropdown, virtualised results, incremental queue search, keyboard
 // navigation, copy-results modal, explain panel and recent-searches persistence.
 
-
 const V = ng11SearchViewClasses;
 let ng11ViewHost = null;
 function VH() { return ng11ViewHost; }
@@ -39410,7 +39409,8 @@ function SearchView(leaf) {
   self._restartSearch = debounceCall(() => self.startSearch(), 0);
 
   const containerEl = self.containerEl;
-  self.dom = new V.SearchResults(app, containerEl.createDiv({ cls: "search-result-container mod-global-search" }), ng11SearchStrings().labelNoMatches(), containerEl);
+  const ng11ResultsEl = containerEl.createDiv({ cls: "search-result-container mod-global-search" });
+  self.dom = new V.SearchResults(app, ng11ResultsEl, ng11SearchStrings().labelNoMatches(), containerEl);
 
   const row = containerEl.createDiv("search-row");
   self.searchComponent = new (VH().SearchComponent)(row);
@@ -39474,6 +39474,7 @@ function SearchView(leaf) {
     for (const key of group) sortDD.addOption(key, ng11SearchSortLabel(key));
   }
   sortDD.setValue(self.sortOrder).onChange((v) => self.setSortOrder(v));
+  containerEl.appendChild(ng11ResultsEl); // the result list comes after the input row, params and info rows
 
   self.queueComponent = new V.SearchQueueComponent ? new V.SearchQueueComponent(app, self.dom) : null;
   self.scope = new (VH().Scope)(app.scope);
@@ -65763,7 +65764,7 @@ function ng21ChromeLink(Child, getParent) {
 
 function ng21Svg(inner) {
   const span = document.createElement("span");
-  span.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+  span.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
   return span.firstChild;
 }
 
@@ -65899,7 +65900,7 @@ function ng21VaultProfile(host) {
     let nodePath = null;
     try { nodePath = window.require && window.require("path"); } catch (e) { nodePath = null; }
 
-    this.el = containerEl.createDiv("workspace-drawer-vault-profile");
+    this.el = containerEl.createDiv("workspace-sidedock-vault-profile");
     const row = this.el.createDiv("workspace-drawer-vault-switcher");
     const icon = row.createDiv("workspace-drawer-vault-switcher-icon");
     host.setIcon(icon, "lucide-chevrons-up-down");
@@ -69061,11 +69062,10 @@ function ng21DefineWorkspaceTabs(host) {
     if (stacked) {
       content.setChildrenInPlace(wanted);
     } else {
-      const keep = new Set(children.map((leaf) => leaf.containerEl));
-      for (const node of Array.from(content.children)) {
-        if (!keep.has(node)) node.detach();
-      }
       const current = children[this.currentTab];
+      for (const node of Array.from(content.children)) {
+        if (!current || node !== current.containerEl) node.detach();
+      }
       if (current && current.containerEl.parentNode !== content) content.appendChild(current.containerEl);
     }
     this.updateSlidingTabs();
