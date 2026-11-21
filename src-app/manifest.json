@@ -2398,32 +2398,32 @@
     },
     {
       "orig": "Kf",
-      "use": "s92ApplySpellcheckerLanguages",
+      "use": "ng39ApplySpellcheckerLanguages",
       "originalBytes": 267
     },
     {
       "orig": "Yf",
-      "use": "s92RevealInFolder",
+      "use": "ng39RevealInFolder",
       "originalBytes": 74
     },
     {
       "orig": "Qf",
-      "use": "s92ClipboardBridge",
+      "use": "ng39ClipboardBridge",
       "originalBytes": 72
     },
     {
       "orig": "sm",
-      "use": "s92CurrentLanguage",
+      "use": "ng39CurrentLanguage",
       "originalBytes": 77
     },
     {
       "orig": "lm",
-      "use": "s92StoreLanguage",
+      "use": "ng39StoreLanguage",
       "originalBytes": 88
     },
     {
       "orig": "cm",
-      "use": "s92DetectLanguage",
+      "use": "ng39DetectLanguage",
       "originalBytes": 115
     },
     {
@@ -9231,73 +9231,73 @@
     },
     {
       "orig": "Xf",
-      "expr": "__basaltOwn.s92LanguageStorageKey",
+      "expr": "__basaltOwn.ng39LanguageStorageKey",
       "sha1": "26ff207d62ada6071477ccf783d69895f828d8a7",
       "originalBytes": 10
     },
     {
       "orig": "$f",
-      "expr": "__basaltOwn.s92FallbackLanguage",
+      "expr": "__basaltOwn.ng39FallbackLanguage",
       "sha1": "c2906cd829a408386dca12515ce063811ad16cc3",
       "originalBytes": 4
     },
     {
       "orig": "Zf",
-      "expr": "__basaltOwn.s92LanguageNames",
+      "expr": "__basaltOwn.ng39LanguageNames",
       "sha1": "bd173c4b551cef598d4f16ecc18a3e03e9e6c8d3",
       "originalBytes": 27
     },
     {
       "orig": "Jf",
-      "expr": "__basaltOwn.s92SupportedLanguages",
+      "expr": "__basaltOwn.ng39SupportedLanguages",
       "sha1": "a44b367a65b24091071ce8513a43cff82276a1e2",
       "originalBytes": 22
     },
     {
       "orig": "em",
-      "expr": "__basaltOwn.s92LocaleAliasMap",
+      "expr": "__basaltOwn.ng39LocaleAliasMap",
       "sha1": "bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f",
       "originalBytes": 2
     },
     {
       "orig": "tm",
-      "expr": "__basaltOwn.s92RtlLanguages",
+      "expr": "__basaltOwn.ng39RtlLanguages",
       "sha1": "97d170e1550eee4afc0af065b78cda302a97674c",
       "originalBytes": 2
     },
     {
       "orig": "nm",
-      "expr": "__basaltOwn.s92InterpolationOverride",
+      "expr": "__basaltOwn.ng39InterpolationOverride",
       "sha1": "5a39c46f5d0dd34f35c4def8ac3e0cf3d1821caf",
       "originalBytes": 45
     },
     {
       "orig": "im",
-      "expr": "__basaltOwn.s92ResourceNamespace",
+      "expr": "__basaltOwn.ng39ResourceNamespace",
       "sha1": "2be8cb975411eb0f90d1895ca0092067ad7615e3",
       "originalBytes": 9
     },
     {
       "orig": "om",
-      "expr": "__basaltOwn.s92I18nResourceBundle()",
+      "expr": "__basaltOwn.ng39I18nResourceBundle()",
       "sha1": "7a073c5daf53a92efa6f303ee85dd8284c5bbca2",
       "originalBytes": 145
     },
     {
       "orig": "um",
-      "expr": "__basaltOwn.s92InitReady",
+      "expr": "__basaltOwn.ng39InitReady",
       "sha1": "47b038849d964f2910c38df87756eeab2c33c845",
       "originalBytes": 17
     },
     {
       "orig": "hm",
-      "expr": "__basaltOwn.s92CurrentLanguage()",
+      "expr": "__basaltOwn.ng39CurrentLanguage()",
       "sha1": "370c22d307762b0421640646432dde65469eb10f",
       "originalBytes": 4
     },
     {
       "orig": "gm",
-      "expr": "__basaltOwn.s92CreateI18nProxy()",
+      "expr": "__basaltOwn.ng39CreateI18nProxy()",
       "sha1": "3dbeb29c5bef5718cfc0fd29fe5caea27b3a2f99",
       "originalBytes": 237
     },
@@ -9810,7 +9810,7 @@
     },
     {
       "find": "function am(){i18next.addResourceBundle($f,im,om);if(window.BASALT_I18N_RU){var rr=function e(t){var i={};for(var n in t)if(t.hasOwnProperty(n)){var m=/^(.*)_plural([012])$/.exec(n),o=m?rm(m[1])+\"_\"+m[2]:rm(n),a=t[n];i[o]=String.isString(a)?a:e(a)}return i};i18next.addResourceBundle(\"ru\",im,rr(window.BASALT_I18N_RU));\"ru\"===sm()&&i18next.changeLanguage(\"ru\")}}",
-      "replace": "function am(){return/*own*/__basaltOwn.s92RegisterDefaultBundle()}",
+      "replace": "function am(){return/*own*/__basaltOwn.ng39RegisterDefaultBundle()}",
       "note": "s92: am drifted from base ca5acac (Basalt added the ru bundle); replaced wholesale with own i18n registration"
     }
   ]
