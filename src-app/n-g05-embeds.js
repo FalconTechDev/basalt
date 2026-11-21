@@ -8,7 +8,7 @@
 // cache below.
 import { env } from "./env.js";
 import { s11MediaEmbed, s11ImageEmbed, s11AudioEmbed, s11VideoEmbed, s11VideoView } from "./s11-media.js";
-import { s11FileEmbed, s11FallbackEmbed, s11EmbedRegistry, s11MarkdownEmbed, s11ShowInlineError } from "./s11-embed.js";
+import { s11FileEmbed, s11FallbackEmbed, s11EmbedRegistry, s11MarkdownEmbed, s11ShowInlineError } from "./n-g05-embed-impl.js";
 
 /** Per-key cache so repeated factory calls return the same constructor. */
 const ng05EmbedKit = {};
