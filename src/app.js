@@ -50402,7 +50402,7 @@ function stripFrontmatter(text) {
 /** "" when the format is usable, otherwise a localized error string. */
 function validateDailyFormat(format) {
   if (!format) return "";
-  return s33ValidateDateFormat(format, {
+  return ng37ValidateDateFormat(format, {
     invalidCharsPattern: env().UT,
     invalidCharsList: env().qT || "",
   });

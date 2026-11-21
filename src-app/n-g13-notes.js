@@ -7,7 +7,7 @@ import { env } from "./env.js";
 import { inherit } from "./inherit.js";
 import { normalizePath, parentPath, lastSegment, baseName, extensionOf, withoutExtension, joinNameExt, isLocalLink, isHiddenPath } from "./path.js";
 import { fileClass } from "./n-g13-vault.js";
-import { s33ValidateDateFormat } from "./s33-daily-notes.js";
+import { ng37ValidateDateFormat } from "./n-g37-daily.js";
 
 const MarkdownFile = () => fileClass("TFile");
 const MarkdownFolder = () => fileClass("TFolder");
@@ -143,7 +143,7 @@ export function stripFrontmatter(text) {
 /** "" when the format is usable, otherwise a localized error string. */
 export function validateDailyFormat(format) {
   if (!format) return "";
-  return s33ValidateDateFormat(format, {
+  return ng37ValidateDateFormat(format, {
     invalidCharsPattern: env().UT,
     invalidCharsList: env().qT || "",
   });
