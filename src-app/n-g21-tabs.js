@@ -188,11 +188,10 @@ export function ng21DefineWorkspaceTabs(host) {
     if (stacked) {
       content.setChildrenInPlace(wanted);
     } else {
-      const keep = new Set(children.map((leaf) => leaf.containerEl));
-      for (const node of Array.from(content.children)) {
-        if (!keep.has(node)) node.detach();
-      }
       const current = children[this.currentTab];
+      for (const node of Array.from(content.children)) {
+        if (!current || node !== current.containerEl) node.detach();
+      }
       if (current && current.containerEl.parentNode !== content) content.appendChild(current.containerEl);
     }
     this.updateSlidingTabs();
