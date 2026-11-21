@@ -39,22 +39,40 @@ export function ng16DefineS06FolderSuggest(host) {
 
 // ---- property-name value + type combobox --------------------------------------------
 
+// `vO` — combobox of all known property names (value + type icon per item).
 export function ng16DefineS06TypeCombobox(host) {
+  const Combobox = env().MI;
+  function TypeCombobox(app, buttonContainer) {
+    const self = Combobox.call(this, app, buttonContainer) || this;
+    return self;
+  }
+  inherit(TypeCombobox, Combobox);
+  TypeCombobox.prototype.getItems = function () {
+    const app = this.app;
+    const mgr = app && app.metadataTypeManager;
+    if (!mgr) return [];
+    return Object.values(mgr.getAllProperties()).map((t) => ({
+      value: t.name,
+      icon: mgr.getWidget(t.widget).icon,
+    }));
+  };
+  return TypeCombobox;
+}
+
+// `gO` — "property" type widget: a TypeCombobox bound to ctx.onChange.
+export function ng16DefineS06PropertyKeyValue(host) {
+  const TypeCombobox = ng16DefineS06TypeCombobox(host);
   return function (ctx, el, value) {
     const w = ng16MkWidget(ctx, el, value);
-    const box = el.createDiv("combobox-container");
-    const bases = host.t.plugins && host.t.plugins.bases;
-    const input = box.createEl("input", { cls: "metadata-input-text", type: "text", attr: { placeholder: bases && bases.labelPropertyKey ? bases.labelPropertyKey() : "" } });
-    w.input = input;
-    input.value = value == null ? "" : String(value);
-    input.addEventListener("change", () => ctx.onChange(ng16EmptyValue(input.value)));
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === "Escape") { e.preventDefault(); ctx.blur && ctx.blur(); } });
-    w.setValue = (v) => { w.value = v; input.value = v == null ? "" : String(v); };
+    const combobox = w.combobox = new TypeCombobox(ctx.app, el)
+      .setPlaceholder(env().gm.plugins.bases.labelPropertyKey())
+      .onSelect((item) => ctx.onChange(item == null ? undefined : item.value))
+      .setValueById(value);
+    w.onFocus = () => combobox.focus();
+    w.setValue = (v) => { w.value = v; combobox.setValueById(v); };
     return w;
   };
 }
-
-export function ng16DefineS06PropertyKeyValue(host) { return ng16DefineS06TypeCombobox(host); }
 
 export function ng16DefineS06Combobox(host) {
   return function (ctx, el, value, items) {
