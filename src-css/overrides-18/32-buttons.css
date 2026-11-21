@@ -27,3 +27,5 @@
 .bsg-controls .canvas-control-item, .bscg-controls .canvas-control-item { border: 0; border-radius: 0; box-shadow: none; background: transparent; }
 .bsg-controls .canvas-control-item + .canvas-control-item, .bscg-controls .canvas-control-item + .canvas-control-item { border-top: 1px solid var(--background-modifier-border); }
 .bsg-controls .canvas-control-item:hover, .bscg-controls .canvas-control-item:hover { background: var(--background-modifier-hover); }
+.canvas-card-menu .canvas-card-menu-button, .canvas-card-menu .canvas-card-menu-button.mod-draggable { border: 0; box-shadow: none; background: transparent; }
+.canvas-card-menu .canvas-card-menu-button:hover { background: var(--background-modifier-hover); }

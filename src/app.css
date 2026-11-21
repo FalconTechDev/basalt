@@ -18077,6 +18077,14 @@ button:focus-visible{
 .bsg-controls .canvas-control-item:hover,.bscg-controls .canvas-control-item:hover{
     background:var(--background-modifier-hover)
 }
+.canvas-card-menu .canvas-card-menu-button,.canvas-card-menu .canvas-card-menu-button.mod-draggable{
+    border:0;
+    box-shadow:none;
+    background:transparent
+}
+.canvas-card-menu .canvas-card-menu-button:hover{
+    background:var(--background-modifier-hover)
+}
 :root{
     --radius-s:6px;
     --radius-m:8px;
@@ -18348,7 +18356,7 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
         animation:bs-drop-in .12s ease-out
     }
     .bset-main > *{
-        animation:bs-rise-in .22s cubic-bezier(.2,.8,.3,1) both
+        animation:bs-rise-in .22s cubic-bezier(.2,.8,.3,1) backwards
     }
     .bset-main > *:nth-child(2){
         animation-delay:.02s
@@ -18363,7 +18371,7 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
         animation-delay:.08s
     }
     .bsm-card{
-        animation:bs-rise-in .26s cubic-bezier(.2,.8,.3,1) both
+        animation:bs-rise-in .26s cubic-bezier(.2,.8,.3,1) backwards
     }
     .bsm-card:nth-child(2){
         animation-delay:.03s
@@ -18378,7 +18386,7 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
         animation-delay:.12s
     }
     .bsh-search,.bsh-tile,.bsh-recent{
-        animation:bs-rise-in .3s cubic-bezier(.2,.8,.3,1) both
+        animation:bs-rise-in .3s cubic-bezier(.2,.8,.3,1) backwards
     }
     .bsh-tile:nth-child(2){
         animation-delay:.04s
@@ -18402,7 +18410,7 @@ input[type="text"],input[type="search"],input[type="number"],input[type="passwor
         transform:translateY(-1px)
     }
     .canvas-card-menu,.canvas-controls{
-        animation:bs-rise-in .25s cubic-bezier(.2,.8,.3,1) both
+        animation:bs-fade-in .25s ease-out
     }
     .checkbox-container,.checkbox-container::after{
         transition:background-color .16s ease,left .16s ease

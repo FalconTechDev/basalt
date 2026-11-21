@@ -76,7 +76,7 @@ export function defineNg20CanvasMenu(host) {
       const canvas_ = this.canvas;
       const sel = canvas_.selection;
       const key = sel.size + ":" + [...sel].map((i) => i.id).join(",");
-      if (!force && this.renderedFor === key) return;
+      if (!force && this.renderedFor === key) { if (sel.size && this.containerEl) this.positionMenu(); return; } // same selection: only the camera or the cards moved
       this.renderedFor = key;
       this.renderSelectionOverlay(sel);
       this.renderMenuPopup(sel);
@@ -162,6 +162,9 @@ export function defineNg20CanvasMenu(host) {
       }
       this.containerEl.toggle(show);
       if (!show) { this.menuEl.empty(); this.closeSubmenu(); return; }
+      const sig = Array.from(sel).map((x) => x && x.id).join(",");
+      if (this._menuSig === sig && this.menuEl.childElementCount) { this.positionMenu(); return; }
+      this._menuSig = sig;
       // rebuild only when the selection signature changed (renderedFor already gates)
       this.menuEl.empty();
       this.submenuEl = null;
@@ -183,15 +186,23 @@ export function defineNg20CanvasMenu(host) {
       btn("align-horizontal-distribute-center", ti.menuJustify ? ti.menuJustify() : "Justify", (evt) => this.openPopupMenu(evt, "justify"));
       btn("arrow-right", ti.menuEdgeDirection ? ti.menuEdgeDirection() : "Edge direction", (evt) => this.openPopupMenu(evt, "direction"));
       btn("image", ti.menuBackground ? ti.menuBackground() : "Background", (evt) => this.openPopupMenu(evt, "background"));
-      // position near the selection box (canvas coordinates, container is a 0-size anchor)
-      const b = this.selection.bbox;
-      if (b) {
-        const cx = (b.minX + b.maxX) / 2;
-        const cy = b.maxY + 8;
-        this.containerEl.style.transform = "translate(" + cx + "px, " + cy + "px)";
-        this.containerEl.style.left = "0px";
-        this.containerEl.style.top = "0px";
-      }
+      this.positionMenu();
+    }
+
+    positionMenu() {
+      const canvas_ = this.canvas, b = ng20SelectionBBox(canvas_.selection);
+      if (!b || !this.containerEl) return;
+      // the anchor lives in screen space, next to the board's controls: convert the selection box through the camera,
+      // then centre the toolbar under it
+      const sc = canvas_.scale || 1, wrap = canvas_.wrapperEl;
+      const vw = (wrap && wrap.clientWidth) || 0, vh = (wrap && wrap.clientHeight) || 0;
+      const sx = vw / 2 + ((b.minX + b.maxX) / 2 - canvas_.x) * sc;
+      const sy = vh / 2 + (b.maxY - canvas_.y) * sc + 10;
+      this.containerEl.style.transform = "translate(" + sx + "px, " + sy + "px)";
+      this.containerEl.style.left = "0px";
+      this.containerEl.style.top = "0px";
+      const bar = this.containerEl.querySelector(".canvas-menu");
+      if (bar) bar.style.transform = "translateX(-50%)";
     }
 
     /** Inline `.canvas-submenu` colour picker (orig colour submenu contract). */

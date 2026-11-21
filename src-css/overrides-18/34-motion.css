@@ -21,18 +21,18 @@
 	/* folders opening in the file tree and in lists */
 	.bsf-tree > *, .tree-item-children > .tree-item { animation: bs-drop-in .12s ease-out; }
 	/* settings: every page rises into place */
-	.bset-main > * { animation: bs-rise-in .22s cubic-bezier(.2, .8, .3, 1) both; }
+	.bset-main > * { animation: bs-rise-in .22s cubic-bezier(.2, .8, .3, 1) backwards; }
 	.bset-main > *:nth-child(2) { animation-delay: .02s; } .bset-main > *:nth-child(3) { animation-delay: .04s; } .bset-main > *:nth-child(4) { animation-delay: .06s; } .bset-main > *:nth-child(n+5) { animation-delay: .08s; }
-	.bsm-card { animation: bs-rise-in .26s cubic-bezier(.2, .8, .3, 1) both; }
+	.bsm-card { animation: bs-rise-in .26s cubic-bezier(.2, .8, .3, 1) backwards; }
 	.bsm-card:nth-child(2) { animation-delay: .03s; } .bsm-card:nth-child(3) { animation-delay: .06s; } .bsm-card:nth-child(4) { animation-delay: .09s; } .bsm-card:nth-child(n+5) { animation-delay: .12s; }
 	/* the start page */
-	.bsh-search, .bsh-tile, .bsh-recent { animation: bs-rise-in .3s cubic-bezier(.2, .8, .3, 1) both; }
+	.bsh-search, .bsh-tile, .bsh-recent { animation: bs-rise-in .3s cubic-bezier(.2, .8, .3, 1) backwards; }
 	.bsh-tile:nth-child(2) { animation-delay: .04s; } .bsh-tile:nth-child(3) { animation-delay: .08s; } .bsh-tile:nth-child(4) { animation-delay: .12s; } .bsh-recent { animation-delay: .16s; }
 	/* controls respond to the pointer */
 	button, .clickable-icon, .bset-nav button.bset-n, .menu-item, .suggestion-item, .nav-file-title, .tree-item-self, .bsf-tree > * { transition: background-color .14s ease, color .14s ease, border-color .14s ease, box-shadow .14s ease, transform .1s ease; }
 	button:active:not(:disabled), .clickable-icon:active { transform: scale(.96); }
 	.bsm-card:hover { transform: translateY(-1px); }
-	.canvas-card-menu, .canvas-controls { animation: bs-rise-in .25s cubic-bezier(.2, .8, .3, 1) both; }
+	.canvas-card-menu, .canvas-controls { animation: bs-fade-in .25s ease-out; } /* opacity only: a transform animation would replace the centring transform of the bar */
 	.checkbox-container, .checkbox-container::after { transition: background-color .16s ease, left .16s ease; }
 }
 
