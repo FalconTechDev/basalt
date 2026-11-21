@@ -676,7 +676,9 @@ export function ng21DefineMenu(host) {
       const target = event.targetNode || event.target;
       if (target && !this.isInside(target)) this.hide();
     };
-    const onContext = () => { if (host.Platform.isDesktop) this.hide(); };
+    // a menu opened by a right-button press must survive the contextmenu event that follows that very press
+    const shownAt = performance.now();
+    const onContext = () => { if (host.Platform.isDesktop && performance.now() - shownAt > 350) this.hide(); };
     win.addEventListener("mousedown", onMouseDown, true);
     win.addEventListener("click", onClick, true);
     if (host.Platform.isDesktop) win.addEventListener("contextmenu", onContext, true);
