@@ -2344,12 +2344,12 @@
     },
     {
       "orig": "m8",
-      "use": "s33DailyNoteSuffix",
+      "use": "ng37DailyNoteSuffix",
       "originalBytes": 99
     },
     {
       "orig": "g8",
-      "use": "s33ValidateDateFormat",
+      "use": "ng37ValidateDateFormat",
       "host": true,
       "originalBytes": 239
     },
@@ -5227,19 +5227,19 @@
     },
     {
       "orig": "V6",
-      "use": "s31BacklinkPlugin"
+      "use": "ng37BacklinkPlugin"
     },
     {
       "orig": "q6",
-      "use": "s31BacklinksSettingTab"
+      "use": "ng37BacklinksSettingTab"
     },
     {
       "orig": "Q6",
-      "use": "s31NoteFoldStore"
+      "use": "ng37NoteFoldStore"
     },
     {
       "orig": "X6",
-      "use": "s31MobileNavbar"
+      "use": "ng37MobileNavbar"
     },
     {
       "orig": "G5",
@@ -5273,17 +5273,17 @@
     },
     {
       "orig": "r8",
-      "use": "defineS33CanvasView",
+      "use": "ng37CanvasView",
       "originalBytes": 4070
     },
     {
       "orig": "s8",
-      "use": "defineS33CanvasSettingsTab",
+      "use": "ng37CanvasSettingsTab",
       "originalBytes": 3259
     },
     {
       "orig": "b8",
-      "use": "defineS33EditorStatusPlugin",
+      "use": "ng37EditorStatusPlugin",
       "originalBytes": 2350
     },
     {
@@ -5441,17 +5441,17 @@
     },
     {
       "orig": "H8",
-      "use": "defineFootnoteItem",
+      "use": "ng37FootnoteItem",
       "originalBytes": 1577
     },
     {
       "orig": "z8",
-      "use": "defineFootnotesView",
+      "use": "ng37FootnotesView",
       "originalBytes": 3116
     },
     {
       "orig": "q8",
-      "use": "defineFootnotesPlugin",
+      "use": "ng37FootnotesPlugin",
       "originalBytes": 560
     },
     {
@@ -5486,7 +5486,7 @@
     },
     {
       "orig": "r7",
-      "use": "defineOutgoingLinksPlugin",
+      "use": "ng37OutgoingLinksPlugin",
       "originalBytes": 2269
     },
     {
@@ -8877,13 +8877,13 @@
     },
     {
       "orig": "C8",
-      "expr": "__basaltOwn.s33NavFileEl",
+      "expr": "__basaltOwn.ng37NavFileEl",
       "sha1": "c63753a159f9b323b9c54c10c273cb9d39d671c6",
       "originalBytes": 183
     },
     {
       "orig": "M8",
-      "expr": "__basaltOwn.s33NavFolderEl",
+      "expr": "__basaltOwn.ng37NavFolderEl",
       "sha1": "19e8fa166245d96b82eac7d0eff7590df79b6d07",
       "originalBytes": 234
     },
