@@ -214,13 +214,13 @@ let s12postprocessFx = null;
 
 /** Creates (once per call site) the state-effect type used to ask live preview to rebuild decorations. */
 export function s12CmPostprocessEffect() {
-  s12postprocessFx = cmStateEffect().define();
+  if (!s12postprocessFx) s12postprocessFx = cmStateEffect().define();
   return s12postprocessFx;
 }
 
 /** Schedules a decoration refresh on the given editor view (used by focus/blur and post-processor hooks). */
 export function s12cmRefreshDispatch(view) {
-  view.dom.win.setTimeout(() => view.dispatch({ effects: s12postprocessFx.of() }), 10);
+  view.dom.win.setTimeout(() => view.dispatch({ effects: s12CmPostprocessEffect().of() }), 10);
 }
 
 /** The live-preview refresh effect instance created by the G2 declarator (null until then). */

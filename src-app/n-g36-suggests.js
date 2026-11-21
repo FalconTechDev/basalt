@@ -48,7 +48,6 @@ export function ng36FootnoteSuggest(host) {
       start: { line: cursor.line, ch: idx },
       end: { line: cursor.line, ch: endCh },
       query,
-      file,
     };
   };
 
@@ -59,6 +58,9 @@ export function ng36FootnoteSuggest(host) {
     const app = this.app;
     let content;
     try { content = await app.vault.cachedRead(context.file); } catch (e) { return null; }
+    if (content == null) {
+      try { content = await app.vault.read(context.file); } catch (e) { return null; }
+    }
     if (runnable.isCancelled()) return null;
     const cache = app.metadataCache.getFileCache(context.file);
     const raw = cache && cache.footnotes;

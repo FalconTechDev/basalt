@@ -38,7 +38,7 @@ export function ng36CmHrWidget(host) {
   if (ng36ClsHr) return ng36ClsHr;
   function HrWidget() { ng36WidgetBase().call(this); }
   inherit(HrWidget, ng36WidgetBase());
-  HrWidget.prototype.estimatedHeight = 20;
+  Object.defineProperty(HrWidget.prototype, "estimatedHeight", { get: function () { return 20; }, enumerable: false, configurable: true });
   HrWidget.prototype.eq = function () { return true; };
   HrWidget.prototype.toDOM = function (view) {
     const el = createDiv("hr cm-line");

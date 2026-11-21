@@ -74513,7 +74513,7 @@ function ng36CmHrWidget(host) {
   if (ng36ClsHr) return ng36ClsHr;
   function HrWidget() { ng36WidgetBase().call(this); }
   inherit(HrWidget, ng36WidgetBase());
-  HrWidget.prototype.estimatedHeight = 20;
+  Object.defineProperty(HrWidget.prototype, "estimatedHeight", { get: function () { return 20; }, enumerable: false, configurable: true });
   HrWidget.prototype.eq = function () { return true; };
   HrWidget.prototype.toDOM = function (view) {
     const el = createDiv("hr cm-line");
@@ -75341,7 +75341,6 @@ function ng36FootnoteSuggest(host) {
       start: { line: cursor.line, ch: idx },
       end: { line: cursor.line, ch: endCh },
       query,
-      file,
     };
   };
 
@@ -75352,6 +75351,9 @@ function ng36FootnoteSuggest(host) {
     const app = this.app;
     let content;
     try { content = await app.vault.cachedRead(context.file); } catch (e) { return null; }
+    if (content == null) {
+      try { content = await app.vault.read(context.file); } catch (e) { return null; }
+    }
     if (runnable.isCancelled()) return null;
     const cache = app.metadataCache.getFileCache(context.file);
     const raw = cache && cache.footnotes;
@@ -84853,13 +84855,13 @@ let s12postprocessFx = null;
 
 /** Creates (once per call site) the state-effect type used to ask live preview to rebuild decorations. */
 function s12CmPostprocessEffect() {
-  s12postprocessFx = cmStateEffect().define();
+  if (!s12postprocessFx) s12postprocessFx = cmStateEffect().define();
   return s12postprocessFx;
 }
 
 /** Schedules a decoration refresh on the given editor view (used by focus/blur and post-processor hooks). */
 function s12cmRefreshDispatch(view) {
-  view.dom.win.setTimeout(() => view.dispatch({ effects: s12postprocessFx.of() }), 10);
+  view.dom.win.setTimeout(() => view.dispatch({ effects: s12CmPostprocessEffect().of() }), 10);
 }
 
 /** The live-preview refresh effect instance created by the G2 declarator (null until then). */
