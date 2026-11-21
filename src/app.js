@@ -74269,6 +74269,7 @@ function ng40DefineUnknownView(host) {
   };
 
   proto.onLayoutChange = function () {
+    if (!this.closeAllButtonEl) return;
     const count = this.app.workspace.getLeavesOfType(this.viewType).length;
     this.closeAllButtonEl.setText(host.t.interface.emptyState.closeAll({ id: this.viewType, count }));
     this.closeAllButtonEl.style.display = count > 1 ? "" : "none";
@@ -74921,6 +74922,7 @@ function ng40DefineWorkspaceFloating(host) {
 
 function ng40DefineWorkspaceItem(host) {
   function WorkspaceItem(workspace, id) {
+    host.Events.call(this);
     const self = this;
     self.workspace = workspace;
     self.app = workspace.app;
@@ -74935,6 +74937,7 @@ function ng40DefineWorkspaceItem(host) {
     self.resizeHandleEl.addEventListener("mousedown", (event) => self.onResizeStart(event));
     return self;
   }
+  inherit(WorkspaceItem, host.Events);
   const proto = WorkspaceItem.prototype;
 
   proto.serialize = function () {

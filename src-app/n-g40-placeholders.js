@@ -145,6 +145,7 @@ export function ng40DefineUnknownView(host) {
   };
 
   proto.onLayoutChange = function () {
+    if (!this.closeAllButtonEl) return;
     const count = this.app.workspace.getLeavesOfType(this.viewType).length;
     this.closeAllButtonEl.setText(host.t.interface.emptyState.closeAll({ id: this.viewType, count }));
     this.closeAllButtonEl.style.display = count > 1 ? "" : "none";

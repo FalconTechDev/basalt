@@ -1,9 +1,11 @@
 // g40 clean-room: workspace layout tree, part 1 — WorkspaceItem (leaf DOM node).
 // Owns containerEl, id, dimension, resize handle, parent bookkeeping helpers.
+import { inherit } from "./inherit.js";
 import { randomHex } from "./misc.js";
 
 export function ng40DefineWorkspaceItem(host) {
   function WorkspaceItem(workspace, id) {
+    host.Events.call(this);
     const self = this;
     self.workspace = workspace;
     self.app = workspace.app;
@@ -18,6 +20,7 @@ export function ng40DefineWorkspaceItem(host) {
     self.resizeHandleEl.addEventListener("mousedown", (event) => self.onResizeStart(event));
     return self;
   }
+  inherit(WorkspaceItem, host.Events);
   const proto = WorkspaceItem.prototype;
 
   proto.serialize = function () {
