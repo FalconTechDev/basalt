@@ -44,6 +44,7 @@ export function ng21DefineTitlebar(host) {
     const doc = win.document;
     this.barEl = doc.createElement("div");
     this.barEl.className = "titlebar";
+    this.titleBarEl = this.barEl;
     this.innerEl = doc.createElement("div");
     this.innerEl.className = "titlebar-inner";
     this.textEl = doc.createElement("div");
@@ -277,6 +278,8 @@ export function ng21DefineInfoDrawer(host) {
 function ng21MakeMobileDrawer(host) {
   function MobileDrawer(workspace, side, id) {
     host.WorkspaceParent.call(this, workspace, id);
+    this.children = [];
+    this.parent = null;
     this.side = side === "right" ? "right" : "left";
     this.type = "mobile-drawer";
     this.allowSingleChild = true;
