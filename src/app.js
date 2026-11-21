@@ -1,4 +1,448 @@
 (()=>{var e={134:(e,t,n)=>{"use strict";var i=n(8813);e.exports=function(e,t,n){var l,c,u,h=-1,p=t.length,d="",f="",m="",v="";for(;++h<p;)if(l=t.charAt(h),u)if(u=!1,d+=m,f+=v,m="",v="",l===r)m=l,v=l;else for(d+=l,f+=l;++h<p;){if(!(l=t.charAt(h))||l===r){v=l,m=l;break}d+=l,f+=l}else if(l===a&&t.charAt(h+1)===l&&t.charAt(h+2)===l&&t.charAt(h+3)===l)m+=s,h+=3,u=!0;else if(l===o)m+=l,u=!0;else{for(c="";l===o||l===a;)c+=l,l=t.charAt(++h);if(l!==r)break;m+=c+l,v+=l}if(f)return!!n||e(d)({type:"code",lang:null,meta:null,value:i(f)})};var r="\n",o="\t",a=" ",s=a.repeat(4)},313:(e,t,n)=>{"use strict";var i=n(7297);e.exports=i({space:"xml",transform:function(e,t){return"xml:"+t.slice(3).toLowerCase()},properties:{xmlLang:null,xmlBase:null,xmlSpace:null}})},326:(e,t,n)=>{"use strict";var i=n(8593),r=n(7137),o=n(631);e.exports=function(e,t){var n=e.upperDoctype?s:a,i=e.tightDoctype?"":" ",r=t.name,o=t.public,c=t.system,u=["<!"+n];r&&(u.push(i,r),null!=o?u.push(" public",i,l(e,o)):null!=c&&u.push(" system"),null!=c&&u.push(i,l(e,c)));return u.join("")+">"};var a="doctype",s=a.toUpperCase();function l(e,t){var n=e.quote,a=e.alternative,s=String(t),l=r(s,n)>r(s,a)?a:n;return l+o(s,i(e.entities,{subset:["<","&",l]}))+l}},396:(e,t,n)=>{"use strict";e.exports=function(e,t){var n,o,a={},s=t.ordered?"ol":"ul",l=-1;"number"==typeof t.start&&1!==t.start&&(a.start=t.start);n=r(e,t),o=n.length;for(;++l<o;)if(n[l].properties.className&&-1!==n[l].properties.className.indexOf("task-list-item")){a.className=["contains-task-list"];break}return e(t,s,a,i(n,!0))};var i=n(7824),r=n(4297)},439:(e,t,n)=>{"use strict";var i=n(8257),r=n(1900),o=n(1030);e.exports=c,c.locator=o;var a="*",s="_",l="\\";function c(e,t,n){var o,c,u,h,p,d,f,m=0,v=t.charAt(m);if(!(v!==a&&v!==s||(c=this.options.pedantic,p=v,u=v,d=t.length,m++,h="",v="",c&&r(t.charAt(m)))))for(;m<d;){if(f=v,!((v=t.charAt(m))!==u||c&&r(f))){if((v=t.charAt(++m))!==u){if(!h.trim()||f===u)return;if(!c&&u===s&&i(v)){h+=u;continue}return!!n||((o=e.now()).column++,o.offset++,e(p+h+u)({type:"emphasis",children:this.tokenizeInline(h,o)}))}h+=u}c||v!==l||(h+=v,v=t.charAt(++m)),h+=v,m++}}},470:(e,t,n)=>{"use strict";var i=n(3115);e.exports=a,a.locator=i;var r="\n",o="\\";function a(e,t,n){var i,a;if(t.charAt(0)===o&&(i=t.charAt(1),-1!==this.escape.indexOf(i)))return!!n||(a=i===r?{type:"break"}:{type:"text",value:i},e(o+i)(a))}},493:e=>{"use strict";function t(e){if(null==e)return n;if("string"==typeof e)return function(e){return t;function t(t){return Boolean(t&&t.type===e)}}(e);if("object"==typeof e)return"length"in e?function(e){var n=[],i=-1;for(;++i<e.length;)n[i]=t(e[i]);return r;function r(){for(var e=-1;++e<n.length;)if(n[e].apply(this,arguments))return!0;return!1}}(e):function(e){return t;function t(t){var n;for(n in e)if(t[n]!==e[n])return!1;return!0}}(e);if("function"==typeof e)return e;throw new Error("Expected function, string, or object as test")}function n(){return!0}e.exports=t},535:(e,t,n)=>{"use strict";var i=n(5176),r=n(7297),o=n(1716),a=i.boolean,s=i.overloadedBoolean,l=i.booleanish,c=i.number,u=i.spaceSeparated,h=i.commaSeparated;e.exports=r({space:"html",attributes:{acceptcharset:"accept-charset",classname:"class",htmlfor:"for",httpequiv:"http-equiv"},transform:o,mustUseProperty:["checked","multiple","muted","selected"],properties:{abbr:null,accept:h,acceptCharset:u,accessKey:u,action:null,allow:null,allowFullScreen:a,allowPaymentRequest:a,allowUserMedia:a,alt:null,as:null,async:a,autoCapitalize:null,autoComplete:u,autoFocus:a,autoPlay:a,capture:a,charSet:null,checked:a,cite:null,className:u,cols:c,colSpan:null,content:null,contentEditable:l,controls:a,controlsList:u,coords:c|h,crossOrigin:null,data:null,dateTime:null,decoding:null,default:a,defer:a,dir:null,dirName:null,disabled:a,download:s,draggable:l,encType:null,enterKeyHint:null,form:null,formAction:null,formEncType:null,formMethod:null,formNoValidate:a,formTarget:null,headers:u,height:c,hidden:a,high:c,href:null,hrefLang:null,htmlFor:u,httpEquiv:u,id:null,imageSizes:null,imageSrcSet:h,inputMode:null,integrity:null,is:null,isMap:a,itemId:null,itemProp:u,itemRef:u,itemScope:a,itemType:u,kind:null,label:null,lang:null,language:null,list:null,loading:null,loop:a,low:c,manifest:null,max:null,maxLength:c,media:null,method:null,min:null,minLength:c,multiple:a,muted:a,name:null,nonce:null,noModule:a,noValidate:a,onAbort:null,onAfterPrint:null,onAuxClick:null,onBeforePrint:null,onBeforeUnload:null,onBlur:null,onCancel:null,onCanPlay:null,onCanPlayThrough:null,onChange:null,onClick:null,onClose:null,onContextMenu:null,onCopy:null,onCueChange:null,onCut:null,onDblClick:null,onDrag:null,onDragEnd:null,onDragEnter:null,onDragExit:null,onDragLeave:null,onDragOver:null,onDragStart:null,onDrop:null,onDurationChange:null,onEmptied:null,onEnded:null,onError:null,onFocus:null,onFormData:null,onHashChange:null,onInput:null,onInvalid:null,onKeyDown:null,onKeyPress:null,onKeyUp:null,onLanguageChange:null,onLoad:null,onLoadedData:null,onLoadedMetadata:null,onLoadEnd:null,onLoadStart:null,onMessage:null,onMessageError:null,onMouseDown:null,onMouseEnter:null,onMouseLeave:null,onMouseMove:null,onMouseOut:null,onMouseOver:null,onMouseUp:null,onOffline:null,onOnline:null,onPageHide:null,onPageShow:null,onPaste:null,onPause:null,onPlay:null,onPlaying:null,onPopState:null,onProgress:null,onRateChange:null,onRejectionHandled:null,onReset:null,onResize:null,onScroll:null,onSecurityPolicyViolation:null,onSeeked:null,onSeeking:null,onSelect:null,onSlotChange:null,onStalled:null,onStorage:null,onSubmit:null,onSuspend:null,onTimeUpdate:null,onToggle:null,onUnhandledRejection:null,onUnload:null,onVolumeChange:null,onWaiting:null,onWheel:null,open:a,optimum:c,pattern:null,ping:u,placeholder:null,playsInline:a,poster:null,preload:null,readOnly:a,referrerPolicy:null,rel:u,required:a,reversed:a,rows:c,rowSpan:c,sandbox:u,scope:null,scoped:a,seamless:a,selected:a,shape:null,size:c,sizes:null,slot:null,span:c,spellCheck:l,src:null,srcDoc:null,srcLang:null,srcSet:h,start:c,step:null,style:null,tabIndex:c,target:null,title:null,translate:null,type:null,typeMustMatch:a,useMap:null,value:l,width:c,wrap:null,align:null,aLink:null,archive:u,axis:null,background:null,bgColor:null,border:c,borderColor:null,bottomMargin:c,cellPadding:null,cellSpacing:null,char:null,charOff:null,classId:null,clear:null,code:null,codeBase:null,codeType:null,color:null,compact:a,declare:a,event:null,face:null,frame:null,frameBorder:null,hSpace:c,leftMargin:c,link:null,longDesc:null,lowSrc:null,marginHeight:c,marginWidth:c,noResize:a,noHref:a,noShade:a,noWrap:a,object:null,profile:null,prompt:null,rev:null,rightMargin:c,rules:null,scheme:null,scrolling:l,standby:null,summary:null,text:null,topMargin:c,valueType:null,version:null,vAlign:null,vLink:null,vSpace:c,allowTransparency:null,autoCorrect:null,autoSave:null,disablePictureInPicture:a,disableRemotePlayback:a,prefix:null,property:null,results:c,security:null,unselectable:null}})},544:(e,t,n)=>{"use strict";e.exports=function(e,t){return e(t,"h"+t.depth,i(e,t))};var i=n(4297)},618:(e,t,n)=>{"use strict";var i=n(8785);e.exports=function(e,t){return e.dangerous?t.value:i(e,t)}},631:(e,t,n)=>{"use strict";e.exports=n(9159)},741:e=>{"use strict";e.exports=function(e){var t="string"==typeof e?e.charCodeAt(0):e;return t>=97&&t<=122||t>=65&&t<=90}},745:(e,t,n)=>{"use strict";var i=n(7092),r=n(6058),o=n(5540),a=n(6047);e.exports=function(e,t,n){var r,o,g,y,b,w,k,E,M,S,x,T,D,A,P,L,I,O,F,N,R,B,V,H=this,z=H.options.commonmark,q=H.options.pedantic,j=H.blockTokenizers,U=H.interruptList,W=0,_=t.length,G=null,K=!1;for(;W<_&&((y=t.charAt(W))===f||y===p);)W++;if((y=t.charAt(W))===s||y===c||y===u)b=y,g=!1;else{for(g=!0,o="";W<_&&(y=t.charAt(W),i(y));)o+=y,W++;if(y=t.charAt(W),!o||!(y===h||z&&y===m))return;if(n&&"1"!==o)return;G=parseInt(o,10),b=y}if((y=t.charAt(++W))!==p&&y!==f&&(q||y!==d&&""!==y))return;if(n)return!0;W=0,A=[],P=[],L=[];for(;W<_;){for(k=W,E=!1,V=!1,-1===(w=t.indexOf(d,W))&&(w=_),r=0;W<_;){if((y=t.charAt(W))===f)r+=v-r%v;else{if(y!==p)break;r++}W++}if(I&&r>=I.indent&&(V=!0),y=t.charAt(W),M=null,!V){if(y===s||y===c||y===u)M=y,W++,r++;else{for(o="";W<_&&(y=t.charAt(W),i(y));)o+=y,W++;y=t.charAt(W),W++,o&&(y===h||z&&y===m)&&(M=y,r+=o.length+1)}if(M)if((y=t.charAt(W))===f)r+=v-r%v,W++;else if(y===p){for(B=W+v;W<B&&t.charAt(W)===p;)W++,r++;W===B&&t.charAt(W)===p&&(W-=v-1,r-=v-1)}else y!==d&&""!==y&&(M=null)}if(M){if(!q&&b!==M)break;E=!0}else z||V||t.charAt(k)!==p?z&&I&&(V=r>=I.indent||r>v):V=!0,E=!1,W=k;if(x=t.slice(k,w),S=k===W?x:t.slice(W,w),(M===s||M===l||M===u)&&j.thematicBreak.call(H,e,x,!0))break;if(T=D,D=!E&&!S.trim(),V&&I)I.value=I.value.concat(L,x),P=P.concat(L,x),L=[];else if(E)0!==L.length&&(K=!0,I.value.push(""),I.trail=L.concat()),I={value:[x],indent:r,trail:[]},A.push(I),P=P.concat(L,x),L=[];else if(D){if(T&&!z)break;L.push(x)}else{if(T)break;if(a(U,j,H,[e,x,!0]))break;I.value=I.value.concat(L,x),P=P.concat(L,x),L=[]}W=w+1}N=e(P.join(d)).reset({type:"list",ordered:g,start:G,spread:K,children:[]}),O=H.enterList(),F=H.enterBlock(),W=-1,_=A.length;for(;++W<_;)I=A[W].value.join(d),R=e.now(),e(I)(C(H,I,R),N),I=A[W].trail.join(d),W!==_-1&&(I+=d),e(I);return O(),F(),N};var s="*",l="_",c="+",u="-",h=".",p=" ",d="\n",f="\t",m=")",v=4,g=/\n\n(?!\s*$)/,y=/^\[(.)][ \t]/,b=/^([ \t]*)([*+-]|\d+[.)])( {1,4}(?! )| |\t|$|(?=\n))([^\n]*)/,w=/^([ \t]*)([*+-]|\d+[.)])([ \t]+)/,k=/^( {1,4}|\t)?/gm;function C(e,t,n){var i,r,o=e.offset,a=null,s=null;return t=(e.options.pedantic?E:M).apply(null,arguments),e.options.gfm&&(i=t.match(y))&&(r=i[0].length,a=" "!==i[1],s=i[1],o[n.line]+=r,t=t.slice(r)),{type:"listItem",spread:g.test(t),checked:a,checklist:s,children:e.tokenizeBlock(t,n)}}function E(e,t,n){var i=e.offset,r=n.line;return t=t.replace(w,o),r=n.line,t.replace(k,o);function o(e){return i[r]=(i[r]||0)+e.length,r++,""}}function M(e,t,n){var i,a,s,l,c,u,h,f=e.offset,m=n.line;for(l=(t=t.replace(b,(function(e,t,n,r,o){a=t+n+r,s=o,Number(n)<10&&a.length%2==1&&(n=p+n);return(i=t+p.repeat(n.length)+r)+s}))).split(d),(c=o(t,r(i).indent,!1).split(d))[0]=s,f[m]=(f[m]||0)+a.length,m++,u=0,h=l.length;++u<h;)f[m]=(f[m]||0)+l[u].length-c[u].length,m++;return c.join(d)}},753:e=>{"use strict";e.exports=function(e,t){var n=e.indexOf("\n",t);for(;n>t&&" "===e.charAt(n-1);)n--;return n}},859:(e,t,n)=>{"use strict";var i=n(2472);function r(){}e.exports=a,r.prototype=Error.prototype,a.prototype=new r;var o=a.prototype;function a(e,t,n){var r,o,a;"string"==typeof t&&(n=t,t=null),r=function(e){var t,n=[null,null];"string"==typeof e&&(-1===(t=e.indexOf(":"))?n[1]=e:(n[0]=e.slice(0,t),n[1]=e.slice(t+1)));return n}(n),o=i(t)||"1:1",a={start:{line:null,column:null},end:{line:null,column:null}},t&&t.position&&(t=t.position),t&&(t.start?(a=t,t=t.start):a.start=t),e.stack&&(this.stack=e.stack,e=e.message),this.message=e,this.name=o,this.reason=e,this.line=t?t.line:null,this.column=t?t.column:null,this.location=a,this.source=r[0],this.ruleId=r[1]}o.file="",o.name="",o.reason="",o.message="",o.stack="",o.fatal=null,o.column=null,o.line=null},922:e=>{"use strict";e.exports=function(e){var t=String(e),n=[],i=/\r?\n|\r/g;for(;i.exec(t);)n.push(i.lastIndex);return n.push(t.length+1),{toPoint:r,toPosition:r,toOffset:function(e){var t,i=e&&e.line,r=e&&e.column;isNaN(i)||isNaN(r)||!(i-1 in n)||(t=(n[i-2]||0)+r-1||0);return t>-1&&t<n[n.length-1]?t:-1}};function r(e){var t=-1;if(e>-1&&e<n[n.length-1])for(;++t<n.length;)if(n[t]>e)return{line:t+1,column:e-(n[t-1]||0)+1,offset:e};return{}}}},927:(e,t,n)=>{var i=n(2877);e.exports=function(e){var t={},n=new i(e);t.trackNumber=n.nextUIntV(),t.timecode=n.nextInt16BE();var r=n.nextUInt8();t.invisible=!!(8&r),t.keyframe=!!(128&r),t.discardable=!!(1&r);var o=(6&r)>>1;return t.frames=function(e,t){if(!t)return[e.nextBuffer()];var n,i,r=[],o=e.nextUInt8()+1;if(2===t){if(e.length%o!=0)throw new Error("Fixed-Size Lacing Error");for(i=e.length/o,n=0;n<o;n++)r.push(e.nextBuffer(i));return r}var a=[];if(1===t)for(n=0;n<o-1;n++){var s;i=0;do{i+=s=e.nextUInt8()}while(255===s);a.push(i)}else if(3===t)for(i=e.nextUIntV(),a.push(i),n=1;n<o-1;n++)i+=e.nextIntV(),a.push(i);for(n=0;n<o-1;n++)r.push(e.nextBuffer(a[n]));return r.push(e.nextBuffer()),r}(n,o),t}},935:(e,t,n)=>{"use strict";e.exports=function(e,t){var n=t.value.replace(/\r?\n|\r/g," ");return e(t,"code",[i("text",n)])};var i=n(9650)},942:(e,t,n)=>{"use strict";function i(){return null}e.exports={blockquote:n(9331),break:n(1501),code:n(3849),delete:n(5275),emphasis:n(4738),footnoteReference:n(3632),footnote:n(8812),heading:n(544),html:n(9941),imageReference:n(4255),image:n(3603),inlineCode:n(935),linkReference:n(7756),link:n(9040),listItem:n(8942),list:n(396),paragraph:n(6504),root:n(4824),strong:n(5151),table:n(2258),text:n(8711),thematicBreak:n(5125),toml:i,yaml:i,definition:i,footnoteDefinition:i}},1030:e=>{"use strict";e.exports=function(e,t){var n=e.indexOf("*",t),i=e.indexOf("_",t);if(-1===i)return n;if(-1===n)return i;return i<n?i:n}},1039:e=>{"use strict";var t=r("start"),n=r("end");function i(e){return{start:t(e),end:n(e)}}function r(e){return t.displayName=e,t;function t(t){var n=t&&t.position&&t.position[e]||{};return{line:n.line||null,column:n.column||null,offset:isNaN(n.offset)?null:n.offset}}}e.exports=i,i.start=t,i.end=n},1071:e=>{"use strict";e.exports=function(e,t){return e.indexOf("~~",t)}},1126:function(e,t,n){var i;e.exports=(i=i||function(e,t){var i;if("undefined"!=typeof window&&window.crypto&&(i=window.crypto),"undefined"!=typeof self&&self.crypto&&(i=self.crypto),"undefined"!=typeof globalThis&&globalThis.crypto&&(i=globalThis.crypto),!i&&"undefined"!=typeof window&&window.msCrypto&&(i=window.msCrypto),!i&&void 0!==n.g&&n.g.crypto&&(i=n.g.crypto),!i)try{i=n(3936)}catch(e){}var r=function(){if(i){if("function"==typeof i.getRandomValues)try{return i.getRandomValues(new Uint32Array(1))[0]}catch(e){}if("function"==typeof i.randomBytes)try{return i.randomBytes(4).readInt32LE()}catch(e){}}throw new Error("Native crypto module could not be used to get secure random number.")},o=Object.create||function(){function e(){}return function(t){var n;return e.prototype=t,n=new e,e.prototype=null,n}}(),a={},s=a.lib={},l=s.Base={extend:function(e){var t=o(this);return e&&t.mixIn(e),t.hasOwnProperty("init")&&this.init!==t.init||(t.init=function(){t.$super.init.apply(this,arguments)}),t.init.prototype=t,t.$super=this,t},create:function(){var e=this.extend();return e.init.apply(e,arguments),e},init:function(){},mixIn:function(e){for(var t in e)e.hasOwnProperty(t)&&(this[t]=e[t]);e.hasOwnProperty("toString")&&(this.toString=e.toString)},clone:function(){return this.init.prototype.extend(this)}},c=s.WordArray=l.extend({init:function(e,n){e=this.words=e||[],this.sigBytes=n!=t?n:4*e.length},toString:function(e){return(e||h).stringify(this)},concat:function(e){var t=this.words,n=e.words,i=this.sigBytes,r=e.sigBytes;if(this.clamp(),i%4)for(var o=0;o<r;o++){var a=n[o>>>2]>>>24-o%4*8&255;t[i+o>>>2]|=a<<24-(i+o)%4*8}else for(var s=0;s<r;s+=4)t[i+s>>>2]=n[s>>>2];return this.sigBytes+=r,this},clamp:function(){var t=this.words,n=this.sigBytes;t[n>>>2]&=4294967295<<32-n%4*8,t.length=e.ceil(n/4)},clone:function(){var e=l.clone.call(this);return e.words=this.words.slice(0),e},random:function(e){for(var t=[],n=0;n<e;n+=4)t.push(r());return new c.init(t,e)}}),u=a.enc={},h=u.Hex={stringify:function(e){for(var t=e.words,n=e.sigBytes,i=[],r=0;r<n;r++){var o=t[r>>>2]>>>24-r%4*8&255;i.push((o>>>4).toString(16)),i.push((15&o).toString(16))}return i.join("")},parse:function(e){for(var t=e.length,n=[],i=0;i<t;i+=2)n[i>>>3]|=parseInt(e.substr(i,2),16)<<24-i%8*4;return new c.init(n,t/2)}},p=u.Latin1={stringify:function(e){for(var t=e.words,n=e.sigBytes,i=[],r=0;r<n;r++){var o=t[r>>>2]>>>24-r%4*8&255;i.push(String.fromCharCode(o))}return i.join("")},parse:function(e){for(var t=e.length,n=[],i=0;i<t;i++)n[i>>>2]|=(255&e.charCodeAt(i))<<24-i%4*8;return new c.init(n,t)}},d=u.Utf8={stringify:function(e){try{return decodeURIComponent(escape(p.stringify(e)))}catch(e){throw new Error("Malformed UTF-8 data")}},parse:function(e){return p.parse(unescape(encodeURIComponent(e)))}},f=s.BufferedBlockAlgorithm=l.extend({reset:function(){this._data=new c.init,this._nDataBytes=0},_append:function(e){"string"==typeof e&&(e=d.parse(e)),this._data.concat(e),this._nDataBytes+=e.sigBytes},_process:function(t){var n,i=this._data,r=i.words,o=i.sigBytes,a=this.blockSize,s=o/(4*a),l=(s=t?e.ceil(s):e.max((0|s)-this._minBufferSize,0))*a,u=e.min(4*l,o);if(l){for(var h=0;h<l;h+=a)this._doProcessBlock(r,h);n=r.splice(0,l),i.sigBytes-=u}return new c.init(n,u)},clone:function(){var e=l.clone.call(this);return e._data=this._data.clone(),e},_minBufferSize:0}),m=(s.Hasher=f.extend({cfg:l.extend(),init:function(e){this.cfg=this.cfg.extend(e),this.reset()},reset:function(){f.reset.call(this),this._doReset()},update:function(e){return this._append(e),this._process(),this},finalize:function(e){return e&&this._append(e),this._doFinalize()},blockSize:16,_createHelper:function(e){return function(t,n){return new e.init(n).finalize(t)}},_createHmacHelper:function(e){return function(t,n){return new m.HMAC.init(e,n).finalize(t)}}}),a.algo={});return a}(Math),i)},1134:(e,t,n)=>{"use strict";var i=n(1900),r=n(1071);e.exports=s,s.locator=r;var o="~",a="~~";function s(e,t,n){var r,s,l,c="",u="",h="",p="";if(this.options.gfm&&t.charAt(0)===o&&t.charAt(1)===o&&!i(t.charAt(2)))for(r=1,s=t.length,(l=e.now()).column+=2,l.offset+=2;++r<s;){if(!((c=t.charAt(r))!==o||u!==o||h&&i(h)))return!!n||e(a+p+a)({type:"delete",children:this.tokenizeInline(p,l)});p+=u,h=u,u=c}}},1184:(e,t,n)=>{"use strict";var i=n(8707),r=n(7422),o=n(7274),a=n(3784),s=n(2700);e.exports=function(e,t){var n=t||{},h=n.quote||l,p=h===l?c:l,d=n.quoteSmart,f=e&&"object"==typeof e&&"length"in e?{type:"root",children:e}:e;if(h!==l&&h!==c)throw new Error("Invalid quote `"+h+"`, expected `"+c+"` or `"+l+"`");void 0!==n.allowDangerousHTML&&(u||(u=!0,console.warn("Deprecation warning: `allowDangerousHTML` is a nonstandard option, use `allowDangerousHtml` instead")));return s({valid:n.allowParseErrors?0:1,safe:n.allowDangerousCharacters?0:1,schema:"svg"===n.space?r:i,omit:n.omitOptionalTags&&a,quote:h,alternative:p,smart:d,unquoted:Boolean(n.preferUnquoted),tight:n.tightAttributes,upperDoctype:Boolean(n.upperDoctype),tightDoctype:Boolean(n.tightDoctype),bogusComments:Boolean(n.bogusComments),tightLists:n.tightCommaSeparatedLists,tightClose:n.tightSelfClosing,collapseEmpty:n.collapseEmptyAttributes,dangerous:n.allowDangerousHtml||n.allowDangerousHTML,voids:n.voids||o.concat(),entities:n.entities||{},close:n.closeSelfClosing,closeEmpty:n.closeEmptyElements},f)};var l='"',c="'",u=!1},1185:(e,t,n)=>{"use strict";var i=n(8593),r=n(1632),o=n(6901);e.exports=function(e,t){return r(e,i(t,{format:o}))}},1339:(e,t,n)=>{"use strict";var i=n(493),r=n(1765),o=n(6134),a=n(7578).P,s=n(1575),l=i("comment"),c="optgroup",u=["option"].concat(c),h=["dt","dd"],p=["menuitem","hr","menu"],d=["rp","rt"],f=["tbody","tfoot"],m=["td","th"],v=["a","audio","del","ins","map","noscript","video"],g=["address","article","aside","blockquote","details","div","dl","fieldset","figcaption","figure","footer","form","h1","h2","h3","h4","h5","h6","header","hgroup","hr","main","menu","nav","ol","p","pre","section","table","ul"];function y(e,t,n){var i=a(n,t,!0);return!i||!l(i)&&!o(i)}function b(e,t,n){var i=a(n,t);return!i||r(i,d)}function w(e,t,n){var i=a(n,t);return!i||r(i,m)}e.exports=s({html:function(e,t,n){var i=a(n,t);return!i||!l(i)},head:y,body:function(e,t,n){var i=a(n,t);return!i||!l(i)},p:function(e,t,n){var i=a(n,t);return i?r(i,g):!n||!r(n,v)},li:function(e,t,n){var i=a(n,t);return!i||r(i,"li")},dt:function(e,t,n){var i=a(n,t);return i&&r(i,h)},dd:function(e,t,n){var i=a(n,t);return!i||r(i,h)},rt:b,rp:b,optgroup:function(e,t,n){var i=a(n,t);return!i||r(i,c)},option:function(e,t,n){var i=a(n,t);return!i||r(i,u)},menuitem:function(e,t,n){var i=a(n,t);return!i||r(i,p)},colgroup:y,caption:y,thead:function(e,t,n){var i=a(n,t);return i&&r(i,f)},tbody:function(e,t,n){var i=a(n,t);return!i||r(i,f)},tfoot:function(e,t,n){return!a(n,t)},tr:function(e,t,n){var i=a(n,t);return!i||r(i,"tr")},td:w,th:w})},1383:e=>{"use strict";e.exports=function(e){return e.toLowerCase()}},1393:(e,t,n)=>{"use strict";e.exports={position:!0,gfm:!0,commonmark:!1,pedantic:!1,blocks:n(5810)}},1498:e=>{"use strict";e.exports=function(e,l,c){var u,h,p,d,f,m,v,g,y,b,w,k,C,E=this,M=E.options.gfm,S=l.length+1,x=0,T="";if(!M)return;for(;x<S&&((p=l.charAt(x))===i||p===n);)T+=p,x++;if(k=x,(p=l.charAt(x))!==r&&p!==o)return;x++,h=p,u=1,T+=p;for(;x<S&&(p=l.charAt(x))===h;)T+=p,u++,x++;if(u<a)return;for(;x<S&&((p=l.charAt(x))===i||p===n);)T+=p,x++;d="",v="";for(;x<S&&(p=l.charAt(x))!==t&&(h!==o||p!==h);)p===i||p===n?v+=p:(d+=v+p,v=""),x++;if((p=l.charAt(x))&&p!==t)return;if(c)return!0;(C=e.now()).column+=T.length,C.offset+=T.length,T+=d,d=E.decode.raw(E.unescape(d),C),v&&(T+=v);v="",b="",w="",g="",y="";var D=!0;for(;x<S;)if(g+=b,y+=w,b="",w="",(p=l.charAt(x))===t){for(D?(T+=p,D=!1):(b+=p,w+=p),v="",x++;x<S&&(p=l.charAt(x))===i;)v+=p,x++;if(b+=v,w+=v.slice(k),!(v.length>=s)){for(v="";x<S&&(p=l.charAt(x))===h;)v+=p,x++;if(b+=v,w+=v,!(v.length<u)){for(v="";x<S&&((p=l.charAt(x))===i||p===n);)b+=p,w+=p,x++;if(!p||p===t)break}}}else g+=p,w+=p,x++;T+=g+b,x=-1,S=d.length;for(;++x<S;)if((p=d.charAt(x))===i||p===n)f||(f=d.slice(0,x));else if(f){m=d.slice(x);break}return e(T)({type:"code",lang:f||d||null,meta:m||null,value:y})};var t="\n",n="\t",i=" ",r="~",o="`",a=3,s=4},1501:(e,t,n)=>{"use strict";e.exports=function(e,t){return[e(t,"br"),i("text","\n")]};var i=n(9650)},1528:(e,t,n)=>{"use strict";var i=n(7057),r=n(9546),o=n(922),a=n(9359),s=n(5785),l=n(7269);function c(e,t){this.file=t,this.offset={},this.options=i(this.options),this.setOptions({}),this.inList=!1,this.inBlock=!1,this.inLink=!1,this.atStart=!0,this.toOffset=o(t).toOffset,this.unescape=a(this,"escape"),this.decode=s(this)}e.exports=c;var u=c.prototype;function h(e){var t,n=[];for(t in e)n.push(t);return n}u.setOptions=n(3228),u.parse=n(4272),u.options=n(1393),u.exitStart=r("atStart",!0),u.enterList=r("inList",!1),u.enterLink=r("inLink",!1),u.enterBlock=r("inBlock",!1),u.interruptParagraph=[["thematicBreak"],["list"],["atxHeading"],["fencedCode"],["blockquote"],["html"],["setextHeading",{commonmark:!1}],["definition",{commonmark:!1}]],u.interruptList=[["atxHeading",{pedantic:!1}],["fencedCode",{pedantic:!1}],["thematicBreak",{pedantic:!1}],["definition",{commonmark:!1}]],u.interruptBlockquote=[["indentedCode",{commonmark:!0}],["fencedCode",{commonmark:!0}],["atxHeading",{commonmark:!0}],["setextHeading",{commonmark:!0}],["thematicBreak",{commonmark:!0}],["html",{commonmark:!0}],["list",{commonmark:!0}],["definition",{commonmark:!1}]],u.blockTokenizers={blankLine:n(1694),indentedCode:n(134),fencedCode:n(1498),blockquote:n(6234),atxHeading:n(8469),thematicBreak:n(6968),list:n(745),setextHeading:n(8671),html:n(8776),definition:n(1616),table:n(7793),paragraph:n(8607)},u.inlineTokenizers={escape:n(470),autoLink:n(8775),url:n(1944),email:n(5657),html:n(7648),link:n(9405),reference:n(6252),strong:n(5702),emphasis:n(439),deletion:n(1134),code:n(1891),break:n(5874),text:n(4410)},u.blockMethods=h(u.blockTokenizers),u.inlineMethods=h(u.inlineTokenizers),u.tokenizeBlock=l("block"),u.tokenizeInline=l("inline"),u.tokenizeFactory=l},1575:e=>{"use strict";e.exports=function(e){return function(n,i,r){var o=n.tagName;return!!t.call(e,o)&&e[o](n,i,r)}};var t={}.hasOwnProperty},1606:(e,t)=>{"use strict";t.A=function(e,t){var o=t||{},a=!1===o.padLeft?r:i,s=o.padRight?i:r;e[e.length-1]===r&&(e=e.concat(r));return e.join(s+n+a).trim()};var n=",",i=" ",r=""},1616:(e,t,n)=>{"use strict";var i=n(1900),r=n(2115);e.exports=function(e,t,n){var i,g,w,k,C,E,M,S,x=this,T=x.options.commonmark,D=0,A=t.length,P="";for(;D<A&&((k=t.charAt(D))===u||k===c);)P+=k,D++;if((k=t.charAt(D))!==h)return;D++,P+=k,w="";for(;D<A&&(k=t.charAt(D))!==p;)k===s&&(w+=k,D++,k=t.charAt(D)),w+=k,D++;if(!w||t.charAt(D)!==p||t.charAt(D+1)!==m)return;E=w,D=(P+=w+p+m).length,w="";for(;D<A&&((k=t.charAt(D))===c||k===u||k===l);)P+=k,D++;if(k=t.charAt(D),w="",i=P,k===v){for(D++;D<A&&y(k=t.charAt(D));)w+=k,D++;if((k=t.charAt(D))===y.delimiter)P+=v+w+k,D++;else{if(T)return;D-=w.length+1,w=""}}if(!w){for(;D<A&&b(k=t.charAt(D));)w+=k,D++;P+=w}if(!w)return;M=w,w="";for(;D<A&&((k=t.charAt(D))===c||k===u||k===l);)w+=k,D++;k=t.charAt(D),C=null,k===o?C=o:k===a?C=a:k===d&&(C=f);if(C){if(!w)return;for(D=(P+=w+k).length,w="";D<A&&(k=t.charAt(D))!==C;){if(k===l){if(D++,(k=t.charAt(D))===l||k===C)return;w+=l}w+=k,D++}if((k=t.charAt(D))!==C)return;g=P,P+=w+k,D++,S=w,w=""}else w="",D=P.length;for(;D<A&&((k=t.charAt(D))===c||k===u);)P+=k,D++;if(!(k=t.charAt(D))||k===l)return!!n||(i=e(i).test().end,M=x.decode.raw(x.unescape(M),i,{nonTerminated:!1}),S&&(g=e(g).test().end,S=x.decode.raw(x.unescape(S),g)),e(P)({type:"definition",identifier:r(E),label:E,title:S||null,url:M}))};var o='"',a="'",s="\\",l="\n",c="\t",u=" ",h="[",p="]",d="(",f=")",m=":",v="<",g=">";function y(e){return e!==g&&e!==h&&e!==p}function b(e){return e!==h&&e!==p&&!i(e)}y.delimiter=g},1632:e=>{"use strict";e.exports=function(e,t){if(e=e.replace(t.subset?function(e){var t=[],n=-1;for(;++n<e.length;)t.push(e[n].replace(/[|\\{}()[\]^$+*?.]/g,"\\$&"));return new RegExp("(?:"+t.join("|")+")","g")}(t.subset):/["&'<>`]/g,n),t.subset||t.escapeOnly)return e;return e.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g,(function(e,n,i){return t.format(1024*(e.charCodeAt(0)-55296)+e.charCodeAt(1)-56320+65536,i.charCodeAt(n+2),t)})).replace(/[\x01-\t\v\f\x0E-\x1F\x7F\x81\x8D\x8F\x90\x9D\xA0-\uFFFF]/g,n);function n(e,n,i){return t.format(e.charCodeAt(0),i.charCodeAt(n+1),t)}}},1694:e=>{"use strict";var t=/^[ \t]*(\n|$)/;e.exports=function(e,n,i){var r,o="",a=0,s=n.length;for(;a<s&&null!=(r=t.exec(n.slice(a)));)a+=r[0].length,o+=r[0];if(""===o)return;if(i)return!0;e(o)}},1716:(e,t,n)=>{"use strict";var i=n(6933);e.exports=function(e,t){return i(e,t.toLowerCase())}},1765:(e,t,n)=>{"use strict";var i=n(1918);function r(e,t,n,r,o){var a=null!=r,s=null!=n,l=i(t);if(s&&("number"!=typeof n||n<0||n===1/0))throw new Error("Expected positive finite index for child node");if(a&&(!r.type||!r.children))throw new Error("Expected parent node");if(!e||!e.type||"string"!=typeof e.type)return!1;if(a!==s)throw new Error("Expected both parent and index");return l.call(o,e,n,r)}e.exports=r,r.convert=i},1782:e=>{"use strict";e.exports=n;var t=n.prototype;function n(e,t,n){this.property=e,this.normal=t,n&&(this.space=n)}t.space=null,t.normal={},t.property={}},1890:e=>{"use strict";e.exports=function(e,t){return e.indexOf("<",t)}},1891:(e,t,n)=>{"use strict";var i=n(2163);e.exports=s,s.locator=i;var r=10,o=32,a=96;function s(e,t,n){for(var i,s,l,c,u,h,p=t.length,d=0;d<p&&t.charCodeAt(d)===a;)d++;if(0!==d&&d!==p){for(i=d,u=t.charCodeAt(d);d<p;){if(c=u,u=t.charCodeAt(d+1),c===a){if(void 0===s&&(s=d),l=d+1,u!==a&&l-s===i){h=!0;break}}else void 0!==s&&(s=void 0,l=void 0);d++}if(h){if(n)return!0;if(d=i,p=s,c=t.charCodeAt(d),u=t.charCodeAt(p-1),h=!1,p-d>2&&(c===o||c===r)&&(u===o||u===r)){for(d++,p--;d<p;){if((c=t.charCodeAt(d))!==o&&c!==r){h=!0;break}d++}!0===h&&(i++,s--)}return e(t.slice(0,l))({type:"inlineCode",value:t.slice(i,s)})}}}},1900:e=>{"use strict";e.exports=function(e){return n.test("number"==typeof e?t(e):e.charAt(0))};var t=String.fromCharCode,n=/\s/},1918:e=>{"use strict";function t(e){if("string"==typeof e)return function(e){return t;function t(t){return n(t)&&t.tagName===e}}(e);if(null==e)return n;if("object"==typeof e)return function(e){var n=function(e){var n=e.length,i=-1,r=[];for(;++i<n;)r[i]=t(e[i]);return r}(e),i=n.length;return r;function r(){for(var e=-1;++e<i;)if(n[e].apply(this,arguments))return!0;return!1}}(e);if("function"==typeof e)return function(e){return t;function t(t){return n(t)&&Boolean(e.apply(this,arguments))}}(e);throw new Error("Expected function, string, or array as test")}function n(e){return e&&"object"==typeof e&&"element"===e.type&&"string"==typeof e.tagName}e.exports=t},1928:function(e,t,n){var i;e.exports=(i=n(1126),n(8190),n(3490),i.HmacSHA256)},1944:(e,t,n)=>{"use strict";var i=n(5759).LC,r=n(7122),o=n(7092),a=n(741),s=n(1900),l=n(4307);e.exports=M,M.locator=l,M.notInLink=!0;var c=33,u=38,h=41,p=42,d=44,f=45,m=46,v=58,g=59,y=63,b=60,w=95,k=126,C="(",E=")";function M(e,t,n){var l,M,S,x,T,D,A,P,L,I,O,F,N,R,B=this,V=B.options.gfm,H=B.inlineTokenizers,z=t.length,q=-1,j=!1;if(V){if("www."===t.slice(0,4))j=!0,x=4;else if("http://"===t.slice(0,7).toLowerCase())x=7;else{if("https://"!==t.slice(0,8).toLowerCase())return;x=8}for(q=x-1,S=x,l=[];x<z;)if((A=t.charCodeAt(x))!==m){if(!o(A)&&!a(A)&&A!==f&&A!==w)break;x++}else{if(q===x-1)break;l.push(x),q=x,x++}if(A===m&&(l.pop(),x--),void 0!==l[0]&&(M=l.length<2?S:l[l.length-2]+1,-1===t.slice(M,x).indexOf("_"))){if(n)return!0;for(P=x,T=x;x<z&&(A=t.charCodeAt(x),!s(A)&&A!==b);)x++,A===c||A===p||A===d||A===m||A===v||A===y||A===w||A===k||(P=x);if(x=P,t.charCodeAt(x-1)===h)for(D=t.slice(T,x),L=r(D,C),I=r(D,E);I>L;)x=T+D.lastIndexOf(E),D=t.slice(T,x),I--;if(t.charCodeAt(x-1)===g&&(x--,a(t.charCodeAt(x-1)))){for(P=x-2;a(t.charCodeAt(P));)P--;t.charCodeAt(P)===u&&(x=P)}return O=t.slice(0,x),N=i(O,{nonTerminated:!1}),j&&(N="http://"+N),R=B.enterLink(),B.inlineTokenizers={text:H.text},F=B.tokenizeInline(O,e.now()),B.inlineTokenizers=H,R(),e(O)({type:"link",title:null,url:N,children:F})}}}},1979:(e,t,n)=>{"use strict";n.r(t),n.d(t,{RateAppWeb:()=>r});var i=n(6043);class r extends i.E_{async requestReview(){}}},2115:(e,t,n)=>{"use strict";var i=n(9510);e.exports=function(e){return i(e).toLowerCase()}},2163:e=>{"use strict";e.exports=function(e,t){return e.indexOf("`",t)}},2258:(e,t,n)=>{"use strict";e.exports=function(e,t){var n,a,s,l,c,u=t.children,h=u.length,p=t.align||[],d=p.length,f=[];for(;h--;){for(a=u[h].children,l=0===h?"th":"td",n=d||a.length,s=[];n--;)c=a[n],s[n]=e(c,l,{align:p[n]},c?o(e,c):[]);f[h]=e(u[h],"tr",r(s,!0))}return e(t,"table",r([e(f[0].position,"thead",r([f[0]],!0))].concat(f[1]?e({start:i.start(f[1]),end:i.end(f[f.length-1])},"tbody",r(f.slice(1),!0)):[]),!0))};var i=n(1039),r=n(7824),o=n(4297)},2292:(e,t,n)=>{"use strict";e.exports=n(1184)},2298:(e,t,n)=>{"use strict";var i=n(7092),r=n(741);function o(e){return i(e)||r(e)||43===e||45===e||46===e||95===e}e.exports=function e(t,n){var i,r;if(!this.options.gfm)return-1;if(-1===(i=t.indexOf("@",n)))return-1;if((r=i)===n||!o(t.charCodeAt(r-1)))return e.call(this,t,i+1);for(;r>n&&o(t.charCodeAt(r-1));)r--;return r}},2315:(e,t,n)=>{e.exports=function(e,t,n,l){var c,u,h=o(e);if(a.call(r,h))return u="&"+(c=r[h]),n&&a.call(i,c)&&-1===s.indexOf(c)&&(!l||t&&61!==t&&/[^\da-z]/i.test(o(t)))?u:u+";";return""};var i=n(4472),r=n(6426),o=n(9677),a=n(3303),s=n(5547)},2356:e=>{"use strict";e.exports=function(e,t){var n=e.indexOf("[",t),i=e.indexOf("![",t);if(-1===i)return n;return n<i?n:i}},2472:e=>{"use strict";var t={}.hasOwnProperty;function n(e){return e&&"object"==typeof e||(e={}),r(e.line)+":"+r(e.column)}function i(e){return e&&"object"==typeof e||(e={}),n(e.start)+"-"+n(e.end)}function r(e){return e&&"number"==typeof e?e:1}e.exports=function(e){if(!e||"object"!=typeof e)return"";if(t.call(e,"position")||t.call(e,"type"))return i(e.position);if(t.call(e,"start")||t.call(e,"end"))return i(e);if(t.call(e,"line")||t.call(e,"column"))return n(e);return""}},2660:e=>{e.exports=function(e){return null!=e&&null!=e.constructor&&"function"==typeof e.constructor.isBuffer&&e.constructor.isBuffer(e)}},2700:(e,t,n)=>{"use strict";e.exports=function(e,t,n,o){var a=t&&t.type;if(!a)throw new Error("Expected node, not `"+t+"`");if(!i.call(r,a))throw new Error("Cannot compile unknown node `"+a+"`");return r[a](e,t,n,o)};var i={}.hasOwnProperty,r={};r.root=n(9795),r.text=n(8785),r.element=n(5684),r.doctype=n(326),r.comment=n(5393),r.raw=n(618)},2877:(e,t,n)=>{var i=n(5420);function r(e){this.buffer=e,this.offset=0}r.prototype.nextInt16BE=function(){var e=this.buffer.readInt16BE(this.offset);return this.offset+=2,e},r.prototype.nextUInt8=function(){var e=this.buffer.readUInt8(this.offset);return this.offset+=1,e},r.prototype.nextUIntV=function(){var e=i(this.buffer,this.offset);return this.offset+=e.length,e.value},r.prototype.nextIntV=function(){var e=i(this.buffer,this.offset,!0);return this.offset+=e.length,e.value},r.prototype.nextBuffer=function(e){var t=e?this.buffer.slice(this.offset,this.offset+e):this.buffer.slice(this.offset);return this.offset+=e||this.length,t},Object.defineProperty(r.prototype,"length",{get:function(){return this.buffer.length-this.offset}}),e.exports=r},2888:(e,t,n)=>{"use strict";e.exports=l;var i=n(493),r=n(5001),o=!0,a="skip",s=!1;function l(e,t,n,l){var c,u;"function"==typeof t&&"function"!=typeof n&&(l=n,n=t,t=null),u=i(t),c=l?-1:1,function e(i,h,p){var d,f="object"==typeof i&&null!==i?i:{};"string"==typeof f.type&&(d="string"==typeof f.tagName?f.tagName:"string"==typeof f.name?f.name:void 0,m.displayName="node ("+r(f.type+(d?"<"+d+">":""))+")");return m;function m(){var r,d,f=p.concat(i),m=[];if((!t||u(i,h,p[p.length-1]||null))&&(m=function(e){if(null!==e&&"object"==typeof e&&"length"in e)return e;if("number"==typeof e)return[o,e];return[e]}(n(i,p)),m[0]===s))return m;if(i.children&&m[0]!==a)for(d=(l?i.children.length:-1)+c;d>-1&&d<i.children.length;){if((r=e(i.children[d],d,f)())[0]===s)return r;d="number"==typeof r[1]?r[1]:d+c}return m}}(e,null,[])()}l.CONTINUE=o,l.SKIP=a,l.EXIT=s},3115:e=>{"use strict";e.exports=function(e,t){return e.indexOf("\\",t)}},3179:function(e,t,n){"use strict";var i=this&&this.__createBinding||(Object.create?function(e,t,n,i){void 0===i&&(i=n),Object.defineProperty(e,i,{enumerable:!0,get:function(){return t[n]}})}:function(e,t,n,i){void 0===i&&(i=n),e[i]=t[n]}),r=this&&this.__exportStar||function(e,t){for(var n in e)"default"===n||Object.prototype.hasOwnProperty.call(t,n)||i(t,e,n)};Object.defineProperty(t,"__esModule",{value:!0}),t.tools=t.Reader=t.Encoder=t.Decoder=void 0,r(n(8177),t);var o=n(8193);t.Decoder=o.default;var a=n(4741);t.Encoder=a.default;var s=n(5226);t.Reader=s.default;var l=n(9840);t.tools=l},3228:(e,t,n)=>{"use strict";var i=n(7057),r=n(4982),o=n(1393);e.exports=function(e){var t,n,a=this,s=a.options;if(null==e)e={};else{if("object"!=typeof e)throw new Error("Invalid value `"+e+"` for setting `options`");e=i(e)}for(t in o){if(null==(n=e[t])&&(n=s[t]),"blocks"!==t&&"boolean"!=typeof n||"blocks"===t&&"object"!=typeof n)throw new Error("Invalid value `"+n+"` for setting `options."+t+"`");e[t]=n}return a.options=e,a.escape=r(e),a}},3303:e=>{e.exports={}.hasOwnProperty},3357:(e,t,n)=>{"use strict";n.r(t),n.d(t,{SecureStorageWeb:()=>r});var i=n(3860);class r extends i.u{async setSynchronizeKeychain(e){return Promise.resolve()}async internalGetItem(e){return{data:localStorage.getItem(e.prefixedKey)}}async internalSetItem(e){return localStorage.setItem(e.prefixedKey,e.data),Promise.resolve()}async internalRemoveItem(e){return null!==localStorage.getItem(e.prefixedKey)?(localStorage.removeItem(e.prefixedKey),Promise.resolve({success:!0})):Promise.resolve({success:!1})}async clear(){const{keys:e}=await this.getPrefixedKeys({prefix:this.prefix});return e.forEach((e=>{localStorage.removeItem(e)})),Promise.resolve()}async clearItemsWithPrefix(e){console.warn("clearItemsWithPrefix is native only")}async getPrefixedKeys(e){const t=[];for(let n=0;n<localStorage.length;n++){const i=localStorage.key(n);(null==i?void 0:i.startsWith(e.prefix))&&t.push(i)}return Promise.resolve({keys:t})}}},3390:(e,t,n)=>{"use strict";e.exports=function(e,t){var n,o,a,s=t.referenceType,l="]";"collapsed"===s?l+="[]":"full"===s&&(l+="["+(t.label||t.identifier)+"]");if("imageReference"===t.type)return i("text","!["+t.alt+l);n=r(e,t),(o=n[0])&&"text"===o.type?o.value="["+o.value:n.unshift(i("text","["));(a=n[n.length-1])&&"text"===a.type?a.value+=l:n.push(i("text",l));return n};var i=n(9650),r=n(4297)},3490:function(e,t,n){var i,r,o,a;e.exports=(i=n(1126),o=(r=i).lib.Base,a=r.enc.Utf8,void(r.algo.HMAC=o.extend({init:function(e,t){e=this._hasher=new e.init,"string"==typeof t&&(t=a.parse(t));var n=e.blockSize,i=4*n;t.sigBytes>i&&(t=e.finalize(t)),t.clamp();for(var r=this._oKey=t.clone(),o=this._iKey=t.clone(),s=r.words,l=o.words,c=0;c<n;c++)s[c]^=1549556828,l[c]^=909522486;r.sigBytes=o.sigBytes=i,this.reset()},reset:function(){var e=this._hasher;e.reset(),e.update(this._iKey)},update:function(e){return this._hasher.update(e),this},finalize:function(e){var t=this._hasher,n=t.finalize(e);return t.reset(),t.finalize(this._oKey.clone().concat(n))}})))},3603:(e,t,n)=>{"use strict";var i=n(8131);e.exports=function(e,t){var n={src:i(t.url),alt:t.alt};null!==t.title&&void 0!==t.title&&(n.title=t.title);return e(t,"img",n)}},3632:(e,t,n)=>{"use strict";e.exports=function(e,t){var n=e.footnoteOrder,r=String(t.identifier);-1===n.indexOf(r)&&n.push(r);return e(t.position,"sup",{id:"fnref-"+r},[e(t,"a",{href:"#fn-"+r,className:["footnote-ref"]},[i("text",t.label||r)])])};var i=n(9650)},3784:(e,t,n)=>{"use strict";t.opening=n(3804),t.closing=n(1339)},3804:(e,t,n)=>{"use strict";var i=n(493),r=n(1765),o=n(7578).g,a=n(4159),s=n(8518),l=n(6134),c=n(1339),u=n(1575),h=i("comment"),p=["title","base"],d=["meta","link","script","style","template"],f=["thead","tbody"];e.exports=u({html:function(e){var t=a(e);return!t||!h(t)},head:function(e){var t,n,i=e.children,o=i.length,a=[],s=-1;for(;++s<o;)if(n=(t=i[s]).tagName,r(t,p)){if(-1!==a.indexOf(n))return!1;a.push(n)}return 0!==o},body:function(e){var t=a(e,!0);return!t||!h(t)&&!l(t)&&!r(t,d)},colgroup:function(e,t,n){var i=o(n,t),l=a(e,!0);if(r(i,"colgroup")&&c(i,s(n,i),n))return!1;return l&&r(l,"col")},tbody:function(e,t,n){var i=o(n,t),l=a(e);if(r(i,f)&&c(i,s(n,i),n))return!1;return l&&r(l,"tr")}})},3849:(e,t,n)=>{"use strict";e.exports=function(e,t){var n,r=t.value?t.value+"\n":"",o=t.lang&&t.lang.match(/^[^ \t]+(?=[ \t]|$)/),a={};o&&(a.className=["language-"+o]);n=e(t,"code",a,[i("text",r)]),t.meta&&(n.data={meta:t.meta});return e(t.position,"pre",[n])};var i=n(9650)},3860:(e,t,n)=>{"use strict";n.d(t,{u:()=>h});var i=n(6043);new Error("timeout while waiting for mutex to become available"),new Error("mutex already locked");const r=new Error("request for lock canceled");var o=function(e,t,n,i){return new(n||(n=Promise))((function(r,o){function a(e){try{l(i.next(e))}catch(e){o(e)}}function s(e){try{l(i.throw(e))}catch(e){o(e)}}function l(e){var t;e.done?r(e.value):(t=e.value,t instanceof n?t:new n((function(e){e(t)}))).then(a,s)}l((i=i.apply(e,t||[])).next())}))};class a{constructor(e,t=r){this._value=e,this._cancelError=t,this._queue=[],this._weightedWaiters=[]}acquire(e=1,t=0){if(e<=0)throw new Error(`invalid weight ${e}: must be positive`);return new Promise(((n,i)=>{const r={resolve:n,reject:i,weight:e,priority:t},o=s(this._queue,(e=>t<=e.priority));-1===o&&e<=this._value?this._dispatchItem(r):this._queue.splice(o+1,0,r)}))}runExclusive(e){return o(this,arguments,void 0,(function*(e,t=1,n=0){const[i,r]=yield this.acquire(t,n);try{return yield e(i)}finally{r()}}))}waitForUnlock(e=1,t=0){if(e<=0)throw new Error(`invalid weight ${e}: must be positive`);return this._couldLockImmediately(e,t)?Promise.resolve():new Promise((n=>{this._weightedWaiters[e-1]||(this._weightedWaiters[e-1]=[]),function(e,t){const n=s(e,(e=>t.priority<=e.priority));e.splice(n+1,0,t)}(this._weightedWaiters[e-1],{resolve:n,priority:t})}))}isLocked(){return this._value<=0}getValue(){return this._value}setValue(e){this._value=e,this._dispatchQueue()}release(e=1){if(e<=0)throw new Error(`invalid weight ${e}: must be positive`);this._value+=e,this._dispatchQueue()}cancel(){this._queue.forEach((e=>e.reject(this._cancelError))),this._queue=[]}_dispatchQueue(){for(this._drainUnlockWaiters();this._queue.length>0&&this._queue[0].weight<=this._value;)this._dispatchItem(this._queue.shift()),this._drainUnlockWaiters()}_dispatchItem(e){const t=this._value;this._value-=e.weight,e.resolve([t,this._newReleaser(e.weight)])}_newReleaser(e){let t=!1;return()=>{t||(t=!0,this.release(e))}}_drainUnlockWaiters(){if(0===this._queue.length)for(let e=this._value;e>0;e--){const t=this._weightedWaiters[e-1];t&&(t.forEach((e=>e.resolve())),this._weightedWaiters[e-1]=[])}else{const e=this._queue[0].priority;for(let t=this._value;t>0;t--){const n=this._weightedWaiters[t-1];if(!n)continue;const i=n.findIndex((t=>t.priority<=e));(-1===i?n:n.splice(0,i)).forEach((e=>e.resolve()))}}}_couldLockImmediately(e,t){return(0===this._queue.length||this._queue[0].priority<t)&&e<=this._value}}function s(e,t){for(let n=e.length-1;n>=0;n--)if(t(e[n]))return n;return-1}var l=function(e,t,n,i){return new(n||(n=Promise))((function(r,o){function a(e){try{l(i.next(e))}catch(e){o(e)}}function s(e){try{l(i.throw(e))}catch(e){o(e)}}function l(e){var t;e.done?r(e.value):(t=e.value,t instanceof n?t:new n((function(e){e(t)}))).then(a,s)}l((i=i.apply(e,t||[])).next())}))};var c=n(8173);const u=new class{constructor(e){this._semaphore=new a(1,e)}acquire(){return l(this,arguments,void 0,(function*(e=0){const[,t]=yield this._semaphore.acquire(1,e);return t}))}runExclusive(e,t=0){return this._semaphore.runExclusive((()=>e()),1,t)}isLocked(){return this._semaphore.isLocked()}waitForUnlock(e=0){return this._semaphore.waitForUnlock(1,e)}release(){this._semaphore.isLocked()&&this._semaphore.release()}cancel(){return this._semaphore.cancel()}};class h extends i.E_{constructor(){super(...arguments),this.prefix="capacitor-storage_",this.sync=!1,this.access=c.T2.whenUnlocked}async setSynchronize(e){return u.runExclusive((async()=>(this.sync=e,"ios"===i.Ii.getPlatform()?this.setSynchronizeKeychain({sync:e}):Promise.resolve())))}async getSynchronize(){return Promise.resolve(this.sync)}async setDefaultKeychainAccess(e){return u.runExclusive((()=>{this.access=e}))}async tryOperation(e){try{return await u.runExclusive((async()=>e()))}catch(e){if(e instanceof i.I9&&(void 0!==(t=e.code)&&Object.keys(c.CA).includes(t)))throw new c.aq(e.message,e.code);throw e}var t}async get(e,t=!0,n){if(e){const{data:i}=await this.tryOperation((async()=>this.internalGetItem({prefixedKey:this.prefixedKey(e),sync:null!=n?n:this.sync})));if(null===i)return null;if(t){const e=function(e){const t=p.exec(e);if(t){const e=parseInt(t[1],10),n=parseInt(t[2],10)-1,i=parseInt(t[3],10),r=parseInt(t[4],10),o=parseInt(t[5],10),a=parseInt(t[6],10),s=parseInt(t[7],10),l=Date.UTC(e,n,i,r,o,a,s);return new Date(l)}return null}(i);if(e)return e}try{return JSON.parse(i)}catch(e){throw new c.aq("Invalid data",c.CA.invalidData)}}return h.missingKey()}async getItem(e){if(e){const{data:t}=await this.tryOperation((async()=>this.internalGetItem({prefixedKey:this.prefixedKey(e),sync:this.sync})));return t}return null}async set(e,t,n=!0,i,r){if(e){let o=t;return n&&t instanceof Date&&(o=t.toISOString()),this.tryOperation((async()=>this.internalSetItem({prefixedKey:this.prefixedKey(e),data:JSON.stringify(o),sync:null!=i?i:this.sync,access:null!=r?r:this.access})))}return h.missingKey()}async setItem(e,t){return e?this.tryOperation((async()=>this.internalSetItem({prefixedKey:this.prefixedKey(e),data:t,sync:this.sync,access:this.access}))):h.missingKey()}async remove(e,t){if(e){const{success:n}=await this.tryOperation((async()=>this.internalRemoveItem({prefixedKey:this.prefixedKey(e),sync:null!=t?t:this.sync})));return n}return h.missingKey()}async removeItem(e){e?await this.tryOperation((async()=>this.internalRemoveItem({prefixedKey:this.prefixedKey(e),sync:this.sync}))):h.missingKey()}async keys(e){const{keys:t}=await this.tryOperation((async()=>this.getPrefixedKeys({prefix:this.prefix,sync:null!=e?e:this.sync}))),n=this.prefix.length;return t.map((e=>e.slice(n)))}async getKeyPrefix(){return Promise.resolve(this.prefix)}async setKeyPrefix(e){return this.prefix=e,Promise.resolve()}prefixedKey(e){return this.prefix+e}static missingKey(){throw new c.aq("No key provided",c.CA.missingKey)}}const p=/^"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z"$/u},3936:()=>{},4159:(e,t,n)=>{"use strict";var i=n(7578).P;e.exports=function(e,t){return i(e,-1,t)}},4169:(e,t,n)=>{e.exports=function(e,t,n){var r="&#x"+e.toString(16).toUpperCase();return n&&t&&!/[\dA-Fa-f]/.test(i(t))?r:r+";"};var i=n(9677)},4197:(e,t,n)=>{"use strict";var i=n(5325),r=n(5176);e.exports=s,s.prototype=new i,s.prototype.defined=!0;var o=["boolean","booleanish","overloadedBoolean","number","commaSeparated","spaceSeparated","commaOrSpaceSeparated"],a=o.length;function s(e,t,n,s){var c,u=-1;for(l(this,"space",s),i.call(this,e,t);++u<a;)l(this,c=o[u],(n&r[c])===r[c])}function l(e,t,n){n&&(e[t]=n)}},4255:(e,t,n)=>{"use strict";e.exports=function(e,t){var n,o=e.definition(t.identifier);if(!o)return r(e,t);n={src:i(o.url||""),alt:t.alt},null!==o.title&&void 0!==o.title&&(n.title=o.title);return e(t,"img",n)};var i=n(8131),r=n(3390)},4272:(e,t,n)=>{"use strict";var i=n(7057),r=n(8124);e.exports=function(){var e,t=this,n=String(t.file),s={line:1,column:1,offset:0},l=i(s);65279===(n=n.replace(a,o)).charCodeAt(0)&&(n=n.slice(1),l.column++,l.offset++);e={type:"root",children:t.tokenizeBlock(n,l),position:{start:s,end:t.eof||i(s)}},t.options.position||r(e,!0);return e};var o="\n",a=/\r\n|\r/g},4297:(e,t,n)=>{"use strict";e.exports=function(e,t){var n,r,o=t.children||[],a=o.length,s=[],l=-1;for(;++l<a;)(n=i(e,o[l],t))&&(l&&"break"===o[l-1].type&&(n.value&&(n.value=n.value.replace(/^\s+/,"")),(r=n.children&&n.children[0])&&r.value&&(r.value=r.value.replace(/^\s+/,""))),s=s.concat(n));return s};var i=n(7194)},4307:e=>{"use strict";e.exports=function(e,n){var i,r,o,a=-1;if(!this.options.gfm)return a;r=t.length,i=-1;for(;++i<r;)-1!==(o=e.indexOf(t[i],n))&&(-1===a||o<a)&&(a=o);return a};var t=["www.","http://","https://"]},4410:e=>{"use strict";e.exports=function(e,t,n){var i,r,o,a,s,l,c,u,h,p,d=this;if(n)return!0;i=d.inlineMethods,a=i.length,r=d.inlineTokenizers,o=-1,h=t.length;for(;++o<a;)"text"!==(u=i[o])&&r[u]&&((c=r[u].locator)||e.file.fail("Missing locator: `"+u+"`"),-1!==(l=c.call(d,t,1))&&l<h&&(h=l));s=t.slice(0,h),p=e.now(),d.decode(s,p,(function(t,n,i){e(i||t)({type:"text",value:t})}))}},4472:e=>{"use strict";e.exports=JSON.parse('{"AElig":"Æ","AMP":"&","Aacute":"Á","Acirc":"Â","Agrave":"À","Aring":"Å","Atilde":"Ã","Auml":"Ä","COPY":"©","Ccedil":"Ç","ETH":"Ð","Eacute":"É","Ecirc":"Ê","Egrave":"È","Euml":"Ë","GT":">","Iacute":"Í","Icirc":"Î","Igrave":"Ì","Iuml":"Ï","LT":"<","Ntilde":"Ñ","Oacute":"Ó","Ocirc":"Ô","Ograve":"Ò","Oslash":"Ø","Otilde":"Õ","Ouml":"Ö","QUOT":"\\"","REG":"®","THORN":"Þ","Uacute":"Ú","Ucirc":"Û","Ugrave":"Ù","Uuml":"Ü","Yacute":"Ý","aacute":"á","acirc":"â","acute":"´","aelig":"æ","agrave":"à","amp":"&","aring":"å","atilde":"ã","auml":"ä","brvbar":"¦","ccedil":"ç","cedil":"¸","cent":"¢","copy":"©","curren":"¤","deg":"°","divide":"÷","eacute":"é","ecirc":"ê","egrave":"è","eth":"ð","euml":"ë","frac12":"½","frac14":"¼","frac34":"¾","gt":">","iacute":"í","icirc":"î","iexcl":"¡","igrave":"ì","iquest":"¿","iuml":"ï","laquo":"«","lt":"<","macr":"¯","micro":"µ","middot":"·","nbsp":" ","not":"¬","ntilde":"ñ","oacute":"ó","ocirc":"ô","ograve":"ò","ordf":"ª","ordm":"º","oslash":"ø","otilde":"õ","ouml":"ö","para":"¶","plusmn":"±","pound":"£","quot":"\\"","raquo":"»","reg":"®","sect":"§","shy":"­","sup1":"¹","sup2":"²","sup3":"³","szlig":"ß","thorn":"þ","times":"×","uacute":"ú","ucirc":"û","ugrave":"ù","uml":"¨","uuml":"ü","yacute":"ý","yen":"¥","yuml":"ÿ"}')},4506:(e,t,n)=>{"use strict";var i=n(7297),r=n(1716);e.exports=i({space:"xmlns",attributes:{xmlnsxlink:"xmlns:xlink"},transform:r,properties:{xmlns:null,xmlnsXLink:null}})},4571:(e,t,n)=>{"use strict";var i=n(6931),r=n(7512),o=n(2660);e.exports=l;var a={}.hasOwnProperty,s=["history","path","basename","stem","extname","dirname"];function l(e){var t,n;if(e){if("string"==typeof e||o(e))e={contents:e};else if("message"in e&&"messages"in e)return e}else e={};if(!(this instanceof l))return new l(e);for(this.data={},this.messages=[],this.history=[],this.cwd=r.cwd(),n=-1;++n<s.length;)t=s[n],a.call(e,t)&&(this[t]=e[t]);for(t in e)s.indexOf(t)<0&&(this[t]=e[t])}function c(e,t){if(e&&e.indexOf(i.sep)>-1)throw new Error("`"+t+"` cannot be a path: did not expect `"+i.sep+"`")}function u(e,t){if(!e)throw new Error("`"+t+"` cannot be empty")}function h(e,t){if(!e)throw new Error("Setting `"+t+"` requires `path` to be set too")}l.prototype.toString=function(e){return(this.contents||"").toString(e)},Object.defineProperty(l.prototype,"path",{get:function(){return this.history[this.history.length-1]},set:function(e){u(e,"path"),this.path!==e&&this.history.push(e)}}),Object.defineProperty(l.prototype,"dirname",{get:function(){return"string"==typeof this.path?i.dirname(this.path):void 0},set:function(e){h(this.path,"dirname"),this.path=i.join(e||"",this.basename)}}),Object.defineProperty(l.prototype,"basename",{get:function(){return"string"==typeof this.path?i.basename(this.path):void 0},set:function(e){u(e,"basename"),c(e,"basename"),this.path=i.join(this.dirname||"",e)}}),Object.defineProperty(l.prototype,"extname",{get:function(){return"string"==typeof this.path?i.extname(this.path):void 0},set:function(e){if(c(e,"extname"),h(this.path,"extname"),e){if(46!==e.charCodeAt(0))throw new Error("`extname` must start with `.`");if(e.indexOf(".",1)>-1)throw new Error("`extname` cannot contain multiple dots")}this.path=i.join(this.dirname,this.stem+(e||""))}}),Object.defineProperty(l.prototype,"stem",{get:function(){return"string"==typeof this.path?i.basename(this.path,this.extname):void 0},set:function(e){u(e,"stem"),c(e,"stem"),this.path=i.join(this.dirname||"",e+(this.extname||""))}})},4635:function(e,t,n){"use strict";var i=this&&this.__assign||function(){return i=Object.assign||function(e){for(var t,n=1,i=arguments.length;n<i;n++)for(var r in t=arguments[n])Object.prototype.hasOwnProperty.call(t,r)&&(e[r]=t[r]);return e},i.apply(this,arguments)},r=this&&this.__spreadArray||function(e,t,n){if(n||2===arguments.length)for(var i,r=0,o=t.length;r<o;r++)!i&&r in t||(i||(i=Array.prototype.slice.call(t,0,r)),i[r]=t[r]);return e.concat(i||Array.prototype.slice.call(t))};Object.defineProperty(t,"__esModule",{value:!0});var o=n(9840),a=function(){function e(){}return e.readVint=function(t,n){void 0===n&&(n=0);var i=8-Math.floor(Math.log2(t[n]));if(i>8){var r=e.readHexString(t,n,n+i);throw new Error("Unrepresentable length: ".concat(i," ").concat(r))}if(n+i>t.length)return null;for(var o=t[n]&(1<<8-i)-1,a=1;a<i;a+=1){if(7===a&&o>=Math.pow(2,8)&&t[n+7]>0)return{length:i,value:-1};o*=Math.pow(2,8),o+=t[n+a]}return{length:i,value:o}},e.writeVint=function(e){if(e<0||e>Math.pow(2,53))throw new Error("Unrepresentable value: ".concat(e));var t=1;for(t=1;t<=8&&!(e<Math.pow(2,7*t)-1);t+=1);for(var n=o.Buffer.alloc(t),i=e,r=1;r<=t;r+=1){var a=255&i;n[t-r]=a,i-=a,i/=Math.pow(2,8)}return n[0]|=1<<8-t,n},e.concatenate=function(e,t){return e||t?e&&0!==e.byteLength?t&&0!==t.byteLength?o.Buffer.from(r(r([],e,!0),t,!0)):e:t:o.Buffer.from([])},e.readHexString=function(e,t,n){return void 0===t&&(t=0),void 0===n&&(n=e.byteLength),Array.from(e.slice(t,n)).map((function(e){return Number(e).toString(16)})).reduce((function(e,t){return"".concat(e).concat(t.padStart(2,"0"))}),"")},e.readUtf8=function(e){try{return o.Buffer.from(e).toString("utf8")}catch(e){return null}},e.readUnsigned=function(t){var n=new DataView(t.buffer,t.byteOffset,t.byteLength);switch(t.byteLength){case 1:return n.getUint8(0);case 2:return n.getUint16(0);case 4:return n.getUint32(0)}return t.byteLength<=6?t.reduce((function(e,t){return 256*e+t}),0):e.readHexString(t,0,t.byteLength)},e.readSigned=function(e){var t=new DataView(e.buffer,e.byteOffset,e.byteLength);switch(e.byteLength){case 1:return t.getInt8(0);case 2:return t.getInt16(0);case 4:return t.getInt32(0);default:return NaN}},e.readFloat=function(e){var t=new DataView(e.buffer,e.byteOffset,e.byteLength);switch(e.byteLength){case 4:return t.getFloat32(0);case 8:return t.getFloat64(0);default:return NaN}},e.readDate=function(t){var n=new DataView(t.buffer,t.byteOffset,t.byteLength);switch(t.byteLength){case 1:return new Date(n.getUint8(0));case 2:return new Date(n.getUint16(0));case 4:return new Date(n.getUint32(0));case 8:return new Date(Number.parseInt(e.readHexString(t),16));default:return new Date(0)}},e.readDataFromTag=function(t,n){var r,o=t.type,a=t.name,s=t.track,l=t.discardable||!1,c=t.keyframe||!1,u=null;switch(o){case"u":r=e.readUnsigned(n);break;case"f":r=e.readFloat(n);break;case"i":r=e.readSigned(n);break;case"s":r=String.fromCharCode.apply(String,n);break;case"8":r=e.readUtf8(n);break;case"d":r=e.readDate(n)}if("SimpleBlock"===a||"Block"===a){var h=0,p=e.readVint(n,h),d=p.length;h+=d,s=p.value,r=e.readSigned(n.subarray(h,h+2)),h+=2,"SimpleBlock"===a&&(c=Boolean(128&n[d+2]),l=Boolean(1&n[d+2])),h+=1,u=n.subarray(h)}return i(i({},t),{data:n,discardable:l,keyframe:c,payload:u,track:s,value:r})},e}();t.default=a},4686:(e,t,n)=>{"use strict";const i=n(5350),r=n(7947),o="function"==typeof Symbol&&"function"==typeof Symbol.for?Symbol.for("nodejs.util.inspect.custom"):null;t.Buffer=l,t.SlowBuffer=function(e){+e!=e&&(e=0);return l.alloc(+e)},t.INSPECT_MAX_BYTES=50;const a=2147483647;function s(e){if(e>a)throw new RangeError('The value "'+e+'" is invalid for option "size"');const t=new Uint8Array(e);return Object.setPrototypeOf(t,l.prototype),t}function l(e,t,n){if("number"==typeof e){if("string"==typeof t)throw new TypeError('The "string" argument must be of type string. Received type number');return h(e)}return c(e,t,n)}function c(e,t,n){if("string"==typeof e)return function(e,t){"string"==typeof t&&""!==t||(t="utf8");if(!l.isEncoding(t))throw new TypeError("Unknown encoding: "+t);const n=0|m(e,t);let i=s(n);const r=i.write(e,t);r!==n&&(i=i.slice(0,r));return i}(e,t);if(ArrayBuffer.isView(e))return function(e){if(Q(e,Uint8Array)){const t=new Uint8Array(e);return d(t.buffer,t.byteOffset,t.byteLength)}return p(e)}(e);if(null==e)throw new TypeError("The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type "+typeof e);if(Q(e,ArrayBuffer)||e&&Q(e.buffer,ArrayBuffer))return d(e,t,n);if("undefined"!=typeof SharedArrayBuffer&&(Q(e,SharedArrayBuffer)||e&&Q(e.buffer,SharedArrayBuffer)))return d(e,t,n);if("number"==typeof e)throw new TypeError('The "value" argument must not be of type number. Received type number');const i=e.valueOf&&e.valueOf();if(null!=i&&i!==e)return l.from(i,t,n);const r=function(e){if(l.isBuffer(e)){const t=0|f(e.length),n=s(t);return 0===n.length||e.copy(n,0,0,t),n}if(void 0!==e.length)return"number"!=typeof e.length||X(e.length)?s(0):p(e);if("Buffer"===e.type&&Array.isArray(e.data))return p(e.data)}(e);if(r)return r;if("undefined"!=typeof Symbol&&null!=Symbol.toPrimitive&&"function"==typeof e[Symbol.toPrimitive])return l.from(e[Symbol.toPrimitive]("string"),t,n);throw new TypeError("The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type "+typeof e)}function u(e){if("number"!=typeof e)throw new TypeError('"size" argument must be of type number');if(e<0)throw new RangeError('The value "'+e+'" is invalid for option "size"')}function h(e){return u(e),s(e<0?0:0|f(e))}function p(e){const t=e.length<0?0:0|f(e.length),n=s(t);for(let i=0;i<t;i+=1)n[i]=255&e[i];return n}function d(e,t,n){if(t<0||e.byteLength<t)throw new RangeError('"offset" is outside of buffer bounds');if(e.byteLength<t+(n||0))throw new RangeError('"length" is outside of buffer bounds');let i;return i=void 0===t&&void 0===n?new Uint8Array(e):void 0===n?new Uint8Array(e,t):new Uint8Array(e,t,n),Object.setPrototypeOf(i,l.prototype),i}function f(e){if(e>=a)throw new RangeError("Attempt to allocate Buffer larger than maximum size: 0x"+a.toString(16)+" bytes");return 0|e}function m(e,t){if(l.isBuffer(e))return e.length;if(ArrayBuffer.isView(e)||Q(e,ArrayBuffer))return e.byteLength;if("string"!=typeof e)throw new TypeError('The "string" argument must be one of type string, Buffer, or ArrayBuffer. Received type '+typeof e);const n=e.length,i=arguments.length>2&&!0===arguments[2];if(!i&&0===n)return 0;let r=!1;for(;;)switch(t){case"ascii":case"latin1":case"binary":return n;case"utf8":case"utf-8":return G(e).length;case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return 2*n;case"hex":return n>>>1;case"base64":return K(e).length;default:if(r)return i?-1:G(e).length;t=(""+t).toLowerCase(),r=!0}}function v(e,t,n){let i=!1;if((void 0===t||t<0)&&(t=0),t>this.length)return"";if((void 0===n||n>this.length)&&(n=this.length),n<=0)return"";if((n>>>=0)<=(t>>>=0))return"";for(e||(e="utf8");;)switch(e){case"hex":return P(this,t,n);case"utf8":case"utf-8":return x(this,t,n);case"ascii":return D(this,t,n);case"latin1":case"binary":return A(this,t,n);case"base64":return S(this,t,n);case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return L(this,t,n);default:if(i)throw new TypeError("Unknown encoding: "+e);e=(e+"").toLowerCase(),i=!0}}function g(e,t,n){const i=e[t];e[t]=e[n],e[n]=i}function y(e,t,n,i,r){if(0===e.length)return-1;if("string"==typeof n?(i=n,n=0):n>2147483647?n=2147483647:n<-2147483648&&(n=-2147483648),X(n=+n)&&(n=r?0:e.length-1),n<0&&(n=e.length+n),n>=e.length){if(r)return-1;n=e.length-1}else if(n<0){if(!r)return-1;n=0}if("string"==typeof t&&(t=l.from(t,i)),l.isBuffer(t))return 0===t.length?-1:b(e,t,n,i,r);if("number"==typeof t)return t&=255,"function"==typeof Uint8Array.prototype.indexOf?r?Uint8Array.prototype.indexOf.call(e,t,n):Uint8Array.prototype.lastIndexOf.call(e,t,n):b(e,[t],n,i,r);throw new TypeError("val must be string, number or Buffer")}function b(e,t,n,i,r){let o,a=1,s=e.length,l=t.length;if(void 0!==i&&("ucs2"===(i=String(i).toLowerCase())||"ucs-2"===i||"utf16le"===i||"utf-16le"===i)){if(e.length<2||t.length<2)return-1;a=2,s/=2,l/=2,n/=2}function c(e,t){return 1===a?e[t]:e.readUInt16BE(t*a)}if(r){let i=-1;for(o=n;o<s;o++)if(c(e,o)===c(t,-1===i?0:o-i)){if(-1===i&&(i=o),o-i+1===l)return i*a}else-1!==i&&(o-=o-i),i=-1}else for(n+l>s&&(n=s-l),o=n;o>=0;o--){let n=!0;for(let i=0;i<l;i++)if(c(e,o+i)!==c(t,i)){n=!1;break}if(n)return o}return-1}function w(e,t,n,i){n=Number(n)||0;const r=e.length-n;i?(i=Number(i))>r&&(i=r):i=r;const o=t.length;let a;for(i>o/2&&(i=o/2),a=0;a<i;++a){const i=parseInt(t.substr(2*a,2),16);if(X(i))return a;e[n+a]=i}return a}function k(e,t,n,i){return Y(G(t,e.length-n),e,n,i)}function C(e,t,n,i){return Y(function(e){const t=[];for(let n=0;n<e.length;++n)t.push(255&e.charCodeAt(n));return t}(t),e,n,i)}function E(e,t,n,i){return Y(K(t),e,n,i)}function M(e,t,n,i){return Y(function(e,t){let n,i,r;const o=[];for(let a=0;a<e.length&&!((t-=2)<0);++a)n=e.charCodeAt(a),i=n>>8,r=n%256,o.push(r),o.push(i);return o}(t,e.length-n),e,n,i)}function S(e,t,n){return 0===t&&n===e.length?i.fromByteArray(e):i.fromByteArray(e.slice(t,n))}function x(e,t,n){n=Math.min(e.length,n);const i=[];let r=t;for(;r<n;){const t=e[r];let o=null,a=t>239?4:t>223?3:t>191?2:1;if(r+a<=n){let n,i,s,l;switch(a){case 1:t<128&&(o=t);break;case 2:n=e[r+1],128==(192&n)&&(l=(31&t)<<6|63&n,l>127&&(o=l));break;case 3:n=e[r+1],i=e[r+2],128==(192&n)&&128==(192&i)&&(l=(15&t)<<12|(63&n)<<6|63&i,l>2047&&(l<55296||l>57343)&&(o=l));break;case 4:n=e[r+1],i=e[r+2],s=e[r+3],128==(192&n)&&128==(192&i)&&128==(192&s)&&(l=(15&t)<<18|(63&n)<<12|(63&i)<<6|63&s,l>65535&&l<1114112&&(o=l))}}null===o?(o=65533,a=1):o>65535&&(o-=65536,i.push(o>>>10&1023|55296),o=56320|1023&o),i.push(o),r+=a}return function(e){const t=e.length;if(t<=T)return String.fromCharCode.apply(String,e);let n="",i=0;for(;i<t;)n+=String.fromCharCode.apply(String,e.slice(i,i+=T));return n}(i)}t.kMaxLength=a,l.TYPED_ARRAY_SUPPORT=function(){try{const e=new Uint8Array(1),t={foo:function(){return 42}};return Object.setPrototypeOf(t,Uint8Array.prototype),Object.setPrototypeOf(e,t),42===e.foo()}catch(e){return!1}}(),l.TYPED_ARRAY_SUPPORT||"undefined"==typeof console||"function"!=typeof console.error||console.error("This browser lacks typed array (Uint8Array) support which is required by `buffer` v5.x. Use `buffer` v4.x if you require old browser support."),Object.defineProperty(l.prototype,"parent",{enumerable:!0,get:function(){if(l.isBuffer(this))return this.buffer}}),Object.defineProperty(l.prototype,"offset",{enumerable:!0,get:function(){if(l.isBuffer(this))return this.byteOffset}}),l.poolSize=8192,l.from=function(e,t,n){return c(e,t,n)},Object.setPrototypeOf(l.prototype,Uint8Array.prototype),Object.setPrototypeOf(l,Uint8Array),l.alloc=function(e,t,n){return function(e,t,n){return u(e),e<=0?s(e):void 0!==t?"string"==typeof n?s(e).fill(t,n):s(e).fill(t):s(e)}(e,t,n)},l.allocUnsafe=function(e){return h(e)},l.allocUnsafeSlow=function(e){return h(e)},l.isBuffer=function(e){return null!=e&&!0===e._isBuffer&&e!==l.prototype},l.compare=function(e,t){if(Q(e,Uint8Array)&&(e=l.from(e,e.offset,e.byteLength)),Q(t,Uint8Array)&&(t=l.from(t,t.offset,t.byteLength)),!l.isBuffer(e)||!l.isBuffer(t))throw new TypeError('The "buf1", "buf2" arguments must be one of type Buffer or Uint8Array');if(e===t)return 0;let n=e.length,i=t.length;for(let r=0,o=Math.min(n,i);r<o;++r)if(e[r]!==t[r]){n=e[r],i=t[r];break}return n<i?-1:i<n?1:0},l.isEncoding=function(e){switch(String(e).toLowerCase()){case"hex":case"utf8":case"utf-8":case"ascii":case"latin1":case"binary":case"base64":case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return!0;default:return!1}},l.concat=function(e,t){if(!Array.isArray(e))throw new TypeError('"list" argument must be an Array of Buffers');if(0===e.length)return l.alloc(0);let n;if(void 0===t)for(t=0,n=0;n<e.length;++n)t+=e[n].length;const i=l.allocUnsafe(t);let r=0;for(n=0;n<e.length;++n){let t=e[n];if(Q(t,Uint8Array))r+t.length>i.length?(l.isBuffer(t)||(t=l.from(t)),t.copy(i,r)):Uint8Array.prototype.set.call(i,t,r);else{if(!l.isBuffer(t))throw new TypeError('"list" argument must be an Array of Buffers');t.copy(i,r)}r+=t.length}return i},l.byteLength=m,l.prototype._isBuffer=!0,l.prototype.swap16=function(){const e=this.length;if(e%2!=0)throw new RangeError("Buffer size must be a multiple of 16-bits");for(let t=0;t<e;t+=2)g(this,t,t+1);return this},l.prototype.swap32=function(){const e=this.length;if(e%4!=0)throw new RangeError("Buffer size must be a multiple of 32-bits");for(let t=0;t<e;t+=4)g(this,t,t+3),g(this,t+1,t+2);return this},l.prototype.swap64=function(){const e=this.length;if(e%8!=0)throw new RangeError("Buffer size must be a multiple of 64-bits");for(let t=0;t<e;t+=8)g(this,t,t+7),g(this,t+1,t+6),g(this,t+2,t+5),g(this,t+3,t+4);return this},l.prototype.toString=function(){const e=this.length;return 0===e?"":0===arguments.length?x(this,0,e):v.apply(this,arguments)},l.prototype.toLocaleString=l.prototype.toString,l.prototype.equals=function(e){if(!l.isBuffer(e))throw new TypeError("Argument must be a Buffer");return this===e||0===l.compare(this,e)},l.prototype.inspect=function(){let e="";const n=t.INSPECT_MAX_BYTES;return e=this.toString("hex",0,n).replace(/(.{2})/g,"$1 ").trim(),this.length>n&&(e+=" ... "),"<Buffer "+e+">"},o&&(l.prototype[o]=l.prototype.inspect),l.prototype.compare=function(e,t,n,i,r){if(Q(e,Uint8Array)&&(e=l.from(e,e.offset,e.byteLength)),!l.isBuffer(e))throw new TypeError('The "target" argument must be one of type Buffer or Uint8Array. Received type '+typeof e);if(void 0===t&&(t=0),void 0===n&&(n=e?e.length:0),void 0===i&&(i=0),void 0===r&&(r=this.length),t<0||n>e.length||i<0||r>this.length)throw new RangeError("out of range index");if(i>=r&&t>=n)return 0;if(i>=r)return-1;if(t>=n)return 1;if(this===e)return 0;let o=(r>>>=0)-(i>>>=0),a=(n>>>=0)-(t>>>=0);const s=Math.min(o,a),c=this.slice(i,r),u=e.slice(t,n);for(let e=0;e<s;++e)if(c[e]!==u[e]){o=c[e],a=u[e];break}return o<a?-1:a<o?1:0},l.prototype.includes=function(e,t,n){return-1!==this.indexOf(e,t,n)},l.prototype.indexOf=function(e,t,n){return y(this,e,t,n,!0)},l.prototype.lastIndexOf=function(e,t,n){return y(this,e,t,n,!1)},l.prototype.write=function(e,t,n,i){if(void 0===t)i="utf8",n=this.length,t=0;else if(void 0===n&&"string"==typeof t)i=t,n=this.length,t=0;else{if(!isFinite(t))throw new Error("Buffer.write(string, encoding, offset[, length]) is no longer supported");t>>>=0,isFinite(n)?(n>>>=0,void 0===i&&(i="utf8")):(i=n,n=void 0)}const r=this.length-t;if((void 0===n||n>r)&&(n=r),e.length>0&&(n<0||t<0)||t>this.length)throw new RangeError("Attempt to write outside buffer bounds");i||(i="utf8");let o=!1;for(;;)switch(i){case"hex":return w(this,e,t,n);case"utf8":case"utf-8":return k(this,e,t,n);case"ascii":case"latin1":case"binary":return C(this,e,t,n);case"base64":return E(this,e,t,n);case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":return M(this,e,t,n);default:if(o)throw new TypeError("Unknown encoding: "+i);i=(""+i).toLowerCase(),o=!0}},l.prototype.toJSON=function(){return{type:"Buffer",data:Array.prototype.slice.call(this._arr||this,0)}};const T=4096;function D(e,t,n){let i="";n=Math.min(e.length,n);for(let r=t;r<n;++r)i+=String.fromCharCode(127&e[r]);return i}function A(e,t,n){let i="";n=Math.min(e.length,n);for(let r=t;r<n;++r)i+=String.fromCharCode(e[r]);return i}function P(e,t,n){const i=e.length;(!t||t<0)&&(t=0),(!n||n<0||n>i)&&(n=i);let r="";for(let i=t;i<n;++i)r+=$[e[i]];return r}function L(e,t,n){const i=e.slice(t,n);let r="";for(let e=0;e<i.length-1;e+=2)r+=String.fromCharCode(i[e]+256*i[e+1]);return r}function I(e,t,n){if(e%1!=0||e<0)throw new RangeError("offset is not uint");if(e+t>n)throw new RangeError("Trying to access beyond buffer length")}function O(e,t,n,i,r,o){if(!l.isBuffer(e))throw new TypeError('"buffer" argument must be a Buffer instance');if(t>r||t<o)throw new RangeError('"value" argument is out of bounds');if(n+i>e.length)throw new RangeError("Index out of range")}function F(e,t,n,i,r){j(t,i,r,e,n,7);let o=Number(t&BigInt(4294967295));e[n++]=o,o>>=8,e[n++]=o,o>>=8,e[n++]=o,o>>=8,e[n++]=o;let a=Number(t>>BigInt(32)&BigInt(4294967295));return e[n++]=a,a>>=8,e[n++]=a,a>>=8,e[n++]=a,a>>=8,e[n++]=a,n}function N(e,t,n,i,r){j(t,i,r,e,n,7);let o=Number(t&BigInt(4294967295));e[n+7]=o,o>>=8,e[n+6]=o,o>>=8,e[n+5]=o,o>>=8,e[n+4]=o;let a=Number(t>>BigInt(32)&BigInt(4294967295));return e[n+3]=a,a>>=8,e[n+2]=a,a>>=8,e[n+1]=a,a>>=8,e[n]=a,n+8}function R(e,t,n,i,r,o){if(n+i>e.length)throw new RangeError("Index out of range");if(n<0)throw new RangeError("Index out of range")}function B(e,t,n,i,o){return t=+t,n>>>=0,o||R(e,0,n,4),r.write(e,t,n,i,23,4),n+4}function V(e,t,n,i,o){return t=+t,n>>>=0,o||R(e,0,n,8),r.write(e,t,n,i,52,8),n+8}l.prototype.slice=function(e,t){const n=this.length;(e=~~e)<0?(e+=n)<0&&(e=0):e>n&&(e=n),(t=void 0===t?n:~~t)<0?(t+=n)<0&&(t=0):t>n&&(t=n),t<e&&(t=e);const i=this.subarray(e,t);return Object.setPrototypeOf(i,l.prototype),i},l.prototype.readUintLE=l.prototype.readUIntLE=function(e,t,n){e>>>=0,t>>>=0,n||I(e,t,this.length);let i=this[e],r=1,o=0;for(;++o<t&&(r*=256);)i+=this[e+o]*r;return i},l.prototype.readUintBE=l.prototype.readUIntBE=function(e,t,n){e>>>=0,t>>>=0,n||I(e,t,this.length);let i=this[e+--t],r=1;for(;t>0&&(r*=256);)i+=this[e+--t]*r;return i},l.prototype.readUint8=l.prototype.readUInt8=function(e,t){return e>>>=0,t||I(e,1,this.length),this[e]},l.prototype.readUint16LE=l.prototype.readUInt16LE=function(e,t){return e>>>=0,t||I(e,2,this.length),this[e]|this[e+1]<<8},l.prototype.readUint16BE=l.prototype.readUInt16BE=function(e,t){return e>>>=0,t||I(e,2,this.length),this[e]<<8|this[e+1]},l.prototype.readUint32LE=l.prototype.readUInt32LE=function(e,t){return e>>>=0,t||I(e,4,this.length),(this[e]|this[e+1]<<8|this[e+2]<<16)+16777216*this[e+3]},l.prototype.readUint32BE=l.prototype.readUInt32BE=function(e,t){return e>>>=0,t||I(e,4,this.length),16777216*this[e]+(this[e+1]<<16|this[e+2]<<8|this[e+3])},l.prototype.readBigUInt64LE=Z((function(e){U(e>>>=0,"offset");const t=this[e],n=this[e+7];void 0!==t&&void 0!==n||W(e,this.length-8);const i=t+256*this[++e]+65536*this[++e]+this[++e]*2**24,r=this[++e]+256*this[++e]+65536*this[++e]+n*2**24;return BigInt(i)+(BigInt(r)<<BigInt(32))})),l.prototype.readBigUInt64BE=Z((function(e){U(e>>>=0,"offset");const t=this[e],n=this[e+7];void 0!==t&&void 0!==n||W(e,this.length-8);const i=t*2**24+65536*this[++e]+256*this[++e]+this[++e],r=this[++e]*2**24+65536*this[++e]+256*this[++e]+n;return(BigInt(i)<<BigInt(32))+BigInt(r)})),l.prototype.readIntLE=function(e,t,n){e>>>=0,t>>>=0,n||I(e,t,this.length);let i=this[e],r=1,o=0;for(;++o<t&&(r*=256);)i+=this[e+o]*r;return r*=128,i>=r&&(i-=Math.pow(2,8*t)),i},l.prototype.readIntBE=function(e,t,n){e>>>=0,t>>>=0,n||I(e,t,this.length);let i=t,r=1,o=this[e+--i];for(;i>0&&(r*=256);)o+=this[e+--i]*r;return r*=128,o>=r&&(o-=Math.pow(2,8*t)),o},l.prototype.readInt8=function(e,t){return e>>>=0,t||I(e,1,this.length),128&this[e]?-1*(255-this[e]+1):this[e]},l.prototype.readInt16LE=function(e,t){e>>>=0,t||I(e,2,this.length);const n=this[e]|this[e+1]<<8;return 32768&n?4294901760|n:n},l.prototype.readInt16BE=function(e,t){e>>>=0,t||I(e,2,this.length);const n=this[e+1]|this[e]<<8;return 32768&n?4294901760|n:n},l.prototype.readInt32LE=function(e,t){return e>>>=0,t||I(e,4,this.length),this[e]|this[e+1]<<8|this[e+2]<<16|this[e+3]<<24},l.prototype.readInt32BE=function(e,t){return e>>>=0,t||I(e,4,this.length),this[e]<<24|this[e+1]<<16|this[e+2]<<8|this[e+3]},l.prototype.readBigInt64LE=Z((function(e){U(e>>>=0,"offset");const t=this[e],n=this[e+7];void 0!==t&&void 0!==n||W(e,this.length-8);const i=this[e+4]+256*this[e+5]+65536*this[e+6]+(n<<24);return(BigInt(i)<<BigInt(32))+BigInt(t+256*this[++e]+65536*this[++e]+this[++e]*2**24)})),l.prototype.readBigInt64BE=Z((function(e){U(e>>>=0,"offset");const t=this[e],n=this[e+7];void 0!==t&&void 0!==n||W(e,this.length-8);const i=(t<<24)+65536*this[++e]+256*this[++e]+this[++e];return(BigInt(i)<<BigInt(32))+BigInt(this[++e]*2**24+65536*this[++e]+256*this[++e]+n)})),l.prototype.readFloatLE=function(e,t){return e>>>=0,t||I(e,4,this.length),r.read(this,e,!0,23,4)},l.prototype.readFloatBE=function(e,t){return e>>>=0,t||I(e,4,this.length),r.read(this,e,!1,23,4)},l.prototype.readDoubleLE=function(e,t){return e>>>=0,t||I(e,8,this.length),r.read(this,e,!0,52,8)},l.prototype.readDoubleBE=function(e,t){return e>>>=0,t||I(e,8,this.length),r.read(this,e,!1,52,8)},l.prototype.writeUintLE=l.prototype.writeUIntLE=function(e,t,n,i){if(e=+e,t>>>=0,n>>>=0,!i){O(this,e,t,n,Math.pow(2,8*n)-1,0)}let r=1,o=0;for(this[t]=255&e;++o<n&&(r*=256);)this[t+o]=e/r&255;return t+n},l.prototype.writeUintBE=l.prototype.writeUIntBE=function(e,t,n,i){if(e=+e,t>>>=0,n>>>=0,!i){O(this,e,t,n,Math.pow(2,8*n)-1,0)}let r=n-1,o=1;for(this[t+r]=255&e;--r>=0&&(o*=256);)this[t+r]=e/o&255;return t+n},l.prototype.writeUint8=l.prototype.writeUInt8=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,1,255,0),this[t]=255&e,t+1},l.prototype.writeUint16LE=l.prototype.writeUInt16LE=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,2,65535,0),this[t]=255&e,this[t+1]=e>>>8,t+2},l.prototype.writeUint16BE=l.prototype.writeUInt16BE=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,2,65535,0),this[t]=e>>>8,this[t+1]=255&e,t+2},l.prototype.writeUint32LE=l.prototype.writeUInt32LE=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,4,4294967295,0),this[t+3]=e>>>24,this[t+2]=e>>>16,this[t+1]=e>>>8,this[t]=255&e,t+4},l.prototype.writeUint32BE=l.prototype.writeUInt32BE=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,4,4294967295,0),this[t]=e>>>24,this[t+1]=e>>>16,this[t+2]=e>>>8,this[t+3]=255&e,t+4},l.prototype.writeBigUInt64LE=Z((function(e,t=0){return F(this,e,t,BigInt(0),BigInt("0xffffffffffffffff"))})),l.prototype.writeBigUInt64BE=Z((function(e,t=0){return N(this,e,t,BigInt(0),BigInt("0xffffffffffffffff"))})),l.prototype.writeIntLE=function(e,t,n,i){if(e=+e,t>>>=0,!i){const i=Math.pow(2,8*n-1);O(this,e,t,n,i-1,-i)}let r=0,o=1,a=0;for(this[t]=255&e;++r<n&&(o*=256);)e<0&&0===a&&0!==this[t+r-1]&&(a=1),this[t+r]=(e/o|0)-a&255;return t+n},l.prototype.writeIntBE=function(e,t,n,i){if(e=+e,t>>>=0,!i){const i=Math.pow(2,8*n-1);O(this,e,t,n,i-1,-i)}let r=n-1,o=1,a=0;for(this[t+r]=255&e;--r>=0&&(o*=256);)e<0&&0===a&&0!==this[t+r+1]&&(a=1),this[t+r]=(e/o|0)-a&255;return t+n},l.prototype.writeInt8=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,1,127,-128),e<0&&(e=255+e+1),this[t]=255&e,t+1},l.prototype.writeInt16LE=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,2,32767,-32768),this[t]=255&e,this[t+1]=e>>>8,t+2},l.prototype.writeInt16BE=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,2,32767,-32768),this[t]=e>>>8,this[t+1]=255&e,t+2},l.prototype.writeInt32LE=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,4,2147483647,-2147483648),this[t]=255&e,this[t+1]=e>>>8,this[t+2]=e>>>16,this[t+3]=e>>>24,t+4},l.prototype.writeInt32BE=function(e,t,n){return e=+e,t>>>=0,n||O(this,e,t,4,2147483647,-2147483648),e<0&&(e=4294967295+e+1),this[t]=e>>>24,this[t+1]=e>>>16,this[t+2]=e>>>8,this[t+3]=255&e,t+4},l.prototype.writeBigInt64LE=Z((function(e,t=0){return F(this,e,t,-BigInt("0x8000000000000000"),BigInt("0x7fffffffffffffff"))})),l.prototype.writeBigInt64BE=Z((function(e,t=0){return N(this,e,t,-BigInt("0x8000000000000000"),BigInt("0x7fffffffffffffff"))})),l.prototype.writeFloatLE=function(e,t,n){return B(this,e,t,!0,n)},l.prototype.writeFloatBE=function(e,t,n){return B(this,e,t,!1,n)},l.prototype.writeDoubleLE=function(e,t,n){return V(this,e,t,!0,n)},l.prototype.writeDoubleBE=function(e,t,n){return V(this,e,t,!1,n)},l.prototype.copy=function(e,t,n,i){if(!l.isBuffer(e))throw new TypeError("argument should be a Buffer");if(n||(n=0),i||0===i||(i=this.length),t>=e.length&&(t=e.length),t||(t=0),i>0&&i<n&&(i=n),i===n)return 0;if(0===e.length||0===this.length)return 0;if(t<0)throw new RangeError("targetStart out of bounds");if(n<0||n>=this.length)throw new RangeError("Index out of range");if(i<0)throw new RangeError("sourceEnd out of bounds");i>this.length&&(i=this.length),e.length-t<i-n&&(i=e.length-t+n);const r=i-n;return this===e&&"function"==typeof Uint8Array.prototype.copyWithin?this.copyWithin(t,n,i):Uint8Array.prototype.set.call(e,this.subarray(n,i),t),r},l.prototype.fill=function(e,t,n,i){if("string"==typeof e){if("string"==typeof t?(i=t,t=0,n=this.length):"string"==typeof n&&(i=n,n=this.length),void 0!==i&&"string"!=typeof i)throw new TypeError("encoding must be a string");if("string"==typeof i&&!l.isEncoding(i))throw new TypeError("Unknown encoding: "+i);if(1===e.length){const t=e.charCodeAt(0);("utf8"===i&&t<128||"latin1"===i)&&(e=t)}}else"number"==typeof e?e&=255:"boolean"==typeof e&&(e=Number(e));if(t<0||this.length<t||this.length<n)throw new RangeError("Out of range index");if(n<=t)return this;let r;if(t>>>=0,n=void 0===n?this.length:n>>>0,e||(e=0),"number"==typeof e)for(r=t;r<n;++r)this[r]=e;else{const o=l.isBuffer(e)?e:l.from(e,i),a=o.length;if(0===a)throw new TypeError('The value "'+e+'" is invalid for argument "value"');for(r=0;r<n-t;++r)this[r+t]=o[r%a]}return this};const H={};function z(e,t,n){H[e]=class extends n{constructor(){super(),Object.defineProperty(this,"message",{value:t.apply(this,arguments),writable:!0,configurable:!0}),this.name=`${this.name} [${e}]`,this.stack,delete this.name}get code(){return e}set code(e){Object.defineProperty(this,"code",{configurable:!0,enumerable:!0,value:e,writable:!0})}toString(){return`${this.name} [${e}]: ${this.message}`}}}function q(e){let t="",n=e.length;const i="-"===e[0]?1:0;for(;n>=i+4;n-=3)t=`_${e.slice(n-3,n)}${t}`;return`${e.slice(0,n)}${t}`}function j(e,t,n,i,r,o){if(e>n||e<t){const i="bigint"==typeof t?"n":"";let r;throw r=o>3?0===t||t===BigInt(0)?`>= 0${i} and < 2${i} ** ${8*(o+1)}${i}`:`>= -(2${i} ** ${8*(o+1)-1}${i}) and < 2 ** ${8*(o+1)-1}${i}`:`>= ${t}${i} and <= ${n}${i}`,new H.ERR_OUT_OF_RANGE("value",r,e)}!function(e,t,n){U(t,"offset"),void 0!==e[t]&&void 0!==e[t+n]||W(t,e.length-(n+1))}(i,r,o)}function U(e,t){if("number"!=typeof e)throw new H.ERR_INVALID_ARG_TYPE(t,"number",e)}function W(e,t,n){if(Math.floor(e)!==e)throw U(e,n),new H.ERR_OUT_OF_RANGE(n||"offset","an integer",e);if(t<0)throw new H.ERR_BUFFER_OUT_OF_BOUNDS;throw new H.ERR_OUT_OF_RANGE(n||"offset",`>= ${n?1:0} and <= ${t}`,e)}z("ERR_BUFFER_OUT_OF_BOUNDS",(function(e){return e?`${e} is outside of buffer bounds`:"Attempt to access memory outside buffer bounds"}),RangeError),z("ERR_INVALID_ARG_TYPE",(function(e,t){return`The "${e}" argument must be of type number. Received type ${typeof t}`}),TypeError),z("ERR_OUT_OF_RANGE",(function(e,t,n){let i=`The value of "${e}" is out of range.`,r=n;return Number.isInteger(n)&&Math.abs(n)>2**32?r=q(String(n)):"bigint"==typeof n&&(r=String(n),(n>BigInt(2)**BigInt(32)||n<-(BigInt(2)**BigInt(32)))&&(r=q(r)),r+="n"),i+=` It must be ${t}. Received ${r}`,i}),RangeError);const _=/[^+/0-9A-Za-z-_]/g;function G(e,t){let n;t=t||1/0;const i=e.length;let r=null;const o=[];for(let a=0;a<i;++a){if(n=e.charCodeAt(a),n>55295&&n<57344){if(!r){if(n>56319){(t-=3)>-1&&o.push(239,191,189);continue}if(a+1===i){(t-=3)>-1&&o.push(239,191,189);continue}r=n;continue}if(n<56320){(t-=3)>-1&&o.push(239,191,189),r=n;continue}n=65536+(r-55296<<10|n-56320)}else r&&(t-=3)>-1&&o.push(239,191,189);if(r=null,n<128){if((t-=1)<0)break;o.push(n)}else if(n<2048){if((t-=2)<0)break;o.push(n>>6|192,63&n|128)}else if(n<65536){if((t-=3)<0)break;o.push(n>>12|224,n>>6&63|128,63&n|128)}else{if(!(n<1114112))throw new Error("Invalid code point");if((t-=4)<0)break;o.push(n>>18|240,n>>12&63|128,n>>6&63|128,63&n|128)}}return o}function K(e){return i.toByteArray(function(e){if((e=(e=e.split("=")[0]).trim().replace(_,"")).length<2)return"";for(;e.length%4!=0;)e+="=";return e}(e))}function Y(e,t,n,i){let r;for(r=0;r<i&&!(r+n>=t.length||r>=e.length);++r)t[r+n]=e[r];return r}function Q(e,t){return e instanceof t||null!=e&&null!=e.constructor&&null!=e.constructor.name&&e.constructor.name===t.name}function X(e){return e!=e}const $=function(){const e="0123456789abcdef",t=new Array(256);for(let n=0;n<16;++n){const i=16*n;for(let r=0;r<16;++r)t[i+r]=e[n]+e[r]}return t}();function Z(e){return"undefined"==typeof BigInt?J:e}function J(){throw new Error("BigInt not supported")}},4738:(e,t,n)=>{"use strict";e.exports=function(e,t){return e(t,"em",i(e,t))};var i=n(4297)},4741:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i=n(9840),r=n(9840),o=n(5416),a=function(){function e(){this._schema=o.byEbmlID,this._buffers=[],this._stack=[]}return e.prototype.encode=function(e){var t=this;return i.concat(e.reduce((function(e,n){return e.concat(t.encodeChunk(n))}),[])).buffer},e.prototype.encodeChunk=function(e){return"m"===e.type?e.isEnd?this.endTag(e):this.startTag(e):(e.data=r.Buffer.from(e.data),this.writeTag(e)),this.flush()},e.prototype.flush=function(){var e=this._buffers;return this._buffers=[],e},e.prototype.getSchemaInfo=function(e){for(var t=Object.keys(this._schema).map(Number),n=0;n<t.length;n++){var i=t[n];if(this._schema[i].name===e)return new r.Buffer(i.toString(16),"hex")}return null},e.prototype.writeTag=function(e){var t=e.name,n=this.getSchemaInfo(t),r=e.data;if(null==n)throw new Error("No schema entry found for "+t);var o=i.encodeTag(n,r);this._stack.length>0?this._stack[this._stack.length-1].children.push({tagId:n,elm:e,children:[],data:o}):this._buffers=this._buffers.concat(o)},e.prototype.startTag=function(e){var t=e.name,n=this.getSchemaInfo(t);if(null==n)throw new Error("No schema entry found for "+t);if(e.unknownSize){var o=i.encodeTag(n,new r.Buffer(0),e.unknownSize);this._buffers=this._buffers.concat(o)}else{var a={tagId:n,elm:e,children:[],data:null};this._stack.length>0&&this._stack[this._stack.length-1].children.push(a),this._stack.push(a)}},e.prototype.endTag=function(e){e.name;var t=this._stack.pop();if(null==t)throw new Error("EBML structure is broken");if(t.elm.name!==e.name)throw new Error("EBML structure is broken");var n=t.children.reduce((function(e,t){if(null===t.data)throw new Error("EBML structure is broken");return e.concat(t.data)}),[]),r=i.concat(n);"m"===t.elm.type?t.data=i.encodeTag(t.tagId,r,t.elm.unknownSize):t.data=i.encodeTag(t.tagId,r),this._stack.length<1&&(this._buffers=this._buffers.concat(t.data))},e}();t.default=a},4824:(e,t,n)=>{"use strict";e.exports=function(e,t){return e.augment(t,i("root",r(o(e,t))))};var i=n(9650),r=n(7824),o=n(4297)},4834:(e,t,n)=>{"use strict";var i=n(5176),r=n(7297),o=n(6933),a=i.boolean,s=i.number,l=i.spaceSeparated,c=i.commaSeparated,u=i.commaOrSpaceSeparated;e.exports=r({space:"svg",attributes:{accentHeight:"accent-height",alignmentBaseline:"alignment-baseline",arabicForm:"arabic-form",baselineShift:"baseline-shift",capHeight:"cap-height",className:"class",clipPath:"clip-path",clipRule:"clip-rule",colorInterpolation:"color-interpolation",colorInterpolationFilters:"color-interpolation-filters",colorProfile:"color-profile",colorRendering:"color-rendering",crossOrigin:"crossorigin",dataType:"datatype",dominantBaseline:"dominant-baseline",enableBackground:"enable-background",fillOpacity:"fill-opacity",fillRule:"fill-rule",floodColor:"flood-color",floodOpacity:"flood-opacity",fontFamily:"font-family",fontSize:"font-size",fontSizeAdjust:"font-size-adjust",fontStretch:"font-stretch",fontStyle:"font-style",fontVariant:"font-variant",fontWeight:"font-weight",glyphName:"glyph-name",glyphOrientationHorizontal:"glyph-orientation-horizontal",glyphOrientationVertical:"glyph-orientation-vertical",hrefLang:"hreflang",horizAdvX:"horiz-adv-x",horizOriginX:"horiz-origin-x",horizOriginY:"horiz-origin-y",imageRendering:"image-rendering",letterSpacing:"letter-spacing",lightingColor:"lighting-color",markerEnd:"marker-end",markerMid:"marker-mid",markerStart:"marker-start",navDown:"nav-down",navDownLeft:"nav-down-left",navDownRight:"nav-down-right",navLeft:"nav-left",navNext:"nav-next",navPrev:"nav-prev",navRight:"nav-right",navUp:"nav-up",navUpLeft:"nav-up-left",navUpRight:"nav-up-right",onAbort:"onabort",onActivate:"onactivate",onAfterPrint:"onafterprint",onBeforePrint:"onbeforeprint",onBegin:"onbegin",onCancel:"oncancel",onCanPlay:"oncanplay",onCanPlayThrough:"oncanplaythrough",onChange:"onchange",onClick:"onclick",onClose:"onclose",onCopy:"oncopy",onCueChange:"oncuechange",onCut:"oncut",onDblClick:"ondblclick",onDrag:"ondrag",onDragEnd:"ondragend",onDragEnter:"ondragenter",onDragExit:"ondragexit",onDragLeave:"ondragleave",onDragOver:"ondragover",onDragStart:"ondragstart",onDrop:"ondrop",onDurationChange:"ondurationchange",onEmptied:"onemptied",onEnd:"onend",onEnded:"onended",onError:"onerror",onFocus:"onfocus",onFocusIn:"onfocusin",onFocusOut:"onfocusout",onHashChange:"onhashchange",onInput:"oninput",onInvalid:"oninvalid",onKeyDown:"onkeydown",onKeyPress:"onkeypress",onKeyUp:"onkeyup",onLoad:"onload",onLoadedData:"onloadeddata",onLoadedMetadata:"onloadedmetadata",onLoadStart:"onloadstart",onMessage:"onmessage",onMouseDown:"onmousedown",onMouseEnter:"onmouseenter",onMouseLeave:"onmouseleave",onMouseMove:"onmousemove",onMouseOut:"onmouseout",onMouseOver:"onmouseover",onMouseUp:"onmouseup",onMouseWheel:"onmousewheel",onOffline:"onoffline",onOnline:"ononline",onPageHide:"onpagehide",onPageShow:"onpageshow",onPaste:"onpaste",onPause:"onpause",onPlay:"onplay",onPlaying:"onplaying",onPopState:"onpopstate",onProgress:"onprogress",onRateChange:"onratechange",onRepeat:"onrepeat",onReset:"onreset",onResize:"onresize",onScroll:"onscroll",onSeeked:"onseeked",onSeeking:"onseeking",onSelect:"onselect",onShow:"onshow",onStalled:"onstalled",onStorage:"onstorage",onSubmit:"onsubmit",onSuspend:"onsuspend",onTimeUpdate:"ontimeupdate",onToggle:"ontoggle",onUnload:"onunload",onVolumeChange:"onvolumechange",onWaiting:"onwaiting",onZoom:"onzoom",overlinePosition:"overline-position",overlineThickness:"overline-thickness",paintOrder:"paint-order",panose1:"panose-1",pointerEvents:"pointer-events",referrerPolicy:"referrerpolicy",renderingIntent:"rendering-intent",shapeRendering:"shape-rendering",stopColor:"stop-color",stopOpacity:"stop-opacity",strikethroughPosition:"strikethrough-position",strikethroughThickness:"strikethrough-thickness",strokeDashArray:"stroke-dasharray",strokeDashOffset:"stroke-dashoffset",strokeLineCap:"stroke-linecap",strokeLineJoin:"stroke-linejoin",strokeMiterLimit:"stroke-miterlimit",strokeOpacity:"stroke-opacity",strokeWidth:"stroke-width",tabIndex:"tabindex",textAnchor:"text-anchor",textDecoration:"text-decoration",textRendering:"text-rendering",typeOf:"typeof",underlinePosition:"underline-position",underlineThickness:"underline-thickness",unicodeBidi:"unicode-bidi",unicodeRange:"unicode-range",unitsPerEm:"units-per-em",vAlphabetic:"v-alphabetic",vHanging:"v-hanging",vIdeographic:"v-ideographic",vMathematical:"v-mathematical",vectorEffect:"vector-effect",vertAdvY:"vert-adv-y",vertOriginX:"vert-origin-x",vertOriginY:"vert-origin-y",wordSpacing:"word-spacing",writingMode:"writing-mode",xHeight:"x-height",playbackOrder:"playbackorder",timelineBegin:"timelinebegin"},transform:o,properties:{about:u,accentHeight:s,accumulate:null,additive:null,alignmentBaseline:null,alphabetic:s,amplitude:s,arabicForm:null,ascent:s,attributeName:null,attributeType:null,azimuth:s,bandwidth:null,baselineShift:null,baseFrequency:null,baseProfile:null,bbox:null,begin:null,bias:s,by:null,calcMode:null,capHeight:s,className:l,clip:null,clipPath:null,clipPathUnits:null,clipRule:null,color:null,colorInterpolation:null,colorInterpolationFilters:null,colorProfile:null,colorRendering:null,content:null,contentScriptType:null,contentStyleType:null,crossOrigin:null,cursor:null,cx:null,cy:null,d:null,dataType:null,defaultAction:null,descent:s,diffuseConstant:s,direction:null,display:null,dur:null,divisor:s,dominantBaseline:null,download:a,dx:null,dy:null,edgeMode:null,editable:null,elevation:s,enableBackground:null,end:null,event:null,exponent:s,externalResourcesRequired:null,fill:null,fillOpacity:s,fillRule:null,filter:null,filterRes:null,filterUnits:null,floodColor:null,floodOpacity:null,focusable:null,focusHighlight:null,fontFamily:null,fontSize:null,fontSizeAdjust:null,fontStretch:null,fontStyle:null,fontVariant:null,fontWeight:null,format:null,fr:null,from:null,fx:null,fy:null,g1:c,g2:c,glyphName:c,glyphOrientationHorizontal:null,glyphOrientationVertical:null,glyphRef:null,gradientTransform:null,gradientUnits:null,handler:null,hanging:s,hatchContentUnits:null,hatchUnits:null,height:null,href:null,hrefLang:null,horizAdvX:s,horizOriginX:s,horizOriginY:s,id:null,ideographic:s,imageRendering:null,initialVisibility:null,in:null,in2:null,intercept:s,k:s,k1:s,k2:s,k3:s,k4:s,kernelMatrix:u,kernelUnitLength:null,keyPoints:null,keySplines:null,keyTimes:null,kerning:null,lang:null,lengthAdjust:null,letterSpacing:null,lightingColor:null,limitingConeAngle:s,local:null,markerEnd:null,markerMid:null,markerStart:null,markerHeight:null,markerUnits:null,markerWidth:null,mask:null,maskContentUnits:null,maskUnits:null,mathematical:null,max:null,media:null,mediaCharacterEncoding:null,mediaContentEncodings:null,mediaSize:s,mediaTime:null,method:null,min:null,mode:null,name:null,navDown:null,navDownLeft:null,navDownRight:null,navLeft:null,navNext:null,navPrev:null,navRight:null,navUp:null,navUpLeft:null,navUpRight:null,numOctaves:null,observer:null,offset:null,onAbort:null,onActivate:null,onAfterPrint:null,onBeforePrint:null,onBegin:null,onCancel:null,onCanPlay:null,onCanPlayThrough:null,onChange:null,onClick:null,onClose:null,onCopy:null,onCueChange:null,onCut:null,onDblClick:null,onDrag:null,onDragEnd:null,onDragEnter:null,onDragExit:null,onDragLeave:null,onDragOver:null,onDragStart:null,onDrop:null,onDurationChange:null,onEmptied:null,onEnd:null,onEnded:null,onError:null,onFocus:null,onFocusIn:null,onFocusOut:null,onHashChange:null,onInput:null,onInvalid:null,onKeyDown:null,onKeyPress:null,onKeyUp:null,onLoad:null,onLoadedData:null,onLoadedMetadata:null,onLoadStart:null,onMessage:null,onMouseDown:null,onMouseEnter:null,onMouseLeave:null,onMouseMove:null,onMouseOut:null,onMouseOver:null,onMouseUp:null,onMouseWheel:null,onOffline:null,onOnline:null,onPageHide:null,onPageShow:null,onPaste:null,onPause:null,onPlay:null,onPlaying:null,onPopState:null,onProgress:null,onRateChange:null,onRepeat:null,onReset:null,onResize:null,onScroll:null,onSeeked:null,onSeeking:null,onSelect:null,onShow:null,onStalled:null,onStorage:null,onSubmit:null,onSuspend:null,onTimeUpdate:null,onToggle:null,onUnload:null,onVolumeChange:null,onWaiting:null,onZoom:null,opacity:null,operator:null,order:null,orient:null,orientation:null,origin:null,overflow:null,overlay:null,overlinePosition:s,overlineThickness:s,paintOrder:null,panose1:null,path:null,pathLength:s,patternContentUnits:null,patternTransform:null,patternUnits:null,phase:null,ping:l,pitch:null,playbackOrder:null,pointerEvents:null,points:null,pointsAtX:s,pointsAtY:s,pointsAtZ:s,preserveAlpha:null,preserveAspectRatio:null,primitiveUnits:null,propagate:null,property:u,r:null,radius:null,referrerPolicy:null,refX:null,refY:null,rel:u,rev:u,renderingIntent:null,repeatCount:null,repeatDur:null,requiredExtensions:u,requiredFeatures:u,requiredFonts:u,requiredFormats:u,resource:null,restart:null,result:null,rotate:null,rx:null,ry:null,scale:null,seed:null,shapeRendering:null,side:null,slope:null,snapshotTime:null,specularConstant:s,specularExponent:s,spreadMethod:null,spacing:null,startOffset:null,stdDeviation:null,stemh:null,stemv:null,stitchTiles:null,stopColor:null,stopOpacity:null,strikethroughPosition:s,strikethroughThickness:s,string:null,stroke:null,strokeDashArray:u,strokeDashOffset:null,strokeLineCap:null,strokeLineJoin:null,strokeMiterLimit:s,strokeOpacity:s,strokeWidth:null,style:null,surfaceScale:s,syncBehavior:null,syncBehaviorDefault:null,syncMaster:null,syncTolerance:null,syncToleranceDefault:null,systemLanguage:u,tabIndex:s,tableValues:null,target:null,targetX:s,targetY:s,textAnchor:null,textDecoration:null,textRendering:null,textLength:null,timelineBegin:null,title:null,transformBehavior:null,type:null,typeOf:u,to:null,transform:null,u1:null,u2:null,underlinePosition:s,underlineThickness:s,unicode:null,unicodeBidi:null,unicodeRange:null,unitsPerEm:s,values:null,vAlphabetic:s,vMathematical:s,vectorEffect:null,vHanging:s,vIdeographic:s,version:null,vertAdvY:s,vertOriginX:s,vertOriginY:s,viewBox:null,viewTarget:null,visibility:null,width:null,widths:null,wordSpacing:null,writingMode:null,x:null,x1:null,x2:null,xChannelSelector:null,xHeight:s,y:null,y1:null,y2:null,yChannelSelector:null,z:null,zoomAndPan:null}})},4839:(e,t)=>{"use strict";var n="<[A-Za-z][A-Za-z0-9\\-]*(?:\\s+[a-zA-Z_:][a-zA-Z0-9:._-]*(?:\\s*=\\s*(?:[^\"'=<>`\\u0000-\\u0020]+|'[^']*'|\"[^\"]*\"))?)*\\s*\\/?>",i="<\\/[A-Za-z][A-Za-z0-9\\-]*\\s*>";t.X=new RegExp("^(?:"+n+"|"+i+")"),t.T=new RegExp("^(?:"+n+"|"+i+"|\x3c!----\x3e|\x3c!--(?:-?[^>-])(?:-?[^-])*--\x3e|<[?].*?[?]>|<![A-Za-z]+\\s+[^>]*>|<!\\[CDATA\\[[\\s\\S]*?\\]\\]>)")},4967:(e,t,n)=>{"use strict";var i=n(1528);e.exports={Parser:i}},4982:e=>{"use strict";e.exports=r;var t=["\\","`","*","{","}","[","]","(",")","#","+","-",".","!","_",">"],n=t.concat(["~","|"]),i=n.concat(["\n",'"',"$","%","&","'",",","/",":",";","<","=","?","@","^"]);function r(e){var r=e||{};return r.commonmark?i:r.gfm?n:t}r.default=t,r.gfm=n,r.commonmark=i},5001:e=>{e.exports=function(e){return e}},5125:e=>{"use strict";e.exports=function(e,t){return e(t,"hr")}},5151:(e,t,n)=>{"use strict";e.exports=function(e,t){return e(t,"strong",i(e,t))};var i=n(4297)},5176:(e,t)=>{"use strict";var n=0;function i(){return Math.pow(2,++n)}t.boolean=i(),t.booleanish=i(),t.overloadedBoolean=i(),t.number=i(),t.spaceSeparated=i(),t.commaSeparated=i(),t.commaOrSpaceSeparated=i()},5226:function(e,t,n){"use strict";var i,r=this&&this.__extends||(i=function(e,t){return i=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n])},i(e,t)},function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Class extends value "+String(t)+" is not a constructor or null");function n(){this.constructor=e}i(e,t),e.prototype=null===t?Object.create(t):(n.prototype=t.prototype,new n)});Object.defineProperty(t,"__esModule",{value:!0});var o=n(9784),a=n(9840),s=function(e){function t(){var t=e.call(this)||this;return t.logGroup="",t.hasLoggingStarted=!1,t.metadataloaded=!1,t.chunks=[],t.stack=[],t.segmentOffset=0,t.last2SimpleBlockVideoTrackTimecode=[0,0],t.last2SimpleBlockAudioTrackTimecode=[0,0],t.lastClusterTimecode=0,t.lastClusterPosition=0,t.timecodeScale=1e6,t.metadataSize=0,t.metadatas=[],t.cues=[],t.firstVideoBlockRead=!1,t.firstAudioBlockRead=!1,t.currentTrack={TrackNumber:-1,TrackType:-1,DefaultDuration:null,CodecDelay:null},t.trackTypes=[],t.trackDefaultDuration=[],t.trackCodecDelay=[],t.trackInfo={type:"nothing"},t.ended=!1,t.logging=!1,t.use_duration_every_simpleblock=!1,t.use_webp=!1,t.use_segment_info=!0,t.drop_default_duration=!0,t}return r(t,e),t.prototype.stop=function(){for(this.ended=!0,this.emit_segment_info();this.stack.length;)this.stack.pop(),this.logging&&console.groupEnd();this.logging&&this.hasLoggingStarted&&this.logGroup&&console.groupEnd()},t.prototype.emit_segment_info=function(){var e=this.chunks;if(this.chunks=[],this.metadataloaded){if(!this.use_segment_info)return;var t=this.lastClusterTimecode,n=this.duration,i=this.timecodeScale;this.emit("cluster",{timecode:t,data:e}),this.emit("duration",{timecodeScale:i,duration:n})}else{this.metadataloaded=!0,this.metadatas=e;var r=this.trackTypes.indexOf(1),o=this.trackTypes.indexOf(2);if(this.trackInfo=r>=0&&o>=0?{type:"both",trackNumber:r}:r>=0?{type:"video",trackNumber:r}:o>=0?{type:"audio",trackNumber:o}:{type:"nothing"},!this.use_segment_info)return;this.emit("metadata",{data:e,metadataSize:this.metadataSize})}},t.prototype.read=function(e){var t=this,n=!1;if(!this.ended){if("m"===e.type)if(e.isEnd)this.stack.pop();else{var i=this.stack[this.stack.length-1];if(null!=i&&i.level>=e.level){this.stack.pop(),this.logging&&console.groupEnd(),i.dataEnd=e.dataEnd,i.dataSize=e.dataEnd-i.dataStart,i.unknownSize=!1;var r=Object.assign({},i,{name:i.name,type:i.type,isEnd:!0});this.chunks.push(r)}this.stack.push(e)}if("m"===e.type&&"Segment"==e.name)0!=this.segmentOffset&&console.warn("Multiple segments detected!"),this.segmentOffset=e.dataStart,this.emit("segment_offset",this.segmentOffset);else if("b"===e.type&&"SimpleBlock"===e.name){var o=a.ebmlBlock(e.data),s=o.timecode,l=o.trackNumber,c=o.frames;if(1===this.trackTypes[l]){if(!this.firstVideoBlockRead&&(this.firstVideoBlockRead=!0,"both"===this.trackInfo.type||"video"===this.trackInfo.type)){var u=this.lastClusterTimecode+s;this.cues.push({CueTrack:l,CueClusterPosition:this.lastClusterPosition,CueTime:u}),this.emit("cue_info",{CueTrack:l,CueClusterPosition:this.lastClusterPosition,CueTime:this.lastClusterTimecode}),this.emit("cue",{CueTrack:l,CueClusterPosition:this.lastClusterPosition,CueTime:u})}this.last2SimpleBlockVideoTrackTimecode=[this.last2SimpleBlockVideoTrackTimecode[1],s]}else if(2===this.trackTypes[l]){if(!this.firstAudioBlockRead&&(this.firstAudioBlockRead=!0,"audio"===this.trackInfo.type)){u=this.lastClusterTimecode+s;this.cues.push({CueTrack:l,CueClusterPosition:this.lastClusterPosition,CueTime:u}),this.emit("cue_info",{CueTrack:l,CueClusterPosition:this.lastClusterPosition,CueTime:this.lastClusterTimecode}),this.emit("cue",{CueTrack:l,CueClusterPosition:this.lastClusterPosition,CueTime:u})}this.last2SimpleBlockAudioTrackTimecode=[this.last2SimpleBlockAudioTrackTimecode[1],s]}this.use_duration_every_simpleblock&&this.emit("duration",{timecodeScale:this.timecodeScale,duration:this.duration}),this.use_webp&&c.forEach((function(e){if("9d012a"===e.slice(3,6).toString("hex")){var n=a.VP8BitStreamToRiffWebPBuffer(e),i=new Blob([n],{type:"image/webp"}),r=t.duration;t.emit("webp",{currentTime:r,webp:i})}}))}else"m"===e.type&&"Cluster"===e.name&&!1===e.isEnd?(this.firstVideoBlockRead=!1,this.firstAudioBlockRead=!1,this.emit_segment_info(),this.emit("cluster_ptr",e.tagStart),this.lastClusterPosition=e.tagStart):"u"===e.type&&"Timecode"===e.name?this.lastClusterTimecode=e.value:"u"===e.type&&"TimecodeScale"===e.name?this.timecodeScale=e.value:"m"===e.type&&"TrackEntry"===e.name?e.isEnd?(this.trackTypes[this.currentTrack.TrackNumber]=this.currentTrack.TrackType,this.trackDefaultDuration[this.currentTrack.TrackNumber]=this.currentTrack.DefaultDuration,this.trackCodecDelay[this.currentTrack.TrackNumber]=this.currentTrack.CodecDelay):this.currentTrack={TrackNumber:-1,TrackType:-1,DefaultDuration:null,CodecDelay:null}:"u"===e.type&&"TrackType"===e.name?this.currentTrack.TrackType=e.value:"u"===e.type&&"TrackNumber"===e.name?this.currentTrack.TrackNumber=e.value:"u"===e.type&&"CodecDelay"===e.name?this.currentTrack.CodecDelay=e.value:"u"===e.type&&"DefaultDuration"===e.name?this.drop_default_duration?(console.warn("DefaultDuration detected!, remove it"),n=!0):this.currentTrack.DefaultDuration=e.value:"unknown"===e.name&&console.warn(e);!this.metadataloaded&&e.dataEnd>0&&(this.metadataSize=e.dataEnd),n||this.chunks.push(e),this.logging&&this.put(e)}},Object.defineProperty(t.prototype,"duration",{get:function(){if("nothing"===this.trackInfo.type)return console.warn("no video, no audio track"),0;var e=0,t=0,n=0,i=this.trackDefaultDuration[this.trackInfo.trackNumber];if("number"==typeof i)e=i;else if("both"===this.trackInfo.type)this.last2SimpleBlockAudioTrackTimecode[1]>this.last2SimpleBlockVideoTrackTimecode[1]?(e=(this.last2SimpleBlockAudioTrackTimecode[1]-this.last2SimpleBlockAudioTrackTimecode[0])*this.timecodeScale,"number"==typeof(r=this.trackCodecDelay[this.trackTypes.indexOf(2)])&&(t=r),n=this.last2SimpleBlockAudioTrackTimecode[1]):(e=(this.last2SimpleBlockVideoTrackTimecode[1]-this.last2SimpleBlockVideoTrackTimecode[0])*this.timecodeScale,"number"==typeof(r=this.trackCodecDelay[this.trackTypes.indexOf(1)])&&(t=r),n=this.last2SimpleBlockVideoTrackTimecode[1]);else if("video"===this.trackInfo.type){e=(this.last2SimpleBlockVideoTrackTimecode[1]-this.last2SimpleBlockVideoTrackTimecode[0])*this.timecodeScale,"number"==typeof(r=this.trackCodecDelay[this.trackInfo.trackNumber])&&(t=r),n=this.last2SimpleBlockVideoTrackTimecode[1]}else if("audio"===this.trackInfo.type){var r;e=(this.last2SimpleBlockAudioTrackTimecode[1]-this.last2SimpleBlockAudioTrackTimecode[0])*this.timecodeScale,"number"==typeof(r=this.trackCodecDelay[this.trackInfo.trackNumber])&&(t=r),n=this.last2SimpleBlockAudioTrackTimecode[1]}var o=((this.lastClusterTimecode+n)*this.timecodeScale+e-t)/this.timecodeScale;return Math.floor(o)},enumerable:!1,configurable:!0}),t.prototype.addListener=function(t,n){return e.prototype.addListener.call(this,t,n)},t.prototype.put=function(e){this.hasLoggingStarted||(this.hasLoggingStarted=!0,this.logging&&this.logGroup&&console.groupCollapsed(this.logGroup)),"m"===e.type?e.isEnd?console.groupEnd():console.group(e.name+":"+e.tagStart):"b"===e.type?console.log(e.name,e.type):console.log(e.name,e.tagStart,e.type,e.value)},t}(o.EventEmitter);t.default=s},5245:(e,t,n)=>{e.exports=function(e,t,n){var r="&#"+String(e);return n&&t&&!/\d/.test(i(t))?r:r+";"};var i=n(9677)},5261:(e,t,n)=>{"use strict";var i=n(8593),r=n(1782);e.exports=function(e){var t,n,o=e.length,a=[],s=[],l=-1;for(;++l<o;)t=e[l],a.push(t.property),s.push(t.normal),n=t.space;return new r(i.apply(null,a),i.apply(null,s),n)}},5275:(e,t,n)=>{"use strict";e.exports=function(e,t){return e(t,"del",i(e,t))};var i=n(4297)},5325:e=>{"use strict";e.exports=n;var t=n.prototype;function n(e,t){this.property=e,this.attribute=t}t.space=null,t.attribute=null,t.property=null,t.boolean=!1,t.booleanish=!1,t.overloadedBoolean=!1,t.number=!1,t.commaSeparated=!1,t.spaceSeparated=!1,t.commaOrSpaceSeparated=!1,t.mustUseProperty=!1,t.defined=!1},5350:(e,t)=>{"use strict";t.byteLength=function(e){var t=s(e),n=t[0],i=t[1];return 3*(n+i)/4-i},t.toByteArray=function(e){var t,n,o=s(e),a=o[0],l=o[1],c=new r(function(e,t,n){return 3*(t+n)/4-n}(0,a,l)),u=0,h=l>0?a-4:a;for(n=0;n<h;n+=4)t=i[e.charCodeAt(n)]<<18|i[e.charCodeAt(n+1)]<<12|i[e.charCodeAt(n+2)]<<6|i[e.charCodeAt(n+3)],c[u++]=t>>16&255,c[u++]=t>>8&255,c[u++]=255&t;2===l&&(t=i[e.charCodeAt(n)]<<2|i[e.charCodeAt(n+1)]>>4,c[u++]=255&t);1===l&&(t=i[e.charCodeAt(n)]<<10|i[e.charCodeAt(n+1)]<<4|i[e.charCodeAt(n+2)]>>2,c[u++]=t>>8&255,c[u++]=255&t);return c},t.fromByteArray=function(e){for(var t,i=e.length,r=i%3,o=[],a=16383,s=0,c=i-r;s<c;s+=a)o.push(l(e,s,s+a>c?c:s+a));1===r?(t=e[i-1],o.push(n[t>>2]+n[t<<4&63]+"==")):2===r&&(t=(e[i-2]<<8)+e[i-1],o.push(n[t>>10]+n[t>>4&63]+n[t<<2&63]+"="));return o.join("")};for(var n=[],i=[],r="undefined"!=typeof Uint8Array?Uint8Array:Array,o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",a=0;a<64;++a)n[a]=o[a],i[o.charCodeAt(a)]=a;function s(e){var t=e.length;if(t%4>0)throw new Error("Invalid string. Length must be a multiple of 4");var n=e.indexOf("=");return-1===n&&(n=t),[n,n===t?0:4-n%4]}function l(e,t,i){for(var r,o,a=[],s=t;s<i;s+=3)r=(e[s]<<16&16711680)+(e[s+1]<<8&65280)+(255&e[s+2]),a.push(n[(o=r)>>18&63]+n[o>>12&63]+n[o>>6&63]+n[63&o]);return a.join("")}i["-".charCodeAt(0)]=62,i["_".charCodeAt(0)]=63},5393:(e,t,n)=>{"use strict";var i=n(8593),r=n(631);e.exports=function(e,t){var n=t.value;if(e.bogusComments)return"<?"+r(n,i(e.entities,{subset:s}))+">";return"\x3c!--"+n.replace(o,(function(t){return r(t,i(e.entities,{subset:a}))}))+"--\x3e"};var o=/^>|^->|<!--|-->|--!>|<!-$/g,a=["<",">"],s=[">"]},5416:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.byEbmlID=void 0,t.byEbmlID={128:{name:"ChapterDisplay",level:4,type:"m",multiple:!0,minver:1,webm:!0,description:"Contains all possible strings to use for the chapter display."},131:{name:"TrackType",level:3,type:"u",mandatory:!0,minver:1,range:"1-254",description:"A set of track types coded on 8 bits (1: video, 2: audio, 3: complex, 0x10: logo, 0x11: subtitle, 0x12: buttons, 0x20: control)."},133:{name:"ChapString",cppname:"ChapterString",level:5,type:"8",mandatory:!0,minver:1,webm:!0,description:"Contains the string to use as the chapter atom."},134:{name:"CodecID",level:3,type:"s",mandatory:!0,minver:1,description:"An ID corresponding to the codec, see the codec page for more info."},136:{name:"FlagDefault",cppname:"TrackFlagDefault",level:3,type:"u",mandatory:!0,minver:1,default:1,range:"0-1",description:"Set if that track (audio, video or subs) SHOULD be active if no language found matches the user preference. (1 bit)"},137:{name:"ChapterTrackNumber",level:5,type:"u",mandatory:!0,multiple:!0,minver:1,webm:!1,range:"not 0",description:"UID of the Track to apply this chapter too. In the absense of a control track, choosing this chapter will select the listed Tracks and deselect unlisted tracks. Absense of this element indicates that the Chapter should be applied to any currently used Tracks."},145:{name:"ChapterTimeStart",level:4,type:"u",mandatory:!0,minver:1,webm:!0,description:"Timestamp of the start of Chapter (not scaled)."},146:{name:"ChapterTimeEnd",level:4,type:"u",minver:1,webm:!1,description:"Timestamp of the end of Chapter (timestamp excluded, not scaled)."},150:{name:"CueRefTime",level:5,type:"u",mandatory:!0,minver:2,webm:!1,description:"Timestamp of the referenced Block."},151:{name:"CueRefCluster",level:5,type:"u",mandatory:!0,webm:!1,description:"The Position of the Cluster containing the referenced Block."},152:{name:"ChapterFlagHidden",level:4,type:"u",mandatory:!0,minver:1,webm:!1,default:0,range:"0-1",description:"If a chapter is hidden (1), it should not be available to the user interface (but still to Control Tracks; see flag notes). (1 bit)"},16980:{name:"ContentCompAlgo",level:6,type:"u",mandatory:!0,minver:1,webm:!1,default:0,description:"The compression algorithm used. Algorithms that have been specified so far are: 0 - zlib,   3 - Header Stripping"},16981:{name:"ContentCompSettings",level:6,type:"b",minver:1,webm:!1,description:"Settings that might be needed by the decompressor. For Header Stripping (ContentCompAlgo=3), the bytes that were removed from the beggining of each frames of the track."},17026:{name:"DocType",level:1,type:"s",mandatory:!0,default:"matroska",minver:1,description:"A string that describes the type of document that follows this EBML header. 'matroska' in our case or 'webm' for webm files."},17029:{name:"DocTypeReadVersion",level:1,type:"u",mandatory:!0,default:1,minver:1,description:"The minimum DocType version an interpreter has to support to read this file."},17030:{name:"EBMLVersion",level:1,type:"u",mandatory:!0,default:1,minver:1,description:"The version of EBML parser used to create the file."},17031:{name:"DocTypeVersion",level:1,type:"u",mandatory:!0,default:1,minver:1,description:"The version of DocType interpreter used to create the file."},17476:{name:"SegmentFamily",level:2,type:"b",multiple:!0,minver:1,webm:!1,bytesize:16,description:"A randomly generated unique ID that all segments related to each other must use (128 bits)."},17505:{name:"DateUTC",level:2,type:"d",minver:1,description:"Date of the origin of timestamp (value 0), i.e. production date."},17540:{name:"TagDefault",level:4,type:"u",mandatory:!0,minver:1,webm:!1,default:1,range:"0-1",description:"Indication to know if this is the default/original language to use for the given tag. (1 bit)"},17541:{name:"TagBinary",level:4,type:"b",minver:1,webm:!1,description:"The values of the Tag if it is binary. Note that this cannot be used in the same SimpleTag as TagString."},17543:{name:"TagString",level:4,type:"8",minver:1,webm:!1,description:"The value of the Element."},17545:{name:"Duration",level:2,type:"f",minver:1,range:"> 0",description:"Duration of the segment (based on TimecodeScale)."},17816:{name:"ChapterFlagEnabled",level:4,type:"u",mandatory:!0,minver:1,webm:!1,default:1,range:"0-1",description:"Specify wether the chapter is enabled. It can be enabled/disabled by a Control Track. When disabled, the movie should skip all the content between the TimeStart and TimeEnd of this chapter (see flag notes). (1 bit)"},18016:{name:"FileMimeType",level:3,type:"s",mandatory:!0,minver:1,webm:!1,description:"MIME type of the file."},18017:{name:"FileUsedStartTime",level:3,type:"u",divx:!0,description:"DivX font extension"},18018:{name:"FileUsedEndTime",level:3,type:"u",divx:!0,description:"DivX font extension"},18037:{name:"FileReferral",level:3,type:"b",webm:!1,description:"A binary value that a track/codec can refer to when the attachment is needed."},20529:{name:"ContentEncodingOrder",level:5,type:"u",mandatory:!0,minver:1,webm:!1,default:0,description:"Tells when this modification was used during encoding/muxing starting with 0 and counting upwards. The decoder/demuxer has to start with the highest order number it finds and work its way down. This value has to be unique over all ContentEncodingOrder elements in the segment."},20530:{name:"ContentEncodingScope",level:5,type:"u",mandatory:!0,minver:1,webm:!1,default:1,range:"not 0",description:"A bit field that describes which elements have been modified in this way. Values (big endian) can be OR'ed. Possible values: 1 - all frame contents, 2 - the track's private data, 4 - the next ContentEncoding (next ContentEncodingOrder. Either the data inside ContentCompression and/or ContentEncryption)"},20531:{name:"ContentEncodingType",level:5,type:"u",mandatory:!0,minver:1,webm:!1,default:0,description:"A value describing what kind of transformation has been done. Possible values: 0 - compression, 1 - encryption"},20532:{name:"ContentCompression",level:5,type:"m",minver:1,webm:!1,description:"Settings describing the compression used. Must be present if the value of ContentEncodingType is 0 and absent otherwise. Each block must be decompressable even if no previous block is available in order not to prevent seeking."},20533:{name:"ContentEncryption",level:5,type:"m",minver:1,webm:!1,description:"Settings describing the encryption used. Must be present if the value of ContentEncodingType is 1 and absent otherwise."},21368:{name:"CueBlockNumber",level:4,type:"u",minver:1,default:1,range:"not 0",description:"Number of the Block in the specified Cluster."},22100:{name:"ChapterStringUID",level:4,type:"8",mandatory:!1,minver:3,webm:!0,description:"A unique string ID to identify the Chapter. Use for WebVTT cue identifier storage."},22337:{name:"WritingApp",level:2,type:"8",mandatory:!0,minver:1,description:'Writing application ("mkvmerge-0.3.3").'},22612:{name:"SilentTracks",cppname:"ClusterSilentTracks",level:2,type:"m",minver:1,webm:!1,description:"The list of tracks that are not used in that part of the stream. It is useful when using overlay tracks on seeking. Then you should decide what track to use."},25152:{name:"ContentEncoding",level:4,type:"m",mandatory:!0,multiple:!0,minver:1,webm:!1,description:"Settings for one content encoding like compression or encryption."},25188:{name:"BitDepth",cppname:"AudioBitDepth",level:4,type:"u",minver:1,range:"not 0",description:"Bits per sample, mostly used for PCM."},25906:{name:"SignedElement",level:3,type:"b",multiple:!0,webm:!1,description:"An element ID whose data will be used to compute the signature."},26148:{name:"TrackTranslate",level:3,type:"m",multiple:!0,minver:1,webm:!1,description:"The track identification for the given Chapter Codec."},26897:{name:"ChapProcessCommand",cppname:"ChapterProcessCommand",level:5,type:"m",multiple:!0,minver:1,webm:!1,description:"Contains all the commands associated to the Atom."},26914:{name:"ChapProcessTime",cppname:"ChapterProcessTime",level:6,type:"u",mandatory:!0,minver:1,webm:!1,description:"Defines when the process command should be handled (0: during the whole chapter, 1: before starting playback, 2: after playback of the chapter)."},26916:{name:"ChapterTranslate",level:2,type:"m",multiple:!0,minver:1,webm:!1,description:"A tuple of corresponding ID used by chapter codecs to represent this segment."},26931:{name:"ChapProcessData",cppname:"ChapterProcessData",level:6,type:"b",mandatory:!0,minver:1,webm:!1,description:"Contains the command information. The data should be interpreted depending on the ChapProcessCodecID value. For ChapProcessCodecID = 1, the data correspond to the binary DVD cell pre/post commands."},26948:{name:"ChapProcess",cppname:"ChapterProcess",level:4,type:"m",multiple:!0,minver:1,webm:!1,description:"Contains all the commands associated to the Atom."},26965:{name:"ChapProcessCodecID",cppname:"ChapterProcessCodecID",level:5,type:"u",mandatory:!0,minver:1,webm:!1,default:0,description:"Contains the type of the codec used for the processing. A value of 0 means native Matroska processing (to be defined), a value of 1 means the DVD command set is used. More codec IDs can be added later."},29555:{name:"Tag",level:2,type:"m",mandatory:!0,multiple:!0,minver:1,webm:!1,description:"Element containing elements specific to Tracks/Chapters."},29572:{name:"SegmentFilename",level:2,type:"8",minver:1,webm:!1,description:"A filename corresponding to this segment."},29766:{name:"AttachmentLink",cppname:"TrackAttachmentLink",level:3,type:"u",minver:1,webm:!1,range:"not 0",description:"The UID of an attachment that is used by this codec."},2459272:{name:"CodecName",level:3,type:"8",minver:1,description:"A human-readable string specifying the codec."},408125543:{name:"Segment",level:"0",type:"m",mandatory:!0,multiple:!0,minver:1,description:"This element contains all other top-level (level 1) elements. Typically a Matroska file is composed of 1 segment."},17530:{name:"TagLanguage",level:4,type:"s",mandatory:!0,minver:1,webm:!1,default:"und",description:"Specifies the language of the tag specified, in the Matroska languages form."},17827:{name:"TagName",level:4,type:"8",mandatory:!0,minver:1,webm:!1,description:"The name of the Tag that is going to be stored."},26568:{name:"SimpleTag",cppname:"TagSimple",level:3,recursive:"1",type:"m",mandatory:!0,multiple:!0,minver:1,webm:!1,description:"Contains general information about the target."},25542:{name:"TagAttachmentUID",level:4,type:"u",multiple:!0,minver:1,webm:!1,default:0,description:"A unique ID to identify the Attachment(s) the tags belong to. If the value is 0 at this level, the tags apply to all the attachments in the Segment."},25540:{name:"TagChapterUID",level:4,type:"u",multiple:!0,minver:1,webm:!1,default:0,description:"A unique ID to identify the Chapter(s) the tags belong to. If the value is 0 at this level, the tags apply to all chapters in the Segment."},25545:{name:"TagEditionUID",level:4,type:"u",multiple:!0,minver:1,webm:!1,default:0,description:"A unique ID to identify the EditionEntry(s) the tags belong to. If the value is 0 at this level, the tags apply to all editions in the Segment."},25541:{name:"TagTrackUID",level:4,type:"u",multiple:!0,minver:1,webm:!1,default:0,description:"A unique ID to identify the Track(s) the tags belong to. If the value is 0 at this level, the tags apply to all tracks in the Segment."},25546:{name:"TargetType",cppname:"TagTargetType",level:4,type:"s",minver:1,webm:!1,strong:"informational",description:'An  string that can be used to display the logical level of the target like "ALBUM", "TRACK", "MOVIE", "CHAPTER", etc (see TargetType).'},26826:{name:"TargetTypeValue",cppname:"TagTargetTypeValue",level:4,type:"u",minver:1,webm:!1,default:50,description:"A number to indicate the logical level of the target (see TargetType)."},25536:{name:"Targets",cppname:"TagTargets",level:3,type:"m",mandatory:!0,minver:1,webm:!1,description:"Contain all UIDs where the specified meta data apply. It is empty to describe everything in the segment."},307544935:{name:"Tags",level:1,type:"m",multiple:!0,minver:1,webm:!1,description:"Element containing elements specific to Tracks/Chapters. A list of valid tags can be found here."},17677:{name:"ChapProcessPrivate",cppname:"ChapterProcessPrivate",level:5,type:"b",minver:1,webm:!1,description:'Some optional data attached to the ChapProcessCodecID information. For ChapProcessCodecID = 1, it is the "DVD level" equivalent.'},17278:{name:"ChapCountry",cppname:"ChapterCountry",level:5,type:"s",multiple:!0,minver:1,webm:!1,description:"The countries corresponding to the string, same 2 octets as in Internet domains."},17276:{name:"ChapLanguage",cppname:"ChapterLanguage",level:5,type:"s",mandatory:!0,multiple:!0,minver:1,webm:!0,default:"eng",description:"The languages corresponding to the string, in the bibliographic ISO-639-2 form."},143:{name:"ChapterTrack",level:4,type:"m",minver:1,webm:!1,description:"List of tracks on which the chapter applies. If this element is not present, all tracks apply"},25539:{name:"ChapterPhysicalEquiv",level:4,type:"u",minver:1,webm:!1,description:'Specify the physical equivalent of this ChapterAtom like "DVD" (60) or "SIDE" (50), see complete list of values.'},28348:{name:"ChapterSegmentEditionUID",level:4,type:"u",minver:1,webm:!1,range:"not 0",description:"The EditionUID to play from the segment linked in ChapterSegmentUID."},28263:{name:"ChapterSegmentUID",level:4,type:"b",minver:1,webm:!1,range:">0",bytesize:16,description:"A segment to play in place of this chapter. Edition ChapterSegmentEditionUID should be used for this segment, otherwise no edition is used."},29636:{name:"ChapterUID",level:4,type:"u",mandatory:!0,minver:1,webm:!0,range:"not 0",description:"A unique ID to identify the Chapter."},182:{name:"ChapterAtom",level:3,recursive:"1",type:"m",mandatory:!0,multiple:!0,minver:1,webm:!0,description:"Contains the atom information to use as the chapter atom (apply to all tracks)."},17885:{name:"EditionFlagOrdered",level:3,type:"u",minver:1,webm:!1,default:0,range:"0-1",description:"Specify if the chapters can be defined multiple times and the order to play them is enforced. (1 bit)"},17883:{name:"EditionFlagDefault",level:3,type:"u",mandatory:!0,minver:1,webm:!1,default:0,range:"0-1",description:"If a flag is set (1) the edition should be used as the default one. (1 bit)"},17853:{name:"EditionFlagHidden",level:3,type:"u",mandatory:!0,minver:1,webm:!1,default:0,range:"0-1",description:"If an edition is hidden (1), it should not be available to the user interface (but still to Control Tracks; see flag notes). (1 bit)"},17852:{name:"EditionUID",level:3,type:"u",minver:1,webm:!1,range:"not 0",description:"A unique ID to identify the edition. It's useful for tagging an edition."},17849:{name:"EditionEntry",level:2,type:"m",mandatory:!0,multiple:!0,minver:1,webm:!0,description:"Contains all information about a segment edition."},272869232:{name:"Chapters",level:1,type:"m",minver:1,webm:!0,description:"A system to define basic menus and partition data. For more detailed information, look at the Chapters Explanation."},18094:{name:"FileUID",level:3,type:"u",mandatory:!0,minver:1,webm:!1,range:"not 0",description:"Unique ID representing the file, as random as possible."},18012:{name:"FileData",level:3,type:"b",mandatory:!0,minver:1,webm:!1,description:"The data of the file."},18030:{name:"FileName",level:3,type:"8",mandatory:!0,minver:1,webm:!1,description:"Filename of the attached file."},18046:{name:"FileDescription",level:3,type:"8",minver:1,webm:!1,description:"A human-friendly name for the attached file."},24999:{name:"AttachedFile",level:2,type:"m",mandatory:!0,multiple:!0,minver:1,webm:!1,description:"An attached file."},423732329:{name:"Attachments",level:1,type:"m",minver:1,webm:!1,description:"Contain attached files."},235:{name:"CueRefCodecState",level:5,type:"u",webm:!1,default:0,description:"The position of the Codec State corresponding to this referenced element. 0 means that the data is taken from the initial Track Entry."},21343:{name:"CueRefNumber",level:5,type:"u",webm:!1,default:1,range:"not 0",description:"Number of the referenced Block of Track X in the specified Cluster."},219:{name:"CueReference",level:4,type:"m",multiple:!0,minver:2,webm:!1,description:"The Clusters containing the required referenced Blocks."},234:{name:"CueCodecState",level:4,type:"u",minver:2,webm:!1,default:0,description:"The position of the Codec State corresponding to this Cue element. 0 means that the data is taken from the initial Track Entry."},178:{name:"CueDuration",level:4,type:"u",mandatory:!1,minver:4,webm:!1,description:"The duration of the block according to the segment time base. If missing the track's DefaultDuration does not apply and no duration information is available in terms of the cues."},240:{name:"CueRelativePosition",level:4,type:"u",mandatory:!1,minver:4,webm:!1,description:"The relative position of the referenced block inside the cluster with 0 being the first possible position for an element inside that cluster.",position:"clusterRelative"},241:{name:"CueClusterPosition",level:4,type:"u",mandatory:!0,minver:1,description:"The position of the Cluster containing the required Block.",position:"segment"},247:{name:"CueTrack",level:4,type:"u",mandatory:!0,minver:1,range:"not 0",description:"The track for which a position is given."},183:{name:"CueTrackPositions",level:3,type:"m",mandatory:!0,multiple:!0,minver:1,description:"Contain positions for different tracks corresponding to the timestamp."},179:{name:"CueTime",level:3,type:"u",mandatory:!0,minver:1,description:"Absolute timestamp according to the segment time base."},187:{name:"CuePoint",level:2,type:"m",mandatory:!0,multiple:!0,minver:1,description:"Contains all information relative to a seek point in the segment."},475249515:{name:"Cues",level:1,type:"m",minver:1,description:'A top-level element to speed seeking access. All entries are local to the segment. Should be mandatory for non "live" streams.'},18406:{name:"ContentSigHashAlgo",level:6,type:"u",minver:1,webm:!1,default:0,description:"The hash algorithm used for the signature. A value of '0' means that the contents have not been signed but only encrypted. Predefined values: 1 - SHA1-160 2 - MD5"},18405:{name:"ContentSigAlgo",level:6,type:"u",minver:1,webm:!1,default:0,description:"The algorithm used for the signature. A value of '0' means that the contents have not been signed but only encrypted. Predefined values: 1 - RSA"},18404:{name:"ContentSigKeyID",level:6,type:"b",minver:1,webm:!1,description:"This is the ID of the private key the data was signed with."},18403:{name:"ContentSignature",level:6,type:"b",minver:1,webm:!1,description:"A cryptographic signature of the contents."},18402:{name:"ContentEncKeyID",level:6,type:"b",minver:1,webm:!1,description:"For public key algorithms this is the ID of the public key the the data was encrypted with."},18401:{name:"ContentEncAlgo",level:6,type:"u",minver:1,webm:!1,default:0,description:"The encryption algorithm used. The value '0' means that the contents have not been encrypted but only signed. Predefined values: 1 - DES, 2 - 3DES, 3 - Twofish, 4 - Blowfish, 5 - AES"},28032:{name:"ContentEncodings",level:3,type:"m",minver:1,webm:!1,description:"Settings for several content encoding mechanisms like compression or encryption."},196:{name:"TrickMasterTrackSegmentUID",level:3,type:"b",divx:!0,bytesize:16,description:"DivX trick track extenstions"},199:{name:"TrickMasterTrackUID",level:3,type:"u",divx:!0,description:"DivX trick track extenstions"},198:{name:"TrickTrackFlag",level:3,type:"u",divx:!0,default:0,description:"DivX trick track extenstions"},193:{name:"TrickTrackSegmentUID",level:3,type:"b",divx:!0,bytesize:16,description:"DivX trick track extenstions"},192:{name:"TrickTrackUID",level:3,type:"u",divx:!0,description:"DivX trick track extenstions"},237:{name:"TrackJoinUID",level:5,type:"u",mandatory:!0,multiple:!0,minver:3,webm:!1,range:"not 0",description:"The trackUID number of a track whose blocks are used to create this virtual track."},233:{name:"TrackJoinBlocks",level:4,type:"m",minver:3,webm:!1,description:"Contains the list of all tracks whose Blocks need to be combined to create this virtual track"},230:{name:"TrackPlaneType",level:6,type:"u",mandatory:!0,minver:3,webm:!1,description:"The kind of plane this track corresponds to (0: left eye, 1: right eye, 2: background)."},229:{name:"TrackPlaneUID",level:6,type:"u",mandatory:!0,minver:3,webm:!1,range:"not 0",description:"The trackUID number of the track representing the plane."},228:{name:"TrackPlane",level:5,type:"m",mandatory:!0,multiple:!0,minver:3,webm:!1,description:"Contains a video plane track that need to be combined to create this 3D track"},227:{name:"TrackCombinePlanes",level:4,type:"m",minver:3,webm:!1,description:"Contains the list of all video plane tracks that need to be combined to create this 3D track"},226:{name:"TrackOperation",level:3,type:"m",minver:3,webm:!1,description:"Operation that needs to be applied on tracks to create this virtual track. For more details look at the Specification Notes on the subject."},32123:{name:"ChannelPositions",cppname:"AudioPosition",level:4,type:"b",webm:!1,description:"Table of horizontal angles for each successive channel, see appendix."},159:{name:"Channels",cppname:"AudioChannels",level:4,type:"u",mandatory:!0,minver:1,default:1,range:"not 0",description:"Numbers of channels in the track."},30901:{name:"OutputSamplingFrequency",cppname:"AudioOutputSamplingFreq",level:4,type:"f",minver:1,default:"Sampling Frequency",range:"> 0",description:"Real output sampling frequency in Hz (used for SBR techniques)."},181:{name:"SamplingFrequency",cppname:"AudioSamplingFreq",level:4,type:"f",mandatory:!0,minver:1,default:8e3,range:"> 0",description:"Sampling frequency in Hz."},225:{name:"Audio",cppname:"TrackAudio",level:3,type:"m",minver:1,description:"Audio settings."},2327523:{name:"FrameRate",cppname:"VideoFrameRate",level:4,type:"f",range:"> 0",strong:"Informational",description:"Number of frames per second.  only."},3126563:{name:"GammaValue",cppname:"VideoGamma",level:4,type:"f",webm:!1,range:"> 0",description:"Gamma Value."},3061028:{name:"ColourSpace",cppname:"VideoColourSpace",level:4,type:"b",minver:1,webm:!1,bytesize:4,description:"Same value as in AVI (32 bits)."},21683:{name:"AspectRatioType",cppname:"VideoAspectRatio",level:4,type:"u",minver:1,default:0,description:"Specify the possible modifications to the aspect ratio (0: free resizing, 1: keep aspect ratio, 2: fixed)."},21682:{name:"DisplayUnit",cppname:"VideoDisplayUnit",level:4,type:"u",minver:1,default:0,description:"How DisplayWidth & DisplayHeight should be interpreted (0: pixels, 1: centimeters, 2: inches, 3: Display Aspect Ratio)."},21690:{name:"DisplayHeight",cppname:"VideoDisplayHeight",level:4,type:"u",minver:1,default:"PixelHeight",range:"not 0",description:"Height of the video frames to display. The default value is only valid when DisplayUnit is 0."},21680:{name:"DisplayWidth",cppname:"VideoDisplayWidth",level:4,type:"u",minver:1,default:"PixelWidth",range:"not 0",description:"Width of the video frames to display. The default value is only valid when DisplayUnit is 0."},21725:{name:"PixelCropRight",cppname:"VideoPixelCropRight",level:4,type:"u",minver:1,default:0,description:"The number of video pixels to remove on the right of the image."},21708:{name:"PixelCropLeft",cppname:"VideoPixelCropLeft",level:4,type:"u",minver:1,default:0,description:"The number of video pixels to remove on the left of the image."},21691:{name:"PixelCropTop",cppname:"VideoPixelCropTop",level:4,type:"u",minver:1,default:0,description:"The number of video pixels to remove at the top of the image."},21674:{name:"PixelCropBottom",cppname:"VideoPixelCropBottom",level:4,type:"u",minver:1,default:0,description:"The number of video pixels to remove at the bottom of the image (for HDTV content)."},186:{name:"PixelHeight",cppname:"VideoPixelHeight",level:4,type:"u",mandatory:!0,minver:1,range:"not 0",description:"Height of the encoded video frames in pixels."},176:{name:"PixelWidth",cppname:"VideoPixelWidth",level:4,type:"u",mandatory:!0,minver:1,range:"not 0",description:"Width of the encoded video frames in pixels."},21433:{name:"OldStereoMode",level:4,type:"u",maxver:"0",webm:!1,divx:!1,description:"DEPRECATED, DO NOT USE. Bogus StereoMode value used in old versions of libmatroska. (0: mono, 1: right eye, 2: left eye, 3: both eyes)."},21440:{name:"AlphaMode",cppname:"VideoAlphaMode",level:4,type:"u",minver:3,webm:!0,default:0,description:"Alpha Video Mode. Presence of this element indicates that the BlockAdditional element could contain Alpha data."},21432:{name:"StereoMode",cppname:"VideoStereoMode",level:4,type:"u",minver:3,webm:!0,default:0,description:"Stereo-3D video mode (0: mono, 1: side by side (left eye is first), 2: top-bottom (right eye is first), 3: top-bottom (left eye is first), 4: checkboard (right is first), 5: checkboard (left is first), 6: row interleaved (right is first), 7: row interleaved (left is first), 8: column interleaved (right is first), 9: column interleaved (left is first), 10: anaglyph (cyan/red), 11: side by side (right eye is first), 12: anaglyph (green/magenta), 13 both eyes laced in one Block (left eye is first), 14 both eyes laced in one Block (right eye is first)) . There are some more details on 3D support in the Specification Notes."},154:{name:"FlagInterlaced",cppname:"VideoFlagInterlaced",level:4,type:"u",mandatory:!0,minver:2,webm:!0,default:0,range:"0-1",description:"Set if the video is interlaced. (1 bit)"},224:{name:"Video",cppname:"TrackVideo",level:3,type:"m",minver:1,description:"Video settings."},26277:{name:"TrackTranslateTrackID",level:4,type:"b",mandatory:!0,minver:1,webm:!1,description:"The binary value used to represent this track in the chapter codec data. The format depends on the ChapProcessCodecID used."},26303:{name:"TrackTranslateCodec",level:4,type:"u",mandatory:!0,minver:1,webm:!1,description:"The chapter codec using this ID (0: Matroska Script, 1: DVD-menu)."},26364:{name:"TrackTranslateEditionUID",level:4,type:"u",multiple:!0,minver:1,webm:!1,description:"Specify an edition UID on which this translation applies. When not specified, it means for all editions found in the segment."},22203:{name:"SeekPreRoll",level:3,type:"u",mandatory:!0,multiple:!1,default:0,minver:4,webm:!0,description:"After a discontinuity, SeekPreRoll is the duration in nanoseconds of the data the decoder must decode before the decoded data is valid."},22186:{name:"CodecDelay",level:3,type:"u",multiple:!1,default:0,minver:4,webm:!0,description:"CodecDelay is The codec-built-in delay in nanoseconds. This value must be subtracted from each block timestamp in order to get the actual timestamp. The value should be small so the muxing of tracks with the same actual timestamp are in the same Cluster."},28587:{name:"TrackOverlay",level:3,type:"u",multiple:!0,minver:1,webm:!1,description:"Specify that this track is an overlay track for the Track specified (in the u-integer). That means when this track has a gap (see SilentTracks) the overlay track should be used instead. The order of multiple TrackOverlay matters, the first one is the one that should be used. If not found it should be the second, etc."},170:{name:"CodecDecodeAll",level:3,type:"u",mandatory:!0,minver:2,webm:!1,default:1,range:"0-1",description:"The codec can decode potentially damaged data (1 bit)."},2536e3:{name:"CodecDownloadURL",level:3,type:"s",multiple:!0,webm:!1,description:"A URL to download about the codec used."},3883072:{name:"CodecInfoURL",level:3,type:"s",multiple:!0,webm:!1,description:"A URL to find information about the codec used."},3839639:{name:"CodecSettings",level:3,type:"8",webm:!1,description:"A string describing the encoding setting used."},25506:{name:"CodecPrivate",level:3,type:"b",minver:1,description:"Private data only known to the codec."},2274716:{name:"Language",cppname:"TrackLanguage",level:3,type:"s",minver:1,default:"eng",description:"Specifies the language of the track in the Matroska languages form."},21358:{name:"Name",cppname:"TrackName",level:3,type:"8",minver:1,description:"A human-readable track name."},21998:{name:"MaxBlockAdditionID",level:3,type:"u",mandatory:!0,minver:1,webm:!1,default:0,description:"The maximum value of BlockAdditions for this track."},21375:{name:"TrackOffset",level:3,type:"i",webm:!1,default:0,description:"A value to add to the Block's Timestamp. This can be used to adjust the playback offset of a track."},2306383:{name:"TrackTimecodeScale",level:3,type:"f",mandatory:!0,minver:1,maxver:"3",webm:!1,default:1,range:"> 0",description:"DEPRECATED, DO NOT USE. The scale to apply on this track to work at normal speed in relation with other tracks (mostly used to adjust video speed when the audio length differs)."},2313850:{name:"DefaultDecodedFieldDuration",cppname:"TrackDefaultDecodedFieldDuration",level:3,type:"u",minver:4,range:"not 0",description:"The period in nanoseconds (not scaled by TimcodeScale)\nbetween two successive fields at the output of the decoding process (see the notes)"},2352003:{name:"DefaultDuration",cppname:"TrackDefaultDuration",level:3,type:"u",minver:1,range:"not 0",description:"Number of nanoseconds (not scaled via TimecodeScale) per frame ('frame' in the Matroska sense -- one element put into a (Simple)Block)."},28152:{name:"MaxCache",cppname:"TrackMaxCache",level:3,type:"u",minver:1,webm:!1,description:"The maximum cache size required to store referenced frames in and the current frame. 0 means no cache is needed."},28135:{name:"MinCache",cppname:"TrackMinCache",level:3,type:"u",mandatory:!0,minver:1,webm:!1,default:0,description:"The minimum number of frames a player should be able to cache during playback. If set to 0, the reference pseudo-cache system is not used."},156:{name:"FlagLacing",cppname:"TrackFlagLacing",level:3,type:"u",mandatory:!0,minver:1,default:1,range:"0-1",description:"Set if the track may contain blocks using lacing. (1 bit)"},21930:{name:"FlagForced",cppname:"TrackFlagForced",level:3,type:"u",mandatory:!0,minver:1,default:0,range:"0-1",description:"Set if that track MUST be active during playback. There can be many forced track for a kind (audio, video or subs), the player should select the one which language matches the user preference or the default + forced track. Overlay MAY happen between a forced and non-forced track of the same kind. (1 bit)"},185:{name:"FlagEnabled",cppname:"TrackFlagEnabled",level:3,type:"u",mandatory:!0,minver:2,webm:!0,default:1,range:"0-1",description:"Set if the track is usable. (1 bit)"},29637:{name:"TrackUID",level:3,type:"u",mandatory:!0,minver:1,range:"not 0",description:"A unique ID to identify the Track. This should be kept the same when making a direct stream copy of the Track to another file."},215:{name:"TrackNumber",level:3,type:"u",mandatory:!0,minver:1,range:"not 0",description:"The track number as used in the Block Header (using more than 127 tracks is not encouraged, though the design allows an unlimited number)."},174:{name:"TrackEntry",level:2,type:"m",mandatory:!0,multiple:!0,minver:1,description:"Describes a track with all elements."},374648427:{name:"Tracks",level:1,type:"m",multiple:!0,minver:1,description:"A top-level block of information with many tracks described."},175:{name:"EncryptedBlock",level:2,type:"b",multiple:!0,webm:!1,description:"Similar to EncryptedBlock Structure)"},202:{name:"ReferenceTimeCode",level:4,type:"u",multiple:!1,mandatory:!0,minver:0,webm:!1,divx:!0,description:"DivX trick track extenstions"},201:{name:"ReferenceOffset",level:4,type:"u",multiple:!1,mandatory:!0,minver:0,webm:!1,divx:!0,description:"DivX trick track extenstions"},200:{name:"ReferenceFrame",level:3,type:"m",multiple:!1,minver:0,webm:!1,divx:!0,description:"DivX trick track extenstions"},207:{name:"SliceDuration",level:5,type:"u",default:0,description:"The (scaled) duration to apply to the element."},206:{name:"Delay",cppname:"SliceDelay",level:5,type:"u",default:0,description:"The (scaled) delay to apply to the element."},203:{name:"BlockAdditionID",cppname:"SliceBlockAddID",level:5,type:"u",default:0,description:"The ID of the BlockAdditional element (0 is the main Block)."},205:{name:"FrameNumber",cppname:"SliceFrameNumber",level:5,type:"u",default:0,description:"The number of the frame to generate from this lace with this delay (allow you to generate many frames from the same Block/Frame)."},204:{name:"LaceNumber",cppname:"SliceLaceNumber",level:5,type:"u",minver:1,default:0,divx:!1,description:"The reverse number of the frame in the lace (0 is the last frame, 1 is the next to last, etc). While there are a few files in the wild with this element, it is no longer in use and has been deprecated. Being able to interpret this element is not required for playback."},232:{name:"TimeSlice",level:4,type:"m",multiple:!0,minver:1,divx:!1,description:"Contains extra time information about the data contained in the Block. While there are a few files in the wild with this element, it is no longer in use and has been deprecated. Being able to interpret this element is not required for playback."},142:{name:"Slices",level:3,type:"m",minver:1,divx:!1,description:"Contains slices description."},30114:{name:"DiscardPadding",level:3,type:"i",minver:4,webm:!0,description:"Duration in nanoseconds of the silent data added to the Block (padding at the end of the Block for positive value, at the beginning of the Block for negative value). The duration of DiscardPadding is not calculated in the duration of the TrackEntry and should be discarded during playback."},164:{name:"CodecState",level:3,type:"b",minver:2,webm:!1,description:"The new codec state to use. Data interpretation is private to the codec. This information should always be referenced by a seek entry."},253:{name:"ReferenceVirtual",level:3,type:"i",webm:!1,description:"Relative position of the data that should be in position of the virtual block."},251:{name:"ReferenceBlock",level:3,type:"i",multiple:!0,minver:1,description:"Timestamp of another frame used as a reference (ie: B or P frame). The timestamp is relative to the block it's attached to."},250:{name:"ReferencePriority",cppname:"FlagReferenced",level:3,type:"u",mandatory:!0,minver:1,webm:!1,default:0,description:"This frame is referenced and has the specified cache priority. In cache only a frame of the same or higher priority can replace this frame. A value of 0 means the frame is not referenced."},155:{name:"BlockDuration",level:3,type:"u",minver:1,default:"TrackDuration",description:'The duration of the Block (based on TimecodeScale). This element is mandatory when DefaultDuration is set for the track (but can be omitted as other default values). When not written and with no DefaultDuration, the value is assumed to be the difference between the timestamp of this Block and the timestamp of the next Block in "display" order (not coding order). This element can be useful at the end of a Track (as there is not other Block available), or when there is a break in a track like for subtitle tracks. When set to 0 that means the frame is not a keyframe.'},165:{name:"BlockAdditional",level:5,type:"b",mandatory:!0,minver:1,webm:!1,description:"Interpreted by the codec as it wishes (using the BlockAddID)."},238:{name:"BlockAddID",level:5,type:"u",mandatory:!0,minver:1,webm:!1,default:1,range:"not 0",description:"An ID to identify the BlockAdditional level."},166:{name:"BlockMore",level:4,type:"m",mandatory:!0,multiple:!0,minver:1,webm:!1,description:"Contain the BlockAdditional and some parameters."},30113:{name:"BlockAdditions",level:3,type:"m",minver:1,webm:!1,description:"Contain additional blocks to complete the main one. An EBML parser that has no knowledge of the Block structure could still see and use/skip these data."},162:{name:"BlockVirtual",level:3,type:"b",webm:!1,description:"A Block with no data. It must be stored in the stream at the place the real Block should be in display order. (see Block Virtual)"},161:{name:"Block",level:3,type:"b",mandatory:!0,minver:1,description:"Block containing the actual data to be rendered and a timestamp relative to the Cluster Timecode. (see Block Structure)"},160:{name:"BlockGroup",level:2,type:"m",multiple:!0,minver:1,description:"Basic container of information containing a single Block or BlockVirtual, and information specific to that Block/VirtualBlock."},163:{name:"SimpleBlock",level:2,type:"b",multiple:!0,minver:2,webm:!0,divx:!0,description:"Similar to SimpleBlock Structure"},171:{name:"PrevSize",cppname:"ClusterPrevSize",level:2,type:"u",minver:1,description:"Size of the previous Cluster, in octets. Can be useful for backward playing.",position:"prevCluster"},167:{name:"Position",cppname:"ClusterPosition",level:2,type:"u",minver:1,webm:!1,description:"The Position of the Cluster in the segment (0 in live broadcast streams). It might help to resynchronise offset on damaged streams.",position:"segment"},22743:{name:"SilentTrackNumber",cppname:"ClusterSilentTrackNumber",level:3,type:"u",multiple:!0,minver:1,webm:!1,description:"One of the track number that are not used from now on in the stream. It could change later if not specified as silent in a further Cluster."},231:{name:"Timecode",cppname:"ClusterTimecode",level:2,type:"u",mandatory:!0,minver:1,description:"Absolute timestamp of the cluster (based on TimecodeScale)."},524531317:{name:"Cluster",level:1,type:"m",multiple:!0,minver:1,description:"The lower level element containing the (monolithic) Block structure."},19840:{name:"MuxingApp",level:2,type:"8",mandatory:!0,minver:1,description:'Muxing application or library ("libmatroska-0.4.3").'},31657:{name:"Title",level:2,type:"8",minver:1,webm:!1,description:"General name of the segment."},2807730:{name:"TimecodeScaleDenominator",level:2,type:"u",mandatory:!0,minver:4,default:"1000000000",description:"Timestamp scale numerator, see TimecodeScale."},2807729:{name:"TimecodeScale",level:2,type:"u",mandatory:!0,minver:1,default:"1000000",description:"Timestamp scale in nanoseconds (1.000.000 means all timestamps in the segment are expressed in milliseconds)."},27045:{name:"ChapterTranslateID",level:3,type:"b",mandatory:!0,minver:1,webm:!1,description:"The binary value used to represent this segment in the chapter codec data. The format depends on the ChapProcessCodecID used."},27071:{name:"ChapterTranslateCodec",level:3,type:"u",mandatory:!0,minver:1,webm:!1,description:"The chapter codec using this ID (0: Matroska Script, 1: DVD-menu)."},27132:{name:"ChapterTranslateEditionUID",level:3,type:"u",multiple:!0,minver:1,webm:!1,description:"Specify an edition UID on which this correspondance applies. When not specified, it means for all editions found in the segment."},4096955:{name:"NextFilename",level:2,type:"8",minver:1,webm:!1,description:"An escaped filename corresponding to the next segment."},4110627:{name:"NextUID",level:2,type:"b",minver:1,webm:!1,bytesize:16,description:"A unique ID to identify the next chained segment (128 bits)."},3965867:{name:"PrevFilename",level:2,type:"8",minver:1,webm:!1,description:"An escaped filename corresponding to the previous segment."},3979555:{name:"PrevUID",level:2,type:"b",minver:1,webm:!1,bytesize:16,description:"A unique ID to identify the previous chained segment (128 bits)."},29604:{name:"SegmentUID",level:2,type:"b",minver:1,webm:!1,range:"not 0",bytesize:16,description:"A randomly generated unique ID to identify the current segment between many others (128 bits)."},357149030:{name:"Info",level:1,type:"m",mandatory:!0,multiple:!0,minver:1,description:"Contains miscellaneous general information and statistics on the file."},21420:{name:"SeekPosition",level:3,type:"u",mandatory:!0,minver:1,description:"The position of the element in the segment in octets (0 = first level 1 element).",position:"segment"},21419:{name:"SeekID",level:3,type:"b",mandatory:!0,minver:1,description:"The binary ID corresponding to the element name.",type2:"ebmlID"},19899:{name:"Seek",cppname:"SeekPoint",level:2,type:"m",mandatory:!0,multiple:!0,minver:1,description:"Contains a single seek entry to an EBML element."},290298740:{name:"SeekHead",cppname:"SeekHeader",level:1,type:"m",multiple:!0,minver:1,description:"Contains the position of other level 1 elements."},32379:{name:"SignatureElementList",level:2,type:"m",multiple:!0,webm:!1,i:"Cluster|Block|BlockAdditional",description:"A list consists of a number of consecutive elements that represent one case where data is used in signature. Ex:  means that the BlockAdditional of all Blocks in all Clusters is used for encryption."},32347:{name:"SignatureElements",level:1,type:"m",webm:!1,description:"Contains elements that will be used to compute the signature."},32437:{name:"Signature",level:1,type:"b",webm:!1,description:"The signature of the data (until a new."},32421:{name:"SignaturePublicKey",level:1,type:"b",webm:!1,description:"The public key to use with the algorithm (in the case of a PKI-based signature)."},32410:{name:"SignatureHash",level:1,type:"u",webm:!1,description:"Hash algorithm used (1=SHA1-160, 2=MD5)."},32394:{name:"SignatureAlgo",level:1,type:"u",webm:!1,description:"Signature algorithm used (1=RSA, 2=elliptic)."},458458727:{name:"SignatureSlot",level:-1,type:"m",multiple:!0,webm:!1,description:"Contain signature of some (coming) elements in the stream."},191:{name:"CRC-32",level:-1,type:"b",minver:1,webm:!1,description:"The CRC is computed on all the data of the Master element it's in. The CRC element should be the first in it's parent master for easier reading. All level 1 elements should include a CRC-32. The CRC in use is the IEEE CRC32 Little Endian",crc:!0},236:{name:"Void",level:-1,type:"b",minver:1,description:"Used to void damaged data, to avoid unexpected behaviors when using damaged data. The content is discarded. Also used to reserve space in a sub-element for later use."},17139:{name:"EBMLMaxSizeLength",level:1,type:"u",mandatory:!0,default:8,minver:1,description:"The maximum length of the sizes you'll find in this file (8 or less in Matroska). This does not override the element size indicated at the beginning of an element. Elements that have an indicated size which is larger than what is allowed by EBMLMaxSizeLength shall be considered invalid."},17138:{name:"EBMLMaxIDLength",level:1,type:"u",mandatory:!0,default:4,minver:1,description:"The maximum length of the IDs you'll find in this file (4 or less in Matroska)."},17143:{name:"EBMLReadVersion",level:1,type:"u",mandatory:!0,default:1,minver:1,description:"The minimum EBML version a parser has to support to read this file."},440786851:{name:"EBML",level:"0",type:"m",mandatory:!0,multiple:!0,minver:1,description:"Set the EBML characteristics of the data to follow. Each EBML document has to start with this."},21936:{name:"Colour",level:"4",type:"m",mandatory:!0,multiple:!0,description:"Settings describing the colour format."},21937:{name:"MatrixCoefficients",level:"5",type:"u",mandatory:!0,multiple:!0,description:"The Matrix Coefficients of the video used to derive luma and chroma values from red, green, and blue color primaries. For clarity, the value and meanings for MatrixCoefficients are adopted from Table 4 of ISO/IEC 23001-8:2016 or ITU-T H.273."},21945:{name:"Range",level:"5",type:"u",mandatory:!0,multiple:!0,description:"Clipping of the color ranges."},21946:{name:"TransferCharacteristics",level:"5",type:"u",mandatory:!0,multiple:!0,description:"The transfer characteristics of the video."},21947:{name:"Primaries",level:"5",type:"u",mandatory:!0,multiple:!0,description:"The colour primaries of the video. For clarity, the value and meanings for Primaries are adopted from Table 2 of ISO/IEC 23091-4 or ITU-T H.273."}}},5420:e=>{e.exports=function(e,t,n){t=t||0;for(var i=1;i<=8&&!(e[t]>=Math.pow(2,8-i));i++);if(i>8)throw new Error("Unrepresentable length: "+i+" "+e.toString("hex",t,t+i));if(t+i>e.length)return null;var r,o=e[t]&(1<<8-i)-1;for(r=1;r<i;r++){if(7===r&&o>=Math.pow(2,45)&&e[t+7]>0)return{length:i,value:-1};o*=Math.pow(2,8),o+=e[t+r]}return n&&(o-=Math.pow(2,7*i-1)-1),{length:i,value:o}}},5540:(e,t,n)=>{"use strict";var i=n(6058);e.exports=function(e,t,n=!0){var s,l,c,u=e.split(r),h=u.length+1,p=1/0,d=[];u.unshift(o.repeat(t)+a);for(;h--;)if(l=i(u[h]),d[h]=l.stops,""!==u[h].trim())if(l.indent)l.indent>0&&l.indent<p&&(p=l.indent);else if(n){p=1/0;break}if(p!==1/0)for(h=u.length;h--;){for(c=d[h],s=p;s&&!(s in c);)s--;u[h]=u[h].slice(c[s]+1)}return u.shift(),u.join(r)};var r="\n",o=" ",a="!"},5547:e=>{"use strict";e.exports=JSON.parse('["cent","copy","divide","gt","lt","not","para","times"]')},5657:(e,t,n)=>{"use strict";var i=n(5759).LC,r=n(7092),o=n(741),a=n(2298);e.exports=p,p.locator=a,p.notInLink=!0;var s=43,l=45,c=46,u=64,h=95;function p(e,t,n){var a,p,d,f,m=this,v=m.options.gfm,g=m.inlineTokenizers,y=0,b=t.length,w=-1;if(v){for(a=t.charCodeAt(y);r(a)||o(a)||a===s||a===l||a===c||a===h;)a=t.charCodeAt(++y);if(0!==y&&a===u){for(y++;y<b&&(a=t.charCodeAt(y),r(a)||o(a)||a===l||a===c||a===h);)y++,-1===w&&a===c&&(w=y);if(-1!==w&&w!==y&&a!==l&&a!==h)return a===c&&y--,p=t.slice(0,y),!!n||(f=m.enterLink(),m.inlineTokenizers={text:g.text},d=m.tokenizeInline(p,e.now()),m.inlineTokenizers=g,f(),e(p)({type:"link",title:null,url:"mailto:"+i(p,{nonTerminated:!1}),children:d}))}}}},5684:(e,t,n)=>{"use strict";var i=n(8593),r=n(7422),o=n(9489),a=n(8502).A,s=n(1606).A,l=n(631),c=n(7137),u=n(9795),h=n(6405);e.exports=function(e,t,n,i){var o,a,s,l,c,h,m=e.schema,w=t.tagName,k="",C=t;"html"===m.space&&"svg"===w&&(e.schema=r);c=function(e,t){var n,i,r,o,a,s,l=[];for(n in t)null!=(i=t[n])&&(r=b(e,n,i))&&l.push(r);o=l.length,a=-1;for(;++a<o;)r=l[a],s=null,e.tight&&(s=r.charAt(r.length-1)),a!==o-1&&s!==d&&s!==f&&(l[a]=r+p);return l.join("")}(e,t.properties),"svg"===e.schema.space?(s=!1,a=!0,o=e.closeEmpty):(s=e.omit,a=e.close,o=-1!==e.voids.indexOf(w.toLowerCase()),"template"===w&&(C=t.content));l=u(e,C),o=!l&&o,!c&&s&&s.opening(t,n,i)||(k=v+w+(c?p+c:""),o&&a&&(h=c.charAt(c.length-1),(!e.tightClose||h===y||"svg"===e.schema.space&&h&&h!==d&&h!==f)&&(k+=p),k+=y),k+=g);k+=l,o||s&&s.closing(t,n,i)||(k+=v+y+w+g);return e.schema=m,k};var p=" ",d='"',f="'",m="=",v="<",g=">",y="/";function b(e,t,n){var r=e.schema,u=o(r,t),p=u.attribute;return!u.overloadedBoolean||n!==p&&""!==n?(u.boolean||u.overloadedBoolean&&"string"!=typeof n)&&(n=Boolean(n)):n=!0,null==n||!1===n||"number"==typeof n&&isNaN(n)?"":(p=function(e,t){var n="html"===e.schema.space?e.valid:1,r=h.name[n][e.safe];return l(t,i(e.entities,{subset:r}))}(e,p),!0===n?p:p+function(e,t,n,r){var o,u,p=e.entities,d=e.quote,v=e.alternative,g=e.smart;"object"==typeof n&&"length"in n&&(n=(r.commaSeparated?s:a)(n,{padLeft:!e.tightLists}));n=String(n),(n||!e.collapseEmpty)&&(o=n,e.unquoted&&(u=h.unquoted[e.valid][e.safe],o=l(n,i(p,{subset:u,attribute:!0}))),e.unquoted&&o===n||(g&&c(n,d)>c(n,v)&&(d=v),u=(u=d===f?h.single:h.double)["html"===e.schema.space?e.valid:1][e.safe],n=d+(n=l(n,i(p,{subset:u,attribute:!0})))+d),n=n?m+n:n);return n}(e,0,n,u))}},5702:(e,t,n)=>{"use strict";var i=n(1900),r=n(6451);e.exports=l,l.locator=r;var o="\\",a="*",s="_";function l(e,t,n){var r,l,c,u,h,p,d,f=0,m=t.charAt(f);if(!(m!==a&&m!==s||t.charAt(++f)!==m||(l=this.options.pedantic,h=(c=m)+c,p=t.length,f++,u="",m="",l&&i(t.charAt(f)))))for(;f<p;){if(d=m,!((m=t.charAt(f))!==c||t.charAt(f+1)!==c||l&&i(d))&&(m=t.charAt(f+2))!==c){if(!u.trim())return;return!!n||((r=e.now()).column+=2,r.offset+=2,e(h+u+h)({type:"strong",children:this.tokenizeInline(u,r)}))}l||m!==o||(u+=m,m=t.charAt(++f)),u+=m,f++}}},5759:(e,t,n)=>{"use strict";n.d(t,{LC:()=>p});const i={AElig:"Æ",AMP:"&",Aacute:"Á",Abreve:"Ă",Acirc:"Â",Acy:"А",Afr:"𝔄",Agrave:"À",Alpha:"Α",Amacr:"Ā",And:"⩓",Aogon:"Ą",Aopf:"𝔸",ApplyFunction:"⁡",Aring:"Å",Ascr:"𝒜",Assign:"≔",Atilde:"Ã",Auml:"Ä",Backslash:"∖",Barv:"⫧",Barwed:"⌆",Bcy:"Б",Because:"∵",Bernoullis:"ℬ",Beta:"Β",Bfr:"𝔅",Bopf:"𝔹",Breve:"˘",Bscr:"ℬ",Bumpeq:"≎",CHcy:"Ч",COPY:"©",Cacute:"Ć",Cap:"⋒",CapitalDifferentialD:"ⅅ",Cayleys:"ℭ",Ccaron:"Č",Ccedil:"Ç",Ccirc:"Ĉ",Cconint:"∰",Cdot:"Ċ",Cedilla:"¸",CenterDot:"·",Cfr:"ℭ",Chi:"Χ",CircleDot:"⊙",CircleMinus:"⊖",CirclePlus:"⊕",CircleTimes:"⊗",ClockwiseContourIntegral:"∲",CloseCurlyDoubleQuote:"”",CloseCurlyQuote:"’",Colon:"∷",Colone:"⩴",Congruent:"≡",Conint:"∯",ContourIntegral:"∮",Copf:"ℂ",Coproduct:"∐",CounterClockwiseContourIntegral:"∳",Cross:"⨯",Cscr:"𝒞",Cup:"⋓",CupCap:"≍",DD:"ⅅ",DDotrahd:"⤑",DJcy:"Ђ",DScy:"Ѕ",DZcy:"Џ",Dagger:"‡",Darr:"↡",Dashv:"⫤",Dcaron:"Ď",Dcy:"Д",Del:"∇",Delta:"Δ",Dfr:"𝔇",DiacriticalAcute:"´",DiacriticalDot:"˙",DiacriticalDoubleAcute:"˝",DiacriticalGrave:"`",DiacriticalTilde:"˜",Diamond:"⋄",DifferentialD:"ⅆ",Dopf:"𝔻",Dot:"¨",DotDot:"⃜",DotEqual:"≐",DoubleContourIntegral:"∯",DoubleDot:"¨",DoubleDownArrow:"⇓",DoubleLeftArrow:"⇐",DoubleLeftRightArrow:"⇔",DoubleLeftTee:"⫤",DoubleLongLeftArrow:"⟸",DoubleLongLeftRightArrow:"⟺",DoubleLongRightArrow:"⟹",DoubleRightArrow:"⇒",DoubleRightTee:"⊨",DoubleUpArrow:"⇑",DoubleUpDownArrow:"⇕",DoubleVerticalBar:"∥",DownArrow:"↓",DownArrowBar:"⤓",DownArrowUpArrow:"⇵",DownBreve:"̑",DownLeftRightVector:"⥐",DownLeftTeeVector:"⥞",DownLeftVector:"↽",DownLeftVectorBar:"⥖",DownRightTeeVector:"⥟",DownRightVector:"⇁",DownRightVectorBar:"⥗",DownTee:"⊤",DownTeeArrow:"↧",Downarrow:"⇓",Dscr:"𝒟",Dstrok:"Đ",ENG:"Ŋ",ETH:"Ð",Eacute:"É",Ecaron:"Ě",Ecirc:"Ê",Ecy:"Э",Edot:"Ė",Efr:"𝔈",Egrave:"È",Element:"∈",Emacr:"Ē",EmptySmallSquare:"◻",EmptyVerySmallSquare:"▫",Eogon:"Ę",Eopf:"𝔼",Epsilon:"Ε",Equal:"⩵",EqualTilde:"≂",Equilibrium:"⇌",Escr:"ℰ",Esim:"⩳",Eta:"Η",Euml:"Ë",Exists:"∃",ExponentialE:"ⅇ",Fcy:"Ф",Ffr:"𝔉",FilledSmallSquare:"◼",FilledVerySmallSquare:"▪",Fopf:"𝔽",ForAll:"∀",Fouriertrf:"ℱ",Fscr:"ℱ",GJcy:"Ѓ",GT:">",Gamma:"Γ",Gammad:"Ϝ",Gbreve:"Ğ",Gcedil:"Ģ",Gcirc:"Ĝ",Gcy:"Г",Gdot:"Ġ",Gfr:"𝔊",Gg:"⋙",Gopf:"𝔾",GreaterEqual:"≥",GreaterEqualLess:"⋛",GreaterFullEqual:"≧",GreaterGreater:"⪢",GreaterLess:"≷",GreaterSlantEqual:"⩾",GreaterTilde:"≳",Gscr:"𝒢",Gt:"≫",HARDcy:"Ъ",Hacek:"ˇ",Hat:"^",Hcirc:"Ĥ",Hfr:"ℌ",HilbertSpace:"ℋ",Hopf:"ℍ",HorizontalLine:"─",Hscr:"ℋ",Hstrok:"Ħ",HumpDownHump:"≎",HumpEqual:"≏",IEcy:"Е",IJlig:"Ĳ",IOcy:"Ё",Iacute:"Í",Icirc:"Î",Icy:"И",Idot:"İ",Ifr:"ℑ",Igrave:"Ì",Im:"ℑ",Imacr:"Ī",ImaginaryI:"ⅈ",Implies:"⇒",Int:"∬",Integral:"∫",Intersection:"⋂",InvisibleComma:"⁣",InvisibleTimes:"⁢",Iogon:"Į",Iopf:"𝕀",Iota:"Ι",Iscr:"ℐ",Itilde:"Ĩ",Iukcy:"І",Iuml:"Ï",Jcirc:"Ĵ",Jcy:"Й",Jfr:"𝔍",Jopf:"𝕁",Jscr:"𝒥",Jsercy:"Ј",Jukcy:"Є",KHcy:"Х",KJcy:"Ќ",Kappa:"Κ",Kcedil:"Ķ",Kcy:"К",Kfr:"𝔎",Kopf:"𝕂",Kscr:"𝒦",LJcy:"Љ",LT:"<",Lacute:"Ĺ",Lambda:"Λ",Lang:"⟪",Laplacetrf:"ℒ",Larr:"↞",Lcaron:"Ľ",Lcedil:"Ļ",Lcy:"Л",LeftAngleBracket:"⟨",LeftArrow:"←",LeftArrowBar:"⇤",LeftArrowRightArrow:"⇆",LeftCeiling:"⌈",LeftDoubleBracket:"⟦",LeftDownTeeVector:"⥡",LeftDownVector:"⇃",LeftDownVectorBar:"⥙",LeftFloor:"⌊",LeftRightArrow:"↔",LeftRightVector:"⥎",LeftTee:"⊣",LeftTeeArrow:"↤",LeftTeeVector:"⥚",LeftTriangle:"⊲",LeftTriangleBar:"⧏",LeftTriangleEqual:"⊴",LeftUpDownVector:"⥑",LeftUpTeeVector:"⥠",LeftUpVector:"↿",LeftUpVectorBar:"⥘",LeftVector:"↼",LeftVectorBar:"⥒",Leftarrow:"⇐",Leftrightarrow:"⇔",LessEqualGreater:"⋚",LessFullEqual:"≦",LessGreater:"≶",LessLess:"⪡",LessSlantEqual:"⩽",LessTilde:"≲",Lfr:"𝔏",Ll:"⋘",Lleftarrow:"⇚",Lmidot:"Ŀ",LongLeftArrow:"⟵",LongLeftRightArrow:"⟷",LongRightArrow:"⟶",Longleftarrow:"⟸",Longleftrightarrow:"⟺",Longrightarrow:"⟹",Lopf:"𝕃",LowerLeftArrow:"↙",LowerRightArrow:"↘",Lscr:"ℒ",Lsh:"↰",Lstrok:"Ł",Lt:"≪",Map:"⤅",Mcy:"М",MediumSpace:" ",Mellintrf:"ℳ",Mfr:"𝔐",MinusPlus:"∓",Mopf:"𝕄",Mscr:"ℳ",Mu:"Μ",NJcy:"Њ",Nacute:"Ń",Ncaron:"Ň",Ncedil:"Ņ",Ncy:"Н",NegativeMediumSpace:"​",NegativeThickSpace:"​",NegativeThinSpace:"​",NegativeVeryThinSpace:"​",NestedGreaterGreater:"≫",NestedLessLess:"≪",NewLine:"\n",Nfr:"𝔑",NoBreak:"⁠",NonBreakingSpace:" ",Nopf:"ℕ",Not:"⫬",NotCongruent:"≢",NotCupCap:"≭",NotDoubleVerticalBar:"∦",NotElement:"∉",NotEqual:"≠",NotEqualTilde:"≂̸",NotExists:"∄",NotGreater:"≯",NotGreaterEqual:"≱",NotGreaterFullEqual:"≧̸",NotGreaterGreater:"≫̸",NotGreaterLess:"≹",NotGreaterSlantEqual:"⩾̸",NotGreaterTilde:"≵",NotHumpDownHump:"≎̸",NotHumpEqual:"≏̸",NotLeftTriangle:"⋪",NotLeftTriangleBar:"⧏̸",NotLeftTriangleEqual:"⋬",NotLess:"≮",NotLessEqual:"≰",NotLessGreater:"≸",NotLessLess:"≪̸",NotLessSlantEqual:"⩽̸",NotLessTilde:"≴",NotNestedGreaterGreater:"⪢̸",NotNestedLessLess:"⪡̸",NotPrecedes:"⊀",NotPrecedesEqual:"⪯̸",NotPrecedesSlantEqual:"⋠",NotReverseElement:"∌",NotRightTriangle:"⋫",NotRightTriangleBar:"⧐̸",NotRightTriangleEqual:"⋭",NotSquareSubset:"⊏̸",NotSquareSubsetEqual:"⋢",NotSquareSuperset:"⊐̸",NotSquareSupersetEqual:"⋣",NotSubset:"⊂⃒",NotSubsetEqual:"⊈",NotSucceeds:"⊁",NotSucceedsEqual:"⪰̸",NotSucceedsSlantEqual:"⋡",NotSucceedsTilde:"≿̸",NotSuperset:"⊃⃒",NotSupersetEqual:"⊉",NotTilde:"≁",NotTildeEqual:"≄",NotTildeFullEqual:"≇",NotTildeTilde:"≉",NotVerticalBar:"∤",Nscr:"𝒩",Ntilde:"Ñ",Nu:"Ν",OElig:"Œ",Oacute:"Ó",Ocirc:"Ô",Ocy:"О",Odblac:"Ő",Ofr:"𝔒",Ograve:"Ò",Omacr:"Ō",Omega:"Ω",Omicron:"Ο",Oopf:"𝕆",OpenCurlyDoubleQuote:"“",OpenCurlyQuote:"‘",Or:"⩔",Oscr:"𝒪",Oslash:"Ø",Otilde:"Õ",Otimes:"⨷",Ouml:"Ö",OverBar:"‾",OverBrace:"⏞",OverBracket:"⎴",OverParenthesis:"⏜",PartialD:"∂",Pcy:"П",Pfr:"𝔓",Phi:"Φ",Pi:"Π",PlusMinus:"±",Poincareplane:"ℌ",Popf:"ℙ",Pr:"⪻",Precedes:"≺",PrecedesEqual:"⪯",PrecedesSlantEqual:"≼",PrecedesTilde:"≾",Prime:"″",Product:"∏",Proportion:"∷",Proportional:"∝",Pscr:"𝒫",Psi:"Ψ",QUOT:'"',Qfr:"𝔔",Qopf:"ℚ",Qscr:"𝒬",RBarr:"⤐",REG:"®",Racute:"Ŕ",Rang:"⟫",Rarr:"↠",Rarrtl:"⤖",Rcaron:"Ř",Rcedil:"Ŗ",Rcy:"Р",Re:"ℜ",ReverseElement:"∋",ReverseEquilibrium:"⇋",ReverseUpEquilibrium:"⥯",Rfr:"ℜ",Rho:"Ρ",RightAngleBracket:"⟩",RightArrow:"→",RightArrowBar:"⇥",RightArrowLeftArrow:"⇄",RightCeiling:"⌉",RightDoubleBracket:"⟧",RightDownTeeVector:"⥝",RightDownVector:"⇂",RightDownVectorBar:"⥕",RightFloor:"⌋",RightTee:"⊢",RightTeeArrow:"↦",RightTeeVector:"⥛",RightTriangle:"⊳",RightTriangleBar:"⧐",RightTriangleEqual:"⊵",RightUpDownVector:"⥏",RightUpTeeVector:"⥜",RightUpVector:"↾",RightUpVectorBar:"⥔",RightVector:"⇀",RightVectorBar:"⥓",Rightarrow:"⇒",Ropf:"ℝ",RoundImplies:"⥰",Rrightarrow:"⇛",Rscr:"ℛ",Rsh:"↱",RuleDelayed:"⧴",SHCHcy:"Щ",SHcy:"Ш",SOFTcy:"Ь",Sacute:"Ś",Sc:"⪼",Scaron:"Š",Scedil:"Ş",Scirc:"Ŝ",Scy:"С",Sfr:"𝔖",ShortDownArrow:"↓",ShortLeftArrow:"←",ShortRightArrow:"→",ShortUpArrow:"↑",Sigma:"Σ",SmallCircle:"∘",Sopf:"𝕊",Sqrt:"√",Square:"□",SquareIntersection:"⊓",SquareSubset:"⊏",SquareSubsetEqual:"⊑",SquareSuperset:"⊐",SquareSupersetEqual:"⊒",SquareUnion:"⊔",Sscr:"𝒮",Star:"⋆",Sub:"⋐",Subset:"⋐",SubsetEqual:"⊆",Succeeds:"≻",SucceedsEqual:"⪰",SucceedsSlantEqual:"≽",SucceedsTilde:"≿",SuchThat:"∋",Sum:"∑",Sup:"⋑",Superset:"⊃",SupersetEqual:"⊇",Supset:"⋑",THORN:"Þ",TRADE:"™",TSHcy:"Ћ",TScy:"Ц",Tab:"\t",Tau:"Τ",Tcaron:"Ť",Tcedil:"Ţ",Tcy:"Т",Tfr:"𝔗",Therefore:"∴",Theta:"Θ",ThickSpace:"  ",ThinSpace:" ",Tilde:"∼",TildeEqual:"≃",TildeFullEqual:"≅",TildeTilde:"≈",Topf:"𝕋",TripleDot:"⃛",Tscr:"𝒯",Tstrok:"Ŧ",Uacute:"Ú",Uarr:"↟",Uarrocir:"⥉",Ubrcy:"Ў",Ubreve:"Ŭ",Ucirc:"Û",Ucy:"У",Udblac:"Ű",Ufr:"𝔘",Ugrave:"Ù",Umacr:"Ū",UnderBar:"_",UnderBrace:"⏟",UnderBracket:"⎵",UnderParenthesis:"⏝",Union:"⋃",UnionPlus:"⊎",Uogon:"Ų",Uopf:"𝕌",UpArrow:"↑",UpArrowBar:"⤒",UpArrowDownArrow:"⇅",UpDownArrow:"↕",UpEquilibrium:"⥮",UpTee:"⊥",UpTeeArrow:"↥",Uparrow:"⇑",Updownarrow:"⇕",UpperLeftArrow:"↖",UpperRightArrow:"↗",Upsi:"ϒ",Upsilon:"Υ",Uring:"Ů",Uscr:"𝒰",Utilde:"Ũ",Uuml:"Ü",VDash:"⊫",Vbar:"⫫",Vcy:"В",Vdash:"⊩",Vdashl:"⫦",Vee:"⋁",Verbar:"‖",Vert:"‖",VerticalBar:"∣",VerticalLine:"|",VerticalSeparator:"❘",VerticalTilde:"≀",VeryThinSpace:" ",Vfr:"𝔙",Vopf:"𝕍",Vscr:"𝒱",Vvdash:"⊪",Wcirc:"Ŵ",Wedge:"⋀",Wfr:"𝔚",Wopf:"𝕎",Wscr:"𝒲",Xfr:"𝔛",Xi:"Ξ",Xopf:"𝕏",Xscr:"𝒳",YAcy:"Я",YIcy:"Ї",YUcy:"Ю",Yacute:"Ý",Ycirc:"Ŷ",Ycy:"Ы",Yfr:"𝔜",Yopf:"𝕐",Yscr:"𝒴",Yuml:"Ÿ",ZHcy:"Ж",Zacute:"Ź",Zcaron:"Ž",Zcy:"З",Zdot:"Ż",ZeroWidthSpace:"​",Zeta:"Ζ",Zfr:"ℨ",Zopf:"ℤ",Zscr:"𝒵",aacute:"á",abreve:"ă",ac:"∾",acE:"∾̳",acd:"∿",acirc:"â",acute:"´",acy:"а",aelig:"æ",af:"⁡",afr:"𝔞",agrave:"à",alefsym:"ℵ",aleph:"ℵ",alpha:"α",amacr:"ā",amalg:"⨿",amp:"&",and:"∧",andand:"⩕",andd:"⩜",andslope:"⩘",andv:"⩚",ang:"∠",ange:"⦤",angle:"∠",angmsd:"∡",angmsdaa:"⦨",angmsdab:"⦩",angmsdac:"⦪",angmsdad:"⦫",angmsdae:"⦬",angmsdaf:"⦭",angmsdag:"⦮",angmsdah:"⦯",angrt:"∟",angrtvb:"⊾",angrtvbd:"⦝",angsph:"∢",angst:"Å",angzarr:"⍼",aogon:"ą",aopf:"𝕒",ap:"≈",apE:"⩰",apacir:"⩯",ape:"≊",apid:"≋",apos:"'",approx:"≈",approxeq:"≊",aring:"å",ascr:"𝒶",ast:"*",asymp:"≈",asympeq:"≍",atilde:"ã",auml:"ä",awconint:"∳",awint:"⨑",bNot:"⫭",backcong:"≌",backepsilon:"϶",backprime:"‵",backsim:"∽",backsimeq:"⋍",barvee:"⊽",barwed:"⌅",barwedge:"⌅",bbrk:"⎵",bbrktbrk:"⎶",bcong:"≌",bcy:"б",bdquo:"„",becaus:"∵",because:"∵",bemptyv:"⦰",bepsi:"϶",bernou:"ℬ",beta:"β",beth:"ℶ",between:"≬",bfr:"𝔟",bigcap:"⋂",bigcirc:"◯",bigcup:"⋃",bigodot:"⨀",bigoplus:"⨁",bigotimes:"⨂",bigsqcup:"⨆",bigstar:"★",bigtriangledown:"▽",bigtriangleup:"△",biguplus:"⨄",bigvee:"⋁",bigwedge:"⋀",bkarow:"⤍",blacklozenge:"⧫",blacksquare:"▪",blacktriangle:"▴",blacktriangledown:"▾",blacktriangleleft:"◂",blacktriangleright:"▸",blank:"␣",blk12:"▒",blk14:"░",blk34:"▓",block:"█",bne:"=⃥",bnequiv:"≡⃥",bnot:"⌐",bopf:"𝕓",bot:"⊥",bottom:"⊥",bowtie:"⋈",boxDL:"╗",boxDR:"╔",boxDl:"╖",boxDr:"╓",boxH:"═",boxHD:"╦",boxHU:"╩",boxHd:"╤",boxHu:"╧",boxUL:"╝",boxUR:"╚",boxUl:"╜",boxUr:"╙",boxV:"║",boxVH:"╬",boxVL:"╣",boxVR:"╠",boxVh:"╫",boxVl:"╢",boxVr:"╟",boxbox:"⧉",boxdL:"╕",boxdR:"╒",boxdl:"┐",boxdr:"┌",boxh:"─",boxhD:"╥",boxhU:"╨",boxhd:"┬",boxhu:"┴",boxminus:"⊟",boxplus:"⊞",boxtimes:"⊠",boxuL:"╛",boxuR:"╘",boxul:"┘",boxur:"└",boxv:"│",boxvH:"╪",boxvL:"╡",boxvR:"╞",boxvh:"┼",boxvl:"┤",boxvr:"├",bprime:"‵",breve:"˘",brvbar:"¦",bscr:"𝒷",bsemi:"⁏",bsim:"∽",bsime:"⋍",bsol:"\\",bsolb:"⧅",bsolhsub:"⟈",bull:"•",bullet:"•",bump:"≎",bumpE:"⪮",bumpe:"≏",bumpeq:"≏",cacute:"ć",cap:"∩",capand:"⩄",capbrcup:"⩉",capcap:"⩋",capcup:"⩇",capdot:"⩀",caps:"∩︀",caret:"⁁",caron:"ˇ",ccaps:"⩍",ccaron:"č",ccedil:"ç",ccirc:"ĉ",ccups:"⩌",ccupssm:"⩐",cdot:"ċ",cedil:"¸",cemptyv:"⦲",cent:"¢",centerdot:"·",cfr:"𝔠",chcy:"ч",check:"✓",checkmark:"✓",chi:"χ",cir:"○",cirE:"⧃",circ:"ˆ",circeq:"≗",circlearrowleft:"↺",circlearrowright:"↻",circledR:"®",circledS:"Ⓢ",circledast:"⊛",circledcirc:"⊚",circleddash:"⊝",cire:"≗",cirfnint:"⨐",cirmid:"⫯",cirscir:"⧂",clubs:"♣",clubsuit:"♣",colon:":",colone:"≔",coloneq:"≔",comma:",",commat:"@",comp:"∁",compfn:"∘",complement:"∁",complexes:"ℂ",cong:"≅",congdot:"⩭",conint:"∮",copf:"𝕔",coprod:"∐",copy:"©",copysr:"℗",crarr:"↵",cross:"✗",cscr:"𝒸",csub:"⫏",csube:"⫑",csup:"⫐",csupe:"⫒",ctdot:"⋯",cudarrl:"⤸",cudarrr:"⤵",cuepr:"⋞",cuesc:"⋟",cularr:"↶",cularrp:"⤽",cup:"∪",cupbrcap:"⩈",cupcap:"⩆",cupcup:"⩊",cupdot:"⊍",cupor:"⩅",cups:"∪︀",curarr:"↷",curarrm:"⤼",curlyeqprec:"⋞",curlyeqsucc:"⋟",curlyvee:"⋎",curlywedge:"⋏",curren:"¤",curvearrowleft:"↶",curvearrowright:"↷",cuvee:"⋎",cuwed:"⋏",cwconint:"∲",cwint:"∱",cylcty:"⌭",dArr:"⇓",dHar:"⥥",dagger:"†",daleth:"ℸ",darr:"↓",dash:"‐",dashv:"⊣",dbkarow:"⤏",dblac:"˝",dcaron:"ď",dcy:"д",dd:"ⅆ",ddagger:"‡",ddarr:"⇊",ddotseq:"⩷",deg:"°",delta:"δ",demptyv:"⦱",dfisht:"⥿",dfr:"𝔡",dharl:"⇃",dharr:"⇂",diam:"⋄",diamond:"⋄",diamondsuit:"♦",diams:"♦",die:"¨",digamma:"ϝ",disin:"⋲",div:"÷",divide:"÷",divideontimes:"⋇",divonx:"⋇",djcy:"ђ",dlcorn:"⌞",dlcrop:"⌍",dollar:"$",dopf:"𝕕",dot:"˙",doteq:"≐",doteqdot:"≑",dotminus:"∸",dotplus:"∔",dotsquare:"⊡",doublebarwedge:"⌆",downarrow:"↓",downdownarrows:"⇊",downharpoonleft:"⇃",downharpoonright:"⇂",drbkarow:"⤐",drcorn:"⌟",drcrop:"⌌",dscr:"𝒹",dscy:"ѕ",dsol:"⧶",dstrok:"đ",dtdot:"⋱",dtri:"▿",dtrif:"▾",duarr:"⇵",duhar:"⥯",dwangle:"⦦",dzcy:"џ",dzigrarr:"⟿",eDDot:"⩷",eDot:"≑",eacute:"é",easter:"⩮",ecaron:"ě",ecir:"≖",ecirc:"ê",ecolon:"≕",ecy:"э",edot:"ė",ee:"ⅇ",efDot:"≒",efr:"𝔢",eg:"⪚",egrave:"è",egs:"⪖",egsdot:"⪘",el:"⪙",elinters:"⏧",ell:"ℓ",els:"⪕",elsdot:"⪗",emacr:"ē",empty:"∅",emptyset:"∅",emptyv:"∅",emsp13:" ",emsp14:" ",emsp:" ",eng:"ŋ",ensp:" ",eogon:"ę",eopf:"𝕖",epar:"⋕",eparsl:"⧣",eplus:"⩱",epsi:"ε",epsilon:"ε",epsiv:"ϵ",eqcirc:"≖",eqcolon:"≕",eqsim:"≂",eqslantgtr:"⪖",eqslantless:"⪕",equals:"=",equest:"≟",equiv:"≡",equivDD:"⩸",eqvparsl:"⧥",erDot:"≓",erarr:"⥱",escr:"ℯ",esdot:"≐",esim:"≂",eta:"η",eth:"ð",euml:"ë",euro:"€",excl:"!",exist:"∃",expectation:"ℰ",exponentiale:"ⅇ",fallingdotseq:"≒",fcy:"ф",female:"♀",ffilig:"ﬃ",fflig:"ﬀ",ffllig:"ﬄ",ffr:"𝔣",filig:"ﬁ",fjlig:"fj",flat:"♭",fllig:"ﬂ",fltns:"▱",fnof:"ƒ",fopf:"𝕗",forall:"∀",fork:"⋔",forkv:"⫙",fpartint:"⨍",frac12:"½",frac13:"⅓",frac14:"¼",frac15:"⅕",frac16:"⅙",frac18:"⅛",frac23:"⅔",frac25:"⅖",frac34:"¾",frac35:"⅗",frac38:"⅜",frac45:"⅘",frac56:"⅚",frac58:"⅝",frac78:"⅞",frasl:"⁄",frown:"⌢",fscr:"𝒻",gE:"≧",gEl:"⪌",gacute:"ǵ",gamma:"γ",gammad:"ϝ",gap:"⪆",gbreve:"ğ",gcirc:"ĝ",gcy:"г",gdot:"ġ",ge:"≥",gel:"⋛",geq:"≥",geqq:"≧",geqslant:"⩾",ges:"⩾",gescc:"⪩",gesdot:"⪀",gesdoto:"⪂",gesdotol:"⪄",gesl:"⋛︀",gesles:"⪔",gfr:"𝔤",gg:"≫",ggg:"⋙",gimel:"ℷ",gjcy:"ѓ",gl:"≷",glE:"⪒",gla:"⪥",glj:"⪤",gnE:"≩",gnap:"⪊",gnapprox:"⪊",gne:"⪈",gneq:"⪈",gneqq:"≩",gnsim:"⋧",gopf:"𝕘",grave:"`",gscr:"ℊ",gsim:"≳",gsime:"⪎",gsiml:"⪐",gt:">",gtcc:"⪧",gtcir:"⩺",gtdot:"⋗",gtlPar:"⦕",gtquest:"⩼",gtrapprox:"⪆",gtrarr:"⥸",gtrdot:"⋗",gtreqless:"⋛",gtreqqless:"⪌",gtrless:"≷",gtrsim:"≳",gvertneqq:"≩︀",gvnE:"≩︀",hArr:"⇔",hairsp:" ",half:"½",hamilt:"ℋ",hardcy:"ъ",harr:"↔",harrcir:"⥈",harrw:"↭",hbar:"ℏ",hcirc:"ĥ",hearts:"♥",heartsuit:"♥",hellip:"…",hercon:"⊹",hfr:"𝔥",hksearow:"⤥",hkswarow:"⤦",hoarr:"⇿",homtht:"∻",hookleftarrow:"↩",hookrightarrow:"↪",hopf:"𝕙",horbar:"―",hscr:"𝒽",hslash:"ℏ",hstrok:"ħ",hybull:"⁃",hyphen:"‐",iacute:"í",ic:"⁣",icirc:"î",icy:"и",iecy:"е",iexcl:"¡",iff:"⇔",ifr:"𝔦",igrave:"ì",ii:"ⅈ",iiiint:"⨌",iiint:"∭",iinfin:"⧜",iiota:"℩",ijlig:"ĳ",imacr:"ī",image:"ℑ",imagline:"ℐ",imagpart:"ℑ",imath:"ı",imof:"⊷",imped:"Ƶ",in:"∈",incare:"℅",infin:"∞",infintie:"⧝",inodot:"ı",int:"∫",intcal:"⊺",integers:"ℤ",intercal:"⊺",intlarhk:"⨗",intprod:"⨼",iocy:"ё",iogon:"į",iopf:"𝕚",iota:"ι",iprod:"⨼",iquest:"¿",iscr:"𝒾",isin:"∈",isinE:"⋹",isindot:"⋵",isins:"⋴",isinsv:"⋳",isinv:"∈",it:"⁢",itilde:"ĩ",iukcy:"і",iuml:"ï",jcirc:"ĵ",jcy:"й",jfr:"𝔧",jmath:"ȷ",jopf:"𝕛",jscr:"𝒿",jsercy:"ј",jukcy:"є",kappa:"κ",kappav:"ϰ",kcedil:"ķ",kcy:"к",kfr:"𝔨",kgreen:"ĸ",khcy:"х",kjcy:"ќ",kopf:"𝕜",kscr:"𝓀",lAarr:"⇚",lArr:"⇐",lAtail:"⤛",lBarr:"⤎",lE:"≦",lEg:"⪋",lHar:"⥢",lacute:"ĺ",laemptyv:"⦴",lagran:"ℒ",lambda:"λ",lang:"⟨",langd:"⦑",langle:"⟨",lap:"⪅",laquo:"«",larr:"←",larrb:"⇤",larrbfs:"⤟",larrfs:"⤝",larrhk:"↩",larrlp:"↫",larrpl:"⤹",larrsim:"⥳",larrtl:"↢",lat:"⪫",latail:"⤙",late:"⪭",lates:"⪭︀",lbarr:"⤌",lbbrk:"❲",lbrace:"{",lbrack:"[",lbrke:"⦋",lbrksld:"⦏",lbrkslu:"⦍",lcaron:"ľ",lcedil:"ļ",lceil:"⌈",lcub:"{",lcy:"л",ldca:"⤶",ldquo:"“",ldquor:"„",ldrdhar:"⥧",ldrushar:"⥋",ldsh:"↲",le:"≤",leftarrow:"←",leftarrowtail:"↢",leftharpoondown:"↽",leftharpoonup:"↼",leftleftarrows:"⇇",leftrightarrow:"↔",leftrightarrows:"⇆",leftrightharpoons:"⇋",leftrightsquigarrow:"↭",leftthreetimes:"⋋",leg:"⋚",leq:"≤",leqq:"≦",leqslant:"⩽",les:"⩽",lescc:"⪨",lesdot:"⩿",lesdoto:"⪁",lesdotor:"⪃",lesg:"⋚︀",lesges:"⪓",lessapprox:"⪅",lessdot:"⋖",lesseqgtr:"⋚",lesseqqgtr:"⪋",lessgtr:"≶",lesssim:"≲",lfisht:"⥼",lfloor:"⌊",lfr:"𝔩",lg:"≶",lgE:"⪑",lhard:"↽",lharu:"↼",lharul:"⥪",lhblk:"▄",ljcy:"љ",ll:"≪",llarr:"⇇",llcorner:"⌞",llhard:"⥫",lltri:"◺",lmidot:"ŀ",lmoust:"⎰",lmoustache:"⎰",lnE:"≨",lnap:"⪉",lnapprox:"⪉",lne:"⪇",lneq:"⪇",lneqq:"≨",lnsim:"⋦",loang:"⟬",loarr:"⇽",lobrk:"⟦",longleftarrow:"⟵",longleftrightarrow:"⟷",longmapsto:"⟼",longrightarrow:"⟶",looparrowleft:"↫",looparrowright:"↬",lopar:"⦅",lopf:"𝕝",loplus:"⨭",lotimes:"⨴",lowast:"∗",lowbar:"_",loz:"◊",lozenge:"◊",lozf:"⧫",lpar:"(",lparlt:"⦓",lrarr:"⇆",lrcorner:"⌟",lrhar:"⇋",lrhard:"⥭",lrm:"‎",lrtri:"⊿",lsaquo:"‹",lscr:"𝓁",lsh:"↰",lsim:"≲",lsime:"⪍",lsimg:"⪏",lsqb:"[",lsquo:"‘",lsquor:"‚",lstrok:"ł",lt:"<",ltcc:"⪦",ltcir:"⩹",ltdot:"⋖",lthree:"⋋",ltimes:"⋉",ltlarr:"⥶",ltquest:"⩻",ltrPar:"⦖",ltri:"◃",ltrie:"⊴",ltrif:"◂",lurdshar:"⥊",luruhar:"⥦",lvertneqq:"≨︀",lvnE:"≨︀",mDDot:"∺",macr:"¯",male:"♂",malt:"✠",maltese:"✠",map:"↦",mapsto:"↦",mapstodown:"↧",mapstoleft:"↤",mapstoup:"↥",marker:"▮",mcomma:"⨩",mcy:"м",mdash:"—",measuredangle:"∡",mfr:"𝔪",mho:"℧",micro:"µ",mid:"∣",midast:"*",midcir:"⫰",middot:"·",minus:"−",minusb:"⊟",minusd:"∸",minusdu:"⨪",mlcp:"⫛",mldr:"…",mnplus:"∓",models:"⊧",mopf:"𝕞",mp:"∓",mscr:"𝓂",mstpos:"∾",mu:"μ",multimap:"⊸",mumap:"⊸",nGg:"⋙̸",nGt:"≫⃒",nGtv:"≫̸",nLeftarrow:"⇍",nLeftrightarrow:"⇎",nLl:"⋘̸",nLt:"≪⃒",nLtv:"≪̸",nRightarrow:"⇏",nVDash:"⊯",nVdash:"⊮",nabla:"∇",nacute:"ń",nang:"∠⃒",nap:"≉",napE:"⩰̸",napid:"≋̸",napos:"ŉ",napprox:"≉",natur:"♮",natural:"♮",naturals:"ℕ",nbsp:" ",nbump:"≎̸",nbumpe:"≏̸",ncap:"⩃",ncaron:"ň",ncedil:"ņ",ncong:"≇",ncongdot:"⩭̸",ncup:"⩂",ncy:"н",ndash:"–",ne:"≠",neArr:"⇗",nearhk:"⤤",nearr:"↗",nearrow:"↗",nedot:"≐̸",nequiv:"≢",nesear:"⤨",nesim:"≂̸",nexist:"∄",nexists:"∄",nfr:"𝔫",ngE:"≧̸",nge:"≱",ngeq:"≱",ngeqq:"≧̸",ngeqslant:"⩾̸",nges:"⩾̸",ngsim:"≵",ngt:"≯",ngtr:"≯",nhArr:"⇎",nharr:"↮",nhpar:"⫲",ni:"∋",nis:"⋼",nisd:"⋺",niv:"∋",njcy:"њ",nlArr:"⇍",nlE:"≦̸",nlarr:"↚",nldr:"‥",nle:"≰",nleftarrow:"↚",nleftrightarrow:"↮",nleq:"≰",nleqq:"≦̸",nleqslant:"⩽̸",nles:"⩽̸",nless:"≮",nlsim:"≴",nlt:"≮",nltri:"⋪",nltrie:"⋬",nmid:"∤",nopf:"𝕟",not:"¬",notin:"∉",notinE:"⋹̸",notindot:"⋵̸",notinva:"∉",notinvb:"⋷",notinvc:"⋶",notni:"∌",notniva:"∌",notnivb:"⋾",notnivc:"⋽",npar:"∦",nparallel:"∦",nparsl:"⫽⃥",npart:"∂̸",npolint:"⨔",npr:"⊀",nprcue:"⋠",npre:"⪯̸",nprec:"⊀",npreceq:"⪯̸",nrArr:"⇏",nrarr:"↛",nrarrc:"⤳̸",nrarrw:"↝̸",nrightarrow:"↛",nrtri:"⋫",nrtrie:"⋭",nsc:"⊁",nsccue:"⋡",nsce:"⪰̸",nscr:"𝓃",nshortmid:"∤",nshortparallel:"∦",nsim:"≁",nsime:"≄",nsimeq:"≄",nsmid:"∤",nspar:"∦",nsqsube:"⋢",nsqsupe:"⋣",nsub:"⊄",nsubE:"⫅̸",nsube:"⊈",nsubset:"⊂⃒",nsubseteq:"⊈",nsubseteqq:"⫅̸",nsucc:"⊁",nsucceq:"⪰̸",nsup:"⊅",nsupE:"⫆̸",nsupe:"⊉",nsupset:"⊃⃒",nsupseteq:"⊉",nsupseteqq:"⫆̸",ntgl:"≹",ntilde:"ñ",ntlg:"≸",ntriangleleft:"⋪",ntrianglelefteq:"⋬",ntriangleright:"⋫",ntrianglerighteq:"⋭",nu:"ν",num:"#",numero:"№",numsp:" ",nvDash:"⊭",nvHarr:"⤄",nvap:"≍⃒",nvdash:"⊬",nvge:"≥⃒",nvgt:">⃒",nvinfin:"⧞",nvlArr:"⤂",nvle:"≤⃒",nvlt:"<⃒",nvltrie:"⊴⃒",nvrArr:"⤃",nvrtrie:"⊵⃒",nvsim:"∼⃒",nwArr:"⇖",nwarhk:"⤣",nwarr:"↖",nwarrow:"↖",nwnear:"⤧",oS:"Ⓢ",oacute:"ó",oast:"⊛",ocir:"⊚",ocirc:"ô",ocy:"о",odash:"⊝",odblac:"ő",odiv:"⨸",odot:"⊙",odsold:"⦼",oelig:"œ",ofcir:"⦿",ofr:"𝔬",ogon:"˛",ograve:"ò",ogt:"⧁",ohbar:"⦵",ohm:"Ω",oint:"∮",olarr:"↺",olcir:"⦾",olcross:"⦻",oline:"‾",olt:"⧀",omacr:"ō",omega:"ω",omicron:"ο",omid:"⦶",ominus:"⊖",oopf:"𝕠",opar:"⦷",operp:"⦹",oplus:"⊕",or:"∨",orarr:"↻",ord:"⩝",order:"ℴ",orderof:"ℴ",ordf:"ª",ordm:"º",origof:"⊶",oror:"⩖",orslope:"⩗",orv:"⩛",oscr:"ℴ",oslash:"ø",osol:"⊘",otilde:"õ",otimes:"⊗",otimesas:"⨶",ouml:"ö",ovbar:"⌽",par:"∥",para:"¶",parallel:"∥",parsim:"⫳",parsl:"⫽",part:"∂",pcy:"п",percnt:"%",period:".",permil:"‰",perp:"⊥",pertenk:"‱",pfr:"𝔭",phi:"φ",phiv:"ϕ",phmmat:"ℳ",phone:"☎",pi:"π",pitchfork:"⋔",piv:"ϖ",planck:"ℏ",planckh:"ℎ",plankv:"ℏ",plus:"+",plusacir:"⨣",plusb:"⊞",pluscir:"⨢",plusdo:"∔",plusdu:"⨥",pluse:"⩲",plusmn:"±",plussim:"⨦",plustwo:"⨧",pm:"±",pointint:"⨕",popf:"𝕡",pound:"£",pr:"≺",prE:"⪳",prap:"⪷",prcue:"≼",pre:"⪯",prec:"≺",precapprox:"⪷",preccurlyeq:"≼",preceq:"⪯",precnapprox:"⪹",precneqq:"⪵",precnsim:"⋨",precsim:"≾",prime:"′",primes:"ℙ",prnE:"⪵",prnap:"⪹",prnsim:"⋨",prod:"∏",profalar:"⌮",profline:"⌒",profsurf:"⌓",prop:"∝",propto:"∝",prsim:"≾",prurel:"⊰",pscr:"𝓅",psi:"ψ",puncsp:" ",qfr:"𝔮",qint:"⨌",qopf:"𝕢",qprime:"⁗",qscr:"𝓆",quaternions:"ℍ",quatint:"⨖",quest:"?",questeq:"≟",quot:'"',rAarr:"⇛",rArr:"⇒",rAtail:"⤜",rBarr:"⤏",rHar:"⥤",race:"∽̱",racute:"ŕ",radic:"√",raemptyv:"⦳",rang:"⟩",rangd:"⦒",range:"⦥",rangle:"⟩",raquo:"»",rarr:"→",rarrap:"⥵",rarrb:"⇥",rarrbfs:"⤠",rarrc:"⤳",rarrfs:"⤞",rarrhk:"↪",rarrlp:"↬",rarrpl:"⥅",rarrsim:"⥴",rarrtl:"↣",rarrw:"↝",ratail:"⤚",ratio:"∶",rationals:"ℚ",rbarr:"⤍",rbbrk:"❳",rbrace:"}",rbrack:"]",rbrke:"⦌",rbrksld:"⦎",rbrkslu:"⦐",rcaron:"ř",rcedil:"ŗ",rceil:"⌉",rcub:"}",rcy:"р",rdca:"⤷",rdldhar:"⥩",rdquo:"”",rdquor:"”",rdsh:"↳",real:"ℜ",realine:"ℛ",realpart:"ℜ",reals:"ℝ",rect:"▭",reg:"®",rfisht:"⥽",rfloor:"⌋",rfr:"𝔯",rhard:"⇁",rharu:"⇀",rharul:"⥬",rho:"ρ",rhov:"ϱ",rightarrow:"→",rightarrowtail:"↣",rightharpoondown:"⇁",rightharpoonup:"⇀",rightleftarrows:"⇄",rightleftharpoons:"⇌",rightrightarrows:"⇉",rightsquigarrow:"↝",rightthreetimes:"⋌",ring:"˚",risingdotseq:"≓",rlarr:"⇄",rlhar:"⇌",rlm:"‏",rmoust:"⎱",rmoustache:"⎱",rnmid:"⫮",roang:"⟭",roarr:"⇾",robrk:"⟧",ropar:"⦆",ropf:"𝕣",roplus:"⨮",rotimes:"⨵",rpar:")",rpargt:"⦔",rppolint:"⨒",rrarr:"⇉",rsaquo:"›",rscr:"𝓇",rsh:"↱",rsqb:"]",rsquo:"’",rsquor:"’",rthree:"⋌",rtimes:"⋊",rtri:"▹",rtrie:"⊵",rtrif:"▸",rtriltri:"⧎",ruluhar:"⥨",rx:"℞",sacute:"ś",sbquo:"‚",sc:"≻",scE:"⪴",scap:"⪸",scaron:"š",sccue:"≽",sce:"⪰",scedil:"ş",scirc:"ŝ",scnE:"⪶",scnap:"⪺",scnsim:"⋩",scpolint:"⨓",scsim:"≿",scy:"с",sdot:"⋅",sdotb:"⊡",sdote:"⩦",seArr:"⇘",searhk:"⤥",searr:"↘",searrow:"↘",sect:"§",semi:";",seswar:"⤩",setminus:"∖",setmn:"∖",sext:"✶",sfr:"𝔰",sfrown:"⌢",sharp:"♯",shchcy:"щ",shcy:"ш",shortmid:"∣",shortparallel:"∥",shy:"­",sigma:"σ",sigmaf:"ς",sigmav:"ς",sim:"∼",simdot:"⩪",sime:"≃",simeq:"≃",simg:"⪞",simgE:"⪠",siml:"⪝",simlE:"⪟",simne:"≆",simplus:"⨤",simrarr:"⥲",slarr:"←",smallsetminus:"∖",smashp:"⨳",smeparsl:"⧤",smid:"∣",smile:"⌣",smt:"⪪",smte:"⪬",smtes:"⪬︀",softcy:"ь",sol:"/",solb:"⧄",solbar:"⌿",sopf:"𝕤",spades:"♠",spadesuit:"♠",spar:"∥",sqcap:"⊓",sqcaps:"⊓︀",sqcup:"⊔",sqcups:"⊔︀",sqsub:"⊏",sqsube:"⊑",sqsubset:"⊏",sqsubseteq:"⊑",sqsup:"⊐",sqsupe:"⊒",sqsupset:"⊐",sqsupseteq:"⊒",squ:"□",square:"□",squarf:"▪",squf:"▪",srarr:"→",sscr:"𝓈",ssetmn:"∖",ssmile:"⌣",sstarf:"⋆",star:"☆",starf:"★",straightepsilon:"ϵ",straightphi:"ϕ",strns:"¯",sub:"⊂",subE:"⫅",subdot:"⪽",sube:"⊆",subedot:"⫃",submult:"⫁",subnE:"⫋",subne:"⊊",subplus:"⪿",subrarr:"⥹",subset:"⊂",subseteq:"⊆",subseteqq:"⫅",subsetneq:"⊊",subsetneqq:"⫋",subsim:"⫇",subsub:"⫕",subsup:"⫓",succ:"≻",succapprox:"⪸",succcurlyeq:"≽",succeq:"⪰",succnapprox:"⪺",succneqq:"⪶",succnsim:"⋩",succsim:"≿",sum:"∑",sung:"♪",sup1:"¹",sup2:"²",sup3:"³",sup:"⊃",supE:"⫆",supdot:"⪾",supdsub:"⫘",supe:"⊇",supedot:"⫄",suphsol:"⟉",suphsub:"⫗",suplarr:"⥻",supmult:"⫂",supnE:"⫌",supne:"⊋",supplus:"⫀",supset:"⊃",supseteq:"⊇",supseteqq:"⫆",supsetneq:"⊋",supsetneqq:"⫌",supsim:"⫈",supsub:"⫔",supsup:"⫖",swArr:"⇙",swarhk:"⤦",swarr:"↙",swarrow:"↙",swnwar:"⤪",szlig:"ß",target:"⌖",tau:"τ",tbrk:"⎴",tcaron:"ť",tcedil:"ţ",tcy:"т",tdot:"⃛",telrec:"⌕",tfr:"𝔱",there4:"∴",therefore:"∴",theta:"θ",thetasym:"ϑ",thetav:"ϑ",thickapprox:"≈",thicksim:"∼",thinsp:" ",thkap:"≈",thksim:"∼",thorn:"þ",tilde:"˜",times:"×",timesb:"⊠",timesbar:"⨱",timesd:"⨰",tint:"∭",toea:"⤨",top:"⊤",topbot:"⌶",topcir:"⫱",topf:"𝕥",topfork:"⫚",tosa:"⤩",tprime:"‴",trade:"™",triangle:"▵",triangledown:"▿",triangleleft:"◃",trianglelefteq:"⊴",triangleq:"≜",triangleright:"▹",trianglerighteq:"⊵",tridot:"◬",trie:"≜",triminus:"⨺",triplus:"⨹",trisb:"⧍",tritime:"⨻",trpezium:"⏢",tscr:"𝓉",tscy:"ц",tshcy:"ћ",tstrok:"ŧ",twixt:"≬",twoheadleftarrow:"↞",twoheadrightarrow:"↠",uArr:"⇑",uHar:"⥣",uacute:"ú",uarr:"↑",ubrcy:"ў",ubreve:"ŭ",ucirc:"û",ucy:"у",udarr:"⇅",udblac:"ű",udhar:"⥮",ufisht:"⥾",ufr:"𝔲",ugrave:"ù",uharl:"↿",uharr:"↾",uhblk:"▀",ulcorn:"⌜",ulcorner:"⌜",ulcrop:"⌏",ultri:"◸",umacr:"ū",uml:"¨",uogon:"ų",uopf:"𝕦",uparrow:"↑",updownarrow:"↕",upharpoonleft:"↿",upharpoonright:"↾",uplus:"⊎",upsi:"υ",upsih:"ϒ",upsilon:"υ",upuparrows:"⇈",urcorn:"⌝",urcorner:"⌝",urcrop:"⌎",uring:"ů",urtri:"◹",uscr:"𝓊",utdot:"⋰",utilde:"ũ",utri:"▵",utrif:"▴",uuarr:"⇈",uuml:"ü",uwangle:"⦧",vArr:"⇕",vBar:"⫨",vBarv:"⫩",vDash:"⊨",vangrt:"⦜",varepsilon:"ϵ",varkappa:"ϰ",varnothing:"∅",varphi:"ϕ",varpi:"ϖ",varpropto:"∝",varr:"↕",varrho:"ϱ",varsigma:"ς",varsubsetneq:"⊊︀",varsubsetneqq:"⫋︀",varsupsetneq:"⊋︀",varsupsetneqq:"⫌︀",vartheta:"ϑ",vartriangleleft:"⊲",vartriangleright:"⊳",vcy:"в",vdash:"⊢",vee:"∨",veebar:"⊻",veeeq:"≚",vellip:"⋮",verbar:"|",vert:"|",vfr:"𝔳",vltri:"⊲",vnsub:"⊂⃒",vnsup:"⊃⃒",vopf:"𝕧",vprop:"∝",vrtri:"⊳",vscr:"𝓋",vsubnE:"⫋︀",vsubne:"⊊︀",vsupnE:"⫌︀",vsupne:"⊋︀",vzigzag:"⦚",wcirc:"ŵ",wedbar:"⩟",wedge:"∧",wedgeq:"≙",weierp:"℘",wfr:"𝔴",wopf:"𝕨",wp:"℘",wr:"≀",wreath:"≀",wscr:"𝓌",xcap:"⋂",xcirc:"◯",xcup:"⋃",xdtri:"▽",xfr:"𝔵",xhArr:"⟺",xharr:"⟷",xi:"ξ",xlArr:"⟸",xlarr:"⟵",xmap:"⟼",xnis:"⋻",xodot:"⨀",xopf:"𝕩",xoplus:"⨁",xotime:"⨂",xrArr:"⟹",xrarr:"⟶",xscr:"𝓍",xsqcup:"⨆",xuplus:"⨄",xutri:"△",xvee:"⋁",xwedge:"⋀",yacute:"ý",yacy:"я",ycirc:"ŷ",ycy:"ы",yen:"¥",yfr:"𝔶",yicy:"ї",yopf:"𝕪",yscr:"𝓎",yucy:"ю",yuml:"ÿ",zacute:"ź",zcaron:"ž",zcy:"з",zdot:"ż",zeetrf:"ℨ",zeta:"ζ",zfr:"𝔷",zhcy:"ж",zigrarr:"⇝",zopf:"𝕫",zscr:"𝓏",zwj:"‍",zwnj:"‌"},r={}.hasOwnProperty;function o(e){return!!r.call(i,e)&&i[e]}function a(e){const t="string"==typeof e?e.charCodeAt(0):e;return t>=48&&t<=57}function s(e){return function(e){const t="string"==typeof e?e.charCodeAt(0):e;return t>=97&&t<=122||t>=65&&t<=90}(e)||a(e)}function l(e){const t="string"==typeof e?e.charCodeAt(0):e;return t>=97&&t<=102||t>=65&&t<=70||t>=48&&t<=57}const c=["AElig","AMP","Aacute","Acirc","Agrave","Aring","Atilde","Auml","COPY","Ccedil","ETH","Eacute","Ecirc","Egrave","Euml","GT","Iacute","Icirc","Igrave","Iuml","LT","Ntilde","Oacute","Ocirc","Ograve","Oslash","Otilde","Ouml","QUOT","REG","THORN","Uacute","Ucirc","Ugrave","Uuml","Yacute","aacute","acirc","acute","aelig","agrave","amp","aring","atilde","auml","brvbar","ccedil","cedil","cent","copy","curren","deg","divide","eacute","ecirc","egrave","eth","euml","frac12","frac14","frac34","gt","iacute","icirc","iexcl","igrave","iquest","iuml","laquo","lt","macr","micro","middot","nbsp","not","ntilde","oacute","ocirc","ograve","ordf","ordm","oslash","otilde","ouml","para","plusmn","pound","quot","raquo","reg","sect","shy","sup1","sup2","sup3","szlig","thorn","times","uacute","ucirc","ugrave","uml","uuml","yacute","yen","yuml"],u={0:"�",128:"€",130:"‚",131:"ƒ",132:"„",133:"…",134:"†",135:"‡",136:"ˆ",137:"‰",138:"Š",139:"‹",140:"Œ",142:"Ž",145:"‘",146:"’",147:"“",148:"”",149:"•",150:"–",151:"—",152:"˜",153:"™",154:"š",155:"›",156:"œ",158:"ž",159:"Ÿ"},h=["","Named character references must be terminated by a semicolon","Numeric character references must be terminated by a semicolon","Named character references cannot be empty","Numeric character references cannot be empty","Named character references must be known","Numeric character references cannot be disallowed","Numeric character references cannot be outside the permissible Unicode range"];function p(e,t){const n=t||{},i="string"==typeof n.additional?n.additional.charCodeAt(0):n.additional,r=[];let p,f,m=0,v=-1,g="";n.position&&("start"in n.position||"indent"in n.position?(f=n.position.indent,p=n.position.start):p=n.position);let y,b=(p?p.line:0)||1,w=(p?p.column:0)||1,k=E();for(m--;++m<=e.length;)if(10===y&&(w=(f?f[v]:0)||1),y=e.charCodeAt(m),38===y){const t=e.charCodeAt(m+1);if(9===t||10===t||12===t||32===t||38===t||60===t||Number.isNaN(t)||i&&t===i){g+=String.fromCharCode(y),w++;continue}const h=m+1;let p,f=h,v=h;if(35===t){v=++f;const t=e.charCodeAt(v);88===t||120===t?(p="hexadecimal",v=++f):p="decimal"}else p="named";let b="",x="",T="";const D="named"===p?s:"decimal"===p?a:l;for(v--;++v<=e.length;){const t=e.charCodeAt(v);if(!D(t))break;T+=String.fromCharCode(t),"named"===p&&c.includes(T)&&(b=T,x=o(T))}let A=59===e.charCodeAt(v);if(A){v++;const e="named"===p&&o(T);e&&(b=T,x=e)}let P=1+v-h,L="";if(A||!1!==n.nonTerminated)if(T)if("named"===p){if(A&&!x)M(5,1);else if(b!==T&&(v=f+b.length,P=1+v-f,A=!1),!A){const t=b?1:3;if(n.attribute){const n=e.charCodeAt(v);61===n?(M(t,P),x=""):s(n)?x="":M(t,P)}else M(t,P)}L=x}else{A||M(2,P);let e=Number.parseInt(T,"hexadecimal"===p?16:10);if((C=e)>=55296&&C<=57343||C>1114111)M(7,P),L=String.fromCharCode(65533);else if(e in u)M(6,P),L=u[e];else{let t="";d(e)&&M(6,P),e>65535&&(e-=65536,t+=String.fromCharCode(e>>>10|55296),e=56320|1023&e),L=t+String.fromCharCode(e)}}else"named"!==p&&M(4,P);else;if(L){S(),k=E(),m=v-1,w+=v-h+1,r.push(L);const t=E();t.offset++,n.reference&&n.reference.call(n.referenceContext||void 0,L,{start:k,end:t},e.slice(h-1,v)),k=t}else T=e.slice(h-1,v),g+=T,w+=T.length,m=v-1}else 10===y&&(b++,v++,w=0),Number.isNaN(y)?S():(g+=String.fromCharCode(y),w++);var C;return r.join("");function E(){return{line:b,column:w,offset:m+((p?p.offset:0)||0)}}function M(e,t){let i;n.warning&&(i=E(),i.column+=t,i.offset+=t,n.warning.call(n.warningContext||void 0,h[e],i,e))}function S(){g&&(r.push(g),n.text&&n.text.call(n.textContext||void 0,g,{start:k,end:E()}),g="")}}function d(e){return e>=1&&e<=8||11===e||e>=13&&e<=31||e>=127&&e<=159||e>=64976&&e<=65007||!(65535&~e)||65534==(65535&e)}},5785:(e,t,n)=>{"use strict";var i=n(5759).LC,r=n(7057),o=i;e.exports=function(e){return n.raw=function(e,n,a){return o(e,r(a,{position:t(n),warning:i}))},n;function t(t){for(var n=e.offset,i=t.line,r=[];++i&&i in n;)r.push((n[i]||0)+1);return{start:t,indent:r}}function n(n,r,a){o(n,{position:t(r),warning:i,text:a,reference:a,textContext:e,referenceContext:e})}function i(t,n,i){3!==i&&e.file.message(t,n)}}},5810:e=>{"use strict";e.exports=["address","article","aside","base","basefont","blockquote","body","caption","center","col","colgroup","dd","details","dialog","dir","div","dl","dt","fieldset","figcaption","figure","footer","form","frame","frameset","h1","h2","h3","h4","h5","h6","head","header","hgroup","hr","html","iframe","legend","li","link","main","menu","menuitem","meta","nav","noframes","ol","optgroup","option","p","param","pre","section","source","title","summary","table","tbody","td","tfoot","th","thead","title","tr","track","ul"]},5874:(e,t,n)=>{"use strict";var i=n(753);e.exports=s,s.locator=i;var r=" ",o="\n",a=2;function s(e,t,n){for(var i,s=t.length,l=-1,c="";++l<s;){if((i=t.charAt(l))===o){if(l<a)return;return!!n||e(c+=i)({type:"break"})}if(i!==r)return;c+=i}}},5897:function(e,t,n){var i;e.exports=(i=n(1126),i.enc.Hex)},6043:(e,t,n)=>{"use strict";n.d(t,{E_:()=>c,F3:()=>l,I9:()=>o,Ii:()=>s});const i=(e=>e.CapacitorPlatforms=(e=>{const t=new Map;t.set("web",{name:"web"});const n=e.CapacitorPlatforms||{currentPlatform:{name:"web"},platforms:t};return n.addPlatform=(e,t)=>{n.platforms.set(e,t)},n.setPlatform=e=>{n.platforms.has(e)&&(n.currentPlatform=n.platforms.get(e))},n})(e))("undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:"undefined"!=typeof window?window:void 0!==n.g?n.g:{});i.addPlatform,i.setPlatform;var r;!function(e){e.Unimplemented="UNIMPLEMENTED",e.Unavailable="UNAVAILABLE"}(r||(r={}));class o extends Error{constructor(e,t,n){super(e),this.message=e,this.code=t,this.data=n}}const a=e=>{var t,n,i,a,s;const l=e.CapacitorCustomPlatform||null,c=e.Capacitor||{},u=c.Plugins=c.Plugins||{},h=e.CapacitorPlatforms,p=(null===(t=null==h?void 0:h.currentPlatform)||void 0===t?void 0:t.getPlatform)||(()=>null!==l?l.name:(e=>{var t,n;return(null==e?void 0:e.androidBridge)?"android":(null===(n=null===(t=null==e?void 0:e.webkit)||void 0===t?void 0:t.messageHandlers)||void 0===n?void 0:n.bridge)?"ios":"web"})(e)),d=(null===(n=null==h?void 0:h.currentPlatform)||void 0===n?void 0:n.isNativePlatform)||(()=>"web"!==p()),f=(null===(i=null==h?void 0:h.currentPlatform)||void 0===i?void 0:i.isPluginAvailable)||(e=>{const t=v.get(e);return!!(null==t?void 0:t.platforms.has(p()))||!!m(e)}),m=(null===(a=null==h?void 0:h.currentPlatform)||void 0===a?void 0:a.getPluginHeader)||(e=>{var t;return null===(t=c.PluginHeaders)||void 0===t?void 0:t.find((t=>t.name===e))}),v=new Map,g=(null===(s=null==h?void 0:h.currentPlatform)||void 0===s?void 0:s.registerPlugin)||((e,t={})=>{const n=v.get(e);if(n)return console.warn(`Capacitor plugin "${e}" already registered. Cannot register plugins twice.`),n.proxy;const i=p(),a=m(e);let s;const h=n=>{let u;const h=(...h)=>{const p=(async()=>(!s&&i in t?s=s="function"==typeof t[i]?await t[i]():t[i]:null!==l&&!s&&"web"in t&&(s=s="function"==typeof t.web?await t.web():t.web),s))().then((t=>{const s=((t,n)=>{var s,l;if(!a){if(t)return null===(l=t[n])||void 0===l?void 0:l.bind(t);throw new o(`"${e}" plugin is not implemented on ${i}`,r.Unimplemented)}{const i=null==a?void 0:a.methods.find((e=>n===e.name));if(i)return"promise"===i.rtype?t=>c.nativePromise(e,n.toString(),t):(t,i)=>c.nativeCallback(e,n.toString(),t,i);if(t)return null===(s=t[n])||void 0===s?void 0:s.bind(t)}})(t,n);if(s){const e=s(...h);return u=null==e?void 0:e.remove,e}throw new o(`"${e}.${n}()" is not implemented on ${i}`,r.Unimplemented)}));return"addListener"===n&&(p.remove=async()=>u()),p};return h.toString=()=>`${n.toString()}() { [capacitor code] }`,Object.defineProperty(h,"name",{value:n,writable:!1,configurable:!1}),h},d=h("addListener"),f=h("removeListener"),g=(e,t)=>{const n=d({eventName:e},t),i=async()=>{const i=await n;f({eventName:e,callbackId:i},t)},r=new Promise((e=>n.then((()=>e({remove:i})))));return r.remove=async()=>{console.warn("Using addListener() without 'await' is deprecated."),await i()},r},y=new Proxy({},{get(e,t){switch(t){case"$$typeof":return;case"toJSON":return()=>({});case"addListener":return a?g:d;case"removeListener":return f;default:return h(t)}}});return u[e]=y,v.set(e,{name:e,proxy:y,platforms:new Set([...Object.keys(t),...a?[i]:[]])}),y});return c.convertFileSrc||(c.convertFileSrc=e=>e),c.getPlatform=p,c.handleError=t=>e.console.error(t),c.isNativePlatform=d,c.isPluginAvailable=f,c.pluginMethodNoop=(e,t,n)=>Promise.reject(`${n} does not have an implementation of "${t}".`),c.registerPlugin=g,c.Exception=o,c.DEBUG=!!c.DEBUG,c.isLoggingEnabled=!!c.isLoggingEnabled,c.platform=c.getPlatform(),c.isNative=c.isNativePlatform(),c},s=(e=>e.Capacitor=a(e))("undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:"undefined"!=typeof window?window:void 0!==n.g?n.g:{}),l=s.registerPlugin;s.Plugins;class c{constructor(e){this.listeners={},this.windowListeners={},e&&(console.warn(`Capacitor WebPlugin "${e.name}" config object was deprecated in v3 and will be removed in v4.`),this.config=e)}addListener(e,t){this.listeners[e]||(this.listeners[e]=[]),this.listeners[e].push(t);const n=this.windowListeners[e];n&&!n.registered&&this.addWindowListener(n);const i=async()=>this.removeListener(e,t),r=Promise.resolve({remove:i});return Object.defineProperty(r,"remove",{value:async()=>{console.warn("Using addListener() without 'await' is deprecated."),await i()}}),r}async removeAllListeners(){this.listeners={};for(const e in this.windowListeners)this.removeWindowListener(this.windowListeners[e]);this.windowListeners={}}notifyListeners(e,t){const n=this.listeners[e];n&&n.forEach((e=>e(t)))}hasListeners(e){return!!this.listeners[e].length}registerWindowListener(e,t){this.windowListeners[t]={registered:!1,windowEventName:e,pluginEventName:t,handler:e=>{this.notifyListeners(t,e)}}}unimplemented(e="not implemented"){return new s.Exception(e,r.Unimplemented)}unavailable(e="not available"){return new s.Exception(e,r.Unavailable)}async removeListener(e,t){const n=this.listeners[e];if(!n)return;const i=n.indexOf(t);this.listeners[e].splice(i,1),this.listeners[e].length||this.removeWindowListener(this.windowListeners[e])}addWindowListener(e){window.addEventListener(e.windowEventName,e.handler),e.registered=!0}removeWindowListener(e){e&&(window.removeEventListener(e.windowEventName,e.handler),e.registered=!1)}}const u=e=>encodeURIComponent(e).replace(/%(2[346B]|5E|60|7C)/g,decodeURIComponent).replace(/[()]/g,escape),h=e=>e.replace(/(%[\dA-F]{2})+/gi,decodeURIComponent);class p extends c{async getCookies(){const e=document.cookie,t={};return e.split(";").forEach((e=>{if(e.length<=0)return;let[n,i]=e.replace(/=/,"CAP_COOKIE").split("CAP_COOKIE");n=h(n).trim(),i=h(i).trim(),t[n]=i})),t}async setCookie(e){try{const t=u(e.key),n=u(e.value),i=`; expires=${(e.expires||"").replace("expires=","")}`,r=(e.path||"/").replace("path=",""),o=null!=e.url&&e.url.length>0?`domain=${e.url}`:"";document.cookie=`${t}=${n||""}${i}; path=${r}; ${o};`}catch(e){return Promise.reject(e)}}async deleteCookie(e){try{document.cookie=`${e.key}=; Max-Age=0`}catch(e){return Promise.reject(e)}}async clearCookies(){try{const e=document.cookie.split(";")||[];for(const t of e)document.cookie=t.replace(/^ +/,"").replace(/=.*/,`=;expires=${(new Date).toUTCString()};path=/`)}catch(e){return Promise.reject(e)}}async clearAllCookies(){try{await this.clearCookies()}catch(e){return Promise.reject(e)}}}l("CapacitorCookies",{web:()=>new p});const d=(e,t={})=>{const n=Object.assign({method:e.method||"GET",headers:e.headers},t),i=((e={})=>{const t=Object.keys(e);return Object.keys(e).map((e=>e.toLocaleLowerCase())).reduce(((n,i,r)=>(n[i]=e[t[r]],n)),{})})(e.headers)["content-type"]||"";if("string"==typeof e.data)n.body=e.data;else if(i.includes("application/x-www-form-urlencoded")){const t=new URLSearchParams;for(const[n,i]of Object.entries(e.data||{}))t.set(n,i);n.body=t.toString()}else if(i.includes("multipart/form-data")||e.data instanceof FormData){const t=new FormData;if(e.data instanceof FormData)e.data.forEach(((e,n)=>{t.append(n,e)}));else for(const n of Object.keys(e.data))t.append(n,e.data[n]);n.body=t;const i=new Headers(n.headers);i.delete("content-type"),n.headers=i}else(i.includes("application/json")||"object"==typeof e.data)&&(n.body=JSON.stringify(e.data));return n};class f extends c{async request(e){const t=d(e,e.webFetchExtra),n=((e,t=!0)=>e?Object.entries(e).reduce(((e,n)=>{const[i,r]=n;let o,a;return Array.isArray(r)?(a="",r.forEach((e=>{o=t?encodeURIComponent(e):e,a+=`${i}=${o}&`})),a.slice(0,-1)):(o=t?encodeURIComponent(r):r,a=`${i}=${o}`),`${e}&${a}`}),"").substr(1):null)(e.params,e.shouldEncodeUrlParams),i=n?`${e.url}?${n}`:e.url,r=await fetch(i,t),o=r.headers.get("content-type")||"";let a,s,{responseType:l="text"}=r.ok?e:{};switch(o.includes("application/json")&&(l="json"),l){case"arraybuffer":case"blob":s=await r.blob(),a=await(async e=>new Promise(((t,n)=>{const i=new FileReader;i.onload=()=>{const e=i.result;t(e.indexOf(",")>=0?e.split(",")[1]:e)},i.onerror=e=>n(e),i.readAsDataURL(e)})))(s);break;case"json":a=await r.json();break;default:a=await r.text()}const c={};return r.headers.forEach(((e,t)=>{c[t]=e})),{data:a,headers:c,status:r.status,url:r.url}}async get(e){return this.request(Object.assign(Object.assign({},e),{method:"GET"}))}async post(e){return this.request(Object.assign(Object.assign({},e),{method:"POST"}))}async put(e){return this.request(Object.assign(Object.assign({},e),{method:"PUT"}))}async patch(e){return this.request(Object.assign(Object.assign({},e),{method:"PATCH"}))}async delete(e){return this.request(Object.assign(Object.assign({},e),{method:"DELETE"}))}}l("CapacitorHttp",{web:()=>new f})},6047:e=>{"use strict";e.exports=function(e,t,n,i){var r,o,a=e.length,s=-1;for(;++s<a;)if((void 0===(o=(r=e[s])[1]||{}).pedantic||o.pedantic===n.options.pedantic)&&(void 0===o.commonmark||o.commonmark===n.options.commonmark)&&t[r[0]].apply(n,i))return!0;return!1}},6058:e=>{"use strict";e.exports=function(e){var o,a=0,s=0,l=e.charAt(a),c={},u=0;for(;l===t||l===n;){for(s+=o=l===t?r:i,o>1&&(s=Math.floor(s/o)*o);u<s;)c[++u]=a;l=e.charAt(++a)}return{indent:s,stops:c}};var t="\t",n=" ",i=1,r=4},6134:(e,t,n)=>{"use strict";var i=n(493),r=n(9098);e.exports=function(e){return o(e)&&r(e.value.charAt(0))};var o=i("text")},6234:(e,t,n)=>{"use strict";var i=n(6047);e.exports=function(e,t,n){var l,c,u,h,p,d,f,m,v,g=this,y=g.offset,b=g.blockTokenizers,w=g.interruptBlockquote,k=e.now(),C=k.line,E=t.length,M=[],S=[],x=[],T=[],D=0;for(;D<E&&((c=t.charAt(D))===a||c===o);)D++;if(t.charAt(D)!==s)return;if(n)return!0;D=0;var A=null;for(;D<E;){for(f=D,m=!1,-1===(h=t.indexOf(r,D))&&(h=E);D<E&&((c=t.charAt(D))===a||c===o);)D++;if(t.charAt(D)===s?(D++,m=!0,t.charAt(D)===a&&D++):D=f,p=t.slice(D,h),!m&&!p.trim()){D=f;break}if(!m&&(u=t.slice(D),i(w,b,g,[e,u,!0])))break;if(0===f){var P=p.match(/^\[!([^\]]+)\]([+\-]?)(?:\s|$)/);if(P){let e=P[1],t=e,n="",i=e.indexOf("|");-1!==i&&(t=e.substr(0,i),n=e.substr(i+1)),A={type:t.trim().toLowerCase().replace(/\s+/g,"-"),fold:P[2],data:n};var L=P[0].length;D+=L,p=p.substr(L)}}d=f===D?p:t.slice(f,h),T.push(D-f),M.push(d),S.push(p),D=h+1}D=-1,E=T.length,l=e(M.join(r));for(;++D<E;)y[C]=(y[C]||0)+T[D],C++;v=g.enterBlock(),A&&S[0]&&(x=g.tokenizeBlock(S.shift(),k),k.line+=1);return S=g.tokenizeBlock(S.join(r),k),x.push(...S),v(),l({type:"blockquote",children:x,callout:A})};var r="\n",o="\t",a=" ",s=">"},6252:(e,t,n)=>{"use strict";var i=n(1900),r=n(2356),o=n(2115);e.exports=m,m.locator=r;var a="link",s="image",l="shortcut",c="collapsed",u="full",h="!",p="[",d="\\",f="]";function m(e,t,n){var r,m,v,g,y,b,w,k,C=this,E=C.options.commonmark,M=t.charAt(0),S=0,x=t.length,T="",D="",A=a,P=l;if(M===h&&(A=s,D=M,M=t.charAt(++S)),M===p){for(S++,D+=M,b="",k=0;S<x;){if((M=t.charAt(S))===p)w=!0,k++;else if(M===f){if(!k)break;k--}M===d&&(b+=d,M=t.charAt(++S)),b+=M,S++}if(T=b,r=b,(M=t.charAt(S))===f){if(S++,T+=M,b="",!E)for(;S<x&&(M=t.charAt(S),i(M));)b+=M,S++;if((M=t.charAt(S))===p){for(m="",b+=M,S++;S<x&&(M=t.charAt(S))!==p&&M!==f;)M===d&&(m+=d,M=t.charAt(++S)),m+=M,S++;(M=t.charAt(S))===f?(P=m?u:c,b+=m+M,S++):m="",T+=b,b=""}else{if(!r)return;m=r}if(P===u||!w)return T=D+T,A===a&&C.inLink?null:!!n||((v=e.now()).column+=D.length,v.offset+=D.length,g={type:A+"Reference",identifier:o(m=P===u?m:r),label:m,referenceType:P},A===a?(y=C.enterLink(),g.children=C.tokenizeInline(r,v),y()):g.alt=C.decode.raw(C.unescape(r),v)||null,e(T)(g))}}}},6405:e=>{"use strict";var t="\0",n="&",i="`",r='"',o="'",a=[" ","\t","\n","\r","\f"],s=a.concat(n,"/",">","="),l=a.concat(n,">"),c=l.concat(t,r,o,"<","=",i),u=[n,o],h=[n,r];e.exports={name:[[s,s.concat(r,o,i)],[s.concat(t,r,o,"<"),s.concat(t,r,o,"<",i)]],unquoted:[[l,c],[c,c]],single:[[u,u.concat(r,i)],[u.concat(t),u.concat(t,r,i)]],double:[[h,h.concat(o,i)],[h.concat(t),h.concat(t,o,i)]]}},6426:(e,t,n)=>{var i,r=n(9710),o={};for(i in e.exports=o,r)o[r[i]]=i},6451:e=>{"use strict";e.exports=function(e,t){var n=e.indexOf("**",t),i=e.indexOf("__",t);if(-1===i)return n;if(-1===n)return i;return i<n?i:n}},6504:(e,t,n)=>{"use strict";e.exports=function(e,t){return e(t,"p",i(e,t))};var i=n(4297)},6658:(e,t,n)=>{"use strict";e.exports=s;var i=n(2888),r=i.CONTINUE,o=i.SKIP,a=i.EXIT;function s(e,t,n,r){"function"==typeof t&&"function"!=typeof n&&(r=n,n=t,t=null),i(e,t,(function(e,t){var i=t[t.length-1],r=i?i.children.indexOf(e):null;return n(e,r,i)}),r)}s.CONTINUE=r,s.SKIP=o,s.EXIT=a},6661:function(e,t){!function(e){var t,n="undefined",i=n!==typeof Buffer&&Buffer,r=n!==typeof Uint8Array&&Uint8Array,o=n!==typeof ArrayBuffer&&ArrayBuffer,a=[0,0,0,0,0,0,0,0],s=Array.isArray||function(e){return!!e&&"[object Array]"==Object.prototype.toString.call(e)},l=4294967296;function c(s,c,w){var k=c?0:4,C=c?4:0,E=c?0:3,M=c?1:2,S=c?2:1,x=c?3:0,T=c?v:y,D=c?g:b,A=I.prototype,P="is"+s,L="_"+P;return A.buffer=void 0,A.offset=0,A[L]=!0,A.toNumber=O,A.toString=function(e){var t=this.buffer,n=this.offset,i=N(t,n+k),r=N(t,n+C),o="",a=!w&&2147483648&i;a&&(i=~i,r=l-r);e=e||10;for(;;){var s=i%e*l+r;if(i=Math.floor(i/e),r=Math.floor(s/e),o=(s%e).toString(e)+o,!i&&!r)break}a&&(o="-"+o);return o},A.toJSON=O,A.toArray=u,i&&(A.toBuffer=h),r&&(A.toArrayBuffer=p),I[P]=function(e){return!(!e||!e[L])},e[s]=I,I;function I(e,s,c,u){return this instanceof I?function(e,s,c,u,h){r&&o&&(s instanceof o&&(s=new r(s)),u instanceof o&&(u=new r(u)));if(!(s||c||u||t))return void(e.buffer=m(a,0));if(!d(s,c)){var p=t||Array;h=c,u=s,c=0,s=t===i?i.alloc(8):new p(8)}if(e.buffer=s,e.offset=c|=0,n===typeof u)return;"string"==typeof u?function(e,t,n,i){var r=0,o=n.length,a=0,s=0;"-"===n[0]&&r++;var c=r;for(;r<o;){var u=parseInt(n[r++],i);if(!(u>=0))break;s=s*i+u,a=a*i+Math.floor(s/l),s%=l}c&&(a=~a,s?s=l-s:a++);F(e,t+k,a),F(e,t+C,s)}(s,c,u,h||10):d(u,h)?f(s,c,u,h):"number"==typeof h?(F(s,c+k,u),F(s,c+C,h)):u>0?T(s,c,u):u<0?D(s,c,u):f(s,c,a,0)}(this,e,s,c,u):new I(e,s,c,u)}function O(){var e=this.buffer,t=this.offset,n=N(e,t+k),i=N(e,t+C);return w||(n|=0),n?n*l+i:i}function F(e,t,n){e[t+x]=255&n,n>>=8,e[t+S]=255&n,n>>=8,e[t+M]=255&n,n>>=8,e[t+E]=255&n}function N(e,t){return 16777216*e[t+E]+(e[t+M]<<16)+(e[t+S]<<8)+e[t+x]}}function u(e){var n=this.buffer,i=this.offset;return t=null,!1!==e&&s(n)?8===n.length?n:n.slice(i,i+8):m(n,i)}function h(e){var n=this.buffer,r=this.offset;return t=i,!1!==e&&i.isBuffer(n)?8===n.length?n:n.slice(r,r+8):i.from(p.call(this,e))}function p(e){var n=this.buffer,i=this.offset,a=n.buffer;if(t=r,!1!==e&&!n.offset&&a instanceof o)return 8===a.byteLength?a:a.slice(i,i+8);var s=new r(8);return f(s,0,n,i),s.buffer}function d(e,t){var n=e&&e.length;return t|=0,n&&t+8<=n&&"string"!=typeof e[t]}function f(e,t,n,i){t|=0,i|=0;for(var r=0;r<8;r++)e[t++]=255&n[i++]}function m(e,t){return Array.prototype.slice.call(e,t,t+8)}function v(e,t,n){for(var i=t+8;i>t;)e[--i]=255&n,n/=256}function g(e,t,n){var i=t+8;for(n++;i>t;)e[--i]=255&-n^255,n/=256}function y(e,t,n){for(var i=t+8;t<i;)e[t++]=255&n,n/=256}function b(e,t,n){var i=t+8;for(n++;t<i;)e[t++]=255&-n^255,n/=256}c("Uint64BE",!0,!0),c("Int64BE",!0,!1),c("Uint64LE",!1,!0),c("Int64LE",!1,!1)}("string"!=typeof t.nodeName?t:this||{})},6859:e=>{"use strict";e.exports=function(e){return!(e&&e.position&&e.position.start&&e.position.start.line&&e.position.start.column&&e.position.end&&e.position.end.line&&e.position.end.column)}},6901:(e,t,n)=>{e.exports=function(e,t,n){var a,s,l;(n.useNamedReferences||n.useShortestReferences)&&(a=o(e,t,n.omitOptionalSemicolons,n.attribute));!n.useShortestReferences&&a||(s=i(e,t,n.omitOptionalSemicolons),n.useShortestReferences&&(l=r(e,t,n.omitOptionalSemicolons)).length<s.length&&(s=l));return a&&(!n.useShortestReferences||a.length<s.length)?a:s};var i=n(4169),r=n(5245),o=n(2315)},6920:(e,t,n)=>{"use strict";var i=n(7297);e.exports=i({space:"xlink",transform:function(e,t){return"xlink:"+t.slice(5).toLowerCase()},properties:{xLinkActuate:null,xLinkArcRole:null,xLinkHref:null,xLinkRole:null,xLinkShow:null,xLinkTitle:null,xLinkType:null}})},6931:(e,t)=>{"use strict";function n(e){if("string"!=typeof e)throw new TypeError("Path must be a string. Received "+JSON.stringify(e))}t.basename=function(e,t){var i,r,o,a,s=0,l=-1;if(void 0!==t&&"string"!=typeof t)throw new TypeError('"ext" argument must be a string');if(n(e),i=e.length,void 0===t||!t.length||t.length>e.length){for(;i--;)if(47===e.charCodeAt(i)){if(o){s=i+1;break}}else l<0&&(o=!0,l=i+1);return l<0?"":e.slice(s,l)}if(t===e)return"";r=-1,a=t.length-1;for(;i--;)if(47===e.charCodeAt(i)){if(o){s=i+1;break}}else r<0&&(o=!0,r=i+1),a>-1&&(e.charCodeAt(i)===t.charCodeAt(a--)?a<0&&(l=i):(a=-1,l=r));s===l?l=r:l<0&&(l=e.length);return e.slice(s,l)},t.dirname=function(e){var t,i,r;if(n(e),!e.length)return".";t=-1,r=e.length;for(;--r;)if(47===e.charCodeAt(r)){if(i){t=r;break}}else i||(i=!0);return t<0?47===e.charCodeAt(0)?"/":".":1===t&&47===e.charCodeAt(0)?"//":e.slice(0,t)},t.extname=function(e){var t,i,r,o=-1,a=0,s=-1,l=0;n(e),r=e.length;for(;r--;)if(47!==(i=e.charCodeAt(r)))s<0&&(t=!0,s=r+1),46===i?o<0?o=r:1!==l&&(l=1):o>-1&&(l=-1);else if(t){a=r+1;break}if(o<0||s<0||0===l||1===l&&o===s-1&&o===a+1)return"";return e.slice(o,s)},t.join=function(){var e,t=-1;for(;++t<arguments.length;)n(arguments[t]),arguments[t]&&(e=void 0===e?arguments[t]:e+"/"+arguments[t]);return void 0===e?".":function(e){var t,i;n(e),t=47===e.charCodeAt(0),i=function(e,t){var n,i,r="",o=0,a=-1,s=0,l=-1;for(;++l<=e.length;){if(l<e.length)n=e.charCodeAt(l);else{if(47===n)break;n=47}if(47===n){if(a===l-1||1===s);else if(a!==l-1&&2===s){if(r.length<2||2!==o||46!==r.charCodeAt(r.length-1)||46!==r.charCodeAt(r.length-2))if(r.length>2){if((i=r.lastIndexOf("/"))!==r.length-1){i<0?(r="",o=0):o=(r=r.slice(0,i)).length-1-r.lastIndexOf("/"),a=l,s=0;continue}}else if(r.length){r="",o=0,a=l,s=0;continue}t&&(r=r.length?r+"/..":"..",o=2)}else r.length?r+="/"+e.slice(a+1,l):r=e.slice(a+1,l),o=l-a-1;a=l,s=0}else 46===n&&s>-1?s++:s=-1}return r}(e,!t),i.length||t||(i=".");i.length&&47===e.charCodeAt(e.length-1)&&(i+="/");return t?"/"+i:i}(e)},t.sep="/"},6933:e=>{"use strict";e.exports=function(e,t){return t in e?e[t]:t}},6968:e=>{"use strict";e.exports=function(e,l,c){var u,h,p,d,f=-1,m=l.length+1,v="";for(;++f<m&&((u=l.charAt(f))===t||u===i);)v+=u;if(u!==r&&u!==o&&u!==a)return;h=u,v+=u,p=1,d="";for(;++f<m;)if((u=l.charAt(f))===h)p++,v+=d+h,d="";else{if(u!==i)return p>=s&&(!u||u===n)?(v+=d,!!c||e(v)({type:"thematicBreak"})):void 0;d+=u}};var t="\t",n="\n",i=" ",r="*",o="-",a="_",s=3},7057:e=>{e.exports=function(){for(var e={},n=0;n<arguments.length;n++){var i=arguments[n];for(var r in i)t.call(i,r)&&(e[r]=i[r])}return e};var t=Object.prototype.hasOwnProperty},7074:(e,t,n)=>{"use strict";e.exports=n(9478)},7092:e=>{"use strict";e.exports=function(e){var t="string"==typeof e?e.charCodeAt(0):e;return t>=48&&t<=57}},7122:e=>{"use strict";e.exports=function(e,t){var n,i=String(e),r=0;if("string"!=typeof t)throw new Error("Expected character");n=i.indexOf(t);for(;-1!==n;)r++,n=i.indexOf(t,n+t.length);return r}},7137:e=>{"use strict";e.exports=function(e,t){var n,i=String(e),r=0;if("string"!=typeof t)throw new Error("Expected character");n=i.indexOf(t);for(;-1!==n;)r++,n=i.indexOf(t,n+t.length);return r}},7194:(e,t,n)=>{"use strict";e.exports=function(e,t,n){var i,r=t&&t.type;if(!r)throw new Error("Expected node, got `"+t+"`");i=o.call(e.handlers,r)?e.handlers[r]:e.passThrough&&e.passThrough.indexOf(r)>-1?s:e.unknownHandler;return("function"==typeof i?i:a)(e,t,n)};var i=n(9650),r=n(4297),o={}.hasOwnProperty;function a(e,t){return function(e){var t=e.data||{};if(o.call(t,"hName")||o.call(t,"hProperties")||o.call(t,"hChildren"))return!1;return"value"in e}(t)?e.augment(t,i("text",t.value)):e(t,"div",r(e,t))}function s(e,t){var n;return t.children?((n=Object.assign({},t)).children=r(e,t),n):t}},7269:e=>{"use strict";function t(e){var t,n;return"text"!==e.type||!e.position||(t=e.position.start,n=e.position.end,t.line!==n.line||n.column-t.column===e.value.length)}function n(e,t){return e.value+=t.value,e}function i(e,t){return this.options.commonmark||this.options.gfm?t:(e.children=e.children.concat(t.children),e)}e.exports=function(e){return function(r,o){var a,s,l,c,u,h=this,p=h.offset,d=[],f=h[e+"Methods"],m=h[e+"Tokenizers"],v=o.line,g=o.column;if(!r)return d;S.now=w,S.file=h.file,y("");for(;r;){for(a=-1,s=f.length,c=!1;++a<s&&(!(l=m[f[a]])||l.onlyAtStart&&!h.atStart||l.notInList&&h.inList||l.notInBlock&&h.inBlock||l.notInLink&&h.inLink||(u=r.length,l.apply(h,[S,r]),!(c=u!==r.length))););c||h.file.fail(new Error("Infinite loop"),S.now())}return h.eof=w(),d;function y(e){for(var t=-1,n=e.indexOf("\n");-1!==n;)v++,t=n,n=e.indexOf("\n",n+1);-1===t?g+=e.length:g=e.length-t,v in p&&(-1!==t?g+=p[v]:g<=p[v]&&(g=p[v]+1))}function b(){var e=[],t=v+1;return function(){for(var n=v+1;t<n;)e.push((p[t]||0)+1),t++;return e}}function w(){var e={line:v,column:g};return e.offset=h.toOffset(e),e}function k(e){this.start=e,this.end=w()}function C(e){r.slice(0,e.length)!==e&&h.file.fail(new Error("Incorrectly eaten value: please report this warning on https://git.io/vg5Ft"),w())}function E(){var e=w();return t;function t(t,n){var i=t.position,r=i?i.start:e,o=[],a=i&&i.end.line,s=e.line;if(t.position=new k(r),i&&n&&i.indent){if(o=i.indent,a<s){for(;++a<s;)o.push((p[a]||0)+1);o.push(e.column)}n=o.concat(n)}return t.position.indent=n||[],t}}function M(e,r){var o=r?r.children:d,a=o[o.length-1];return a&&e.type===a.type&&("text"===e.type||"blockquote"===e.type)&&t(a)&&t(e)&&(e=("text"===e.type?n:i).call(h,a,e)),e!==a&&o.push(e),e}function S(e){var t=b(),n=E(),i=w();C(e),a.reset=s,s.test=l,a.test=l,r=r.slice(e.length),y(e);let o=h.atStart;return h.atStart&&0!==e.length&&h.exitStart(),t=t(),a;function a(e,i){return n(M(n(e),i),t)}function s(){var t=a.apply(null,arguments);return v=i.line,g=i.column,r=e+r,h.atStart=o,t}function l(){var t=n({});return v=i.line,g=i.column,r=e+r,t.position}}}}},7274:e=>{"use strict";e.exports=JSON.parse('["area","base","basefont","bgsound","br","col","command","embed","frame","hr","image","img","input","isindex","keygen","link","menuitem","meta","nextid","param","source","track","wbr"]')},7297:(e,t,n)=>{"use strict";var i=n(1383),r=n(1782),o=n(4197);e.exports=function(e){var t,n,a=e.space,s=e.mustUseProperty||[],l=e.attributes||{},c=e.properties,u=e.transform,h={},p={};for(t in c)n=new o(t,u(l,t),c[t],a),-1!==s.indexOf(t)&&(n.mustUseProperty=!0),h[t]=n,p[i(t)]=t,p[i(n.attribute)]=t;return new r(h,p,a)}},7422:(e,t,n)=>{"use strict";var i=n(5261),r=n(6920),o=n(313),a=n(4506),s=n(8055),l=n(4834);e.exports=i([o,r,a,s,l])},7497:(e,t,n)=>{"use strict";var i=n(6658);e.exports=function(e,t){return function(e){return t;function t(t){var n=t&&o(t);return n&&r.call(e,n)?e[n]:null}}(function(e){var t={};if(!e||!e.type)throw new Error("mdast-util-definitions expected node");return i(e,"definition",n),t;function n(e){var n=o(e.identifier);r.call(t,n)||(t[n]=e)}}(e))};var r={}.hasOwnProperty;function o(e){return e.toUpperCase()}},7512:(e,t)=>{"use strict";t.cwd=function(){return"/"}},7578:(e,t,n)=>{"use strict";var i=n(9098);function r(e){return function(t,n,r){var o=t&&t.children,a=n+e,s=o&&o[a];if(!r)for(;s&&i(s);)s=o[a+=e];return s}}t.g=r(-1),t.P=r(1)},7583:(e,t,n)=>{"use strict";e.exports=function(e){var t,n,a,s,l=e.footnoteById,c=e.footnoteOrder,u=c.length,h=-1,p=[];for(;++h<u;)(t=l[c[h].toUpperCase()])&&(s=(a=t.children.concat())[a.length-1],n={type:"link",url:"#fnref-"+t.identifier,data:{hProperties:{className:["footnote-backref"]}},children:[{type:"text",value:"↩"}]},s&&"paragraph"===s.type||(s={type:"paragraph",children:[]},a.push(s)),s.children.push(n),p.push({type:"listItem",data:{hProperties:{id:"fn-"+t.identifier}},children:a,position:t.position}));if(0===p.length)return null;return e(null,"div",{className:["footnotes"]},o([i(e),r(e,{type:"list",ordered:!0,children:p})],!0))};var i=n(5125),r=n(396),o=n(7824)},7648:(e,t,n)=>{"use strict";var i=n(741),r=n(1890),o=n(4839).T;e.exports=p,p.locator=r;var a="<",s="?",l="!",c="/",u=/^<a /i,h=/^<\/a>/i;function p(e,t,n){var r,p,d=this,f=t.length;if(!(t.charAt(0)!==a||f<3)&&(r=t.charAt(1),(i(r)||r===s||r===l||r===c)&&(p=t.match(o))))return!!n||(p=p[0],!d.inLink&&u.test(p)?d.inLink=!0:d.inLink&&h.test(p)&&(d.inLink=!1),e(p)({type:"html",value:p}))}},7756:(e,t,n)=>{"use strict";e.exports=function(e,t){var n,a=e.definition(t.identifier);if(!a)return r(e,t);n={href:i(a.url||"")},null!==a.title&&void 0!==a.title&&(n.title=a.title);return e(t,"a",n,o(e,t))};var i=n(8131),r=n(3390),o=n(4297)},7793:(e,t,n)=>{"use strict";var i=n(1900);e.exports=function(e,t,n){var r,a,g,y,b,w,k,C,E,M,S,x,T,D,A,P,L,I,O,F,N,R;if(!this.options.gfm)return;r=0,A=0,w=t.length+1,k=[];for(;r<w;){if(O=t.indexOf(o,r),F=t.indexOf(u,r+1),-1===O&&(O=t.length),-1===F||F>O){if(A<p)return;break}if(P=t.slice(r,O),0===A)R=P[0]!==u;else if(R&&P[0]===u||!R&&P[0]!==u)break;k.push(P),A++,r=O+1}y=k.join(o),a=k.splice(1,1)[0]||[],r=0,w=a.length,A--,g=!1,S=[];for(;r<w;){if((E=a.charAt(r))===u){if(M=null,!1===g){if(!1===N)return}else S.push(g),g=!1;N=!1}else if(E===s)M=!0,g=g||null;else if(E===l)g=g===d?f:M&&null===g?m:d;else if(!i(E))return;r++}!1!==g&&S.push(g);if(S.length<h)return;if(n)return!0;D=-1,L=[],I=e(y).reset({type:"table",align:S,children:L});for(;++D<A;){for(P=k[D],b={type:"tableRow",children:[]},D&&e(o),e(P).reset(b,I),w=P.length+1,r=0,C="",x="",T=!0;r<w;){if(""===(E=P.charAt(r))||E===u)if(T)e(E);else{if((x||E)&&!T){y=x,C.length>1&&(E?(y+=C.slice(0,-1),C=C.charAt(C.length-1)):(y+=C,C=""));let t=v(y),{start:n,end:i}=t,r=y.slice(n,y.length-i),o=e.now();o.offset+=n,o.column+=n,e(y)({type:"tableCell",padding:t,children:this.tokenizeInline(r,o)},b)}e(C+E),C="",x=""}else C&&(x+=C,C=""),x+=E,E===c&&r!==w-2&&(x+=P.charAt(r+1),r++);T=!1,r++}D||e(o+a)}return I};var r="\t",o="\n",a=" ",s="-",l=":",c="\\",u="|",h=1,p=2,d="left",f="center",m="right";function v(e){let t=0,n=0;for(let n=0,i=e.length;n<i;n++){let i=e[n];if(i!==r&&i!==a)break;t+=1}for(let i=e.length-1;i>=t;i--){let t=e[i];if(t!==r&&t!==a)break;n+=1}return{start:t,end:n}}},7824:(e,t,n)=>{"use strict";e.exports=function(e,t){var n=[],r=-1,o=e.length;t&&n.push(i("text","\n"));for(;++r<o;)r&&n.push(i("text","\n")),n.push(e[r]);t&&e.length>0&&n.push(i("text","\n"));return n};var i=n(9650)},7947:(e,t)=>{t.read=function(e,t,n,i,r){var o,a,s=8*r-i-1,l=(1<<s)-1,c=l>>1,u=-7,h=n?r-1:0,p=n?-1:1,d=e[t+h];for(h+=p,o=d&(1<<-u)-1,d>>=-u,u+=s;u>0;o=256*o+e[t+h],h+=p,u-=8);for(a=o&(1<<-u)-1,o>>=-u,u+=i;u>0;a=256*a+e[t+h],h+=p,u-=8);if(0===o)o=1-c;else{if(o===l)return a?NaN:1/0*(d?-1:1);a+=Math.pow(2,i),o-=c}return(d?-1:1)*a*Math.pow(2,o-i)},t.write=function(e,t,n,i,r,o){var a,s,l,c=8*o-r-1,u=(1<<c)-1,h=u>>1,p=23===r?Math.pow(2,-24)-Math.pow(2,-77):0,d=i?0:o-1,f=i?1:-1,m=t<0||0===t&&1/t<0?1:0;for(t=Math.abs(t),isNaN(t)||t===1/0?(s=isNaN(t)?1:0,a=u):(a=Math.floor(Math.log(t)/Math.LN2),t*(l=Math.pow(2,-a))<1&&(a--,l*=2),(t+=a+h>=1?p/l:p*Math.pow(2,1-h))*l>=2&&(a++,l/=2),a+h>=u?(s=0,a=u):a+h>=1?(s=(t*l-1)*Math.pow(2,r),a+=h):(s=t*Math.pow(2,h-1)*Math.pow(2,r),a=0));r>=8;e[n+d]=255&s,d+=f,s/=256,r-=8);for(a=a<<r|s,c+=r;c>0;e[n+d]=255&a,d+=f,a/=256,c-=8);e[n+d-f]|=128*m}},8055:(e,t,n)=>{"use strict";var i=n(5176),r=n(7297),o=i.booleanish,a=i.number,s=i.spaceSeparated;e.exports=r({transform:function(e,t){return"role"===t?t:"aria-"+t.slice(4).toLowerCase()},properties:{ariaActiveDescendant:null,ariaAtomic:o,ariaAutoComplete:null,ariaBusy:o,ariaChecked:o,ariaColCount:a,ariaColIndex:a,ariaColSpan:a,ariaControls:s,ariaCurrent:null,ariaDescribedBy:s,ariaDetails:null,ariaDisabled:o,ariaDropEffect:s,ariaErrorMessage:null,ariaExpanded:o,ariaFlowTo:s,ariaGrabbed:o,ariaHasPopup:null,ariaHidden:o,ariaInvalid:null,ariaKeyShortcuts:null,ariaLabel:null,ariaLabelledBy:s,ariaLevel:a,ariaLive:null,ariaModal:o,ariaMultiLine:o,ariaMultiSelectable:o,ariaOrientation:null,ariaOwns:s,ariaPlaceholder:null,ariaPosInSet:a,ariaPressed:o,ariaReadOnly:o,ariaRelevant:null,ariaRequired:o,ariaRoleDescription:s,ariaRowCount:a,ariaRowIndex:a,ariaRowSpan:a,ariaSelected:o,ariaSetSize:a,ariaSort:null,ariaValueMax:a,ariaValueMin:a,ariaValueNow:a,ariaValueText:null,role:null}})},8124:(e,t,n)=>{"use strict";var i=n(6658);function r(e){delete e.position}function o(e){e.position=void 0}e.exports=function(e,t){return i(e,t?r:o),e}},8131:e=>{"use strict";var t={};function n(e,i,r){var o,a,s,l,c,u="";for("string"!=typeof i&&(r=i,i=n.defaultChars),void 0===r&&(r=!0),c=function(e){var n,i,r=t[e];if(r)return r;for(r=t[e]=[],n=0;n<128;n++)i=String.fromCharCode(n),/^[0-9a-z]$/i.test(i)?r.push(i):r.push("%"+("0"+n.toString(16).toUpperCase()).slice(-2));for(n=0;n<e.length;n++)r[e.charCodeAt(n)]=e[n];return r}(i),o=0,a=e.length;o<a;o++)if(s=e.charCodeAt(o),r&&37===s&&o+2<a&&/^[0-9a-f]{2}$/i.test(e.slice(o+1,o+3)))u+=e.slice(o,o+3),o+=2;else if(s<128)u+=c[s];else if(s>=55296&&s<=57343){if(s>=55296&&s<=56319&&o+1<a&&(l=e.charCodeAt(o+1))>=56320&&l<=57343){u+=encodeURIComponent(e[o]+e[o+1]),o++;continue}u+="%EF%BF%BD"}else u+=encodeURIComponent(e[o]);return u}n.defaultChars=";/?:@&=+$,-_.!~*'()#",n.componentChars="-_.!~*'()",e.exports=n},8173:(e,t,n)=>{"use strict";var i,r;n.d(t,{CA:()=>i,T2:()=>r,aq:()=>o}),function(e){e.missingKey="missingKey",e.invalidData="invalidData",e.osError="osError",e.unknownError="unknownError"}(i||(i={})),function(e){e[e.whenUnlocked=0]="whenUnlocked",e[e.whenUnlockedThisDeviceOnly=1]="whenUnlockedThisDeviceOnly",e[e.afterFirstUnlock=2]="afterFirstUnlock",e[e.afterFirstUnlockThisDeviceOnly=3]="afterFirstUnlockThisDeviceOnly",e[e.whenPasscodeSetThisDeviceOnly=4]="whenPasscodeSetThisDeviceOnly"}(r||(r={}));class o extends Error{constructor(e,t){super(e),this.name=this.constructor.name,this.code=t}}},8177:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:!0})},8190:function(e,t,n){var i;e.exports=(i=n(1126),function(e){var t=i,n=t.lib,r=n.WordArray,o=n.Hasher,a=t.algo,s=[],l=[];!function(){function t(t){for(var n=e.sqrt(t),i=2;i<=n;i++)if(!(t%i))return!1;return!0}function n(e){return 4294967296*(e-(0|e))|0}for(var i=2,r=0;r<64;)t(i)&&(r<8&&(s[r]=n(e.pow(i,.5))),l[r]=n(e.pow(i,1/3)),r++),i++}();var c=[],u=a.SHA256=o.extend({_doReset:function(){this._hash=new r.init(s.slice(0))},_doProcessBlock:function(e,t){for(var n=this._hash.words,i=n[0],r=n[1],o=n[2],a=n[3],s=n[4],u=n[5],h=n[6],p=n[7],d=0;d<64;d++){if(d<16)c[d]=0|e[t+d];else{var f=c[d-15],m=(f<<25|f>>>7)^(f<<14|f>>>18)^f>>>3,v=c[d-2],g=(v<<15|v>>>17)^(v<<13|v>>>19)^v>>>10;c[d]=m+c[d-7]+g+c[d-16]}var y=i&r^i&o^r&o,b=(i<<30|i>>>2)^(i<<19|i>>>13)^(i<<10|i>>>22),w=p+((s<<26|s>>>6)^(s<<21|s>>>11)^(s<<7|s>>>25))+(s&u^~s&h)+l[d]+c[d];p=h,h=u,u=s,s=a+w|0,a=o,o=r,r=i,i=w+(b+y)|0}n[0]=n[0]+i|0,n[1]=n[1]+r|0,n[2]=n[2]+o|0,n[3]=n[3]+a|0,n[4]=n[4]+s|0,n[5]=n[5]+u|0,n[6]=n[6]+h|0,n[7]=n[7]+p|0},_doFinalize:function(){var t=this._data,n=t.words,i=8*this._nDataBytes,r=8*t.sigBytes;return n[r>>>5]|=128<<24-r%32,n[14+(r+64>>>9<<4)]=e.floor(i/4294967296),n[15+(r+64>>>9<<4)]=i,t.sigBytes=4*n.length,this._process(),this._hash},clone:function(){var e=o.clone.call(this);return e._hash=this._hash.clone(),e}});t.SHA256=o._createHelper(u),t.HmacSHA256=o._createHmacHelper(u)}(Math),i.SHA256)},8193:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:!0});var i,r=n(6661),o=n(9840),a=n(9840),s=n(5416);!function(e){e[e.STATE_TAG=1]="STATE_TAG",e[e.STATE_SIZE=2]="STATE_SIZE",e[e.STATE_CONTENT=3]="STATE_CONTENT"}(i||(i={}));var l=function(){function e(){this._buffer=new o.Buffer(0),this._tag_stack=[],this._state=i.STATE_TAG,this._cursor=0,this._total=0,this._schema=s.byEbmlID,this._result=[]}return e.prototype.decode=function(e){this.readChunk(e);var t=this._result;return this._result=[],t},e.prototype.readChunk=function(e){for(this._buffer=a.concat([this._buffer,new o.Buffer(e)]);this._cursor<this._buffer.length&&(this._state!==i.STATE_TAG||this.readTag())&&(this._state!==i.STATE_SIZE||this.readSize())&&(this._state!==i.STATE_CONTENT||this.readContent()););},e.prototype.getSchemaInfo=function(e){return this._schema[e]||{name:"unknown",level:-1,type:"unknown",description:"unknown"}},e.prototype.readTag=function(){if(this._cursor>=this._buffer.length)return!1;var e=(0,o.readVint)(this._buffer,this._cursor);if(null==e)return!1;var t=this._buffer.slice(this._cursor,this._cursor+e.length).reduce((function(e,t,n,i){return e+t*Math.pow(16,2*(i.length-1-n))}),0),n=this.getSchemaInfo(t),r={EBML_ID:t.toString(16),schema:n,type:n.type,name:n.name,level:n.level,tagStart:this._total,tagEnd:this._total+e.length,sizeStart:this._total+e.length,sizeEnd:null,dataStart:null,dataEnd:null,dataSize:null,data:null};return this._tag_stack.push(r),this._cursor+=e.length,this._total+=e.length,this._state=i.STATE_SIZE,!0},e.prototype.readSize=function(){if(this._cursor>=this._buffer.length)return!1;var e=(0,o.readVint)(this._buffer,this._cursor);if(null==e)return!1;var t=this._tag_stack[this._tag_stack.length-1];return t.sizeEnd=t.sizeStart+e.length,t.dataStart=t.sizeEnd,t.dataSize=e.value,-1===e.value?(t.dataEnd=-1,"m"===t.type&&(t.unknownSize=!0)):t.dataEnd=t.sizeEnd+e.value,this._cursor+=e.length,this._total+=e.length,this._state=i.STATE_CONTENT,!0},e.prototype.readContent=function(){var e=this._tag_stack[this._tag_stack.length-1];if("m"===e.type){if(e.isEnd=!1,this._result.push(e),this._state=i.STATE_TAG,0===e.dataSize){var t=Object.assign({},e,{isEnd:!0});this._result.push(t),this._tag_stack.pop()}return!0}if(this._buffer.length<this._cursor+e.dataSize)return!1;var n=this._buffer.slice(this._cursor,this._cursor+e.dataSize);switch(this._buffer=this._buffer.slice(this._cursor+e.dataSize),e.data=n,e.type){case"u":e.value=n.readUIntBE(0,n.length);break;case"i":e.value=n.readIntBE(0,n.length);break;case"f":e.value=4===e.dataSize?n.readFloatBE(0):8===e.dataSize?n.readDoubleBE(0):(console.warn("cannot read ".concat(e.dataSize," octets float. failback to 0")),0);break;case"s":e.value=n.toString("ascii");break;case"8":e.value=n.toString("utf8");break;case"b":e.value=n;break;case"d":e.value=(0,o.convertEBMLDateToJSDate)(new r.Int64BE(n).toNumber())}if(null===e.value)throw new Error("unknown tag type:"+e.type);for(this._result.push(e),this._total+=e.dataSize,this._state=i.STATE_TAG,this._cursor=0,this._tag_stack.pop();this._tag_stack.length>0;){var a=this._tag_stack[this._tag_stack.length-1];if(a.dataEnd<0)return this._tag_stack.pop(),!0;if(this._total<a.dataEnd)break;if("m"!==a.type)throw new Error("parent element is not master element");t=Object.assign({},a,{isEnd:!0});this._result.push(t),this._tag_stack.pop()}return!0},e}();t.default=l},8257:e=>{"use strict";e.exports=function(e){return n.test("number"==typeof e?t(e):e.charAt(0))};var t=String.fromCharCode,n=/\w/},8469:e=>{"use strict";e.exports=function(e,a,s){var l,c,u,h=this.options.pedantic,p=a.length+1,d=-1,f=e.now(),m="",v="";for(;++d<p;){if((l=a.charAt(d))!==i&&l!==n){d--;break}m+=l}u=0;for(;++d<=p;){if((l=a.charAt(d))!==r){d--;break}m+=l,u++}if(u>o)return;if(!u||!h&&a.charAt(d+1)===r)return;p=a.length+1,c="";for(;++d<p;){if((l=a.charAt(d))!==i&&l!==n){d--;break}c+=l}if(!h&&0===c.length&&l&&l!==t)return;if(s)return!0;m+=c,c="",v="";for(;++d<p&&(l=a.charAt(d))&&l!==t;)if(l===i||l===n||l===r){for(;l===i||l===n;)c+=l,l=a.charAt(++d);if(h||!v||c||l!==r){for(;l===r;)c+=l,l=a.charAt(++d);for(;l===i||l===n;)c+=l,l=a.charAt(++d);d--}else v+=l}else v+=c+l,c="";return f.column+=m.length,f.offset+=m.length,e(m+=v+c)({type:"heading",depth:u,children:this.tokenizeInline(v,f)})};var t="\n",n="\t",i=" ",r="#",o=6},8502:(e,t)=>{"use strict";t.A=function(e){return e.join(i).trim()};var n="",i=" ",r=/[ \t\n\r\f]+/g},8518:e=>{"use strict";e.exports=function(e,t){return e&&e.children&&e.children.indexOf(t)}},8593:e=>{e.exports=function(){for(var e={},n=0;n<arguments.length;n++){var i=arguments[n];for(var r in i)t.call(i,r)&&(e[r]=i[r])}return e};var t=Object.prototype.hasOwnProperty},8607:(e,t,n)=>{"use strict";var i=n(8813),r=n(6047);e.exports=function(e,t,n){var c,u,h,p,d,f=this,m=f.options.commonmark,v=f.blockTokenizers,g=f.interruptParagraph,y=t.indexOf(a),b=t.length;for(;y<b;){if(-1===y){y=b;break}if(t.charAt(y+1)===a)break;if(m){for(p=0,c=y+1;c<b;){if((h=t.charAt(c))===o){p=l;break}if(h!==s)break;p++,c++}if(p>=l&&h!==a){y=t.indexOf(a,y+1);continue}}if(u=t.slice(y+1),r(g,v,f,[e,u,!0]))break;if(c=y,-1!==(y=t.indexOf(a,y+1))&&""===t.slice(c,y).trim()){y=c;break}}if(u=t.slice(0,y),n)return!0;return d=e.now(),u=i(u),e(u)({type:"paragraph",children:f.tokenizeInline(u,d)})};var o="\t",a="\n",s=" ",l=4},8671:e=>{"use strict";e.exports=function(e,c,u){var h,p,d,f,m,v=e.now(),g=c.length,y=-1,b="";for(;++y<g;){if((d=c.charAt(y))!==i||y>=a){y--;break}b+=d}h="",p="";for(;++y<g;){if((d=c.charAt(y))===t){y--;break}d===i||d===n?p+=d:(h+=p+d,p="")}if(v.column+=b.length,v.offset+=b.length,b+=h+p,d=c.charAt(++y),f=c.charAt(++y),d!==t||f!==r&&f!==o)return;b+=d,p=f,m=f===r?s:l;for(;++y<g;){if((d=c.charAt(y))!==f){if(d!==t)return;y--;break}p+=d}if(u)return!0;return e(b+p)({type:"heading",depth:m,children:this.tokenizeInline(h,v)})};var t="\n",n="\t",i=" ",r="=",o="-",a=3,s=1,l=2},8707:(e,t,n)=>{"use strict";var i=n(5261),r=n(6920),o=n(313),a=n(4506),s=n(8055),l=n(535);e.exports=i([o,r,a,s,l])},8711:(e,t,n)=>{"use strict";e.exports=function(e,t){return e.augment(t,i("text",String(t.value).replace(/[ \t]*(\r?\n|\r)[ \t]*/g,"$1")))};var i=n(9650)},8775:(e,t,n)=>{"use strict";var i=n(5759).LC,r=n(1900),o=n(1890);e.exports=p,p.locator=o,p.notInLink=!0;var a="<",s=">",l="@",c="/",u="mailto:",h=u.length;function p(e,t,n){var o,p,d,f,m,v=this,g="",y=t.length,b=0,w="",k=!1,C="";if(t.charAt(0)===a){for(b++,g=a;b<y&&(o=t.charAt(b),!(r(o)||o===s||o===l||":"===o&&t.charAt(b+1)===c));)w+=o,b++;if(w){if(C+=w,w="",C+=o=t.charAt(b),b++,o===l)k=!0;else{if(":"!==o||t.charAt(b+1)!==c)return;C+=c,b++}for(;b<y&&(o=t.charAt(b),!r(o)&&o!==s);)w+=o,b++;if(o=t.charAt(b),w&&o===s)return!!n||(d=C+=w,g+=C+o,(p=e.now()).column++,p.offset++,k&&(C.slice(0,h).toLowerCase()===u?(d=d.slice(h),p.column+=h,p.offset+=h):C=u+C),f=v.inlineTokenizers,v.inlineTokenizers={text:f.text},m=v.enterLink(),d=v.tokenizeInline(d,p),v.inlineTokenizers=f,m(),e(g)({type:"link",title:null,url:i(C,{nonTerminated:!1}),children:d}))}}}},8776:(e,t,n)=>{"use strict";var i=n(4839).X;e.exports=function(e,t,n){var i,w,k,C,E,M,S,x=this.options.blocks.join("|"),T=new RegExp("^</?("+x+")(?=(\\s|/?>|$))","i"),D=t.length,A=0,P=[[l,c,!0],[u,h,!0],[p,d,!0],[f,m,!0],[v,g,!0],[T,y,!0],[b,y,!1]];for(;A<D&&((C=t.charAt(A))===r||C===o);)A++;if(t.charAt(A)!==s)return;i=-1===(i=t.indexOf(a,A+1))?D:i,w=t.slice(A,i),k=-1,E=P.length;for(;++k<E;)if(P[k][0].test(w)){M=P[k];break}if(!M)return;if(n)return M[2];if(A=i,!M[1].test(w))for(;A<D;){if(i=-1===(i=t.indexOf(a,A+1))?D:i,w=t.slice(A+1,i),M[1].test(w)){w&&(A=i);break}A=i}return S=t.slice(0,A),e(S)({type:"html",value:S})};var r="\t",o=" ",a="\n",s="<",l=/^<(script|pre|style)(?=(\s|>|$))/i,c=/<\/(script|pre|style)>/i,u=/^<!--/,h=/-->/,p=/^<\?/,d=/\?>/,f=/^<![A-Za-z]/,m=/>/,v=/^<!\[CDATA\[/,g=/]]>/,y=/^$/,b=new RegExp(i.source+"\\s*$")},8785:(e,t,n)=>{"use strict";var i=n(8593),r=n(631);e.exports=function(e,t,n,o){var a=t.value;return function(e){return e&&("script"===e.tagName||"style"===e.tagName)}(o)?a:r(a,i(e.entities,{subset:["<","&"]}))}},8812:(e,t,n)=>{"use strict";e.exports=function(e,t){var n=e.footnoteById,r=e.footnoteOrder,o=1;for(;o in n;)o++;return o=String(o),r.push(o),n[o]={type:"footnoteDefinition",identifier:o,children:[{type:"paragraph",children:t.children}],position:t.position},i(e,{type:"footnoteReference",identifier:o,position:t.position})};var i=n(3632)},8813:e=>{"use strict";e.exports=function(e){return String(e).replace(/\n+$/,"")}},8942:(e,t,n)=>{"use strict";e.exports=function(e,t,n){var a,s,l,c=r(e,t),u=c[0],h=n?function(e){var t=e.spread,n=e.children,i=n.length,r=-1;for(;!t&&++r<i;)t=o(n[r]);return t}(n):o(t),p={},d=[];"boolean"==typeof t.checked&&(u&&"p"===u.tagName||(u=e(null,"p",[]),c.unshift(u)),u.children.length>0&&u.children.unshift(i("text"," ")),u.children.unshift(e(null,"input",{type:"checkbox",checked:t.checked,disabled:!0})),p.className=["task-list-item"]);a=c.length,s=-1;for(;++s<a;)l=c[s],(h||0!==s||"p"!==l.tagName)&&d.push(i("text","\n")),"p"!==l.tagName||h?d.push(l):d=d.concat(l.children);a&&(h||"p"!==l.tagName)&&d.push(i("text","\n"));return e(t,"li",p,d)};var i=n(9650),r=n(4297);function o(e){var t=e.spread;return null==t?e.children.length>1:t}},9040:(e,t,n)=>{"use strict";var i=n(8131),r=n(4297);e.exports=function(e,t){var n={href:i(t.url)};null!==t.title&&void 0!==t.title&&(n.title=t.title);return e(t,"a",n,r(e,t))}},9098:e=>{"use strict";e.exports=function(e){var n;if(e&&"object"==typeof e&&"text"===e.type)n=e.value||"";else{if("string"!=typeof e)return!1;n=e}return""===n.replace(t,"")};var t=/[ \t\n\f\r]/g},9159:(e,t,n)=>{"use strict";var i=n(1185),r=n(9932);e.exports=i,i.escape=r},9331:(e,t,n)=>{"use strict";e.exports=function(e,t){return e(t,"blockquote",i(r(e,t),!0))};var i=n(7824),r=n(4297)},9359:e=>{"use strict";e.exports=function(e,n){return function(i){var r,o=0,a=i.indexOf(t),s=e[n],l=[];for(;-1!==a;)l.push(i.slice(o,a)),o=a+1,(r=i.charAt(o))&&-1!==s.indexOf(r)||l.push(t),a=i.indexOf(t,o+1);return l.push(i.slice(o)),l.join("")}};var t="\\"},9405:(e,t,n)=>{"use strict";var i=n(1900),r=n(2356);e.exports=g,g.locator=r;var o="\n",a="!",s='"',l="'",c="(",u=")",h="<",p=">",d="[",f="\\",m="]",v="`";function g(e,t,n){var r,g,y,b,w,k,C,E,M,S,x,T,D,A,P,L,I,O,F=this,N="",R=0,B=t.charAt(0),V=F.options.pedantic,H=F.options.commonmark,z=F.options.gfm;if(B===a&&(E=!0,N=B,B=t.charAt(++R)),B===d&&(E||!F.inLink)){for(N+=B,A="",R++,x=t.length,D=0,(L=e.now()).column+=R,L.offset+=R;R<x;){if(k=B=t.charAt(R),B===v){for(g=1;t.charAt(R+1)===v;)k+=B,R++,g++;y?g>=y&&(y=0):y=g}else if(B===f)R++,k+=t.charAt(R);else if(y&&!z||B!==d){if((!y||z)&&B===m){if(!D){if(t.charAt(R+1)!==c)return;k+=c,r=!0,R++;break}D--}}else D++;A+=k,k="",R++}if(r){for(M=A,N+=A+k,R++;R<x&&(B=t.charAt(R),i(B));)N+=B,R++;if(A="",b=N,(B=t.charAt(R))===h){for(R++,b+=h;R<x&&(B=t.charAt(R))!==p;){if(H&&B===o)return;A+=B,R++}if(t.charAt(R)!==p)return;N+=h+A+p,P=A,R++}else{for(B=null,k="";R<x&&(B=t.charAt(R),!k||!(B===s||B===l||H&&B===c));){if(i(B)){if(!V)break;k+=B}else{if(B===c)D++;else if(B===u){if(0===D)break;D--}A+=k,k="",B===f&&(A+=f,B=t.charAt(++R)),A+=B}R++}P=A,R=(N+=A).length}for(A="";R<x&&(B=t.charAt(R),i(B));)A+=B,R++;if(B=t.charAt(R),N+=A,A&&(B===s||B===l||H&&B===c))if(R++,A="",S=B===c?u:B,w=N+=B,H){for(;R<x&&(B=t.charAt(R))!==S;)B===f&&(A+=f,B=t.charAt(++R)),R++,A+=B;if((B=t.charAt(R))!==S)return;for(T=A,N+=A+B,R++;R<x&&(B=t.charAt(R),i(B));)N+=B,R++}else for(k="";R<x;){if((B=t.charAt(R))===S)C&&(A+=S+k,k=""),C=!0;else if(C){if(B===u){N+=A+S+k,T=A;break}i(B)?k+=B:(A+=S+k+B,k="",C=!1)}else A+=B;R++}if(t.charAt(R)===u)return!!n||(N+=u,P=F.decode.raw(F.unescape(P),e(b).test().end,{nonTerminated:!1}),T&&(w=e(w).test().end,T=F.decode.raw(F.unescape(T),w)),O={type:E?"image":"link",title:T||null,url:P},E?O.alt=F.decode.raw(F.unescape(M),L)||null:(I=F.enterLink(),O.children=F.tokenizeInline(M,L),I()),e(N)(O))}}}},9478:(e,t,n)=>{"use strict";var i=n(859),r=n(4571);e.exports=r,r.prototype.message=function(e,t,n){var r=new i(e,t,n);this.path&&(r.name=this.path+":"+r.name,r.file=this.path);return r.fatal=!1,this.messages.push(r),r},r.prototype.info=function(){var e=this.message.apply(this,arguments);return e.fatal=null,e},r.prototype.fail=function(){var e=this.message.apply(this,arguments);throw e.fatal=!0,e}},9489:(e,t,n)=>{"use strict";var i=n(1383),r=n(4197),o=n(5325),a="data";e.exports=function(e,t){var n=i(t),p=t,d=o;if(n in e.normal)return e.property[e.normal[n]];n.length>4&&n.slice(0,4)===a&&s.test(t)&&("-"===t.charAt(4)?p=function(e){var t=e.slice(5).replace(l,h);return a+t.charAt(0).toUpperCase()+t.slice(1)}(t):t=function(e){var t=e.slice(4);if(l.test(t))return e;t=t.replace(c,u),"-"!==t.charAt(0)&&(t="-"+t);return a+t}(t),d=r);return new d(p,t)};var s=/^data[-\w.:]+$/i,l=/-[a-z]/g,c=/[A-Z]/g;function u(e){return"-"+e.toLowerCase()}function h(e){return e.charAt(1).toUpperCase()}},9510:e=>{"use strict";e.exports=function(e){return String(e).replace(/\s+/g," ")}},9546:e=>{"use strict";e.exports=function(e,t,n){return function(){var i=n||this,r=i[e];return i[e]=!t,o;function o(){i[e]=r}}}},9547:function(e,t,n){"use strict";var i=this&&this.__awaiter||function(e,t,n,i){return new(n||(n=Promise))((function(r,o){function a(e){try{l(i.next(e))}catch(e){o(e)}}function s(e){try{l(i.throw(e))}catch(e){o(e)}}function l(e){var t;e.done?r(e.value):(t=e.value,t instanceof n?t:new n((function(e){e(t)}))).then(a,s)}l((i=i.apply(e,t||[])).next())}))},r=this&&this.__generator||function(e,t){var n,i,r,o,a={label:0,sent:function(){if(1&r[0])throw r[1];return r[1]},trys:[],ops:[]};return o={next:s(0),throw:s(1),return:s(2)},"function"==typeof Symbol&&(o[Symbol.iterator]=function(){return this}),o;function s(o){return function(s){return function(o){if(n)throw new TypeError("Generator is already executing.");for(;a;)try{if(n=1,i&&(r=2&o[0]?i.return:o[0]?i.throw||((r=i.return)&&r.call(i),0):i.next)&&!(r=r.call(i,o[1])).done)return r;switch(i=0,r&&(o=[2&o[0],r.value]),o[0]){case 0:case 1:r=o;break;case 4:return a.label++,{value:o[1],done:!1};case 5:a.label++,i=o[1],o=[0];continue;case 7:o=a.ops.pop(),a.trys.pop();continue;default:if(!(r=a.trys,(r=r.length>0&&r[r.length-1])||6!==o[0]&&2!==o[0])){a=0;continue}if(3===o[0]&&(!r||o[1]>r[0]&&o[1]<r[3])){a.label=o[1];break}if(6===o[0]&&a.label<r[1]){a.label=r[1],r=o;break}if(r&&a.label<r[2]){a.label=r[2],a.ops.push(o);break}r[2]&&a.ops.pop(),a.trys.pop();continue}o=t.call(e,a)}catch(e){o=[6,e],i=0}finally{n=r=0}if(5&o[0])throw o[1];return{value:o[0]?o[1]:void 0,done:!0}}([o,s])}}};Object.defineProperty(t,"__esModule",{value:!0});var o=n(3179);t.default=function(e){return i(this,void 0,void 0,(function(){var t,n,i,a,s,l,c,u,h,p,d;return r(this,(function(r){switch(r.label){case 0:if(!e)throw Error("call to fixWebmDuration requires a blob");t=new o.Decoder,n=new o.Reader,i=e.stream(),a=i.getReader(),r.label=1;case 1:return[4,a.read()];case 2:return s=r.sent(),l=s.done,c=s.value,l?(n.stop(),[3,3]):((u=null==(u=t.decode(c))?void 0:u.filter((function(e){return"unknown"!==e.type}))).forEach((function(e){n.read(e)})),c=null,[3,1]);case 3:return h=o.tools.makeMetadataSeekable(n.metadatas,n.duration,n.cues),p=new Blob([h],{type:e.type}),d=e.slice(n.metadataSize),[2,new Blob([p,d],{type:e.type})]}}))}))}},9650:e=>{"use strict";e.exports=function(e,t,n){var i;null!=n||"object"==typeof t&&!Array.isArray(t)||(n=t,t={});i=Object.assign({type:String(e)},t),Array.isArray(n)?i.children=n:null!=n&&(i.value=String(n));return i}},9677:e=>{e.exports=String.fromCharCode},9710:e=>{"use strict";e.exports=JSON.parse('{"nbsp":" ","iexcl":"¡","cent":"¢","pound":"£","curren":"¤","yen":"¥","brvbar":"¦","sect":"§","uml":"¨","copy":"©","ordf":"ª","laquo":"«","not":"¬","shy":"­","reg":"®","macr":"¯","deg":"°","plusmn":"±","sup2":"²","sup3":"³","acute":"´","micro":"µ","para":"¶","middot":"·","cedil":"¸","sup1":"¹","ordm":"º","raquo":"»","frac14":"¼","frac12":"½","frac34":"¾","iquest":"¿","Agrave":"À","Aacute":"Á","Acirc":"Â","Atilde":"Ã","Auml":"Ä","Aring":"Å","AElig":"Æ","Ccedil":"Ç","Egrave":"È","Eacute":"É","Ecirc":"Ê","Euml":"Ë","Igrave":"Ì","Iacute":"Í","Icirc":"Î","Iuml":"Ï","ETH":"Ð","Ntilde":"Ñ","Ograve":"Ò","Oacute":"Ó","Ocirc":"Ô","Otilde":"Õ","Ouml":"Ö","times":"×","Oslash":"Ø","Ugrave":"Ù","Uacute":"Ú","Ucirc":"Û","Uuml":"Ü","Yacute":"Ý","THORN":"Þ","szlig":"ß","agrave":"à","aacute":"á","acirc":"â","atilde":"ã","auml":"ä","aring":"å","aelig":"æ","ccedil":"ç","egrave":"è","eacute":"é","ecirc":"ê","euml":"ë","igrave":"ì","iacute":"í","icirc":"î","iuml":"ï","eth":"ð","ntilde":"ñ","ograve":"ò","oacute":"ó","ocirc":"ô","otilde":"õ","ouml":"ö","divide":"÷","oslash":"ø","ugrave":"ù","uacute":"ú","ucirc":"û","uuml":"ü","yacute":"ý","thorn":"þ","yuml":"ÿ","fnof":"ƒ","Alpha":"Α","Beta":"Β","Gamma":"Γ","Delta":"Δ","Epsilon":"Ε","Zeta":"Ζ","Eta":"Η","Theta":"Θ","Iota":"Ι","Kappa":"Κ","Lambda":"Λ","Mu":"Μ","Nu":"Ν","Xi":"Ξ","Omicron":"Ο","Pi":"Π","Rho":"Ρ","Sigma":"Σ","Tau":"Τ","Upsilon":"Υ","Phi":"Φ","Chi":"Χ","Psi":"Ψ","Omega":"Ω","alpha":"α","beta":"β","gamma":"γ","delta":"δ","epsilon":"ε","zeta":"ζ","eta":"η","theta":"θ","iota":"ι","kappa":"κ","lambda":"λ","mu":"μ","nu":"ν","xi":"ξ","omicron":"ο","pi":"π","rho":"ρ","sigmaf":"ς","sigma":"σ","tau":"τ","upsilon":"υ","phi":"φ","chi":"χ","psi":"ψ","omega":"ω","thetasym":"ϑ","upsih":"ϒ","piv":"ϖ","bull":"•","hellip":"…","prime":"′","Prime":"″","oline":"‾","frasl":"⁄","weierp":"℘","image":"ℑ","real":"ℜ","trade":"™","alefsym":"ℵ","larr":"←","uarr":"↑","rarr":"→","darr":"↓","harr":"↔","crarr":"↵","lArr":"⇐","uArr":"⇑","rArr":"⇒","dArr":"⇓","hArr":"⇔","forall":"∀","part":"∂","exist":"∃","empty":"∅","nabla":"∇","isin":"∈","notin":"∉","ni":"∋","prod":"∏","sum":"∑","minus":"−","lowast":"∗","radic":"√","prop":"∝","infin":"∞","ang":"∠","and":"∧","or":"∨","cap":"∩","cup":"∪","int":"∫","there4":"∴","sim":"∼","cong":"≅","asymp":"≈","ne":"≠","equiv":"≡","le":"≤","ge":"≥","sub":"⊂","sup":"⊃","nsub":"⊄","sube":"⊆","supe":"⊇","oplus":"⊕","otimes":"⊗","perp":"⊥","sdot":"⋅","lceil":"⌈","rceil":"⌉","lfloor":"⌊","rfloor":"⌋","lang":"〈","rang":"〉","loz":"◊","spades":"♠","clubs":"♣","hearts":"♥","diams":"♦","quot":"\\"","amp":"&","lt":"<","gt":">","OElig":"Œ","oelig":"œ","Scaron":"Š","scaron":"š","Yuml":"Ÿ","circ":"ˆ","tilde":"˜","ensp":" ","emsp":" ","thinsp":" ","zwnj":"‌","zwj":"‍","lrm":"‎","rlm":"‏","ndash":"–","mdash":"—","lsquo":"‘","rsquo":"’","sbquo":"‚","ldquo":"“","rdquo":"”","bdquo":"„","dagger":"†","Dagger":"‡","permil":"‰","lsaquo":"‹","rsaquo":"›","euro":"€"}')},9784:e=>{"use strict";var t,n="object"==typeof Reflect?Reflect:null,i=n&&"function"==typeof n.apply?n.apply:function(e,t,n){return Function.prototype.apply.call(e,t,n)};t=n&&"function"==typeof n.ownKeys?n.ownKeys:Object.getOwnPropertySymbols?function(e){return Object.getOwnPropertyNames(e).concat(Object.getOwnPropertySymbols(e))}:function(e){return Object.getOwnPropertyNames(e)};var r=Number.isNaN||function(e){return e!=e};function o(){o.init.call(this)}e.exports=o,e.exports.once=function(e,t){return new Promise((function(n,i){function r(n){e.removeListener(t,o),i(n)}function o(){"function"==typeof e.removeListener&&e.removeListener("error",r),n([].slice.call(arguments))}m(e,t,o,{once:!0}),"error"!==t&&function(e,t,n){"function"==typeof e.on&&m(e,"error",t,n)}(e,r,{once:!0})}))},o.EventEmitter=o,o.prototype._events=void 0,o.prototype._eventsCount=0,o.prototype._maxListeners=void 0;var a=10;function s(e){if("function"!=typeof e)throw new TypeError('The "listener" argument must be of type Function. Received type '+typeof e)}function l(e){return void 0===e._maxListeners?o.defaultMaxListeners:e._maxListeners}function c(e,t,n,i){var r,o,a,c;if(s(n),void 0===(o=e._events)?(o=e._events=Object.create(null),e._eventsCount=0):(void 0!==o.newListener&&(e.emit("newListener",t,n.listener?n.listener:n),o=e._events),a=o[t]),void 0===a)a=o[t]=n,++e._eventsCount;else if("function"==typeof a?a=o[t]=i?[n,a]:[a,n]:i?a.unshift(n):a.push(n),(r=l(e))>0&&a.length>r&&!a.warned){a.warned=!0;var u=new Error("Possible EventEmitter memory leak detected. "+a.length+" "+String(t)+" listeners added. Use emitter.setMaxListeners() to increase limit");u.name="MaxListenersExceededWarning",u.emitter=e,u.type=t,u.count=a.length,c=u,console&&console.warn&&console.warn(c)}return e}function u(){if(!this.fired)return this.target.removeListener(this.type,this.wrapFn),this.fired=!0,0===arguments.length?this.listener.call(this.target):this.listener.apply(this.target,arguments)}function h(e,t,n){var i={fired:!1,wrapFn:void 0,target:e,type:t,listener:n},r=u.bind(i);return r.listener=n,i.wrapFn=r,r}function p(e,t,n){var i=e._events;if(void 0===i)return[];var r=i[t];return void 0===r?[]:"function"==typeof r?n?[r.listener||r]:[r]:n?function(e){for(var t=new Array(e.length),n=0;n<t.length;++n)t[n]=e[n].listener||e[n];return t}(r):f(r,r.length)}function d(e){var t=this._events;if(void 0!==t){var n=t[e];if("function"==typeof n)return 1;if(void 0!==n)return n.length}return 0}function f(e,t){for(var n=new Array(t),i=0;i<t;++i)n[i]=e[i];return n}function m(e,t,n,i){if("function"==typeof e.on)i.once?e.once(t,n):e.on(t,n);else{if("function"!=typeof e.addEventListener)throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type '+typeof e);e.addEventListener(t,(function r(o){i.once&&e.removeEventListener(t,r),n(o)}))}}Object.defineProperty(o,"defaultMaxListeners",{enumerable:!0,get:function(){return a},set:function(e){if("number"!=typeof e||e<0||r(e))throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received '+e+".");a=e}}),o.init=function(){void 0!==this._events&&this._events!==Object.getPrototypeOf(this)._events||(this._events=Object.create(null),this._eventsCount=0),this._maxListeners=this._maxListeners||void 0},o.prototype.setMaxListeners=function(e){if("number"!=typeof e||e<0||r(e))throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received '+e+".");return this._maxListeners=e,this},o.prototype.getMaxListeners=function(){return l(this)},o.prototype.emit=function(e){for(var t=[],n=1;n<arguments.length;n++)t.push(arguments[n]);var r="error"===e,o=this._events;if(void 0!==o)r=r&&void 0===o.error;else if(!r)return!1;if(r){var a;if(t.length>0&&(a=t[0]),a instanceof Error)throw a;var s=new Error("Unhandled error."+(a?" ("+a.message+")":""));throw s.context=a,s}var l=o[e];if(void 0===l)return!1;if("function"==typeof l)i(l,this,t);else{var c=l.length,u=f(l,c);for(n=0;n<c;++n)i(u[n],this,t)}return!0},o.prototype.addListener=function(e,t){return c(this,e,t,!1)},o.prototype.on=o.prototype.addListener,o.prototype.prependListener=function(e,t){return c(this,e,t,!0)},o.prototype.once=function(e,t){return s(t),this.on(e,h(this,e,t)),this},o.prototype.prependOnceListener=function(e,t){return s(t),this.prependListener(e,h(this,e,t)),this},o.prototype.removeListener=function(e,t){var n,i,r,o,a;if(s(t),void 0===(i=this._events))return this;if(void 0===(n=i[e]))return this;if(n===t||n.listener===t)0==--this._eventsCount?this._events=Object.create(null):(delete i[e],i.removeListener&&this.emit("removeListener",e,n.listener||t));else if("function"!=typeof n){for(r=-1,o=n.length-1;o>=0;o--)if(n[o]===t||n[o].listener===t){a=n[o].listener,r=o;break}if(r<0)return this;0===r?n.shift():function(e,t){for(;t+1<e.length;t++)e[t]=e[t+1];e.pop()}(n,r),1===n.length&&(i[e]=n[0]),void 0!==i.removeListener&&this.emit("removeListener",e,a||t)}return this},o.prototype.off=o.prototype.removeListener,o.prototype.removeAllListeners=function(e){var t,n,i;if(void 0===(n=this._events))return this;if(void 0===n.removeListener)return 0===arguments.length?(this._events=Object.create(null),this._eventsCount=0):void 0!==n[e]&&(0==--this._eventsCount?this._events=Object.create(null):delete n[e]),this;if(0===arguments.length){var r,o=Object.keys(n);for(i=0;i<o.length;++i)"removeListener"!==(r=o[i])&&this.removeAllListeners(r);return this.removeAllListeners("removeListener"),this._events=Object.create(null),this._eventsCount=0,this}if("function"==typeof(t=n[e]))this.removeListener(e,t);else if(void 0!==t)for(i=t.length-1;i>=0;i--)this.removeListener(e,t[i]);return this},o.prototype.listeners=function(e){return p(this,e,!0)},o.prototype.rawListeners=function(e){return p(this,e,!1)},o.listenerCount=function(e,t){return"function"==typeof e.listenerCount?e.listenerCount(t):d.call(e,t)},o.prototype.listenerCount=d,o.prototype.eventNames=function(){return this._eventsCount>0?t(this._events):[]}},9795:(e,t,n)=>{"use strict";var i=n(2700);e.exports=function(e,t){var n=t&&t.children,r=n&&n.length,o=-1,a=[];for(;++o<r;)a[o]=i(e,n[o],o,t);return a.join("")}},9804:(e,t,n)=>{"use strict";n.r(t),n.d(t,{SecureStorageNative:()=>r});var i=n(3860);class r extends i.u{constructor(e){super();const t=e;this.setSynchronizeKeychain=t.setSynchronizeKeychain,this.internalGetItem=t.internalGetItem,this.internalSetItem=t.internalSetItem,this.internalRemoveItem=t.internalRemoveItem,this.clearItemsWithPrefix=t.clearItemsWithPrefix,this.getPrefixedKeys=t.getPrefixedKeys}async setSynchronizeKeychain(e){return Promise.resolve()}async internalGetItem(e){return Promise.resolve({data:""})}async internalSetItem(e){return Promise.resolve()}async internalRemoveItem(e){return Promise.resolve({success:!0})}async clear(e){return this.tryOperation((async()=>this.clearItemsWithPrefix({prefix:this.prefix,sync:null!=e?e:this.sync})))}async clearItemsWithPrefix(e){return Promise.resolve()}async getPrefixedKeys(e){return Promise.resolve({keys:[]})}}},9840:(e,t,n)=>{"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.convertEBMLDateToJSDate=t.createFloatBuffer=t.createIntBuffer=t.createUIntBuffer=t.encodeValueToBuffer=t.concat=t.putRefinedMetaData=t.extractElement=t.removeElement=t.makeMetadataSeekable=t.createRIFFChunk=t.VP8BitStreamToRiffWebPBuffer=t.WebPBlockFilter=t.encodeTag=t.readBlock=t.ebmlBlock=t.writeVint=t.readVint=t.Buffer=void 0;var i=n(6661),r=n(4741),o=n(4686),a=n(4635),s=n(927);function l(e,n){var i=new t.Buffer(4);return i.writeUInt32LE(n.byteLength,0),f([new t.Buffer(e.substr(0,4),"ascii"),i,n,new t.Buffer(n.byteLength%2==0?0:1)])}function c(e,t){for(var n=-1,i=0;i<t.length;i++){var r=t[i];if(r.name===e){if("m"!==r.type)return void t.splice(i,1);if(r.isEnd){if(-1==n)throw new Error("Detected ".concat(e," closing element before finding the start"));return void t.splice(n,i-n+1)}n=i}}}function u(e,t){for(var n=[],i=-1,r=0;r<t.length;r++){var o=t[r];if(o.name===e){if("m"!==o.type){n.push(t[r]);break}if(o.isEnd){if(-1==i)throw new Error("Detected ".concat(e," closing element before finding the start"));n=t.slice(i,r+1);break}i=r}}return n}function h(e){var t=new r.default;return e.reduce((function(e,n){return e.concat(t.encode([n]))}),[]).reduce((function(e,t){return e+t.byteLength}),0)}function p(e,n,i){var r=i.duration,o=i.clusterPtrs,a=i.cues,s=e.slice(0);if("number"==typeof r){var l=!1;s.forEach((function(e){"f"===e.type&&"Duration"===e.name&&(l=!0,e.data=g(r,8))})),l||d(s,"Info",[{name:"Duration",type:"f",data:g(r,8)}])}Array.isArray(a)&&d(s,"Cues",function(e,t){var n=[];return e.forEach((function(e){var i=e.CueTrack,r=e.CueClusterPosition,o=e.CueTime;n.push({name:"CuePoint",type:"m",isEnd:!1}),n.push({name:"CueTime",type:"u",data:m(o)}),n.push({name:"CueTrackPositions",type:"m",isEnd:!1}),n.push({name:"CueTrack",type:"u",data:m(i)}),n.push({name:"CueClusterPosition",type:"u",data:m(r+t)}),n.push({name:"CueTrackPositions",type:"m",isEnd:!0}),n.push({name:"CuePoint",type:"m",isEnd:!0})})),n}(a,n));var c=[];return Array.isArray(o)&&(console.warn("append cluster pointers to seekhead is deprecated. please use cues"),c=function(e,n){var i=[];return e.forEach((function(e){i.push({name:"Seek",type:"m",isEnd:!1}),i.push({name:"SeekID",type:"b",data:new t.Buffer([31,67,182,117])}),i.push({name:"SeekPosition",type:"u",data:m(e+n)}),i.push({name:"Seek",type:"m",isEnd:!0})})),i}(o,n)),d(s,"SeekHead",c,!0),s}function d(e,t,n,i){void 0===i&&(i=!1);for(var r=-1,o=0;o<e.length;o++){var a=e[o];if("m"===a.type&&a.name===t&&!1===a.isEnd){r=o;break}}r>=0?Array.prototype.splice.apply(e,[r+1,0].concat(n)):i?[].concat([{name:t,type:"m",isEnd:!1}],n,[{name:t,type:"m",isEnd:!0}]).reverse().forEach((function(t){e.unshift(t)})):(e.push({name:t,type:"m",isEnd:!1}),n.forEach((function(t){e.push(t)})),e.push({name:t,type:"m",isEnd:!0}))}function f(e){return t.Buffer.concat(e)}function m(e){for(var n=1;e>=Math.pow(2,8*n);n++);if(n>=7)return console.warn("7bit or more bigger uint not supported."),new i.Uint64BE(e).toBuffer();var r=new t.Buffer(n);return r.writeUIntBE(e,0,n),r}function v(e){for(var n=1;e>=Math.pow(2,8*n);n++);if(n>=7)return console.warn("7bit or more bigger uint not supported."),new i.Int64BE(e).toBuffer();var r=new t.Buffer(n);return r.writeIntBE(e,0,n),r}function g(e,n){var i;if(void 0===n&&(n=8),8===n)return(i=new t.Buffer(8)).writeDoubleBE(e,0),i;if(4===n)return(i=new t.Buffer(4)).writeFloatBE(e,0),i;throw new Error("float type bits must 4bytes or 8bytes")}t.Buffer=o.Buffer,t.readVint=a.default.readVint,t.writeVint=a.default.writeVint,t.ebmlBlock=s,t.readBlock=function(e){return(0,t.ebmlBlock)(new t.Buffer(e))},t.encodeTag=function(e,n,i){return void 0===i&&(i=!1),f([e,i?new t.Buffer("01ffffffffffffff","hex"):(0,t.writeVint)(n.length),n])},t.WebPBlockFilter=function(e){return e.reduce((function(e,n){return"b"!==n.type||"SimpleBlock"!==n.name?e:(0,t.ebmlBlock)(n.data).frames.some((function(e){return"9d012a"===e.slice(3,6).toString("hex")}))?e.concat(n):e}),[])},t.VP8BitStreamToRiffWebPBuffer=function(e){var n=l("VP8 ",e);return l("RIFF",f([new t.Buffer("WEBP","ascii"),n]))},t.createRIFFChunk=l,t.makeMetadataSeekable=function(e,n,i){var o=u("EBML",e),a=h(o)+12,s=e[e.length-1].dataEnd-a,l=u("Info",e);c("Duration",l),l.splice(1,0,{name:"Duration",type:"f",data:g(n,8)});for(var p=h(l),d=u("Tracks",e),f=h(d),v=47,y=[],b=5+15*i.length,w=[],k=-1,C=function(e){var n=v,r=n+p,o=r+f,l=o+b-s;if((y=[]).push({name:"SeekHead",type:"m",isEnd:!1}),y.push({name:"Seek",type:"m",isEnd:!1}),y.push({name:"SeekID",type:"b",data:new t.Buffer([21,73,169,102])}),y.push({name:"SeekPosition",type:"u",data:m(n)}),y.push({name:"Seek",type:"m",isEnd:!0}),y.push({name:"Seek",type:"m",isEnd:!1}),y.push({name:"SeekID",type:"b",data:new t.Buffer([22,84,174,107])}),y.push({name:"SeekPosition",type:"u",data:m(r)}),y.push({name:"Seek",type:"m",isEnd:!0}),y.push({name:"Seek",type:"m",isEnd:!1}),y.push({name:"SeekID",type:"b",data:new t.Buffer([28,83,187,107])}),y.push({name:"SeekPosition",type:"u",data:m(o)}),y.push({name:"Seek",type:"m",isEnd:!0}),y.push({name:"SeekHead",type:"m",isEnd:!0}),v=h(y),(w=[]).push({name:"Cues",type:"m",isEnd:!1}),i.forEach((function(e){var t=e.CueTrack,n=e.CueClusterPosition,i=e.CueTime;w.push({name:"CuePoint",type:"m",isEnd:!1}),w.push({name:"CueTime",type:"u",data:m(i)}),w.push({name:"CueTrackPositions",type:"m",isEnd:!1}),w.push({name:"CueTrack",type:"u",data:m(t)}),n-=a,n+=l,w.push({name:"CueClusterPosition",type:"u",data:m(n)}),w.push({name:"CueTrackPositions",type:"m",isEnd:!0}),w.push({name:"CuePoint",type:"m",isEnd:!0})})),w.push({name:"Cues",type:"m",isEnd:!0}),b=h(w),k===l)return"break";if(k=l,9===e)throw new Error("Failed to converge to a stable metadata size")},E=0;E<10;E++){if("break"===C(E))break}var M=[].concat.apply([],[o,{name:"Segment",type:"m",isEnd:!1,unknownSize:!0},y,l,d,w]);return(new r.default).encode(M)},t.removeElement=c,t.extractElement=u,t.putRefinedMetaData=function(e,n){Array.isArray(n.cueInfos)&&!Array.isArray(n.cues)&&(console.warn("putRefinedMetaData: info.cueInfos property is deprecated. please use info.cues"),n.cues=n.cueInfos);for(var i=[],o=[],a=0;a<e.length;a++){var s=e[a];if("m"===s.type&&"Segment"===s.name){if(i=e.slice(0,a),o=e.slice(a),s.unknownSize){o.shift();break}throw new Error("this metadata is not streaming webm file")}}if(!(o[o.length-1].dataEnd>0))throw new Error("metadata dataEnd has wrong number");var l,c=o[o.length-1].dataEnd,u=i[i.length-1].dataEnd,h=(new r.default).encode(i).byteLength-u,d=c-o[0].tagStart,f=(o[0].tagStart,o[0].tagStart,new t.Buffer([24,83,128,103])),m=new t.Buffer("01ffffffffffffff","hex"),v=f.byteLength+m.byteLength,g=d;for(l=1;l<20;l++){var y=p(o,h+(u+v+g-c),n),b=(new r.default).encode(y).byteLength;if(b===g)return(new r.default).encode([].concat(i,[{type:"m",name:"Segment",isEnd:!1,unknownSize:!0}],y));g=b}throw new Error("unable to refine metadata, stable size could not be found in "+l+" iterations!")},t.concat=f,t.encodeValueToBuffer=function(e){var n=new t.Buffer(0);if("m"===e.type)return e;switch(e.type){case"u":n=m(e.value);break;case"i":n=v(e.value);break;case"f":n=g(e.value);break;case"s":n=new t.Buffer(e.value,"ascii");break;case"8":n=new t.Buffer(e.value,"utf8");break;case"b":n=e.value;break;case"d":n=new i.Int64BE(e.value.getTime().toString()).toBuffer()}return Object.assign({},e,{data:n})},t.createUIntBuffer=m,t.createIntBuffer=v,t.createFloatBuffer=g,t.convertEBMLDateToJSDate=function(e){return e instanceof Date?e:new Date(new Date("2001-01-01T00:00:00.000Z").getTime()+Number(e)/1e3/1e3)}},9932:(e,t,n)=>{"use strict";var i=n(1632),r=n(6901);e.exports=function(e){return i(e,{escapeOnly:!0,useNamedReferences:!0,format:r})}},9941:(e,t,n)=>{"use strict";e.exports=function(e,t){return e.dangerous?e.augment(t,i("raw",t.value)):null};var i=n(9650)}},t={};function n(i){var r=t[i];if(void 0!==r)return r.exports;var o=t[i]={exports:{}};return e[i].call(o.exports,o,o.exports,n),o.exports}n.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return n.d(t,{a:t}),t},n.d=(e,t)=>{for(var i in t)n.o(t,i)&&!n.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:t[i]})},n.g=function(){if("object"==typeof globalThis)return globalThis;try{return this||new Function("return this")()}catch(e){if("object"==typeof window)return window}}(),n.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),n.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},(()=>{"use strict";/*basalt-own:begin*/var __basaltOwn=(()=>{
+// ---- n-g25-misc.js ----
+// g25 clean-room misc helpers: numbers, lists, dates, colours, binary, geometry, DOM/clipboard glue.
+// Spec: F:\orch\specs\g25.md Part A. No host/env usage; `activeDocument` is a bundle-scope free variable.
+
+function smaller(a, b) { return a < b ? a : b; }
+function larger(a, b) { return a > b ? a : b; }
+
+/** Perceptual slider mapping: slider fraction `x` at position `t`. */
+function sliderCurve(x, t) { return (Math.pow(t, 1 - x) - t) / (1 - t); }
+
+/** Inverse of sliderCurve for the same `t`. */
+function sliderCurveInverse(y, t) {
+  return 1 - Math.log(y * (1 - t) + t) / Math.log(t);
+}
+
+/** n+1 evenly spaced values from 0 to 1 inclusive. */
+function unitSteps(n) {
+  const out = new Array(n + 1);
+  for (let i = 0; i <= n; i++) out[i] = i / n;
+  return out;
+}
+
+/** `length` lowercase hex chars from Math.random (not crypto-random). */
+function randomHex(length) {
+  let s = "";
+  for (let i = 0; i < length; i++) s += Math.floor(Math.random() * 16).toString(16);
+  return s;
+}
+
+function asArray(v) { return Array.isArray(v) ? v : [v]; }
+
+/** Deduped array, first occurrence wins (=== equality). */
+function distinct(list) {
+  const out = [];
+  for (const v of list) if (!out.includes(v)) out.push(v);
+  return out;
+}
+
+/** In-place move of the element at `from` to index `to`; returns the list. */
+function moveItem(list, from, to) {
+  list.splice(to, 0, list.splice(from, 1)[0]);
+  return list;
+}
+
+/** Removes and returns the first element matching `test`, or null. */
+function takeFirst(list, test) {
+  for (let i = 0; i < list.length; i++) {
+    if (test(list[i])) return list.splice(i, 1)[0];
+  }
+  return null;
+}
+
+/**
+ * Three-way binary search: probe returns 0 on match, negative to search the left
+ * half, positive for the right half. Returns the item or null.
+ */
+function binaryFind(list, probe) {
+  let lo = 0, hi = list.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const r = probe(list[mid]);
+    if (r === 0) return list[mid];
+    if (r < 0) hi = mid - 1; else lo = mid + 1;
+  }
+  return null;
+}
+
+/** Every element is a string; `lenient` ignores null/undefined entries. */
+function isStringArray(v, lenient = false) {
+  if (!Array.isArray(v)) return false;
+  for (const x of v) {
+    if (lenient && (x === null || x === undefined)) continue;
+    if (typeof x !== "string") return false;
+  }
+  return true;
+}
+
+/** Concat that avoids copying when either side is empty. */
+function joinLists(a, b) {
+  if (!a || a.length === 0) return b || [];
+  if (!b || b.length === 0) return a;
+  return a.concat(b);
+}
+
+/**
+ * Sliding undo window: entries history[from..at-1] plus `entry`. Once the
+ * history grows past `keep + 20` entries the oldest are dropped.
+ */
+function pushHistory(history, at, keep, entry) {
+  const from = at + 1 > keep + 20 ? at - keep - 1 : 0;
+  return history.slice(from, at).concat(entry);
+}
+
+function sameItems(a, b) {
+  if (a == b) return true;
+  if (!a || !b || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+
+function sameItemsBy(a, b, eq) {
+  if (a == b) return true;
+  if (!a || !b || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (!eq(a[i], b[i])) return false;
+  return true;
+}
+
+/** In-place sort by index in `order`; unknown ids sort last (stable). */
+function sortByOrder(items, order) {
+  const rank = new Map();
+  for (let i = 0; i < order.length; i++) if (!rank.has(order[i])) rank.set(order[i], i);
+  const r = (item) => {
+    const v = rank.get(item.id);
+    return v === undefined ? Infinity : v;
+  };
+  items.sort((a, b) => {
+    const ra = r(a), rb = r(b);
+    return ra === rb ? 0 : ra < rb ? -1 : 1;
+  });
+  return items;
+}
+
+/** Suggestion penalty: 0 without matches, else -(count + firstScore/10). */
+function matchPenalty(matches) {
+  if (!matches) return 0;
+  return -(matches.length + matches[0][0] / 10);
+}
+
+function twoDigits(n) { return n < 10 ? "0" + n : String(n); }
+
+function ng25Pad2(n) { return n < 10 ? "0" + n : String(n); }
+
+/** "YYYY-MM-DD" in local time; year padded to 4 digits. */
+function localDate(d) {
+  return String(d.getFullYear()).padStart(4, "0") + "-" + ng25Pad2(d.getMonth() + 1) + "-" + ng25Pad2(d.getDate());
+}
+
+/** "HH:MM:SS" in local time. */
+function localTime(d) {
+  return ng25Pad2(d.getHours()) + ":" + ng25Pad2(d.getMinutes()) + ":" + ng25Pad2(d.getSeconds());
+}
+
+function hexByte(n) { return n.toString(16).padStart(2, "0"); }
+
+function ng25Channel(v) { return Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0"); }
+
+function rgbToHex({ r, g, b }) { return "#" + ng25Channel(r) + ng25Channel(g) + ng25Channel(b); }
+function rgbToInt({ r, g, b }) { return (r << 16) | (g << 8) | b; }
+
+/** Perceived brightness (Rec. 601 luma) at or above 150. */
+function isLightColor({ r, g, b }) { return (299 * r + 587 * g + 114 * b) / 1000 >= 150; }
+
+/** h 0-360, s/l 0-100 -> {r,g,b} 0-255 rounded. */
+function hslToRgb({ h, s, l }) {
+  h = ((h % 360) + 360) % 360 / 360;
+  s = Math.max(0, Math.min(100, s)) / 100;
+  l = Math.max(0, Math.min(100, l)) / 100;
+  if (s === 0) {
+    const v = Math.round(l * 255);
+    return { r: v, g: v, b: v };
+  }
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const hue = (t) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  return { r: Math.round(hue(h + 1 / 3) * 255), g: Math.round(hue(h) * 255), b: Math.round(hue(h - 1 / 3) * 255) };
+}
+
+/** 0-255 rgb -> {h,s,l} integer degrees/percents. */
+function rgbToHsl({ r, g, b }) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return { h: 0, s: 0, l: Math.round(l * 100) };
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h;
+  if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  return { h: Math.round(h * 60), s: Math.round(s * 100), l: Math.round(l * 100) };
+}
+
+const ng25Hex6 = /^#?([0-9a-fA-F]{6})$/;
+
+/** "#aabbcc" or "aabbcc" -> {r,g,b}; anything else -> null. */
+function parseHexColor(text) {
+  const m = ng25Hex6.exec(String(text));
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+const ng25RgbTriple = /^\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*$/;
+
+/** "r, g, b" -> "#rrggbb"; non-matching input returned unchanged. */
+function rgbTripleToHex(text) {
+  const m = ng25RgbTriple.exec(String(text));
+  if (!m) return text;
+  return "#" + [+m[1], +m[2], +m[3]].map((v) => (v & 255).toString(16).padStart(2, "0")).join("");
+}
+
+/** Hex string -> ArrayBuffer; odd tail and non-hex chars degrade to 0 bytes. */
+function hexToBuffer(hex) {
+  const s = String(hex);
+  const out = new Uint8Array(Math.ceil(s.length / 2));
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(s.substr(i * 2, 2), 16);
+  return out.buffer;
+}
+
+/** ArrayBuffer -> lowercase hex. */
+function bufferToHex(buf) {
+  const u = new Uint8Array(buf);
+  let s = "";
+  for (let i = 0; i < u.length; i++) s += u[i].toString(16).padStart(2, "0");
+  return s;
+}
+
+function stringFromCodes(codes) { return String.fromCharCode.apply(null, codes); }
+
+function readInt32BE(bytes, at) {
+  return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getInt32(at, false);
+}
+
+function readInt32LE(bytes, at) {
+  return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getInt32(at, true);
+}
+
+/** Exact copy of the bytes a typed array view covers. */
+function ownBuffer(view) {
+  return view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength);
+}
+
+/** Fill with 0 and return the array. */
+function zeroFill(list) { list.fill(0); return list; }
+
+/** dst[i] ^= src[i] in place. */
+function xorInto(dst, src) {
+  for (let i = 0; i < dst.length; i++) dst[i] ^= src[i];
+  return dst;
+}
+
+/** Clear bit 7 of the bytes at length-8 and length-4 (SIV tag positions). */
+function clearTopBits(bytes) {
+  bytes[bytes.length - 8] &= 0x7f;
+  bytes[bytes.length - 4] &= 0x7f;
+  return bytes;
+}
+
+/** fs.Stats-like -> {ctime,mtime,size} with rounded times. */
+function statFromNode(st) {
+  return { ctime: Math.round(st.birthtimeMs), mtime: Math.round(st.mtimeMs), size: st.size };
+}
+
+/** Capacitor stat -> {ctime,mtime,size} with rounded times. */
+function statFromCapacitor(st) {
+  return { ctime: Math.round(st.ctime), mtime: Math.round(st.mtime), size: st.size };
+}
+
+// ---------------------------------------------------------------- geometry
+
+function point(x, y) { return { x, y }; }
+function rect(x, y, width, height) { return { x, y, width, height }; }
+
+function distance(a, b) {
+  const dx = a.x - b.x, dy = a.y - b.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function rectAt(origin, size) {
+  return { x: origin.x, y: origin.y, width: size.width, height: size.height };
+}
+
+function pointOfEvent(e) { return { x: e.clientX, y: e.clientY }; }
+
+function box(minX, minY, maxX, maxY) { return { minX, minY, maxX, maxY }; }
+
+function boxOfPoints(a, b) {
+  return { minX: Math.min(a.x, b.x), minY: Math.min(a.y, b.y), maxX: Math.max(a.x, b.x), maxY: Math.max(a.y, b.y) };
+}
+
+function boxOfRect(r) {
+  return { minX: r.x, minY: r.y, maxX: r.x + r.width, maxY: r.y + r.height };
+}
+
+function rectOfBox(b) {
+  return { x: b.minX, y: b.minY, width: b.maxX - b.minX, height: b.maxY - b.minY };
+}
+
+function boxContains(a, b) {
+  return a.minX <= b.minX && a.minY <= b.minY && a.maxX >= b.maxX && a.maxY >= b.maxY;
+}
+
+function boxCenter(b) {
+  return { x: (b.minX + b.maxX) / 2, y: (b.minY + b.maxY) / 2 };
+}
+
+/** Point offset so `size` is centered on `p`. */
+function centeredOrigin(p, size) {
+  return { x: p.x - size.width / 2, y: p.y - size.height / 2 };
+}
+
+function boxX(p) { return p.x; }
+function boxY(p) { return p.y; }
+
+/** Smallest box containing all; empty input -> inverted infinite box. */
+function boxUnion(boxes) {
+  if (!boxes || boxes.length === 0) return { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const b of boxes) {
+    if (b.minX < minX) minX = b.minX;
+    if (b.minY < minY) minY = b.minY;
+    if (b.maxX > maxX) maxX = b.maxX;
+    if (b.maxY > maxY) maxY = b.maxY;
+  }
+  return { minX, minY, maxX, maxY };
+}
+
+function boxGrow(b, by) {
+  return { minX: b.minX - by, minY: b.minY - by, maxX: b.maxX + by, maxY: b.maxY + by };
+}
+
+/** 4 corners then centre: (minX,minY),(minX,maxY),(maxX,minY),(maxX,maxY),centre. */
+function boxPoints(b) {
+  return [
+    { x: b.minX, y: b.minY },
+    { x: b.minX, y: b.maxY },
+    { x: b.maxX, y: b.minY },
+    { x: b.maxX, y: b.maxY },
+    boxCenter(b),
+  ];
+}
+
+const ng25Sides = {
+  top: { axis: "y", sign: -1 },
+  right: { axis: "x", sign: 1 },
+  bottom: { axis: "y", sign: 1 },
+  left: { axis: "x", sign: -1 },
+};
+
+/** Midpoint of a "top"|"right"|"bottom"|"left" side; undefined otherwise. */
+function sideMidpoint(b, side) {
+  const s = ng25Sides[side];
+  if (!s) return undefined;
+  if (side === "top") return { x: (b.minX + b.maxX) / 2, y: b.minY };
+  if (side === "bottom") return { x: (b.minX + b.maxX) / 2, y: b.maxY };
+  if (side === "left") return { x: b.minX, y: (b.minY + b.maxY) / 2 };
+  return { x: b.maxX, y: (b.minY + b.maxY) / 2 };
+}
+
+/** `p` moved `by` px out of a side; undefined for unknown side names. */
+function pushOut(side, p, by) {
+  const s = ng25Sides[side];
+  if (!s) return undefined;
+  const out = { x: p.x, y: p.y };
+  out[s.axis] += s.sign * by;
+  return out;
+}
+
+/** Distinct corner/center points of many boxes, sorted x-then-y. */
+function sortedBoxPoints(boxes) {
+  const seen = new Set();
+  const pts = [];
+  for (const b of boxes) {
+    for (const p of boxPoints(b)) {
+      const k = p.x + "," + p.y;
+      if (!seen.has(k)) { seen.add(k); pts.push(p); }
+    }
+  }
+  pts.sort((a, b) => (a.x - b.x) || (a.y - b.y));
+  return pts;
+}
+
+/** Cubic bezier edge between two points leaving/entering through box sides. */
+function bezierEdge(from, fromSide, to, toSide) {
+  const d = distance(from, to);
+  const reach = Math.min(150, Math.max(70, d / 2));
+  const cp1 = pushOut(fromSide, from, reach);
+  const cp2 = pushOut(toSide, to, reach);
+  const path = `M${from.x},${from.y} C${cp1.x},${cp1.y} ${cp2.x},${cp2.y} ${to.x},${to.y}`;
+  return { from, to, cp1, cp2, path };
+}
+
+/** In-place sort by numeric key ascending. */
+function sortByKey(list, key) {
+  list.sort((a, b) => key(a) - key(b));
+  return list;
+}
+
+/** In-place sort by match.score descending. */
+function sortHitsByScore(hits) {
+  hits.sort((a, b) => b.match.score - a.match.score);
+  return hits;
+}
+
+/** Add `by` to every [from,to] pair in place. */
+function shiftRanges(ranges, by) {
+  for (const r of ranges) { r[0] += by; r[1] += by; }
+  return ranges;
+}
+
+/** True when `value` parses as an absolute URL. */
+function isUrl(value) {
+  if (!value) return false;
+  try { new URL(value); return true; } catch { return false; }
+}
+
+/**
+ * Clipboard copy: the async clipboard API when available, else a hidden
+ * textarea + execCommand("copy"). Failures are silent.
+ */
+function copyText(text) {
+  try {
+    if (typeof navigator !== "undefined" && navigator.clipboard && navigator.permissions) {
+      navigator.clipboard.writeText(text);
+      return;
+    }
+    const doc = typeof activeDocument !== "undefined" && activeDocument ? activeDocument : document;
+    const ta = doc.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    doc.body.appendChild(ta);
+    ta.select();
+    doc.execCommand("copy");
+    ta.remove();
+  } catch { /* silent */ }
+}
+
+/** Run `callback` now when `el` is shown, else on its next insertion. */
+function focusWhenShown(el, callback) {
+  if (el.isShown && el.isShown()) callback();
+  else el.onNodeInserted(callback, true);
+}
+
+/** Shared locale-aware string collator. */
+const stringCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
+
 // ---- path.js ----
 // Compatibility shim: the path helpers now live in n-g28-path.js (clean-room).
 // This file only re-exports them so existing `from "./path.js"` imports and the
@@ -52,390 +496,6 @@ const uniqueName = ng39UniqueName;
 const plainHeading = ng39PlainHeading;
 const linkSafeHeading = ng39LinkSafeHeading;
 const describeCliOptions = ng39DescribeCliOptions;
-
-// ---- misc.js ----
-// Small numeric, array, date, colour, binary and geometry helpers.
-
-// ---------- numbers ----------
-
-/** Smaller of two (the second one when they compare equal or are unordered). */
-function smaller(a, b) { return a < b ? a : b; }
-/** Larger of two (the second one when they compare equal or are unordered). */
-function larger(a, b) { return a > b ? a : b; }
-
-/** Perceptual-slider mapping: (t^(1-x) - t) / (1 - t). */
-function sliderCurve(x, t) { return (Math.pow(t, 1 - x) - t) / (1 - t); }
-/** Inverse of sliderCurve. */
-function sliderCurveInverse(x, t) { return 1 - Math.log(x * (1 - t) + t) / Math.log(t); }
-
-/** [0, 1/n, 2/n, ... 1]. */
-function unitSteps(n) {
-  const out = [];
-  for (let i = 0; i <= n; i++) out.push(i / n);
-  return out;
-}
-
-/** Random lowercase hex string of the given length. */
-function randomHex(length) {
-  let out = "";
-  for (let i = 0; i < length; i++) out += ((16 * Math.random()) | 0).toString(16);
-  return out;
-}
-
-// ---------- arrays ----------
-
-/** Array.isArray(v) ? v : [v]. */
-function asArray(v) { return Array.isArray(v) ? v : [v]; }
-
-/** Distinct values, first occurrence wins. */
-function distinct(list) { return Array.from(new Set(list)); }
-
-/** Moves list[from] to index `to` in place and returns the list. */
-function moveItem(list, from, to) {
-  const item = list[from];
-  list.splice(from, 1);
-  list.splice(to, 0, item);
-  return list;
-}
-
-/** Removes and returns the first item matching the predicate, null when none. */
-function takeFirst(list, test) {
-  const at = list.findIndex((x) => test(x));
-  return at < 0 ? null : list.splice(at, 1)[0];
-}
-
-/** Binary search with a three-way probe (0 found, <0 look left, >0 look right); the item or null. */
-function binaryFind(list, probe) {
-  let lo = 0;
-  let hi = list.length - 1;
-  while (lo <= hi) {
-    const mid = Math.floor((lo + hi) / 2);
-    const item = list[mid];
-    const way = probe(item);
-    if (way === 0) return item;
-    if (way < 0) hi = mid - 1; else lo = mid + 1;
-  }
-  return null;
-}
-
-/** True when the value is an array of strings (null/undefined entries ignored when `lenient`). */
-function isStringArray(value, lenient = false) {
-  if (!Array.isArray(value)) return false;
-  const items = lenient ? value.filter((v) => v != null) : value;
-  return items.every((v) => typeof v === "string");
-}
-
-/** Concatenation that avoids copying when one side is empty. */
-function joinLists(a, b) {
-  if (!a.length) return b;
-  return b.length ? a.concat(b) : a;
-}
-
-/** Window of an undo history: the last `keep` entries before index `at`, plus `entry`. */
-function pushHistory(history, at, keep, entry) {
-  const from = at + 1 > keep + 20 ? at - keep - 1 : 0;
-  const out = history.slice(from, at);
-  out.push(entry);
-  return out;
-}
-
-/** Shallow list equality using ===. */
-function sameItems(a, b) {
-  return a == b || (a.length == b.length && a.every((x, i) => x === b[i]));
-}
-
-/** List equality with a custom comparer. */
-function sameItemsBy(a, b, eq) {
-  if (a.length != b.length) return false;
-  for (let i = 0; i < a.length; i++) if (!eq(a[i], b[i])) return false;
-  return true;
-}
-
-/** Sorts items by their index in `order` (unknown ids go last). */
-function sortByOrder(items, order) {
-  const rank = new Map(order.map((id, i) => [id, i]));
-  return items.sort((a, b) => (rank.get(a.id) ?? Infinity) - (rank.get(b.id) ?? Infinity));
-}
-
-/** Penalty for a match list used when ordering suggestions. */
-function matchPenalty(matches) {
-  return matches ? -(matches.length + (matches.length > 0 ? matches[0][0] / 10 : 0)) : 0;
-}
-
-// ---------- dates ----------
-
-/** Two digits, zero padded. */
-function twoDigits(n) { return String(n).padStart(2, "0"); }
-const two = twoDigits;
-
-/** "2024-03-07" in local time. */
-function localDate(d) {
-  return `${String(d.getFullYear()).padStart(4, "0")}-${two(d.getMonth() + 1)}-${two(d.getDate())}`;
-}
-
-/** "09:05:03" in local time. */
-function localTime(d) {
-  return `${two(d.getHours())}:${two(d.getMinutes())}:${two(d.getSeconds())}`;
-}
-
-// ---------- colour ----------
-
-/** Hex byte "0a". */
-function hexByte(n) {
-  const h = n.toString(16);
-  return h.length === 1 ? "0" + h : h;
-}
-
-/** {r,g,b} -> "#rrggbb". */
-function rgbToHex({ r, g, b }) { return "#" + hexByte(r) + hexByte(g) + hexByte(b); }
-
-/** {r,g,b} -> 0xrrggbb. */
-function rgbToInt({ r, g, b }) { return (r << 16) | (g << 8) | b; }
-
-/** True for colours that need dark text on top. */
-function isLightColor({ r, g, b }) { return (299 * r + 587 * g + 114 * b) / 1000 >= 150; }
-
-function hueToChannel(p, q, t) {
-  if (t < 0) t += 1;
-  if (t > 1) t -= 1;
-  if (t < 1 / 6) return p + 6 * (q - p) * t;
-  if (t < 0.5) return q;
-  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-  return p;
-}
-
-/** {h: 0-360, s: 0-100, l: 0-100} -> {r,g,b} (0-255). */
-function hslToRgb({ h, s, l }) {
-  h /= 360; s /= 100; l /= 100;
-  let r, g, b;
-  if (s == 0) {
-    r = g = b = l;
-  } else {
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hueToChannel(p, q, h + 1 / 3);
-    g = hueToChannel(p, q, h);
-    b = hueToChannel(p, q, h - 1 / 3);
-  }
-  return { r: Math.round(255 * r), g: Math.round(255 * g), b: Math.round(255 * b) };
-}
-
-/** {r,g,b} (0-255) -> {h,s,l} with integer degrees / percents. */
-function rgbToHsl({ r, g, b }) {
-  r /= 255; g /= 255; b /= 255;
-  const hi = Math.max(r, g, b);
-  const lo = Math.min(r, g, b);
-  const l = (hi + lo) / 2;
-  let h, s;
-  if (hi == lo) {
-    h = s = 0;
-  } else {
-    const d = hi - lo;
-    s = l > 0.5 ? d / (2 - hi - lo) : d / (hi + lo);
-    switch (hi) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-    h /= 6;
-  }
-  return { h: Math.round(360 * h), s: Math.round(100 * s), l: Math.round(100 * l) };
-}
-
-const HEX_COLOR = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i;
-const RGB_TRIPLE = /^\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*$/i;
-
-/** "#aabbcc" / "aabbcc" -> {r,g,b}, null if not a hex colour. */
-function parseHexColor(text) {
-  const m = HEX_COLOR.exec(text);
-  return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : null;
-}
-
-/** "12, 34, 56" -> "#0c2238"; anything else is returned unchanged. */
-function rgbTripleToHex(text) {
-  const m = text.match(RGB_TRIPLE);
-  return m ? rgbToHex({ r: parseInt(m[1]), g: parseInt(m[2]), b: parseInt(m[3]) }) : text;
-}
-
-// ---------- binary ----------
-
-/** "00ff10" -> ArrayBuffer. */
-function hexToBuffer(hex) {
-  const n = hex.length / 2;
-  const buf = new ArrayBuffer(n);
-  const view = new Uint8Array(buf);
-  for (let i = 0; i < n; i++) view[i] = parseInt(hex.substr(2 * i, 2), 16);
-  return buf;
-}
-
-/** ArrayBuffer -> "00ff10". */
-function bufferToHex(buf) {
-  const bytes = new Uint8Array(buf);
-  let out = "";
-  for (let i = 0; i < bytes.length; i++) out += (bytes[i] >>> 4).toString(16) + (bytes[i] & 15).toString(16);
-  return out;
-}
-
-/** String made of the given char codes. */
-function stringFromCodes(codes) { return String.fromCharCode.apply(String, Array.from(codes)); }
-
-/** Big-endian signed 32-bit read. */
-function readInt32BE(bytes, at) { return (bytes[at] << 24) | (bytes[at + 1] << 16) | (bytes[at + 2] << 8) | bytes[at + 3]; }
-/** Little-endian signed 32-bit read. */
-function readInt32LE(bytes, at) { return bytes[at] | (bytes[at + 1] << 8) | (bytes[at + 2] << 16) | (bytes[at + 3] << 24); }
-
-/** Copy of exactly the bytes a typed array views. */
-function ownBuffer(view) { return view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength); }
-
-/** Fills with zero, returns the array. */
-function zeroFill(list) {
-  for (let i = 0; i < list.length; i++) list[i] = 0;
-  return list;
-}
-
-/** dst[i] ^= src[i]. */
-function xorInto(dst, src) { for (let i = 0; i < src.length; i++) dst[i] ^= src[i]; }
-
-/** Clears the top bit of two bytes (ed25519-style clamp helper). */
-function clearTopBits(bytes) {
-  bytes[bytes.length - 8] &= 127;
-  bytes[bytes.length - 4] &= 127;
-}
-
-/** fs.Stats -> {ctime, mtime, size} (birth time in ms). */
-function statFromNode(st) { return { ctime: Math.round(st.birthtimeMs), mtime: Math.round(st.mtimeMs), size: st.size }; }
-/** Capacitor-style stat -> {ctime, mtime, size}. */
-function statFromCapacitor(st) { return { ctime: Math.round(st.ctime), mtime: Math.round(st.mtime), size: st.size }; }
-
-// ---------- geometry ----------
-
-const point = (x, y) => ({ x, y });
-const rect = (x, y, width, height) => ({ x, y, width, height });
-const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-const rectAt = (origin, size) => rect(origin.x, origin.y, size.width, size.height);
-const pointOfEvent = (e) => point(e.clientX, e.clientY);
-const box = (minX, minY, maxX, maxY) => ({ minX, minY, maxX, maxY });
-const boxOfPoints = (a, b) => box(Math.min(a.x, b.x), Math.min(a.y, b.y), Math.max(a.x, b.x), Math.max(a.y, b.y));
-const boxOfRect = (r) => box(r.x, r.y, r.x + r.width, r.y + r.height);
-const rectOfBox = (b) => rect(b.minX, b.minY, b.maxX - b.minX, b.maxY - b.minY);
-const boxContains = (a, b) => a.minX <= b.minX && a.minY <= b.minY && a.maxX >= b.maxX && a.maxY >= b.maxY;
-const boxCenter = (b) => point((b.minX + b.maxX) / 2, (b.minY + b.maxY) / 2);
-const centeredOrigin = (p, size) => point(p.x - size.width / 2, p.y - size.height / 2);
-const boxX = (p) => p.x;
-const boxY = (p) => p.y;
-
-/** Smallest box around many boxes (an inverted infinite box for none). */
-function boxUnion(boxes) {
-  const out = box(Infinity, Infinity, -Infinity, -Infinity);
-  for (const b of boxes) {
-    out.minX = Math.min(out.minX, b.minX);
-    out.minY = Math.min(out.minY, b.minY);
-    out.maxX = Math.max(out.maxX, b.maxX);
-    out.maxY = Math.max(out.maxY, b.maxY);
-  }
-  return out;
-}
-
-/** The box grown by `by` on every side. */
-function boxGrow(b, by) { return box(b.minX - by, b.minY - by, b.maxX + by, b.maxY + by); }
-
-/** Four corners plus centre of a box. */
-function boxPoints(b) {
-  const { minX, minY, maxX, maxY } = b;
-  return [point(minX, minY), point(minX, maxY), point(maxX, minY), point(maxX, maxY), point((minX + maxX) / 2, (minY + maxY) / 2)];
-}
-
-/** Midpoint of one side ("top" | "right" | "bottom" | "left") of a box; undefined for other names. */
-function sideMidpoint(b, side) {
-  switch (side) {
-    case "top": return point((b.minX + b.maxX) / 2, b.minY);
-    case "right": return point(b.maxX, (b.minY + b.maxY) / 2);
-    case "bottom": return point((b.minX + b.maxX) / 2, b.maxY);
-    case "left": return point(b.minX, (b.minY + b.maxY) / 2);
-  }
-}
-
-/** `p` moved `by` pixels out of a side. */
-function pushOut(side, p, by) {
-  switch (side) {
-    case "left": return { x: p.x - by, y: p.y };
-    case "right": return { x: p.x + by, y: p.y };
-    case "top": return { x: p.x, y: p.y - by };
-    case "bottom": return { x: p.x, y: p.y + by };
-  }
-}
-
-/** Distinct, sorted (x then y) corner/centre points of many boxes. */
-function sortedBoxPoints(boxes) {
-  const all = [].concat(...boxes.map(boxPoints));
-  all.sort((a, b) => (a.x !== b.x ? a.x - b.x : a.y - b.y));
-  const out = [];
-  let prev = null;
-  for (const p of all) {
-    if (prev && prev.x === p.x && prev.y === p.y) continue;
-    prev = p;
-    out.push(p);
-  }
-  return out;
-}
-
-/** Bezier edge between two anchor points leaving through the given sides. */
-function bezierEdge(from, fromSide, to, toSide) {
-  const dist = distance(from, to);
-  const reach = Math.min(Math.max(dist / 2, 70), 150);
-  const c1 = pushOut(fromSide, from, reach);
-  const c2 = pushOut(toSide, to, reach);
-  return { from, to, cp1: c1, cp2: c2, path: `M${from.x},${from.y} C${c1.x},${c1.y} ${c2.x},${c2.y} ${to.x},${to.y}` };
-}
-
-/** Sorts an array in place by a numeric key. */
-function sortByKey(list, key) { list.sort((a, b) => key(a) - key(b)); }
-
-/** Sorts search hits by descending score. */
-function sortHitsByScore(hits) { hits.sort((a, b) => b.match.score - a.match.score); }
-
-/** Adds an offset to every [from, to] pair, in place. */
-function shiftRanges(ranges, by) {
-  if (ranges) for (const r of ranges) { r[0] += by; r[1] += by; }
-}
-
-// ---------- clipboard / urls ----------
-
-/** True when `value` parses as an absolute URL. */
-function isUrl(value) {
-  if (!value) return false;
-  try { new URL(value); } catch (e) { return false; }
-  return true;
-}
-
-/** Copies `text` to the clipboard (execCommand fallback where the async API is missing). */
-function copyText(text) {
-  if (navigator.clipboard && navigator.permissions) {
-    navigator.clipboard.writeText(text);
-  } else {
-    const area = activeDocument.createElement("textarea");
-    area.value = text;
-    area.style.top = "0";
-    area.style.left = "0";
-    area.style.position = "fixed";
-    activeDocument.body.appendChild(area);
-    try {
-      area.focus({ preventScroll: true });
-      area.select();
-      activeDocument.execCommand("copy");
-    } catch (e) {}
-    activeDocument.body.removeChild(area);
-  }
-}
-
-/** Runs `callback` now when `el` is already laid out, otherwise once it is inserted (and shown). */
-function focusWhenShown(el, callback) {
-  if (el.isShown()) callback();
-  else el.onNodeInserted(callback, true);
-}
-
-/** Locale-aware "sort" comparator used for user-visible name lists. */
-const stringCollator = new Intl.Collator(undefined, { usage: "sort", sensitivity: "base", numeric: true });
 
 // ---- frontmatter.js ----
 // g27: implementation lives in n-g27-frontmatter.js; shim for existing importers.
@@ -73396,6 +73456,3588 @@ function s04CssManager(host) {
 const ng24CommunityThemesUrl = s04CommunityThemesUrl;
 const ng24CommunityThemesEmpty = s04CommunityThemesEmpty;
 
+// ---- n-g25-adapter.js ----
+// g25 clean-room s04-mobile-adapter: CapacitorAdapter — mobile (Capacitor) DataAdapter
+// over the filesystem plugin bridge. Spec: F:\orch\specs\g25.md Part K.
+// files = vault-relative path -> {type:"file"|"folder", realpath, ctime?, mtime?, size?};
+// mutations serialised through a promise queue; watch events reconcile create/modify/delete.
+
+const NG25AD_TRASH_RETRY = 100;
+
+function s04CapacitorAdapter(host) {
+  void host;
+
+  class CapacitorAdapter {
+    constructor(basePath, fs) {
+      this.fs = fs;
+      this.basePath = basePath;
+      this.files = {};
+      this.promise = null;
+      this.handler = null;
+      this.insensitive = false;
+      this._dmHandler = null;
+    }
+
+    testInsensitive() {}
+
+    // Serial promise chain; a failing op must not break the chain.
+    queue(fn) {
+      const run = () => Promise.resolve().then(fn);
+      const p = (this.promise || Promise.resolve()).then(run, run);
+      this.promise = p.then(() => {}, () => {});
+      return p;
+    }
+
+    trigger(event, path, oldPath, stat) {
+      if (this.handler) this.handler(event, path, oldPath, stat);
+    }
+
+    // ---- path mapping ----
+
+    getName() { return lastSegment(this.basePath); }
+
+    // Deepest registered ancestor's realpath + the remaining suffix.
+    getRealPath(path) {
+      let p = collapseSlashes(path);
+      if (p === "/") return "/";
+      p = p.replace(/^\/+/, "");
+      if (!p) return "/";
+      const parts = p.split("/");
+      for (let i = parts.length; i >= 0; i--) {
+        const cand = i === 0 ? "/" : parts.slice(0, i).join("/");
+        const e = this.files[cand];
+        if (e) {
+          const base = e.realpath === "/" ? "" : String(e.realpath).replace(/^\/+|\/+$/g, "");
+          const tail = parts.slice(i).join("/");
+          return [base, tail].filter((s) => s).join("/") || "/";
+        }
+      }
+      return p;
+    }
+
+    getFullRealPath(p) { return (this.basePath + "/" + p).replace(/\/{2,}/g, "/"); }
+    getFullPath(path) { return this.getFullRealPath(this.getRealPath(path)); }
+
+    // ---- listing / watch ----
+
+    watchAndList() {
+      return this.queue(() => this._watchAndList());
+    }
+
+    async _watchAndList() {
+      this.files = { "/": { type: "folder", realpath: "/" } };
+      try {
+        const res = await this.fs.watchAndStatAll(this.basePath);
+        const children = res && res.children ? res.children : [];
+        for (const child of children) await this.quickList(child);
+      } catch (e) {
+        console.error("Failed to run quick list");
+        try { await this.fs.watch(this.basePath); } catch (e2) {}
+        await this._listRecursive("");
+      }
+    }
+
+    // Register one entry reported by watchAndStatAll / readdir.
+    async quickList(child) {
+      const name = child && child.name;
+      if (!name) return;
+      const norm = normalizePath(name);
+      if (norm === "/" || !norm) return;
+      this.trigger("raw", norm);
+      if (isHiddenPath(norm)) {
+        if (this.files[norm]) await this.reconcileDeletion(this.getRealPath(norm), norm, true);
+        return;
+      }
+      const type = child.type === "directory" || child.type === "folder" ? "folder" : "file";
+      if (type === "file") {
+        if (this.files[norm]) { await this.reconcileFileChanged(this.getRealPath(norm), norm); return; }
+        await this.reconcileFileCreation(this.getRealPath(norm), norm, child);
+        return;
+      }
+      await this.reconcileFolderCreation(this.getRealPath(norm), norm, null, false);
+    }
+
+    listRecursive(path) {
+      return this.queue(() => this._listRecursive(path));
+    }
+
+    async _listRecursive(path) {
+      const norm = normalizePath(path || "");
+      const full = norm === "/" || norm === "" ? this.basePath : this.getFullPath(norm);
+      let entries;
+      try { entries = await this.fs.readdir(full); } catch (e) { return; }
+      for (const child of entries || []) {
+        const name = child && child.name;
+        if (!name) continue;
+        const childPath = norm === "/" || norm === "" ? normalizePath(name) : normalizePath(norm + "/" + name);
+        if (isHiddenPath(childPath)) continue;
+        const type = child.type === "directory" || child.type === "folder" ? "folder" : "file";
+        this.trigger("raw", childPath);
+        if (type === "file") {
+          if (!this.files[childPath]) await this.reconcileFileCreation(this.getRealPath(childPath), childPath, child);
+        } else {
+          if (!this.files[childPath]) {
+            this.files[childPath] = { type: "folder", realpath: this.getRealPath(childPath) };
+            this.trigger("folder-created", childPath);
+          }
+          await this._listRecursive(childPath);
+        }
+      }
+    }
+
+    // ---- mutations (all queued) ----
+
+    mkdir(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try { await this.fs.mkdir(this.getFullPath(norm)); }
+        catch (e) { if (!/Directory exists/.test(String(e && e.message || e))) throw e; }
+        await this.reconcileInternalFile(norm);
+      });
+    }
+
+    trashSystem(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try {
+          await this.fs.trash(this.getFullPath(norm));
+          await this.reconcileFile(this.getRealPath(norm), norm, true);
+          return true;
+        } catch (e) { return false; }
+      });
+    }
+
+    trashLocal(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        const trashDir = ".trash";
+        try { await this.fs.mkdir(this.getFullPath(trashDir)); } catch (e) {}
+        const stem = baseName(norm);
+        const ext = extensionOf(norm);
+        let candidate = joinNameExt(stem, ext);
+        for (let n = 2; ; n++) {
+          const rel = trashDir + "/" + candidate;
+          let taken = false;
+          try { await this.fs.stat(this.getFullPath(rel)); taken = true; } catch (e) {}
+          if (!taken) break;
+          candidate = joinNameExt(stem + " " + n, ext);
+        }
+        const target = trashDir + "/" + candidate;
+        await this.fs.rename(this.getFullPath(norm), this.getFullPath(target));
+        await this.reconcileFile(this.getRealPath(target), target, true);
+      });
+    }
+
+    rmdir(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        const fn = this.fs.rmdir || this.fs.delete;
+        await fn.call(this.fs, this.getFullPath(norm));
+        await this.reconcileFile(this.getRealPath(norm), norm, true);
+      });
+    }
+
+    remove(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        await this.fs.delete(this.getFullPath(norm));
+        await this.reconcileFile(this.getRealPath(norm), norm, true);
+      });
+    }
+
+    update(path) {
+      return this.queue(() => this.reconcileInternalFile(path));
+    }
+
+    // ---- content ops ----
+
+    read(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try { return await this.fs.read(this.getFullPath(norm)); }
+        catch (e) { this._scheduleReconcile(norm); throw e; }
+      });
+    }
+
+    readBinary(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try { return await this.fs.readBinary(this.getFullPath(norm)); }
+        catch (e) { this._scheduleReconcile(norm); throw e; }
+      });
+    }
+
+    _scheduleReconcile(norm) {
+      setTimeout(() => { this.reconcileInternalFile(norm).catch(() => {}); }, 0);
+    }
+
+    async _readRaw(norm) {
+      return this.fs.read(this.getFullPath(norm));
+    }
+
+    async _readBinaryRaw(norm) {
+      return this.fs.readBinary(this.getFullPath(norm));
+    }
+
+    async _writeRaw(norm, data, options, op) {
+      const full = this.getFullPath(norm);
+      try {
+        if (op === "writeBinary") await this.fs.writeBinary(full, data);
+        else if (op === "append") await this.fs.append(full, data);
+        else if (op === "appendBinary") await this.fs.appendBinary(full, data);
+        else await this.fs.write(full, data);
+        if (options && (options.ctime || options.mtime)) {
+          await this.fs.setTimes(full, options.ctime, options.mtime);
+        }
+        if (options && options.immediate) options.immediate();
+      } catch (e) {
+        await this.reconcileInternalFile(norm).catch(() => {});
+        throw e;
+      }
+    }
+
+    write(path, data, options) { return this.queue(() => this._writeRaw(normalizePath(path), data, options, "write")); }
+    writeBinary(path, data, options) { return this.queue(() => this._writeRaw(normalizePath(path), data, options, "writeBinary")); }
+    append(path, data, options) { return this.queue(() => this._writeRaw(normalizePath(path), data, options, "append")); }
+    appendBinary(path, data, options) { return this.queue(() => this._writeRaw(normalizePath(path), data, options, "appendBinary")); }
+
+    process(path, fn, options) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try {
+          const contents = await this._readRaw(norm);
+          const next = await fn(contents);
+          if (next === contents) return contents;
+          await this._writeRaw(norm, next, options, "write");
+          return next;
+        } catch (e) {
+          await this.reconcileInternalFile(norm).catch(() => {});
+          throw e;
+        }
+      });
+    }
+
+    getResourcePath(path) { return this.fs.getUri(this.getFullPath(path)); }
+    getNativePath(path) { return this.fs.getNativeUri(this.getFullPath(path)); }
+    open(path) { return this.fs.open(this.getFullPath(path)); }
+
+    exists(path, strict) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        try { await this.fs.stat(this.getFullPath(norm)); return true; }
+        catch (e) {
+          if (strict && this.insensitive) {
+            const parent = parentPath(norm);
+            try {
+              const entries = await this.fs.readdir(this.getFullPath(parent || "/"));
+              const want = normalizePath(lastSegment(norm));
+              return (entries || []).some((en) => en && normalizePath(en.name) === want);
+            } catch (e2) { return false; }
+          }
+          return false;
+        }
+      });
+    }
+
+    stat(path) {
+      return this.queue(async () => {
+        const norm = normalizePath(path);
+        let st;
+        try { st = await this.fs.stat(this.getFullPath(norm)); }
+        catch (e) {
+          if (e && (e.code === "ENOENT" || /ENOENT/.test(String(e && e.message || e)))) return null;
+          throw e;
+        }
+        const info = statFromCapacitor(st);
+        info.type = st.type === "directory" || st.type === "folder" ? "folder" : "file";
+        return info;
+      });
+    }
+
+    list(prefix) {
+      return this.queue(() => {
+        let pre = prefix ? normalizePath(prefix) : "";
+        if (pre === "/") pre = "";
+        const folders = new Set(), filesOut = new Set();
+        for (const key of Object.keys(this.files)) {
+          if (key === "/") continue;
+          if (pre && !(key === pre || key.startsWith(pre + "/"))) continue;
+          const rel = pre ? key.slice(pre.length).replace(/^\/+/, "") : key;
+          if (!rel) continue;
+          const first = rel.split("/")[0];
+          if (rel.includes("/")) { folders.add(first); continue; }
+          const e = this.files[key];
+          if (e && e.type === "folder") folders.add(first); else filesOut.add(first);
+        }
+        return { folders: [...folders].sort(), files: [...filesOut].sort() };
+      });
+    }
+
+    // ---- watch ----
+
+    async stopWatch() {
+      try {
+        const Dm = env().Dm;
+        if (Dm && Dm.stopWatch) await Dm.stopWatch();
+      } catch (e) {}
+    }
+
+    watch(handler) {
+      return this.queue(async () => {
+        await this.stopWatch();
+        this.handler = handler;
+        try {
+          const Dm = env().Dm;
+          if (Dm && Dm.addListener) {
+            this._dmHandler = await Dm.addListener("change", (event) => {
+              const p = event && event.path;
+              if (typeof p !== "string") return;
+              const rel = p.startsWith(this.basePath) ? p.slice(this.basePath.length) : p;
+              this.onFileChange(rel);
+            });
+          }
+        } catch (e) {}
+        await this._watchAndList();
+      });
+    }
+
+    onFileChange(path) {
+      setTimeout(() => {
+        const norm = normalizePath(String(path || "").replace(/^\/+/, ""));
+        if (!norm || norm === "/") return;
+        this.queue(() => this.reconcileFile(this.getRealPath(norm), norm, false));
+      }, 0);
+    }
+
+    // ---- reconcile ----
+
+    async reconcileInternalFile(path) {
+      const norm = normalizePath(path || "");
+      if (!norm || norm === "/") return;
+      let st;
+      try { st = await this.fs.stat(this.getFullPath(norm)); }
+      catch (e) {
+        if (e && (e.code === "ENOENT" || /ENOENT/.test(String(e && e.message || e)))) {
+          if (this.files[norm]) await this.reconcileDeletion(this.getRealPath(norm), norm, true);
+        }
+        return;
+      }
+      const isDir = st.type === "directory" || st.type === "folder";
+      const real = this.getRealPath(norm);
+      if (isDir) {
+        if (!this.files[norm]) {
+          this.files[norm] = { type: "folder", realpath: real };
+          this.trigger("folder-created", norm, norm, this.files[norm]);
+        } else {
+          this.files[norm].realpath = real;
+        }
+        return;
+      }
+      const info = statFromCapacitor(st);
+      const prev = this.files[norm];
+      if (!prev) {
+        this.files[norm] = { type: "file", realpath: real, ctime: info.ctime, mtime: info.mtime, size: info.size };
+        this.trigger("file-created", norm, norm, this.files[norm]);
+      } else if (prev.type !== "file" || prev.mtime !== info.mtime || prev.size !== info.size) {
+        prev.type = "file"; prev.realpath = real;
+        prev.ctime = info.ctime; prev.mtime = info.mtime; prev.size = info.size;
+        this.trigger("modified", norm, norm, { type: "file", realpath: real, ctime: info.ctime, mtime: info.mtime, size: info.size });
+      } else {
+        prev.realpath = real;
+      }
+    }
+
+    async reconcileFile(realPath, path, remove = true) {
+      const norm = normalizePath(path);
+      this.trigger("raw", norm);
+      if (isHiddenPath(norm)) { await this.reconcileDeletion(realPath, norm, remove); return; }
+      const parent = parentPath(norm);
+      if (parent && parent !== "/" && !this.files[parent]) {
+        await this.reconcileFile(this.getRealPath(parent), parent, remove);
+      }
+      if (this.insensitive && parent && parent !== "/") {
+        try {
+          const entries = await this.fs.readdir(this.getFullPath(parent));
+          const want = normalizePath(lastSegment(norm));
+          const found = (entries || []).some((en) => en && normalizePath(en.name) === want);
+          if (!found) { await this.reconcileDeletion(realPath, norm, remove); return; }
+        } catch (e) { await this.reconcileDeletion(realPath, norm, remove); return; }
+      }
+      let st;
+      try { st = await this.fs.stat(this.getFullPath(norm)); }
+      catch (e) {
+        if (e && (e.code === "ENOENT" || /ENOENT/.test(String(e && e.message || e)))) {
+          await this.reconcileDeletion(realPath, norm, remove);
+        } else {
+          console.error(e);
+        }
+        return;
+      }
+      const isDir = st.type === "directory" || st.type === "folder";
+      if (isDir) await this.reconcileFolderCreation(realPath, norm, st);
+      else await this.reconcileFileChanged(realPath, norm, st);
+    }
+
+    async reconcileFileChanged(realPath, path, st) {
+      const norm = normalizePath(path);
+      const prev = this.files[norm];
+      const real = realPath || this.getRealPath(norm);
+      if (!prev) { await this.reconcileFileCreation(real, norm, st); return; }
+      prev.realpath = real;
+      if (prev.type === "file" && st) {
+        const info = statFromCapacitor(st);
+        if (prev.mtime !== info.mtime || prev.size !== info.size) {
+          prev.ctime = info.ctime; prev.mtime = info.mtime; prev.size = info.size;
+          this.trigger("modified", norm, norm, { type: "file", realpath: real, ctime: info.ctime, mtime: info.mtime, size: info.size });
+        }
+      }
+    }
+
+    async reconcileFileCreation(realPath, path, info) {
+      const norm = normalizePath(path);
+      const real = realPath || this.getRealPath(norm);
+      let entry;
+      if (info && (info.type === "directory" || info.type === "folder")) {
+        entry = { type: "folder", realpath: real };
+      } else {
+        const ctime = Math.round(info && info.ctime != null ? info.ctime : (info && info.birthtime != null ? info.birthtime : 0));
+        const mtime = Math.round(info && info.mtime != null ? info.mtime : 0);
+        const size = info && info.size != null ? info.size : 0;
+        entry = { type: "file", realpath: real, ctime, mtime, size };
+      }
+      this.files[norm] = entry;
+      this.trigger(entry.type === "folder" ? "folder-created" : "file-created", norm, norm, entry);
+    }
+
+    async reconcileFolderCreation(realPath, path, info, recurse = true) {
+      const norm = normalizePath(path);
+      const real = realPath || this.getRealPath(norm);
+      const prev = this.files[norm];
+      if (!prev) {
+        this.files[norm] = { type: "folder", realpath: real };
+        this.trigger("folder-created", norm, norm, this.files[norm]);
+        if (recurse) await this._listRecursive(norm);
+        return;
+      }
+      prev.realpath = real;
+    }
+
+    async reconcileDeletion(realPath, path, remove = true) {
+      const norm = normalizePath(path);
+      if (norm === "/") { this.trigger("closed", norm); return; }
+      if (!remove) {
+        setTimeout(() => { this.reconcileDeletion(realPath, norm, true).catch(() => {}); }, NG25AD_TRASH_RETRY);
+        return;
+      }
+      const e = this.files[norm];
+      if (e && e.type === "folder") {
+        for (const k of Object.keys(this.files)) {
+          if (k !== norm && k.startsWith(norm + "/")) {
+            await this.removeFile(k, this.files[k] && this.files[k].type === "folder");
+          }
+        }
+      }
+      await this.removeFile(norm, e ? e.type === "folder" : false);
+    }
+
+    async removeFile(path, isFolder) {
+      const norm = normalizePath(path);
+      delete this.files[norm];
+      this.trigger(isFolder ? "folder-removed" : "file-removed", norm);
+    }
+
+    // ---- move / copy ----
+
+    rename(oldPath, newPath) {
+      return this.queue(async () => {
+        const o = normalizePath(oldPath);
+        const n = normalizePath(newPath);
+        if (o === n) return;
+        let destExists = false;
+        try { await this.fs.stat(this.getFullPath(n)); destExists = true; } catch (e) {}
+        if (destExists && (!this.insensitive || o.toLowerCase() !== n.toLowerCase())) {
+          throw new Error("Destination file already exists!");
+        }
+        await this.fs.rename(this.getFullPath(o), this.getFullPath(n));
+        const entry = this.files[o];
+        if (entry) {
+          this.files[n] = { ...entry, realpath: this.getRealPath(n) };
+          delete this.files[o];
+        }
+        this.trigger("renamed", n, o);
+        if (entry && entry.type === "folder") {
+          for (const k of Object.keys(this.files)) {
+            if (k !== n && k.startsWith(o + "/")) {
+              const nk = n + k.slice(o.length);
+              const e2 = this.files[k];
+              this.files[nk] = { ...e2, realpath: this.getRealPath(nk) };
+              delete this.files[k];
+              this.trigger("renamed", nk, k);
+            }
+          }
+        }
+      });
+    }
+
+    copy(oldPath, newPath) {
+      return this.queue(async () => {
+        const o = normalizePath(oldPath);
+        const n = normalizePath(newPath);
+        await this.fs.copy(this.getFullPath(o), this.getFullPath(n));
+        await this.reconcileInternalFile(n);
+      });
+    }
+  }
+
+  return CapacitorAdapter;
+}
+
+// ---- n-g25-app.js ----
+// g25 clean-room s17-app-class: the App class factory — constructor wiring every app
+// subsystem, debug/mobile-emulation localStorage switches, mobile tap highlight +
+// touch long-press context menu, tablet/phone media classes, iOS callout disabling,
+// service-worker neutering, startup progress flow. Spec: F:\orch\specs\g25.md Part H.
+// Prototype methods are attached from n-g15-app.js helpers (`this` = app instance).
+
+
+const s17IframeAllowlist = {
+  "encrypted-media": true, fullscreen: true, gamepad: true, hid: true,
+  "idle-detection": true, "oversized-images": true, "picture-in-picture": true, "sync-xhr": true,
+};
+const s17IframeSandbox = {
+  "allow-forms": true, "allow-modals": true, "allow-popups": true,
+  "allow-presentation": true, "allow-same-origin": true, "allow-scripts": true,
+};
+const s17EmulateMobileKey = "EmulateMobile";
+const s17DebugModeKey = "DebugMode";
+
+const NG25S17_TAP_SELECTOR = "a, button, .tappable, .is-clickable, .clickable-icon, .text-icon-button, .suggestion-item";
+const NG25S17_TABLET_QUERY = "(min-width:600px) and (min-height:600px)";
+
+const NG25S17_METHODS = {
+  nextFrame: appNextFrame, onNextFrame: appOnNextFrame, nextFrameOnceCallback: appNextFrameOnceCallback,
+  initializeWithAdapter: appInitializeWithAdapter, onConfigChanged: appOnConfigChanged,
+  registerCommands: appRegisterCommands, disableCssTransition: appDisableCssTransition,
+  enableCssTransition: appEnableCssTransition, getAppTitle: appGetAppTitle,
+  getWebviewPartition: appGetWebviewPartition, fixFileLinks: appFixFileLinks,
+  getTheme: appGetTheme, isDarkMode: appIsDarkMode, changeTheme: appChangeTheme,
+  updateTheme: appUpdateTheme, updateMobileFrameTheme: appUpdateMobileFrameTheme,
+  updateInlineTitleDisplay: appUpdateInlineTitleDisplay,
+  updateFloatingNavigationDisplay: appUpdateFloatingNavigationDisplay,
+  updateAutoFullScreenDisplay: appUpdateAutoFullScreenDisplay,
+  updateViewHeaderDisplay: appUpdateViewHeaderDisplay, updateRibbonDisplay: appUpdateRibbonDisplay,
+  updateFontFamily: appUpdateFontFamily, updateFontSize: appUpdateFontSize,
+  updateUseNativeMenu: appUpdateUseNativeMenu, updateTabSize: appUpdateTabSize,
+  showReleaseNotes: appShowReleaseNotes, updateAccentColor: appUpdateAccentColor,
+  getAccentColor: appGetAccentColor, setAccentColor: appSetAccentColor, garbleText: appGarbleText,
+  importAttachments: appImportAttachments, saveAttachment: appSaveAttachment,
+  openVaultChooser: appOpenVaultChooser, openHelp: appOpenHelp,
+  runOpeningBehavior: appRunOpeningBehavior, openWithDefaultApp: appOpenWithDefaultApp,
+  showInFolder: appShowInFolder, getObsidianUrl: appGetObsidianUrl,
+  copyObsidianUrl: appCopyObsidianUrl, registerQuitHook: appRegisterQuitHook,
+  loadLocalStorage: appLoadLocalStorage, saveLocalStorage: appSaveLocalStorage,
+  on: appOn, setTheme: appSetTheme, emulateMobile: appEmulateMobile, debugMode: appDebugMode,
+  getSpellcheckLanguages: appGetSpellcheckLanguages,
+  setSpellcheckLanguages: appSetSpellcheckLanguages, isVimEnabled: appIsVimEnabled,
+};
+
+function s17CreateApp(host) {
+
+  function s17StartupButtons(app, prominent) {
+    const S = host.i18n.interface.startUp;
+    const pluginsOn = !!(app.plugins && app.plugins.isEnabled && app.plugins.isEnabled());
+    return (el) => {
+      const add = (label, cta, hidden, action) => {
+        const b = el.createEl("button", { text: label, cls: cta ? "mod-cta" : "" });
+        if (hidden && b.hide) b.hide();
+        b.addEventListener("click", action);
+      };
+      add(S.buttonReloadApp(), prominent, false, () => window.location.reload());
+      add(S.buttonReloadAppInSafeMode(), true, !pluginsOn, async () => {
+        if (app.plugins && app.plugins.setEnable) await app.plugins.setEnable(false);
+        window.location.reload();
+      });
+      add(S.buttonOpenAnotherVault(), prominent, false, () => app.openVaultChooser());
+    };
+  }
+
+  function s17PersistStorage() {
+    try {
+      const p = navigator.storage && navigator.storage.persist ? navigator.storage.persist() : null;
+      if (p && p.catch) p.catch(() => console.error("Failed to persist local storages"));
+      else if (p && p.then) p.then(undefined, () => console.error("Failed to persist local storages"));
+    } catch (e) { console.error("Failed to persist local storages"); }
+  }
+
+  function s17Startup(app, adapter) {
+    const overlay = host.progressOverlay;
+    const watchdog = setTimeout(() => { try { overlay.show(); } catch (e) {} }, 20000);
+    (async () => {
+      try {
+        overlay.setContext(s17StartupButtons(app, false)).show();
+        overlay.setMessage(host.i18n.interface.startUp.loadingObsidian()).show();
+        await app.initializeWithAdapter(adapter);
+        overlay.hide();
+      } catch (e) {
+        console.error("Basalt startup failed:", e);
+        try {
+          overlay.setMessage(host.i18n.interface.startUp.obsidianLoadError() + " " + (e && e.message || e));
+          overlay.setContext(s17StartupButtons(app, true));
+        } catch (e2) {}
+      } finally {
+        clearTimeout(watchdog);
+        try {
+          if (host.Platform.isMobileApp && host.s17SplashScreen) {
+            await app.nextFrame();
+            host.s17SplashScreen.hide({ fadeOutDuration: 0 });
+          }
+        } catch (e) {}
+      }
+    })();
+  }
+
+  function s17ApplyMobileChrome(platform, isMobile) {
+    const body = document.body;
+    if (isMobile) {
+      body.classList.add("is-mobile");
+      try { if (window.frameDom && window.frameDom.titleBarEl && window.frameDom.titleBarEl.hide) window.frameDom.titleBarEl.hide(); } catch (e) {}
+      body.addEventListener("mouseover", (e) => {
+        if (host.isTouchSyntheticMouse && host.isTouchSyntheticMouse(e)) return;
+        const t = e.target && e.target.closest ? e.target.closest(NG25S17_TAP_SELECTOR) : null;
+        if (t) t.classList.add("mobile-tap");
+      });
+      body.addEventListener("mouseout", (e) => {
+        const t = e.target && e.target.closest ? e.target.closest(NG25S17_TAP_SELECTOR) : null;
+        if (t) t.classList.remove("mobile-tap");
+      });
+      let tapTimer = null, tapEl = null, tapX = 0, tapY = 0, tapStart = 0, tapId = null;
+      const finishTap = () => {
+        if (!tapEl) return;
+        const el = tapEl; tapEl = null;
+        setTimeout(() => el.classList.remove("mobile-tap"), Math.max(10, 300 - (Date.now() - tapStart)));
+      };
+      body.addEventListener("touchstart", (e) => {
+        if (!e.touches || e.touches.length !== 1) return;
+        const t = e.touches[0];
+        tapId = t.identifier; tapX = t.clientX; tapY = t.clientY; tapStart = Date.now();
+        tapEl = document.elementFromPoint(t.clientX, t.clientY);
+        tapTimer = setTimeout(() => { if (tapEl) tapEl.classList.add("mobile-tap"); }, 10);
+      }, { capture: true });
+      body.addEventListener("touchmove", (e) => {
+        for (const t of e.changedTouches || []) {
+          if (t.identifier !== tapId) continue;
+          const dx = t.clientX - tapX, dy = t.clientY - tapY;
+          if (dx * dx + dy * dy > 25) { clearTimeout(tapTimer); tapTimer = null; finishTap(); }
+        }
+      }, { capture: true });
+      const endTap = (e) => {
+        for (const t of e.changedTouches || []) {
+          if (t.identifier === tapId) { clearTimeout(tapTimer); tapTimer = null; finishTap(); tapId = null; }
+        }
+      };
+      body.addEventListener("touchend", endTap, { capture: true });
+      body.addEventListener("touchcancel", endTap, { capture: true });
+    }
+    if (!platform.isMacOS) body.classList.add("styled-scrollbars");
+  }
+
+  function s17ApplyTabletClasses(platform) {
+    if (typeof window.matchMedia !== "function") return;
+    const mq = window.matchMedia(NG25S17_TABLET_QUERY);
+    const apply = () => {
+      if (platform.mobileSoftKeyboardVisible) return;
+      const tablet = !!(mq && mq.matches);
+      platform.isTablet = tablet;
+      platform.isPhone = !tablet;
+      document.body.classList.toggle("is-tablet", tablet);
+      document.body.classList.toggle("is-phone", !tablet);
+    };
+    if (mq && mq.addEventListener) mq.addEventListener("change", host.debounce ? host.debounce(apply, 10) : apply);
+    else if (mq && mq.addListener) mq.addListener(host.debounce ? host.debounce(apply, 10) : apply);
+    apply();
+  }
+
+  function s17IosCalloutGuard(platform) {
+    if (!platform.isIosApp) return;
+    try { document.body.style.setProperty("-webkit-touch-callout", "none"); } catch (e) {}
+    let cancelTouch = null;
+    const onStart = (e) => {
+      if (e.touches.length > 1 || e.defaultPrevented) return;
+      const t = e.touches[0];
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      const delay = el && el.closest && el.closest('[draggable="true"]') ? 1200 : 800;
+      const timer = setTimeout(() => {
+        const me = new MouseEvent("contextmenu", {
+          bubbles: true, cancelable: true, clientX: t.clientX, clientY: t.clientY,
+          button: 0, buttons: 0, ctrlKey: e.ctrlKey, shiftKey: e.shiftKey, altKey: e.altKey, metaKey: e.metaKey,
+        });
+        (el || document.body).dispatchEvent(me);
+        if (navigator.vibrate) navigator.vibrate(200);
+      }, delay);
+      const cancel = () => clearTimeout(timer);
+      cancelTouch = cancel;
+      if (host.s17SetTouchCancel) host.s17SetTouchCancel(cancel);
+      const onMove = (ev) => {
+        for (const c of ev.changedTouches || []) {
+          if (c.identifier === t.identifier &&
+              (c.clientX - t.clientX) ** 2 + (c.clientY - t.clientY) ** 2 > 25) cancel();
+        }
+      };
+      const onEnd = (ev) => {
+        for (const c of ev.changedTouches || []) {
+          if (c.identifier === t.identifier) {
+            cancel();
+            window.removeEventListener("touchmove", onMove, true);
+            window.removeEventListener("touchend", onEnd, true);
+            window.removeEventListener("touchcancel", onEnd, true);
+          }
+        }
+      };
+      window.addEventListener("touchmove", onMove, true);
+      window.addEventListener("touchend", onEnd, true);
+      window.addEventListener("touchcancel", onEnd, true);
+    };
+    document.body.addEventListener("touchstart", onStart, { capture: true, passive: true });
+    document.body.addEventListener("dragstart", () => { if (cancelTouch) { cancelTouch(); cancelTouch = null; } }, true);
+  }
+
+  function s17NeuterServiceWorker() {
+    try {
+      const SWC = typeof window !== "undefined" && window.ServiceWorkerContainer;
+      if (SWC && SWC.prototype) SWC.prototype.register = () => new Promise(() => {});
+    } catch (e) {}
+  }
+
+  class App {
+    constructor(adapter, appId) {
+      const platform = host.Platform;
+      this.adapter = adapter;
+      this.embedRegistry = new host.s17EmbedRegistry();
+      this.viewRegistry = new host.s17ViewRegistry();
+      this.nextFrameEvents = [];
+      this.nextFrameTimer = null;
+      this.isMobile = false;
+      this.lastEvent = null;
+      console.log("%cBasalt Developer Console", "font-weight:bold");
+      this.title = document.title;
+      this.appId = appId;
+      this.keymap = host.Keymap.init();
+      this.scope = this.keymap.getRootScope();
+      this.commands = new host.s17Commands(this);
+      this.hotkeyManager = new host.s17HotkeyManager(this);
+      this.dragManager = new host.s17DragManager(this);
+      this.dom = new host.s17AppDom(document.body);
+      this.customCss = new host.s17CustomCss(this);
+      this.shareReceiver = new host.s17ShareReceiver(this);
+      this.renderContext = new host.s17RenderContext(this);
+      this.secretStorage = new host.SecretStorage(this);
+      this.cli = new host.s17Cli(this);
+      window.__bsApi = {
+        ItemView: host.ItemView, Modal: host.Modal, Notice: host.Notice,
+        Menu: host.Menu, setIcon: host.setIcon, Setting: host.Setting,
+      };
+      document.body.classList.add("basalt-app");
+
+      if (this.loadLocalStorage(s17DebugModeKey) === "1" || this.loadLocalStorage(s17DebugModeKey) === 1) {
+        host.s17SetBasaltDebug(true);
+        new host.Notice("Basalt debug mode enabled.");
+        console.debug("Basalt debug mode enabled.");
+      }
+
+      if (!platform.isMobile && localStorage.getItem(s17EmulateMobileKey)) {
+        platform.isMobile = true;
+        platform.isDesktop = false;
+        platform.hasPhysicalKeyboard = false;
+        document.body.classList.add("emulate-mobile");
+      }
+
+      this.isMobile = !!platform.isMobile;
+      s17ApplyMobileChrome(platform, this.isMobile);
+      if (this.isMobile) s17ApplyTabletClasses(platform);
+      s17IosCalloutGuard(platform);
+      s17NeuterServiceWorker();
+      if (host.keyboard && host.keyboard.hasPhysicalKeyboard) {
+        Promise.resolve()
+          .then(() => host.keyboard.hasPhysicalKeyboard())
+          .then((v) => { platform.hasPhysicalKeyboard = !!v; })
+          .catch(() => {});
+      }
+
+      s17PersistStorage();
+      s17Startup(this, adapter);
+    }
+
+    static getOverrideConfigDir(appId) {
+      const v = localStorage.getItem(appId + "-config");
+      return typeof v === "string" ? v : null;
+    }
+  }
+
+  for (const name of Object.keys(NG25S17_METHODS)) {
+    App.prototype[name] = NG25S17_METHODS[name];
+  }
+  return App;
+}
+
+// ---- n-g25-crypto.js ----
+// n-g25-crypto.js — clean-room vault crypto (spec g25 Part J).
+// AES-GCM via WebCrypto; AES-SIV (S2V/CMAC/CTR) built on AES-CBC single-block
+// primitive; scrypt via node crypto or window.scrypt; HKDF via WebCrypto.
+
+const ng25cSubtle = () => globalThis.crypto.subtle;
+const ng25cText = () => new TextEncoder();
+
+function utf8Bytes(str) {
+  const u8 = ng25cText().encode(String(str));
+  return u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
+}
+function utf8String(buf) {
+  return new TextDecoder().decode(buf);
+}
+function decodeBase64(b64) {
+  const bin = atob(b64);
+  const u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return u8.buffer;
+}
+function encodeBase64(buf) {
+  const u8 = new Uint8Array(buf);
+  let s = "";
+  const CH = 0x8000;
+  for (let i = 0; i < u8.length; i += CH) {
+    s += String.fromCharCode.apply(null, u8.subarray(i, i + CH));
+  }
+  return btoa(s);
+}
+async function sha256(data) {
+  return ng25cSubtle().digest("SHA-256", data);
+}
+function randomSaltHex() {
+  const u8 = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(u8);
+  return ng25cHex(u8);
+}
+function constantTimeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let acc = 0;
+  for (let i = 0; i < a.length; i++) acc |= a[i] ^ b[i];
+  return acc === 0;
+}
+
+function ng25cHex(buf) {
+  const u8 = new Uint8Array(buf);
+  let s = "";
+  for (let i = 0; i < u8.length; i++) s += u8[i].toString(16).padStart(2, "0");
+  return s;
+}
+function ng25cUnhex(hex) {
+  const s = String(hex);
+  const u8 = new Uint8Array(s.length / 2);
+  for (let i = 0; i < u8.length; i++) u8[i] = parseInt(s.substr(i * 2, 2), 16);
+  return u8;
+}
+function ng25cConcat(parts) {
+  const u8s = parts.map((p) => p instanceof Uint8Array ? p : new Uint8Array(p));
+  const out = new Uint8Array(u8s.reduce((n, u) => n + u.length, 0));
+  let o = 0;
+  for (const u of u8s) { out.set(u, o); o += u.length; }
+  return out;
+}
+
+let ng25cSivErrorClass = null;
+function defineSivError() {
+  if (!ng25cSivErrorClass) {
+    ng25cSivErrorClass = class SivError extends Error {
+      constructor(msg) { super(msg); this.name = "SivError"; }
+    };
+  }
+  return ng25cSivErrorClass;
+}
+
+async function importAesGcmKey(rawKey) {
+  return ng25cSubtle().importKey("raw", rawKey, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+}
+
+async function aesGcmEncrypt(data, key, iv) {
+  const ivBytes = iv === undefined
+    ? (() => { const u = new Uint8Array(12); globalThis.crypto.getRandomValues(u); return u; })()
+    : (iv instanceof Uint8Array ? iv : new Uint8Array(iv));
+  const ct = await ng25cSubtle().encrypt({ name: "AES-GCM", iv: ivBytes }, key, data);
+  return ng25cConcat([ivBytes, new Uint8Array(ct)]).buffer;
+}
+
+async function aesGcmDecrypt(data, key) {
+  const u8 = new Uint8Array(data);
+  if (u8.length < 12) throw new Error("Encrypted data is bad");
+  if (u8.length === 12) return new ArrayBuffer(0);
+  const pt = await ng25cSubtle().decrypt({ name: "AES-GCM", iv: u8.subarray(0, 12) }, key, u8.subarray(12));
+  return pt;
+}
+
+const NG25_SCRYPT_PARAMS = { N: 32768, r: 8, p: 1, maxmem: 67108864 };
+
+async function deriveScryptKey(password, salt) {
+  const pwd = new TextEncoder().encode(String(password).normalize("NFKC"));
+  const st = new TextEncoder().encode(String(salt).normalize("NFKC"));
+  const req = (typeof window !== "undefined" && window.require) || (typeof globalThis !== "undefined" && globalThis.require);
+  if (req) {
+    const nodeCrypto = req("crypto");
+    return await new Promise((resolve, reject) => {
+      nodeCrypto.scrypt(pwd, st, 32, NG25_SCRYPT_PARAMS, (err, key) => {
+        if (err) reject(err);
+        else resolve(key.buffer.slice(key.byteOffset, key.byteOffset + key.byteLength));
+      });
+    });
+  }
+  if (typeof window !== "undefined" && window.scrypt && window.scrypt.scrypt) {
+    const out = await window.scrypt.scrypt(pwd, st, NG25_SCRYPT_PARAMS.N, NG25_SCRYPT_PARAMS.r, NG25_SCRYPT_PARAMS.p, 32);
+    const u8 = out instanceof Uint8Array ? out : new Uint8Array(out);
+    return u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
+  }
+  throw new TypeError("No scrypt implementation available");
+}
+
+async function ng25cHkdfBits(ikm, salt, info, bits) {
+  const key = await ng25cSubtle().importKey("raw", ikm, "HKDF", false, ["deriveBits"]);
+  const out = await ng25cSubtle().deriveBits(
+    { name: "HKDF", hash: "SHA-256", salt, info },
+    key, bits);
+  return new Uint8Array(out);
+}
+
+async function ng25cHkdfKeyBytes(ikm, salt, info) {
+  const bits = await ng25cHkdfBits(ikm, salt, info, 256);
+  return bits.buffer.slice(bits.byteOffset, bits.byteOffset + bits.byteLength);
+}
+
+async function ng25cImportAesCbc(rawKey, usages) {
+  return ng25cSubtle().importKey("raw", rawKey, { name: "AES-CBC" }, true, usages);
+}
+
+async function ng25cImportAesCbcExtractable(rawKey) {
+  return ng25cSubtle().importKey("raw", rawKey, { name: "AES-CBC" }, true, ["encrypt"]);
+}
+
+async function deriveKeyHash(keyBytes, salt, version) {
+  if (version === 0) {
+    return ng25cHex(await sha256(keyBytes));
+  }
+  if (version === 2 || version === 3) {
+    const bits = await ng25cHkdfKeyBytes(keyBytes, utf8Bytes(salt || ""), utf8Bytes("ObsidianKeyHash"));
+    const key = await ng25cImportAesCbcExtractable(bits);
+    const raw = await ng25cSubtle().exportKey("raw", key);
+    return ng25cHex(raw);
+  }
+  throw new Error("Encryption version not supported");
+}
+
+async function deriveVaultSecrets(password, salt, version) {
+  const key = await deriveScryptKey(password, salt);
+  const keyhash = await deriveKeyHash(key, salt, version);
+  return { key, keyhash };
+}
+
+async function deriveVaultKeyhash(password, salt, version) {
+  const key = await deriveScryptKey(password, salt);
+  return deriveKeyHash(key, salt, version);
+}
+
+// ---- AES block primitive: AES-CBC with zero IV over one block yields AES-ECB.
+async function ng25cAesBlock(key, block16) {
+  const ct = await ng25cSubtle().encrypt({ name: "AES-CBC", iv: new Uint8Array(16) }, key, block16);
+  return new Uint8Array(ct).subarray(0, 16);
+}
+
+function ng25cXor16(a, b) {
+  const out = new Uint8Array(16);
+  for (let i = 0; i < 16; i++) out[i] = a[i] ^ b[i];
+  return out;
+}
+
+async function ng25cCbcCrypt(key, iv, data) {
+  // data length multiple of 16; manual CBC so we control padding-free blocks.
+  const out = new Uint8Array(data.length);
+  let prev = iv;
+  for (let o = 0; o < data.length; o += 16) {
+    const block = ng25cXor16(new Uint8Array(data.subarray(o, o + 16)), prev);
+    const enc = await ng25cAesBlock(key, block);
+    out.set(enc, o);
+    prev = enc;
+  }
+  return out;
+}
+
+function defineBlock() {
+  return class Block {
+    constructor() { this.data = new Uint8Array(16); }
+    dbl() {
+      const msb = this.data[0] & 0x80;
+      let carry = 0;
+      for (let i = 15; i >= 0; i--) {
+        const nc = this.data[i] >> 7;
+        this.data[i] = ((this.data[i] << 1) & 0xff) | carry;
+        carry = nc;
+      }
+      if (msb) this.data[15] ^= 0x87;
+      return this;
+    }
+    static fromBytes(b) { const blk = new this(); blk.data.set(b.subarray(0, 16)); return blk; }
+  };
+}
+
+const ng25cBlockProto = defineBlock();
+
+function ng25cDouble(block16) {
+  const b = ng25cBlockProto.fromBytes(block16);
+  b.dbl();
+  return b.data;
+}
+
+function defineCmac() {
+  return class Cmac {
+    constructor(key) { this.key = key; this._k1 = null; this._k2 = null; this._done = false; }
+    async _subkeys() {
+      if (!this._k1) {
+        const l = await ng25cAesBlock(this.key, new Uint8Array(16));
+        this._k1 = ng25cDouble(l);
+        this._k2 = ng25cDouble(this._k1);
+      }
+      return [this._k1, this._k2];
+    }
+    async mac(data) {
+      const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
+      const [k1, k2] = await this._subkeys();
+      const n = u8.length % 16 === 0 ? u8.length / 16 : Math.ceil(u8.length / 16);
+      const parts = [];
+      for (let i = 0; i < n - 1; i++) parts.push(u8.subarray(i * 16, i * 16 + 16));
+      const rem = u8.subarray((n - 1) * 16);
+      let last;
+      if (u8.length > 0 && u8.length % 16 === 0) {
+        last = ng25cXor16(new Uint8Array(rem), k1);
+      } else {
+        const pad = new Uint8Array(16);
+        pad.set(rem);
+        pad[rem.length] = 0x80;
+        last = ng25cXor16(pad, k2);
+      }
+      parts.push(last);
+      const cbcIn = ng25cConcat(parts);
+      const ct = await ng25cCbcCrypt(this.key, new Uint8Array(16), cbcIn);
+      return ct.subarray(ct.length - 16);
+    }
+    finish() { this._done = true; }
+    update() { if (this._done) throw new Error("Cannot update finished CMAC"); }
+  };
+}
+
+function defineCbcMacCipher() {
+  return class CbcMacCipher {
+    constructor(key) { this._cmac = new (defineCmac())(key); }
+    async mac(data) { return this._cmac.mac(data); }
+  };
+}
+
+function defineCtrCipher() {
+  return class CtrCipher {
+    constructor(key) { this.key = key; }
+    async crypt(counter16, data) {
+      const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
+      const out = new Uint8Array(u8.length);
+      const ctr = new Uint8Array(counter16.subarray(0, 16));
+      for (let o = 0; o < u8.length; o += 16) {
+        const ks = await ng25cAesBlock(this.key, ctr);
+        const n = Math.min(16, u8.length - o);
+        for (let i = 0; i < n; i++) out[o + i] = u8[o + i] ^ ks[i];
+        // increment 128-bit big-endian counter
+        for (let i = 15; i >= 0; i--) { ctr[i] = (ctr[i] + 1) & 0xff; if (ctr[i] !== 0) break; }
+      }
+      return out;
+    }
+  };
+}
+
+function ng25cSivMask(tag) {
+  const t = new Uint8Array(tag);
+  const n = t.length;
+  if (n >= 16) { t[n - 8] &= 0x7f; t[n - 4] &= 0x7f; }
+  return t;
+}
+
+function defineSiv() {
+  const SivError = defineSivError();
+  return class Siv {
+    constructor(macKey, ctrKey) {
+      this._cmac = new (defineCmac())(macKey);
+      this._ctr = new (defineCtrCipher())(ctrKey);
+    }
+    async _s2v(plaintext) {
+      // RFC 5297 S2V over the single vector element P (no associated data).
+      const p = plaintext instanceof Uint8Array ? plaintext : new Uint8Array(plaintext);
+      const d = new Uint8Array(await this._cmac.mac(new Uint8Array(16)));
+      let t;
+      if (p.length >= 16) {
+        t = new Uint8Array(p);
+        for (let i = 0; i < 16; i++) t[p.length - 16 + i] ^= d[i];
+      } else {
+        const dd = ng25cDouble(d);
+        t = new Uint8Array(16);
+        t.set(p);
+        t[p.length] = 0x80;
+        for (let i = 0; i < 16; i++) t[i] ^= dd[i];
+      }
+      return new Uint8Array(await this._cmac.mac(t));
+    }
+    async seal(plaintext) {
+      const pt = plaintext instanceof Uint8Array ? plaintext : new Uint8Array(plaintext);
+      const tag = ng25cSivMask(await this._s2v(pt));
+      const ct = await this._ctr.crypt(tag, pt);
+      return ng25cConcat([tag, ct]);
+    }
+    async open(data) {
+      const u8 = data instanceof Uint8Array ? data : new Uint8Array(data);
+      if (u8.length < 16) throw new SivError("AES-SIV: ciphertext is truncated");
+      const tag = u8.subarray(0, 16);
+      const ct = u8.subarray(16);
+      const pt = new Uint8Array(await this._ctr.crypt(ng25cSivMask(tag), ct));
+      const expected = ng25cSivMask(await this._s2v(pt));
+      if (!constantTimeEqual(expected, ng25cSivMask(tag))) {
+        pt.fill(0);
+        throw new SivError("AES-SIV: ciphertext verification failure!");
+      }
+      return pt;
+    }
+  };
+}
+
+function defineCipherV0() {
+  return class CipherV0 {
+    constructor(keyBytes, salt) {
+      this.encryptionVersion = 0;
+      this._salt = salt || "";
+      this._ready = this._setup(keyBytes);
+    }
+    async _setup(keyBytes) {
+      const kb = new Uint8Array(keyBytes);
+      if (kb.length !== 32) throw new Error("Invalid encryption key");
+      this.keyHash = ng25cHex(await sha256(kb.buffer.slice(kb.byteOffset, kb.byteOffset + kb.byteLength)));
+      this.cryptoKey = await importAesGcmKey(kb.buffer.slice(kb.byteOffset, kb.byteOffset + kb.byteLength));
+    }
+    async encrypt(data) { await this._ready; return aesGcmEncrypt(data, this.cryptoKey); }
+    async decrypt(data) { await this._ready; return aesGcmDecrypt(data, this.cryptoKey); }
+    async deterministicEncodeStr(str) {
+      await this._ready;
+      const ivFull = new Uint8Array(await sha256(utf8Bytes(str)));
+      const iv = ivFull.subarray(0, 12);
+      const ct = await aesGcmEncrypt(utf8Bytes(str), this.cryptoKey, iv);
+      return ng25cHex(ct);
+    }
+    async deterministicDecodeStr(hex) {
+      await this._ready;
+      const pt = await aesGcmDecrypt(ng25cUnhex(hex).buffer, this.cryptoKey);
+      return utf8String(pt);
+    }
+  };
+}
+
+function defineCipherV23() {
+  return class CipherV23 {
+    constructor(keyBytes, salt, version) {
+      this.encryptionVersion = version;
+      this._salt = salt || "";
+      this._ready = this._setup(keyBytes, version);
+    }
+    async _setup(keyBytes, version) {
+      if (version !== 2 && version !== 3) throw new Error("Encryption version not supported");
+      const kb = new Uint8Array(keyBytes);
+      if (kb.length !== 32) throw new Error("Invalid encryption key");
+      const raw = kb.buffer.slice(kb.byteOffset, kb.byteOffset + kb.byteLength);
+      this.keyHash = await deriveKeyHash(raw, this._salt, version);
+      const saltBytes = utf8Bytes(this._salt);
+      const emptySalt = new Uint8Array(0);
+      const macBits = await ng25cHkdfKeyBytes(raw, saltBytes, utf8Bytes("ObsidianAesSivMac"));
+      const encBits = await ng25cHkdfKeyBytes(raw, saltBytes, utf8Bytes("ObsidianAesSivEnc"));
+      const gcmBits = await ng25cHkdfKeyBytes(raw, emptySalt, utf8Bytes("ObsidianAesGcm"));
+      const macKey = await ng25cImportAesCbc(macBits, ["encrypt"]);
+      const encKey = await ng25cImportAesCbc(encBits, ["encrypt"]);
+      this.siv = new (defineSiv())(macKey, encKey);
+      this.cryptoKey = await ng25cSubtle().importKey("raw", gcmBits, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+    }
+    async encrypt(data) { await this._ready; return aesGcmEncrypt(data, this.cryptoKey); }
+    async decrypt(data) { await this._ready; return aesGcmDecrypt(data, this.cryptoKey); }
+    async deterministicEncodeStr(str) {
+      await this._ready;
+      const sealed = await this.siv.seal(utf8Bytes(str));
+      return ng25cHex(sealed);
+    }
+    async deterministicDecodeStr(hex) {
+      await this._ready;
+      const opened = await this.siv.open(ng25cUnhex(hex));
+      return utf8String(opened.buffer.slice(opened.byteOffset, opened.byteOffset + opened.byteLength));
+    }
+  };
+}
+
+async function initCipher(version, keyBytes, salt) {
+  if (version === 0) {
+    const C = defineCipherV0();
+    const c = new C(keyBytes, salt);
+    await c._ready;
+    return c;
+  }
+  if (version === 2 || version === 3) {
+    const C = defineCipherV23();
+    const c = new C(keyBytes, salt, version);
+    await c._ready;
+    return c;
+  }
+  throw new Error("Encryption version not supported");
+}
+
+async function requestVaultAccess(vaultUid, password, salt, host, encryptionVersion) {
+  const keyhash = await deriveVaultKeyhash(password, salt, encryptionVersion);
+  return acctVaultAccess(account.token, vaultUid, keyhash, host, encryptionVersion);
+}
+
+function parseCallbackUrl(url) {
+  if (typeof url !== "string" || !url.startsWith("obsidian://")) return null;
+  const rest = url.slice("obsidian://".length);
+  // vault branch: obsidian://vault/<a>/<b>… (hash/query not parsed here)
+  const pathPart = rest.split("#")[0].split("?")[0];
+  const vm = /^vault\/([^/]+)(?:\/([\s\S]*))?$/.exec(pathPart);
+  if (vm) {
+    return { action: "open", vault: decodeURIComponent(vm[1]), file: vm[2] !== undefined ? decodeURIComponent(vm[2]) : "" };
+  }
+  let hash = "";
+  let work = rest;
+  const hi = work.indexOf("#");
+  if (hi >= 0) { hash = work.slice(hi + 1); work = work.slice(0, hi); }
+  const params = {};
+  const qi = work.indexOf("?");
+  let action = work;
+  if (qi >= 0) {
+    action = work.slice(0, qi);
+    const query = work.slice(qi + 1);
+    for (const pair of query.split("&")) {
+      if (!pair) continue;
+      const eq = pair.indexOf("=");
+      const k = eq < 0 ? pair : pair.slice(0, eq);
+      const v = eq < 0 ? "true" : pair.slice(eq + 1);
+      try { params[decodeURIComponent(k)] = decodeURIComponent(v); }
+      catch { params[k] = v; }
+    }
+  }
+  action = action.replace(/\/+$/, "");
+  if (hash) params.hash = hash;
+  params.action = decodeURIComponent(action);
+  return params;
+}
+
+function renderFormattedDescription(containerEl, text) {
+  const lines = String(text).split("\n");
+  for (const line of lines) {
+    const p = document.createElement("p");
+    const re = /\*\*(.*?)\*\*/g;
+    let last = 0, m;
+    while ((m = re.exec(line))) {
+      if (m.index > last) p.appendChild(document.createTextNode(line.slice(last, m.index)));
+      const strong = document.createElement("strong");
+      strong.textContent = m[1];
+      p.appendChild(strong);
+      last = m.index + m[0].length;
+    }
+    if (last < line.length) p.appendChild(document.createTextNode(line.slice(last)));
+    containerEl.appendChild(p);
+  }
+}
+
+const SYNCABLE_FEATURE_TYPES = ["app", "appearance", "appearance-data", "hotkey", "core-plugin", "core-plugin-data"];
+const MEDIA_FEATURE_TYPES = ["image", "audio", "pdf", "video"];
+
+// ---- n-g25-locale.js ----
+// g25 clean-room locale display names: BCP-47-ish tag -> 'Lang (Region)(extra)...'.
+// Tables: ISO 639-1 (2-letter), ISO 639-2 *bibliographic* (3-letter; terminologic codes absent),
+// ISO 3166-1 alpha-2 (uppercase keys, English short names). Unknown codes pass through verbatim.
+
+const NG25_LANG2 = {"aa":"Afar","ab":"Abkhazian","af":"Afrikaans","ak":"Akan","sq":"Albanian","am":"Amharic","ar":"Arabic","an":"Aragonese","hy":"Armenian","as":"Assamese","av":"Avaric","ae":"Avestan","ay":"Aymara","az":"Azerbaijani","ba":"Bashkir","bm":"Bambara","eu":"Basque","be":"Belarusian","bn":"Bengali","bh":"Bihari languages","bi":"Bislama","bs":"Bosnian","br":"Breton","bg":"Bulgarian","my":"Burmese","ca":"Catalan","ch":"Chamorro","ce":"Chechen","zh":"Chinese","cu":"Church Slavic","cv":"Chuvash","kw":"Cornish","co":"Corsican","cr":"Cree","cs":"Czech","da":"Danish","dv":"Divehi","nl":"Dutch","dz":"Dzongkha","en":"English","eo":"Esperanto","et":"Estonian","ee":"Ewe","fo":"Faroese","fj":"Fijian","fi":"Finnish","fr":"French","fy":"Western Frisian","ff":"Fulah","ka":"Georgian","de":"German","gd":"Gaelic","ga":"Irish","gl":"Galician","gv":"Manx","el":"Greek, Modern (1453-)","gn":"Guarani","gu":"Gujarati","ht":"Haitian","ha":"Hausa","he":"Hebrew","hz":"Herero","hi":"Hindi","ho":"Hiri Motu","hr":"Croatian","hu":"Hungarian","ig":"Igbo","is":"Icelandic","io":"Ido","ii":"Sichuan Yi","iu":"Inuktitut","ie":"Interlingue","ia":"Interlingua (International Auxiliary Language Association)","id":"Indonesian","ik":"Inupiaq","it":"Italian","jv":"Javanese","ja":"Japanese","kl":"Kalaallisut","kn":"Kannada","ks":"Kashmiri","kr":"Kanuri","kk":"Kazakh","km":"Central Khmer","ki":"Kikuyu","rw":"Kinyarwanda","ky":"Kirghiz","kv":"Komi","kg":"Kongo","ko":"Korean","kj":"Kuanyama","ku":"Kurdish","lo":"Lao","la":"Latin","lv":"Latvian","li":"Limburgan","ln":"Lingala","lt":"Lithuanian","lb":"Luxembourgish","lu":"Luba-Katanga","lg":"Ganda","mk":"Macedonian","mh":"Marshallese","ml":"Malayalam","mi":"Maori","mr":"Marathi","ms":"Malay","mg":"Malagasy","mt":"Maltese","mn":"Mongolian","na":"Nauru","nv":"Navajo","nr":"South Ndebele","nd":"North Ndebele","ng":"Ndonga","ne":"Nepali","nn":"Norwegian Nynorsk","nb":"Norwegian Bokmål","no":"Norwegian","ny":"Chichewa","oc":"Occitan (post 1500)","oj":"Ojibwa","or":"Oriya","om":"Oromo","os":"Ossetian","pa":"Panjabi","fa":"Persian","pi":"Pali","pl":"Polish","pt":"Portuguese","ps":"Pushto","qu":"Quechua","rm":"Romansh","ro":"Romanian","rn":"Rundi","ru":"Russian","sg":"Sango","sa":"Sanskrit","si":"Sinhala","sk":"Slovak","sl":"Slovenian","se":"Northern Sami","sm":"Samoan","sn":"Shona","sd":"Sindhi","so":"Somali","st":"Sotho, Southern","es":"Spanish","sc":"Sardinian","sr":"Serbian","ss":"Swati","su":"Sundanese","sw":"Swahili","sv":"Swedish","ty":"Tahitian","ta":"Tamil","tt":"Tatar","te":"Telugu","tg":"Tajik","tl":"Tagalog","th":"Thai","bo":"Tibetan","ti":"Tigrinya","to":"Tonga (Tonga Islands)","tn":"Tswana","ts":"Tsonga","tk":"Turkmen","tr":"Turkish","tw":"Twi","ug":"Uighur","uk":"Ukrainian","ur":"Urdu","uz":"Uzbek","ve":"Venda","vi":"Vietnamese","vo":"Volapük","cy":"Welsh","wa":"Walloon","wo":"Wolof","xh":"Xhosa","yi":"Yiddish","yo":"Yoruba","za":"Zhuang","zu":"Zulu"};
+const NG25_LANG3 = {"aar":"Afar","abk":"Abkhazian","ace":"Achinese","ach":"Acoli","ada":"Adangme","ady":"Adyghe","afa":"Afro-Asiatic languages","afh":"Afrihili","afr":"Afrikaans","ain":"Ainu","aka":"Akan","akk":"Akkadian","alb":"Albanian","ale":"Aleut","alg":"Algonquian languages","alt":"Southern Altai","amh":"Amharic","ang":"English, Old (ca.450-1100)","anp":"Angika","apa":"Apache languages","ara":"Arabic","arc":"Official Aramaic (700-300 BCE)","arg":"Aragonese","arm":"Armenian","arn":"Mapudungun","arp":"Arapaho","art":"Artificial languages","arw":"Arawak","asm":"Assamese","ast":"Asturian","ath":"Athapascan languages","aus":"Australian languages","ava":"Avaric","ave":"Avestan","awa":"Awadhi","aym":"Aymara","aze":"Azerbaijani","bad":"Banda languages","bai":"Bamileke languages","bak":"Bashkir","bal":"Baluchi","bam":"Bambara","ban":"Balinese","baq":"Basque","bas":"Basa","bat":"Baltic languages","bej":"Beja","bel":"Belarusian","bem":"Bemba","ben":"Bengali","ber":"Berber languages","bho":"Bhojpuri","bih":"Bihari languages","bik":"Bikol","bin":"Bini","bis":"Bislama","bla":"Siksika","bnt":"Bantu languages","bos":"Bosnian","bra":"Braj","bre":"Breton","btk":"Batak languages","bua":"Buriat","bug":"Buginese","bul":"Bulgarian","bur":"Burmese","byn":"Blin","cad":"Caddo","cai":"Central American Indian languages","car":"Galibi Carib","cat":"Catalan","cau":"Caucasian languages","ceb":"Cebuano","cel":"Celtic languages","cha":"Chamorro","chb":"Chibcha","che":"Chechen","chg":"Chagatai","chi":"Chinese","chk":"Chuukese","chm":"Mari","chn":"Chinook jargon","cho":"Choctaw","chp":"Chipewyan","chr":"Cherokee","chu":"Church Slavic","chv":"Chuvash","chy":"Cheyenne","cmc":"Chamic languages","cnr":"Montenegrin","cop":"Coptic","cor":"Cornish","cos":"Corsican","cpe":"Creoles and pidgins, English based","cpf":"Creoles and pidgins, French-based","cpp":"Creoles and pidgins, Portuguese-based","cre":"Cree","crh":"Crimean Tatar","crp":"Creoles and pidgins","csb":"Kashubian","cus":"Cushitic languages","cze":"Czech","dak":"Dakota","dan":"Danish","dar":"Dargwa","day":"Land Dayak languages","del":"Delaware","den":"Slave (Athapascan)","dgr":"Dogrib","din":"Dinka","div":"Divehi","doi":"Dogri","dra":"Dravidian languages","dsb":"Lower Sorbian","dua":"Duala","dum":"Dutch, Middle (ca.1050-1350)","dut":"Dutch","dyu":"Dyula","dzo":"Dzongkha","efi":"Efik","egy":"Egyptian (Ancient)","eka":"Ekajuk","elx":"Elamite","eng":"English","enm":"English, Middle (1100-1500)","epo":"Esperanto","est":"Estonian","ewe":"Ewe","ewo":"Ewondo","fan":"Fang","fao":"Faroese","fat":"Fanti","fij":"Fijian","fil":"Filipino","fin":"Finnish","fiu":"Finno-Ugrian languages","fon":"Fon","fre":"French","frm":"French, Middle (ca.1400-1600)","fro":"French, Old (842-ca.1400)","frr":"Northern Frisian","frs":"Eastern Frisian","fry":"Western Frisian","ful":"Fulah","fur":"Friulian","gaa":"Ga","gay":"Gayo","gba":"Gbaya","gem":"Germanic languages","geo":"Georgian","ger":"German","gez":"Geez","gil":"Gilbertese","gla":"Gaelic","gle":"Irish","glg":"Galician","glv":"Manx","gmh":"German, Middle High (ca.1050-1500)","goh":"German, Old High (ca.750-1050)","gon":"Gondi","gor":"Gorontalo","got":"Gothic","grb":"Grebo","grc":"Greek, Ancient (to 1453)","gre":"Greek, Modern (1453-)","grn":"Guarani","gsw":"Swiss German","guj":"Gujarati","gwi":"Gwich'in","hai":"Haida","hat":"Haitian","hau":"Hausa","haw":"Hawaiian","heb":"Hebrew","her":"Herero","hil":"Hiligaynon","him":"Himachali languages","hin":"Hindi","hit":"Hittite","hmn":"Hmong","hmo":"Hiri Motu","hrv":"Croatian","hsb":"Upper Sorbian","hun":"Hungarian","hup":"Hupa","iba":"Iban","ibo":"Igbo","ice":"Icelandic","ido":"Ido","iii":"Sichuan Yi","ijo":"Ijo languages","iku":"Inuktitut","ile":"Interlingue","ilo":"Iloko","ina":"Interlingua (International Auxiliary Language Association)","inc":"Indic languages","ind":"Indonesian","ine":"Indo-European languages","inh":"Ingush","ipk":"Inupiaq","ira":"Iranian languages","iro":"Iroquoian languages","ita":"Italian","jav":"Javanese","jbo":"Lojban","jpn":"Japanese","jpr":"Judeo-Persian","jrb":"Judeo-Arabic","kaa":"Kara-Kalpak","kab":"Kabyle","kac":"Kachin","kal":"Kalaallisut","kam":"Kamba","kan":"Kannada","kar":"Karen languages","kas":"Kashmiri","kau":"Kanuri","kaw":"Kawi","kaz":"Kazakh","kbd":"Kabardian","kha":"Khasi","khi":"Khoisan languages","khm":"Central Khmer","kho":"Khotanese","kik":"Kikuyu","kin":"Kinyarwanda","kir":"Kirghiz","kmb":"Kimbundu","kok":"Konkani","kom":"Komi","kon":"Kongo","kor":"Korean","kos":"Kosraean","kpe":"Kpelle","krc":"Karachay-Balkar","krl":"Karelian","kro":"Kru languages","kru":"Kurukh","kua":"Kuanyama","kum":"Kumyk","kur":"Kurdish","kut":"Kutenai","lad":"Ladino","lah":"Lahnda","lam":"Lamba","lao":"Lao","lat":"Latin","lav":"Latvian","lez":"Lezghian","lim":"Limburgan","lin":"Lingala","lit":"Lithuanian","lol":"Mongo","loz":"Lozi","ltz":"Luxembourgish","lua":"Luba-Lulua","lub":"Luba-Katanga","lug":"Ganda","lui":"Luiseno","lun":"Lunda","luo":"Luo (Kenya and Tanzania)","lus":"Lushai","mac":"Macedonian","mad":"Madurese","mag":"Magahi","mah":"Marshallese","mai":"Maithili","mak":"Makasar","mal":"Malayalam","man":"Mandingo","mao":"Maori","map":"Austronesian languages","mar":"Marathi","mas":"Masai","may":"Malay","mdf":"Moksha","mdr":"Mandar","men":"Mende","mga":"Irish, Middle (900-1200)","mic":"Mi'kmaq","min":"Minangkabau","mis":"Uncoded languages","mkh":"Mon-Khmer languages","mlg":"Malagasy","mlt":"Maltese","mnc":"Manchu","mni":"Manipuri","mno":"Manobo languages","moh":"Mohawk","mon":"Mongolian","mos":"Mossi","mul":"Multiple languages","mun":"Munda languages","mus":"Creek","mwl":"Mirandese","mwr":"Marwari","myn":"Mayan languages","myv":"Erzya","nah":"Nahuatl languages","nai":"North American Indian languages","nap":"Neapolitan","nau":"Nauru","nav":"Navajo","nbl":"South Ndebele","nde":"North Ndebele","ndo":"Ndonga","nds":"Low German","nep":"Nepali","new":"Nepal Bhasa","nia":"Nias","nic":"Niger-Kordofanian languages","niu":"Niuean","nno":"Norwegian Nynorsk","nob":"Norwegian Bokmål","nog":"Nogai","non":"Norse, Old","nor":"Norwegian","nqo":"N'Ko","nso":"Pedi","nub":"Nubian languages","nwc":"Classical Newari","nya":"Chichewa","nym":"Nyamwezi","nyn":"Nyankole","nyo":"Nyoro","nzi":"Nzima","oci":"Occitan (post 1500)","oji":"Ojibwa","ori":"Oriya","orm":"Oromo","osa":"Osage","oss":"Ossetian","ota":"Turkish, Ottoman (1500-1928)","oto":"Otomian languages","paa":"Papuan languages","pag":"Pangasinan","pal":"Pahlavi","pam":"Pampanga","pan":"Panjabi","pap":"Papiamento","pau":"Palauan","peo":"Persian, Old (ca.600-400 B.C.)","per":"Persian","phi":"Philippine languages","phn":"Phoenician","pli":"Pali","pol":"Polish","pon":"Pohnpeian","por":"Portuguese","pra":"Prakrit languages","pro":"Provençal, Old (to 1500)","pus":"Pushto","qaa-qtz":"Reserved for local use","que":"Quechua","raj":"Rajasthani","rap":"Rapanui","rar":"Rarotongan","roa":"Romance languages","roh":"Romansh","rom":"Romany","rum":"Romanian","run":"Rundi","rup":"Aromanian","rus":"Russian","sad":"Sandawe","sag":"Sango","sah":"Yakut","sai":"South American Indian languages","sal":"Salishan languages","sam":"Samaritan Aramaic","san":"Sanskrit","sas":"Sasak","sat":"Santali","scn":"Sicilian","sco":"Scots","sel":"Selkup","sem":"Semitic languages","sga":"Irish, Old (to 900)","sgn":"Sign Languages","shn":"Shan","sid":"Sidamo","sin":"Sinhala","sio":"Siouan languages","sit":"Sino-Tibetan languages","sla":"Slavic languages","slo":"Slovak","slv":"Slovenian","sma":"Southern Sami","sme":"Northern Sami","smi":"Sami languages","smj":"Lule Sami","smn":"Inari Sami","smo":"Samoan","sms":"Skolt Sami","sna":"Shona","snd":"Sindhi","snk":"Soninke","sog":"Sogdian","som":"Somali","son":"Songhai languages","sot":"Sotho, Southern","spa":"Spanish","srd":"Sardinian","srn":"Sranan Tongo","srp":"Serbian","srr":"Serer","ssa":"Nilo-Saharan languages","ssw":"Swati","suk":"Sukuma","sun":"Sundanese","sus":"Susu","sux":"Sumerian","swa":"Swahili","swe":"Swedish","syc":"Classical Syriac","syr":"Syriac","tah":"Tahitian","tai":"Tai languages","tam":"Tamil","tat":"Tatar","tel":"Telugu","tem":"Timne","ter":"Tereno","tet":"Tetum","tgk":"Tajik","tgl":"Tagalog","tha":"Thai","tib":"Tibetan","tig":"Tigre","tir":"Tigrinya","tiv":"Tiv","tkl":"Tokelau","tlh":"Klingon","tli":"Tlingit","tmh":"Tamashek","tog":"Tonga (Nyasa)","ton":"Tonga (Tonga Islands)","tpi":"Tok Pisin","tsi":"Tsimshian","tsn":"Tswana","tso":"Tsonga","tuk":"Turkmen","tum":"Tumbuka","tup":"Tupi languages","tur":"Turkish","tut":"Altaic languages","tvl":"Tuvalu","twi":"Twi","tyv":"Tuvinian","udm":"Udmurt","uga":"Ugaritic","uig":"Uighur","ukr":"Ukrainian","umb":"Umbundu","und":"Undetermined","urd":"Urdu","uzb":"Uzbek","vai":"Vai","ven":"Venda","vie":"Vietnamese","vol":"Volapük","vot":"Votic","wak":"Wakashan languages","wal":"Wolaitta","war":"Waray","was":"Washo","wel":"Welsh","wen":"Sorbian languages","wln":"Walloon","wol":"Wolof","xal":"Kalmyk","xho":"Xhosa","yao":"Yao","yap":"Yapese","yid":"Yiddish","yor":"Yoruba","ypk":"Yupik languages","zap":"Zapotec","zbl":"Blissymbols","zen":"Zenaga","zgh":"Standard Moroccan Tamazight","zha":"Zhuang","znd":"Zande languages","zul":"Zulu","zun":"Zuni","zxx":"No linguistic content","zza":"Zaza"};
+const NG25_COUNTRY = {"AW":"Aruba","AF":"Afghanistan","AO":"Angola","AI":"Anguilla","AX":"Åland Islands","AL":"Albania","AD":"Andorra","AE":"United Arab Emirates","AR":"Argentina","AM":"Armenia","AS":"American Samoa","AQ":"Antarctica","TF":"French Southern Territories","AG":"Antigua & Barbuda","AU":"Australia","AT":"Austria","AZ":"Azerbaijan","BI":"Burundi","BE":"Belgium","BJ":"Benin","BF":"Burkina Faso","BD":"Bangladesh","BG":"Bulgaria","BH":"Bahrain","BS":"Bahamas","BA":"Bosnia & Herzegovina","BL":"St. Barthélemy","SH":"St. Helena","BY":"Belarus","BZ":"Belize","BM":"Bermuda","BO":"Bolivia","BQ":"Caribbean Netherlands","BR":"Brazil","BB":"Barbados","BN":"Brunei","BT":"Bhutan","BV":"Bouvet Island","BW":"Botswana","CF":"Central African Republic","CA":"Canada","CC":"Cocos (Keeling) Islands","CH":"Switzerland","CL":"Chile","CN":"China","CI":"Côte d’Ivoire","CM":"Cameroon","CD":"Congo - Kinshasa","CG":"Congo - Brazzaville","CK":"Cook Islands","CO":"Colombia","KM":"Comoros","CV":"Cape Verde","CR":"Costa Rica","CU":"Cuba","CW":"Curaçao","CX":"Christmas Island","KY":"Cayman Islands","CY":"Cyprus","CZ":"Czechia","DE":"Germany","DJ":"Djibouti","DM":"Dominica","DK":"Denmark","DO":"Dominican Republic","DZ":"Algeria","EC":"Ecuador","EG":"Egypt","ER":"Eritrea","EH":"Western Sahara","ES":"Spain","EE":"Estonia","ET":"Ethiopia","FI":"Finland","FJ":"Fiji","FK":"Falkland Islands","FR":"France","FO":"Faroe Islands","FM":"Micronesia","GA":"Gabon","GB":"United Kingdom","GE":"Georgia","GG":"Guernsey","GH":"Ghana","GI":"Gibraltar","GN":"Guinea","GP":"Guadeloupe","GM":"Gambia","GW":"Guinea-Bissau","GQ":"Equatorial Guinea","GR":"Greece","GD":"Grenada","GL":"Greenland","GT":"Guatemala","GF":"French Guiana","GU":"Guam","GY":"Guyana","HK":"Hong Kong SAR China","HM":"Heard & McDonald Islands","HN":"Honduras","HR":"Croatia","HT":"Haiti","HU":"Hungary","ID":"Indonesia","IM":"Isle of Man","IN":"India","IO":"British Indian Ocean Territory","IE":"Ireland","IR":"Iran","IQ":"Iraq","IS":"Iceland","IL":"Israel","IT":"Italy","JM":"Jamaica","JE":"Jersey","JO":"Jordan","JP":"Japan","KZ":"Kazakhstan","KE":"Kenya","KG":"Kyrgyzstan","KH":"Cambodia","KI":"Kiribati","KN":"St. Kitts & Nevis","KR":"South Korea","XK":"Kosovo","KW":"Kuwait","LA":"Laos","LB":"Lebanon","LR":"Liberia","LY":"Libya","LC":"St. Lucia","LI":"Liechtenstein","LK":"Sri Lanka","LS":"Lesotho","LT":"Lithuania","LU":"Luxembourg","LV":"Latvia","MO":"Macao SAR China","MF":"St. Martin","MA":"Morocco","MC":"Monaco","MD":"Moldova","MG":"Madagascar","MV":"Maldives","MX":"Mexico","MH":"Marshall Islands","MK":"North Macedonia","ML":"Mali","MT":"Malta","MM":"Myanmar (Burma)","ME":"Montenegro","MN":"Mongolia","MP":"Northern Mariana Islands","MZ":"Mozambique","MR":"Mauritania","MS":"Montserrat","MQ":"Martinique","MU":"Mauritius","MW":"Malawi","MY":"Malaysia","YT":"Mayotte","NA":"Namibia","NC":"New Caledonia","NE":"Niger","NF":"Norfolk Island","NG":"Nigeria","NI":"Nicaragua","NU":"Niue","NL":"Netherlands","NO":"Norway","NP":"Nepal","NR":"Nauru","NZ":"New Zealand","OM":"Oman","PK":"Pakistan","PA":"Panama","PN":"Pitcairn Islands","PE":"Peru","PH":"Philippines","PW":"Palau","PG":"Papua New Guinea","PL":"Poland","PR":"Puerto Rico","KP":"North Korea","PT":"Portugal","PY":"Paraguay","PS":"Palestinian Territories","PF":"French Polynesia","QA":"Qatar","RE":"Réunion","RO":"Romania","RU":"Russia","RW":"Rwanda","SA":"Saudi Arabia","SD":"Sudan","SN":"Senegal","SG":"Singapore","GS":"South Georgia & South Sandwich Islands","SJ":"Svalbard & Jan Mayen","SB":"Solomon Islands","SL":"Sierra Leone","SV":"El Salvador","SM":"San Marino","SO":"Somalia","PM":"St. Pierre & Miquelon","RS":"Serbia","SS":"South Sudan","ST":"São Tomé & Príncipe","SR":"Suriname","SK":"Slovakia","SI":"Slovenia","SE":"Sweden","SZ":"Eswatini","SX":"Sint Maarten","SC":"Seychelles","SY":"Syria","TC":"Turks & Caicos Islands","TD":"Chad","TG":"Togo","TH":"Thailand","TJ":"Tajikistan","TK":"Tokelau","TM":"Turkmenistan","TL":"Timor-Leste","TO":"Tonga","TT":"Trinidad & Tobago","TN":"Tunisia","TR":"Türkiye","TV":"Tuvalu","TW":"Taiwan","TZ":"Tanzania","UG":"Uganda","UA":"Ukraine","UM":"U.S. Outlying Islands","UY":"Uruguay","US":"United States","UZ":"Uzbekistan","VA":"Vatican City","VC":"St. Vincent & Grenadines","VE":"Venezuela","VG":"British Virgin Islands","VI":"U.S. Virgin Islands","VN":"Vietnam","VU":"Vanuatu","WF":"Wallis & Futuna","WS":"Samoa","YE":"Yemen","ZA":"South Africa","ZM":"Zambia","ZW":"Zimbabwe"};
+
+function ng25Lang(code) {
+  return code.length === 2 ? NG25_LANG2[code] : code.length === 3 ? NG25_LANG3[code] : undefined;
+}
+
+/** 'en-US' -> 'English (United States)'; falsy -> ''. */
+function s65LocaleName(locale) {
+  if (!locale) return '';
+  const parts = String(locale).split('-');
+  if (parts.length === 1) {
+    const p = parts[0];
+    return NG25_LANG2[p] || NG25_LANG3[p] || NG25_COUNTRY[p] || locale;
+  }
+  const lang = ng25Lang(parts[0]) || parts[0];
+  let out = lang + ' (' + (NG25_COUNTRY[parts[1]] || parts[1]) + ')';
+  for (let i = 2; i < parts.length; i++) out += '(' + parts[i] + ')';
+  return out;
+}
+
+// ---- n-g25-s05.js ----
+// g25 clean-room s05-utils: mdast text/positions, frontmatter links, filename checks,
+// loaders, system info, mobile vault list, titlebar dblclick, wheel scroll.
+// Spec: F:\orch\specs\g25.md Part D.
+
+
+// ---------------------------------------------------------------- mdast
+
+/** mdast 1-based {line,column,offset} -> 0-based {line,col,offset}. */
+function s05Point(position) {
+  return { line: position.line - 1, col: position.column - 1, offset: position.offset };
+}
+
+/** {start,end} points of an mdast range. */
+function s05Range(range) {
+  return { start: s05Point(range.start), end: s05Point(range.end) };
+}
+
+function s05HasPosition(node) {
+  return !!node && Object.prototype.hasOwnProperty.call(node, "position");
+}
+
+function s05HasKey(node) {
+  return !!node && Object.prototype.hasOwnProperty.call(node, "key");
+}
+
+/** mdast subtree -> plain text (type-specific whitespace rules). */
+function s05InlineText(node) {
+  if (!node) return "";
+  const type = node.type;
+  if (type === "html" || type === "comment") return "";
+  if (type === "iembed") return node.href || "";
+  if (type === "tag") return node.tag || "";
+  if (type === "listItem") {
+    const kids = node.children || [];
+    return kids.map(s05InlineText).join("\n") + "\n";
+  }
+  let text = node.value || node.alt || node.title || "";
+  if (!text) {
+    const kids = node.children || [];
+    if (kids.length) text = kids.map(s05InlineText).join("");
+  }
+  if (type === "list" && typeof node.start === "number") text = node.start + ". " + text;
+  if (type === "paragraph" || type === "break" || type === "heading" || type === "code") {
+    text += "\n";
+  } else {
+    text = text.replace(/\n$/, "");
+  }
+  if (type === "tableCell") text += " ";
+  if (type === "tableRow") text += "\n";
+  return text;
+}
+
+/** Plain text of each child node. */
+function s05ChildrenText(children) {
+  return (children || []).map(s05InlineText);
+}
+
+// ---------------------------------------------------------------- frontmatter links
+
+const ng25MdLinkFull = /^(!?\[)([^\]]*)\]\(\s*(<[^>]*?>|[^)\s]+)(?:\s+[^)]*)?\s*\)$/;
+
+function ng25FmLinkValue(value) {
+  const t = value.trim();
+  if (t.length > 4 && t.charAt(0) === "[" && t.charAt(1) === "[") {
+    const parsed = env().iE(t.slice(2, -2));
+    if (parsed && parsed.href !== undefined) {
+      return { link: parsed.href, original: value, displayText: parsed.title };
+    }
+  }
+  const m = ng25MdLinkFull.exec(t);
+  if (m) {
+    let dest = m[3];
+    if (dest.charAt(0) === "<" && dest.charAt(dest.length - 1) === ">") dest = dest.slice(1, -1);
+    let link;
+    try { link = decodeURI(dest); } catch { link = dest; }
+    if (isLocalLink(link)) return { link, original: value, displayText: m[2] };
+  }
+  return null;
+}
+
+/** All "[[…]]" / "[…](…)" links inside a frontmatter object, with dotted keys. */
+function s05FrontmatterLinks(frontmatter) {
+  const out = [];
+  const walk = (value, key) => {
+    if (typeof value === "string") {
+      const link = ng25FmLinkValue(value);
+      if (link) out.push({ key, link: link.link, original: link.original, displayText: link.displayText });
+      return;
+    }
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) walk(value[i], key + "." + i);
+      return;
+    }
+    if (value && typeof value === "object") {
+      for (const k of Object.keys(value)) walk(value[k], key ? key + "." + k : k);
+    }
+  };
+  walk(frontmatter, "");
+  return out;
+}
+
+/** Metadata node links or embeds match the predicate. */
+function s05HasRef(node, target) {
+  if (!node) return false;
+  return anyRefMatch(node.links, target) || anyRefMatch(node.embeds, target);
+}
+
+/** Plain text of a cached heading (parsed markdown, raw fallback). */
+function s05HeadingText(heading) {
+  const raw = heading && heading.heading;
+  try {
+    const parsed = env().Kx(raw);
+    const text = parsed ? s05InlineText(parsed) : "";
+    return text || raw;
+  } catch {
+    return raw;
+  }
+}
+
+// ---------------------------------------------------------------- filenames
+
+const ng25Reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i;
+
+/** Throws Error on an invalid file name (Windows rules only when env().Ul). */
+function s05AssertValidFileName(name) {
+  if (env().Ul) {
+    const base = lastSegment(String(name));
+    if (/[. ]$/.test(base)) throw new Error("File name must not end with a dot or space: " + name);
+    if (ng25Reserved.test(base)) throw new Error("Reserved file name: " + name);
+  }
+  const segs = String(name).split(/[\\/]/);
+  const bad = env().UT;
+  for (const seg of segs) {
+    if (bad && bad.test(seg)) throw new Error("Invalid characters in file name (" + (env().qT || "") + "): " + name);
+  }
+}
+
+function s05IsValidFileName(name) {
+  try {
+    s05AssertValidFileName(name);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------- misc app helpers
+
+/** One-shot filesystem permission probe; caches the flag in env().kD. */
+async function s05CheckFilePermissions() {
+  if (env().kD !== undefined && env().kD !== null) return env().kD;
+  try {
+    const r = await env().Dm.checkPerms();
+    env().kD = r !== false;
+  } catch {
+    env().kD = false;
+  }
+  return env().kD;
+}
+
+/** Append {key, ts} to the action log env().aD. */
+function s05TrackAction(key) {
+  const log = env().aD;
+  if (log && typeof log.push === "function") log.push({ key, ts: performance.now() });
+}
+
+/** Dotted-path lookup inside the animation tree env().lD; null when missing. */
+function s05LookupAnimNode(path) {
+  let node = env().lD;
+  if (!node) return null;
+  if (!path) return node;
+  for (const seg of String(path).split(".")) {
+    node = node && node.children ? node.children[seg] : undefined;
+    if (!node) return null;
+  }
+  return node;
+}
+
+function s05AnimDuration(path) {
+  const node = s05LookupAnimNode(path);
+  return node && typeof node.duration === "number" ? node.duration : 0;
+}
+
+/** .loader-cube div with 9 .sk-cube.sk-cubeN children. */
+function s05CreateLoaderCube(parent) {
+  const cube = env().createDiv("loader-cube", parent);
+  for (let n = 1; n <= 9; n++) env().createDiv("sk-cube sk-cube" + n, cube);
+  return cube;
+}
+
+/** .loader-spinner div with the loader-2 icon. */
+function s05CreateLoaderSpinner(parent) {
+  const el = env().createDiv("loader-spinner", parent);
+  env().tv(el, "loader-2");
+  return el;
+}
+
+/** Show a spinner while `task()` runs; always removed afterwards. */
+async function s05WithLoader(parent, task) {
+  const spinner = s05CreateLoaderSpinner(parent);
+  try {
+    return await task();
+  } finally {
+    if (spinner.detach) spinner.detach();
+    else if (spinner.remove) spinner.remove();
+  }
+}
+
+/** First non-word character index >= from, or -1. */
+function s05FindBreakIndex(text, from) {
+  for (let i = from; i < text.length; i++) {
+    if (/\W/.test(text.charAt(i))) return i;
+  }
+  return -1;
+}
+
+/** Max numeric footnote id (excluding "[inline...") + 1; 1 when none. */
+function s05NextFootnoteId(node) {
+  let max = 0;
+  const list = node && node.footnotes;
+  if (list) {
+    for (const f of list) {
+      const id = f && f.id !== undefined && f.id !== null ? String(f.id) : "";
+      if (id.indexOf("[inline") === 0) continue;
+      const n = parseInt(id, 10);
+      if (!Number.isNaN(n) && n > max) max = n;
+    }
+  }
+  return max + 1;
+}
+
+/** `cssclasses` frontmatter as filtered single-token classes, or null. */
+function s05CssClasses(frontmatter) {
+  const list = frontmatterStrings(frontmatter, /^cssclasses$/i);
+  if (!list) return null;
+  return list.filter((c) => !!c && !/\s/.test(c));
+}
+
+// ---------------------------------------------------------------- system info / vaults
+
+/** Diagnostic text block for the debug-info pane. */
+function s05SystemInfo() {
+  const p = env().Yl || {};
+  const mobile = !!(p.isMobileApp || p.isMobile || p.isAndroidApp || p.isIosApp);
+  const lines = ["SYSTEM INFO:"];
+  if (mobile) {
+    lines.push("Basalt version: " + p.version + " (" + p.build + ")");
+    lines.push("API version: " + env().gte);
+    const os = [p.osName, p.osVersion].filter(Boolean).join(" ");
+    const mm = [p.manufacturer, p.model].filter(Boolean).join(" ").trim();
+    lines.push("OS: " + os + (mm ? " (" + mm + ")" : ""));
+    if ((p.isAndroidApp || env().Sm) && typeof navigator !== "undefined" && navigator.userAgent) {
+      const cv = chromeVersion(navigator.userAgent);
+      if (cv) lines.push("Webview version: " + cv);
+    }
+  } else {
+    lines.push("Basalt version: " + p.version);
+    let installer = "unknown";
+    try {
+      env().Of((e) => {
+        if (e && e.app && typeof e.app.getVersion === "function") installer = e.app.getVersion();
+      });
+    } catch { /* no bridge */ }
+    lines.push("Installer version: " + installer);
+    lines.push("OS: " + [p.osName, p.osVersion].filter(Boolean).join(" "));
+    let insider = false;
+    try {
+      env().Of((e) => {
+        insider = !!(e && e.ipcRenderer && e.ipcRenderer.sendSync("insider-build", null));
+      });
+    } catch { /* no bridge */ }
+    lines.push("Insider build toggle: " + (insider ? "on" : "off"));
+  }
+  const hw = env().Hw || {};
+  lines.push("Login status: " + (hw.token ? "logged in" : "not logged in"));
+  lines.push("Language: " + (env().sm ? env().sm() : ""));
+  if (hw.token) lines.push("Catalyst license: " + (hw.license || "none"));
+  return lines.join("\n");
+}
+
+async function ng25CollectVault(adapter, subdir, prefix, storageType, excludes, out) {
+  let entries;
+  try {
+    entries = await adapter.readdir(subdir);
+  } catch (e) {
+    console.error(e);
+    return;
+  }
+  for (const en of entries || []) {
+    const name = en && en.name;
+    if (!name || name.charAt(0) === ".") continue;
+    if (excludes && excludes.has(name)) continue;
+    if (en.type === "directory") out.push({ name, location: prefix + name, storageType });
+  }
+}
+
+/** Vault list for mobile platforms; [] elsewhere. */
+async function s05MobileVaultList() {
+  const out = [];
+  if (env().Mm) {
+    if (env().yD) await ng25CollectVault(env().yD, env().wD || "", "icloud/", "iCloud", null, out);
+    if (env().vD) await ng25CollectVault(env().vD, "", "documents/", "local", null, out);
+    return out;
+  }
+  if (env().Sm) {
+    if (!(await s05CheckFilePermissions())) return out;
+    const excludes = new Set();
+    const base = env().vD && env().vD.getUri ? env().vD.getUri("") : "";
+    for (const dir of env().gD || []) {
+      try {
+        const uri = env().bD.getUri(dir);
+        if (base && uri.indexOf(base + "/") === 0) {
+          const rest = uri.slice(base.length + 1);
+          if (rest && rest.indexOf("/") === -1) excludes.add(decodeURIComponent(rest));
+        }
+        const st = await env().bD.stat(dir);
+        if (st && st.type === "directory") {
+          out.push({ name: lastSegment(dir), location: dir, storageType: "local" });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (env().vD) await ng25CollectVault(env().vD, "", "", "local", excludes, out);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------- DOM glue
+
+/** macOS desktop: double-click titlebar -> minimize/maximize per system preference. */
+function s05TitlebarDoubleClick(element) {
+  const p = env().Yl;
+  if (!p || !p.isMacOS || !p.isDesktopApp) return;
+  element.addEventListener("dblclick", (event) => {
+    if (event.button !== 0) return;
+    const t = event.target;
+    if (!(t instanceof HTMLElement)) return;
+    if (t.closest(".clickable-icon") || t.closest(".workspace-tab-header-inner-close-button")) return;
+    const tab = t.closest(".workspace-tab-header");
+    if (tab && tab.closest(".workspace-split.mod-sidedock")) return;
+    const win = element.win && element.win.electronWindow;
+    if (!win || !win.isMaximizable) return;
+    try {
+      env().Of((e) => {
+        const sp = e && e.remote && e.remote.systemPreferences;
+        const pref = sp ? sp.getUserDefault("AppleActionOnDoubleClick", "string") : "";
+        if (pref === "Minimize") win.minimize();
+        else if (pref === "Maximize" || pref === "") {
+          if (typeof win.isMaximized === "function" && win.isMaximized()) win.unmaximize();
+          else win.maximize();
+        }
+      });
+    } catch { /* no bridge */ }
+  });
+}
+
+/** Wheel deltaY -> horizontal scroll on the event's currentTarget. */
+function s05WheelScroll(event) {
+  if (!event.deltaY) return;
+  const el = event.currentTarget;
+  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) el.scrollLeft += event.deltaX;
+  else el.scrollLeft += event.deltaY;
+  event.preventDefault();
+}
+
+// ---- n-g25-s06.js ----
+// g25 clean-room s06-util: positions, frontmatter, table cells, link/tag helpers, shared regexes.
+// Spec: F:\orch\specs\g25.md Part C. env() names are the minified bundle bindings (lazy).
+
+
+// ---------------------------------------------------------------- regexes / consts (contract-exact)
+
+const s06BlockquoteRe = /^\s{0,3}>(\s*)/;
+const s06TagRe = /(^|\s)#[^ -⁯⸀-⹿'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\\s]*$/g;
+const s06WikiLinkRe = /^(!?\[\[)(.*?)(\|(.*))?(]])$/;
+const s06FootnoteRefRe = /^#\d+$/;
+const s06ListMarkerRe = /^([>\s]*)(([*+-] |(\d+)([.)] ))(?:\[(.)\] )?)?/;
+const s06HeadingRe = /^([>\s]*)(#{1,6} )?(.*)/;
+const s06DateTimeRe = /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d$/;
+const s06DateRe = /^\d{4}-[01]\d-[0-3]\d$/;
+const s06DateTimeFormats = ["YYYY-MM-DD[T]HH:mm:ss", "YYYY-MM-DD[T]HH:mm", "YYYY-MM-DD HH:mm:ss", "YYYY-MM-DD HH:mm"];
+const s06DateFormats = ["YYYY-MM-DD"];
+const s06CommentPrefix = "<!-- basalt -->";
+const s06CjkBrackets = [
+  { regex: /(！)?【【$/, replace: (m) => (m[1] ? "![[" : "[[") },
+  { regex: /】】$/, replace: "]]" },
+  { regex: /【【$/, replace: "[[" },
+];
+const s06EmptySuggestion = { type: "none", matches: null, score: 0 };
+
+// ---------------------------------------------------------------- positions
+
+function s06Pos(line, ch = 0) { return { line, ch }; }
+function s06PosEq(a, b) { return a.line === b.line && a.ch === b.ch; }
+function s06PosAdd(pos, ch) { return { line: pos.line, ch: pos.ch + ch }; }
+
+/** {line,ch} (0-based line) -> absolute offset. ch<0 counts from line end; missing/Infinity ch -> line end. */
+function s06PosToOffset(doc, pos) {
+  const n = pos.line;
+  if (n < 0) {
+    const l0 = doc.line(1);
+    return l0.from + ng25ChOffset(l0, pos.ch);
+  }
+  if (n >= doc.lines) return doc.length;
+  const l = doc.line(n + 1);
+  return l.from + ng25ChOffset(l, pos.ch);
+}
+
+function ng25ChOffset(line, ch) {
+  if (ch === undefined || ch === null || ch === Infinity) return line.length;
+  if (ch < 0) return Math.max(0, line.length + ch);
+  return ch;
+}
+
+/** Absolute offset -> {line,ch} clamped into the doc. */
+function s06OffsetToPos(doc, offset) {
+  const o = Math.max(0, Math.min(doc.length, offset));
+  const l = doc.lineAt(o);
+  return { line: l.number - 1, ch: o - l.from };
+}
+
+/** Visual width of the leading blockquote indent captured by s06BlockquoteRe. */
+function ng25IndentWidth(s) {
+  let w = 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === " ") {
+      let n = 0;
+      while (i < s.length && s[i] === " ") { n++; i++; }
+      i--;
+      w += Math.floor(n / 4) + (n % 4);
+    } else if (c === "\t") {
+      w += 4 - (w % 4);
+    } else {
+      w += 1;
+    }
+  }
+  return w;
+}
+
+/** Width of the leading ">" marker run plus its indent; 0 without a marker. */
+function s06QuotePrefixWidth(text) {
+  const m = s06BlockquoteRe.exec(text);
+  if (!m) return 0;
+  return 1 + ng25IndentWidth(m[1]);
+}
+
+// ---------------------------------------------------------------- object helpers
+
+/** Set obj[path...] = value; path array is consumed (shift). Aborts silently on type/index mismatch. */
+function s06SetPath(obj, path, value) {
+  while (path.length > 1) {
+    const key = path.shift();
+    if (Array.isArray(obj)) {
+      const i = Number(key);
+      if (!Number.isInteger(i) || i < 0 || i >= obj.length) return;
+      obj = obj[i];
+    } else if (obj && typeof obj === "object") {
+      const next = obj[key];
+      if (next === undefined || next === null || typeof next !== "object") return;
+      obj = next;
+    } else {
+      return;
+    }
+  }
+  if (path.length === 0) return;
+  const key = path.shift();
+  if (Array.isArray(obj)) {
+    const i = Number(key);
+    if (Number.isInteger(i) && i >= 0 && i < obj.length) obj[i] = value;
+  } else if (obj && typeof obj === "object") {
+    obj[key] = value;
+  }
+}
+
+/** Deep merge into target: arrays concat+dedupe, plain objects recurse, scalars overwrite (null ignored over existing). */
+function s06MergeDeep(target, source) {
+  if (!source || typeof source !== "object") return target;
+  for (const key of Object.keys(source)) {
+    const nv = source[key];
+    const ov = target[key];
+    if (Array.isArray(nv)) {
+      const base = Array.isArray(ov) ? ov : [];
+      target[key] = base.concat(nv).filter((v, i, a) => a.indexOf(v) === i);
+    } else if (nv && typeof nv === "object") {
+      if (ov && typeof ov === "object" && !Array.isArray(ov) && !Array.isArray(nv)) s06MergeDeep(ov, nv);
+      else target[key] = nv;
+    } else {
+      if (nv === null && ov !== undefined) continue;
+      target[key] = nv;
+    }
+  }
+  return target;
+}
+
+// ---------------------------------------------------------------- frontmatter
+
+/** "---\n<yaml>\n---\n" or "" for null/empty data. */
+function s06FrontmatterBlock(data) {
+  if (!data || typeof data !== "object" || Object.keys(data).length === 0) return "";
+  const yaml = env().vA(data);
+  return "---\n" + String(yaml).trim() + "\n---\n";
+}
+
+function ng25FmObject(v) {
+  return v && typeof v === "object" && !Array.isArray(v) ? v : {};
+}
+
+/** {content, frontmatter} split at the frontmatter block. */
+function s06ParseFrontmatter(text) {
+  const info = env().Xx(text);
+  const fm = info && info.frontmatter ? env().mA(info.frontmatter) : {};
+  return { content: text.slice(info ? info.contentStart : 0), frontmatter: ng25FmObject(fm) };
+}
+
+/** Serialized `data` block followed by the body of `text`. */
+function s06WithFrontmatter(text, data) {
+  const info = env().Xx(text);
+  return s06FrontmatterBlock(data) + text.slice(info ? info.contentStart : 0);
+}
+
+/** Parse fm, run mutate(obj), rewrite the block; empty result drops the block. */
+function s06UpdateFrontmatter(text, mutate) {
+  const info = env().Xx(text);
+  const had = !!(info && info.exists);
+  const parsed = had && info.frontmatter ? env().mA(info.frontmatter) : {};
+  const obj = ng25FmObject(parsed);
+  if (mutate) mutate(obj);
+  const empty = !obj || typeof obj !== "object" || Object.keys(obj).length === 0;
+  if (empty) return had ? text.slice(info.contentStart) : text;
+  const yaml = String(env().vA(obj)).trim();
+  if (had) return text.slice(0, info.from) + yaml + "\n" + text.slice(info.to);
+  return "---\n" + yaml + "\n---\n" + text;
+}
+
+// ---------------------------------------------------------------- tables / DOM
+
+/** True for a header row: THEAD row, first TABLE row, or first TBODY row after absent/blank THEAD — all-TH cells. */
+function s06IsHeaderRow(el) {
+  const p = el.parentNode;
+  if (!p) return false;
+  if (p.nodeName === "THEAD") return true;
+  const cells = el.childNodes;
+  let allTh = cells.length > 0;
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i].nodeName !== "TH") { allTh = false; break; }
+  }
+  if (!allTh) return false;
+  if (p.nodeName === "TABLE") return el === p.firstChild;
+  if (p.nodeName === "TBODY" && el === p.firstChild) {
+    const prev = p.previousSibling;
+    if (!prev) return true;
+    if (prev.nodeName === "THEAD") return !prev.textContent || !prev.textContent.trim();
+  }
+  return false;
+}
+
+/** Sorted offsets -> [{line,ch}] via one forward scan. */
+function s06OffsetsToPositions(text, offsets) {
+  const out = [];
+  let line = 0, start = 0, nl = text.indexOf("\n");
+  for (const off of offsets) {
+    while (nl !== -1 && off > nl) {
+      line++;
+      start = nl + 1;
+      nl = text.indexOf("\n", start);
+    }
+    out.push({ line, ch: off - start });
+  }
+  return out;
+}
+
+/** colspan-1 (0 when absent/invalid). */
+function s06Colspan(cell) {
+  const v = cell.getAttribute && cell.getAttribute("colspan");
+  if (v === null || v === undefined) return 0;
+  const n = parseInt(v, 10);
+  return Number.isNaN(n) ? 0 : Math.max(0, n - 1);
+}
+
+/** Filler repeated for the extra colspan columns. */
+function s06ColspanRepeat(cell, filler) {
+  return String(filler).repeat(s06Colspan(cell));
+}
+
+function ng25Changeset(changes, length) {
+  return env().re.of(changes, length);
+}
+
+/** Escape newlines -> <br> and unescaped pipes -> \| for a table cell. */
+function s06EscapeTableCell(text) {
+  const changes = [];
+  let out = "";
+  let bs = 0;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === "\r" && text[i + 1] === "\n") {
+      changes.push({ from: i, to: i + 2, insert: "<br>" });
+      out += "<br>";
+      i++;
+      bs = 0;
+      continue;
+    }
+    if (c === "\n") {
+      changes.push({ from: i, to: i + 1, insert: "<br>" });
+      out += "<br>";
+      bs = 0;
+      continue;
+    }
+    if (c === "\\") { bs++; out += c; continue; }
+    if (c === "|") {
+      if (bs % 2 === 0) {
+        changes.push({ from: i, to: i, insert: "\\" });
+        out += "\\|";
+      } else {
+        out += "|";
+      }
+      bs = 0;
+      continue;
+    }
+    bs = 0;
+    out += c;
+  }
+  return { result: out, changes: ng25Changeset(changes, text.length) };
+}
+
+/** Reverse of s06EscapeTableCell: <br> -> \n (outside code spans), odd-backslash \| -> |. */
+function s06UnescapeTableCell(text) {
+  const changes = [];
+  let out = "";
+  let i = 0;
+  let codeLen = 0;
+  while (i < text.length) {
+    const c = text[i];
+    if (c === "`") {
+      let n = 0;
+      while (i + n < text.length && text[i + n] === "`") n++;
+      if (codeLen === 0) codeLen = n;
+      else if (n === codeLen) codeLen = 0;
+      out += text.substr(i, n);
+      i += n;
+      continue;
+    }
+    if (codeLen === 0 && text.startsWith("<br>", i)) {
+      changes.push({ from: i, to: i + 4, insert: "\n" });
+      out += "\n";
+      i += 4;
+      continue;
+    }
+    if (c === "|") {
+      let bs = 0, j = i - 1;
+      while (j >= 0 && text[j] === "\\") { bs++; j--; }
+      if (bs % 2 === 1) {
+        // odd run: drop one backslash, keep the literal pipe
+        changes.push({ from: j + 1, to: j + 2, insert: "" });
+        if (out.charAt(out.length - 1) === "\\") out = out.slice(0, -1);
+        out += "|";
+      } else {
+        out += "|";
+      }
+      i++;
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return { result: out, changes: ng25Changeset(changes, text.length) };
+}
+
+// ---------------------------------------------------------------- suggestions / matching
+
+/** Try basename match first (ranges shifted); else whole text with score-1. */
+function s06MatchBasenameFirst(matchFn, text) {
+  const base = lastSegment(text);
+  const hit = matchFn(base);
+  if (hit) {
+    const shift = text.length - base.length;
+    if (hit.matches) shiftRanges(hit.matches, shift);
+    return hit;
+  }
+  const whole = matchFn(text);
+  if (whole) whole.score -= 1;
+  return whole === undefined ? null : whole;
+}
+
+function s06CompareScoreDesc(a, b) { return b.score - a.score; }
+function s06ComparePathLength(a, b) { return a.path.length - b.path.length; }
+
+/** dataTransfer carries file items, or iOS "Files" drop. */
+function s06HasIosFilesDrop(dt) {
+  const items = dt && dt.items;
+  if (items) {
+    for (let i = 0; i < items.length; i++) {
+      if (items[i] && items[i].kind === "file") return true;
+    }
+  }
+  const platform = env().Yl;
+  return !!(platform && platform.isIosApp && dt && dt.types && dt.types.indexOf("Files") !== -1);
+}
+
+// ---------------------------------------------------------------- views / links
+
+function ng25HasOwnMeta(view, host) {
+  return !!(view && Object.prototype.hasOwnProperty.call(view, "metadataEditor")
+    && host && host.MetadataEditor && view.metadataEditor instanceof host.MetadataEditor);
+}
+
+/** View owns a MetadataEditor instance. */
+function s06HasMetadataEditor(view, host) {
+  return ng25HasOwnMeta(view, host);
+}
+
+/** metadataEditor of activeEditor (preferred) or activeLeaf view, when it can show properties. */
+function s06ActivePropertiesEditor(ws, host) {
+  const ed = ws && ws.activeEditor;
+  if (ng25HasOwnMeta(ed, host) && typeof ed.canShowProperties === "function" && ed.canShowProperties()) {
+    return ed.metadataEditor;
+  }
+  const leaf = ws && ws.activeLeaf && ws.activeLeaf.view;
+  if (ng25HasOwnMeta(leaf, host) && typeof leaf.canShowProperties === "function" && leaf.canShowProperties()) {
+    return leaf.metadataEditor;
+  }
+  return null;
+}
+
+/** DOMPurify-sanitize `html` and return the imported DOM node (DocumentFragment). */
+function s06SanitizeHtml(html, host) {
+  const purify = (host && host.s06Purify) || env().s06Purify || env().EL;
+  const config = (host && host.s06PurifyConfig) || env().s06PurifyConfig || env().SL;
+  const clean = purify.sanitize(String(html), config);
+  const tpl = document.createElement("template");
+  tpl.innerHTML = clean;
+  return tpl.content;
+}
+
+
+/** Markdown link strings for drop targets; `embed` prefixes image links with "!". */
+function s06DropLinkTexts(app, target, sourcePath, embed, host) {
+  const out = [];
+  const fm = app && app.fileManager;
+  const vault = app && app.vault;
+  const push = (file, subpath, alias) => {
+    if (!file) return;
+    let link = fm ? fm.generateMarkdownLink(file, sourcePath, subpath || "", alias || "") : "";
+    if (embed && host && host.isImageExtension && host.isImageExtension(file.extension)) link = "!" + link;
+    out.push(link);
+  };
+  const isFile = (f) => !!f && typeof f === "object" && typeof f.path === "string" && typeof f.extension === "string";
+  const resolve = (f) => {
+    if (!f) return null;
+    if (typeof f === "string") {
+      if (!vault) return null;
+      const r = vault.getAbstractFileByPath(f);
+      if (host && host.TFile) return r instanceof host.TFile ? r : null;
+      return isFile(r) ? r : null;
+    }
+    if (host && host.TFile) return f instanceof host.TFile ? f : null;
+    return isFile(f) ? f : null;
+  };
+  const t = target && target.type;
+  if (t === "file") {
+    push(resolve(target.file));
+  } else if (t === "files") {
+    const list = target.files || [];
+    for (let i = 0; i < list.length; i++) push(resolve(list[i]));
+  } else if (t === "link") {
+    const lp = parseLinktext(String(target.linktext || ""));
+    const file = resolve(target.file);
+    if (file) push(file, lp.subpath);
+    else out.push(String(target.linktext || ""));
+  } else if (t === "heading") {
+    const file = resolve(target.file);
+    if (file) {
+      const h = target.heading;
+      const text = h && typeof h === "object" ? (h.text || "") : String(h || "");
+      push(file, "#" + linkSafeHeading(text));
+    }
+  } else if (t === "bookmarks") {
+    const items = target.items || target.bookmarks || [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (!item || item.type !== "file") continue;
+      const file = vault ? vault.getAbstractFileByPath(item.path) : null;
+      if (host && host.TFile && !(file instanceof host.TFile)) continue;
+      if (!file) continue;
+      push(file, item.subpath || "", item.title || "");
+    }
+  }
+  return out;
+}
+
+const ng25WikiRe = s06WikiLinkRe;
+
+function ng25MdPattern(host) {
+  return (host && host.s06MdLinkPattern) || env().s06MdLinkPattern || env().pT;
+}
+
+/** Rewrite {original, link} to newLink preserving alias/format; fallback "[](<escaped>)". */
+function s06RewriteLink(pair, newLink, host) {
+  const original = String(pair.original || "");
+  const oldLink = String(pair.link || "");
+  const wiki = ng25WikiRe.exec(original);
+  if (wiki) {
+    const bang = wiki[1].charAt(0) === "!" ? "!" : "";
+    const open = wiki[1].charAt(bang.length) === "[" ? wiki[1].slice(bang.length) : wiki[1];
+    let inner = wiki[2];
+    let alias = wiki[4];
+    const sep = wiki[3]; // "|alias" or undefined
+    if (inner.indexOf("/") !== -1 && alias !== undefined && alias.trim() === baseName(inner)) {
+      alias = baseName(newLink);
+    }
+    const tail = sep !== undefined ? "|" + alias : "";
+    return bang + "[[" + newLink + tail + "]]";
+  }
+  const md = ng25MdPattern(host);
+  if (md) {
+    const m = md.exec(original);
+    if (m) {
+      // groups: 1 prefix "["/"![", 2 text, 3 "](", 4 dest(+title), 5 dest, 6 title-part, 9 close ")"
+      const prefix = m[1];
+      const oldText = m[2];
+      const oldDest = m[5] || "";
+      const angle = oldDest.charAt(0) === "<";
+      const newDest = angle ? "<" + newLink + ">" : escapeLinkChars(newLink);
+      const oldName = displayName(oldLink);
+      const oldNoExt = withoutExtension(oldLink);
+      let newText = oldText;
+      if (oldText === oldName || oldText === oldNoExt || oldText === oldLink) {
+        newText = displayName(newLink);
+      }
+      const titlePart = m[6] || "";
+      const close = m[9] || ")";
+      return prefix + newText + m[3] + newDest + titlePart + close;
+    }
+  }
+  const esc = escapeLinkChars(newLink);
+  return (original.charAt(0) === "!" ? "![" : "[") + "](" + esc + ")";
+}
+
+/** On rename resolution: {sourcePath, reference, change} or undefined. */
+function s06LinkChangeFor(resolved, cache, host) {
+  if (!resolved || !cache) return undefined;
+  const reference = resolved.reference;
+  const sourcePath = resolved.sourcePath;
+  if (!reference || !reference.link) return undefined;
+  const parsed = parseLinktext(reference.link);
+  const dest = cache.getLinkpathDest(parsed.path, sourcePath);
+  const resolvedPath = resolved.file ? resolved.file.path : resolved.path;
+  if (dest === resolvedPath) return undefined;
+  const wasWiki = /^!?\[\[/.test(String(reference.original || ""));
+  const file = resolved.file;
+  if (!file || typeof cache.fileToLinktext !== "function") return undefined;
+  const newLink = cache.fileToLinktext(file, sourcePath, wasWiki) + (parsed.subpath || "");
+  if (newLink === reference.link) return undefined;
+  return { sourcePath, reference, change: s06RewriteLink(reference, newLink, host) };
+}
+
+/** {path, subpath} for link-bearing items. */
+function s06LinkTarget(item) {
+  const t = item && item.type;
+  if (t === "block") {
+    return { path: item.file.path, subpath: "#^" + item.id };
+  }
+  if (t === "heading") {
+    const h = item.heading;
+    const text = h && typeof h === "object" ? (h.text || "") : String(h || "");
+    return { path: item.file.path, subpath: "#" + linkSafeHeading(text) };
+  }
+  if (t === "file" || t === "alias") {
+    return { path: item.file.path, subpath: "" };
+  }
+  if (t === "linktext") {
+    const p = parseLinktext(String(item.linktext || ""));
+    return { path: p.path, subpath: p.subpath };
+  }
+  return { path: "", subpath: "" };
+}
+
+/** Fuzzy tag suggestions sorted by score desc (alpha pre-order via host.compareStrings). */
+function s06TagSuggestions(cache, query, withHash = false, host) {
+  const tags = (cache && typeof cache.getTags === "function" ? cache.getTags() : null) || {};
+  const cmp = (host && host.compareStrings) || ((a, b) => String(a).localeCompare(String(b)));
+  const q = String(query || "").toLowerCase();
+  const prepared = prepareQuery(q);
+  const strip = (t) => (withHash ? t : String(t).replace(/^#/, ""));
+  const keys = Object.keys(tags).map(strip);
+  keys.sort(cmp);
+  const emptyQ = q === "" || (withHash && q === "#");
+  const out = [];
+  for (const tag of keys) {
+    let score = 0, matches = null;
+    if (!emptyQ) {
+      const m = fuzzyMatchJs(prepared, tag.toLowerCase());
+      if (!m) continue;
+      score = m.score + matchPenalty(m.matches);
+      matches = m.matches;
+    }
+    out.push({ tag, score, matches });
+  }
+  out.sort(s06CompareScoreDesc);
+  return out;
+}
+
+// ---- n-g25-s07.js ----
+// g25 clean-room s07-helpers: CM position conversion, _handlers trio, IME dispatch,
+// cursor restore, embed URLs/iframe, writing-tools menu, outline HTML, sort
+// comparators, match rendering, weak-map caches, DOM/list helpers.
+// Spec: F:\orch\specs\g25.md Part E.
+
+
+// ---------------------------------------------------------------- positions
+
+/** CM6 {line,ch} -> offset; ch clamped to line end (unlike s06's from-end rule). */
+function s07posToOffset(doc, pos) {
+  const n = pos.line + 1;
+  if (n < 1) return 0;
+  if (n > doc.lines) return doc.length;
+  const line = doc.line(n);
+  return Math.min(line.from + Math.max(0, pos.ch), line.to);
+}
+
+/** Offset -> {line,ch}; null when out of [0, doc.length]. */
+function s07offsetToPos(doc, offset) {
+  if (offset < 0 || offset > doc.length) return null;
+  const line = doc.lineAt(offset);
+  return { line: line.number - 1, ch: offset - line.from };
+}
+
+// ---------------------------------------------------------------- _handlers trio
+
+function ng25IsDom(t) {
+  return !!(t && typeof t.addEventListener === "function" && typeof t.removeEventListener === "function");
+}
+
+function s07addHandler(t, type, fn) {
+  if (ng25IsDom(t)) {
+    t.addEventListener(type, fn, false);
+    return;
+  }
+  const h = t._handlers || (t._handlers = {});
+  const list = h[type] || (h[type] = []);
+  list.push(fn);
+}
+
+function s07removeHandler(t, type, fn) {
+  if (ng25IsDom(t)) {
+    t.removeEventListener(type, fn, false);
+    return;
+  }
+  const h = t && t._handlers;
+  const list = h && h[type];
+  if (!list) return;
+  const i = list.indexOf(fn);
+  if (i !== -1) list.splice(i, 1);
+}
+
+/** Run every fn stored under target._handlers[type] with `args`. */
+function s07emitStored(target, type, ...args) {
+  const h = target && target._handlers;
+  const list = h && h[type];
+  if (!list) return;
+  for (let i = 0; i < list.length; i++) list[i].apply(list, args);
+}
+
+/** Invoke every fn in `fns` with `args`. */
+function s07callAll(fns, ...args) {
+  for (let i = 0; i < fns.length; i++) fns[i].apply(fns, args);
+}
+
+// ---------------------------------------------------------------- CM6 glue
+
+/** IME-aware dispatch: compose userEvent, rewrite "input" annotations, respect readOnly. */
+function s07cm6Dispatch(facade, spec) {
+  const cm6 = facade && facade.cm6;
+  if (!cm6 || (cm6.state && cm6.state.readOnly)) return undefined;
+  const userEvent = facade.curOp && !facade.lastChange ? "input.type.compose.start" : "input.type.compose";
+  if (spec && spec.annotations) {
+    for (const a of spec.annotations) {
+      if (a && a.value === "input") {
+        try { a.value = userEvent; } catch (e) { console.error(e); }
+      }
+    }
+  } else if (spec) {
+    spec.userEvent = userEvent;
+  }
+  return cm6.dispatch(spec);
+}
+
+/** undo/redo on facade.cm6, then restore the recorded selection start when possible. */
+function s07cm6RestoreCursor(facade, undo) {
+  const op = facade && facade.curOp;
+  const start = op ? op.$changeStart : undefined;
+  if (op) op.$changeStart = undefined;
+  const cm6 = facade.cm6;
+  if (undo) env().nF(cm6); else env().iF(cm6);
+  if (start !== undefined && start !== null) {
+    const doc = cm6.state && cm6.state.doc;
+    let anchor = null;
+    if (start && typeof start === "object") anchor = start;
+    else if (typeof start === "number" && doc) anchor = s07offsetToPos(doc, start);
+    if (anchor && typeof cm6.dispatch === "function") cm6.dispatch({ selection: { anchor } });
+  }
+}
+
+// ---------------------------------------------------------------- embeds
+
+const s07youtubeRe = /(?:youtube\.com\/(?:watch\?[^#]*v=|embed\/|v\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/i;
+const s07tweetRe = /(?:twitter\.com|x\.com)\/[^/?#]+\/status(?:es)?\/(\d+)/i;
+
+function ng25YoutubeId(text) {
+  let m;
+  if (/youtu\.be\//i.test(text)) {
+    m = /youtu\.be\/([A-Za-z0-9_-]{3,})/i.exec(text);
+  } else if (/youtube\.com\/watch/i.test(text)) {
+    m = /[?&]v=([A-Za-z0-9_-]{3,})/.exec(text);
+  } else {
+    m = /youtube\.com\/(?:embed|v|shorts)\/([A-Za-z0-9_-]{3,})/i.exec(text);
+    if (!m && /^[A-Za-z0-9_-]{6,}$/.test(text.trim())) m = [null, text.trim()];
+  }
+  return m ? m[1] : null;
+}
+
+function ng25YoutubeStart(text) {
+  const tm = /[?&](?:t|start)=([^&#]+)/.exec(text);
+  if (!tm) return "";
+  const raw = tm[1];
+  const hm = /^(\d+)m(\d+)s?$/.exec(raw);
+  const sm = /^(\d+)s$/.exec(raw);
+  const dm = /^(\d+)$/.exec(raw);
+  if (hm) return String(+hm[1] * 60 + +hm[2]);
+  if (sm) return sm[1];
+  if (dm) return dm[1];
+  return raw;
+}
+
+/** YouTube/Twitter URL -> sandboxed embed URL, else null. */
+function s07embedUrlFor(text) {
+  if (typeof text !== "string" || !text) return null;
+  const ytId = ng25YoutubeId(text);
+  if (ytId) {
+    const st = ng25YoutubeStart(text);
+    return "https://www.youtube-nocookie.com/embed/" + ytId + (st ? "?start=" + st : "");
+  }
+  const tw = s07tweetRe.exec(text);
+  if (tw) {
+    const dark = typeof document !== "undefined" && document.body && document.body.classList.contains("theme-dark");
+    return "https://platform.twitter.com/embed/Tweet.html?dnt=true&theme=" + (dark ? "dark" : "light") + "&id=" + tw[1];
+  }
+  return null;
+}
+
+/** Sandboxed iframe for an external embed URL. */
+function s07externalEmbed(url) {
+  const frame = document.createElement("iframe");
+  frame.className = "external-embed mod-receives-events";
+  frame.setAttribute("sandbox", "allow-forms allow-presentation allow-same-origin allow-popups-to-escape-sandbox allow-scripts allow-modals allow-popups");
+  frame.setAttribute("allow", "fullscreen");
+  frame.setAttribute("frameborder", "0");
+  frame.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+  frame.src = url;
+  if (/platform\.twitter\.com/.test(String(url))) {
+    frame.setAttribute("scrolling", "no");
+    const onMsg = (e) => {
+      const d = e && e.data;
+      if (d && d.type === "twttr.private.resize") {
+        const h = d.params && d.params[0] && d.params[0].height;
+        if (typeof h === "number" && isFinite(h)) frame.style.height = Math.min(1000, h) + "px";
+      }
+    };
+    const win = frame.contentWindow || frame.win;
+    if (win && win.addEventListener) win.addEventListener("message", onMsg);
+    try {
+      if (env().Iz) env().Iz(frame.win || win, onMsg);
+    } catch { /* no bridge */ }
+  }
+  return frame;
+}
+
+// ---------------------------------------------------------------- menus
+
+function ng25SubItem(menu, section, fmt, editor, state, spec) {
+  menu.addItem((item) => {
+    item.setSection(section);
+    item.setTitle(fmt[spec.title]());
+    item.setIcon(spec.icon);
+    if (spec.checked !== undefined) item.setChecked(!!state[spec.checked]);
+    item.onClick(() => {
+      if (spec.comment) editor.toggleComment();
+      else if (spec.clear) editor.clearMarkdownFormatting();
+      else editor.toggleMarkdownFormatting(spec.kind);
+    });
+  });
+}
+
+/** macOS writing-tools formatting menu (basic/advanced/danger sections). */
+function s07writingToolsMenu(menu, editor, state, section) {
+  const fmt = env().gm.interface.formatting;
+  menu.setShowMacWritingTools(true);
+  menu.addSections([section + ".basic", section + ".advanced", section + ".danger"]);
+  menu.addItem((item) => {
+    item.setSection(section);
+    item.setTitle(fmt.labelFormatting());
+    item.setIcon("lucide-paintbrush");
+    const sub = item.setSubmenu();
+    const mk = (title, icon, extra) => ng25SubItem(sub, section, fmt, editor, state || {}, Object.assign({ title, icon }, extra));
+    mk("toggleBold", "lucide-bold", { kind: "bold", checked: "bold" });
+    mk("toggleItalics", "lucide-italic", { kind: "italic", checked: "italic" });
+    mk("toggleStrikethrough", "lucide-strikethrough", { kind: "strikethrough", checked: "strikethrough" });
+    mk("toggleHighlight", "lucide-highlighter", { kind: "highlight", checked: "highlight" });
+    mk("toggleCode", "lucide-code-2", { kind: "code" });
+    mk("toggleMath", "lucide-sigma", { kind: "math" });
+    mk("toggleComments", "lucide-percent", { comment: true });
+    mk("clear", "lucide-eraser", { clear: true });
+  });
+}
+
+// ---------------------------------------------------------------- outline / markdown pipeline
+
+/** TOC sections {html,pos,level} for top-level markdown blocks plus frontmatter. */
+function s07outlineHtml(markdown) {
+  const ast = env().Kx(markdown);
+  const children = (ast && ast.children) || [];
+  const markTypes = ["checklist", "listItem", "code"];
+  const defs = ast ? { definitions: env().oT(ast) } : undefined;
+  const frontmatter = env().$x(ast);
+  const sections = [];
+  for (const child of children) {
+    if (!child || !child.position) continue;
+    const level = child.type === "heading" ? (child.depth || 1) : 7;
+    env().jC(child, markTypes, (node) => {
+      if (!node || !node.position) return;
+      const data = node.data || (node.data = {});
+      const hp = data.hProperties || (data.hProperties = {});
+      const ns = node.position && node.position.start;
+      const cs = child.position && child.position.start;
+      if (ns && cs) hp["data-line"] = ns.line - cs.line;
+    });
+    ast.children = [child];
+    sections.push({
+      html: env().Zx(ast, defs),
+      pos: env().hT(child.position),
+      level,
+    });
+  }
+  return { sections, frontmatter };
+}
+
+// ---------------------------------------------------------------- sorting
+
+const s07sortOrderPairs = [
+  ["alphabetical", "alphabeticalReverse"],
+  ["byModifiedTime", "byModifiedTimeReverse"],
+  ["byCreatedTime", "byCreatedTimeReverse"],
+];
+
+function ng25ItemName(x) {
+  return x.basename !== undefined ? x.basename : String(x.path || "");
+}
+
+/** Six file-explorer sort comparators (forward + reverse). */
+function s07fileSortComparators() {
+  const fwd = {
+    alphabetical: (a, b) => env().ub(ng25ItemName(a), ng25ItemName(b)),
+    byModifiedTime: (a, b) => (b.stat ? b.stat.mtime : 0) - (a.stat ? a.stat.mtime : 0),
+    byCreatedTime: (a, b) => (b.stat ? b.stat.ctime : 0) - (a.stat ? a.stat.ctime : 0),
+  };
+  const out = {};
+  for (const key of Object.keys(fwd)) {
+    out[key] = fwd[key];
+    out[key + "Reverse"] = (a, b) => -fwd[key](a, b);
+  }
+  return out;
+}
+
+const NG25_LABEL_KEYS = {
+  alphabetical: "labelSortAToZ",
+  alphabeticalReverse: "labelSortZToA",
+  byModifiedTime: "labelSortNewToOld",
+  byModifiedTimeReverse: "labelSortOldToNew",
+  byCreatedTime: "labelSortCreatedNewToOld",
+  byCreatedTimeReverse: "labelSortCreatedOldToNew",
+};
+
+/** The six i18n label strings for the sort menu. */
+function s07labelSortComparators() {
+  const labels = env().gm.plugins.fileExplorer;
+  const out = {};
+  for (const key of Object.keys(NG25_LABEL_KEYS)) out[key] = labels[NG25_LABEL_KEYS[key]];
+  return out;
+}
+
+const s07paraBreakRe = /\r?\n\r?\n/y;
+const s07searchKeyFilepath = "filepath";
+const s07searchResultKeys = ["filename", "filepath", "content", "propertyName", "tag"];
+function s07sentinelKey() {}
+const s07mermaidFlowConfig = { progressiveRender: true, asyncParse: true, listBullet: true };
+
+// ---------------------------------------------------------------- match rendering
+
+/** Render `text[start,end)` into `el` with matched ranges as highlighted spans. */
+function s07renderMatchSegments(el, text, start, end, ranges) {
+  const clipped = [];
+  for (const r of ranges || []) {
+    const rFrom = Math.max(r[0], start);
+    const rTo = Math.min(r[1], end);
+    if (rTo <= rFrom) continue;
+    clipped.push([rFrom, rTo]);
+  }
+  clipped.sort((a, b) => a[0] - b[0]);
+  let pos = start;
+  const push = (from, to, matched) => {
+    if (to <= from) return;
+    const span = env().createEl ? env().createEl("span", matched ? "search-result-file-matched-text" : undefined) : document.createElement("span");
+    if (matched) span.className = "search-result-file-matched-text";
+    span.textContent = text.substring(from, to);
+    el.appendChild(span);
+  };
+  for (const r of clipped) {
+    if (r[0] >= end) break;
+    if (r[0] > pos) push(pos, Math.min(r[0], end), false);
+    push(Math.max(r[0], pos), Math.min(r[1], end), true);
+    pos = Math.max(pos, r[1]);
+    if (pos >= end) break;
+  }
+  if (pos < end) push(pos, end, false);
+}
+
+// ---------------------------------------------------------------- weak maps
+
+class s07weakMapBox {
+  constructor() { this._m = new WeakMap(); }
+  set(k, v) { this._m.set(k, v); return this; }
+  get(k) { return this._m.get(k); }
+  has(k) { return this._m.has(k); }
+  delete(k) { return this._m.delete(k); }
+}
+
+let ng25WeakmapSeq = 0;
+
+/** WeakMap-shaped polyfill storing values under a unique own property of the key. */
+class s07weakMapPolyfill {
+  constructor() { this._id = "_weakmap_" + (++ng25WeakmapSeq); }
+  set(k, v) { if (k && (typeof k === "object" || typeof k === "function")) k[this._id] = v; return this; }
+  get(k) { return k ? k[this._id] : undefined; }
+  has(k) { return !!(k && this._id in k); }
+  delete(k) { if (k && this._id in k) { delete k[this._id]; return true; } return false; }
+}
+
+/** Box when a real WeakMap exists, polyfill otherwise. */
+function s07weakMapFactory() {
+  return typeof WeakMap === "function" ? new s07weakMapBox() : new s07weakMapPolyfill();
+}
+
+const s07loadedWindows = new WeakSet();
+
+// ---------------------------------------------------------------- misc DOM/list helpers
+
+/** Fill `el` from an embed attribute value (quoted string, JSON string, inline SVG, or icon). */
+function s07embedAttrValue(el, raw) {
+  let value = String(raw);
+  if (value.length >= 2 && value.charAt(0) === "'" && value.charAt(value.length - 1) === "'") {
+    value = value.slice(1, -1).replace(/\\'/g, "'");
+  }
+  if (value.length >= 2 && value.charAt(0) === '"') {
+    try {
+      const parsed = JSON.parse(value);
+      if (typeof parsed === "string") value = parsed;
+    } catch { /* keep raw */ }
+  }
+  if (/^<svg[\s>]/i.test(value)) {
+    const frag = env().xL(value);
+    const node = frag && (frag.firstChild || frag.firstElementChild);
+    if (node && node instanceof SVGSVGElement) {
+      node.setAttribute("width", "16");
+      node.setAttribute("height", "16");
+      node.setAttribute("fill", "currentColor");
+      node.setAttribute("stroke", "currentColor");
+      el.appendChild(node);
+      return;
+    }
+  }
+  env().tv(el, value);
+}
+
+/** cb for every <li> under `root` that contains a nested list. */
+function s07forEachNestedItem(root, cb) {
+  const items = root && root.findAll ? root.findAll("li") : (root ? Array.from(root.querySelectorAll("li")) : []);
+  for (const li of items) {
+    const nested = li.findAll ? li.findAll("ul, ol") : li.querySelectorAll("ul, ol");
+    if (nested && nested.length) cb(li);
+  }
+}
+
+/** cb(firstChild) when the first child is a heading element. */
+function s07ifFirstHeading(el, cb) {
+  const first = el && el.firstChild;
+  if (first && first instanceof HTMLHeadingElement) cb(first);
+}
+
+/** Leading list/quote marker text of `text`, or null. */
+function s07leadingListMarker(text) {
+  const m = env().aP.exec(text);
+  return m && m[0] ? m[0] : null;
+}
+
+/** Continuation indent for a list line at `offset`: quote prefix + marker-width spaces. */
+function s07listMarkerIndent(doc, offset) {
+  const line = doc.lineAt(offset);
+  const m = env().aP.exec(line.text);
+  if (!m) return "";
+  return (m[1] || "") + " ".repeat((m[3] || "").length);
+}
+
+/** RangeSet equality: eq() for equal lengths, prefix-compare otherwise. */
+function s07rangeSetsEqual(a, b) {
+  if (a.length === b.length) return a.eq(b);
+  const short = a.length < b.length ? a : b;
+  const long = a.length < b.length ? b : a;
+  return short.eq(long.slice(0, short.length));
+}
+
+// ---- n-g25-s12.js ----
+// n-g25-s12.js — clean-room s12-consts replacement (spec g25 Part F).
+
+function s12SecretsWarningKey() { return "secrets-encryption-warning-dismissed"; }
+function s12SecretsDirName() { return "secrets"; }
+function s12SecretsEncryptedName() { return "secrets-encrypted"; }
+function s12SecretsMetaName() { return "secrets-meta"; }
+function s12ReleaseNotesViewType() { return "release-notes"; }
+function s12ReleaseNotesRepo() { return "obsidianmd/obsidian-docs"; }
+function s12WorkspaceLayoutFile() { return "workspace.json"; }
+function s12WorkspaceMobileLayoutFile() { return "workspace-mobile.json"; }
+function s12WebviewerViewType() { return "webviewer"; }
+function s12WebviewerHistoryViewType() { return "webviewer-history"; }
+function s12DefaultSearchEngineKey() { return "duckduckgo"; }
+function s12WebviewerEmptyPageUrl() { return "data:text/plain,"; }
+function s12BacklinkViewType() { return "backlink"; }
+function s12MarkdownViewTypeName() { return "markdown"; }
+function s12DeprecationIndexUrl() {
+  return env().s12githubRaw("obsidianmd/obsidian-releases", "community-plugin-deprecation.json");
+}
+
+function s12CmIterateErrorDetail() {
+  return "tree.iterate has changed syntax. Migrate to the object form tree.iterate({from,to,enter,leave}); see https://discuss.codemirror.net/t/tree-iterate/ for details.";
+}
+
+function s12CmIterateCompat(inner) {
+  return function (spec, from, to) {
+    console.error(new Error("[CM6] " + s12CmIterateErrorDetail()));
+    return inner.call(this, spec && spec.type !== undefined ? spec.type : spec, spec && spec.from !== undefined ? spec.from : from, spec && spec.to !== undefined ? spec.to : to);
+  };
+}
+
+function s12CmEmptyFieldConfig() { return { from() {} }; }
+
+const S12REQ_SPEC = [
+  ["obsidian", "s12reqObsidian"],
+  ["@codemirror/autocomplete", "s12reqAutocomplete"],
+  ["@codemirror/collab", "s12reqCollab"],
+  ["@codemirror/commands", "s12reqCommands"],
+  ["@codemirror/language", "s12reqLanguage"],
+  ["@codemirror/lint", "s12reqLint"],
+  ["@codemirror/search", "s12reqSearch"],
+  ["@codemirror/state", "s12reqState"],
+  ["@codemirror/text", "s12reqState"],
+  ["@codemirror/view", "s12reqView"],
+  ["@lezer/common", "s12reqLezerCommon"],
+  ["@lezer/lr", "s12reqLezerLr"],
+  ["@lezer/highlight", "s12reqLezerHighlight"],
+];
+
+function s12PluginRequireMap() {
+  const out = {};
+  const e = env();
+  for (const [name, key] of S12REQ_SPEC) out[name] = e[key];
+  return out;
+}
+
+const S12REQ_DEPRECATED = {
+  "@codemirror/closebrackets": "@codemirror/autocomplete",
+  "@codemirror/comment": "@codemirror/commands",
+  "@codemirror/fold": "@codemirror/language",
+  "@codemirror/gutter": "@codemirror/view",
+  "@codemirror/highlight": "@codemirror/language",
+  "@codemirror/history": "@codemirror/commands",
+  "@codemirror/matchbrackets": "@codemirror/language",
+  "@codemirror/panel": "@codemirror/view",
+  "@codemirror/rangeset": "@codemirror/state",
+  "@codemirror/rectangular-selection": "@codemirror/view",
+  "@codemirror/stream-parser": "@codemirror/language",
+  "@codemirror/tooltip": "@codemirror/view",
+};
+
+function s12PluginDeprecatedRequireMap() {
+  const req = s12PluginRequireMap();
+  const out = {};
+  for (const [dep, cur] of Object.entries(S12REQ_DEPRECATED)) out[dep] = req[cur];
+  return out;
+}
+
+function s12InlineSourcemapPattern() {
+  return /^\/\/[@#] sourceMappingURL=data:application\/json(?:;charset[:=][^;]+)?;base64,.*$/gm;
+}
+function s12NoSourcemapMarker() { return "\n/* nosourcemap */"; }
+
+function s12WebviewerSearchEngines() {
+  return {
+    duckduckgo: { display: "duckduckgo", url: "https://duckduckgo.com/?q=%s" },
+    brave: { display: "brave", url: "https://search.brave.com/search?q=%s" },
+    bing: { display: "bing", url: "https://www.bing.com/search?q=%s" },
+    google: { display: "google", url: "https://www.google.com/search?q=%s" },
+    custom: { display: "custom" },
+  };
+}
+function s12WebviewerDefaultOptions() { return { openExternalURLs: true, enableAdblocking: true }; }
+function s12EmptyWebviewerOptions() { return {}; }
+function s12WebviewTagBlocklist() { return ["script", "style", "link", "meta", "object", "embed", "webview"]; }
+function s12NullDropState() { return null; }
+
+let ng25s12DropEl = null;
+function s12DropIndicatorElement() {
+  if (!ng25s12DropEl) ng25s12DropEl = env().createDiv("drop-indicator is-active");
+  return ng25s12DropEl;
+}
+function s12DropIndicatorUpdater() {
+  const el = s12DropIndicatorElement();
+  return env().debounce(({ x, y, placement }) => {
+    el.style.left = x + "px";
+    el.style.top = (y + (placement === "after" ? 1 : -1) - 2) + "px";
+  }, 0);
+}
+
+const S12CALLOUT_KEYS = ["info", "important", "tip", "success", "question", "warning", "example", "quote"];
+function s12CalloutTypeLabels() {
+  const t = env().gm.callout.type;
+  const out = {};
+  for (const k of S12CALLOUT_KEYS) out[k] = t[k];
+  return out;
+}
+const S12CALLOUT_EXTRA = ["abstract", "summary", "tldr", "todo", "hint", "check", "done", "question", "faq", "help", "caution", "attention", "failure", "fail", "missing", "danger", "error", "bug", "example", "cite"];
+function s12CalloutTypeNames() { return S12CALLOUT_KEYS.concat(S12CALLOUT_EXTRA); }
+
+function s12PluginSortLabels() {
+  const s = env().gm.setting.thirdPartyPlugin;
+  return {
+    download: s.labelByPopularity,
+    release: s.labelByReleased,
+    alphabetical: s.labelAlphabetical,
+    update: s.labelByUpdated,
+  };
+}
+function s12HotkeyFilterLabels() {
+  const h = env().gm.setting.hotkeys;
+  return {
+    "show-all": h.labelShowAll,
+    "show-assigned": h.labelShowAssigned,
+    "show-user-assigned": h.labelShowUserAssigned,
+    "show-unassigned": h.labelShowUnassigned,
+  };
+}
+
+let ng25s12PostFx = null;
+function s12CmPostprocessEffect() {
+  if (!ng25s12PostFx) ng25s12PostFx = env().s12cmStateEffect.define();
+  return ng25s12PostFx;
+}
+function s12cmPostprocessFxRef() { return ng25s12PostFx; }
+function s12cmRefreshDispatch(view) {
+  const fx = s12CmPostprocessEffect();
+  view.dom.win.setTimeout(() => view.dispatch({ effects: fx.of() }), 10);
+}
+
+let ng25s12MousePlugin = null;
+function s12CmMouseDownPlugin() {
+  if (!ng25s12MousePlugin) {
+    ng25s12MousePlugin = env().s12cmViewPlugin.define(() => ({ mousedown: false }));
+  }
+  return ng25s12MousePlugin;
+}
+function s12cmMousePluginInstance() { return ng25s12MousePlugin; }
+function s12cmEmptyReplace() { return env().s12cmDecoration.replace({}); }
+
+function s12CmUnderlineMark() {
+  return env().s12cmDecoration.mark({ class: "cm-underline", attributes: { tabindex: "-1", draggable: "true" } });
+}
+function s12CmTransparentMark() { return env().s12cmDecoration.mark({ class: "cm-transparent" }); }
+function s12CmUnresolvedMark() { return env().s12cmDecoration.mark({ class: "is-unresolved" }); }
+function s12CmListBulletMark() { return env().s12cmDecoration.mark({ class: "list-bullet" }); }
+function s12CmListNumberMark() { return env().s12cmDecoration.mark({ class: "list-number" }); }
+function s12CmMouseDownField() { return env().s12cmStateField.define(() => ({ mousedown: false })); }
+
+function s12LivepreviewSyntaxTags() {
+  return new Set(["em", "strong", "inline-code", "strikethrough", "highlight", "link", "image", "hmd-internal-link", "hmd-embed", "formatting-link", "footref"]);
+}
+function s12CodeblockFencePattern() { return /^\s*(~~~+|```+)[ \t]*([\w\/+\#-]*)[^\n`]*$/; }
+
+function s12RegisterSecureStorage() {
+  return env().s12capacitor.F3("SecureStorage", {
+    web: () => {
+      const m = env().s12webpackRequire(3357);
+      return m.SecureStorageWeb || m.default || m;
+    },
+    ios: () => {
+      const m = env().s12webpackRequire(9804);
+      return typeof m.SecureStorageNative === "function" ? m.SecureStorageNative(self) : (m.SecureStorageNative || m.default || m);
+    },
+    android: () => {
+      const m = env().s12webpackRequire(9804);
+      return typeof m.SecureStorageNative === "function" ? m.SecureStorageNative(self) : (m.SecureStorageNative || m.default || m);
+    },
+  });
+}
+
+const S12LEAF_TYPES = ["tab", "window", "split"];
+function s12leafTypeOrFalse(e) {
+  const isBool = typeof isBoolean === "function" ? isBoolean(e) : typeof e === "boolean";
+  if (isBool || S12LEAF_TYPES.includes(e)) return e;
+  return false;
+}
+
+function s12requireDesktopApp() {
+  const e = env();
+  const iface = e.gm.interface;
+  if (!e.Yl.isDesktopApp) {
+    const msg = iface.msgDesktopOnlyFeature();
+    new e.fb(msg);
+    throw new Error(msg);
+  }
+  if (e.qf < 13) {
+    const msg = iface.msgUpgradeInstaller();
+    new e.fb(msg);
+    throw new Error(msg);
+  }
+}
+
+function s12runCommandCallback(cmd) {
+  if (cmd.checkCallback) cmd.checkCallback(false);
+  else if (cmd.callback) cmd.callback();
+  else console.error("Command " + cmd + " did not provide a callback");
+}
+
+function ng25s12StripDim(s, isDim) {
+  const pi = s.lastIndexOf("|");
+  if (pi >= 0 && isDim(s.slice(pi + 1))) return s.slice(0, pi);
+  return s;
+}
+
+function s12appendImageSizeText(linkText, size) {
+  const sized = size === undefined ? "" : String(size);
+  const e = env();
+  const isDim = (t) => !!e.s12isImageDimension(t);
+  const fix = (inner) => {
+    let s = ng25s12StripDim(inner, isDim);
+    if (!s || isDim(s)) return sized;
+    return s + (sized ? "|" + sized : "");
+  };
+  const wiki = e.s12wikilinkPattern.exec(linkText);
+  if (wiki) {
+    const inner = wiki[2] + (wiki[3] || "");
+    return wiki[1] + fix(inner) + wiki[5];
+  }
+  const md = e.s12mdLinkPattern.exec(linkText);
+  if (md) {
+    return md[1] + fix(md[2]) + md[3] + md[4] + md[8];
+  }
+  return linkText;
+}
+
+function s12PropertiesLivePreviewPlugin(plugin) {
+  return env().s12cmViewPlugin.define((view) => {
+    const off = plugin.app.workspace.on("post-processor-change", () => s12cmRefreshDispatch(view));
+    return { destroy() { off.e.offref(off); } };
+  });
+}
+
+// ---- n-g25-syncsocket.js ----
+// g25 clean-room s16-sync-socket: SyncSocket — one WebSocket to the vault sync server.
+// Spec: F:\orch\specs\g25.md Part I. JSON control messages + binary data frames (2 MiB pieces),
+// heartbeat keepalive, deterministic path/hash encryption via the vault cipher provider.
+
+const NG25SS_PIECE = 2 * 1024 * 1024;
+const NG25SS_REQ_TIMEOUT = 60000;
+const NG25SS_HEARTBEAT = 20000;
+const NG25SS_IDLE_PING = 10000;
+const NG25SS_IDLE_DROP = 120000;
+
+function ng25ssNow() { return Date.now(); }
+
+function ng25ssDeferred() {
+  let resolve, reject;
+  const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
+  return { resolve, reject, promise };
+}
+
+// Close-code -> text classification (RFC 6455 ranges).
+function ng25ssCloseText(code) {
+  if (code >= 0 && code <= 999) return "(Unused)";
+  if (code >= 1016 && code <= 1999) return "(Standard)";
+  if (code >= 2000 && code <= 2999) return "(Extensions)";
+  if (code >= 3000 && code <= 3999) return "(Libraries)";
+  if (code >= 4000 && code <= 4999) return "(Applications)";
+  const known = {
+    1000: "Normal Closure", 1001: "Going Away", 1002: "Protocol Error", 1003: "Unsupported Data",
+    1005: "No Status", 1006: "Abnormal Closure", 1007: "Invalid Payload",
+    1008: "Policy Violation", 1009: "Message Too Big", 1010: "Extension Error",
+    1011: "Internal Error", 1012: "Service Restart", 1013: "Try Again Later",
+    1014: "Bad Gateway", 1015: "TLS Handshake",
+  };
+  return known[code] || "(Unknown)";
+}
+
+function defineSyncSocket(host) {
+
+  class SyncSocket {
+    constructor(encryptionProvider) {
+      this.socket = null;
+      this.queue = new host.SerialTaskQueue();
+      this.notifyQueue = new host.SerialTaskQueue();
+      this.perFileMax = 208666624;
+      this.userId = -1;
+      this.justPushed = null;
+      this.encryptionProvider = encryptionProvider;
+      this.heartbeat = null;
+      this.lastMessageTs = 0;
+      this.responsePromise = null;
+      this.dataPromise = null;
+      this.onReady = null;
+      this.onPush = null;
+      this.lastNetworkRequestTs = 0;
+    }
+
+    isConnecting() { return !!this.socket && this.socket.readyState === 0; }
+    isConnected() { return !!this.socket && this.socket.readyState === 1; }
+    hasConnection() { return this.socket !== null; }
+
+    send(msg) { this.socket.send(JSON.stringify(msg)); }
+    sendBinary(data) { this.socket.send(data); }
+
+    // Arms the deferred resolved by the next JSON response message; resolves with it.
+    response() {
+      const d = ng25ssDeferred();
+      this.responsePromise = d;
+      return d.promise;
+    }
+
+    // Arms the deferred resolved by the next binary message; resolves with the data.
+    dataResponse() {
+      const d = ng25ssDeferred();
+      this.dataPromise = d;
+      return d.promise;
+    }
+
+    // Sends a JSON request and resolves with the response message
+    // (rejects Error(response.err) when the server reports an error).
+    request(message, timeout = NG25SS_REQ_TIMEOUT) {
+      return new Promise((resolve, reject) => {
+        const slot = {
+          resolve: (m) => {
+            clearTimeout(timer);
+            if (m && m.err !== undefined) reject(new Error(m.err));
+            else resolve(m);
+          },
+          reject: (e) => { clearTimeout(timer); reject(e); },
+        };
+        const timer = setTimeout(() => {
+          if (this.responsePromise === slot) this.responsePromise = null;
+          reject(new Error("Timeout"));
+          this.disconnect();
+        }, timeout);
+        this.responsePromise = slot;
+        try { this.send(message); }
+        catch (e) {
+          clearTimeout(timer);
+          if (this.responsePromise === slot) this.responsePromise = null;
+          reject(e);
+        }
+      });
+    }
+
+    onMessage(event) {
+      this.lastMessageTs = ng25ssNow();
+      const data = event.data;
+      if (typeof data !== "string") {
+        if (this.dataPromise) {
+          const d = this.dataPromise; this.dataPromise = null;
+          d.resolve(data);
+        }
+        return;
+      }
+      let msg;
+      try { msg = JSON.parse(data); }
+      catch (e) {
+        console.error("Sync socket: unparseable message:", data);
+        this.disconnect();
+        return;
+      }
+      if (msg && msg.op === "pong") return;
+      if (msg && msg.op === "ready") {
+        if (this.onReady) this.onReady(msg.version);
+        return;
+      }
+      if (msg && msg.op === "push") {
+        this.onServerPush(msg);
+        return;
+      }
+      if (this.responsePromise) {
+        const d = this.responsePromise; this.responsePromise = null;
+        d.resolve(msg);
+      }
+    }
+
+    disconnect() {
+      const s = this.socket;
+      this.socket = null;
+      if (this.heartbeat) { clearInterval(this.heartbeat); this.heartbeat = null; }
+      for (const key of ["responsePromise", "dataPromise"]) {
+        const d = this[key];
+        this[key] = null;
+        if (d && d.reject) d.reject(new Error("Disconnected"));
+      }
+      if (s) {
+        try { s.onclose = null; s.onerror = null; s.onmessage = null; s.onopen = null; s.close(); } catch (e) {}
+      }
+    }
+
+    connect(url, token, id, version, initial, device, onReady, onPush) {
+      if (this.socket) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        let u;
+        try { u = new URL(url); } catch (e) { return reject(new Error("Unable to connect to server.")); }
+        const hostName = u.hostname;
+        if (!(hostName === "127.0.0.1" || hostName.endsWith(".basalt.md"))) {
+          return reject(new Error("Unable to connect to server."));
+        }
+        const ws = new WebSocket(u.toString());
+        ws.binaryType = "arraybuffer";
+        this.socket = ws;
+        this.onReady = onReady;
+        this.onPush = onPush;
+        this.lastMessageTs = ng25ssNow();
+        let handshake = true;
+        let settled = false;
+
+        const fail = (err) => {
+          if (settled) return;
+          settled = true;
+          this.disconnect();
+          reject(err);
+        };
+
+        ws.onopen = () => {
+          this.heartbeat = setInterval(() => {
+            const idle = ng25ssNow() - this.lastMessageTs;
+            if (idle > NG25SS_IDLE_DROP) { this.disconnect(); return; }
+            if (idle > NG25SS_IDLE_PING && this.socket) {
+              try { this.send({ op: "ping" }); } catch (e) {}
+            }
+          }, NG25SS_HEARTBEAT);
+          try {
+            this.send({
+              op: "init", token, id,
+              keyhash: this.encryptionProvider.keyHash,
+              version, initial, device,
+              encryption_version: this.encryptionProvider.encryptionVersion,
+            });
+          } catch (e) { fail(e); }
+        };
+
+        ws.onmessage = (event) => {
+          this.lastMessageTs = ng25ssNow();
+          const data = event.data;
+          if (handshake) {
+            if (typeof data !== "string") return fail(new Error("Server returned binary"));
+            let msg;
+            try { msg = JSON.parse(data); }
+            catch (e) { return fail(new Error("Server JSON failed to parse: " + data)); }
+            if (msg && msg.op === "pong") return;
+            if (msg && (msg.status === "err" || msg.res === "err")) {
+              return fail(new Error("Failed to authenticate: " + (msg.msg || msg.error || data)));
+            }
+            if (!msg || msg.res !== "ok") return fail(new Error("Did not respond to login request: " + data));
+            if (msg.perFileMax !== undefined) {
+              if (typeof msg.perFileMax !== "number" || !Number.isInteger(msg.perFileMax) || msg.perFileMax < 0) {
+                return fail(new Error("Unexpected value from server for max file size"));
+              }
+              this.perFileMax = msg.perFileMax;
+            }
+            if (msg.userId) this.userId = msg.userId;
+            handshake = false;
+            ws.onmessage = (ev) => this.onMessage(ev);
+            ws.onclose = () => this.disconnect();
+            ws.onerror = () => this.disconnect();
+            settled = true;
+            resolve();
+            return;
+          }
+          this.onMessage(event);
+        };
+
+        ws.onclose = (event) => {
+          if (handshake && !settled) {
+            const code = event ? event.code : -1;
+            fail(code === 1006
+              ? new Error("Unable to connect to server.")
+              : new Error("Disconnected. Code: " + code + " " + ng25ssCloseText(code)));
+          } else {
+            this.disconnect();
+          }
+        };
+        ws.onerror = () => { if (handshake) fail(new Error("Unable to connect to server.")); };
+      });
+    }
+
+    // ---- file operations (serial on queue) ----
+
+    pull(uid) {
+      return this.queue.queue(async () => {
+        const meta = await this.request({ op: "pull", uid });
+        if (meta.deleted) return null;
+        const size = meta.size || 0;
+        const out = new Uint8Array(size);
+        let offset = 0;
+        for (let i = 0; i < (meta.pieces || 0); i++) {
+          const chunk = await this.dataResponse();
+          const u8 = chunk instanceof Uint8Array ? chunk : new Uint8Array(chunk);
+          const n = Math.min(u8.length, size - offset);
+          out.set(u8.subarray(0, n), offset);
+          offset += u8.length;
+        }
+        const buf = out.buffer.slice(out.byteOffset, out.byteOffset + out.byteLength);
+        if (size > 0) return this.encryptionProvider.decrypt(buf);
+        return buf;
+      });
+    }
+
+    push(path, relatedPath, folder, deleted, ctime, mtime, hash, content) {
+      return this.queue.queue(async () => {
+        const enc = this.encryptionProvider;
+        const encPath = await enc.deterministicEncodeStr(path);
+        const msg = { op: "push", path: encPath };
+        if (relatedPath) msg.relatedpath = await enc.deterministicEncodeStr(relatedPath);
+        const seg = path.slice(path.lastIndexOf("/") + 1);
+        const dot = seg.lastIndexOf(".");
+        msg.extension = folder ? "" : (dot > 0 ? seg.slice(dot + 1) : "");
+        msg.folder = !!folder;
+        msg.deleted = !!deleted;
+
+        if (folder || deleted) {
+          msg.hash = ""; msg.ctime = 0; msg.mtime = 0;
+          this.justPushed = {
+            path: encPath, folder: msg.folder, deleted: msg.deleted, mtime,
+            hash: hash ? await enc.deterministicEncodeStr(hash) : "",
+          };
+          await this.request(msg);
+          return;
+        }
+
+        let payload = content;
+        if (payload && payload.byteLength) payload = await enc.encrypt(payload);
+        const encHash = hash ? await enc.deterministicEncodeStr(hash) : "";
+        const size = payload ? payload.byteLength : 0;
+        msg.size = size;
+        msg.pieces = Math.ceil(size / NG25SS_PIECE);
+        msg.hash = encHash;
+        msg.ctime = ctime || 0;
+        msg.mtime = mtime || 0;
+        this.justPushed = { path: encPath, folder: false, deleted: false, mtime, hash: encHash };
+        const res = await this.request(msg);
+        if (res && res.res === "ok") { this.justPushed = null; return; }
+        if (payload && size > 0) {
+          const u8 = payload instanceof Uint8Array ? payload : new Uint8Array(payload);
+          for (let off = 0; off < u8.length; off += NG25SS_PIECE) {
+            this.sendBinary(u8.subarray(off, off + NG25SS_PIECE));
+            await this.response();
+          }
+        }
+        this.justPushed = null;
+      });
+    }
+
+    listDeleted() {
+      return this.queue.queue(async () => {
+        const res = await this.request({ op: "deleted", suppressrenames: true });
+        const items = res && res.items ? res.items : [];
+        for (const it of items) {
+          if (it && it.path) it.path = await this.encryptionProvider.deterministicDecodeStr(it.path);
+        }
+        return items;
+      });
+    }
+
+    listHistory(path, last) {
+      return this.queue.queue(async () => {
+        const enc = await this.encryptionProvider.deterministicEncodeStr(path);
+        const res = await this.request({ op: "history", path: enc, last });
+        const items = res && res.items ? res.items : [];
+        for (const it of items) {
+          if (it && it.path) it.path = await this.encryptionProvider.deterministicDecodeStr(it.path);
+          if (it && it.relatedpath) it.relatedpath = await this.encryptionProvider.deterministicDecodeStr(it.relatedpath);
+        }
+        return res;
+      });
+    }
+
+    restore(uid) { return this.queue.queue(() => this.request({ op: "restore", uid })); }
+    getUsernames() { return this.queue.queue(() => this.request({ op: "usernames" })); }
+    purge() { return this.queue.queue(() => this.request({ op: "purge" })); }
+    size() { return this.queue.queue(() => this.request({ op: "size" })); }
+
+    onServerPush(message) {
+      const jp = this.justPushed;
+      if (jp && message &&
+          message.path === jp.path && message.folder === jp.folder &&
+          message.deleted === jp.deleted && message.mtime === jp.mtime &&
+          (message.hash || "") === (jp.hash || "")) {
+        this.justPushed = null;
+        message.wasJustPushed = true;
+      }
+      this.notifyQueue.queue(async () => {
+        if (message && message.path) {
+          try { message.path = await this.encryptionProvider.deterministicDecodeStr(message.path); } catch (e) {}
+        }
+        if (message && message.hash) {
+          try { message.hash = await this.encryptionProvider.deterministicDecodeStr(message.hash); } catch (e) {}
+        }
+        if (this.onPush) this.onPush(message);
+      });
+    }
+  }
+
+  return SyncSocket;
+}
+
+// ---- n-g25-view.js ----
+// n-g25-view.js — clean-room View / ItemView base classes (spec g25 Part G).
+// Plain constructor functions + prototype methods: inherited code calls
+// `host.View.call(this, leaf)` / `host.ItemView.call(this, leaf)` and links
+// subclasses with inherit(), so ES6 classes are not usable here.
+
+
+function ng25vDiv(cls, doc) {
+  const d = (doc || document).createElement("div");
+  if (cls) d.className = cls;
+  return d;
+}
+
+function ng25vSetText(el, text) {
+  if (el.setText) el.setText(text);
+  else el.textContent = text;
+}
+
+function ng25vDebounce(fn, ms) {
+  let t = null;
+  const d = (...a) => {
+    if (t) clearTimeout(t);
+    t = setTimeout(() => { t = null; fn(...a); }, ms);
+  };
+  return d;
+}
+
+function defineView(host) {
+  const H = host;
+
+  function View(leaf) {
+    const self = H.Component.call(this) || this;
+    self.icon = "lucide-file";
+    self.navigation = false;
+    self.app = leaf.app;
+    self.leaf = leaf;
+    const parent = leaf.containerEl;
+    self.containerEl = parent && parent.createDiv
+      ? parent.createDiv("workspace-leaf-content")
+      : ng25vDiv("workspace-leaf-content", parent && parent.ownerDocument);
+    self.containerEl.setAttribute("data-type", self.getViewType());
+    return self;
+  }
+  inherit(View, H.Component);
+
+  View.prototype.getViewType = function () { return undefined; };
+  View.prototype.getIcon = function () { return this.icon || "lucide-file"; };
+  View.prototype.getState = function () { return {}; };
+  View.prototype.setState = function () {};
+  View.prototype.getEphemeralState = function () { return {}; };
+  View.prototype.setEphemeralState = function () {};
+  View.prototype.load = function () {};
+  View.prototype.unload = function () {};
+  View.prototype.onOpen = function () {};
+  View.prototype.onClose = function () {};
+  View.prototype.onResize = function () {};
+  View.prototype.onHeaderMenu = function () {};
+  View.prototype.onPaneMenu = function () {};
+  View.prototype.handleCut = function () {};
+  View.prototype.handleCopy = function () {};
+  View.prototype.handlePaste = function () {};
+
+  View.prototype.onTabMenu = function (menu) {
+    const leaf = this.leaf;
+    const ws = this.app.workspace;
+    const t = H.t.interface.menu;
+    menu.addItem((item) => item
+      .setSection("close")
+      .setTitle(t.close())
+      .setIcon("lucide-x")
+      .onClick(() => leaf.detach()));
+    const parent = leaf.parent;
+    if (!parent || ws.isInSidebar(leaf)) return;
+    const kids = parent.children || [];
+    const unpinned = kids.filter((c) => !c.pinned);
+    const others = unpinned.filter((c) => c !== leaf);
+    const idx = kids.indexOf(leaf);
+    const after = others.filter((c) => kids.indexOf(c) > idx);
+    if (others.length) {
+      menu.addItem((item) => item
+        .setSection("close")
+        .setTitle(t.closeOthers())
+        .setIcon("lucide-x")
+        .onClick(() => { for (const c of others) c.detach(); }));
+    }
+    if (after.length) {
+      menu.addItem((item) => item
+        .setSection("close")
+        .setTitle(t.closeAfter())
+        .setIcon("lucide-x")
+        .onClick(() => { for (const c of after) c.detach(); }));
+    }
+    if (unpinned.length > 1 || (unpinned.length === 1 && unpinned[0] !== leaf)) {
+      menu.addItem((item) => item
+        .setSection("close")
+        .setTitle(t.closeAll())
+        .setIcon("lucide-x")
+        .onClick(() => { for (const c of unpinned) c.detach(); }));
+    }
+  };
+
+  View.prototype.getSideTooltipPlacement = function () {
+    const root = this.leaf.getRoot && this.leaf.getRoot();
+    const side = root && root.side;
+    if (side === "left") return "right";
+    if (side === "right") return "left";
+    return undefined;
+  };
+
+  View.prototype.open = async function (parentEl) {
+    parentEl.appendChild(this.containerEl);
+    await this.load();
+    await this.onOpen();
+  };
+
+  View.prototype.close = async function () {
+    if (this.containerEl.parentElement) this.containerEl.parentElement.removeChild(this.containerEl);
+    this.unload();
+    await this.onClose();
+  };
+
+  return View;
+}
+
+function defineItemView(host) {
+  const H = host;
+
+  function ItemView(leaf) {
+    const self = H.View.call(this, leaf) || this;
+    self.canDropAnywhere = false;
+    const app = self.app;
+    const ws = app.workspace;
+    self.headerEl = ng25vDiv("view-header");
+    self.contentEl = ng25vDiv("view-content");
+    self.containerEl.appendChild(self.headerEl);
+    self.containerEl.appendChild(self.contentEl);
+    const headerLeft = ng25vDiv("view-header-left");
+    self.headerEl.appendChild(headerLeft);
+    if (H.Platform.isMobile) {
+      const toggle = document.createElement("button");
+      toggle.className = "view-action clickable-icon mod-left-split-toggle mod-raised sidebar-toggle-button mod-left";
+      H.setTooltip(toggle, H.t.interface.sidebarExpand());
+      H.setIcon(toggle, "sidebar-toggle-button-icon");
+      toggle.addEventListener("click", () => {
+        if (navigator.vibrate) navigator.vibrate(100);
+        ws.leftSplit.toggle();
+      });
+      self.leftSidebarToggleEl = toggle;
+      headerLeft.appendChild(toggle);
+    } else {
+      self.leftSidebarToggleEl = null;
+    }
+    const navBtns = ng25vDiv("view-header-nav-buttons");
+    headerLeft.appendChild(navBtns);
+    const navFn = () => self.leaf;
+    self.backButtonEl = H.createNavButton(app, navFn, "backward");
+    self.forwardButtonEl = H.createNavButton(app, navFn, "forward");
+    H.setIcon(self.backButtonEl, "lucide-arrow-left");
+    H.setIcon(self.forwardButtonEl, "lucide-arrow-right");
+    navBtns.appendChild(self.backButtonEl);
+    navBtns.appendChild(self.forwardButtonEl);
+    self.titleContainerEl = ng25vDiv("view-header-title-container mod-at-start mod-fade");
+    self.titleParentEl = ng25vDiv("view-header-title-parent");
+    self.titleEl = ng25vDiv("view-header-title");
+    self.titleContainerEl.appendChild(self.titleParentEl);
+    self.titleParentEl.appendChild(self.titleEl);
+    self.headerEl.appendChild(self.titleContainerEl);
+    const updateFade = ng25vDebounce(() => {
+      const el = self.titleParentEl;
+      const atStart = el.scrollLeft === 0;
+      const atEnd = Math.ceil(el.scrollLeft) >= el.scrollWidth - el.offsetWidth;
+      self.titleContainerEl.classList.toggle("mod-at-start", atStart);
+      self.titleContainerEl.classList.toggle("mod-at-end", atEnd);
+    }, 10);
+    self.titleParentEl.addEventListener("scroll", updateFade);
+    self.actionsEl = ng25vDiv("view-actions" + (H.Platform.isPhone ? " mod-raised" : ""));
+    self.headerEl.appendChild(self.actionsEl);
+    const openMore = (e) => {
+      if (!self.moreOptionsButtonEl.classList.contains("has-active-menu")) self.onMoreOptions(e);
+    };
+    self.moreOptionsButtonEl = self.addAction("lucide-more-vertical", H.t.interface.menu.moreOptions(), openMore);
+    if (H.Platform.isMobile) {
+      self.moreOptionsButtonEl.addEventListener("contextmenu", (e) => {
+        if (H.Platform.isPhone) {
+          e.preventDefault();
+          ws.rightSplit.expand();
+        }
+      });
+    }
+    if (app.dragManager && app.dragManager.handleDrop) {
+      app.dragManager.handleDrop(self.containerEl, self.handleDrop.bind(self));
+    }
+    return self;
+  }
+  inherit(ItemView, H.View);
+  const proto = ItemView.prototype;
+
+  proto.getDisplayText = function () { return ""; };
+
+  proto.updateNavButtons = function () {
+    const hist = this.leaf.history || {};
+    this.backButtonEl.ariaDisabled = String((hist.backHistory || []).length === 0);
+    this.forwardButtonEl.ariaDisabled = String((hist.forwardHistory || []).length === 0);
+  };
+
+  proto.load = function () {
+    H.View.prototype.load.call(this);
+    ng25vSetText(this.titleEl, this.getDisplayText());
+    this.leaf.on("group-change", () => this.onGroupChange());
+    this.leaf.on("history-change", () => this.updateNavButtons());
+  };
+
+  proto.onGroupChange = function () {};
+  proto.onMoreOptionsMenu = function () {};
+
+  proto.handleDrop = function (event, data, isPreview) {
+    const mod = H.isMacLike ? event.shiftKey : event.altKey;
+    const inHeader = this.headerEl.contains(event.target);
+    if (!this.canDropAnywhere && !mod && !inHeader) return undefined;
+    const hint = this.leaf.handleDrop(event, data, isPreview);
+    if (hint) {
+      hint.hoverEl = this.headerEl;
+      hint.hoverClass = "is-highlighted";
+    }
+    return hint;
+  };
+
+  proto.addAction = function (icon, title, cb) {
+    const btn = document.createElement("button");
+    btn.className = "clickable-icon view-action";
+    H.setIcon(btn, icon);
+    H.setTooltip(btn, title);
+    btn.addEventListener("mousedown", (e) => e.preventDefault());
+    btn.addEventListener("click", (e) => {
+      if (e.button === 0 || e.button === 1) cb(e);
+    });
+    this.actionsEl.prepend(btn);
+    return btn;
+  };
+
+  proto.onMoreOptions = function (event) {
+    event.preventDefault();
+    const menu = new H.Menu();
+    const t = H.t.interface.menu;
+    menu.addSections(["close", "pane", "open", "action", "find", "info", "info.copy", "view", "view.linked", "system", "", "danger"]);
+    menu.setSectionSubmenu("info.copy", { title: t.copyPath(), icon: "lucide-clipboard" });
+    menu.setSectionSubmenu("view.linked", { title: t.openLinkedView(), icon: "lucide-link" });
+    this.onPaneMenu(menu, "more-options");
+    this.onMoreOptionsMenu(menu);
+    this.app.workspace.trigger("leaf-menu", menu, this.leaf);
+    const btn = this.moreOptionsButtonEl;
+    const rect = btn.getBoundingClientRect();
+    menu.setParentElement(btn);
+    menu.showAtPosition({ x: rect.x, y: rect.bottom, width: rect.width, overlap: true, left: true });
+  };
+
+  proto.onPaneMenu = function (menu, source) {
+    H.View.prototype.onPaneMenu.call(this, menu, source);
+    const t = H.t.interface.menu;
+    const ws = this.app.workspace;
+    const leaf = this.leaf;
+    if (H.Platform.isPhone && source === "more-options") {
+      menu.addItem((item) => item.setSection("close").setTitle(t.close()).setIcon("lucide-x").onClick(() => leaf.detach()));
+      menu.addItem((item) => item
+        .setSection("pane")
+        .setTitle(leaf.pinned ? t.unpin() : t.pin())
+        .setIcon(leaf.pinned ? "lucide-pin-off" : "lucide-pin")
+        .onClick(() => leaf.togglePinned()));
+    }
+    if (H.Platform.canSplit && leaf.canPin && leaf.canPin()) {
+      const inSidebar = ws.isInSidebar && ws.isInSidebar(leaf);
+      menu.addItem((item) => item
+        .setSection("pane")
+        .setTitle(H.tc.splitRight())
+        .setIcon("lucide-separator-vertical")
+        .setDisabled(!!inSidebar)
+        .onClick(() => ws.duplicateLeaf(leaf, "vertical")));
+      menu.addItem((item) => item
+        .setSection("pane")
+        .setTitle(H.tc.splitDown())
+        .setIcon("lucide-separator-horizontal")
+        .setDisabled(false)
+        .onClick(() => ws.duplicateLeaf(leaf, "horizontal")));
+    }
+  };
+
+  proto.onTabMenu = function (menu) {
+    H.View.prototype.onTabMenu.call(this, menu);
+    const t = H.t.interface.menu;
+    const ws = this.app.workspace;
+    const leaf = this.leaf;
+    if (leaf.canPin && leaf.canPin()) {
+      menu.addItem((item) => item
+        .setSection("pane")
+        .setTitle(leaf.pinned ? t.unpin() : t.pin())
+        .setIcon("lucide-pin")
+        .onClick(() => leaf.togglePinned()));
+      if (leaf.group) {
+        menu.addItem((item) => item
+          .setSection("pane")
+          .setTitle(t.unlinkTab())
+          .setIcon("lucide-link")
+          .onClick(() => leaf.setGroup(null)));
+      } else {
+        menu.addItem((item) => item
+          .setSection("pane")
+          .setTitle(t.linkTab())
+          .setIcon("lucide-link")
+          .onClick(() => ws.onStartLink(leaf)));
+      }
+    }
+    if (H.Platform.canPopoutWindow) {
+      menu.addItem((item) => item
+        .setSection("pane")
+        .setTitle(t.moveToNewWindow())
+        .setIcon("lucide-picture-in-picture")
+        .onClick(() => ws.moveLeafToPopout(leaf)));
+    }
+  };
+
+  return ItemView;
+}
+
 // ---- n-g26-animation.js ----
 // g26 clean-room: script-driven CSS transitions (spec g26 Part A).
 // A Transition spec collects per-stage style maps; runTransition applies `from`
@@ -91257,558 +94899,6 @@ function defineCommandPalettePlugin(host) {
 // g29: implementation lives in n-g29-*.js; this shim keeps the historic
 // module path working for importers and the spec-test HTTP loader.
 
-// ---- s04-mobile-adapter.js ----
-// s04: own implementation of the mobile (Capacitor) data adapter (was `vk`).
-//
-// It presents the vault as a DataAdapter over the Capacitor filesystem plugin
-// (`this.fs`, the bridge created by the `pk` module). Files are tracked in a
-// `realpath` map so a directory can be materialised lazily by reconcile; all
-// mutating operations run through a serial promise queue.
-
-/** Own implementation of the Capacitor filesystem data adapter. */
-function s04CapacitorAdapter(host) {
-  class CapacitorAdapter {
-    constructor(basePath, fs) {
-      this.fs = fs;
-      this.basePath = basePath;
-      this.files = {};
-      this.promise = Promise.resolve();
-      this.handler = null;
-      this.insensitive = false;
-      // Platform adapters may override testInsensitive; on the base class it
-      // is a resolved no-op.
-      this.testInsensitive();
-    }
-
-    async testInsensitive() {}
-
-    getName() {
-      return lastSegment(this.basePath);
-    }
-
-    async watchAndList() {
-      this.files = {};
-      this.files["/"] = { type: "folder", realpath: "/" };
-      try {
-        const tree = await this.fs.watchAndStatAll(this.basePath);
-        if (tree.children) {
-          for (const child of tree.children) this.quickList("", child);
-        }
-      } catch (error) {
-        console.error("Failed to run quick list", error);
-        await this.fs.watch(this.basePath);
-        await this.listRecursive("");
-      }
-    }
-
-    quickList(prefix, node) {
-      const name = node.name;
-      const path = collapseSlashes(prefix === "" ? name : prefix + "/" + name);
-      const normalized = normalizePath(path);
-      this.trigger("raw", normalized);
-      if (isHiddenPath(normalized)) return;
-      if (node.type === "file") {
-        this.reconcileFileChanged(path, normalized, node);
-      } else if (node.type === "directory") {
-        if (this.files.hasOwnProperty(normalized)) return;
-        this.files[normalized] = { type: "folder", realpath: path };
-        this.trigger("folder-created", normalized);
-      }
-    }
-
-    async listRecursive(prefix) {
-      const full = this.getFullRealPath(prefix);
-      const entries = await this.fs.readdir(full);
-      const pending = [];
-      for (const entry of entries) pending.push(this.listRecursiveChild(prefix, entry));
-      await Promise.all(pending);
-    }
-
-    async listRecursiveChild(prefix, entry) {
-      const path = collapseSlashes(prefix === "" ? entry.name : prefix + "/" + entry.name);
-      const normalized = normalizePath(path);
-      this.trigger("raw", normalized);
-      if (isHiddenPath(normalized)) return this.reconcileDeletion(path, normalized);
-      if (entry.type === "file") {
-        this.reconcileFileChanged(path, normalized, entry);
-      } else if (entry.type === "directory") {
-        await this.reconcileFolderCreation(path, normalized);
-      }
-    }
-
-    mkdir(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.mkdir(full);
-        } catch (error) {
-          if (error.message !== "Directory exists") throw error;
-        }
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    trashSystem(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.trash(full);
-        } catch (error) {
-          return false;
-        }
-        await self.reconcileInternalFile(path);
-        return true;
-      });
-    }
-
-    trashLocal(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        const trash = self.getFullPath(".trash");
-        try {
-          await self.fs.mkdir(trash);
-        } catch (error) {
-          if (error.message !== "Directory exists") throw error;
-        }
-        const name = lastSegment(full);
-        const stem = withoutExtension(name);
-        const ext = extensionOf(name);
-        let target = trash + "/" + stem;
-        if (ext) target = target + "." + ext;
-        let count = 1;
-        while (await self._exists(target)) {
-          count++;
-          target = trash + "/" + stem + " " + count;
-          if (ext) target = target + "." + ext;
-        }
-        await self.fs.rename(full, target);
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    rmdir(path) {
-      const self = this;
-      return this.queue(async function () {
-        await self.fs.rmdir(self.getFullPath(path));
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    read(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          return await self.fs.read(full);
-        } catch (error) {
-          self.queue(function () { return self.reconcileInternalFile(path); });
-          throw error;
-        }
-      });
-    }
-
-    readBinary(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          return await self.fs.readBinary(full);
-        } catch (error) {
-          self.queue(function () { return self.reconcileInternalFile(path); });
-          throw error;
-        }
-      });
-    }
-
-    write(path, data, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.write(full, data);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-      });
-    }
-
-    writeBinary(path, data, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.writeBinary(full, data);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-      });
-    }
-
-    append(path, data, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.append(full, data);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-      });
-    }
-
-    appendBinary(path, data, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          await self.fs.appendBinary(full, data);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-      });
-    }
-
-    process(path, fn, options) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        const contents = await self.fs.read(full);
-        const next = fn(contents);
-        if (next === contents) return contents;
-        try {
-          await self.fs.write(full, next);
-          if (options && (options.ctime || options.mtime)) await self.fs.setTimes(full, options.ctime, options.mtime);
-          if (options && options.immediate) options.immediate();
-        } catch (error) {
-          await self.reconcileInternalFile(path);
-          throw error;
-        }
-        return next;
-      });
-    }
-
-    getResourcePath(path) {
-      return this.fs.getUri(this.getFullPath(path));
-    }
-
-    getNativePath(path) {
-      return this.fs.getNativeUri(this.getFullPath(path));
-    }
-
-    open(path) {
-      return this.fs.open(this.getFullPath(path));
-    }
-
-    remove(path) {
-      const self = this;
-      return this.queue(async function () {
-        await self.fs.delete(self.getFullPath(path));
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    update(path) {
-      const self = this;
-      return this.queue(async function () {
-        await self.reconcileInternalFile(path);
-      });
-    }
-
-    rename(oldPath, newPath) {
-      const self = this;
-      return (async function () {
-        if (oldPath === newPath) return;
-        await self.queue(async function () {
-          const oldFull = self.getFullPath(oldPath);
-          const newFull = self.getFullPath(newPath);
-          if (await self._exists(newFull, false) && (!self.insensitive || oldPath.toLowerCase() !== newPath.toLowerCase())) {
-            throw new Error("Destination file already exists!");
-          }
-          const entry = self.files[oldPath];
-          const oldReal = entry ? entry.realpath : null;
-          await self.fs.rename(oldFull, newFull);
-          if (!entry) return;
-          delete self.files[oldPath];
-          const newReal = self.getRealPath(newPath);
-          entry.realpath = newReal;
-          self.files[newPath] = entry;
-          self.trigger("renamed", newPath, oldPath);
-          if (entry.type === "folder") {
-            for (const key in self.files) {
-              if (!self.files.hasOwnProperty(key) || !key.startsWith(oldPath + "/")) continue;
-              const suffix = key.slice(oldPath.length);
-              const movedKey = newPath + suffix;
-              const moved = self.files[key];
-              delete self.files[key];
-              moved.realpath = newReal + moved.realpath.slice(oldReal.length);
-              self.files[movedKey] = moved;
-              self.trigger("renamed", movedKey, key);
-            }
-          }
-        });
-      })();
-    }
-
-    copy(oldPath, newPath) {
-      const self = this;
-      return (async function () {
-        await self.queue(async function () {
-          await self.fs.copy(self.getFullPath(oldPath), self.getFullPath(newPath));
-          await self.reconcileInternalFile(newPath);
-        });
-      })();
-    }
-
-    exists(path, strict) {
-      const self = this;
-      return this.queue(function () {
-        return self._exists(self.getFullPath(path), strict);
-      });
-    }
-
-    async _exists(fullPath, strict) {
-      try {
-        await this.fs.stat(fullPath);
-      } catch (error) {
-        return false;
-      }
-      if (strict && this.insensitive) {
-        const dir = parentPath(fullPath);
-        const name = lastSegment(fullPath);
-        const entries = await this.fs.readdir(dir);
-        if (entries.map((e) => e.name).indexOf(name) === -1) return false;
-      }
-      return true;
-    }
-
-    stat(path) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(path);
-        try {
-          const st = await self.fs.stat(full);
-          if (st.type === "file") return Object.assign({ type: "file" }, statFromCapacitor(st));
-          if (st.type === "directory") return Object.assign({ type: "folder" }, statFromCapacitor(st));
-        } catch (error) {
-          if (error.code !== "ENOENT") throw error;
-        }
-        return null;
-      });
-    }
-
-    list(prefix) {
-      const self = this;
-      return this.queue(async function () {
-        const full = self.getFullPath(prefix);
-        const entries = await self.fs.readdir(full);
-        const result = { folders: [], files: [] };
-        for (const entry of entries) {
-          const path = collapseSlashes(prefix === "" ? entry.name : prefix + "/" + entry.name);
-          const normalized = normalizePath(path);
-          if (entry.type === "file") result.files.push(normalized);
-          if (entry.type === "directory") result.folders.push(normalized);
-        }
-        return result;
-      });
-    }
-
-    async watch(handler) {
-      await this.stopWatch();
-      this.handler = handler;
-      await env().Dm.addListener("change", (event) => {
-        const raw = normalizePath(event.path);
-        const relative = normalizePath(raw.substr(this.basePath.length));
-        this.onFileChange(relative);
-      });
-      const self = this;
-      return this.queue(async function () {
-        await self.watchAndList();
-      });
-    }
-
-    async stopWatch() {
-      try {
-        await env().Dm.stopWatch();
-      } catch (error) {
-        // ignore
-      }
-      this.handler = null;
-    }
-
-    onFileChange(path) {
-      const self = this;
-      if (!path) return;
-      path = normalizePath(path);
-      setTimeout(function () {
-        const normalized = normalizePath(path);
-        self.queue(function () {
-          return self.reconcileFile(path, normalized, false);
-        });
-      }, 0);
-    }
-
-    reconcileInternalFile(path) {
-      const self = this;
-      return this.queue(async function () {
-        return self.reconcileFile(self.getRealPath(path), path);
-      });
-    }
-
-    async reconcileFile(realPath, path, remove = true) {
-      this.trigger("raw", path);
-      if (isHiddenPath(path)) return this.reconcileDeletion(realPath, path, remove);
-      const parent = parentPath(path);
-      if (parent && parent !== "/" && !this.files[path]) {
-        await this.reconcileFile(parentPath(realPath), parent, remove);
-      }
-      try {
-        const full = this.getFullRealPath(realPath);
-        if (this.insensitive) {
-          const dir = parentPath(full);
-          const name = lastSegment(path);
-          const entries = await this.fs.readdir(dir);
-          if (entries.map((e) => plainSpaces(e.name).normalize("NFC")).indexOf(name) === -1) {
-            return this.reconcileDeletion(realPath, path, remove);
-          }
-        }
-        const st = await this.fs.stat(full);
-        if (st.type === "file") {
-          this.reconcileFileChanged(realPath, path, st);
-        } else if (st.type === "directory") {
-          await this.reconcileFolderCreation(realPath, path);
-        }
-      } catch (error) {
-        if (error.code === "ENOENT") await this.reconcileDeletion(realPath, path, remove);
-        else console.error(error);
-      }
-    }
-
-    reconcileFileChanged(realPath, path, stat) {
-      const entry = this.files[path];
-      if (!entry) {
-        this.reconcileFileCreation(realPath, path, stat);
-        return;
-      }
-      entry.realpath = realPath;
-      if (entry.type !== "file") return;
-      if (entry.mtime !== Math.round(stat.mtime) || entry.size !== stat.size) {
-        entry.mtime = Math.round(stat.mtime);
-        entry.size = stat.size;
-        const info = statFromCapacitor(stat);
-        this.trigger("modified", path, path, info);
-      }
-    }
-
-    reconcileFileCreation(realPath, path, stat) {
-      const info = statFromCapacitor(stat);
-      if (this.files[path]) return;
-      const entry =
-        stat.type === "file"
-          ? {
-              type: "file",
-              realpath: realPath,
-              ctime: Math.round(stat.ctime),
-              mtime: Math.round(stat.mtime),
-              size: stat.size,
-            }
-          : stat.type === "directory"
-            ? { type: "folder", realpath: realPath }
-            : undefined;
-      this.files[path] = entry;
-      this.trigger("file-created", path, path, info);
-    }
-
-    async reconcileFolderCreation(realPath, path) {
-      if (!this.files.hasOwnProperty(path)) {
-        this.files[path] = { type: "folder", realpath: realPath };
-        this.trigger("folder-created", path);
-        await this.listRecursive(realPath);
-      } else {
-        this.files[path].realpath = realPath;
-      }
-    }
-
-    async reconcileDeletion(realPath, path, remove = true) {
-      if (path === "/") {
-        this.trigger("closed", path);
-        return;
-      }
-      const entry = this.files[path];
-      if (!entry) return;
-      if (!remove) {
-        const self = this;
-        setTimeout(function () {
-          self.queue(function () {
-            return self.reconcileFile(realPath, path);
-          });
-        }, 100);
-        return;
-      }
-      if (entry.type === "folder") {
-        for (const key in this.files) {
-          if (this.files.hasOwnProperty(key) && key.startsWith(path + "/")) this.removeFile(key);
-        }
-      }
-      this.removeFile(path);
-    }
-
-    trigger(event, path, oldPath, stat) {
-      if (this.handler) this.handler(event, path, oldPath, stat);
-    }
-
-    getRealPath(path) {
-      let current = path;
-      while (current) {
-        if (this.files.hasOwnProperty(current)) {
-          const suffix = path.substr(current.length);
-          return this.files[current].realpath + suffix;
-        }
-        current = parentPath(current);
-      }
-      return path;
-    }
-
-    getFullPath(path) {
-      return this.getFullRealPath(this.getRealPath(path));
-    }
-
-    getFullRealPath(path) {
-      return this.basePath + "/" + path;
-    }
-
-    queue(fn) {
-      const result = this.promise.then(fn, fn);
-      this.promise = result;
-      return result;
-    }
-
-    removeFile(path) {
-      const entry = this.files[path];
-      delete this.files[path];
-      if (!entry) return;
-      if (entry.type === "file") this.trigger("file-removed", path);
-      else if (entry.type === "folder") this.trigger("folder-removed", path);
-    }
-  }
-
-  return CapacitorAdapter;
-}
-
 // ---- s04-mobile-fs.js ----
 // g29: implementation lives in n-g29-mobile-fs.js; shim for importers/tests.
 
@@ -91819,801 +94909,9 @@ function s04CapacitorAdapter(host) {
 // ---- s04-settings.js ----
 // g29: implementation lives in n-g29-settings.js; shim for importers/tests.
 
-// ---- s05-utils.js ----
-// s05 slice: small application helpers — position/range mapping, markdown
-// inline-text extraction, frontmatter link scanning, filename validation,
-// action tracking, animation-tree lookup, loaders, footnote ids, cssclasses,
-// system info, vault listing (mobile) and the titlebar double-click handler.
-
-// mdast position {line, column, offset} -> editor-style {line, col, offset}
-// with 1-based line/column converted to 0-based.
-function s05Point(position) {
-  return { line: position.line - 1, col: position.column - 1, offset: position.offset };
-}
-
-function s05Range(range) {
-  return { start: s05Point(range.start), end: s05Point(range.end) };
-}
-
-function s05HasPosition(node) {
-  return node.hasOwnProperty("position");
-}
-
-function s05HasKey(node) {
-  return node.hasOwnProperty("key");
-}
-
-// Render an mdast subtree as plain text, preserving list/table structure.
-function s05InlineText(node) {
-  if (!node) return "";
-  const type = node.type;
-  if (type === "html") return "";
-  if (type === "iembed") return node.href;
-  if (type === "listItem") {
-    const parts = s05ChildrenText(node.children);
-    return parts.length === 1 ? parts[0] + "\n" : parts.join("\n");
-  }
-  if (type === "tag") return node.tag;
-  if (type === "comment") return "";
-  let text = node.value || node.alt || node.title ||
-    (node.hasOwnProperty("children") && s05ChildrenText(node.children).join("")) || "";
-  if (type === "list" && node.start !== undefined && node.start !== null) {
-    text = node.start + ". " + text;
-  }
-  if (type === "paragraph" || type === "break" || type === "heading" || type === "code") {
-    text += "\n";
-  } else if (text.endsWith("\n")) {
-    text = text.substring(0, text.length - 1);
-  }
-  if (type === "tableCell") text += " ";
-  if (type === "tableRow") text += "\n";
-  return text;
-}
-
-function s05ChildrenText(children) {
-  const out = [];
-  if (!children) return out;
-  for (const child of children) out.push(s05InlineText(child));
-  return out;
-}
-
-const MD_LINK = /^(!?\[)(.*?)(]\(\s*)((<[^>]*?>|[^ "]+?)(\s+([^ ]+|"[^"]+"|'[^']+'|\([^']+\)))?)(\s*\))$/;
-
-// Collect every [[wikilink]] / [md](url) reference inside a frontmatter value,
-// keyed by the dotted path to the value.
-function s05FrontmatterLinks(frontmatter) {
-  const links = [];
-  const visit = (prefix, key, value) => {
-    const path = prefix ? prefix + "." + key : key;
-    if (typeof value === "string") {
-      if (value.startsWith("[[") && value.endsWith("]]")) {
-        const parsed = env().iE(value.substring(2, value.length - 2));
-        links.push({ key: path, link: parsed.href, original: value, displayText: parsed.title });
-      }
-      if (value.startsWith("[") && value.endsWith(")")) {
-        const match = value.match(MD_LINK);
-        if (match) {
-          let url = match[5];
-          if (url.startsWith("<") && url.endsWith(">")) {
-            url = url.slice(1, -1).trim();
-          }
-          if (isLocalLink(url)) {
-            let href = url;
-            try { href = decodeURI(url); } catch (e) { /* keep raw */ }
-            links.push({ key: path, link: href, original: value, displayText: match[2] });
-          }
-        }
-      }
-    } else {
-      walk(path, value);
-    }
-  };
-  const walk = (prefix, value) => {
-    if (Array.isArray(value)) {
-      for (let i = 0; i < value.length; i++) visit(prefix, String(i), value[i]);
-    } else if (typeof value === "object") {
-      for (const key in value) {
-        if (value.hasOwnProperty(key)) visit(prefix, key, value[key]);
-      }
-    }
-  };
-  walk("", frontmatter);
-  return links;
-}
-
-// True when the cached metadata for `node` references the given file(s).
-function s05HasRef(node, target) {
-  return !!node && (anyRefMatch(node.links, target) === true || anyRefMatch(node.embeds, target) === true);
-}
-
-// Plain-text heading for outline/TOC use; `heading` is the cache heading
-// object, falls back to its raw heading string.
-function s05HeadingText(heading) {
-  const text = s05InlineText(env().Kx(heading.heading));
-  return text || heading.heading;
-}
-
-const WINDOWS_RESERVED = /^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i;
-
-function s05AssertValidFileName(name) {
-  if (env().Ul) {
-    const last = name.charAt(name.length - 1);
-    if (last === "." || last === " ") {
-      throw new Error("File names cannot end with a dot or a space.");
-    }
-    const base = baseName(name);
-    if (WINDOWS_RESERVED.test(base)) {
-      throw new Error("File name is forbidden: " + base);
-    }
-  }
-  if (name.split("/").some((segment) => env().UT.test(segment))) {
-    throw new Error("File name cannot contain any of the following characters: " + env().qT);
-  }
-}
-
-function s05IsValidFileName(name) {
-  try {
-    s05AssertValidFileName(name);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-// Probe whether the filesystem adapter supports permission checks; caches the
-// result in the shared flag so the check runs at most once.
-async function s05CheckFilePermissions() {
-  try {
-    await env().Dm.checkPerms();
-    env().kD = true;
-  } catch (e) {
-    env().kD = false;
-  }
-  return env().kD;
-}
-
-function s05TrackAction(key) {
-  env().aD.push({ key, ts: performance.now() });
-}
-
-// Look up a node in the shared animation-name tree by dotted path.
-function s05LookupAnimNode(path) {
-  let node = env().lD;
-  if (path) {
-    for (const segment of path.split(".")) {
-      if (!node.children.hasOwnProperty(segment)) return null;
-      node = node.children[segment];
-    }
-  }
-  return node;
-}
-
-function s05AnimDuration(path) {
-  const node = s05LookupAnimNode(path);
-  return node?.duration ?? 0;
-}
-
-function s05CreateLoaderCube(parent) {
-  const el = env().createDiv("loader-cube");
-  for (let i = 1; i <= 9; i++) {
-    el.createDiv({ cls: "sk-cube sk-cube" + i });
-  }
-  if (parent) parent.appendChild(el);
-  return el;
-}
-
-function s05CreateLoaderSpinner(parent) {
-  const el = env().createDiv("loader-spinner");
-  env().tv(el, "loader-2");
-  if (parent) parent.appendChild(el);
-  return el;
-}
-
-// Show a spinner for the duration of `task()` and always remove it after.
-async function s05WithLoader(parent, task) {
-  const spinner = s05CreateLoaderSpinner(parent);
-  try {
-    return await task();
-  } finally {
-    spinner.detach();
-  }
-}
-
-const NON_WORD = /\W/;
-
-// Index of the first non-word character at or after `from`, or -1.
-function s05FindBreakIndex(text, from) {
-  const length = text.length;
-  for (let i = from; i < length; i += 1) {
-    if (NON_WORD.test(text[i])) return i;
-  }
-  return -1;
-}
-
-const FOOTNOTE_PREFIX = "[inline";
-
-// Next free numeric footnote id (ids starting with "[inline" are ignored).
-function s05NextFootnoteId(node) {
-  let max = 0;
-  if (node?.footnotes) {
-    for (const footnote of node.footnotes) {
-      if (!footnote.id.startsWith(FOOTNOTE_PREFIX) && /^\d+$/.test(footnote.id)) {
-        const value = parseInt(footnote.id, 10);
-        if (value > max) max = value;
-      }
-    }
-  }
-  return max + 1;
-}
-
-// `cssclasses` frontmatter entry as a filtered list of single-token classes.
-function s05CssClasses(frontmatter) {
-  if (!frontmatter) return null;
-  const value = frontmatterStrings(frontmatter, /^cssclasses$/i);
-  return value ? value.filter((cls) => !!cls && !cls.includes(" ")) : null;
-}
-
-// Human-readable system/vault diagnostic block for bug reports.
-async function s05SystemInfo() {
-  let out = "SYSTEM INFO:\n";
-  const platform = env().Yl;
-  if (platform.isDesktopApp) {
-    out += "\tBasalt version: " + platform.version + "\n";
-    out += "\tInstaller version: " + platform.build + "\n";
-    out += "\tOperating system: " + platform.osName + " " + platform.osVersion + "\n";
-  }
-  if (platform.isMobileApp) {
-    out += "\tBasalt version: " + platform.version + " (" + platform.build + ")\n";
-    out += "\tAPI version: " + env().gte + "\n";
-    out += "\tOperating system: " + platform.osName + " " + platform.osVersion +
-      " (" + platform.manufacturer + " " + platform.model + ")\n";
-    if (platform.isAndroidApp) {
-      out += "\tWebview version: " + chromeVersion(navigator.userAgent) + "\n";
-    }
-  }
-  const login = env().Hw.token ? "logged in" : "not logged in";
-  out += "\tLogin status: " + login + "\n";
-  out += "\tLanguage: " + env().sm() + "\n";
-  if (env().Hw.token) {
-    out += "\tCatalyst license: " + (env().Hw.license || "none") + "\n";
-  }
-  if (platform.isDesktopApp) {
-    let insider = "";
-    env().Of((electron) => {
-      insider = electron.ipcRenderer.sendSync("insider-build", null) ? "on" : "off";
-      out += "\tInsider build toggle: " + insider + "\n";
-    });
-  }
-  return out;
-}
-
-// List every vault visible to the mobile shell. On iOS this merges the iCloud
-// root (when configured) with the documents adapter; on Android it merges
-// permission-gated local roots; other platforms get an empty list.
-async function s05MobileVaultList() {
-  const out = [];
-  const collect = async (adapter, subdir, prefix, isICloud, exclude) => {
-    let entries;
-    try {
-      entries = await adapter.readdir(subdir);
-    } catch (e) {
-      console.error(e);
-      return;
-    }
-    for (const entry of entries) {
-      const name = entry.name;
-      if (name.startsWith(".") || (exclude && exclude.contains(name))) continue;
-      if (entry.type === "directory") {
-        out.push({ name, location: prefix + name, storageType: isICloud ? "iCloud" : "local" });
-      }
-    }
-  };
-  if (env().Mm) {
-    if (env().yD) await collect(env().yD, env().wD, "icloud/", true);
-    await collect(env().vD, "", "documents/");
-  } else if (env().Sm) {
-    if (await s05CheckFilePermissions()) {
-      const rootUri = env().vD.getUri("") + "/";
-      const names = [];
-      for (const dir of env().gD) {
-        try {
-          const uri = env().bD.getUri(dir);
-          if (uri.startsWith(rootUri)) {
-            const rel = uri.substr(rootUri.length);
-            if (!rel.contains("/")) names.push(decodeURIComponent(rel));
-          }
-          if ((await env().bD.stat(dir)).type === "directory") {
-            out.push({ location: dir, name: lastSegment(dir), storageType: "local" });
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      await collect(env().vD, "", "", false, names);
-    }
-  }
-  return out;
-}
-
-// macOS-only: double-clicking the titlebar area toggles minimise/maximise per
-// the system preference, unless the click landed on an interactive control.
-function s05TitlebarDoubleClick(element) {
-  const platform = env().Yl;
-  if (!(platform.isMacOS && platform.isDesktopApp)) return;
-  element.addEventListener("dblclick", (event) => {
-    if (event.button !== 0) return;
-    const target = event.target;
-    if (!target.instanceOf(HTMLElement)) return;
-    if (target.closest(".clickable-icon") ||
-        target.closest(".workspace-tab-header-inner-close-button") ||
-        (target.closest(".workspace-tab-header") && target.closest(".workspace-split.mod-sidedock"))) {
-      return;
-    }
-    const win = element.win.electronWindow;
-    if (!win.isMaximizable) return;
-    env().Of((electron) => {
-      const action = electron.remote.systemPreferences.getUserDefault("AppleActionOnDoubleClick", "string");
-      if (action === "Minimize") {
-        win.minimize();
-      } else if (action === "Maximize" || action === "") {
-        if (win.isMaximized()) win.unmaximize(); else win.maximize();
-      }
-    });
-  });
-}
-
-// Wheel events over a horizontally scrollable element: translate vertical
-// wheel delta into horizontal scrolling.
-function s05WheelScroll(event) {
-  if (!event.deltaY) return;
-  const target = event.currentTarget;
-  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
-    target.scrollLeft += event.deltaX;
-  } else {
-    target.scrollLeft += event.deltaY;
-  }
-  event.preventDefault();
-}
-
 // ---- s05-widgets.js ----
 // g29: implementation lives in n-g29-widgets.js / n-g29-vaultpick.js;
 // shim for importers/tests.
-
-// ---- s06-util.js ----
-// s06 utility replacements: editor positions, frontmatter helpers, table-cell
-// helpers, link/tag suggestion helpers and small comparators.
-// Dependencies that still live in the inherited bundle are reached through
-// env() (manifest envBind names) or the trailing `host` argument that
-// manifest entries with "host": true receive; helpers already rewritten are
-// called by their own names.
-
-// ---- shared regular expressions / constants (also spliced back as declarators) ----
-
-/** Matches a leading blockquote marker `> ` (with up to two spaces of indent). */
-const s06BlockquoteRe = /^\s{0,3}>(\s*)/;
-/** Matches a `#tag` at the end of a line (used by the tag suggest trigger). */
-const s06TagRe = /(^|\s)#[^\u2000-\u206F\u2E00-\u2E7F'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\\s]*$/g;
-/** Matches a whole `[[link|alias]]` / `[[link]]` wikilink. */
-const s06WikiLinkRe = /^(!?\[\[)(.*?)(\|(.*))?(]])$/;
-/** Matches a footnote reference `#1234`. */
-const s06FootnoteRefRe = /^#\d+$/;
-/** Matches a leading list marker or blockquote (used by line classification). */
-const s06ListMarkerRe = /^([>\s]*)(([*+-] |(\d+)([.)] ))(?:\[(.)\] )?)?/;
-/** Matches a leading heading marker. */
-const s06HeadingRe = /^([>\s]*)(#{1,6} )?(.*)/;
-/** ISO-like date+time accepted by the date properties. */
-const s06DateTimeRe = /^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d$/;
-/** ISO-like date accepted by the date properties. */
-const s06DateRe = /^\d{4}-[01]\d-[0-3]\d$/;
-/** moment.js formats tried for datetime property values, most specific first. */
-const s06DateTimeFormats = ["YYYY-MM-DD[T]HH:mm:ss", "YYYY-MM-DD[T]HH:mm", "YYYY-MM-DD HH:mm:ss", "YYYY-MM-DD HH:mm"];
-/** moment.js formats tried for date property values. */
-const s06DateFormats = ["YYYY-MM-DD"];
-/** HTML comment that marks generated/managed blocks in file contents. */
-const s06CommentPrefix = "<!-- basalt -->";
-/** Input rules that turn CJK bracket pairs into wikilink brackets. */
-const s06CjkBrackets = [
-  { regex: /(！)?【【$/, replace: (m) => (m[1] ? "![[" : "[[") },
-  { regex: /】】$/, replace: () => "]]" },
-  { regex: /【【$/, replace: () => "[[" },
-];
-/** Empty suggestion result shared by suggest flows. */
-const s06EmptySuggestion = { type: "none", matches: null, score: 0 };
-
-// ---- editor positions ({line, ch} <-> offsets in a CodeMirror doc) ----
-
-/** Builds a position object. */
-function s06Pos(line, ch = 0) { return { line, ch }; }
-
-/** Position equality on line and ch only. */
-function s06PosEq(a, b) { return a.line === b.line && a.ch === b.ch; }
-
-/** Position shifted by `ch` columns on the same line. */
-function s06PosAdd(pos, ch) { return { line: pos.line, ch: pos.ch + ch }; }
-
-/** Offset of a {line, ch} position inside a CodeMirror doc; negative `ch` counts from line end, missing `ch` means line end. */
-function s06PosToOffset(doc, pos) {
-  if (pos.line < 0) return 0;
-  const lineNo = pos.line + 1;
-  if (lineNo > doc.lines) return doc.length;
-  const line = doc.line(lineNo);
-  if (!isFinite(pos.ch)) return line.to;
-  return pos.ch < 0 ? line.from + Math.max(0, line.length + pos.ch) : line.from + pos.ch;
-}
-
-/** {line, ch} of an offset inside a CodeMirror doc (clamped to the doc). */
-function s06OffsetToPos(doc, offset) {
-  offset = Math.clamp(offset, 0, doc.length);
-  const line = doc.lineAt(offset);
-  return { line: line.number - 1, ch: offset - line.from };
-}
-
-// ---- small pure helpers ----
-
-/** Visual width of the blockquote prefix of a line (4-space groups inside the marker collapse). */
-function s06QuotePrefixWidth(text) {
-  const m = text.match(s06BlockquoteRe);
-  if (!m) return 0;
-  let indent = m[1];
-  while (indent.startsWith("    ")) indent = indent.substring(4);
-  const width = m[0].length - m[1].length;
-  return indent.startsWith(" ") ? width + 1 : width;
-}
-
-/** Sets `value` at `path` inside `obj`, creating arrays/objects along the way; mutates `obj` and `path`. */
-function s06SetPath(obj, path, value) {
-  while (obj && path.length) {
-    const key = path.shift();
-    if (Array.isArray(obj)) {
-      const index = parseInt(key);
-      if (isNaN(index) || index < 0 || index >= obj.length) return;
-      if (!(path.length > 0)) { obj[index] = value; return; }
-      obj = obj[index];
-    } else {
-      if (typeof obj !== "object") return;
-      if (!(path.length > 0)) { obj[key] = value; return; }
-      obj = obj[key];
-    }
-  }
-}
-
-/** Deep-merges `source` into `target`: arrays concatenate+dedupe, plain objects recurse, other values overwrite. */
-function s06MergeDeep(target, source) {
-  if (Object.keys(source).length === 0) return;
-  for (const key in source) {
-    if (!source.hasOwnProperty(key)) continue;
-    const oldVal = target.hasOwnProperty(key) ? target[key] : undefined;
-    const newVal = source[key];
-    if (oldVal) {
-      if (Array.isArray(oldVal) && Array.isArray(newVal)) target[key] = oldVal.concat(newVal).unique();
-      else if (typeof oldVal === "object" && newVal !== null && typeof newVal === "object") s06MergeDeep(oldVal, newVal);
-      else if (newVal !== null) target[key] = newVal;
-    } else target[key] = newVal;
-  }
-}
-
-// ---- frontmatter helpers ----
-
-/** Serializes a frontmatter object to a `---\n...\n---\n` block (empty object -> ""). */
-function s06FrontmatterBlock(data) {
-  let out = "";
-  if (data && Object.keys(data).length > 0) {
-    const body = env().vA(data).trim();
-    out = "---\n".concat(body, "\n---\n");
-  }
-  return out;
-}
-
-/** Splits file text into {content, frontmatter} at the frontmatter block. */
-function s06ParseFrontmatter(text) {
-  const info = env().Xx(text);
-  const content = text.slice(info.contentStart);
-  let frontmatter = {};
-  if (info.frontmatter) frontmatter = env().mA(info.frontmatter);
-  return { content, frontmatter };
-}
-
-/** Returns `text` with its body only, prefixed by the serialized frontmatter `data`. */
-function s06WithFrontmatter(text, data) {
-  const block = s06FrontmatterBlock(data);
-  const info = env().Xx(text);
-  return block + text.slice(info.contentStart);
-}
-
-/** Lets `mutate` edit the parsed frontmatter object, then rewrites the file's frontmatter block. */
-function s06UpdateFrontmatter(text, mutate) {
-  const info = env().Xx(text);
-  const data = info.exists ? env().mA(info.frontmatter) : {};
-  const obj = data && typeof data === "object" ? data : {};
-  mutate(obj);
-  if (Object.keys(obj).length === 0) return info.exists ? text.slice(info.contentStart) : text;
-  const block = env().vA(obj);
-  return info.exists ? text.slice(0, info.from) + block + text.slice(info.to) : "---\n" + block + "---\n" + text;
-}
-
-// ---- table helpers ----
-
-/** True when `el` is a table header row (`<thead>` context and only `<th>` children). */
-function s06IsHeaderRow(el) {
-  if (!el) return false;
-  const parent = el.parentNode;
-  if (parent.nodeName === "THEAD") return true;
-  const firstOfKind = parent.firstChild === el &&
-    (parent.nodeName === "TABLE" ||
-      (parent.nodeName === "TBODY" &&
-        (!parent.previousSibling ||
-          (parent.previousSibling.nodeName === "THEAD" && /^\s*$/i.test(parent.previousSibling.textContent)))));
-  return firstOfKind && Array.prototype.every.call(el.childNodes, (child) => child.nodeName === "TH");
-}
-
-/** Converts a list of offsets into {line, ch} positions by scanning newlines. */
-function s06OffsetsToPositions(text, offsets) {
-  let line = 0, lineStart = 0, nl = text.indexOf("\n"), out = [];
-  for (let k = 0; k < offsets.length; k++) {
-    const offset = offsets[k];
-    while (nl < offset) {
-      if (nl === -1) { nl = text.length; break; }
-      line++; lineStart = nl + 1; nl = text.indexOf("\n", lineStart);
-    }
-    out.push({ line, ch: offset - lineStart });
-  }
-  return out;
-}
-
-/** Extra columns a `<td>` spans (colspan - 1, 0 when absent/invalid). */
-function s06Colspan(cell) {
-  const raw = cell.getAttribute("colspan");
-  if (!raw) return 0;
-  const n = parseInt(raw);
-  return isNaN(n) ? 0 : Math.max(0, n - 1);
-}
-
-/** `filler` repeated for each extra column the cell spans. */
-function s06ColspanRepeat(cell, filler) {
-  return filler.repeat(s06Colspan(cell));
-}
-
-// ---- table cell text <-> markdown escaping (produces a CodeMirror ChangeSet) ----
-
-const S06_CELL_BREAK_RE = /(\r?\n|\\*\|)/g;
-const S06_CELL_CODE_RE = /(`+)[^`]+\1/g;
-const S06_CELL_ESCAPED_RE = /(\\+\||<br>)/gi;
-
-/** Escapes raw newlines/pipes in cell `text` for markdown; returns {result, changes}. */
-function s06EscapeTableCell(text) {
-  const changes = [];
-  const length = text.length;
-  let delta = 0;
-  const matches = Array.from(text.matchAll(S06_CELL_BREAK_RE));
-  for (let k = 0; k < matches.length; k++) {
-    const m = matches[k], token = m[1], at = m.index, size = token.length;
-    const isPipe = token[token.length - 1] === "|";
-    let insertAt = at, insertSize = size, insert;
-    if (isPipe) {
-      const bs = token.match(/^(\\+)/);
-      if (bs && bs[1].length % 2 === 1) continue;
-      if (bs) { insertAt = at + size - 1; insertSize = 1; }
-      insert = "\\|";
-    } else {
-      insert = "<br>";
-    }
-    const pos = insertAt + delta;
-    text = text.substring(0, pos) + insert + text.substring(pos + insertSize);
-    delta -= insertSize - insert.length;
-    changes.push({ from: insertAt, to: insertAt + insertSize, insert });
-  }
-  return { result: text, changes: env().re.of(changes, length) };
-}
-
-/** Replaces `<br>`/escaped-pipe/code-span markers inside cell `text`; returns {result, changes}. */
-function s06UnescapeTableCell(text) {
-  const changes = [];
-  const length = text.length;
-  let delta = 0;
-  const codeSpans = Array.from(text.matchAll(S06_CELL_CODE_RE));
-  const apply = (m) => {
-    const token = m[1], at = m.index, size = token.length;
-    let from = at, span = size, insert;
-    if (token.toLowerCase() !== "<br>") {
-      const bs = token.match(/^(\\+)/);
-      if (bs && bs[1].length % 2 === 0) return;
-      if (bs) { from = at + span - 2; span = 2; }
-      insert = "|";
-    } else {
-      if (codeSpans.some((s) => s.index < m.index && s.index + s[0].length > at + span)) return;
-      insert = "\n";
-    }
-    const pos = from + delta;
-    text = text.substring(0, pos) + insert + text.substring(pos + span);
-    delta -= span - insert.length;
-    changes.push({ from, to: from + span, insert });
-  };
-  const escaped = Array.from(text.matchAll(S06_CELL_ESCAPED_RE));
-  for (let k = 0; k < escaped.length; k++) apply(escaped[k]);
-  return { result: text, changes: env().re.of(changes, length) };
-}
-
-// ---- search/suggestion helpers ----
-
-/** Tries `matchFn` on the basename first, then the whole text (score -1 on fallback). */
-function s06MatchBasenameFirst(matchFn, text) {
-  const base = lastSegment(text);
-  let hit = matchFn(base);
-  if (hit) {
-    shiftRanges(hit.matches, text.length - base.length);
-    return hit;
-  }
-  hit = matchFn(text);
-  if (hit) hit.score -= 1;
-  return hit;
-}
-
-/** Comparator: higher score first. */
-function s06CompareScoreDesc(a, b) { return b.score - a.score; }
-
-/** Comparator: shorter path first. */
-function s06ComparePathLength(a, b) { return a.path.length - b.path.length; }
-
-// ---- platform / view helpers ----
-
-/** True when an iOS "open in Files" drop should be honoured for this dataTransfer. */
-function s06HasIosFilesDrop(dataTransfer) {
-  for (let i = 0; i < dataTransfer.items.length; i++) {
-    if (dataTransfer.items[i].kind === "file") return true;
-  }
-  return env().Yl.isIosApp && dataTransfer.types.indexOf("Files") !== -1;
-}
-
-/** True when `view` exposes a properties metadata editor. */
-function s06HasMetadataEditor(view, host) {
-  return view && typeof view === "object" && Object.hasOwn(view, "metadataEditor") && view.metadataEditor instanceof host.MetadataEditor;
-}
-
-/** The metadata editor of the workspace's active editor or active leaf view, when visible. */
-function s06ActivePropertiesEditor(workspace, host) {
-  const editor = workspace.activeEditor;
-  if (s06HasMetadataEditor(editor, host) && editor.canShowProperties()) return editor.metadataEditor;
-  const leaf = workspace.activeLeaf;
-  const view = leaf === null || leaf === undefined ? undefined : leaf.view;
-  return s06HasMetadataEditor(view, host) && view.canShowProperties() ? view.metadataEditor : null;
-}
-
-/** Sanitizes `html` through DOMPurify and imports the result as a DOM node. */
-function s06SanitizeHtml(html, host) {
-  return document.importNode(host.s06Purify.sanitize(html, host.s06PurifyConfig), true);
-}
-
-// ---- link text helpers ----
-
-/** Turns a drop/link target into markdown link texts (file(s), link, heading, bookmarks). */
-function s06DropLinkTexts(app, target, sourcePath, embed, host) {
-  const fileManager = app.fileManager, vault = app.vault;
-  const linkFor = (file, subpath, alias) => {
-    const md = fileManager.generateMarkdownLink(file, sourcePath, subpath, alias);
-    return embed && host.isImageExtension(file.extension) ? "!" + md : md;
-  };
-  if (target.type === "file") return [linkFor(target.file)];
-  if (target.type === "files") {
-    const out = [];
-    for (let i = 0; i < target.files.length; i++) {
-      const f = target.files[i];
-      if (f instanceof host.TFile) out.push(linkFor(f));
-    }
-    return out;
-  }
-  if (target.type === "link") {
-    if (target.file) {
-      const subpath = parseLinktext(target.linktext).subpath;
-      return [linkFor(target.file, subpath)];
-    }
-    return [target.linktext];
-  }
-  if (target.type === "heading") {
-    const subpath = "#" + linkSafeHeading(target.heading.heading);
-    return [linkFor(target.file, subpath)];
-  }
-  if (target.type === "bookmarks") {
-    const out = [];
-    for (let i = 0; i < target.items.length; i++) {
-      const item = target.items[i].item;
-      if (item.type === "file") {
-        const file = vault.getAbstractFileByPath(item.path);
-        if (file instanceof host.TFile) out.push(linkFor(file, item.subpath, item.title));
-      }
-    }
-    return out;
-  }
-  return [];
-}
-
-/** Rewrites the link inside a {original, link} pair to `newLink`, preserving alias/format. */
-function s06RewriteLink(pair, newLink, host) {
-  const original = pair.original, link = pair.link;
-  const wiki = original.match(s06WikiLinkRe);
-  let result;
-  if (wiki) {
-    const bang = wiki[1], inner = wiki[2], pipe = wiki[4], tail = wiki[5];
-    let alias = pipe === undefined ? "" : pipe;
-    if (alias) {
-      const sep = /\\\|/.test(original) ? "\\|" : "|";
-      if (inner.contains("/")) {
-        const trimmed = alias.trim();
-        if (baseName(inner) === trimmed) alias = baseName(linkPath(newLink));
-      }
-      result = bang + newLink + sep + alias + tail;
-    } else result = bang + newLink + tail;
-  } else {
-    const md = original.match(host.s06MdLinkPattern);
-    const safe = !md || !md[5].startsWith("<") ? escapeLinkChars(newLink) : "<" + newLink + ">";
-    if (md) {
-      let text = md[2];
-      const display = plainSpaces(text).trim();
-      const oldPath = linkPath(link);
-      if (display === displayName(oldPath)) text = displayName(linkPath(newLink));
-      else if (display.contains("/") && display === withoutMd(oldPath)) text = withoutMd(linkPath(newLink));
-      result = md[1] + text + md[3] + safe + (md[6] !== null && md[6] !== undefined ? md[6] : "") + md[8];
-    } else {
-      result = "[](".concat(safe, ")");
-      if (original.startsWith("!")) result = "!" + result;
-    }
-  }
-  return result;
-}
-
-/** Computes the link update for a resolved link whose target paths changed. */
-function s06LinkChangeFor(resolved, metadataCache, host) {
-  const reference = resolved.reference, sourceFile = resolved.sourceFile;
-  const resolvedPaths = resolved.resolvedPaths;
-  const sourcePath = sourceFile.path;
-  const parsed = parseLinktext(reference.link);
-  const linkPathPart = parsed.path, subpath = parsed.subpath;
-  const destPaths = metadataCache.getLinkpathDest(linkPathPart, sourcePath).map((d) => d.path);
-  const same = destPaths.length !== 0 && s06ArraysEqual(resolvedPaths, destPaths);
-  if (same) return undefined;
-  const wasWiki = s06WikiLinkRe.test(reference.original);
-  const newLink = metadataCache.fileToLinktext(resolved.resolvedFile, sourcePath, wasWiki) + subpath;
-  if (reference.link === newLink) return undefined;
-  return { sourcePath, reference, change: s06RewriteLink(reference, newLink, host) };
-}
-
-function s06ArraysEqual(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; ++i) if (a[i] !== b[i]) return false;
-  return true;
-}
-
-/** {path, subpath} a link/suggestion item points at. */
-function s06LinkTarget(item) {
-  let parsed, path = "", subpath = "";
-  if (item.type === "block") { path = item.file.path; subpath = "#^" + item.node.id; }
-  else if (item.type === "heading") { path = item.file.path; subpath = "#" + linkSafeHeading(item.heading); }
-  else if (item.type === "file" || item.type === "alias") { path = item.file.path; }
-  else if (item.type === "linktext") { parsed = parseLinktext(item.path); path = parsed.path; subpath = parsed.subpath; }
-  return { path, subpath };
-}
-
-/** Tag suggestions for `query` from the metadata cache (prefix `#` included when `withHash`). */
-function s06TagSuggestions(metadataCache, query, withHash, host) {
-  if (withHash === undefined) withHash = false;
-  query = query.toLowerCase();
-  let tags = Object.keys(metadataCache.getTags());
-  if (!withHash) tags = tags.map((t) => t.slice(1));
-  const prepared = prepareQuery(query);
-  tags.sort(host.compareStrings);
-  const out = [];
-  for (let i = 0; i < tags.length; i++) {
-    const tag = tags[i];
-    if (query === "" || (query === "#" && withHash)) out.push({ tag, score: 0, matches: null });
-    else {
-      const hit = fuzzyMatchJs(prepared, tag.toLowerCase());
-      if (hit) out.push({ tag, score: hit.score, matches: hit.matches });
-    }
-  }
-  out.sort(s06CompareScoreDesc);
-  return out;
-}
 
 // ---- s07-embed-views.js ----
 // Compatibility shim: the implementation lives in n-g30-embed.js.
@@ -92995,379 +95293,6 @@ function s07imageFor(sections, url, source) {
 function s07linkHrefFor(el, container) {
   const href = el.getAttr("data-href") || el.getAttr("href");
   return href && env().Gz.belongsToMe(el, container) ? href : null;
-}
-
-// ---- s07-helpers.js ----
-// s07 helpers: small application-scope utilities — document position conversion, the
-// _handlers event trio used by the CM5-compat facade, the IME-composition dispatch fix,
-// cursor restore after undo/redo, embed URL detection, the external-embed iframe,
-// the macOS writing-tools formatting menu, outline HTML sections, file-explorer sort
-// comparators, search match segment rendering and the lazy-embed weak maps.
-
-// ---------- document position helpers (CM6 Text <-> {line, ch}) ----------
-
-/** Offset of a 0-based {line, ch} position in a CM6 Text; clamps like the original. */
-function s07posToOffset(doc, pos) {
-  const ch = pos.ch;
-  const line = pos.line + 1;
-  if (line < 1) return 0;
-  if (line > doc.lines) return doc.length;
-  const l = doc.line(line);
-  return Math.min(l.from + Math.max(0, ch), l.to);
-}
-
-/** {line, ch} of an offset in a CM6 Text, or null when out of range. */
-function s07offsetToPos(doc, offset) {
-  if (offset < 0 || offset > doc.length) return null;
-  const l = doc.lineAt(offset);
-  return { line: l.number - 1, ch: offset - l.from };
-}
-
-// ---------- _handlers event trio (targets without addEventListener) ----------
-
-/** Remove one listener; falls back to the `_handlers` map on non-DOM targets. */
-function s07removeHandler(target, type, fn) {
-  if (target.removeEventListener) target.removeEventListener(type, fn, false);
-  else {
-    const map = target._handlers;
-    const list = map && map[type];
-    if (list) {
-      const at = list.indexOf(fn);
-      if (at > -1) map[type] = list.slice(0, at).concat(list.slice(at + 1));
-    }
-  }
-}
-
-/** Add one listener; stores it in `_handlers` when there is no addEventListener. */
-function s07addHandler(target, type, fn) {
-  if (target.addEventListener) target.addEventListener(type, fn, false);
-  else {
-    const map = target._handlers || (target._handlers = {});
-    map[type] = (map[type] || []).concat(fn);
-  }
-}
-
-// ---------- editor facade glue ----------
-
-/**
- * Dispatch a CM6 transaction spec through the facade, rewriting a pending
- * "input.type.compose(.start)" user event while an IME composition is in flight.
- */
-function s07cm6Dispatch(facade, spec) {
-  const view = facade.cm6;
-  if (view.state.readOnly) return;
-  let userEvent = "input.type.compose";
-  if (facade.curOp && !facade.curOp.lastChange) userEvent = "input.type.compose.start";
-  if (spec.annotations && Array.isArray(spec.annotations)) {
-    try {
-      spec.annotations.some((a) => {
-        if (a.value == "input") a.value = userEvent;
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  } else spec.userEvent = userEvent;
-  return view.dispatch(spec);
-}
-
-/** Re-dispatch the cursor position recorded at the start of an undo/redo op. */
-function s07cm6RestoreCursor(facade, undo) {
-  if (facade.curOp) facade.curOp.$changeStart = undefined;
-  (undo ? env().nF : env().iF)(facade.cm6);
-  const start = facade.curOp == null ? void 0 : facade.curOp.$changeStart;
-  if (start != null) facade.cm6.dispatch({ selection: { anchor: start } });
-}
-
-// ---------- embed URL detection ----------
-
-const S07_YOUTUBE_RE = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)(?:\/(?:[\w\-]+\?(?:.*?\&)*v=|embed\/|v\/)?)([\w\-]+)(?:\??&?(?:t|start)=([0-9]+))?(?:\S+)?$/;
-const S07_TWEET_RE = /^(?:https?:\/\/)?(?:mobile\.)?(?:twitter|x)\.com\/.+\/(\d+)/;
-
-const s07youtubeRe = S07_YOUTUBE_RE;
-const s07tweetRe = S07_TWEET_RE;
-
-/** Privacy-enhanced YouTube embed URL, or a theme-aware Twitter embed URL, else null. */
-function s07embedUrlFor(text) {
-  if (!text || typeof text != "string") return null;
-  let m = text.match(S07_YOUTUBE_RE);
-  if (m) {
-    let url = "https://www.youtube-nocookie.com/embed/" + m[1];
-    if (m[2]) url += "?start=" + m[2];
-    return url;
-  }
-  m = text.match(S07_TWEET_RE);
-  if (m) {
-    const dark = document.body.hasClass("theme-dark");
-    return "https://platform.twitter.com/embed/Tweet.html?dnt=true&theme=".concat(dark ? "dark" : "light", "&id=").concat(m[1]);
-  }
-  return null;
-}
-
-// ---------- external embed iframe ----------
-
-/** Sandboxed iframe for externally hosted embeds (tweets resize themselves via framemessage). */
-function s07externalEmbed(url) {
-  const frame = env().createEl("iframe", "external-embed mod-receives-events");
-  frame.setAttr("sandbox", "allow-forms allow-presentation allow-same-origin allow-popups-to-escape-sandbox allow-scripts allow-modals allow-popups");
-  frame.setAttr("allow", "fullscreen");
-  frame.setAttr("frameborder", "0");
-  frame.setAttr("referrerpolicy", "strict-origin-when-cross-origin");
-  frame.src = url;
-  if (url.contains("platform.twitter.com")) {
-    frame.setAttr("scrolling", "no");
-    frame.addEventListener("framemessage", (e) => {
-      const detail = e.detail;
-      if (detail) {
-        const tw = detail.data && detail.data["twttr.embed"];
-        if (tw && tw.method === "twttr.private.resize") {
-          const height = tw.params[0].height;
-          if (Number.isNumber(height)) frame.style.height = String(Math.min(1e3, height)) + "px";
-        }
-      }
-    });
-    env().Iz(frame.win);
-    frame.onWindowMigrated(() => env().Iz(frame.win));
-  }
-  return frame;
-}
-
-// ---------- macOS writing-tools formatting menu ----------
-
-/** Registers the bold/italic/... formatting submenu on a native context menu. */
-function s07writingToolsMenu(menu, editor, state, section) {
-  const fmt = env().gm.interface.formatting;
-  menu.setShowMacWritingTools(true);
-  menu.addSections([section + ".basic", section + ".advanced", section + ".danger"]);
-  menu.addItem((item) => {
-    item.setSection(section).setTitle(fmt.labelFormatting()).setIcon("lucide-paintbrush").setSubmenu()
-      .addItem((sub) => sub.setSection(section + ".basic").setTitle(fmt.toggleBold()).setChecked(state.bold).setIcon("lucide-bold").onClick(() => editor.toggleMarkdownFormatting("bold")))
-      .addItem((sub) => sub.setSection(section + ".basic").setTitle(fmt.toggleItalics()).setChecked(state.italic).setIcon("lucide-italic").onClick(() => editor.toggleMarkdownFormatting("italic")))
-      .addItem((sub) => sub.setSection(section + ".basic").setTitle(fmt.toggleStrikethrough()).setChecked(state.strikethrough).setIcon("lucide-strikethrough").onClick(() => editor.toggleMarkdownFormatting("strikethrough")))
-      .addItem((sub) => sub.setSection(section + ".basic").setTitle(fmt.toggleHighlight()).setChecked(state.highlight).setIcon("lucide-highlighter").onClick(() => editor.toggleMarkdownFormatting("highlight")))
-      .addItem((sub) => sub.setSection(section + ".advanced").setTitle(fmt.toggleCode()).setChecked(state.code).setIcon("lucide-code-2").onClick(() => editor.toggleMarkdownFormatting("code")))
-      .addItem((sub) => sub.setSection(section + ".advanced").setTitle(fmt.toggleMath()).setChecked(state.math).setIcon("lucide-sigma").onClick(() => editor.toggleMarkdownFormatting("math")))
-      .addItem((sub) => sub.setSection(section + ".advanced").setTitle(fmt.toggleComments()).setChecked(state.comment).setIcon("lucide-percent").onClick(() => editor.toggleComment()))
-      .addItem((sub) => sub.setSection(section + ".danger").setTitle(fmt.clear()).setIcon("lucide-eraser").onClick(() => editor.clearMarkdownFormatting()));
-  });
-}
-
-// ---------- outline / table-of-contents HTML ----------
-
-/**
- * Renders the top-level blocks of a markdown document to HTML sections for the
- * outline: each entry is { html, pos, level } plus the parsed frontmatter.
- */
-function s07outlineHtml(markdown) {
-  const ast = env().Kx(markdown);
-  const definitions = { definitions: env().oT(ast) };
-  const sections = [];
-  const children = ast.children;
-  const frontmatter = env().$x(ast);
-  ast.children = [null];
-  for (let i = 0; i < children.length; i++) {
-    const child = children[i];
-    let level = 7;
-    if (child.type === "heading") level = child.depth || 1;
-    env().jC(child, ["checklist", "listItem", "code"], (node) => {
-      const data = node.data || (node.data = {});
-      const props = data.hProperties || (data.hProperties = {});
-      props["data-line"] = String(node.position.start.line - child.position.start.line);
-    });
-    ast.children[0] = child;
-    const html = env().Zx(ast, definitions);
-    sections.push({ html, pos: env().hT(child.position), level });
-  }
-  return { sections, frontmatter };
-}
-
-// ---------- file explorer sorting ----------
-
-/** Sort-order key pairs offered by the file explorer setting. */
-const s07sortOrderPairs = [
-  ["alphabetical", "alphabeticalReverse"],
-  ["byModifiedTime", "byModifiedTimeReverse"],
-  ["byCreatedTime", "byCreatedTimeReverse"],
-];
-
-/** Basename/stat comparators used when no locale sort order is configured. */
-function s07fileSortComparators() {
-  const alphabetical = (a, b) => env().ub(a.basename, b.basename);
-  const byModifiedTime = (a, b) => b.stat.mtime - a.stat.mtime;
-  const byCreatedTime = (a, b) => b.stat.ctime - a.stat.ctime;
-  return {
-    alphabetical,
-    alphabeticalReverse: (a, b) => -alphabetical(a, b),
-    byModifiedTime,
-    byModifiedTimeReverse: (a, b) => -byModifiedTime(a, b),
-    byCreatedTime,
-    byCreatedTimeReverse: (a, b) => -byCreatedTime(a, b),
-  };
-}
-
-/** Localized label comparators from the fileExplorer strings. */
-function s07labelSortComparators() {
-  const labels = env().gm.plugins.fileExplorer;
-  return {
-    alphabetical: labels.labelSortAToZ,
-    alphabeticalReverse: labels.labelSortZToA,
-    byModifiedTime: labels.labelSortNewToOld,
-    byModifiedTimeReverse: labels.labelSortOldToNew,
-    byCreatedTime: labels.labelSortCreatedNewToOld,
-    byCreatedTimeReverse: labels.labelSortCreatedOldToNew,
-  };
-}
-
-// ---------- search match segment rendering ----------
-
-const S07_PARA_BREAK_RE = /\r?\n\r?\n/y;
-const s07paraBreakRe = S07_PARA_BREAK_RE;
-
-/**
- * Renders `text` into `el`, wrapping the [start, end) match ranges (clipped to
- * that window) in spans with the search-result-file-matched-text class.
- */
-function s07renderMatchSegments(el, text, start, end, ranges) {
-  const paint = (matched, from, to) => {
-    const piece = text.substring(from, to);
-    if (matched) el.createSpan({ cls: "search-result-file-matched-text", text: piece });
-    else el.createSpan({ text: piece });
-  };
-  let cursor = start;
-  for (let i = 0; i < ranges.length; i++) {
-    const range = ranges[i];
-    let rFrom = range[0];
-    if (rFrom >= end) break;
-    let rTo = range[1];
-    if (rTo < start) continue;
-    if (rFrom < start) rFrom = start;
-    if (rTo > end) rTo = end;
-    if (rFrom > cursor) paint(false, cursor, rFrom);
-    paint(true, rFrom, rTo);
-    cursor = rTo;
-  }
-  if (cursor < end) paint(false, cursor, end);
-}
-
-// ---------- search field keys ----------
-
-const s07searchKeyFilepath = "filepath";
-const s07searchResultKeys = ["filename", "filepath", "content", "propertyName", "tag"];
-
-// ---------- lazy-embed caches ----------
-
-/** No-op constructor used as the identity key for per-document search caches. */
-function s07sentinelKey() {}
-
-class S07WeakMapBox {
-  constructor() { this.map = new WeakMap(); }
-  get(key) { return this.map.get(key); }
-  set(key, value) { this.map.set(key, value); return this; }
-  has(key) { return this.map.has(key); }
-  delete(key) { return this.map.delete(key); }
-}
-
-let s07weakMapSeq = 0;
-
-/** WeakMap-shaped fallback for environments without window.WeakMap. */
-class S07WeakMapPolyfill {
-  constructor() { this._ = "_weakmap_" + s07weakMapSeq++; }
-  get(key) { return this.has(key) ? key[this._] : undefined; }
-  set(key, value) { Object.defineProperty(key, this._, { configurable: true, value }); return this; }
-  has(key) { return Object.hasOwnProperty.call(key, this._); }
-  delete(key) { return this.has(key) && delete key[this._]; }
-}
-
-const s07weakMapBox = S07WeakMapBox;
-const s07weakMapPolyfill = S07WeakMapPolyfill;
-
-/** The weak-map factory the embed caches are built from. */
-function s07weakMapFactory() {
-  return window.WeakMap ? new S07WeakMapBox() : new S07WeakMapPolyfill();
-}
-
-/** Windows that already got the framemessage bridge (see Iz). */
-const s07loadedWindows = new WeakSet();
-
-/** Mermaid flowchart defaults applied on top of the library defaults. */
-const s07mermaidFlowConfig = { progressiveRender: true, asyncParse: true, listBullet: true };
-
-// ---------- embed value + section-tree helpers ----------
-
-/**
- * Fill `el` with an embed attribute value: unwraps single quotes, JSON-decodes
- * double-quoted strings, renders inline `<svg` markup at icon size, otherwise
- * sets the plain text.
- */
-function s07embedAttrValue(el, raw) {
-  let value = raw;
-  if (value.startsWith("'") && value.endsWith("'")) {
-    value = value.substring(1, value.length - 1).replace(/\'/g, "'");
-  } else if (value.startsWith('"')) {
-    try {
-      const parsed = JSON.parse(value);
-      if (String.isString(parsed)) value = parsed;
-    } catch (e) {}
-  }
-  if (value.startsWith("<svg")) {
-    const node = env().xL(value).firstChild;
-    if (node && node.instanceOf(SVGSVGElement)) {
-      node.setAttrs({ width: 16, height: 16, fill: "currentColor", stroke: "currentColor" });
-      el.empty();
-      el.appendChild(node);
-    }
-  } else {
-    env().tv(el, value);
-  }
-}
-
-/** Call `cb` for every `<li>` that contains a nested `<ul>`/`<ol>`. */
-function s07forEachNestedItem(root, cb) {
-  const items = root.findAll("li");
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    const nested = item.findAll("ul, ol");
-    if (nested && nested.length > 0) cb(item);
-  }
-}
-
-/** Call `cb` with the first child when it is a heading element. */
-function s07ifFirstHeading(el, cb) {
-  const first = el.firstChild;
-  if (first && first.instanceOf(HTMLHeadingElement)) cb(first);
-}
-
-/** Invoke every function in `fns` with the given arguments. */
-function s07callAll(fns, ...args) {
-  if (!fns) return;
-  for (let i = 0; i < fns.length; i++) fns[i].apply(fns, args);
-}
-
-/** Invoke the `_handlers[type]` listeners of a non-DOM event target. */
-function s07emitStored(target, type, ...args) {
-  const list = target._handlers?.[type];
-  if (!list) return;
-  for (let i = 0; i < list.length; i++) list[i].apply(list, args);
-}
-
-/** Leading list marker text of a line ("- ", "1. ", "> - [ ] "), or null. */
-function s07leadingListMarker(text) {
-  const m = env().aP.exec(text);
-  return m && m[0] ? m[0] : null;
-}
-
-/** Indentation prefix a continued list item should get at `offset`. */
-function s07listMarkerIndent(doc, offset) {
-  const m = doc.lineAt(offset).text.match(env().aP);
-  if (!m) return "";
-  const quote = m[1] ?? "";
-  const marker = m[3] ?? "";
-  return quote + " ".repeat(marker.length);
-}
-
-/** Structural equality of two RangeSets of possibly different lengths. */
-function s07rangeSetsEqual(a, b) {
-  if (a.length === b.length) return a.eq(b);
-  return a.length < b.length ? b.slice(0, a.length).eq(a) : a.slice(0, b.length).eq(b);
 }
 
 // ---- s09-publish.js ----
@@ -94245,356 +96170,6 @@ const s11TrackWindowFocus = ng30TrackWindowFocus;
 const s11InstallEnhance = ng30InstallEnhance;
 const s11AttachElectron = ng30AttachElectron;
 
-// ---- s12-consts.js ----
-// s12 constants: small top-level data of the application scope — view-type names, storage keys,
-// i18n label tables, regular expressions, CodeMirror marks/effects and the plugin require maps.
-// Everything here is data or a tiny factory; the classes that consume it live in the other s12 modules.
-//
-// Own modules never name minified identifiers: application values come from env() (envBind) or the
-// host object passed to the class factories.
-
-const s12gm = () => env().gm;
-const cmDecoration = () => env().s12cmDecoration;
-const cmStateField = () => env().s12cmStateField;
-const cmStateEffect = () => env().s12cmStateEffect;
-const debounce = () => env().debounce;
-const s12CreateDiv = (...args) => env().createDiv(...args);
-
-// =====================================================================================================================
-// Secrets / storage keys
-// =====================================================================================================================
-
-function s12SecretsWarningKey() { return "secrets-encryption-warning-dismissed"; }
-function s12SecretsDirName() { return "secrets"; }
-function s12SecretsEncryptedName() { return "secrets-encrypted"; }
-function s12SecretsMetaName() { return "secrets-meta"; }
-
-// =====================================================================================================================
-// Release notes / workspace layout file names
-// =====================================================================================================================
-
-function s12ReleaseNotesViewType() { return "release-notes"; }
-function s12ReleaseNotesRepo() { return "obsidianmd/obsidian-docs"; }
-function s12WorkspaceLayoutFile() { return "workspace.json"; }
-function s12WorkspaceMobileLayoutFile() { return "workspace-mobile.json"; }
-
-// =====================================================================================================================
-// CodeMirror 6 compatibility shim (tree.iterate warning + plugin field defaults)
-// =====================================================================================================================
-
-function s12CmIterateErrorDetail() {
-  return "See the stack trace to find the faulty plugin and file an issue with the plugin author. \nDetails: https://discuss.codemirror.net/t/release-0-20-0/4302";
-}
-
-/** Wraps a lezer Tree.iterate enter/leave callback with the legacy-syntax warning. */
-function s12CmIterateCompat(inner) {
-  return function (spec) {
-    console.error(new Error("[CM6] tree.iterate has changed syntax.\n".concat(s12CmIterateErrorDetail())));
-    return inner.call(this, spec.type, spec.from, spec.to);
-  };
-}
-
-/** The shared empty field config used for PluginField.define/decorations/atomicRanges/scrollMargins. */
-function s12CmEmptyFieldConfig() {
-  return { from() {} };
-}
-
-// =====================================================================================================================
-// Plugin require() maps (the names plugins see through require("@codemirror/...")).
-// The module objects themselves are bound through env (s12req*).
-// =====================================================================================================================
-
-function s12PluginRequireMap() {
-  const e = env();
-  return {
-    obsidian: e.s12reqObsidian,
-    "@codemirror/autocomplete": e.s12reqAutocomplete,
-    "@codemirror/collab": e.s12reqCollab,
-    "@codemirror/commands": e.s12reqCommands,
-    "@codemirror/language": e.s12reqLanguage,
-    "@codemirror/lint": e.s12reqLint,
-    "@codemirror/search": e.s12reqSearch,
-    "@codemirror/state": e.s12reqState,
-    "@codemirror/text": e.s12reqState,
-    "@codemirror/view": e.s12reqView,
-    "@lezer/common": e.s12reqLezerCommon,
-    "@lezer/lr": e.s12reqLezerLr,
-    "@lezer/highlight": e.s12reqLezerHighlight,
-  };
-}
-
-function s12PluginDeprecatedRequireMap() {
-  const e = env();
-  return {
-    "@codemirror/closebrackets": e.s12reqAutocomplete,
-    "@codemirror/comment": e.s12reqCommands,
-    "@codemirror/fold": e.s12reqLanguage,
-    "@codemirror/gutter": e.s12reqView,
-    "@codemirror/highlight": e.s12reqLanguage,
-    "@codemirror/history": e.s12reqCommands,
-    "@codemirror/matchbrackets": e.s12reqLanguage,
-    "@codemirror/panel": e.s12reqView,
-    "@codemirror/rangeset": e.s12reqState,
-    "@codemirror/rectangular-selection": e.s12reqView,
-    "@codemirror/stream-parser": e.s12reqLanguage,
-    "@codemirror/tooltip": e.s12reqView,
-  };
-}
-
-// =====================================================================================================================
-// Source-map stripping helpers used by the plugin loader
-// =====================================================================================================================
-
-function s12InlineSourcemapPattern() {
-  return /^\/\/[@#] sourceMappingURL=data:application\/json(?:;charset[:=][^;]+)?;base64,.*$/gm;
-}
-
-function s12NoSourcemapMarker() { return "\n/* nosourcemap */"; }
-
-// =====================================================================================================================
-// Web viewer core plugin data
-// =====================================================================================================================
-
-function s12WebviewerViewType() { return "webviewer"; }
-function s12WebviewerHistoryViewType() { return "webviewer-history"; }
-function s12DefaultSearchEngineKey() { return "duckduckgo"; }
-function s12WebviewerEmptyPageUrl() { return "data:text/plain,"; }
-
-function s12WebviewerSearchEngines() {
-  return {
-    duckduckgo: { display: "DuckDuckGo", url: "https://duckduckgo.com/?q=%s" },
-    brave: { display: "Brave", url: "https://search.brave.com/search?q=%s" },
-    bing: { display: "Bing", url: "https://www.bing.com/search?q=%s" },
-    google: { display: "Google", url: "https://www.google.com/search?q=%s" },
-    custom: { display: "custom" },
-  };
-}
-
-function s12WebviewerDefaultOptions() {
-  return { openExternalURLs: true, enableAdblocking: true };
-}
-
-/** Empty options object used as a default for the web viewer plugin data. */
-function s12EmptyWebviewerOptions() { return {}; }
-
-/** Tags a <webview> must never load (used when sanitising reader-mode / saved HTML). */
-function s12WebviewTagBlocklist() {
-  return ["script", "style", "link", "meta", "object", "embed", "webview"];
-}
-
-// =====================================================================================================================
-// Tree drag drop indicator (u2 element + h2 debounced positioner + p2/d2 state slots)
-// =====================================================================================================================
-
-let s12dropIndicatorEl = null;
-
-function s12DropIndicatorElement() {
-  s12dropIndicatorEl = s12CreateDiv("drop-indicator is-active");
-  return s12dropIndicatorEl;
-}
-
-function s12DropIndicatorUpdater() {
-  return debounce()((info) => {
-    const x = info.x, y = info.y, placement = info.placement;
-    s12dropIndicatorEl.style.left = x + "px";
-    s12dropIndicatorEl.style.top = (y + (placement === "after" ? 1 : -1) - 2) + "px";
-  }, 0);
-}
-
-function s12NullDropState() { return null; }
-
-// =====================================================================================================================
-// Callout type tables (live preview + suggest)
-// =====================================================================================================================
-
-function s12CalloutTypeLabels() {
-  const t = s12gm().callout.type;
-  return {
-    info: t.info,
-    important: t.important,
-    tip: t.tip,
-    success: t.success,
-    question: t.question,
-    warning: t.warning,
-    example: t.example,
-    quote: t.quote,
-  };
-}
-
-/** Every callout type name the editor accepts: the labelled ones plus the extra aliases. */
-function s12CalloutTypeNames() {
-  const extra = ["abstract", "summary", "tldr", "todo", "hint", "check", "done", "question", "faq", "help",
-    "caution", "attention", "failure", "fail", "missing", "danger", "error", "bug", "example", "cite"];
-  return [...Object.keys(s12CalloutTypeLabels()), ...extra];
-}
-
-// =====================================================================================================================
-// Community plugin sort labels + hotkey filter labels
-// =====================================================================================================================
-
-function s12PluginSortLabels() {
-  const t = s12gm().setting.thirdPartyPlugin;
-  return {
-    download: t.labelByPopularity,
-    release: t.labelByReleased,
-    alphabetical: t.labelAlphabetical,
-    update: t.labelByUpdated,
-  };
-}
-
-function s12HotkeyFilterLabels() {
-  const t = s12gm().setting.hotkeys;
-  return {
-    "show-all": t.labelShowAll,
-    "show-assigned": t.labelShowAssigned,
-    "show-user-assigned": t.labelShowUserAssigned,
-    "show-unassigned": t.labelShowUnassigned,
-  };
-}
-
-// =====================================================================================================================
-// Live-preview CodeMirror decorations
-// =====================================================================================================================
-
-let s12postprocessFx = null;
-
-/** Creates (once per call site) the state-effect type used to ask live preview to rebuild decorations. */
-function s12CmPostprocessEffect() {
-  s12postprocessFx = cmStateEffect().define();
-  return s12postprocessFx;
-}
-
-/** Schedules a decoration refresh on the given editor view (used by focus/blur and post-processor hooks). */
-function s12cmRefreshDispatch(view) {
-  view.dom.win.setTimeout(() => view.dispatch({ effects: s12postprocessFx.of() }), 10);
-}
-
-/** The live-preview refresh effect instance created by the G2 declarator (null until then). */
-function s12cmPostprocessFxRef() { return s12postprocessFx; }
-
-let s12mouseDownPlugin = null;
-
-/** The view plugin whose instance tracks whether the mouse button is held down. */
-function s12CmMouseDownPlugin() {
-  s12mouseDownPlugin = env().s12cmViewPlugin.define(() => ({ mousedown: false }));
-  return s12mouseDownPlugin;
-}
-
-/** The shared mouse-down plugin instance (same object the K2 declarator installed). */
-function s12cmMousePluginInstance() { return s12mouseDownPlugin; }
-
-function s12cmEmptyReplace() { return cmDecoration().replace({}); }
-function s12CmUnderlineMark() {
-  return cmDecoration().mark({ class: "cm-underline", attributes: { tabIndex: "-1", draggable: "true" } });
-}
-function s12CmTransparentMark() { return cmDecoration().mark({ class: "cm-transparent" }); }
-function s12CmUnresolvedMark() { return cmDecoration().mark({ class: "is-unresolved" }); }
-function s12CmListBulletMark() { return cmDecoration().mark({ class: "list-bullet" }); }
-function s12CmListNumberMark() { return cmDecoration().mark({ class: "list-number" }); }
-
-/** State field remembering whether the mouse button is down (used by selection normalisation). */
-function s12CmMouseDownField() {
-  return cmStateField().define(() => ({ mousedown: false }));
-}
-
-/** The set of inline syntax tags that get live-preview widgets. */
-function s12LivepreviewSyntaxTags() {
-  return new Set(["em", "strong", "inline-code", "strikethrough", "highlight", "link", "image",
-    "hmd-internal-link", "hmd-embed", "formatting-link", "footref"]);
-}
-
-/** Matches an opening code fence line (``` or ~~~ with optional language). */
-function s12CodeblockFencePattern() {
-  return /^\s*(~~~+|```+)[ \t]*([\w\/+#-]*)[^\n`]*$/;
-}
-
-// =====================================================================================================================
-// Misc view-type names
-// =====================================================================================================================
-
-function s12BacklinkViewType() { return "backlink"; }
-function s12MarkdownViewTypeName() { return "markdown"; }
-function s12DeprecationIndexUrl() {
-  return env().s12githubRaw("obsidianmd/obsidian-releases", "community-plugin-deprecation.json");
-}
-/** Registers the "SecureStorage" capacitor plugin (web = localStorage, ios/android = native module 9804). */
-function s12RegisterSecureStorage() {
-  const e = env();
-  const req = e.s12webpackRequire;
-  let self = null;
-  const load = (id) => () => Promise.resolve().then(req.bind(req, id));
-  self = e.s12capacitor.F3("SecureStorage", {
-    web: async () => new (await load(3357)()).SecureStorageWeb(),
-    ios: async () => new (await load(9804)()).SecureStorageNative(self),
-    android: async () => new (await load(9804)()).SecureStorageNative(self),
-  });
-  return self;
-}
-
-// =====================================================================================================================
-// Small application functions
-// =====================================================================================================================
-
-/** Validates a leaf "type" option: boolean or one of the container keywords; returns the value or false. */
-function s12leafTypeOrFalse(e) {
-  return !(!isBoolean(e) && "tab" !== e && "window" !== e && "split" !== e) && e;
-}
-
-/** Throws (and shows a notice) when a desktop-only feature is used on an old Electron or non-desktop build. */
-function s12requireDesktopApp() {
-  const e = env();
-  if (!e.Yl.isDesktopApp) {
-    const msg = e.gm.interface.msgDesktopOnlyFeature();
-    throw new e.fb(msg), new Error(msg);
-  }
-  if (e.qf < 13) {
-    const msg2 = e.gm.interface.msgUpgradeInstaller();
-    throw new e.fb(msg2), new Error(msg2);
-  }
-}
-
-/** Invokes a registered command's checkCallback/callback, or logs when the command has neither. */
-function s12runCommandCallback(cmd) {
-  if (cmd.checkCallback) cmd.checkCallback(false);
-  else if (cmd.callback) cmd.callback();
-  else console.error("Command ".concat(cmd, " did not provide a callback"));
-}
-
-/**
- * Rewrites a markdown image/embed link so its size annotation matches `size`.
- * Handles both ![[wiki]] and ![alt](url) forms; a trailing "|WxH" segment is replaced or appended.
- */
-function s12appendImageSizeText(linkText, size) {
-  const isImageDimension = env().s12isImageDimension;
-  const appendSize = (text) => {
-    if (!text || isImageDimension(text)) return size === undefined ? "" : String(size);
-    const suffix = size === undefined ? "" : "|".concat(size);
-    const bar = text.lastIndexOf("|");
-    if (bar !== -1 && isImageDimension(text.slice(bar + 1))) return text.slice(0, bar) + suffix;
-    return text + suffix;
-  };
-  const e = env();
-  let m = linkText.match(e.s12wikilinkPattern);
-  if (m) {
-    const sized = appendSize(m[4] != null ? m[4] : "");
-    return "![[" + m[2] + (sized ? "|" + sized : "") + "]]";
-  }
-  m = linkText.match(e.s12mdLinkPattern);
-  if (m) {
-    const s = m[1], l = m[2], c = m[3], u = m[4], h = m[8];
-    return s + appendSize(l) + c + u + h;
-  }
-  return linkText;
-}
-
-/** Live-preview extension factory: refreshes decorations whenever the properties post-processor changes. */
-function s12PropertiesLivePreviewPlugin(plugin) {
-  return env().s12cmViewPlugin.define((view) => {
-    const off = plugin.app.workspace.on("post-processor-change", () => s12cmRefreshDispatch(view));
-    return { destroy() { off.e.offref(off); } };
-  });
-}
-
 // ---- s12-plugins.js ----
 // Compatibility shim: RecentFiles lives in n-g30-recent.js; the image context
 // menu entry stays here so the live-preview import (and its spec-test stub
@@ -94795,370 +96370,6 @@ const defineSyncNavFile = ng32DefineSyncNavFile;
 // Compatibility entry for tests/tools that import the settings-modal module path.
 // g33: implementation lives in n-g33-settings.js (clean-room rewrite).
 
-// ---- s16-sync-socket.js ----
-// s16 slice: the sync WebSocket client — handshake, heartbeat, request/response and
-// binary data channels, plus the pull/push/list/history/restore/user/purge/size calls.
-
-const CHUNK_SIZE = 2 * 1024 * 1024; // server push/pull pieces are 2 MiB
-const REQUEST_TIMEOUT = 60000;
-const HEARTBEAT_INTERVAL = 20000;
-const HEARTBEAT_PING_AFTER = 10000;
-const HEARTBEAT_DROP_AFTER = 120000;
-
-function s16Deferred() {
-  const d = { promise: null, resolve: null, reject: null };
-  d.promise = new Promise((resolve, reject) => {
-    d.resolve = resolve;
-    d.reject = reject;
-  });
-  return d;
-}
-
-function closeCodeText(code) {
-  if (code >= 0 && code <= 999) return "(Unused)";
-  if (code >= 1016) {
-    if (code <= 1999) return "(For WebSocket standard)";
-    if (code <= 2999) return "(For WebSocket extensions)";
-    if (code <= 3999) return "(For libraries and frameworks)";
-    if (code <= 4999) return "(For applications)";
-  }
-  return Object.prototype.hasOwnProperty.call(s16CloseCodes, code) ? s16CloseCodes[code] : "(Unknown)";
-}
-
-/** hee: SyncSocket — one websocket to the sync server with JSON control + binary data frames. */
-function defineSyncSocket(host) {
-  function SyncSocket(encryptionProvider) {
-    this.socket = null;
-    this.queue = new host.SerialTaskQueue();
-    this.notifyQueue = new host.SerialTaskQueue();
-    this.perFileMax = 208666624;
-    this.userId = -1;
-    this.justPushed = null;
-    this.encryptionProvider = encryptionProvider;
-  }
-
-  const proto = SyncSocket.prototype;
-
-  proto.isConnecting = function () {
-    const socket = this.socket;
-    return socket && socket.readyState === s16WebSocket.CONNECTING;
-  };
-
-  proto.isConnected = function () {
-    const socket = this.socket;
-    return socket && socket.readyState === s16WebSocket.OPEN;
-  };
-
-  proto.hasConnection = function () {
-    return !!this.socket;
-  };
-
-  /**
-   * Opens the socket and performs the init handshake. Resolves once the server accepted
-   * the login (`res:"ok"`); rejects with a descriptive error otherwise.
-   */
-  proto.connect = function (url, token, id, version, initial, device, onReady, onPush) {
-    return (async () => {
-      if (this.hasConnection()) return;
-      this.onReady = onReady;
-      this.onPush = onPush;
-      const keyHash = this.encryptionProvider.keyHash;
-      await new Promise((resolve, reject) => {
-        let settled = false;
-        const fail = (error) => {
-          if (settled) return;
-          settled = true;
-          this.disconnect();
-          reject(error);
-        };
-        const parsed = new s16UrlClass(url);
-        const hostName = s16UrlHostnameGetter.call(parsed);
-        if (!s16EndsWith.call(hostName, ".basalt.md") && hostName !== "127.0.0.1") {
-          return reject(new Error("Unable to connect to server."));
-        }
-        const socket = this.socket = new s16WebSocket(parsed);
-        socket.binaryType = "arraybuffer";
-        socket.onclose = (event) => {
-          if (event.code === 1006) fail(new Error("Unable to connect to server."));
-          else fail(new Error("Disconnected. Code: " + event.code + " " + closeCodeText(event.code)));
-        };
-        socket.onopen = () => {
-          this.lastMessageTs = Date.now();
-          this.heartbeat = window.setInterval(() => {
-            const idle = Date.now() - this.lastMessageTs;
-            if (idle > HEARTBEAT_DROP_AFTER) this.disconnect();
-            else if (idle > HEARTBEAT_PING_AFTER) this.send({ op: "ping" });
-          }, HEARTBEAT_INTERVAL);
-          this.send({
-            op: "init",
-            token,
-            id,
-            keyhash: keyHash,
-            version,
-            initial,
-            device,
-            encryption_version: this.encryptionProvider.encryptionVersion,
-          });
-        };
-        socket.onmessage = (event) => {
-          const data = event.data;
-          if (typeof data !== "string") return fail(new Error("Server returned binary"));
-          let message;
-          try {
-            message = JSON.parse(data);
-          } catch (error) {
-            console.error(error);
-            return fail(new Error("Server JSON failed to parse: " + data));
-          }
-          if (message.op === "pong") return;
-          if (message.status === "err" || message.res === "err") return fail(new Error("Failed to authenticate: " + message.msg));
-          if (message.res !== "ok") return fail(new Error("Did not respond to login request: " + data));
-          if (Object.prototype.hasOwnProperty.call(message, "perFileMax")) {
-            const perFileMax = message.perFileMax;
-            if (!Number.isInteger(perFileMax) || isNaN(perFileMax) || perFileMax < 0) {
-              return fail(new Error("Unexpected value from server for max file size"));
-            }
-            this.perFileMax = perFileMax;
-          }
-          if (message.userId) this.userId = message.userId;
-          resolve();
-          settled = true;
-          socket.onmessage = this.onMessage.bind(this);
-          socket.onclose = this.disconnect.bind(this);
-          socket.onerror = this.disconnect.bind(this);
-        };
-      });
-    })();
-  };
-
-  proto.disconnect = function () {
-    if (this.socket) this.socket.close();
-    this.socket = null;
-    clearInterval(this.heartbeat);
-    this.heartbeat = null;
-    const error = new Error("Disconnected");
-    if (this.responsePromise) {
-      this.responsePromise.reject(error);
-      this.responsePromise = null;
-    }
-    if (this.dataPromise) {
-      this.dataPromise.reject(error);
-      this.dataPromise = null;
-    }
-  };
-
-  /** Downloads a file body: JSON pieces metadata, then `size` binary chunks, decrypted. */
-  proto.pull = function (uid) {
-    return (async () => {
-      return this.queue.queue(async () => {
-        this.lastNetworkRequestTs = Date.now();
-        const meta = await this.request({ op: "pull", uid });
-        if (meta.deleted) return null;
-        const size = meta.size;
-        const pieces = meta.pieces;
-        const buffer = new ArrayBuffer(size);
-        let offset = 0;
-        for (let i = 0; i < pieces; i++) {
-          const chunk = await this.dataResponse();
-          new Uint8Array(buffer, offset, chunk.byteLength).set(new Uint8Array(chunk));
-          offset += chunk.byteLength;
-        }
-        let data = buffer;
-        if (buffer.byteLength > 0) data = await this.encryptionProvider.decrypt(buffer);
-        return data;
-      });
-    })();
-  };
-
-  /** Uploads a file: metadata request, then the (encrypted) content in binary pieces. */
-  proto.push = function (path, relatedPath, folder, deleted, ctime, mtime, hash, content) {
-    return (async () => {
-      return this.queue.queue(async () => {
-        this.lastNetworkRequestTs = Date.now();
-        const encPath = await this.encryptionProvider.deterministicEncodeStr(path);
-        let encRelated = null;
-        if (relatedPath) encRelated = await this.encryptionProvider.deterministicEncodeStr(relatedPath);
-        const ext = folder ? "" : extensionOf(lastSegment(path));
-        if (folder || deleted) {
-          this.justPushed = { path: encPath, folder, deleted, mtime: 0, hash: "" };
-          await this.request({ op: "push", path: encPath, relatedpath: encRelated, extension: ext, hash: "", ctime: 0, mtime: 0, folder, deleted });
-          return;
-        }
-        if (content.byteLength > 0) content = await this.encryptionProvider.encrypt(content);
-        let encHash = null;
-        if (hash) encHash = await this.encryptionProvider.deterministicEncodeStr(hash);
-        const size = content.byteLength;
-        const pieces = Math.ceil(size / CHUNK_SIZE);
-        this.justPushed = { path: encPath, folder, deleted, mtime, hash: encHash };
-        const meta = await this.request({
-          op: "push",
-          path: encPath,
-          relatedpath: encRelated,
-          extension: ext,
-          hash: encHash,
-          ctime,
-          mtime,
-          folder,
-          deleted,
-          size,
-          pieces,
-        });
-        if (meta.res === "ok") {
-          this.justPushed = null;
-          return;
-        }
-        for (let i = 0; i < pieces; i++) {
-          const start = i * CHUNK_SIZE;
-          const end = Math.min(CHUNK_SIZE, size - start);
-          this.sendBinary(new Uint8Array(content, start, end));
-          await this.response();
-        }
-        this.justPushed = null;
-      });
-    })();
-  };
-
-  /** Lists remotely deleted paths (decrypting each path). */
-  proto.listDeleted = function () {
-    return (async () => {
-      return this.queue.queue(async () => {
-        const result = await this.request({ op: "deleted", suppressrenames: true });
-        const items = result.items;
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          item.path = await this.encryptionProvider.deterministicDecodeStr(item.path);
-        }
-        return items;
-      });
-    })();
-  };
-
-  /** Version history for one path; decrypts path and relatedpath of every entry. */
-  proto.listHistory = function (path, last) {
-    return (async () => {
-      return this.queue.queue(async () => {
-        const encPath = await this.encryptionProvider.deterministicEncodeStr(path);
-        const result = await this.request({ op: "history", path: encPath, last });
-        const items = result.items;
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          item.path = await this.encryptionProvider.deterministicDecodeStr(item.path);
-          if (item.relatedpath) item.relatedpath = await this.encryptionProvider.deterministicDecodeStr(item.relatedpath);
-        }
-        return result;
-      });
-    })();
-  };
-
-  proto.restore = function (uid) {
-    return this.queue.queue(() => this.request({ op: "restore", uid }));
-  };
-
-  proto.getUsernames = function () {
-    return this.queue.queue(() => this.request({ op: "usernames" }));
-  };
-
-  proto.purge = function () {
-    return this.queue.queue(() => this.request({ op: "purge" }));
-  };
-
-  proto.size = function () {
-    return this.queue.queue(() => this.request({ op: "size" }));
-  };
-
-  /** Server-initiated push: decrypts path/hash, flags echoes of our own just-pushed file. */
-  proto.onServerPush = function (message) {
-    const justPushed = this.justPushed;
-    if (justPushed
-      && justPushed.path === message.path
-      && justPushed.folder === message.folder
-      && justPushed.deleted === message.deleted
-      && justPushed.mtime === message.mtime
-      && justPushed.hash === message.hash) {
-      this.justPushed = null;
-      message.wasJustPushed = true;
-    }
-    return this.notifyQueue.queue(async () => {
-      message.path = await this.encryptionProvider.deterministicDecodeStr(message.path);
-      if (message.hash) message.hash = await this.encryptionProvider.deterministicDecodeStr(message.hash);
-      this.onPush(message);
-    });
-  };
-
-  proto.response = function () {
-    return (this.responsePromise = s16Deferred()).promise;
-  };
-
-  proto.dataResponse = function () {
-    return (this.dataPromise = s16Deferred()).promise;
-  };
-
-  /** Sends a JSON request and waits for its response (rejects after `timeout` ms). */
-  proto.request = function (message, timeout) {
-    timeout = timeout === undefined ? REQUEST_TIMEOUT : timeout;
-    return (async () => {
-      const deferred = this.responsePromise = s16Deferred();
-      this.send(message);
-      const timeoutError = new Error("Timeout");
-      const timer = window.setTimeout(() => deferred.reject(timeoutError), timeout);
-      try {
-        const response = await deferred.promise;
-        clearTimeout(timer);
-        if (response.err) throw new Error(response.err);
-        return response;
-      } catch (error) {
-        if (error === timeoutError) this.disconnect();
-        throw error;
-      }
-    })();
-  };
-
-  proto.onMessage = function (event) {
-    this.lastMessageTs = Date.now();
-    if (typeof event.data === "string") {
-      let message;
-      try {
-        message = JSON.parse(event.data);
-      } catch (error) {
-        console.log(event.data);
-        this.disconnect();
-        return;
-      }
-      const op = message.op;
-      if (op === "pong") return;
-      if (op === "ready") {
-        this.onReady(message.version);
-        return;
-      }
-      if (op === "push") {
-        this.onServerPush(message);
-        return;
-      }
-      const deferred = this.responsePromise;
-      if (deferred) {
-        this.responsePromise = null;
-        deferred.resolve(message);
-      }
-    } else {
-      const deferred = this.dataPromise;
-      if (deferred) {
-        this.dataPromise = null;
-        deferred.resolve(event.data);
-      }
-    }
-  };
-
-  proto.send = function (message) {
-    this.socket.send(JSON.stringify(message));
-  };
-
-  proto.sendBinary = function (data) {
-    this.socket.send(data);
-  };
-
-  return SyncSocket;
-}
-
 // ---- s16-tagpane.js ----
 // Compatibility entry for tests/tools that import the tag-pane module path.
 // g33: implementation lives in n-g33-tagpane.js (clean-room rewrite).
@@ -95170,377 +96381,6 @@ function defineSyncSocket(host) {
 // ---- s16-workspaces.js ----
 // Compatibility entry for tests/tools that import the workspaces module path.
 // g33: implementation lives in n-g33-workspaces.js + n-g33-workspace-modals.js.
-
-// ---- s17-app-class.js ----
-// Basalt app shell: constructor, mobile-emulation listeners, startup progress flow and the static
-// config-dir lookup. The prototype methods themselves live in app.js and are attached below.
-
-const s17IframeAllowlist = {
-  "encrypted-media": true,
-  fullscreen: true,
-  gamepad: true,
-  hid: true,
-  "idle-detection": true,
-  "oversized-images": true,
-  "picture-in-picture": true,
-  "sync-xhr": true,
-};
-
-const s17IframeSandbox = {
-  "allow-forms": true,
-  "allow-modals": true,
-  "allow-popups": true,
-  "allow-presentation": true,
-  "allow-same-origin": true,
-  "allow-scripts": true,
-};
-
-const s17EmulateMobileKey = "EmulateMobile";
-const s17DebugModeKey = "DebugMode";
-
-function s17TouchById(event, identifier) {
-  const touches = event.changedTouches;
-  for (let i = 0; i < touches.length; i++) if (touches[i].identifier === identifier) return touches[i];
-  return null;
-}
-
-function s17StartupButtons(host, app, prominent) {
-  const i18n = host.i18n.interface.startUp;
-  return function (el) {
-    el.createDiv("progress-bar-button-container", (box) => {
-      const reloadAttrs = prominent ? { cls: "mod-cta", text: i18n.buttonReloadApp() } : { text: i18n.buttonReloadApp() };
-      box.createEl("button", reloadAttrs, (button) => {
-        button.onClickEvent(() => window.location.reload());
-      });
-      if (app.plugins && app.plugins.isEnabled()) {
-        box.createEl("button", { cls: "mod-cta", text: i18n.buttonReloadAppInSafeMode() }, (button) => {
-          button.onClickEvent(async () => {
-            await app.plugins.setEnable(false);
-            window.location.reload();
-          });
-        });
-      }
-      const vaultAttrs = prominent ? { cls: "mod-cta", text: i18n.buttonOpenAnotherVault() } : { text: i18n.buttonOpenAnotherVault() };
-      box.createEl("button", vaultAttrs, (button) => {
-        button.onClickEvent(() => app.openVaultChooser());
-      });
-    });
-  };
-}
-
-async function s17Startup(host, app, adapter) {
-  const overlay = host.progressOverlay;
-  const splash = host.s17SplashScreen;
-  const watchdog = setTimeout(() => {
-    overlay.setContext(s17StartupButtons(host, app, false)).show();
-  }, 20000);
-  try {
-    overlay.setMessage(host.i18n.interface.startUp.loadingObsidian()).show();
-    await app.initializeWithAdapter(adapter);
-    overlay.hide();
-  } catch (error) {
-    console.error(error);
-    overlay
-      .setMessage(host.i18n.interface.startUp.obsidianLoadError() + " " + (error ? error.toString() : "unknown"))
-      .show();
-    overlay.setContext(s17StartupButtons(host, app, true));
-  } finally {
-    clearTimeout(watchdog);
-    if (host.Platform.isMobileApp && splash) {
-      await window.nextFrame();
-      splash.hide({ fadeOutDuration: 0 });
-    }
-  }
-}
-
-async function s17PersistStorage() {
-  try {
-    const storage = navigator.storage;
-    if (storage && storage.persist) await storage.persist();
-  } catch (error) {
-    console.log("Failed to persist local storages");
-  }
-}
-
-function s17CreateApp(host) {
-  const mobileTapSelector = "a, button, .tappable, .is-clickable, .clickable-icon, .text-icon-button, .suggestion-item";
-  const mobileTapClass = "mobile-tap";
-
-  function App(adapter, appId) {
-    const platform = host.Platform;
-    this.appMenuBarManager = null;
-    this.embedRegistry = new host.s17EmbedRegistry();
-    this.viewRegistry = new host.s17ViewRegistry();
-    this.nextFrameEvents = [];
-    this.nextFrameTimer = null;
-    this.isMobile = false;
-    this.mobileToolbar = null;
-    this.mobileNavbar = null;
-    this.mobileTabSwitcher = null;
-    this.mobileQuickActions = null;
-    this.lastEvent = null;
-    console.log("%cBasalt Developer Console", "color:#7f6df2; font-size:40px; font-weight:bold;");
-
-    const bodyEl = document.body;
-    this.title = document.title;
-    this.appId = appId;
-    this.keymap = host.Keymap.init();
-    this.scope = this.keymap.getRootScope();
-    this.commands = new host.s17Commands(this);
-    this.hotkeyManager = new host.s17HotkeyManager(this);
-    this.dragManager = new host.s17DragManager(this);
-    this.dom = new host.s17AppDom(bodyEl);
-    this.customCss = new host.s17CustomCss(this);
-    this.shareReceiver = new host.s17ShareReceiver(this);
-    this.renderContext = new host.s17RenderContext(this);
-    this.secretStorage = new host.SecretStorage(this);
-    window.__bsApi = {
-      ItemView: host.ItemView,
-      Modal: host.Modal,
-      Notice: host.Notice,
-      Menu: host.Menu,
-      setIcon: host.setIcon,
-      Setting: host.Setting,
-    };
-    this.cli = new host.s17Cli(this);
-    bodyEl.addClass("basalt-app");
-
-    if (this.loadLocalStorage(s17DebugModeKey) === "1") {
-      host.s17SetBasaltDebug(true);
-      new host.Notice("Basalt debug mode enabled.");
-      console.debug("[Basalt] Debug mode enabled. Run `app.debugMode(false)` to disable.");
-    }
-
-    if (!platform.isMobile && localStorage.getItem(s17EmulateMobileKey)) {
-      platform.isMobile = true;
-      platform.isDesktop = false;
-      platform.hasPhysicalKeyboard = false;
-      bodyEl.addClass("emulate-mobile");
-    }
-    if (platform.isMobile) {
-      {
-        let mobileTapEl = null;
-        bodyEl.on("mouseover", mobileTapSelector, (event, target) => {
-          if (host.pointerEntered(event, target) && !host.isTouchSyntheticMouse(event)) {
-            if (mobileTapEl) mobileTapEl.removeClass(mobileTapClass);
-            mobileTapEl = target;
-            target.addClass(mobileTapClass);
-          }
-        });
-        bodyEl.on("mouseout", mobileTapSelector, (event, target) => {
-          if (!host.isTouchSyntheticMouse(event) && host.pointerEntered(event, target)) {
-            if (mobileTapEl) mobileTapEl.removeClass(mobileTapClass);
-          }
-        });
-        document.addEventListener(
-          "touchstart",
-          (event) => {
-            if (event.touches.length !== 1) return;
-            const targetNode = event.targetNode;
-            let tapEl = null;
-            if (targetNode.instanceOf(Element)) {
-              tapEl = targetNode.matchParent(mobileTapSelector) || (targetNode.instanceOf(HTMLElement) ? targetNode : targetNode.parentElement);
-            }
-            if (!tapEl) return;
-            const startedAt = event.timeStamp;
-            const startTouch = event.touches[0];
-            const identifier = startTouch.identifier;
-            let fired = false;
-            const showTimer = window.setTimeout(() => {
-              if (!fired) tapEl.addClass(mobileTapClass);
-            }, 10);
-            const finish = (finishEvent) => {
-              fired = true;
-              removeListeners();
-              const elapsed = finishEvent.timeStamp - startedAt;
-              window.setTimeout(() => tapEl.removeClass(mobileTapClass), Math.max(10, 300 - elapsed));
-            };
-            const move = (moveEvent) => {
-              const touch = s17TouchById(moveEvent, identifier);
-              if (!touch || fired) return;
-              const dx = touch.clientX - startTouch.clientX;
-              const dy = touch.clientY - startTouch.clientY;
-              if (dx * dx + dy * dy > 25) finish(moveEvent);
-            };
-            const end = (endEvent) => {
-              for (let i = 0; i < endEvent.changedTouches.length; i++) {
-                if (endEvent.changedTouches[i].identifier === identifier) {
-                  finish(endEvent);
-                  return;
-                }
-              }
-            };
-            const removeListeners = () => {
-              document.removeEventListener("touchmove", move);
-              document.removeEventListener("touchcancel", finish);
-              document.removeEventListener("touchend", finish);
-            };
-            document.addEventListener("touchmove", move);
-            document.addEventListener("touchcancel", finish);
-            document.addEventListener("touchend", finish);
-          },
-          true
-        );
-      }
-
-      if (window.frameDom) window.frameDom.titleBarEl.hide();
-
-    const tabletQuery = window.matchMedia("(min-width: 600px) and (min-height: 600px)");
-    const updateDeviceClass = () => {
-      if (platform.mobileSoftKeyboardVisible) return;
-      platform.isTablet = tabletQuery.matches;
-      platform.isPhone = !tabletQuery.matches;
-      document.body.toggleClass("is-tablet", platform.isTablet);
-      document.body.toggleClass("is-phone", platform.isPhone);
-    };
-    tabletQuery.addEventListener("change", host.debounce(updateDeviceClass, 10));
-      updateDeviceClass();
-    }
-
-    const keyboard = host.keyboard;
-    if (keyboard) keyboard.hasPhysicalKeyboard().then((result) => { platform.hasPhysicalKeyboard = result.hasPhysicalKeyboard; });
-
-    this.isMobile = platform.isMobile;
-    if (platform.isMobile) bodyEl.addClass("is-mobile");
-    if (!platform.isMacOS) document.body.addClass("styled-scrollbars");
-
-    if (platform.isIosApp) {
-      document.body.style["-webkit-touch-callout"] = "none";
-      const win = window;
-      win.addEventListener("touchstart", (event) => {
-        if (event.touches.length > 1 || event.defaultPrevented) return;
-        const touch = event.touches[0];
-        const target = event.targetNode;
-        const startX = touch.clientX;
-        const startY = touch.clientY;
-        const identifier = touch.identifier;
-        let delay = 800;
-        if (target instanceof Element && target.matchParent('[draggable="true"]')) delay = 1200;
-        const timer = win.setTimeout(() => {
-          cancel();
-          target.dispatchEvent(
-            new MouseEvent("contextmenu", {
-              button: 0,
-              buttons: 0,
-              ctrlKey: event.ctrlKey,
-              altKey: event.altKey,
-              metaKey: event.metaKey,
-              shiftKey: event.shiftKey,
-              screenX: touch.screenX,
-              screenY: touch.screenY,
-              bubbles: true,
-              cancelable: true,
-              clientX: startX,
-              clientY: startY,
-            })
-          ) || navigator.vibrate(200);
-        }, delay);
-        const cancel = () => {
-          win.removeEventListener("touchcancel", onEnd, true);
-          win.removeEventListener("touchend", onEnd, true);
-          win.removeEventListener("touchmove", onMove, true);
-          win.removeEventListener("dragstart", onDrag, true);
-          win.clearTimeout(timer);
-          host.s17SetTouchCancel(null);
-        };
-        const onMove = (moveEvent) => {
-          for (let i = 0; i < moveEvent.changedTouches.length; i++) {
-            const changed = moveEvent.changedTouches[i];
-            if (changed.identifier !== identifier) continue;
-            const dx = changed.clientX - startX;
-            const dy = changed.clientY - startY;
-            if (dx * dx + dy * dy > 25) cancel();
-            return;
-          }
-        };
-        const onEnd = (endEvent) => {
-          for (let i = 0; i < endEvent.changedTouches.length; i++) {
-            if (endEvent.changedTouches[i].identifier === identifier) {
-              cancel();
-              return;
-            }
-          }
-        };
-        const onDrag = (dragEvent) => {
-          const dragTarget = dragEvent.targetNode;
-          if (dragTarget && (dragTarget === target || dragTarget.contains(target))) cancel();
-        };
-        win.addEventListener("touchcancel", onEnd, true);
-        win.addEventListener("touchend", onEnd, true);
-        win.addEventListener("touchmove", onMove, true);
-        win.addEventListener("dragstart", onDrag, true);
-        host.s17SetTouchCancel(cancel);
-      });
-    }
-
-    if (window.ServiceWorkerContainer) {
-      window.ServiceWorkerContainer.prototype.register = function () {
-        return new Promise(() => {});
-      };
-    }
-
-    s17Startup(host, this, adapter);
-    s17PersistStorage();
-  }
-
-  function getOverrideConfigDir(appId) {
-    const dir = localStorage.getItem(appId + "-config");
-    return typeof dir === "string" ? dir : null;
-  }
-
-  App.getOverrideConfigDir = getOverrideConfigDir;
-  App.prototype.nextFrame = appNextFrame;
-  App.prototype.onNextFrame = appOnNextFrame;
-  App.prototype.nextFrameOnceCallback = appNextFrameOnceCallback;
-  App.prototype.initializeWithAdapter = appInitializeWithAdapter;
-  App.prototype.onConfigChanged = appOnConfigChanged;
-  App.prototype.registerCommands = appRegisterCommands;
-  App.prototype.disableCssTransition = appDisableCssTransition;
-  App.prototype.enableCssTransition = appEnableCssTransition;
-  App.prototype.getAppTitle = appGetAppTitle;
-  App.prototype.getWebviewPartition = appGetWebviewPartition;
-  App.prototype.fixFileLinks = appFixFileLinks;
-  App.prototype.getTheme = appGetTheme;
-  App.prototype.isDarkMode = appIsDarkMode;
-  App.prototype.changeTheme = appChangeTheme;
-  App.prototype.updateTheme = appUpdateTheme;
-  App.prototype.updateMobileFrameTheme = appUpdateMobileFrameTheme;
-  App.prototype.updateInlineTitleDisplay = appUpdateInlineTitleDisplay;
-  App.prototype.updateFloatingNavigationDisplay = appUpdateFloatingNavigationDisplay;
-  App.prototype.updateAutoFullScreenDisplay = appUpdateAutoFullScreenDisplay;
-  App.prototype.updateViewHeaderDisplay = appUpdateViewHeaderDisplay;
-  App.prototype.updateRibbonDisplay = appUpdateRibbonDisplay;
-  App.prototype.updateFontFamily = appUpdateFontFamily;
-  App.prototype.updateFontSize = appUpdateFontSize;
-  App.prototype.updateUseNativeMenu = appUpdateUseNativeMenu;
-  App.prototype.updateTabSize = appUpdateTabSize;
-  App.prototype.showReleaseNotes = appShowReleaseNotes;
-  App.prototype.updateAccentColor = appUpdateAccentColor;
-  App.prototype.getAccentColor = appGetAccentColor;
-  App.prototype.setAccentColor = appSetAccentColor;
-  App.prototype.garbleText = appGarbleText;
-  App.prototype.importAttachments = appImportAttachments;
-  App.prototype.saveAttachment = appSaveAttachment;
-  App.prototype.openVaultChooser = appOpenVaultChooser;
-  App.prototype.openHelp = appOpenHelp;
-  App.prototype.runOpeningBehavior = appRunOpeningBehavior;
-  App.prototype.openWithDefaultApp = appOpenWithDefaultApp;
-  App.prototype.showInFolder = appShowInFolder;
-  App.prototype.getObsidianUrl = appGetObsidianUrl;
-  App.prototype.copyObsidianUrl = appCopyObsidianUrl;
-  App.prototype.registerQuitHook = appRegisterQuitHook;
-  App.prototype.loadLocalStorage = appLoadLocalStorage;
-  App.prototype.saveLocalStorage = appSaveLocalStorage;
-  App.prototype.on = appOn;
-  App.prototype.setTheme = appSetTheme;
-  App.prototype.emulateMobile = appEmulateMobile;
-  App.prototype.debugMode = appDebugMode;
-  App.prototype.getSpellcheckLanguages = appGetSpellcheckLanguages;
-  App.prototype.setSpellcheckLanguages = appSetSpellcheckLanguages;
-  App.prototype.isVimEnabled = appIsVimEnabled;
-
-  return App;
-}
 
 // ---- s20-bidi.js ----
 // Compatibility entry for tests/tools that import the bidi module path.
@@ -101290,255 +102130,6 @@ function defineOutgoingLinksPlugin(host) {
   return OutgoingLinksPlugin;
 }
 
-// ---- s65-locale-name.js ----
-// s65-locale-name.js
-// Own implementation of the locale display-name helper (replaces the inherited
-// top-level `ym`). Given a BCP-47-ish locale tag it returns a human-readable
-// name: the language name plus the region name in parentheses, e.g.
-// "English (United States)". Used by the settings language pickers through env().ym.
-//
-// Lookup order for the language part: two-letter ISO 639-1 code, then the
-// three-letter ISO 639-2/3 code, then (single-part tags only) an ISO 3166-1
-// alpha-2 country code, then the raw tag. The second subtag is looked up in the
-// country table only; any further subtags are appended verbatim in parentheses.
-
-const s65Lang2 = {
-  aa: "Afar", ab: "Abkhaz", ae: "Avestan", af: "Afrikaans", ak: "Akan", am: "Amharic",
-  an: "Aragonese", ar: "Arabic", as: "Assamese", av: "Avaric", ay: "Aymara", az: "Azerbaijani",
-  ba: "Bashkir", be: "Belarusian", bg: "Bulgarian", bi: "Bislama", bm: "Bambara", bn: "Bengali",
-  bo: "Tibetan", br: "Breton", bs: "Bosnian", ca: "Catalan", ce: "Chechen", ch: "Chamorro",
-  co: "Corsican", cr: "Cree", cs: "Czech", cu: "Old Church Slavonic", cv: "Chuvash", cy: "Welsh",
-  da: "Danish", de: "German", dv: "Divehi", dz: "Dzongkha", ee: "Ewe", el: "Greek",
-  en: "English", eo: "Esperanto", es: "Spanish", et: "Estonian", eu: "Basque", fa: "Persian",
-  ff: "Fula", fi: "Finnish", fj: "Fijian", fo: "Faroese", fr: "French", fy: "Western Frisian",
-  ga: "Irish", gd: "Scottish Gaelic", gl: "Galician", gn: "Guaraní", gu: "Gujarati", gv: "Manx",
-  ha: "Hausa", he: "Hebrew", hi: "Hindi", ho: "Hiri Motu", hr: "Croatian", ht: "Haitian",
-  hu: "Hungarian", hy: "Armenian", hz: "Herero", ia: "Interlingua", id: "Indonesian", ie: "Interlingue",
-  ig: "Igbo", ii: "Nuosu", ik: "Inupiaq", io: "Ido", is: "Icelandic", it: "Italian",
-  iu: "Inuktitut", ja: "Japanese", jv: "Javanese", ka: "Georgian", kg: "Kongo", ki: "Kikuyu",
-  kj: "Kwanyama", kk: "Kazakh", kl: "Kalaallisut", km: "Khmer", kn: "Kannada", ko: "Korean",
-  kr: "Kanuri", ks: "Kashmiri", ku: "Kurdish", kv: "Komi", kw: "Cornish", ky: "Kyrgyz",
-  la: "Latin", lb: "Luxembourgish", lg: "Ganda", li: "Limburgish", ln: "Lingala", lo: "Lao",
-  lt: "Lithuanian", lu: "Luba-Katanga", lv: "Latvian", mg: "Malagasy", mh: "Marshallese", mi: "Māori",
-  mk: "Macedonian", ml: "Malayalam", mn: "Mongolian", mr: "Marathi", ms: "Malay", mt: "Maltese",
-  my: "Burmese", na: "Nauru", nb: "Norwegian Bokmål", nd: "Northern Ndebele", ne: "Nepali", ng: "Ndonga",
-  nl: "Dutch", nn: "Norwegian Nynorsk", no: "Norwegian", nr: "Southern Ndebele", nv: "Navajo", ny: "Chichewa",
-  oc: "Occitan", oj: "Ojibwe", om: "Oromo", or: "Oriya", os: "Ossetian", pa: "Panjabi",
-  pi: "Pāli", pl: "Polish", ps: "Pashto", pt: "Portuguese", qu: "Quechua", rm: "Romansh",
-  rn: "Kirundi", ro: "Romanian", ru: "Russian", rw: "Kinyarwanda", sa: "Sanskrit", sc: "Sardinian",
-  sd: "Sindhi", se: "Northern Sami", sg: "Sango", sh: "Serbo-Croatian", si: "Sinhala", sk: "Slovak",
-  sl: "Slovenian", sm: "Samoan", sn: "Shona", so: "Somali", sq: "Albanian", sr: "Serbian",
-  ss: "Swati", st: "Southern Sotho", su: "Sundanese", sv: "Swedish", sw: "Swahili", ta: "Tamil",
-  te: "Telugu", tg: "Tajik", th: "Thai", ti: "Tigrinya", tk: "Turkmen", tl: "Tagalog",
-  tn: "Tswana", to: "Tonga", tr: "Turkish", ts: "Tsonga", tt: "Tatar", tw: "Twi",
-  ty: "Tahitian", ug: "Uyghur", uk: "Ukrainian", ur: "Urdu", uz: "Uzbek", ve: "Venda",
-  vi: "Vietnamese", vo: "Volapük", wa: "Walloon", wo: "Wolof", xh: "Xhosa", yi: "Yiddish",
-  yo: "Yoruba", za: "Zhuang", zh: "Chinese", zu: "Zulu",
-};
-
-const s65Lang3 = {
-  aar: "Afar", abk: "Abkhaz", ace: "Achinese", ach: "Acoli",
-  ada: "Adangme", ady: "Adyghe; Adygei", afa: "Afro-Asiatic languages", afh: "Afrihili",
-  afr: "Afrikaans", ain: "Ainu", aka: "Akan", akk: "Akkadian",
-  alb: "Albanian", ale: "Aleut", alg: "Algonquian languages", alt: "Southern Altai",
-  amh: "Amharic", ang: "English, Old (ca.450-1100)", anp: "Angika", apa: "Apache languages",
-  ara: "Arabic", arc: "Official Aramaic (700-300 BCE); Imperial Aramaic (700-300 BCE)", arg: "Aragonese", arm: "Armenian",
-  arn: "Mapudungun; Mapuche", arp: "Arapaho", art: "Artificial languages", arw: "Arawak",
-  asm: "Assamese", ast: "Asturian; Bable; Leonese; Asturleonese", ath: "Athapascan languages", aus: "Australian languages",
-  ava: "Avaric", ave: "Avestan", awa: "Awadhi", aym: "Aymara",
-  aze: "Azerbaijani", bad: "Banda languages", bai: "Bamileke languages", bak: "Bashkir",
-  bal: "Baluchi", bam: "Bambara", ban: "Balinese", baq: "Basque",
-  bas: "Basa", bat: "Baltic languages", bej: "Beja; Bedawiyet", bel: "Belarusian",
-  bem: "Bemba", ben: "Bengali", ber: "Berber languages", bho: "Bhojpuri",
-  bik: "Bikol", bin: "Bini; Edo", bis: "Bislama", bla: "Siksika",
-  bnt: "Bantu languages", bos: "Bosnian", bra: "Braj", bre: "Breton",
-  btk: "Batak languages", bua: "Buriat", bug: "Buginese", bul: "Bulgarian",
-  bur: "Burmese", byn: "Blin; Bilin", cad: "Caddo", cai: "Central American Indian languages",
-  car: "Galibi Carib", cat: "Catalan", cau: "Caucasian languages", ceb: "Cebuano",
-  cel: "Celtic languages", cha: "Chamorro", chb: "Chibcha", che: "Chechen",
-  chg: "Chagatai", chi: "Chinese", chk: "Chuukese", chm: "Mari",
-  chn: "Chinook jargon", cho: "Choctaw", chp: "Chipewyan; Dene Suline", chr: "Cherokee",
-  chu: "Old Church Slavonic", chv: "Chuvash", chy: "Cheyenne", cmc: "Chamic languages",
-  cnr: "Montenegrin", cop: "Coptic", cor: "Cornish", cos: "Corsican",
-  cpe: "Creoles and pidgins, English based", cpf: "Creoles and pidgins, French-based", cpp: "Creoles and pidgins, Portuguese-based", cre: "Cree",
-  crh: "Crimean Tatar; Crimean Turkish", crp: "Creoles and pidgins", csb: "Kashubian", cus: "Cushitic languages",
-  cze: "Czech", dak: "Dakota", dan: "Danish", dar: "Dargwa",
-  day: "Land Dayak languages", del: "Delaware", den: "Slave (Athapascan)", dgr: "Dogrib",
-  din: "Dinka", div: "Divehi", doi: "Dogri", dra: "Dravidian languages",
-  dsb: "Lower Sorbian", dua: "Duala", dum: "Dutch, Middle (ca.1050-1350)", dut: "Dutch",
-  dyu: "Dyula", dzo: "Dzongkha", efi: "Efik", egy: "Egyptian (Ancient)",
-  eka: "Ekajuk", elx: "Elamite", eng: "English", enm: "English, Middle (1100-1500)",
-  epo: "Esperanto", est: "Estonian", ewe: "Ewe", ewo: "Ewondo",
-  fan: "Fang", fao: "Faroese", fat: "Fanti", fij: "Fijian",
-  fil: "Filipino; Pilipino", fin: "Finnish", fiu: "Finno-Ugrian languages", fon: "Fon",
-  fre: "French", frm: "French, Middle (ca.1400-1600)", fro: "French, Old (842-ca.1400)", frr: "Northern Frisian",
-  frs: "Eastern Frisian", fry: "Western Frisian", ful: "Fula", fur: "Friulian",
-  gaa: "Ga", gay: "Gayo", gba: "Gbaya", gem: "Germanic languages",
-  geo: "Georgian", ger: "German", gez: "Geez", gil: "Gilbertese",
-  gla: "Scottish Gaelic", gle: "Irish", glg: "Galician", glv: "Manx",
-  gmh: "German, Middle High (ca.1050-1500)", goh: "German, Old High (ca.750-1050)", gon: "Gondi", gor: "Gorontalo",
-  got: "Gothic", grb: "Grebo", grc: "Greek, Ancient (to 1453)", gre: "Greek",
-  grn: "Guaraní", gsw: "Swiss German; Alemannic; Alsatian", guj: "Gujarati", gwi: "Gwich'in",
-  hai: "Haida", hat: "Haitian", hau: "Hausa", haw: "Hawaiian",
-  heb: "Hebrew", her: "Herero", hil: "Hiligaynon", him: "Himachali languages; Western Pahari languages",
-  hin: "Hindi", hit: "Hittite", hmn: "Hmong; Mong", hmo: "Hiri Motu",
-  hrv: "Croatian", hsb: "Upper Sorbian", hun: "Hungarian", hup: "Hupa",
-  iba: "Iban", ibo: "Igbo", ice: "Icelandic", ido: "Ido",
-  iii: "Nuosu", ijo: "Ijo languages", iku: "Inuktitut", ile: "Interlingue",
-  ilo: "Iloko", ina: "Interlingua", inc: "Indic languages", ind: "Indonesian",
-  ine: "Indo-European languages", inh: "Ingush", ipk: "Inupiaq", ira: "Iranian languages",
-  iro: "Iroquoian languages", ita: "Italian", jav: "Javanese", jbo: "Lojban",
-  jpn: "Japanese", jpr: "Judeo-Persian", jrb: "Judeo-Arabic", kaa: "Kara-Kalpak",
-  kab: "Kabyle", kac: "Kachin; Jingpho", kal: "Kalaallisut", kam: "Kamba",
-  kan: "Kannada", kar: "Karen languages", kas: "Kashmiri", kau: "Kanuri",
-  kaw: "Kawi", kaz: "Kazakh", kbd: "Kabardian", kha: "Khasi",
-  khi: "Khoisan languages", khm: "Khmer", kho: "Khotanese; Sakan", kik: "Kikuyu",
-  kin: "Kinyarwanda", kir: "Kyrgyz", kmb: "Kimbundu", kok: "Konkani",
-  kom: "Komi", kon: "Kongo", kor: "Korean", kos: "Kosraean",
-  kpe: "Kpelle", krc: "Karachay-Balkar", krl: "Karelian", kro: "Kru languages",
-  kru: "Kurukh", kua: "Kwanyama", kum: "Kumyk", kur: "Kurdish",
-  kut: "Kutenai", lad: "Ladino", lah: "Lahnda", lam: "Lamba",
-  lao: "Lao", lat: "Latin", lav: "Latvian", lez: "Lezghian",
-  lim: "Limburgish", lin: "Lingala", lit: "Lithuanian", lol: "Mongo",
-  loz: "Lozi", ltz: "Luxembourgish", lua: "Luba-Lulua", lub: "Luba-Katanga",
-  lug: "Ganda", lui: "Luiseno", lun: "Lunda", luo: "Luo (Kenya and Tanzania)",
-  lus: "Lushai", mac: "Macedonian", mad: "Madurese", mag: "Magahi",
-  mah: "Marshallese", mai: "Maithili", mak: "Makasar", mal: "Malayalam",
-  man: "Mandingo", mao: "Māori", map: "Austronesian languages", mar: "Marathi",
-  mas: "Masai", may: "Malay", mdf: "Moksha", mdr: "Mandar",
-  men: "Mende", mga: "Irish, Middle (900-1200)", mic: "Mi'kmaq; Micmac", min: "Minangkabau",
-  mis: "Uncoded languages", mkh: "Mon-Khmer languages", mlg: "Malagasy", mlt: "Maltese",
-  mnc: "Manchu", mni: "Manipuri", mno: "Manobo languages", moh: "Mohawk",
-  mon: "Mongolian", mos: "Mossi", mul: "Multiple languages", mun: "Munda languages",
-  mus: "Creek", mwl: "Mirandese", mwr: "Marwari", myn: "Mayan languages",
-  myv: "Erzya", nah: "Nahuatl languages", nai: "North American Indian languages", nap: "Neapolitan",
-  nau: "Nauru", nav: "Navajo", nbl: "Southern Ndebele", nde: "Northern Ndebele",
-  ndo: "Ndonga", nds: "Low German; Low Saxon; German, Low; Saxon, Low", nep: "Nepali", new: "Nepal Bhasa; Newari",
-  nia: "Nias", nic: "Niger-Kordofanian languages", niu: "Niuean", nno: "Norwegian Nynorsk",
-  nob: "Norwegian Bokmål", nog: "Nogai", non: "Norse, Old", nor: "Norwegian",
-  nqo: "N'Ko", nso: "Pedi; Sepedi; Northern Sotho", nub: "Nubian languages", nwc: "Classical Newari; Old Newari; Classical Nepal Bhasa",
-  nya: "Chichewa", nym: "Nyamwezi", nyn: "Nyankole", nyo: "Nyoro",
-  nzi: "Nzima", oci: "Occitan", oji: "Ojibwe", ori: "Oriya",
-  orm: "Oromo", osa: "Osage", oss: "Ossetian", ota: "Turkish, Ottoman (1500-1928)",
-  oto: "Otomian languages", paa: "Papuan languages", pag: "Pangasinan", pal: "Pahlavi",
-  pam: "Pampanga; Kapampangan", pan: "Panjabi", pap: "Papiamento", pau: "Palauan",
-  peo: "Persian, Old (ca.600-400 B.C.)", per: "Persian", phi: "Philippine languages", phn: "Phoenician",
-  pli: "Pāli", pol: "Polish", pon: "Pohnpeian", por: "Portuguese",
-  pra: "Prakrit languages", pro: "Provençal, Old (to 1500); Occitan, Old (to 1500)", pus: "Pashto", "qaa-qtz": "Reserved for local use",
-  que: "Quechua", raj: "Rajasthani", rap: "Rapanui", rar: "Rarotongan; Cook Islands Maori",
-  roa: "Romance languages", roh: "Romansh", rom: "Romany", rum: "Romanian",
-  run: "Kirundi", rup: "Aromanian; Arumanian; Macedo-Romanian", rus: "Russian", sad: "Sandawe",
-  sag: "Sango", sah: "Yakut", sai: "South American Indian languages", sal: "Salishan languages",
-  sam: "Samaritan Aramaic", san: "Sanskrit", sas: "Sasak", sat: "Santali",
-  scn: "Sicilian", sco: "Scots", sel: "Selkup", sem: "Semitic languages",
-  sga: "Irish, Old (to 900)", sgn: "Sign Languages", shn: "Shan", sid: "Sidamo",
-  sin: "Sinhala", sio: "Siouan languages", sit: "Sino-Tibetan languages", sla: "Slavic languages",
-  slo: "Slovak", slv: "Slovenian", sma: "Southern Sami", sme: "Northern Sami",
-  smi: "Sami languages", smj: "Lule Sami", smn: "Inari Sami", smo: "Samoan",
-  sms: "Skolt Sami", sna: "Shona", snd: "Sindhi", snk: "Soninke",
-  sog: "Sogdian", som: "Somali", son: "Songhai languages", sot: "Southern Sotho",
-  spa: "Spanish", srd: "Sardinian", srn: "Sranan Tongo", srp: "Serbian",
-  srr: "Serer", ssa: "Nilo-Saharan languages", ssw: "Swati", suk: "Sukuma",
-  sun: "Sundanese", sus: "Susu", sux: "Sumerian", swa: "Swahili",
-  swe: "Swedish", syc: "Classical Syriac", syr: "Syriac", tah: "Tahitian",
-  tai: "Tai languages", tam: "Tamil", tat: "Tatar", tel: "Telugu",
-  tem: "Timne", ter: "Tereno", tet: "Tetum", tgk: "Tajik",
-  tgl: "Tagalog", tha: "Thai", tib: "Tibetan", tig: "Tigre",
-  tir: "Tigrinya", tiv: "Tiv", tkl: "Tokelau", tlh: "Klingon; tlhIngan-Hol",
-  tli: "Tlingit", tmh: "Tamashek", tog: "Tonga (Nyasa)", ton: "Tonga",
-  tpi: "Tok Pisin", tsi: "Tsimshian", tsn: "Tswana", tso: "Tsonga",
-  tuk: "Turkmen", tum: "Tumbuka", tup: "Tupi languages", tur: "Turkish",
-  tut: "Altaic languages", tvl: "Tuvalu", twi: "Twi", tyv: "Tuvinian",
-  udm: "Udmurt", uga: "Ugaritic", uig: "Uyghur", ukr: "Ukrainian",
-  umb: "Umbundu", und: "Undetermined", urd: "Urdu", uzb: "Uzbek",
-  vai: "Vai", ven: "Venda", vie: "Vietnamese", vol: "Volapük",
-  vot: "Votic", wak: "Wakashan languages", wal: "Wolaitta; Wolaytta", war: "Waray",
-  was: "Washo", wel: "Welsh", wen: "Sorbian languages", wln: "Walloon",
-  wol: "Wolof", xal: "Kalmyk; Oirat", xho: "Xhosa", yao: "Yao",
-  yap: "Yapese", yid: "Yiddish", yor: "Yoruba", ypk: "Yupik languages",
-  zap: "Zapotec", zbl: "Blissymbols; Blissymbolics; Bliss", zen: "Zenaga", zgh: "Standard Moroccan Tamazight",
-  zha: "Zhuang", znd: "Zande languages", zul: "Zulu", zun: "Zuni",
-  zxx: "No linguistic content; Not applicable", zza: "Zaza; Dimili; Dimli; Kirdki; Kirmanjki; Zazaki",
-};
-
-const s65Country = {
-  AF: "Afghanistan", AX: "Åland Islands", AL: "Albania", DZ: "Algeria",
-  AS: "American Samoa", AD: "Andorra", AO: "Angola", AI: "Anguilla",
-  AQ: "Antarctica", AG: "Antigua and Barbuda", AR: "Argentina", AM: "Armenia",
-  AW: "Aruba", AU: "Australia", AT: "Austria", AZ: "Azerbaijan",
-  BS: "Bahamas", BH: "Bahrain", BD: "Bangladesh", BB: "Barbados",
-  BY: "Belarus", BE: "Belgium", BZ: "Belize", BJ: "Benin",
-  BM: "Bermuda", BT: "Bhutan", BO: "Bolivia, Plurinational State of", BQ: "Bonaire, Sint Eustatius and Saba",
-  BA: "Bosnia and Herzegovina", BW: "Botswana", BV: "Bouvet Island", BR: "Brazil",
-  IO: "British Indian Ocean Territory", BN: "Brunei Darussalam", BG: "Bulgaria", BF: "Burkina Faso",
-  BI: "Burundi", KH: "Cambodia", CM: "Cameroon", CA: "Canada",
-  CV: "Cape Verde", KY: "Cayman Islands", CF: "Central African Republic", TD: "Chad",
-  CL: "Chile", CN: "China", CX: "Christmas Island", CC: "Cocos (Keeling) Islands",
-  CO: "Colombia", KM: "Comoros", CG: "Congo", CD: "Congo, the Democratic Republic of the",
-  CK: "Cook Islands", CR: "Costa Rica", CI: "Côte d'Ivoire", HR: "Croatia",
-  CU: "Cuba", CW: "Curaçao", CY: "Cyprus", CZ: "Czech Republic",
-  DK: "Denmark", DJ: "Djibouti", DM: "Dominica", DO: "Dominican Republic",
-  EC: "Ecuador", EG: "Egypt", SV: "El Salvador", GQ: "Equatorial Guinea",
-  ER: "Eritrea", EE: "Estonia", ET: "Ethiopia", FK: "Falkland Islands (Malvinas)",
-  FO: "Faroe Islands", FJ: "Fiji", FI: "Finland", FR: "France",
-  GF: "French Guiana", PF: "French Polynesia", TF: "French Southern Territories", GA: "Gabon",
-  GM: "Gambia", GE: "Georgia", DE: "Germany", GH: "Ghana",
-  GI: "Gibraltar", GR: "Greece", GL: "Greenland", GD: "Grenada",
-  GP: "Guadeloupe", GU: "Guam", GT: "Guatemala", GG: "Guernsey",
-  GN: "Guinea", GW: "Guinea-Bissau", GY: "Guyana", HT: "Haiti",
-  HM: "Heard Island and McDonald Islands", VA: "Holy See (Vatican City State)", HN: "Honduras", HK: "Hong Kong",
-  HU: "Hungary", IS: "Iceland", IN: "India", ID: "Indonesia",
-  IR: "Iran, Islamic Republic of", IQ: "Iraq", IE: "Ireland", IM: "Isle of Man",
-  IL: "Israel", IT: "Italy", JM: "Jamaica", JP: "Japan",
-  JE: "Jersey", JO: "Jordan", KZ: "Kazakhstan", KE: "Kenya",
-  KI: "Kiribati", KP: "Korea, Democratic People's Republic of", KR: "Korea, Republic of", KW: "Kuwait",
-  KG: "Kyrgyzstan", LA: "Lao People's Democratic Republic", LV: "Latvia", LB: "Lebanon",
-  LS: "Lesotho", LR: "Liberia", LY: "Libya", LI: "Liechtenstein",
-  LT: "Lithuania", LU: "Luxembourg", MO: "Macao", MK: "Macedonia, the Former Yugoslav Republic of",
-  MG: "Madagascar", MW: "Malawi", MY: "Malaysia", MV: "Maldives",
-  ML: "Mali", MT: "Malta", MH: "Marshall Islands", MQ: "Martinique",
-  MR: "Mauritania", MU: "Mauritius", YT: "Mayotte", MX: "Mexico",
-  FM: "Micronesia, Federated States of", MD: "Moldova, Republic of", MC: "Monaco", MN: "Mongolia",
-  ME: "Montenegro", MS: "Montserrat", MA: "Morocco", MZ: "Mozambique",
-  MM: "Myanmar", NA: "Namibia", NR: "Nauru", NP: "Nepal",
-  NL: "Netherlands", NC: "New Caledonia", NZ: "New Zealand", NI: "Nicaragua",
-  NE: "Niger", NG: "Nigeria", NU: "Niue", NF: "Norfolk Island",
-  MP: "Northern Mariana Islands", NO: "Norway", OM: "Oman", PK: "Pakistan",
-  PW: "Palau", PS: "Palestine, State of", PA: "Panama", PG: "Papua New Guinea",
-  PY: "Paraguay", PE: "Peru", PH: "Philippines", PN: "Pitcairn",
-  PL: "Poland", PT: "Portugal", PR: "Puerto Rico", QA: "Qatar",
-  RE: "Réunion", RO: "Romania", RU: "Russian Federation", RW: "Rwanda",
-  BL: "Saint Barthélemy", SH: "Saint Helena, Ascension and Tristan da Cunha", KN: "Saint Kitts and Nevis", LC: "Saint Lucia",
-  MF: "Saint Martin (French part)", PM: "Saint Pierre and Miquelon", VC: "Saint Vincent and the Grenadines", WS: "Samoa",
-  SM: "San Marino", ST: "Sao Tome and Principe", SA: "Saudi Arabia", SN: "Senegal",
-  RS: "Serbia", SC: "Seychelles", SL: "Sierra Leone", SG: "Singapore",
-  SX: "Sint Maarten (Dutch part)", SK: "Slovakia", SI: "Slovenia", SB: "Solomon Islands",
-  SO: "Somalia", ZA: "South Africa", GS: "South Georgia and the South Sandwich Islands", SS: "South Sudan",
-  ES: "Spain", LK: "Sri Lanka", SD: "Sudan", SR: "Suriname",
-  SJ: "Svalbard and Jan Mayen", SZ: "Swaziland", SE: "Sweden", CH: "Switzerland",
-  SY: "Syrian Arab Republic", TW: "Taiwan", TJ: "Tajikistan", TZ: "Tanzania, United Republic of",
-  TH: "Thailand", TL: "Timor-Leste", TG: "Togo", TK: "Tokelau",
-  TO: "Tonga", TT: "Trinidad and Tobago", TN: "Tunisia", TR: "Turkey",
-  TM: "Turkmenistan", TC: "Turks and Caicos Islands", TV: "Tuvalu", UG: "Uganda",
-  UA: "Ukraine", AE: "United Arab Emirates", GB: "United Kingdom", US: "United States",
-  UM: "United States Minor Outlying Islands", UY: "Uruguay", UZ: "Uzbekistan", VU: "Vanuatu",
-  VE: "Venezuela, Bolivarian Republic of", VN: "Viet Nam", VG: "Virgin Islands, British", VI: "Virgin Islands, U.S.",
-  WF: "Wallis and Futuna", EH: "Western Sahara", YE: "Yemen", ZM: "Zambia",
-  ZW: "Zimbabwe",
-};
-
-function s65LocaleName(locale) {
-  if (!locale) return "";
-  const parts = locale.split("-");
-  if (parts.length > 1) {
-    const lang = s65Lang2[parts[0]] || s65Lang3[parts[0]] || parts[0];
-    const region = s65Country[parts[1]] || parts[1];
-    const extra = parts.slice(2).map((p) => "(" + p + ")").join("");
-    return lang + " (" + region + ")" + extra;
-  }
-  return parts.length > 0 ? s65Lang2[parts[0]] || s65Lang3[parts[0]] || s65Country[parts[0]] || parts[0] : "";
-}
-
 // ---- s90-format.js ----
 // Compatibility shim: implementation lives in n-g39-format.js (clean-room g39).
 const s90FormatSpecs = ng39S90FormatSpecs;
@@ -104470,451 +105061,6 @@ function onTooltipPointerOver(event, el) { return ng40OnTooltipPointerOver(event
 function onTooltipPointerOut(event, el) { return ng40OnTooltipPointerOut(event, el); }
 function installTooltipHandlers(doc) { return ng40InstallTooltipHandlers(doc); }
 
-// ---- vault-crypto.js ----
-// Vault encryption for remote sync: AES-SIV (RFC 5297) for v2/v3 vaults, plain AES-GCM for v0,
-// scrypt password stretching and HKDF key hashes. Every constant below (info strings, scrypt
-// parameters, IV layout, hex encodings) is part of the sync wire format and must not change.
-
-const subtle = () => globalThis.crypto.subtle;
-const randomBytes = () => globalThis.crypto.getRandomValues(new Uint8Array(16));
-
-// --- small buffer helpers -------------------------------------------------
-
-function utf8Bytes(str) {
-  const encoded = new TextEncoder().encode(str);
-  return encoded.buffer.slice(encoded.byteOffset, encoded.byteOffset + encoded.byteLength);
-}
-
-function utf8String(buf) {
-  return new TextDecoder().decode(new Uint8Array(buf));
-}
-
-function decodeBase64(b64) {
-  const bin = globalThis.atob(b64);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out.buffer;
-}
-
-function encodeBase64(buf) {
-  const bytes = new Uint8Array(buf);
-  let bin = "";
-  for (let i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
-  return globalThis.btoa(bin);
-}
-
-function sha256(data) {
-  return subtle().digest("SHA-256", new Uint8Array(data));
-}
-
-function randomSaltHex() {
-  return bufferToHex(randomBytes().buffer);
-}
-
-// --- GF(2^128) doubling for CMAC/S2V subkeys (R = 0x87) --------------------
-
-const BLOCK_SIZE = 16;
-const BLOCK_R = 135;
-
-class Block {
-  constructor() { this.data = new Uint8Array(BLOCK_SIZE); }
-  clear() { this.data.fill(0); }
-  clone() { const b = new Block(); b.data.set(this.data); return b; }
-  copy(other) { this.data.set(other.data); }
-  dbl() {
-    let carry = 0;
-    for (let i = BLOCK_SIZE - 1; i >= 0; i--) {
-      const next = this.data[i] >>> 7;
-      this.data[i] = ((this.data[i] << 1) | carry) & 255;
-      carry = next;
-    }
-    this.data[BLOCK_SIZE - 1] ^= (~(carry - 1) & BLOCK_R) | (carry - 1 & 0);
-  }
-}
-
-function constantTimeEqual(a, b) {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
-  return (1 & ((diff - 1) >>> 8)) !== 0;
-}
-
-class SivError extends Error {}
-function defineSivError() { return SivError; }
-
-// --- AES-CMAC (RFC 4493) on top of AES-CBC -------------------------------
-
-// HKDF salt/info used to derive the CMAC key: "ObsidianAesSivMac".
-class CbcMacCipher {
-  constructor(key) { this.key = key; this.iv = new Block(); }
-  static async importKey(hkdfKey, saltBytes) {
-    const key = await subtle().deriveKey(
-      { name: "HKDF", salt: saltBytes, info: utf8Bytes("ObsidianAesSivMac"), hash: "SHA-256" },
-      hkdfKey, { name: "AES-CBC", length: 256 }, false, ["encrypt"]);
-    return new CbcMacCipher(key);
-  }
-  encryptBlock(block) {
-    return subtle().encrypt({ name: "AES-CBC", iv: this.iv.data }, this.key, block.data)
-      .then((out) => { block.data.set(new Uint8Array(out, 0, BLOCK_SIZE)); });
-  }
-}
-
-class Cmac {
-  constructor(cipher, subkey1, subkey2) {
-    this.cipher = cipher;
-    this.subkey1 = subkey1;
-    this.subkey2 = subkey2;
-    this.bufferPos = 0;
-    this.finished = false;
-    this.buffer = new Block();
-  }
-  static async importKey(hkdfKey, saltBytes) {
-    const cipher = await CbcMacCipher.importKey(hkdfKey, saltBytes);
-    const l = new Block();
-    await cipher.encryptBlock(l);
-    l.dbl();
-    const k1 = l.clone();
-    k1.dbl();
-    return () => new Cmac(cipher, l, k1);
-  }
-  async update(data) {
-    if (this.finished) throw new Error("Cannot update finished CMAC");
-    const tail = BLOCK_SIZE - this.bufferPos;
-    let offset = 0;
-    let remaining = data.length;
-    if (remaining > tail) {
-      for (let i = 0; i < tail; i++) this.buffer.data[this.bufferPos + i] ^= data[i];
-      remaining -= tail; offset += tail;
-      await this.cipher.encryptBlock(this.buffer);
-      this.bufferPos = 0;
-    }
-    while (remaining > BLOCK_SIZE) {
-      for (let i = 0; i < BLOCK_SIZE; i++) this.buffer.data[i] ^= data[offset + i];
-      remaining -= BLOCK_SIZE; offset += BLOCK_SIZE;
-      await this.cipher.encryptBlock(this.buffer);
-    }
-    for (let i = 0; i < remaining; i++) this.buffer.data[this.bufferPos++] ^= data[offset + i];
-    return this;
-  }
-  async finish() {
-    if (!this.finished) {
-      const subkey = this.bufferPos < BLOCK_SIZE ? this.subkey2 : this.subkey1;
-      xorInto(this.buffer.data, subkey.data);
-      if (this.bufferPos < BLOCK_SIZE) this.buffer.data[this.bufferPos] ^= 128;
-      await this.cipher.encryptBlock(this.buffer);
-      this.finished = true;
-    }
-    return this.buffer.data;
-  }
-}
-
-// --- AES-CTR for SIV payload encryption ------------------------------------
-
-// HKDF info "ObsidianAesSivEnc" derives an AES-CTR key; counter = first arg block.
-class CtrCipher {
-  constructor(key) { this.key = key; }
-  static async importKey(hkdfKey, saltBytes) {
-    const key = await subtle().deriveKey(
-      { name: "HKDF", salt: saltBytes, info: utf8Bytes("ObsidianAesSivEnc"), hash: "SHA-256" },
-      hkdfKey, { name: "AES-CTR", length: 256 }, false, ["encrypt"]);
-    return new CtrCipher(key);
-  }
-  encryptCtr(counterBlock, data) {
-    return subtle().encrypt({ name: "AES-CTR", counter: counterBlock, length: 16 }, this.key, data)
-      .then((out) => new Uint8Array(out));
-  }
-}
-
-// --- AES-SIV (RFC 5297) ----------------------------------------------------
-
-class Siv {
-  constructor(cmacFactory, ctr) { this.cmacFactory = cmacFactory; this.ctr = ctr; }
-  static async importKey(hkdfKey, saltBytes) {
-    const cmacFactory = await Cmac.importKey(hkdfKey, saltBytes);
-    const ctr = await CtrCipher.importKey(hkdfKey, saltBytes);
-    return new Siv(cmacFactory, ctr);
-  }
-  async seal(plaintext) {
-    const pt = plaintext instanceof Uint8Array ? plaintext : new Uint8Array(plaintext);
-    const out = new Uint8Array(BLOCK_SIZE + pt.length);
-    const tag = await this.s2v(pt);
-    out.set(tag);
-    maskTagBits(tag);
-    out.set(await this.ctr.encryptCtr(tag, pt), BLOCK_SIZE);
-    return out;
-  }
-  async open(ciphertext) {
-    if (ciphertext.length < BLOCK_SIZE) throw new SivError("AES-SIV: ciphertext is truncated");
-    const tag = new Uint8Array(ciphertext.subarray(0, BLOCK_SIZE));
-    const masked = new Uint8Array(BLOCK_SIZE);
-    masked.set(tag);
-    maskTagBits(masked);
-    const plaintext = await this.ctr.encryptCtr(masked, ciphertext.subarray(BLOCK_SIZE));
-    const expected = await this.s2v(plaintext);
-    if (!constantTimeEqual(tag, expected)) {
-      zeroFill(plaintext);
-      throw new SivError("AES-SIV: ciphertext verification failure!");
-    }
-    return plaintext;
-  }
-  async s2v(msg) {
-    const cmac = this.cmacFactory();
-    const double = new Block();
-    const result = new Block();
-    await cmac.update(double.data);
-    result.data.set(await cmac.finish());
-    const cmac2 = this.cmacFactory();
-    double.clear();
-    if (msg.length >= BLOCK_SIZE) {
-      const head = msg.length - BLOCK_SIZE;
-      double.data.set(msg.subarray(head));
-      await cmac2.update(msg.subarray(0, head));
-    } else {
-      double.data.set(msg);
-      double.data[msg.length] = 128;
-      result.dbl();
-    }
-    xorInto(double.data, result.data);
-    await cmac2.update(double.data);
-    return cmac2.finish();
-  }
-}
-
-// Jb equivalent: clear the two bits S2V reserves in the tag.
-function maskTagBits(tag) {
-  tag[tag.length - 8] &= 127;
-  tag[tag.length - 4] &= 127;
-}
-
-// --- AES-GCM helpers (v0 vaults + generic payload encryption) --------------
-
-const AES_GCM = "AES-GCM";
-
-function importAesGcmKey(rawKey) {
-  return subtle().importKey("raw", rawKey, AES_GCM, false, ["encrypt", "decrypt"]);
-}
-
-// Encrypt: returns iv(12) || ciphertext. Caller may pass a fixed iv for deterministic mode.
-function aesGcmEncrypt(data, key, iv) {
-  const nonce = iv || globalThis.crypto.getRandomValues(new Uint8Array(12));
-  return subtle().encrypt({ name: AES_GCM, iv: nonce }, key, data).then((ct) => {
-    const out = new ArrayBuffer(nonce.byteLength + ct.byteLength);
-    const bytes = new Uint8Array(out);
-    bytes.set(new Uint8Array(nonce), 0);
-    bytes.set(new Uint8Array(ct), nonce.byteLength);
-    return out;
-  });
-}
-
-function aesGcmDecrypt(data, key) {
-  return (async () => {
-    if (data.byteLength < 12) throw new Error("Encrypted data is bad");
-    if (data.byteLength === 12) return new ArrayBuffer(0);
-    const iv = new Uint8Array(data, 0, 12);
-    const ct = new Uint8Array(data, 12);
-    return subtle().decrypt({ name: AES_GCM, iv }, key, ct);
-  })();
-}
-
-// --- scrypt password stretching --------------------------------------------
-
-const SCRYPT_N = 32768;
-const SCRYPT_PARAMS = { N: SCRYPT_N, r: 8, p: 1, maxmem: 67108864 };
-
-// Derive the 32-byte vault key from password + salt. Output is an ArrayBuffer.
-function deriveScryptKey(password, salt) {
-  const pwd = password.normalize("NFKC");
-  const slt = salt.normalize("NFKC");
-  return (async () => {
-    const nodeCrypto = globalThis.window && globalThis.window.require && globalThis.window.require("crypto");
-    if (nodeCrypto) {
-      return new Promise((resolve, reject) => {
-        nodeCrypto.scrypt(Buffer.from(pwd, "utf8"), Buffer.from(slt, "utf8"), 32, SCRYPT_PARAMS,
-          (err, key) => (err ? reject(err) : resolve(key.buffer.slice(key.byteOffset, key.byteOffset + key.byteLength))));
-      });
-    }
-    const out = await globalThis.window.scrypt.scrypt(
-      new Uint8Array(utf8Bytes(pwd)), new Uint8Array(utf8Bytes(slt)), SCRYPT_N, 8, 1, 32);
-    return ownBuffer(out);
-  })();
-}
-
-// --- key hash (what /vault/* calls carry instead of the password) -----------
-
-// HKDF info "ObsidianKeyHash": v0 hashes the raw key with SHA-256, v2/v3 derive via HKDF/AES-CBC.
-async function deriveKeyHash(keyBytes, salt, encryptionVersion) {
-  switch (encryptionVersion) {
-    case 0: {
-      const digest = await sha256(keyBytes);
-      return bufferToHex(digest);
-    }
-    case 2:
-    case 3: {
-      const hkdfKey = await subtle().importKey("raw", keyBytes, "HKDF", false, ["deriveKey"]);
-      const derived = await subtle().deriveKey(
-        { name: "HKDF", salt: utf8Bytes(salt), info: utf8Bytes("ObsidianKeyHash"), hash: "SHA-256" },
-        hkdfKey, { name: "AES-CBC", length: 256 }, true, ["encrypt"]);
-      const raw = await subtle().exportKey("raw", derived);
-      return bufferToHex(raw);
-    }
-    default:
-      throw new Error("Encryption version not supported");
-  }
-}
-
-// password + salt -> { key: 32-byte key, keyhash: hex string } for /vault/create.
-async function deriveVaultSecrets(password, salt, encryptionVersion) {
-  const key = await deriveScryptKey(password, salt);
-  const keyhash = await deriveKeyHash(key, salt, encryptionVersion);
-  return { key, keyhash };
-}
-
-// wk: password + salt -> keyhash hex only (what /vault/create and /vault/migrate carry).
-async function deriveVaultKeyhash(password, salt, encryptionVersion) {
-  const key = await deriveScryptKey(password, salt);
-  return deriveKeyHash(key, salt, encryptionVersion);
-}
-
-// --- cipher providers --------------------------------------------------------
-
-// v0: raw key is the AES-GCM key; keyhash is plain SHA-256 hex.
-class CipherV0 {
-  constructor(keyHash, cryptoKey) { this.encryptionVersion = 0; this.keyHash = keyHash; this.cryptoKey = cryptoKey; }
-  static async init(keyBytes) {
-    if (keyBytes.byteLength !== 32) throw new Error("Invalid encryption key");
-    const digest = await sha256(keyBytes);
-    const keyHash = bufferToHex(digest);
-    const cryptoKey = await importAesGcmKey(keyBytes);
-    return new CipherV0(keyHash, cryptoKey);
-  }
-  deterministicEncodeStr(str) {
-    const data = utf8Bytes(str);
-    return (async () => {
-      const digest = await sha256(data);
-      const iv = new Uint8Array(digest, 0, 12);
-      return bufferToHex(await aesGcmEncrypt(data, this.cryptoKey, iv));
-    })();
-  }
-  deterministicDecodeStr(hex) {
-    return (async () => {
-      const data = hexToBuffer(hex);
-      const plain = await aesGcmDecrypt(data, this.cryptoKey);
-      return utf8String(plain);
-    })();
-  }
-  encrypt(data) { return aesGcmEncrypt(data, this.cryptoKey); }
-  decrypt(data) { return aesGcmDecrypt(data, this.cryptoKey); }
-}
-
-// v2/v3: SIV for deterministic strings, AES-GCM for payloads.
-// keyHash = HKDF("ObsidianKeyHash")/AES-CBC export; siv + gcm keys derived from raw key + salt.
-class CipherV23 {
-  constructor(keyHash, cryptoKey, siv, encryptionVersion) {
-    this.keyHash = keyHash;
-    this.cryptoKey = cryptoKey;
-    this.siv = siv;
-    if (encryptionVersion !== 2 && encryptionVersion !== 3) throw new Error("Invalid encryption version");
-    this.encryptionVersion = encryptionVersion;
-  }
-  static async init(keyBytes, salt, encryptionVersion) {
-    if (keyBytes.byteLength !== 32) throw new Error("Invalid encryption key");
-    const hkdfKey = await subtle().importKey("raw", keyBytes, "HKDF", false, ["deriveKey"]);
-    const saltBytes = utf8Bytes(salt);
-    const hashDerived = await subtle().deriveKey(
-      { name: "HKDF", salt: saltBytes, info: utf8Bytes("ObsidianKeyHash"), hash: "SHA-256" },
-      hkdfKey, { name: "AES-CBC", length: 256 }, true, ["encrypt"]);
-    const keyHash = bufferToHex(await subtle().exportKey("raw", hashDerived));
-    const siv = await Siv.importKey(hkdfKey, saltBytes);
-    const gcmDerived = await subtle().deriveKey(
-      { name: "HKDF", salt: new Uint8Array(0), info: utf8Bytes("ObsidianAesGcm"), hash: "SHA-256" },
-      hkdfKey, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
-    return new CipherV23(keyHash, gcmDerived, siv, encryptionVersion);
-  }
-  deterministicEncodeStr(str) {
-    return this.siv.seal(utf8Bytes(str)).then((sealed) => bufferToHex(ownBuffer(sealed)));
-  }
-  deterministicDecodeStr(hex) {
-    return this.siv.open(new Uint8Array(hexToBuffer(hex))).then((opened) => utf8String(ownBuffer(opened)));
-  }
-  encrypt(data) { return aesGcmEncrypt(data, this.cryptoKey); }
-  decrypt(data) { return aesGcmDecrypt(data, this.cryptoKey); }
-}
-
-async function initCipher(encryptionVersion, keyBytes, salt) {
-  switch (encryptionVersion) {
-    case 0: return CipherV0.init(keyBytes);
-    case 2:
-    case 3: return CipherV23.init(keyBytes, salt, encryptionVersion);
-    default: throw new Error("Encryption version not supported");
-  }
-}
-
-// /vault/access call with a derived keyhash (used when joining an existing vault).
-async function requestVaultAccess(vaultUid, password, salt, host, encryptionVersion) {
-  const keyhash = await deriveVaultKeyhash(password, salt, encryptionVersion);
-  return acctVaultAccess(account.token, vaultUid, keyhash, host, encryptionVersion);
-}
-
-// obsidian:// callback URL parser (sync-setup deep links etc.). Kept for wire/URI compatibility.
-function parseCallbackUrl(url) {
-  if (!url.startsWith("obsidian://")) return null;
-  const params = {};
-  let rest = url.substr(11);
-  if (rest.startsWith("vault/")) {
-    const parts = rest.substr(6).split("/").map(decodeURIComponent);
-    params.action = "open";
-    params.vault = parts[0];
-    params.file = parts.slice(1).join("/");
-  } else {
-    let query = "", hash = "";
-    const qi = rest.indexOf("?");
-    const hi = rest.indexOf("#", Math.max(0, qi));
-    if (hi >= 0) { hash = rest.substr(hi + 1); rest = rest.substr(0, hi); params.hash = hash; }
-    if (qi >= 0) { query = rest.substr(qi + 1); rest = rest.substr(0, qi); }
-    const pairs = query.split("&");
-    for (let i = 0; i < pairs.length; i++) {
-      const kv = pairs[i].split("=");
-      let value = "true";
-      if (kv.length > 1) value = decodeURIComponent(kv[1]);
-      params[decodeURIComponent(kv[0])] = value;
-    }
-    params.action = rest.replace(/\/+$/g, "");
-  }
-  return params;
-}
-
-// Simple "**bold**" + newline renderer used by the onboarding screens.
-function renderFormattedDescription(containerEl, text) {
-  const bold = /(\*\*(.*?)\*\*)/g;
-  const lines = text.split("\n");
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    let last = 0, match;
-    const p = containerEl.createEl("p");
-    while ((match = bold.exec(line)) !== null) {
-      if (last < match.index) p.appendText(line.slice(last, match.index));
-      p.createEl("strong", { text: match[2] });
-      last = bold.lastIndex;
-    }
-    if (last < line.length) p.appendText(line.slice(last));
-  }
-}
-
-// Adds/removes "mod-loading" around an async action.
-
-// Feature-type sets shown in the sync settings summary.
-const SYNCABLE_FEATURE_TYPES = ["app", "appearance", "appearance-data", "hotkey", "core-plugin", "core-plugin-data"];
-const MEDIA_FEATURE_TYPES = ["image", "audio", "pdf", "video"];
-
-// Manifest factories: each returns the class the minified initializer produced.
-function defineBlock() { return Block; }
-function defineCbcMacCipher() { return CbcMacCipher; }
-function defineCtrCipher() { return CtrCipher; }
-function defineCmac() { return Cmac; }
-function defineSiv() { return Siv; }
-function defineCipherV0() { return CipherV0; }
-function defineCipherV23() { return CipherV23; }
-
 // ---- view-header.js ----
 // Compatibility surface: implementation lives in n-g40-view-header.js.
 function defineViewHeader(host) { return ng40DefineViewHeader(host); }
@@ -104924,287 +105070,6 @@ function defineViewHeader(host) { return ng40DefineViewHeader(host); }
 function defineDeferredView(host) { return ng40DefineDeferredView(host); }
 function defineEmptyView(host) { return ng40DefineEmptyView(host); }
 function defineUnknownView(host) { return ng40DefineUnknownView(host); }
-
-// ---- view.js ----
-// View (what a leaf shows) and ItemView (a view with the standard header: back / forward, title, action buttons, more-options menu).
-
-function defineView(host) {
-  /**
-   * Base of all views. Owns `containerEl` (a child of the leaf's element), is loaded when the leaf shows it and unloaded when it
-   * leaves. State has two parts: `getState` / `setState` (persisted in the layout) and the ephemeral state (scroll position, focus ...).
-   */
-  function View(leaf) {
-    const self = host.Component.call(this) || this;
-    self.icon = "lucide-file";
-    self.navigation = false; // true when the view takes part in back / forward history
-    self.app = leaf.app;
-    self.leaf = leaf;
-    self.containerEl = leaf.containerEl.createDiv("workspace-leaf-content");
-    self.containerEl.setAttribute("data-type", self.getViewType());
-    return self;
-  }
-  inherit(View, host.Component);
-  const proto = View.prototype;
-
-  proto.open = async function (parentEl) {
-    parentEl.appendChild(this.containerEl);
-    this.load();
-    await this.onOpen();
-  };
-
-  proto.close = async function () {
-    this.containerEl.detach();
-    this.unload();
-    await this.onClose();
-  };
-
-  proto.onOpen = async function () {};
-  proto.onClose = async function () {};
-  proto.getState = function () { return {}; };
-  proto.setState = async function () {};
-  proto.getEphemeralState = function () { return {}; };
-  proto.setEphemeralState = function () {};
-  proto.getIcon = function () { return this.icon ? this.icon : "lucide-file"; };
-  proto.onResize = function () {};
-  proto.onPaneMenu = function () {};
-  proto.onHeaderMenu = function () {};
-
-  /** The close entries of the tab context menu (close, close others, close to the right, close all). */
-  proto.onTabMenu = function (menu) {
-    const leaf = this.leaf;
-    const tabs = leaf.parent;
-    const index = tabs.children.indexOf(leaf);
-    const closeEntry = (title, leaves) => menu.addItem((item) => item
-      .setSection("close")
-      .setTitle(title)
-      .setIcon("lucide-x")
-      .onClick(() => { for (const other of leaves) other.detach(); }));
-
-    menu.addItem((item) => item
-      .setSection("close")
-      .setTitle(host.t.interface.menu.close())
-      .setIcon("lucide-x")
-      .onClick(() => this.leaf.detach()));
-
-    const siblings = tabs.children.slice();
-    if (this.app.workspace.isInSidebar(leaf)) return;
-    const others = siblings.filter((other) => !other.pinned && other !== leaf);
-    if (others.length > 0) closeEntry(host.t.interface.menu.closeOthers(), others);
-    const after = siblings.slice(index + 1).filter((other) => !other.pinned);
-    if (after.length > 0) closeEntry(host.t.interface.menu.closeAfter(), after);
-    const all = siblings.filter((other) => !other.pinned);
-    if (all.length > 0 && (all.length !== 1 || all[0] !== leaf)) closeEntry(host.t.interface.menu.closeAll(), all);
-  };
-
-  /** Where a tooltip of a control in a side dock opens (away from the dock), undefined elsewhere. */
-  proto.getSideTooltipPlacement = function () {
-    const root = this.leaf.getRoot();
-    if (root.side === "left") return "right";
-    if (root.side === "right") return "left";
-    return undefined;
-  };
-
-  proto.handleCut = function () {};
-  proto.handleCopy = function () {};
-  proto.handlePaste = function () {};
-
-  return View;
-}
-
-function defineItemView(host) {
-  function ItemView(leaf) {
-    const self = host.View.call(this, leaf) || this;
-    self.canDropAnywhere = false; // false: files are only accepted on the header (or with a modifier key)
-    self.leftSidebarToggleEl = null;
-    const app = self.app;
-    const workspace = app.workspace;
-    const header = (self.headerEl = self.containerEl.createDiv("view-header"));
-    self.contentEl = self.containerEl.createDiv("view-content");
-
-    header.createDiv("view-header-left", (left) => {
-      if (host.Platform.isMobile) {
-        self.leftSidebarToggleEl = left.createEl(
-          "button",
-          "view-action clickable-icon mod-left-split-toggle mod-raised sidebar-toggle-button mod-left",
-          (button) => {
-            host.setTooltip(button, host.t.interface.sidebarExpand());
-            host.setIcon(button, "sidebar-toggle-button-icon");
-            button.addEventListener("click", () => {
-              navigator.vibrate(100);
-              self.app.workspace.leftSplit.toggle();
-            });
-          },
-        );
-      }
-      left.createDiv("view-header-nav-buttons", (nav) => {
-        self.backButtonEl = host.createNavButton(app, () => self.leaf, "backward");
-        host.setIcon(self.backButtonEl, "lucide-arrow-left");
-        nav.appendChild(self.backButtonEl);
-        self.forwardButtonEl = host.createNavButton(app, () => self.leaf, "forward");
-        host.setIcon(self.forwardButtonEl, "lucide-arrow-right");
-        nav.appendChild(self.forwardButtonEl);
-      });
-      self.updateNavButtons();
-    });
-
-    self.titleContainerEl = header.createDiv("view-header-title-container mod-at-start", (container) => {
-      self.titleParentEl = container.createDiv({ cls: "view-header-title-parent" });
-      self.titleEl = container.createDiv({ cls: "view-header-title" });
-    });
-    // a long title fades out at the edge it overflows; the classes follow the scroll position
-    const fadeEl = self.titleContainerEl;
-    const scrollEl = self.titleEl;
-    fadeEl.addClass("mod-fade");
-    const updateFade = () => {
-      const left = scrollEl.scrollLeft;
-      fadeEl.toggleClass("mod-at-start", left === 0);
-      fadeEl.toggleClass("mod-at-end", Math.ceil(left) >= scrollEl.scrollWidth - scrollEl.offsetWidth);
-    };
-    scrollEl.addEventListener("scroll", debounceCall(updateFade, 10));
-    updateFade();
-
-    self.actionsEl = header.createDiv("view-actions");
-    if (host.Platform.isPhone) self.actionsEl.addClass("mod-raised");
-    const openMoreOptions = (event) => {
-      if (!event.currentTarget.hasClass("has-active-menu")) self.onMoreOptions(event);
-    };
-    self.moreOptionsButtonEl = self.addAction("lucide-more-vertical", host.t.interface.menu.moreOptions(), openMoreOptions);
-    if (host.Platform.isMobile) {
-      self.moreOptionsButtonEl.addEventListener("contextmenu", (event) => {
-        if (host.Platform.isPhone) {
-          event.preventDefault();
-          workspace.rightSplit.expand();
-        }
-      });
-    }
-    app.dragManager.handleDrop(self.containerEl, self.handleDrop.bind(self));
-    return self;
-  }
-  inherit(ItemView, host.View);
-  const proto = ItemView.prototype;
-
-  /** Back / forward buttons are dimmed (aria-disabled) when there is nothing to go to. */
-  proto.updateNavButtons = function () {
-    const { backHistory, forwardHistory } = this.leaf.history;
-    this.backButtonEl.ariaDisabled = String(backHistory.length === 0);
-    this.forwardButtonEl.ariaDisabled = String(forwardHistory.length === 0);
-  };
-
-  proto.load = function () {
-    host.View.prototype.load.call(this);
-    const leaf = this.leaf;
-    this.titleEl.setText(this.getDisplayText());
-    this.registerEvent(leaf.on("group-change", this.onGroupChange, this));
-    this.registerEvent(leaf.on("history-change", this.updateNavButtons, this));
-  };
-
-  /** Drops on the view: accepted on the header, anywhere when `canDropAnywhere`, or with Shift (Alt on non-mac) held. */
-  proto.handleDrop = function (event, data, isPreview) {
-    if (this.canDropAnywhere || (host.isMacLike ? event.shiftKey : event.altKey) || this.headerEl.contains(event.target)) {
-      const hint = this.leaf.handleDrop(event, data, isPreview);
-      if (hint) {
-        hint.hoverEl = this.headerEl;
-        hint.hoverClass = "is-highlighted";
-        return hint;
-      }
-    }
-    return undefined;
-  };
-
-  proto.onGroupChange = function () {};
-
-  /** Adds an icon button to the header (left of the others); returns the button. Clicks with the left / middle mouse button only. */
-  proto.addAction = function (icon, title, callback) {
-    const button = createEl("button", "clickable-icon view-action");
-    this.actionsEl.prepend(button);
-    host.setIcon(button, icon);
-    host.setTooltip(button, title);
-    button.addEventListener("mousedown", (event) => event.preventDefault());
-    button.onClickEvent((event) => {
-      if (event.button === 0 || event.button === 1) return callback(event);
-      return undefined;
-    });
-    return button;
-  };
-
-  proto.onMoreOptions = function (event) {
-    event.preventDefault();
-    const menu = new host.Menu().addSections(["close", "pane", "open", "action", "find", "info", "info.copy", "view", "view.linked", "system", "", "danger"]);
-    menu.setSectionSubmenu("info.copy", { title: host.t.interface.menu.copyPath(), icon: "lucide-clipboard" });
-    menu.setSectionSubmenu("view.linked", { title: host.t.interface.menu.openLinkedView(), icon: "lucide-link" });
-    this.onPaneMenu(menu, "more-options");
-    this.onMoreOptionsMenu(menu);
-    this.app.workspace.trigger("leaf-menu", menu, this.leaf);
-    const button = event.target;
-    const rect = button.getBoundingClientRect();
-    menu.setParentElement(button).showAtPosition({ x: rect.x, y: rect.bottom, width: rect.width, overlap: true, left: true });
-  };
-
-  proto.onPaneMenu = function (menu, source) {
-    host.View.prototype.onPaneMenu.call(this, menu, source);
-    const app = this.app;
-    const leaf = this.leaf;
-    if (host.Platform.isPhone && source === "more-options") {
-      menu.addItem((item) => item.setSection("close").setTitle(host.t.interface.menu.close()).setIcon("lucide-x").onClick(() => this.leaf.detach()));
-      menu.addItem((item) => item
-        .setSection("action")
-        .setTitle(this.leaf.pinned ? host.t.interface.menu.unpin() : host.t.interface.menu.pin())
-        .setIcon(this.leaf.pinned ? "lucide-pin-off" : "lucide-pin")
-        .onClick(() => this.leaf.togglePinned()));
-    }
-    if (host.Platform.canSplit && leaf.canPin()) {
-      menu
-        .addItem((item) => item
-          .setSection("open")
-          .setTitle(host.tc.splitRight())
-          .setDisabled(app.workspace.isInSidebar(this.leaf))
-          .setIcon("lucide-separator-vertical")
-          .onClick(() => app.workspace.duplicateLeaf(leaf, "vertical")))
-        .addItem((item) => item
-          .setSection("open")
-          .setTitle(host.tc.splitDown())
-          .setIcon("lucide-separator-horizontal")
-          .onClick(() => app.workspace.duplicateLeaf(leaf, "horizontal")));
-    }
-  };
-
-  proto.onTabMenu = function (menu) {
-    host.View.prototype.onTabMenu.call(this, menu);
-    const app = this.app;
-    const leaf = this.leaf;
-    if (leaf.canPin()) {
-      menu.addItem((item) => item
-        .setSection("pane")
-        .setTitle(leaf.pinned ? host.t.interface.menu.unpin() : host.t.interface.menu.pin())
-        .setIcon("lucide-pin")
-        .onClick(() => leaf.togglePinned()));
-    }
-    if (leaf.group) {
-      menu.addItem((item) => item
-        .setSection("pane")
-        .setTitle(host.t.interface.menu.unlinkTab())
-        .setIcon("lucide-link")
-        .onClick(() => leaf.setGroup(null)));
-    } else if (leaf.canPin()) {
-      menu.addItem((item) => item
-        .setSection("pane")
-        .setTitle(host.t.interface.menu.linkTab())
-        .setIcon("lucide-link")
-        .onClick(() => app.workspace.onStartLink(leaf)));
-    }
-    if (host.Platform.canPopoutWindow) {
-      menu.addItem((item) => item
-        .setSection("open")
-        .setTitle(host.t.interface.menu.moveToNewWindow())
-        .setIcon("lucide-picture-in-picture")
-        .onClick(() => { app.workspace.moveLeafToPopout(leaf); }));
-    }
-  };
-
-  proto.onMoreOptionsMenu = function () {};
-
-  return ItemView;
-}
 
 // ---- workspace-tree.js ----
 // Compatibility surface: implementations live in n-g40-workspace-*.js.
