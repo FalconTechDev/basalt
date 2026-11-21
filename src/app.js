@@ -43863,7 +43863,10 @@ async function ng11RunSearchOverFiles(app, requiredInputs, queue, callback, opti
     let content = "";
     const ext = file.extension || "";
     if (needContent && (ext === "md" || ext === "canvas")) {
-      try { content = await app.vault.cachedRead(file); }
+      try {
+        content = await app.vault.cachedRead(file);
+        if (content == null) content = await app.vault.read(file);
+      }
       catch (e) { console.log(e); content = ""; }
     }
     await callback(file, content);
