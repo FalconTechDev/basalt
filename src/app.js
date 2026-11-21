@@ -74147,7 +74147,10 @@ const NG34_SORT_LABEL_KEYS = {
 function ng34SortLabels() {
   const labels = env().gm.plugins.fileExplorer;
   const out = {};
-  for (const mode of Object.keys(NG34_SORT_LABEL_KEYS)) out[mode] = labels[NG34_SORT_LABEL_KEYS[mode]]();
+  for (const mode of Object.keys(NG34_SORT_LABEL_KEYS)) {
+    const label = labels[NG34_SORT_LABEL_KEYS[mode]];
+    out[mode] = typeof label === "function" ? label() : label;
+  }
   return out;
 }
 
