@@ -104,44 +104,96 @@
   async function stop(folder) { const key = folder === "/" ? "" : folder; const s = shares.get(key); if (!s) return; s.stop(); shares.delete(key); setStore(store().filter((x) => x.folder !== key)); }
   function forPath(path) { let best = null; for (const [k, s] of shares) { if (k === "" || path.startsWith(k + "/")) if (!best || k.length > best.folder.length) best = s; } return best; }
 
-  async function dialog(folder) {
-    const s = await host(folder); const M = new window.__bsApi.Modal(app); M.titleEl.setText("Общая папка: " + (s.folder || "весь vault")); const c = M.contentEl;
-    c.createEl("p", { text: "Вся папка (заметки, доски, файлы) синхронизируется между всеми, кто введёт этот код. У каждого полная копия: если ваш компьютер выключится, остальные продолжат работать и смогут приглашать новых людей." });
-    const i = c.createEl("input", { attr: { readonly: "true", style: "width:100%" } }); i.value = s.code(); i.onfocus = () => i.select();
-    c.createEl("p", { text: "Свои relay-серверы Nostr (через запятую, необязательно — по умолчанию используются публичные):" }); const sg = c.createEl("input", { attr: { style: "width:100%" } }); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
-    c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me().name; n.onchange = () => { const m = me(); m.name = n.value || m.name; try { localStorage.setItem("board-me", JSON.stringify(m)); } catch (e) { /* private */ } s.publish(); };
-    const row = c.createDiv({ attr: { style: "margin-top:14px;display:flex;justify-content:flex-end" } }); const st = row.createEl("button", { text: "Прекратить обмен" }); st.onclick = async () => { await stop(folder); M.close(); };
-    M.open();
+  const ipc = () => (window.electron && window.electron.ipcRenderer) || null;
+  const nodeReq = (m) => { try { return window.require(m); } catch (e) { return null; } };
+  const baseName = (p) => String(p || "").replace(/[\\/]+$/, "").split(/[\\/]/).pop();
+  const initial = (n) => (String(n || "?").trim()[0] || "?").toUpperCase();
+  const where = (u) => (u.board ? "доска «" + u.board.replace(/^.*\//, "").replace(/\.board$/, "") + "»" : u.file ? "«" + u.file.replace(/^.*\//, "").replace(/\.md$/, "") + "»" : "в сети");
+  function otherVaults() {
+    const out = [], r = ipc(), fs = nodeReq("fs"), pa = nodeReq("path"); if (!r || !fs || !pa) return out;
+    let list = {}; try { list = r.sendSync("vault-list") || {}; } catch (e) { return out; }
+    const here = (app.vault.adapter.getBasePath ? app.vault.adapter.getBasePath() : "").toLowerCase();
+    for (const v of Object.values(list)) { if (!v || !v.path || v.path.toLowerCase() === here) continue; try { const st = JSON.parse(fs.readFileSync(pa.join(v.path, STATE), "utf8")); if (st && st.room) out.push({ path: v.path, name: baseName(v.path), room: st.room, pass: st.pass }); } catch (e) { /* not shared */ } }
+    return out;
   }
-  async function joinDialog() {
-    const M = new window.__bsApi.Modal(app); M.titleEl.setText("Подключиться к общей папке"); const c = M.contentEl; const i = c.createEl("input", { attr: { style: "width:100%", placeholder: "basalt-share:…" } });
-    const row = c.createDiv({ attr: { style: "margin-top:12px;display:flex;justify-content:flex-end" } }); const ok = row.createEl("button", { text: "Подключиться", cls: "mod-cta" });
-    ok.onclick = async () => { const m = /^basalt-share:([^:]+):([^:]+):?(.*)$/.exec(i.value.trim()); if (!m) { new window.__bsApi.Notice("Неверный код"); return; } M.close(); const name = decodeURIComponent(m[3] || "Общая папка") || "Общая папка"; let n = name, k = 1; while (await app.vault.adapter.exists(n)) n = name + " " + ++k; await app.vault.adapter.mkdir(n); await begin(n, m[1], m[2]); new window.__bsApi.Notice("Подключено: «" + n + "»"); };
-    i.onkeydown = (e) => { if (e.key === "Enter") ok.click(); }; M.open(); setTimeout(() => i.focus(), 50);
+  async function joinCode(code) {
+    const m = /^basalt-share:([^:]+):([^:]+):?(.*)$/.exec(String(code || "").trim()); if (!m) { new window.__bsApi.Notice("Неверный код приглашения"); return false; }
+    const fs = nodeReq("fs"), pa = nodeReq("path"), r = ipc(); if (!fs || !pa || !r) { new window.__bsApi.Notice("Не удалось создать хранилище"); return false; }
+    const name = (decodeURIComponent(m[3] || "") || "Общий проект").replace(/[\\/:*?"<>|]/g, "_"); let dir = r.sendSync("get-default-vault-path"); dir = pa.join(pa.dirname(dir), "Basalt shared"); fs.mkdirSync(dir, { recursive: true });
+    let target = pa.join(dir, name), k = 1; while (fs.existsSync(target)) target = pa.join(dir, name + " " + ++k);
+    fs.mkdirSync(target, { recursive: true }); fs.writeFileSync(pa.join(target, STATE), JSON.stringify({ room: m[1], pass: m[2], state: "" }));
+    new window.__bsApi.Notice("Открываю проект «" + baseName(target) + "»…"); r.sendSync("vault-open", target, false); return true;
   }
+  let panelEl = null;
+  function panel() {
+    if (panelEl) { panelEl.close(); return; }
+    const M = new window.__bsApi.Modal(app); panelEl = M; M.modalEl.classList.add("bsp-modal"); M.titleEl.setText("Совместная работа"); const c = M.contentEl; c.classList.add("bsp");
+    const body = c.createDiv(); let live = true;
+    const copy = (t) => { try { navigator.clipboard.writeText(t); new window.__bsApi.Notice("Код скопирован"); } catch (e) { /* none */ } };
+    const render = () => {
+      if (!live) return; body.empty();
+      const mine = me();
+      const sec1 = body.createDiv({ cls: "bsp-sec" }); sec1.createDiv({ cls: "bsp-h", text: "Проекты" });
+      const rows = [];
+      for (const [k, sh] of shares) rows.push({ kind: "here", key: k, name: k ? k.split("/").pop() : app.vault.getName(), sub: k ? "папка в этом хранилище" : "это хранилище", sh });
+      for (const v of otherVaults()) rows.push({ kind: "vault", name: v.name, sub: "другое хранилище", v });
+      if (!rows.length) sec1.createDiv({ cls: "bsp-empty", text: "Пока нет общих проектов. Поделитесь хранилищем или подключитесь по коду." });
+      rows.forEach((r, i) => {
+        const row = sec1.createDiv({ cls: "bsp-row" }); row.style.animationDelay = i * 40 + "ms";
+        const ic = row.createDiv({ cls: "bsp-ic" }); window.__bsApi.setIcon(ic, r.kind === "here" && r.key ? "lucide-folder-open" : "lucide-box");
+        const tx = row.createDiv({ cls: "bsp-tx" }); tx.createDiv({ cls: "bsp-n", text: r.name }); tx.createDiv({ cls: "bsp-s", text: r.sub });
+        if (r.sh) { const n = r.sh.peers.length, st = r.sh.prov ? r.sh.prov.status : "connecting"; const ch = row.createDiv({ cls: "bsp-st " + (n ? "is-live" : st === "connecting" ? "is-wait" : "") }); ch.createSpan({ cls: "bsh-dot" }); ch.createSpan({ text: n ? "Онлайн: " + (n + 1) : st === "connecting" ? "Поиск…" : "Один в сети" }); }
+        const act = row.createDiv({ cls: "bsp-act" });
+        const btn = (t, fn) => { const b = act.createEl("button", { text: t, cls: "bsp-b" }); b.onclick = fn; return b; };
+        if (r.sh) { btn("Код", () => copy(r.sh.code())); btn("Прекратить", async () => { await stop(r.key || "/"); render(); }); }
+        else btn("Открыть", () => { const rr = ipc(); if (rr) rr.sendSync("vault-open", r.v.path, false); });
+      });
+      const sec2 = body.createDiv({ cls: "bsp-sec" }); sec2.createDiv({ cls: "bsp-h", text: "Сейчас в сети" });
+      const people = [{ u: mine, self: true }]; const seen = new Set();
+      for (const sh of shares.values()) for (const u of sh.peers) { const key = u.name + u.color; if (!seen.has(key)) { seen.add(key); people.push({ u, self: false, proj: sh.folder ? sh.folder.split("/").pop() : app.vault.getName() }); } }
+      people.forEach((p, i) => {
+        const row = sec2.createDiv({ cls: "bsp-person" }); row.style.animationDelay = i * 40 + "ms";
+        const av = row.createDiv({ cls: "bsp-av", text: initial(p.u.name) }); av.style.background = p.u.color;
+        const tx = row.createDiv({ cls: "bsp-tx" }); tx.createDiv({ cls: "bsp-n", text: p.u.name + (p.self ? " (вы)" : "") });
+        const af = app.workspace.getActiveFile();
+        tx.createDiv({ cls: "bsp-s", text: p.self ? (af ? "«" + af.basename + "»" : "в сети") : where(p.u) + (p.proj ? " · " + p.proj : "") });
+      });
+      if (people.length === 1) sec2.createDiv({ cls: "bsp-empty", text: shares.size ? "Пока никого рядом. Отправьте код приглашения." : "Подключений нет." });
+      const sec3 = body.createDiv({ cls: "bsp-sec" }); sec3.createDiv({ cls: "bsp-h", text: "Действия" });
+      const bar = sec3.createDiv({ cls: "bsp-bar" });
+      const big = (t, ic, fn) => { const b = bar.createDiv({ cls: "bsp-big" }); const i2 = b.createSpan({ cls: "bsp-bi" }); window.__bsApi.setIcon(i2, ic); b.createSpan({ text: t }); b.onclick = fn; };
+      if (!shares.has("")) big("Поделиться хранилищем", "lucide-share-2", async () => { await host("/"); render(); });
+      const f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null; if (dir && !shares.has(dir)) big("Поделиться папкой «" + dir.split("/").pop() + "»", "lucide-folder-up", async () => { await host(dir); render(); });
+      const jr = sec3.createDiv({ cls: "bsp-join" }); const inp = jr.createEl("input", { attr: { placeholder: "Вставьте код приглашения: basalt-share:…" } }); const jb = jr.createEl("button", { text: "Подключиться", cls: "mod-cta" });
+      jb.onclick = async () => { if (await joinCode(inp.value)) M.close(); }; inp.onkeydown = (e) => { if (e.key === "Enter") jb.click(); };
+      const det = body.createEl("details", { cls: "bsp-set" }); det.createEl("summary", { text: "Имя и серверы" });
+      det.createEl("p", { text: "Ваше имя:" }); const n = det.createEl("input"); n.value = mine.name; n.onchange = () => { const m2 = me(); m2.name = n.value || m2.name; try { localStorage.setItem("board-me", JSON.stringify(m2)); } catch (e) { /* private */ } for (const sh of shares.values()) sh.publish(); render(); };
+      det.createEl("p", { text: "Свои relay-серверы Nostr (через запятую, необязательно):" }); const sg = det.createEl("input"); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
+    };
+    const tick = () => { if (document.activeElement && /INPUT/.test(document.activeElement.tagName) && body.contains(document.activeElement)) return; render(); };
+    document.addEventListener("basalt-share-peers", tick); const iv = setInterval(tick, 2500);
+    M.onClose = () => { live = false; document.removeEventListener("basalt-share-peers", tick); clearInterval(iv); panelEl = null; };
+    render(); M.open();
+  }
+  async function dialog() { panel(); }
+  const joinDialog = panel;
 
   const t = setInterval(() => {
     if (!window.app || !app.workspace || !app.workspace.layoutReady || !app.commands || !window.__bsApi || !window.__bsY || !app.vault) return;
     clearInterval(t);
-    app.commands.addCommand({ id: "basalt:share-folder", name: "Общая папка: поделиться этой папкой", icon: "lucide-users", callback: () => { const f = app.workspace.getActiveFile(); dialog(f && f.parent ? f.parent.path : "/"); } });
-    app.commands.addCommand({ id: "basalt:share-vault", name: "Общая папка: поделиться всем vault", icon: "lucide-users", callback: () => dialog("/") });
-    app.commands.addCommand({ id: "basalt:share-join", name: "Общая папка: подключиться по коду", icon: "lucide-user-plus", callback: joinDialog });
+    app.commands.addCommand({ id: "basalt:share-folder", name: "Общая папка: поделиться этой папкой", icon: "lucide-users", callback: () => panel() });
+    app.commands.addCommand({ id: "basalt:share-vault", name: "Общая папка: поделиться всем vault", icon: "lucide-users", callback: () => panel() });
+    app.commands.addCommand({ id: "basalt:share-join", name: "Общая папка: подключиться по коду", icon: "lucide-user-plus", callback: () => panel() });
     app.workspace.on("file-menu", (menu, f) => { if (f && f.children) menu.addItem((i) => i.setTitle(shares.has(f.path === "/" ? "" : f.path) ? "Общая папка…" : "Поделиться папкой…").setIcon("lucide-users").onClick(() => dialog(f.path))); });
-    const menu = (e) => {
-      const m = new window.__bsApi.Menu(), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)), f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null;
-      it("Поделиться всем vault", "lucide-share-2", () => dialog("/"));
-      if (dir) it("Поделиться папкой «" + dir.split("/").pop() + "»", "lucide-folder-up", () => dialog(dir));
-      it("Подключиться по коду", "lucide-user-plus", joinDialog);
-      if (shares.size) { m.addSeparator(); for (const [k, s] of shares) it("Открыть: " + (k ? k.split("/").pop() : "весь vault") + (s.peers.length ? " · " + (s.peers.length + 1) + " чел." : ""), "lucide-users", () => dialog(k || "/")); }
-      if (e && e.clientX != null) m.showAtMouseEvent(e); else m.showAtPosition({ x: 56, y: 240 });
-    };
-    try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", menu); } catch (e) { /* no ribbon */ }
+    try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", () => panel()); } catch (e) { /* no ribbon */ }
     if (app.statusBar && app.statusBar.registerStatusBarItem) {
       const chip = app.statusBar.registerStatusBarItem(); chip.classList.add("bsh-chip"); chip.style.display = "none";
       const upd = () => { const all = Array.from(shares.values()); if (!all.length) { chip.style.display = "none"; return; } const n = all.reduce((a, s) => a + s.peers.length, 0), st = all.some((s) => s.prov && s.prov.status === "connecting"); chip.style.display = ""; chip.classList.toggle("is-searching", st && !n); chip.classList.toggle("is-live", n > 0); chip.textContent = ""; const d = document.createElement("span"); d.className = "bsh-dot"; chip.append(d, n ? "Онлайн: " + (n + 1) : st ? "Поиск участников…" : "Один в сети"); chip.title = all.map((s) => (s.folder || "весь vault") + ": " + (s.peers.length ? s.peers.map((p) => p.name).join(", ") : "никого рядом")).join(String.fromCharCode(10)); };
       document.addEventListener("basalt-share-peers", upd); setInterval(upd, 2000); upd();
     }
+    const pubFile = () => { const f = app.workspace.getActiveFile(); for (const sh of shares.values()) { const r = f ? sh.rel(f.path) : null; sh.publish({ file: r && !/\.board$/.test(r) ? r : null }); } };
+    app.workspace.on("file-open", pubFile); app.workspace.on("active-leaf-change", pubFile);
     window.__bsShare = { forPath, host, stop, dialog, join: joinDialog, begin, shares };
-    Promise.all(store().map((x) => begin(x.folder || "/", x.room, x.pass).catch((e) => console.error(e)))).then(resolveReady, resolveReady);
+    (async () => { try { const st = JSON.parse(await app.vault.adapter.read(STATE)); if (st && st.room && !shares.has("")) await begin("/", st.room, st.pass); } catch (e) { /* not a shared vault */ } })().then(() => Promise.all(store().filter((x) => !shares.has(x.folder || "")).map((x) => begin(x.folder || "/", x.room, x.pass).catch((e) => console.error(e))))).then(resolveReady, resolveReady);
   }, 600);
 })();
