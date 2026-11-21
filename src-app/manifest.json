@@ -1511,92 +1511,92 @@
     },
     {
       "orig": "K3",
-      "use": "s13Compare",
+      "use": "ng31Compare",
       "originalBytes": 39
     },
     {
       "orig": "G3",
-      "use": "s13Swap",
+      "use": "ng31Swap",
       "originalBytes": 47
     },
     {
       "orig": "X3",
-      "use": "s13IndexOf",
+      "use": "ng31IndexOf",
       "originalBytes": 103
     },
     {
       "orig": "_3",
-      "use": "s13SelectKth",
+      "use": "ng31SelectKth",
       "originalBytes": 414
     },
     {
       "orig": "W3",
-      "use": "s13Quickselect",
+      "use": "ng31Quickselect",
       "originalBytes": 56
     },
     {
       "orig": "s5",
-      "use": "s13QuickselectChunks",
+      "use": "ng31QuickselectChunks",
       "originalBytes": 145
     },
     {
       "orig": "a5",
-      "use": "s13NewNode",
+      "use": "ng31NewNode",
       "originalBytes": 89
     },
     {
       "orig": "J3",
-      "use": "s13GrowBounds",
+      "use": "ng31GrowBounds",
       "originalBytes": 150
     },
     {
       "orig": "Z3",
-      "use": "s13ChildrenBounds",
+      "use": "ng31ChildrenBounds",
       "originalBytes": 155
     },
     {
       "orig": "$3",
-      "use": "s13SubtreeBounds",
+      "use": "ng31SubtreeBounds",
       "originalBytes": 47
     },
     {
       "orig": "e5",
-      "use": "s13BoundsMinX",
+      "use": "ng31BoundsMinX",
       "originalBytes": 38
     },
     {
       "orig": "t5",
-      "use": "s13BoundsMinY",
+      "use": "ng31BoundsMinY",
       "originalBytes": 38
     },
     {
       "orig": "i5",
-      "use": "s13BoundsSpan",
+      "use": "ng31BoundsSpan",
       "originalBytes": 52
     },
     {
       "orig": "n5",
-      "use": "s13BoundsArea",
+      "use": "ng31BoundsArea",
       "originalBytes": 53
     },
     {
       "orig": "r5",
-      "use": "s13BoundsContains",
+      "use": "ng31BoundsContains",
       "originalBytes": 87
     },
     {
       "orig": "o5",
-      "use": "s13BoundsOverlap",
+      "use": "ng31BoundsOverlap",
       "originalBytes": 87
     },
     {
       "orig": "B4",
-      "use": "s13CellRange",
+      "use": "ng31CellRange",
       "originalBytes": 102
     },
     {
       "orig": "V4",
-      "use": "s13ExtendRange",
+      "use": "ng31ExtendRange",
       "originalBytes": 405
     },
     {
