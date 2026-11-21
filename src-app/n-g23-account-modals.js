@@ -79,7 +79,7 @@ export function defineLoginModal(host) {
       autocomplete: "one-time-code",
       inputMode: "numeric",
       maxLength: 6,
-      placeholder: ACCT_T(host, "placeholderMfaCode", "Authentication code"),
+      placeholder: ACCT_T(host, "labelMfaCode", "6-digit 2FA code"),
       sanitize: (v) => v.replace(/\D/g, "").slice(0, 6),
     });
     self._mfaP = mfaF.p;
@@ -97,7 +97,7 @@ export function defineLoginModal(host) {
       try { window.open(NG23_REPO_URL, "_blank", "noopener"); } catch (err) {}
     });
 
-    self.addButton("mod-cta", ACCT_T(host, "labelLogIn", "Log in"), () => self.login());
+    self.addButton("mod-cta", ACCT_T(host, "buttonLogin", "Sign in"), () => self.login());
     self.addCancelButton();
     return self;
   }
@@ -119,16 +119,17 @@ export function defineLoginModal(host) {
     const email = this._email.value.trim();
     const password = this._pass.value;
     const mfa = this._mfa.value.trim();
-    if (!email) return this._showError(ACCT_T(host, "messageEmptyEmail", "Please enter your email."));
-    if (!email.includes("@")) return this._showError(ACCT_T(host, "messageInvalidEmail", "Please enter a valid email."));
-    if (!password) return this._showError(ACCT_T(host, "messageEmptyPassword", "Please enter your password."));
-    if (mfa && !/^\d{6}$/.test(mfa)) return this._showError(ACCT_T(host, "mfaWrongFormat", "The code must be 6 digits."));
+    if (!email) { this._showError(ACCT_T(host, "messageEmptyEmail", "Please enter your email.")); return true; }
+    if (!email.includes("@")) { this._showError(ACCT_T(host, "messageInvalidEmail", "Please enter a valid email.")); return true; }
+    if (!password) { this._showError(ACCT_T(host, "messageEmptyPassword", "Please enter your password.")); return true; }
+    if (mfa && !/^\d{6}$/.test(mfa)) { this._showError(ACCT_T(host, "mfaWrongFormat", "The code must be 6 digits.")); return true; }
 
     this._loader.show();
     this._body.hide();
     try {
       await acctSignIn(account, email, password, mfa || undefined);
       this.close();
+      return false;
     } catch (err) {
       if (err instanceof AccountError) {
         const msg = String(err.message || "");
@@ -145,6 +146,7 @@ export function defineLoginModal(host) {
       } else {
         this._showError(ACCT_T(host, "messageLoginFailed", "Login failed. Please try again."));
       }
+      return true;
     } finally {
       self._loader.hide();
       self._body.show();
@@ -197,7 +199,7 @@ export function defineLicenseModal(host) {
       });
     }
 
-    self.addButton("mod-cta", ABOUT_T(host, "buttonActivateLicense", "Activate"), () => self.activate());
+    self.addButton("mod-cta", ABOUT_T(host, "buttonActivate", "Activate"), () => self.activate());
     self.addCancelButton();
     return self;
   }

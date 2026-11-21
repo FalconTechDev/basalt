@@ -501,6 +501,11 @@ export function defineSettingGroup(host) {
     else if (!text && attached) this.headerEl.detach();
     return this;
   };
+  /** Heading helper accepting a string or a lazy callback (returns the group for chaining). */
+  proto.addHeading = function (textOrFn) {
+    const text = typeof textOrFn === "function" ? textOrFn() : textOrFn;
+    return this.setHeading(text);
+  };
   proto.addClass = function (cls) { this.groupEl.addClass(cls); return this; };
   proto.addSetting = function (configure) { configure(new host.Setting(this.listEl)); return this; };
   proto.addSearch = function (configure) {

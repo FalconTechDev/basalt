@@ -972,331 +972,6 @@ function fuzzyMatchJs(prepared, text) {
   return matchPieces(prepared.tokens, prepared.query, text, false) || matchPieces(prepared.fuzzy, prepared.query, text, true);
 }
 
-// ---- about.js ----
-// The About settings tab: version and update controls, auto-update / insider-build toggles, the
-// language picker, the help link, the account / Catalyst / commercial-licence sections and the
-// advanced section (startup check, CLI registration).
-//
-// Store and site URLs already point at Basalt; the update flow talks to the Electron main process
-// over ipcRenderer ("update", "check-update", "disable-update", "relaunch", "insider-build", "cli",
-// "register-cli") exactly as before.
-
-const aboutEnv = () => hostEnv();
-
-const WIKI = "https://github.com/FalconTechDev/basalt/wiki";
-const REPO = "https://github.com/FalconTechDev/basalt";
-const RELEASES = "https://github.com/FalconTechDev/basalt/releases";
-
-function defineAboutTab(host) {
-  /** Settings tab id "about"; draws itself in display() and refreshes the account rows afterwards. */
-  function AboutTab() {
-    const self = host.SettingTab.apply(this, arguments) || this;
-    self.name = aboutEnv().gm.setting.about.name();
-    self.id = "about";
-    self.icon = "circle-user";
-    return self;
-  }
-  inherit(AboutTab, host.SettingTab);
-  const proto = AboutTab.prototype;
-
-  proto.display = function () {
-    const self = this;
-    const e = aboutEnv();
-    const Yl = e.Yl;
-    const gm = e.gm;
-    const aboutI18n = gm.setting.about;
-    const containerEl = this.containerEl;
-    containerEl.empty();
-
-    let updateState = "";
-    let updateChecking = false;
-    let updateDisabled = false;
-    e.Of((electron) => {
-      updateState = electron.ipcRenderer.sendSync("update");
-      updateChecking = electron.ipcRenderer.sendSync("check-update");
-      updateDisabled = electron.ipcRenderer.sendSync("disable-update");
-    });
-
-    const setting = this.app.setting;
-    const group = new host.SettingGroup(containerEl);
-
-    if (Yl.isDesktopApp) {
-      if (updateChecking) {
-        const poll = () => {
-          e.Of((electron) => { updateChecking = electron.ipcRenderer.sendSync("check-update"); });
-          if (updateChecking) setTimeout(poll, 1000);
-          else self.display();
-        };
-        setTimeout(poll, 300);
-      }
-
-      let versionSetting = null;
-      group.addSetting((s) => {
-        versionSetting = s;
-        s.setName(aboutI18n.labelVersion({ version: Yl.version })).setDesc(createFragment((frag) => {
-          frag.appendText(aboutI18n.labelInstallVersion({ version: Yl.build }));
-          frag.createEl("br");
-          if (updateState === "update-downloaded") {
-            frag.appendText(aboutI18n.labelNewVersionReady());
-            frag.createEl("br");
-            frag.createEl("a", { text: aboutI18n.labelReadChangelog(), attr: { href: RELEASES, target: "_blank", rel: "noopener" } });
-          } else if (updateState === "update-manual-required" || e.gy(e.zf, e.yte)) {
-            frag.createEl("b", { text: aboutI18n.labelManualUpdateRequired() });
-            frag.appendText(" ");
-            frag.createEl("a", { text: gm.dialogue.buttonDownload(), attr: { href: e.fy(), target: "_blank", rel: "noopener" } });
-          } else {
-            frag.createEl("a", { text: aboutI18n.labelReadChangelog(), attr: { href: RELEASES, target: "_blank", rel: "noopener" } });
-          }
-        }));
-      });
-      if (updateState === "update-downloaded") {
-        versionSetting.addButton((b) => b.setCta().setButtonText(aboutI18n.buttonRelaunch()).onClick(() => {
-          e.Of((electron) => electron.ipcRenderer.sendSync("relaunch"));
-        }));
-      } else {
-        versionSetting.addButton((b) => b.setCta().setButtonText(aboutI18n.buttonCheckForUpdates()).setLoading(updateChecking).onClick(() => {
-          e.Of((electron) => electron.ipcRenderer.send("check-update", true));
-          self.display();
-        }));
-      }
-
-      group.addSetting((s) => s.setName(aboutI18n.optionAutoUpdate()).setDesc(aboutI18n.optionAutoUpdateDescription()).addToggle((toggle) => toggle
-        .setValue(!updateDisabled)
-        .onChange((value) => {
-          e.Of((electron) => electron.ipcRenderer.sendSync("disable-update", !value));
-          setTimeout(() => self.display(), 500);
-        })));
-
-      if (account.license) {
-        let insider = false;
-        e.Of((electron) => { insider = electron.ipcRenderer.sendSync("insider-build", null); });
-        group.addSetting((s) => s.setName(aboutI18n.optionInsiderBuild()).setDesc(aboutI18n.optionInsiderBuildDescription()).addToggle((toggle) => toggle
-          .setValue(insider)
-          .onChange((value) => { e.Of((electron) => electron.ipcRenderer.sendSync("insider-build", value)); })));
-      } else {
-        window.electron.ipcRenderer.send("insider-build", false);
-      }
-    } else if (e.Em) {
-      group.addSetting((s) => s.setName(aboutI18n.labelVersion({ version: e.gte }) + " (" + Yl.build + ")"));
-    }
-
-    const currentLanguage = e.sm();
-    let selectedLanguage = currentLanguage;
-    let relaunchButton = null;
-    group.addSetting((s) => s
-      .setName(aboutI18n.optionLanguage())
-      .setDesc(createFragment((frag) => {
-        frag.appendText(aboutI18n.optionLanguageDescription());
-        frag.createEl("br");
-        if (!Yl.isMobile) frag.createEl("a", { text: aboutI18n.labelAddOwnLanguage(), attr: { href: WIKI, target: "_blank", rel: "noopener" } });
-      }))
-      .addButton((b) => {
-        relaunchButton = b;
-        b.setCta().setButtonText(aboutI18n.buttonRelaunch()).onClick(() => {
-          e.lm(selectedLanguage);
-          window.location.reload();
-        });
-        b.buttonEl.hide();
-      })
-      .addDropdown((d) => {
-        d.onChange((value) => {
-          selectedLanguage = value;
-          relaunchButton.buttonEl.toggle(currentLanguage !== selectedLanguage);
-        });
-        for (const code of e.Jf) d.addOption(code, e.Zf[code]);
-        d.setValue(currentLanguage);
-      }));
-
-    group.addSetting((s) => s.setName(aboutI18n.optionGetHelp()).setDesc(aboutI18n.optionGetHelpDescription()).addButton((b) => b
-      .setButtonText(aboutI18n.buttonOpen())
-      .onClick(() => {
-        setting.close();
-        self.app.openHelp();
-      })));
-
-    const accountGroup = new host.SettingGroup(containerEl).setHeading(gm.setting.account.name());
-    accountGroup.addSetting((s) => { self.accountSetting = s; });
-    accountGroup.addSetting((s) => { self.catalystSetting = s; });
-    accountGroup.addSetting((s) => { self.commercialLicenseSetting = s; });
-
-    const advancedGroup = new host.SettingGroup(containerEl);
-    advancedGroup.setHeading(aboutI18n.optionAdvanced());
-    advancedGroup.addSetting((s) => s
-      .setName(aboutI18n.optionCheckSlowStartup())
-      .setDesc(aboutI18n.optionCheckSlowStartupDescription())
-      .addExtraButton((b) => b.setIcon("lucide-timer").setTooltip(aboutI18n.buttonCheckStartup()).onClick(() => {
-        new host.SlowStartupCheck(self.app).open();
-      }))
-      .addToggle((toggle) => toggle
-        .setValue(self.app.loadLocalStorage("slow-startup-check"))
-        .onChange((value) => {
-          if (value) self.app.saveLocalStorage("slow-startup-check", "1");
-          else self.app.saveLocalStorage("slow-startup-check", null);
-        })));
-
-    if (Yl.isDesktopApp && window.electron) {
-      advancedGroup.addSetting((s) => s
-        .setName(aboutI18n.optionCli())
-        .setDesc(aboutI18n.optionCliDescription())
-        .addToggle((toggle) => toggle
-          .setValue(window.electron.ipcRenderer.sendSync("cli", null))
-          .onChange(async (value) => {
-            window.electron.ipcRenderer.sendSync("cli", value);
-            if (!value) return;
-            const modal = new host.ButtonModal(self.app);
-            modal.setTitle(aboutI18n.optionRegisterPath());
-            modal.setContent(aboutI18n.optionRegisterPathDescription());
-            const errorEl = modal.contentEl.createDiv({ cls: "message-container", prepend: true }).createDiv("message mod-error");
-            errorEl.hide();
-            modal.buttonContainerEl.createEl("a", { cls: "mod-secondary", text: gm.interface.buttonLearnMore(), attr: { href: WIKI, target: "_blank", rel: "noopener" } });
-            modal.addButton("mod-cancel", gm.dialogue.buttonSkip(), () => {});
-            modal.addButton("mod-cta", aboutI18n.buttonRegister(), async () => {
-              errorEl.hide();
-              const result = await window.electron.ipcRenderer.invoke("register-cli");
-              if (result.success) {
-                new host.Notice(result.message);
-                return;
-              }
-              errorEl.setText(result.message);
-              errorEl.show();
-              return true;
-            }).open();
-          })));
-    }
-
-    this.updateAccountSettings();
-    (async () => {
-      try {
-        await acctUserInfo(account);
-        await acctValidateBusinessKey(account);
-      } finally {
-        this.updateAccountSettings();
-      }
-    })();
-  };
-
-  proto.updateAccountSettings = function () {
-    const self = this;
-    const e = aboutEnv();
-    const Yl = e.Yl;
-    const gm = e.gm;
-    const accountI18n = gm.setting.account;
-    const aboutI18n = gm.setting.about;
-
-    this.accountSetting.clear();
-    this.catalystSetting.clear();
-    this.commercialLicenseSetting.clear();
-
-    if (account.email) {
-      this.accountSetting
-        .setName(accountI18n.optionYourAccount())
-        .setDesc(accountI18n.optionYourAccountDesc({ name: account.name, email: account.email }));
-      if (!Yl.isAndroidApp) {
-        this.accountSetting.addButton((b) => b.setButtonText(gm.interface.buttonManage()).onClick(() => {
-          window.open(REPO);
-        }));
-      }
-      this.accountSetting.addButton((b) => b
-        .setButtonText(accountI18n.buttonLogOut())
-        .setClass("mod-destructive")
-        .onClick(async () => {
-          b.buttonEl.addClass("mod-loading");
-          try {
-            await acctSignOut(account);
-            self.display();
-          } catch (err) {
-            b.buttonEl.removeClass("mod-loading");
-            new host.Notice(err.message).containerEl.addClass("mod-error");
-          }
-        }));
-
-      if (account.license) {
-        const tier = account.license;
-        this.catalystSetting
-          .setName(aboutI18n.optionCatalyst())
-          .setDesc(aboutI18n.optionCatalystDesc({ tier }));
-        if (tier !== "vip" && !Yl.isAndroidApp) {
-          this.catalystSetting.addButton((b) => b.setButtonText(accountI18n.buttonUpgradeCatalyst()).onClick(() => {
-            window.open(REPO);
-          }));
-        }
-      } else {
-        this.catalystSetting
-          .setName(aboutI18n.optionCatalyst())
-          .setDesc(createFragment((frag) => {
-            frag.appendText(aboutI18n.optionCatalystDescNoLicense());
-            frag.createEl("br");
-            if (!Yl.isAndroidApp) frag.createEl("a", { text: gm.interface.buttonLearnMore(), attr: { href: WIKI, target: "_blank", rel: "noopener" } });
-          }));
-        if (!Yl.isAndroidApp) {
-          this.catalystSetting.addButton((b) => b.setButtonText(accountI18n.buttonPurchase()).setCta().onClick(() => {
-            window.open(REPO);
-          }));
-        }
-      }
-      this.catalystSetting.settingEl.show();
-    } else {
-      this.accountSetting
-        .setName(accountI18n.optionYourAccount())
-        .setDesc(accountI18n.optionYourAccountDescNoLogin())
-        .addButton((b) => b.setButtonText(accountI18n.labelLogIn()).onClick(() => {
-          new host.LoginModal(self.app).setCloseCallback(() => self.display()).open();
-        }))
-        .addButton((b) => b.setButtonText(accountI18n.labelSignUp()).onClick(() => {
-          if (Yl.isIosApp && e.Tm) e.Tm.open({ url: REPO });
-          else window.open(REPO);
-        }));
-      this.catalystSetting.settingEl.hide();
-    }
-
-    if (account.key) {
-      const key = account.key;
-      const validation = account.keyValidation;
-      const licenseSetting = this.commercialLicenseSetting;
-      let desc = aboutI18n.labelYourCommercialLicenseKey({ key });
-      if (validation === "valid") {
-        desc += " " + aboutI18n.labelCommercialLicenseInfo({
-          company: account.company,
-          seats: account.seats,
-          expiry: window.moment(account.expiry).format("MMMM D, YYYY"),
-        });
-      }
-      licenseSetting.setName(aboutI18n.labelCommercialLicense()).setDesc(desc);
-      if (validation === "valid") {
-        licenseSetting.addButton((b) => b.setButtonText(aboutI18n.buttonRemoveCommercialLicense()).onClick(() => {
-          account.setKey(null);
-          self.display();
-        }));
-      } else if (validation) {
-        licenseSetting.descEl.createEl("p", { text: aboutI18n.labelInvalidCommercialLicense() + validation });
-        licenseSetting.addButton((b) => b.setButtonText(aboutI18n.buttonActivate()).setCta().onClick(() => {
-          new host.LicenseModal(self.app).setCloseCallback(() => self.display()).open();
-        }));
-      } else {
-        licenseSetting.descEl.createEl("p", { text: aboutI18n.labelValidatingCommercialLicense() });
-      }
-    } else {
-      this.commercialLicenseSetting
-        .setName(accountI18n.optionCommercialLicense())
-        .setDesc(createFragment((frag) => {
-          frag.appendText(accountI18n.optionCommercialLicenseDesc());
-          frag.createEl("br");
-          if (!Yl.isAndroidApp) frag.createEl("a", { text: gm.interface.buttonLearnMore(), attr: { href: WIKI, target: "_blank", rel: "noopener" } });
-        }))
-        .addButton((b) => b.setButtonText(aboutI18n.buttonActivate()).setCta().onClick(() => {
-          new host.LicenseModal(self.app).setCloseCallback(() => self.display()).open();
-        }));
-      if (!Yl.isAndroidApp) {
-        this.commercialLicenseSetting.addButton((b) => b.setButtonText(accountI18n.buttonPurchase()).onClick(() => {
-          window.open(REPO);
-        }));
-      }
-    }
-  };
-
-  return AboutTab;
-}
-
 // ---- animation.js ----
 // CSS transitions driven from script: describe the style properties to animate (Transition), start it on an element (runTransition)
 // and, if needed, finish it early (cancelTransition). Used for sidebar collapse/expand, tab insert/remove, menus, notices.
@@ -2560,6 +2235,11 @@ function defineSettingGroup(host) {
     if (text && !attached) this.groupEl.prepend(this.headerEl);
     else if (!text && attached) this.headerEl.detach();
     return this;
+  };
+  /** Heading helper accepting a string or a lazy callback (returns the group for chaining). */
+  proto.addHeading = function (textOrFn) {
+    const text = typeof textOrFn === "function" ? textOrFn() : textOrFn;
+    return this.setHeading(text);
   };
   proto.addClass = function (cls) { this.groupEl.addClass(cls); return this; };
   proto.addSetting = function (configure) { configure(new host.Setting(this.listEl)); return this; };
@@ -66123,6 +65803,473 @@ function defineNg20InteractionLayer(host) {
   return NodeInteractionLayer;
 }
 
+// ---- n-g23-about.js ----
+// g23 clean-room: "About" settings tab (spec g23 §2.8/§3.8, orig N7).
+
+const T = (host, path, fb, arg) => ng23T(host, path, fb, arg);
+const NG23ABOUT_T = (host, key, fb, arg) => T(host, "setting.about." + key, fb, arg);
+const NG23ACCT_T = (host, key, fb, arg) => T(host, "setting.account." + key, fb, arg);
+const NG23DL_T = (host, key, fb) => T(host, "dialogue." + key, fb);
+const NG23ABOUT_IF_T = (host, key, fb) => T(host, "interface." + key, fb);
+
+function ng23Ipc() {
+  const e = env();
+  const cand = [e.Of && (e.Of.ipcRenderer || e.Of), typeof window !== "undefined" && window.electron && window.electron.ipcRenderer];
+  for (const c of cand) if (c && typeof c.sendSync === "function") return c;
+  return null;
+}
+
+function ng23Sync(ipc, channel, arg) {
+  if (!ipc) return undefined;
+  try { return arg === undefined ? ipc.sendSync(channel) : ipc.sendSync(channel, arg); } catch (err) { return undefined; }
+}
+
+function defineAboutTab(host) {
+  function AboutTab(app, setting) {
+    const self = host.SettingTab.call(this, app, setting) || this;
+    self.name = NG23ABOUT_T(host, "name", "About");
+    self.id = "about";
+    self.icon = "circle-user";
+    self._accountRowsEl = null;
+    self._langButton = null;
+    self._langValue = null;
+    self._accountLoaded = false;
+    return self;
+  }
+  inherit(AboutTab, host.SettingTab);
+  const proto = AboutTab.prototype;
+
+  proto.display = function () {
+    this.containerEl.empty();
+    this._langButton = null;
+    this._accountRowsEl = null;
+    const platform = env().Yl || host.Platform;
+    if (platform && platform.isDesktopApp) this._renderDesktopVersion();
+    else if (env().Em) this._renderMobileVersion();
+    this._renderLanguage();
+    this._renderHelp();
+    this._renderAccount();
+    this._renderAdvanced();
+    this._refreshAccountAsync();
+  };
+  // ------------------------------------------------------------ version ----
+
+  proto._renderDesktopVersion = function () {
+    const self = this;
+    const platform = env().Yl || host.Platform;
+    const ipc = ng23Ipc();
+    const update = ng23Sync(ipc, "update");
+    const updateChecking = !!ng23Sync(ipc, "check-update");
+    const updateDisabled = !!ng23Sync(ipc, "disable-update");
+
+    // poll while a check is in flight; re-display once it clears
+    if (updateChecking) {
+      const poll = () => {
+        if (!self.containerEl.isConnected) return;
+        if (!ng23Sync(ng23Ipc(), "check-update")) { self.display(); return; }
+        ng23Later(poll, 1000);
+      };
+      ng23Later(poll, 300);
+    }
+
+    const group = new host.SettingGroup(this.containerEl);
+    group.addSetting((setting) => {
+      const version = platform.version || "";
+      setting.setName(NG23ABOUT_T(host, "labelVersion", "Version {version}", { version }));
+      setting.setDesc(NG23ABOUT_T(host, "labelInstallVersion", "Installed build {version}", { version: platform.build || "" }));
+      const desc = setting.descEl;
+      const downloaded = update === "update-downloaded" || (update && update.status === "update-downloaded");
+      const manual = update === "update-manual-required" || (update && update.status === "update-manual-required");
+      let manualNeeded = manual;
+      if (!manualNeeded) {
+        try {
+          const cmp = env().gy && env().zf !== undefined && env().yte !== undefined ? env().gy(env().zf, env().yte) : false;
+          manualNeeded = !!cmp;
+        } catch (err) { manualNeeded = false; }
+      }
+      const changelog = () => {
+        const a = desc.createEl("a", {
+          cls: "clickable-icon",
+          text: NG23ABOUT_T(host, "labelReadChangelog", "Read the changelog"),
+          attr: { href: NG23_REPO_URL + "/releases", target: "_blank", rel: "noopener" },
+        });
+        return a;
+      };
+      if (downloaded) {
+        desc.appendText(NG23ABOUT_T(host, "labelNewVersionReady", "A new version is ready to install."));
+        desc.createEl("br");
+        changelog();
+      } else if (manualNeeded) {
+        const b = desc.createEl("strong");
+        b.setText(NG23ABOUT_T(host, "labelManualUpdateRequired", "Manual update required"));
+        desc.appendText(" ");
+        let url = NG23_REPO_URL + "/releases";
+        try { if (typeof env().fy === "function") url = env().fy() || url; } catch (err) {}
+        desc.createEl("a", {
+          text: NG23DL_T(host, "buttonDownload", "Download"),
+          attr: { href: url, target: "_blank", rel: "noopener" },
+        });
+      } else {
+        changelog();
+      }
+
+      if (downloaded) {
+        setting.addButton((button) => {
+          button.setButtonText(NG23DL_T(host, "buttonRelaunch", "Relaunch")).setCta().onClick(() => {
+            ng23Sync(ng23Ipc(), "relaunch");
+          });
+        });
+      } else {
+        setting.addButton((button) => {
+          button.setButtonText(NG23DL_T(host, "buttonCheckForUpdates", "Check for updates"));
+          if (updateChecking) button.setDisabled(true);
+          button.onClick(() => {
+            const ipc2 = ng23Ipc();
+            if (ipc2 && typeof ipc2.send === "function") { try { ipc2.send("check-update", true); } catch (err) {} }
+            self.display();
+          });
+        });
+      }
+    });
+
+    // auto-update toggle
+    group.addSetting((setting) => {
+      setting
+        .setName(NG23ABOUT_T(host, "optionAutoUpdate", "Automatic updates"))
+        .setDesc(NG23ABOUT_T(host, "optionAutoUpdateDescription", "Download and install updates automatically."))
+        .addToggle((toggle) => {
+          toggle.setValue(!updateDisabled).onChange((value) => {
+            ng23Sync(ng23Ipc(), "disable-update", !value);
+            ng23Later(() => self.display(), 500);
+          });
+        });
+    });
+
+    // insider build (licensed accounts only)
+    if (account.license) {
+      group.addSetting((setting) => {
+        const insider = !!ng23Sync(ng23Ipc(), "insider-build", null);
+        setting
+          .setName(NG23ABOUT_T(host, "optionInsiderBuild", "Insider build"))
+          .setDesc(NG23ABOUT_T(host, "optionInsiderBuildDescription", "Join the insider testing programme."))
+          .addToggle((toggle) => {
+            toggle.setValue(insider).onChange((value) => {
+              ng23Sync(ng23Ipc(), "insider-build", value);
+            });
+          });
+      });
+    } else {
+      try {
+        const ipc = ng23Ipc();
+        if (ipc && typeof ipc.send === "function") ipc.send("insider-build", false);
+      } catch (err) {}
+    }
+  };
+
+  proto._renderMobileVersion = function () {
+    const platform = env().Yl || host.Platform;
+    const group = new host.SettingGroup(this.containerEl);
+    group.addSetting((setting) => {
+      let label = env().gte || "";
+      try { if (typeof env().gte === "function") label = env().gte(); } catch (err) {}
+      setting.setName(NG23ABOUT_T(host, "labelVersion", "Version {version}", { version: label + " (" + (platform.build || "") + ")" }));
+    });
+  };
+  // -------------------------------------------------------------- language --
+
+  proto._renderLanguage = function () {
+    const self = this;
+    const group = new host.SettingGroup(this.containerEl);
+    group.addSetting((setting) => {
+      setting
+        .setName(NG23ABOUT_T(host, "optionLanguage", "Language"))
+        .setDesc(NG23ABOUT_T(host, "optionLanguageDescription", "Choose the interface language."));
+      const descEl = setting.descEl;
+      descEl.createEl("br");
+      descEl.createEl("a", {
+        text: NG23ABOUT_T(host, "labelAddOwnLanguage", "Add your own language"),
+        attr: { href: NG23_WIKI_URL, target: "_blank", rel: "noopener" },
+      });
+      const codes = Array.isArray(env().Jf) ? env().Jf : [];
+      const names = env().Zf || {};
+      let current = "";
+      try { current = typeof env().sm === "function" ? env().sm() : env().sm; } catch (err) {}
+      setting.addDropdown((dropdown) => {
+        for (const code of codes) dropdown.addOption(code, names[code] || code);
+        dropdown.setValue(current || (codes[0] || ""));
+        dropdown.onChange((value) => {
+          self._langValue = value;
+          if (self._langButton) self._langButton.toggle(value !== current);
+        });
+      });
+      setting.addButton((button) => {
+        self._langButton = button.buttonEl || button;
+        const wrap = self._langButton;
+        wrap.hide();
+        button.setButtonText(NG23DL_T(host, "buttonRelaunch", "Relaunch")).onClick(() => {
+          const sel = self._langValue;
+          try { if (sel && typeof env().lm === "function") env().lm(sel); } catch (err) {}
+          try { window.location.reload(); } catch (err) {}
+        });
+      });
+    });
+  };
+
+  // ----------------------------------------------------------------- help ---
+
+  proto._renderHelp = function () {
+    const self = this;
+    const group = new host.SettingGroup(this.containerEl);
+    group.addSetting((setting) => {
+      setting
+        .setName(NG23ABOUT_T(host, "optionGetHelp", "Help"))
+        .setDesc(NG23ABOUT_T(host, "optionGetHelpDescription", "Find answers and report problems."))
+        .addButton((button) => {
+          button.setButtonText(NG23ABOUT_T(host, "buttonOpen", "Open")).onClick(() => {
+            try { self.setting && self.setting.close && self.setting.close(); } catch (err) {}
+            try { this.app.openHelp && this.app.openHelp(); } catch (err) {}
+          });
+        });
+    });
+  };
+  // --------------------------------------------------------------- account --
+
+  proto._renderAccount = function () {
+    const group = new host.SettingGroup(this.containerEl)
+      .addHeading(() => NG23ACCT_T(host, "name", "Account"));
+    const box = this.containerEl.createDiv("account-settings-rows");
+    this._accountRowsEl = box;
+    this._renderAccountRows();
+    void group;
+  };
+
+  proto._accountItem = function (name, descNodes, buttons) {
+    const item = this._accountRowsEl.createDiv("setting-item");
+    const info = item.createDiv("setting-item-info");
+    info.createDiv("setting-item-name").setText(name);
+    const desc = info.createDiv("setting-item-description");
+    for (const node of descNodes) {
+      if (typeof node === "string") desc.appendText(node); else desc.appendChild(node);
+    }
+    const control = item.createDiv("setting-item-control");
+    for (const btn of buttons) control.appendChild(btn);
+    return item;
+  };
+
+  proto._accountButton = function (cls, text, onClick) {
+    const btn = createEl("button", { cls: "clickable-icon " + cls });
+    btn.setText(text);
+    btn.addEventListener("click", onClick);
+    return btn;
+  };
+
+  proto._renderAccountRows = function () {
+    const self = this;
+    const box = this._accountRowsEl;
+    if (!box) return;
+    box.empty();
+    const platform = env().Yl || host.Platform;
+    const isAndroid = !!(platform && platform.isAndroidApp);
+
+    // -- account row ------------------------------------------------------
+    if (account.email) {
+      const btns = [];
+      if (!isAndroid) {
+        btns.push(this._accountButton("", NG23ABOUT_IF_T(host, "buttonManage", "Manage"), () => {
+          try { window.open(NG23_REPO_URL, "_blank", "noopener"); } catch (err) {}
+        }));
+      }
+      const outBtn = this._accountButton("mod-destructive", NG23ACCT_T(host, "buttonLogOut", "Log out"), async (event) => {
+        const btn = event.currentTarget;
+        btn.addClass("mod-loading");
+        try {
+          await acctSignOut(account);
+          self.display();
+        } catch (err) {
+          try { new host.Notice(String(err && err.message || err)); } catch (e) {}
+        } finally {
+          btn.removeClass("mod-loading");
+        }
+      });
+      btns.push(outBtn);
+      this._accountItem(
+        NG23ACCT_T(host, "optionYourAccount", "Your account"),
+        [NG23ACCT_T(host, "optionYourAccountDesc", "Signed in as {name} ({email})", { name: account.name || "", email: account.email })],
+        btns
+      );
+    } else {
+      const btns = [
+        this._accountButton("", NG23ACCT_T(host, "labelLogIn", "Log in"), () => {
+          new host.LoginModal(this.app).setCloseCallback(() => self.display()).open();
+        }),
+      ];
+      btns.push(this._accountButton("", NG23ACCT_T(host, "labelSignUp", "Sign up"), () => {
+        if (platform && platform.isIosApp && env().Em && env().Tm && typeof env().Tm.open === "function") {
+          try { env().Tm.open({ url: NG23_REPO_URL }); return; } catch (err) {}
+        }
+        try { window.open(NG23_REPO_URL, "_blank", "noopener"); } catch (err) {}
+      }));
+      this._accountItem(NG23ACCT_T(host, "optionYourAccount", "Your account"), [NG23ACCT_T(host, "optionYourAccountDescNoLogin", "Log in or sign up for an account.")], btns);
+    }
+
+    // -- catalyst row (signed-in only) -------------------------------------
+    if (account.email) {
+      const btns = [];
+      if (account.license) {
+        const tier = account.license;
+        if (!(tier === "vip" || isAndroid)) {
+          btns.push(this._accountButton("", NG23ACCT_T(host, "buttonUpgradeCatalyst", "Upgrade"), () => {
+            try { window.open(NG23_REPO_URL, "_blank", "noopener"); } catch (err) {}
+          }));
+        }
+        this._accountItem(NG23ACCT_T(host, "optionCatalyst", "Catalyst"), [NG23ACCT_T(host, "optionCatalystDesc", "Licence tier: {tier}", { tier })], btns);
+      } else {
+        const desc = [NG23ACCT_T(host, "optionCatalystDescNoLicense", "Get a licence for extra features.")];
+        if (!isAndroid) {
+          btns.push(this._accountButton("", NG23ABOUT_IF_T(host, "buttonLearnMore", "Learn more"), () => {
+            try { window.open(NG23_WIKI_URL, "_blank", "noopener"); } catch (err) {}
+          }));
+          btns.push(this._accountButton("", NG23ACCT_T(host, "buttonPurchase", "Purchase"), () => {
+            try { window.open(NG23_REPO_URL, "_blank", "noopener"); } catch (err) {}
+          }));
+        }
+        this._accountItem(NG23ACCT_T(host, "optionCatalyst", "Catalyst"), desc, btns);
+      }
+    }
+
+    // -- commercial licence row --------------------------------------------
+    const licBtns = [];
+    const openLicense = () => { new host.LicenseModal(this.app).open(); };
+    let licName = NG23ACCT_T(host, "optionCommercialLicense", "Commercial licence");
+    let licDesc = [];
+    if (account.key) {
+      licName = NG23ABOUT_T(host, "labelCommercialLicense", "Commercial licence");
+      licDesc = [NG23ABOUT_T(host, "labelYourCommercialLicenseKey", "Key: {key}", { key: account.key })];
+      if (account.keyValidation === "valid") {
+        const moment = ng23Moment();
+        let expiry = "";
+        try { expiry = moment && account.expiry ? moment(account.expiry).format("MMMM D, YYYY") : ""; } catch (err) {}
+        licDesc.push(" " + NG23ABOUT_T(host, "labelCommercialLicenseInfo", "{company} · {seats} seats · expires {expiry}", { company: account.company || "", seats: account.seats || "", expiry }));
+        licBtns.push(this._accountButton("", NG23ABOUT_T(host, "buttonRemoveCommercialLicense", "Remove"), () => {
+          account.setKey(null);
+          self.display();
+        }));
+      } else if (typeof account.keyValidation === "string" && account.keyValidation) {
+        licDesc.push(NG23ABOUT_T(host, "labelInvalidCommercialLicense", "Invalid licence key") + " " + account.keyValidation);
+        licBtns.push(this._accountButton("", NG23ABOUT_T(host, "buttonActivate", "Activate"), openLicense));
+      } else {
+        licDesc = [NG23ABOUT_T(host, "labelValidatingCommercialLicense", "Validating licence key…")];
+      }
+    } else {
+      licDesc = [NG23ABOUT_T(host, "optionCommercialLicenseDesc", "Activate a commercial licence key.")];
+      if (!isAndroid) {
+        licBtns.push(this._accountButton("", NG23ABOUT_IF_T(host, "buttonLearnMore", "Learn more"), () => {
+          try { window.open(NG23_WIKI_URL, "_blank", "noopener"); } catch (err) {}
+        }));
+        licBtns.push(this._accountButton("", NG23ABOUT_T(host, "buttonPurchase", "Purchase"), () => {
+          try { window.open(NG23_REPO_URL, "_blank", "noopener"); } catch (err) {}
+        }));
+      }
+      licBtns.push(this._accountButton("", NG23ABOUT_T(host, "buttonActivate", "Activate"), openLicense));
+    }
+    this._accountItem(licName, licDesc, licBtns);
+  };
+
+  proto.updateAccountSettings = function () {
+    this._renderAccountRows();
+  };
+
+  proto._refreshAccountAsync = function () {
+    if (this._accountLoaded) return;
+    this._accountLoaded = true;
+    const self = this;
+    (async () => {
+      try { await acctUserInfo(account); } catch (err) {}
+      try { await acctValidateBusinessKey(account); } catch (err) {}
+      self.updateAccountSettings();
+    })();
+  };
+  // -------------------------------------------------------------- advanced --
+
+  proto._renderAdvanced = function () {
+    const self = this;
+    const platform = env().Yl || host.Platform;
+    const group = new host.SettingGroup(this.containerEl)
+      .addHeading(() => NG23ABOUT_T(host, "optionAdvanced", "Advanced"));
+
+    // slow startup check
+    group.addSetting((setting) => {
+      let on = false;
+      try { on = !!this.app.loadLocalStorage("slow-startup-check"); } catch (err) {}
+      setting
+        .setName(NG23ABOUT_T(host, "optionCheckSlowStartup", "Check for slow startup"))
+        .setDesc(NG23ABOUT_T(host, "optionCheckSlowStartupDescription", "Measure startup time on launch."))
+        .addToggle((toggle) => {
+          toggle.setValue(on).onChange((value) => {
+            try { this.app.saveLocalStorage("slow-startup-check", value ? "1" : null); } catch (err) {}
+          });
+        })
+        .addExtraButton((button) => {
+          button.setIcon("lucide-timer").setTooltip(NG23DL_T(host, "buttonCheckStartup", "Check startup")).onClick(() => {
+            new host.SlowStartupCheck(this.app).open();
+          });
+        });
+    });
+
+    // CLI registration (desktop + electron only)
+    const ipc = ng23Ipc();
+    if (platform && platform.isDesktopApp && ipc && typeof window !== "undefined" && window.electron) {
+      group.addSetting((setting) => {
+        const cliOn = !!ng23Sync(ipc, "cli", null);
+        setting
+          .setName(NG23ABOUT_T(host, "optionCli", "Command line interface"))
+          .setDesc(NG23ABOUT_T(host, "optionCliDescription", "Register the basalt CLI."))
+          .addToggle((toggle) => {
+            toggle.setValue(cliOn).onChange((value) => {
+              ng23Sync(ng23Ipc(), "cli", value);
+              if (value) self._openCliRegister();
+            });
+          });
+      });
+    }
+  };
+
+  proto._openCliRegister = function () {
+    const self = this;
+    const ipc = ng23Ipc();
+    if (!ipc) return;
+    const modal = new host.ButtonModal(this.app);
+    modal.modalEl.addClass("mod-lg");
+    modal.setTitle(NG23ABOUT_T(host, "optionRegisterPath", "Register CLI"));
+    const content = modal.contentEl;
+    content.empty();
+    content.createEl("p", { text: NG23ABOUT_T(host, "optionRegisterPathDescription", "Allow the basalt command in your terminal.") });
+    const errWrap = content.createDiv("message-container");
+    const errEl = errWrap.createDiv("message mod-error");
+    errEl.hide();
+    modal.buttonContainerEl.createEl("a", {
+      cls: "mod-secondary",
+      text: NG23ABOUT_IF_T(host, "buttonLearnMore", "Learn more"),
+      attr: { href: NG23_WIKI_URL, target: "_blank", rel: "noopener" },
+    });
+    modal.addButton("mod-cancel", NG23DL_T(host, "buttonSkip", "Skip"), () => {});
+    modal.addButton("mod-cta", NG23ABOUT_T(host, "buttonRegister", "Register"), async () => {
+      let result = null;
+      try { result = await ipc.invoke("register-cli"); } catch (err) { result = { success: false, message: String(err && err.message || err) }; }
+      if (result && result.success) {
+        try { new host.Notice(result.message || "OK"); } catch (err) {}
+        return false;
+      }
+      errEl.setText((result && result.message) || "Failed");
+      errEl.show();
+      return true;
+    });
+    modal.open();
+  };
+
+  return AboutTab;
+}
+
 // ---- n-g23-account-modals.js ----
 // g23 clean-room: login + commercial-licence dialogs (spec g23 §2.7/§3.7).
 
@@ -66202,7 +66349,7 @@ function defineLoginModal(host) {
       autocomplete: "one-time-code",
       inputMode: "numeric",
       maxLength: 6,
-      placeholder: ACCT_T(host, "placeholderMfaCode", "Authentication code"),
+      placeholder: ACCT_T(host, "labelMfaCode", "6-digit 2FA code"),
       sanitize: (v) => v.replace(/\D/g, "").slice(0, 6),
     });
     self._mfaP = mfaF.p;
@@ -66220,7 +66367,7 @@ function defineLoginModal(host) {
       try { window.open(NG23_REPO_URL, "_blank", "noopener"); } catch (err) {}
     });
 
-    self.addButton("mod-cta", ACCT_T(host, "labelLogIn", "Log in"), () => self.login());
+    self.addButton("mod-cta", ACCT_T(host, "buttonLogin", "Sign in"), () => self.login());
     self.addCancelButton();
     return self;
   }
@@ -66242,16 +66389,17 @@ function defineLoginModal(host) {
     const email = this._email.value.trim();
     const password = this._pass.value;
     const mfa = this._mfa.value.trim();
-    if (!email) return this._showError(ACCT_T(host, "messageEmptyEmail", "Please enter your email."));
-    if (!email.includes("@")) return this._showError(ACCT_T(host, "messageInvalidEmail", "Please enter a valid email."));
-    if (!password) return this._showError(ACCT_T(host, "messageEmptyPassword", "Please enter your password."));
-    if (mfa && !/^\d{6}$/.test(mfa)) return this._showError(ACCT_T(host, "mfaWrongFormat", "The code must be 6 digits."));
+    if (!email) { this._showError(ACCT_T(host, "messageEmptyEmail", "Please enter your email.")); return true; }
+    if (!email.includes("@")) { this._showError(ACCT_T(host, "messageInvalidEmail", "Please enter a valid email.")); return true; }
+    if (!password) { this._showError(ACCT_T(host, "messageEmptyPassword", "Please enter your password.")); return true; }
+    if (mfa && !/^\d{6}$/.test(mfa)) { this._showError(ACCT_T(host, "mfaWrongFormat", "The code must be 6 digits.")); return true; }
 
     this._loader.show();
     this._body.hide();
     try {
       await acctSignIn(account, email, password, mfa || undefined);
       this.close();
+      return false;
     } catch (err) {
       if (err instanceof AccountError) {
         const msg = String(err.message || "");
@@ -66268,6 +66416,7 @@ function defineLoginModal(host) {
       } else {
         this._showError(ACCT_T(host, "messageLoginFailed", "Login failed. Please try again."));
       }
+      return true;
     } finally {
       self._loader.hide();
       self._body.show();
@@ -66320,7 +66469,7 @@ function defineLicenseModal(host) {
       });
     }
 
-    self.addButton("mod-cta", ABOUT_T(host, "buttonActivateLicense", "Activate"), () => self.activate());
+    self.addButton("mod-cta", ABOUT_T(host, "buttonActivate", "Activate"), () => self.activate());
     self.addCancelButton();
     return self;
   }
