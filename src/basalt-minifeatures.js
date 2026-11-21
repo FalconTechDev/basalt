@@ -79,7 +79,7 @@
       else (e.remote && e.remote.shell || e.shell).showItemInFolder(full);
     };
     window.__bsReveal = (full) => { try { reveal(full); } catch (err) { console.error("[show-in-folder]", err); } };
-    const show = (rel) => window.__bsReveal(app.vault.adapter.getFullPath(rel || ""));
+    const show = (rel) => window.__bsReveal(app.vault.adapter.getFullPath((rel && typeof rel === "object" ? rel.path : rel) || "")); /* a path or a file object */
     for (const o of [app, app.vault]) if (typeof o.showInFolder === "function") o.showInFolder = show;
   }, 500);
 })();

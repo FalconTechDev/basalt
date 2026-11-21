@@ -497,11 +497,15 @@ export async function appShowInFolder(file) {
     new (env().fb)(env().gm.interface.notice.fileNotFound ? env().gm.interface.notice.fileNotFound() : "File not found");
     return;
   }
-  const electron = env().electron;
-  const full = this.vault.adapter && this.vault.adapter.getFullPath ? this.vault.adapter.getFullPath(file.path) : file.path;
+  // a path or a file object, whichever the caller has
+  const rel = typeof file === "string" ? file : (file && file.path) || "";
+  const adapter = this.vault.adapter;
+  const full = adapter && adapter.getFullPath ? adapter.getFullPath(rel) : rel;
+  const electron = window.electron || env().electron;
   if (electron && electron.ipcRenderer) {
-    try { electron.ipcRenderer.send("show-in-folder", full); return; } catch (e) {}
+    try { electron.ipcRenderer.send("show-in-folder", full); return; } catch (e) { console.error(e); }
   }
+  new (env().fb)("Не удалось открыть файловый менеджер");
 }
 
 export function appGetObsidianUrl(file) {

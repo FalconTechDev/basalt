@@ -451,6 +451,7 @@ export function defineNg20RenamePrompt(host) {
     onOpen() {
       const { contentEl } = this;
       contentEl.addClass("canvas-rename-modal");
+      contentEl.createDiv("canvas-rename-title").setText("Переименовать");
       const input = contentEl.createEl("input", { type: "text", cls: "canvas-rename-input" });
       input.value = this.file ? this.file.basename : "";
       const err = contentEl.createDiv("canvas-rename-error");
@@ -458,14 +459,16 @@ export function defineNg20RenamePrompt(host) {
       const submit = () => {
         const name = (input.value || "").trim();
         if (!ng20ValidFilename(name)) {
-          err.setText("Invalid file name");
+          err.setText("Недопустимое имя файла");
           err.show();
           return;
         }
         this.close();
         if (this.onSubmit) this.onSubmit(name);
       };
-      contentEl.createEl("button", { cls: "mod-cta", text: "Rename" }).addEventListener("click", submit);
+      const row = contentEl.createDiv("canvas-rename-buttons");
+      row.createEl("button", { text: "Отмена" }).addEventListener("click", () => this.close());
+      row.createEl("button", { cls: "mod-cta", text: "Переименовать" }).addEventListener("click", submit);
       input.addEventListener("keydown", (evt) => {
         if (evt.key === "Enter") submit();
         else if (evt.key === "Escape") this.close();
@@ -499,7 +502,7 @@ export function defineNg20NewFileModal(host) {
       const submit = () => {
         const name = (input.value || "").trim();
         if (!ng20ValidFilename(name)) {
-          err.setText("Invalid file name");
+          err.setText("Недопустимое имя файла");
           err.show();
           return;
         }

@@ -47250,7 +47250,9 @@ function createFileSystemAdapter() {
   // ---------- path mapping ----------
 
   proto.getName = function () {
-    return lastSegment(this.basePath);
+    // the name of the vault folder, whichever separator the operating system uses
+    const parts = String(this.basePath || "").split(/[/\\]+/).filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : lastSegment(this.basePath);
   };
 
   proto.getBasePath = function () {
@@ -47381,6 +47383,7 @@ function createFileSystemAdapter() {
 
   proto.write = async function (path, data, options) {
     return this.queue(() => this.changeFile(path, async (full) => {
+      await this.fs.promises.mkdir(full.slice(0, Math.max(full.lastIndexOf("/"), full.lastIndexOf("\\"))) || ".", { recursive: true });
       await this.fs.promises.writeFile(full, data);
     }, options));
   };
@@ -51828,11 +51831,15 @@ async function appShowInFolder(file) {
     new (env().fb)(env().gm.interface.notice.fileNotFound ? env().gm.interface.notice.fileNotFound() : "File not found");
     return;
   }
-  const electron = env().electron;
-  const full = this.vault.adapter && this.vault.adapter.getFullPath ? this.vault.adapter.getFullPath(file.path) : file.path;
+  // a path or a file object, whichever the caller has
+  const rel = typeof file === "string" ? file : (file && file.path) || "";
+  const adapter = this.vault.adapter;
+  const full = adapter && adapter.getFullPath ? adapter.getFullPath(rel) : rel;
+  const electron = window.electron || env().electron;
   if (electron && electron.ipcRenderer) {
-    try { electron.ipcRenderer.send("show-in-folder", full); return; } catch (e) {}
+    try { electron.ipcRenderer.send("show-in-folder", full); return; } catch (e) { console.error(e); }
   }
+  new (env().fb)("Не удалось открыть файловый менеджер");
 }
 
 function appGetObsidianUrl(file) {
@@ -64288,6 +64295,7 @@ function defineNg20RenamePrompt(host) {
     onOpen() {
       const { contentEl } = this;
       contentEl.addClass("canvas-rename-modal");
+      contentEl.createDiv("canvas-rename-title").setText("Переименовать");
       const input = contentEl.createEl("input", { type: "text", cls: "canvas-rename-input" });
       input.value = this.file ? this.file.basename : "";
       const err = contentEl.createDiv("canvas-rename-error");
@@ -64295,14 +64303,16 @@ function defineNg20RenamePrompt(host) {
       const submit = () => {
         const name = (input.value || "").trim();
         if (!ng20ValidFilename(name)) {
-          err.setText("Invalid file name");
+          err.setText("Недопустимое имя файла");
           err.show();
           return;
         }
         this.close();
         if (this.onSubmit) this.onSubmit(name);
       };
-      contentEl.createEl("button", { cls: "mod-cta", text: "Rename" }).addEventListener("click", submit);
+      const row = contentEl.createDiv("canvas-rename-buttons");
+      row.createEl("button", { text: "Отмена" }).addEventListener("click", () => this.close());
+      row.createEl("button", { cls: "mod-cta", text: "Переименовать" }).addEventListener("click", submit);
       input.addEventListener("keydown", (evt) => {
         if (evt.key === "Enter") submit();
         else if (evt.key === "Escape") this.close();
@@ -64336,7 +64346,7 @@ function defineNg20NewFileModal(host) {
       const submit = () => {
         const name = (input.value || "").trim();
         if (!ng20ValidFilename(name)) {
-          err.setText("Invalid file name");
+          err.setText("Недопустимое имя файла");
           err.show();
           return;
         }

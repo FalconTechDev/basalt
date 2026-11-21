@@ -1,0 +1,45 @@
+/* softer controls: rounded corners and gentle shadows instead of hard edges */
+:root { --radius-s: 6px; --radius-m: 8px; --radius-l: 12px; }
+button:not(.bset-n):not(.titlebar-button), .dropdown, select { border-radius: var(--radius-m); transition: background-color .15s ease, box-shadow .15s ease, color .15s ease; }
+input[type="text"], input[type="search"], input[type="number"], input[type="password"], textarea { border-radius: var(--radius-m); }
+.clickable-icon, .nav-action-button, .view-action, .bsf-bar button, .bsd-tb button, .canvas-card-menu-button { border-radius: var(--radius-m); transition: background-color .15s ease, color .15s ease; }
+.menu, .suggestion-container, .popover, .tooltip, .notice { border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, .45); }
+.modal { border-radius: 14px; box-shadow: 0 16px 48px rgba(0, 0, 0, .55); overflow: hidden; }
+.modal-bg { background: rgba(0, 0, 0, .55); backdrop-filter: blur(2px); }
+.menu-item, .suggestion-item { border-radius: 6px; }
+.menu { padding: 6px; }
+.menu-item { margin: 1px 0; }
+.workspace-tab-header { border-radius: 8px 8px 0 0; }
+.search-input-container input, .bsf-find input, .bset-find input { border-radius: var(--radius-m); }
+.checkbox-container, .bset .checkbox-container { border-radius: 11px; }
+.bset .checkbox-container::after { border-radius: 50%; }
+.bset .checkbox-container { border-width: 0; background: var(--background-modifier-border-hover); }
+.bset .checkbox-container.is-enabled { background: var(--interactive-accent); }
+.bset .checkbox-container::after { top: 3px; left: 3px; width: 16px; height: 16px; }
+.bset .checkbox-container.is-enabled::after { left: 21px; }
+.bset-row button, .bset-c button, .bset-nav button.bset-n { border-radius: 8px; clip-path: none; }
+.bset-nav button.bset-n { margin: 1px 8px; width: calc(100% - 16px); }
+.bset-nav button.bset-n.is-on::before { display: none; }
+.bset-nav button.bset-n.is-on { box-shadow: inset 2px 0 0 var(--interactive-accent); }
+.bset-find input { margin: 0; }
+.modal.bset { border-radius: 14px; }
+.bset-row select, .bset-row input[type=text] { border-radius: 8px; }
+/* the Modules page: one card per module */
+.bsm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-top: 14px; }
+.bsm-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 12px; transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease; }
+.bsm-card:hover { border-color: var(--interactive-accent); box-shadow: 0 6px 18px rgba(0, 0, 0, .3); background: var(--background-primary-alt, var(--background-secondary)); }
+.bsm-ic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--bs-accent-soft, color-mix(in srgb, var(--interactive-accent) 16%, transparent)); color: var(--interactive-accent); }
+.bsm-ic svg { width: 20px; height: 20px; }
+.bsm-t { flex: 1; min-width: 0; }
+.bsm-t b { display: block; font-size: 14px; font-weight: 600; }
+.bsm-t small { display: block; margin-top: 3px; color: var(--text-muted); font-size: 12px; line-height: 1.35; }
+.bsm-go { flex: none; height: 30px; padding: 0 14px; border-radius: 8px; background: var(--background-modifier-hover); }
+.bsm-go:hover { background: var(--interactive-accent); color: var(--text-on-accent); }
+/* the canvas rename prompt: title, a full-width field, two buttons */
+.modal:has(.canvas-rename-modal) { width: min(440px, 92vw); max-width: none; padding: 0; }
+.canvas-rename-modal { display: flex; flex-direction: column; gap: 12px; padding: 22px 24px 20px; }
+.canvas-rename-title { font-size: 16px; font-weight: 600; }
+.canvas-rename-input { width: 100%; height: 36px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; }
+.canvas-rename-error { color: var(--text-error); font-size: 12px; }
+.canvas-rename-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.canvas-rename-buttons button { height: 32px; padding: 0 16px; border-radius: 8px; }

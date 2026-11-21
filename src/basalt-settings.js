@@ -188,8 +188,38 @@
         // the module draws its own page into a container; it is placed here and restyled by .bset-legacy
         try { const c = t.containerEl || document.createElement("div"); c.textContent = ""; box.appendChild(c); t.display(); } catch (e) { box.textContent = "Не удалось показать страницу: " + e.message; }
       };
-      row(grid, "Граф", "Граф заметок и холстов, граф файлов проекта.", button("Открыть", () => { try { app.setting.close(); } catch (e) { /* closed */ } app.commands.executeCommandById("graph:open"); }));
-      for (const t of tabs) row(grid, t.name || t.id, "", button("Открыть", () => openTab(t)));
+      // one card per module: icon, name, what it does, a button to its settings
+      const META = {
+        "switcher": ["lucide-search", "Быстрый переход к заметке по названию."],
+        "daily-notes": ["lucide-calendar-days", "Заметка на каждый день по шаблону."],
+        "templates": ["lucide-file-plus", "Вставка готовых шаблонов в заметку."],
+        "command-palette": ["lucide-terminal", "Поиск и запуск любой команды."],
+        "backlink": ["lucide-link", "Обратные ссылки и упоминания заметки."],
+        "backlinks": ["lucide-link", "Обратные ссылки и упоминания заметки."],
+        "canvas": ["lucide-layout-dashboard", "Бесконечная доска с карточками и связями."],
+        "page-preview": ["lucide-eye", "Предпросмотр заметки при наведении на ссылку."],
+        "note-composer": ["lucide-merge", "Слияние заметок и вынос частей в новые."],
+        "composer": ["lucide-merge", "Слияние заметок и вынос частей в новые."],
+        "sync": ["lucide-refresh-cw", "Синхронизация хранилища между устройствами."],
+        "publish": ["lucide-globe", "Публикация заметок на сайт."],
+        "file-recovery": ["lucide-history", "Восстановление предыдущих версий файлов."],
+        "properties": ["lucide-list", "Свойства заметок."],
+        "outline": ["lucide-list-tree", "Структура заметки по заголовкам."],
+        "bookmarks": ["lucide-bookmark", "Закладки на заметки, поиски и заголовки."],
+        "random-note": ["lucide-dices", "Случайная заметка из хранилища."],
+        "word-count": ["lucide-text", "Подсчёт слов и символов."],
+      };
+      const entries = [{ id: "graph", name: "Граф", open: () => { try { app.setting.close(); } catch (e) { /* closed */ } app.commands.executeCommandById("graph:open"); }, meta: ["lucide-git-fork", "Граф заметок, холстов и файлов проекта."] }]
+        .concat(tabs.map((t) => ({ id: t.id, name: t.name || t.id, open: () => openTab(t), meta: META[t.id] || ["lucide-puzzle", ""] })));
+      grid.className = "bsm-grid";
+      for (const e of entries) {
+        const card = document.createElement("div"); card.className = "bsm-card";
+        const ic = document.createElement("span"); ic.className = "bsm-ic"; try { window.__bsApi.setIcon(ic, e.meta[0]); } catch (err) { /* no icon */ }
+        const txt = document.createElement("div"); txt.className = "bsm-t"; const b = document.createElement("b"); b.textContent = e.name; txt.appendChild(b);
+        if (e.meta[1]) { const sm = document.createElement("small"); sm.textContent = e.meta[1]; txt.appendChild(sm); }
+        const act = button("Настроить", e.open); act.classList.add("bsm-go");
+        card.append(ic, txt, act); card.addEventListener("dblclick", e.open); grid.appendChild(card);
+      }
       view.style.display = "none"; h.append(grid, view);
       if (pendingTab) { const t = tabs.find((x) => x.id === pendingTab); pendingTab = null; if (t) openTab(t); }
     });

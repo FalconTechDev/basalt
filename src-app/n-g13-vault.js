@@ -1040,7 +1040,9 @@ export function createFileSystemAdapter() {
   // ---------- path mapping ----------
 
   proto.getName = function () {
-    return lastSegment(this.basePath);
+    // the name of the vault folder, whichever separator the operating system uses
+    const parts = String(this.basePath || "").split(/[/\\]+/).filter(Boolean);
+    return parts.length ? parts[parts.length - 1] : lastSegment(this.basePath);
   };
 
   proto.getBasePath = function () {
@@ -1171,6 +1173,7 @@ export function createFileSystemAdapter() {
 
   proto.write = async function (path, data, options) {
     return this.queue(() => this.changeFile(path, async (full) => {
+      await this.fs.promises.mkdir(full.slice(0, Math.max(full.lastIndexOf("/"), full.lastIndexOf("\\"))) || ".", { recursive: true });
       await this.fs.promises.writeFile(full, data);
     }, options));
   };
