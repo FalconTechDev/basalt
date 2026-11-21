@@ -66,13 +66,11 @@ function LinkPaneView(leaf) {
 /** One collapsible pane section: header row (.tree-item-self.is-clickable) + body el. */
 function ng11MakeSection(pane, label, countEl, onToggle) {
   const header = pane.createDiv("tree-item-self is-clickable");
-  header.addClass("search-section-header");
-  const icon = header.createDiv("tree-item-icon collapse-icon");
+  const icon = header.createSpan("tree-item-icon collapse-icon");
   LPH().setIcon(icon, "right-triangle");
-  const inner = header.createDiv("tree-item-inner");
-  inner.createDiv("tree-item-inner-text").setText(label);
+  header.createDiv("tree-item-inner").setText(label);
   const flair = header.createDiv("tree-item-flair-outer").createSpan("tree-item-flair");
-  const body = pane.createDiv();
+  const body = pane.createDiv("search-result-container");
   body.hide();
   const section = {
     header, body, flair, collapsed: true,
@@ -121,31 +119,26 @@ const BacklinkComponentProto = {
   _buildDom() {
     const host = LPH();
     const t = host.t.plugins.backlinks;
-    const pane = this.containerEl.createDiv("backlink-pane");
-    this.paneEl = pane;
 
-    // header: collapse-all / more-context / sort / show-search buttons
-    const header = pane.createDiv("backlink-header");
-    this.collapseAllBtn = header.createDiv("clickable-icon");
-    host.setIcon(this.collapseAllBtn, "lucide-list");
-    setElementTooltip(this.collapseAllBtn, host.t.plugins.search.labelCollapseResults());
-    this.collapseAllBtn.addEventListener("click", () => this.setCollapseAll(!this.collapseAll));
-    this.moreContextBtn = header.createDiv("clickable-icon");
-    host.setIcon(this.moreContextBtn, "lucide-move-vertical");
-    setElementTooltip(this.moreContextBtn, host.t.plugins.search.labelMoreContext());
-    this.moreContextBtn.addEventListener("click", () => this.setExtraContext(!this.extraContext));
-    this.sortBtn = header.createDiv("clickable-icon");
-    host.setIcon(this.sortBtn, "lucide-arrow-up-down");
-    this.sortBtn.addEventListener("click", (e) => this._sortMenu(e));
-    this.searchBtn = header.createDiv("clickable-icon");
-    host.setIcon(this.searchBtn, "lucide-search");
-    setElementTooltip(this.searchBtn, t.labelShowSearch());
-    this.searchBtn.addEventListener("click", () => this.setShowSearch(!this.isShowingSearch));
+    // nav header (sibling of the pane, prepended): action buttons + search field
+    const navHeaderEl = this.containerEl.createDiv({ cls: "nav-header", prepend: true });
+    const navButtonsEl = navHeaderEl.createDiv("nav-buttons-container");
+    const addNavButton = (icon, tooltip, cb) => {
+      const btn = navButtonsEl.createDiv("clickable-icon nav-action-button");
+      btn.addEventListener("click", cb);
+      host.setIcon(btn, icon);
+      if (tooltip) setElementTooltip(btn, tooltip);
+      return btn;
+    };
+    this.collapseAllBtn = addNavButton("lucide-list", host.t.plugins.search.labelCollapseResults(), () => this.setCollapseAll(!this.collapseAll));
+    this.moreContextBtn = addNavButton("lucide-move-vertical", host.t.plugins.search.labelMoreContext(), () => this.setExtraContext(!this.extraContext));
+    this.sortBtn = addNavButton("lucide-sort-asc", host.t.plugins.fileExplorer.actionChangeSort(), (e) => this._sortMenu(e));
+    this.searchBtn = addNavButton("lucide-search", t.labelShowSearch(), () => this.setShowSearch(!this.isShowingSearch));
 
-    const searchRow = pane.createDiv("search-row");
-    this.searchComponent = new host.SearchComponent(searchRow);
+    this.searchComponent = new host.SearchComponent(navHeaderEl);
     this.searchComponent.setPlaceholder(host.t.plugins.search.promptStartSearch());
-    this.searchComponent.inputEl.addClass("backlink-search-input");
+    setElementTooltip(this.searchComponent.clearButtonEl, host.t.plugins.search.tooltipClearSearch());
+    this.searchComponent.containerEl.hide();
     this._onSearchChange = debounceCall(() => this.updateSearch(), 300);
     this.searchComponent.onChange(() => {
       const v = this.searchComponent.getValue();
@@ -155,15 +148,16 @@ const BacklinkComponentProto = {
     this.searchComponent.inputEl.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); this.updateSearch(); }
     });
-    searchRow.hide();
-    this.searchRowEl = searchRow;
+
+    const pane = this.containerEl.createDiv("backlink-pane");
+    this.paneEl = pane;
 
     // two sections
     this.linkedSection = ng11MakeSection(pane, t.labelLinkedMentions(), null, (c) => this.setBacklinkCollapsed(c, true));
-    this.backlinkDom = new ng11SearchViewClasses.SearchResults(app, this.linkedSection.body.createDiv({ cls: "search-result-container" }), t.labelNoBacklinks(), this.scrollParent);
+    this.backlinkDom = new ng11SearchViewClasses.SearchResults(app, this.linkedSection.body, t.labelNoBacklinks(), this.scrollParent);
     this.linkedSection.body.show();
     this.unlinkedSection = ng11MakeSection(pane, t.labelUnlinkedMentions(), null, (c) => this.setUnlinkedCollapsed(c, true));
-    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body.createDiv({ cls: "search-result-container" }), t.labelNoUnlinkedMentions(), this.scrollParent);
+    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body, t.labelNoUnlinkedMentions(), this.scrollParent);
     this.unlinkedSection.body.show();
     this.linkedSection.setCollapsed(this.backlinkCollapsed, false);
     this.unlinkedSection.setCollapsed(this.unlinkedCollapsed, false);
@@ -250,7 +244,7 @@ const BacklinkComponentProto = {
     if (this.isShowingSearch === show) return;
     this.isShowingSearch = show;
     this.searchBtn.toggleClass("is-active", show);
-    ng11ToggleElementVisibility(this.searchRowEl, !show, true);
+    ng11ToggleElementVisibility(this.searchComponent.containerEl, !show, true);
     if (!show) {
       if (this.searchQuery) { this.searchQuery = null; this.searchComponent.setValue(""); }
       this._applySearchFilter();
@@ -568,7 +562,6 @@ const OutgoingLinkComponentProto = {
     // Links section
     this.linksSection = ng11MakeSection(pane, t.labelLinks(), null, (c) => this.setLinksCollapsed(c, true));
     const linksBody = this.linksSection.body;
-    linksBody.addClass("search-result-container");
     this.linksListEl = linksBody.createDiv();
     this.linksChildrenEl = linksBody.createDiv("search-results-children");
     this.linksEl = linksBody;
@@ -577,7 +570,7 @@ const OutgoingLinkComponentProto = {
 
     // Unlinked mentions section
     this.unlinkedSection = ng11MakeSection(pane, t.labelUnlinkedMentions(), null, (c) => this.setUnlinkedCollapsed(c, true));
-    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body.createDiv({ cls: "search-result-container" }), t.labelUnlinkedMentions(), this.scrollParent);
+    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body, t.labelUnlinkedMentions(), this.scrollParent);
     this.unlinkedSection.body.show();
     this.unlinkedSection.setCollapsed(this.unlinkedCollapsed, false);
   },
@@ -738,7 +731,6 @@ const OutgoingLinkComponentProto = {
       item.setCollapsible(true);
       for (const row of rows) {
         const child = new ng11SearchViewClasses.SearchMatchResult(item, content, cache, row.start, row.end, [[row.start, row.end]]);
-        child.el.addClass("outgoing-unlinked-match");
         this.unlinkedDomInfo.set(child, row);
         child.onMatchRender = (range, el) => this._addDestinationButtons(child, el, row, file, content);
         item.vChildren.addChild(child);
@@ -786,7 +778,7 @@ function OutgoingLinkItem(component, sourceFile, linktext, dest, subpath, pos) {
   this.subpath = subpath || "";
   this.pos = pos || 0;
   this.el = createDiv("tree-item-self is-clickable outgoing-link-item");
-  this.iconEl = this.el.createDiv("tree-item-icon");
+  this.iconEl = this.el.createSpan("tree-item-icon");
   this.innerEl = this.el.createDiv("tree-item-inner");
   this.labelEl = this.innerEl.createDiv("tree-item-inner-text");
   this.subEl = this.innerEl.createDiv("tree-item-inner-subtext");
@@ -880,7 +872,7 @@ function OutgoingLinkView(leaf) {
   self.navigation = false;
   self.allowNoFile = true;
   self.icon = "links-going-out";
-  self.outgoingLink = new OutgoingLinkComponent(self.app, self.contentEl.createDiv("outgoing-link-view-content"), self.contentEl);
+  self.outgoingLink = new OutgoingLinkComponent(self.app, self.contentEl, self.contentEl);
   self.requestUpdate = debounceCall(() => self.update(), 50);
   return self;
 }
