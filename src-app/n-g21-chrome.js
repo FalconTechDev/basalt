@@ -6,7 +6,7 @@ import { s05TitlebarDoubleClick } from "./s05-utils.js";
 
 const ng21CH = {};
 
-function ng21Link(Child, getParent) {
+function ng21ChromeLink(Child, getParent) {
   const link = () => {
     const P = getParent();
     if (typeof P !== "function") return false;
@@ -53,6 +53,8 @@ export function ng21DefineTitlebar(host) {
     left.className = "titlebar-button-container mod-left";
     const right = doc.createElement("div");
     right.className = "titlebar-button-container mod-right";
+    this.leftButtonContainerEl = left;
+    this.rightButtonContainerEl = right;
     this.innerEl.append(this.textEl, left, right);
     this.barEl.appendChild(this.innerEl);
     doc.body.prepend(this.barEl);
@@ -271,7 +273,6 @@ export function ng21DefineInfoDrawer(host) {
   ng21MD.I = ng21MakeInfoDrawer(host);
   return ng21MD.I;
 }
-export { ng21VaultProfile as s05VaultProfile };
 
 function ng21MakeMobileDrawer(host) {
   function MobileDrawer(workspace, side, id) {
@@ -302,7 +303,7 @@ function ng21MakeMobileDrawer(host) {
     activeHeader.setAttribute("data-ignore-swipe", "");
     this.activeTabHeaderIconEl = activeHeader.createSpan();
     this.activeTabHeaderTitleEl = activeHeader.createSpan();
-    const chevron = activeHeader.createSpan();
+    const chevron = activeHeader.createSpan("workspace-tab-header-inner-chevron");
     host.setIcon(chevron, "lucide-chevrons-up-down");
     this.activeTabHeaderEl = activeHeader;
     this.activeTabEl = activeHeader;
@@ -379,6 +380,7 @@ function ng21MakeMobileDrawer(host) {
   p.setTabOptionsCollapsed = function (b) {
     this.tabOptionsCollapsed = !!b;
     this.tabOptionsEl.toggleClass("is-collapsed", this.tabOptionsCollapsed);
+    this.tabsContainerEl.toggleClass("is-collapsed", this.tabOptionsCollapsed);
     this.containerEl.toggleClass("mod-tab-options-collapsed", this.tabOptionsCollapsed);
   };
 
@@ -444,8 +446,9 @@ function ng21MakeMobileDrawer(host) {
     this.onExpand();
     this._clearSelection();
     const nav = this.app.mobileNavbar;
-    nav.restoreNavigation();
-    this._animateIn();
+    const navEl = nav.containerEl;
+    if (nav.restoreNavigation) nav.restoreNavigation();
+    this._animateIn(navEl);
     this.recomputeChildrenDimensions();
   };
 
@@ -478,7 +481,7 @@ function ng21MakeMobileDrawer(host) {
     if (sel) sel.removeAllRanges();
   };
 
-  p._animateIn = function () {
+  p._animateIn = function (navEl) {
     const ws = this.workspace.containerEl;
     ws.appendChild(this.backdropEl);
     ws.appendChild(this.containerEl);
@@ -493,16 +496,16 @@ function ng21MakeMobileDrawer(host) {
     this.containerEl.style.transform = "translateX(" + dir * w + "px)";
     requestAnimationFrame(() => {
       this.containerEl.style.transform = "translateX(0px)";
-      if (nav && nav.containerEl) {
-        nav.containerEl.style.transition = "transform " + dur + "ms ease-out";
-        nav.containerEl.style.transform = "translateX(" + dir * w + "px)";
+      if (navEl) {
+        navEl.style.transition = "transform " + dur + "ms ease-out";
+        navEl.style.transform = "translateX(" + dir * w + "px)";
       }
     });
   };
 
   p._animateOut = function () {
     const ws = this.workspace.containerEl;
-    const nav = this.app.mobileNavbar;
+    const navEl = this.app.mobileNavbar.containerEl;
     const dur = (env().UD || 250);
     const w = this.containerEl.clientWidth || 300;
     const dir = this.side === "left" ? -1 : 1;
@@ -513,16 +516,14 @@ function ng21MakeMobileDrawer(host) {
       this.backdropEl.style.opacity = "0";
       this.containerEl.hide();
       if (this.backdropEl.parentNode) this.backdropEl.detach();
-      if (nav && nav.containerEl) nav.containerEl.style.transform = "";
+      navEl.style.transform = "";
     };
     this.containerEl.style.transition = "transform " + dur + "ms ease-out";
     this.containerEl.style.transform = "translateX(" + dir * w + "px)";
     this.backdropEl.style.transition = "opacity " + dur + "ms ease-out";
     this.backdropEl.style.opacity = "0";
-    if (nav && nav.containerEl) {
-      nav.containerEl.style.transition = "transform " + dur + "ms ease-out";
-      nav.containerEl.style.transform = "";
-    }
+    navEl.style.transition = "transform " + dur + "ms ease-out";
+    navEl.style.transform = "";
     setTimeout(finish, dur + 30);
   };
 

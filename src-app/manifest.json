@@ -4000,39 +4000,39 @@
     },
     {
       "orig": "n4",
-      "use": "defineS13FilePickerModal"
+      "use": "ng21DefineS13FilePickerModal"
     },
     {
       "orig": "s4",
-      "use": "defineS13Thumbnailer"
+      "use": "ng21DefineS13Thumbnailer"
     },
     {
       "orig": "h3",
-      "use": "defineS13CanvasHelpModal"
+      "use": "ng21DefineS13CanvasHelpModal"
     },
     {
       "orig": "e4",
-      "use": "defineS13QuickActions"
+      "use": "ng21DefineS13QuickActions"
     },
     {
       "orig": "$6",
-      "use": "defineS13MobileTabItem"
+      "use": "ng21DefineS13MobileTabItem"
     },
     {
       "orig": "Z6",
-      "use": "defineS13TabSwitcher"
+      "use": "ng21DefineS13TabSwitcher"
     },
     {
       "orig": "J6",
-      "use": "defineS13MobileToolbar"
+      "use": "ng21DefineS13MobileToolbar"
     },
     {
       "orig": "t4",
-      "use": "defineS13ShareIntent"
+      "use": "ng21DefineS13ShareIntent"
     },
     {
       "orig": "a4",
-      "use": "defineS13AudioRecorder"
+      "use": "ng21DefineS13AudioRecorder"
     },
     {
       "orig": "f4",
@@ -7459,7 +7459,7 @@
     },
     {
       "orig": "DD",
-      "expr": "__basaltOwn.s05VaultProfile(__basaltHost)",
+      "expr": "__basaltOwn.ng21VaultProfile(__basaltHost)",
       "sha1": "839a294d0209d71fefa024a243b235687605a26f",
       "originalBytes": 2427
     },
