@@ -110,19 +110,17 @@ export function defineS50BasesTableView(host) {
     const el = this.contentEl || this.containerEl;
     if (!el) return;
     el.empty();
-    const wrap = el.createDiv("bases-table-view");
+    const wrap = el.createDiv();
     wrap.createEl("input", {
-      cls: "bases-filter",
       attr: { type: "search", placeholder: "Filter rows" },
     }).addEventListener("input", (e) => {
       this.filterText = e.target.value || "";
       this.renderTable();
     });
-    const table = wrap.createEl("table", { cls: "bases-grid" });
+    const table = wrap.createEl("table");
     const thead = table.createEl("thead").createEl("tr");
     for (const col of this.columns) {
       const th = thead.createEl("th", { text: col });
-      th.addClass("bases-col-" + col.replace(/\W+/g, "-"));
       th.addEventListener("click", () => {
         if (this.sortKey === col) this.sortDir = -this.sortDir;
         else { this.sortKey = col; this.sortDir = 1; }
@@ -137,7 +135,7 @@ export function defineS50BasesTableView(host) {
       }
     }
     if (!this.visibleRows().length) {
-      wrap.createDiv({ cls: "bases-empty", text: "No rows" });
+      wrap.createDiv({ text: "No rows" });
     }
   };
 
