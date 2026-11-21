@@ -367,8 +367,10 @@ export function s06SanitizeHtml(html, host) {
   const purify = (host && host.s06Purify) || env().s06Purify || env().EL;
   const config = (host && host.s06PurifyConfig) || env().s06PurifyConfig || env().SL;
   const clean = purify.sanitize(String(html), config);
+  // the shared config asks for RETURN_DOM_FRAGMENT: the result is already a fragment, never stringify it
+  if (clean && typeof clean === "object" && clean.nodeType) return document.importNode(clean, true);
   const tpl = document.createElement("template");
-  tpl.innerHTML = clean;
+  tpl.innerHTML = String(clean);
   return tpl.content;
 }
 

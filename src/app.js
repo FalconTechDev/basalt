@@ -83777,7 +83777,6 @@ function s05WheelScroll(event) {
 // g25 clean-room s06-util: positions, frontmatter, table cells, link/tag helpers, shared regexes.
 // Spec: F:\orch\specs\g25.md Part C. env() names are the minified bundle bindings (lazy).
 
-
 // ---------------------------------------------------------------- regexes / consts (contract-exact)
 
 const s06BlockquoteRe = /^\s{0,3}>(\s*)/;
@@ -84138,11 +84137,12 @@ function s06SanitizeHtml(html, host) {
   const purify = (host && host.s06Purify) || env().s06Purify || env().EL;
   const config = (host && host.s06PurifyConfig) || env().s06PurifyConfig || env().SL;
   const clean = purify.sanitize(String(html), config);
+  // the shared config asks for RETURN_DOM_FRAGMENT: the result is already a fragment, never stringify it
+  if (clean && typeof clean === "object" && clean.nodeType) return document.importNode(clean, true);
   const tpl = document.createElement("template");
-  tpl.innerHTML = clean;
+  tpl.innerHTML = String(clean);
   return tpl.content;
 }
-
 
 /** Markdown link strings for drop targets; `embed` prefixes image links with "!". */
 function s06DropLinkTexts(app, target, sourcePath, embed, host) {
