@@ -236,10 +236,8 @@ export function defineAboutTab(host) {
   proto._renderAccount = function () {
     const group = new host.SettingGroup(this.containerEl)
       .addHeading(() => NG23ACCT_T(host, "name", "Account"));
-    const box = this.containerEl.createDiv("account-settings-rows");
-    this._accountRowsEl = box;
+    this._accountRowsEl = group.listEl;
     this._renderAccountRows();
-    void group;
   };
 
   proto._accountItem = function (name, descNodes, buttons) {

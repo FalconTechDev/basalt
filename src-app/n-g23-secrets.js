@@ -202,7 +202,6 @@ export function defineSecretStorage(host) {
         const notice = new host.Notice(NG23SEC_T(host, "msgSecretsNotEncrypted", "This machine lacks a secret store, so secrets stay unencrypted."), 0);
         if (notice && notice.noticeEl) {
           const learn = notice.noticeEl.createEl("a", {
-            cls: "notice-learn-more",
             text: ng23T(host, "interface.buttonLearnMore", "Learn more"),
           });
           learn.addEventListener("click", (event) => {
@@ -378,7 +377,6 @@ export function defineKeychainTab(host) {
 
     const group = new host.SettingGroup(this.containerEl);
     this._group = group;
-    group.addClass("keychain-group");
     group.addHeading(() => NG23SEC_T(host, "secrets", "Secrets"));
     group.addExtraButton((b) => {
       b.setIcon("lucide-plus");
@@ -620,13 +618,12 @@ export function defineSecretPickerModal(host) {
 
     const content = self.contentEl;
     content.empty();
-    const header = content.createDiv("modal-header-search");
+    content.addClass("keychain-list-results");
+    const header = self.headerEl.createDiv("suggestion-filter-toolbar");
     const search = new host.SearchComponent(header);
     search.setPlaceholder(NG23SEC_T(host, "placeholderSearchSecret", "Look up a secret..."));
-    const listBox = content.createDiv("keychain-list-results");
-    self._chooser = new (defineSecretChooser(host))(app, listBox, self.scope);
+    self._chooser = new (defineSecretChooser(host))(app, content, self.scope);
     self._search = search;
-    self._listBox = listBox;
 
     self._refresh = function () {
       const q = (search.getValue() || "").trim();
@@ -669,29 +666,28 @@ export function defineSecretPickerModal(host) {
 // ===========================================================================
 
 export function defineSecretComponent(host) {
-  function SecretComponent(containerEl) {
+  function SecretComponent(app, containerEl) {
     const self = host.BaseComponent.call(this) || this;
-    self.containerEl = containerEl.createDiv("setting-secret-component");
+    self.containerEl = containerEl;
     self.disabled = false;
     self.settingKey = null;
     self.changeCallback = null;
-    self.revealed = false;
+    self._app = app || null;
 
-    const warn = self.containerEl.createDiv("clickable-icon mod-warning");
+    const warn = self.containerEl.createDiv({ cls: "clickable-icon mod-warning" });
     host.setIcon(warn, "lucide-alert-triangle");
     host.setTooltip(warn, NG23SEC_T(host, "msgSecretsNotEncryptedShort", "Secrets stored unencrypted"));
-    warn.addEventListener("click", () => new (defineEncryptionInfoModal(host))(self._app || null).open());
+    warn.addEventListener("click", () => new (defineEncryptionInfoModal(host))(self._app).open());
     self._warnEl = warn;
     self._refreshWarning = function () {
       const app = self._app;
-      const unavailable = app && app.secretStorage && !app.secretStorage.isEncryptionAvailable();
-      warn.toggle(unavailable !== false ? !!unavailable : false);
+      warn.toggle(!!(app && app.secretStorage && !app.secretStorage.isEncryptionAvailable()));
     };
+    self._refreshWarning();
 
-    self.valueEl = self.containerEl.createDiv("setting-secret-value");
-    self.linkBtn = self.containerEl.createDiv("clickable-icon setting-secret-link");
-    host.setIcon(self.linkBtn, "lucide-key-round");
-    self.linkBtn.addEventListener("click", () => {
+    self.valueEl = self.containerEl.createDiv();
+    self.buttonEl = self.containerEl.createEl("button", { text: NG23SEC_T(host, "buttonLink", "Link") });
+    self.buttonEl.addEventListener("click", () => {
       if (self.disabled || !self._app) return;
       const storage = self._app.secretStorage;
       const done = (key) => { self.setValue(key); if (self.changeCallback) self.changeCallback(key); };
@@ -701,7 +697,6 @@ export function defineSecretComponent(host) {
         new (defineSecretEditModal(host))(self._app, null, done).open();
       }
     });
-    self._render();
     return self;
   }
   inherit(SecretComponent, host.BaseComponent);
@@ -711,34 +706,29 @@ export function defineSecretComponent(host) {
 
   proto.setValue = function (key) {
     this.settingKey = key || null;
-    this._render();
-    return this;
-  };
-
-  proto._render = function () {
-    const storage = this._app && this._app.secretStorage;
-    const exists = !!(this.settingKey && storage && storage.peekSecret(this.settingKey) !== null);
     this.valueEl.empty();
-    if (exists) {
-      const row = this.valueEl.createDiv("setting-hotkey");
-      const text = row.createSpan("setting-password");
-      text.setText(this.revealed ? String(storage.peekSecret(this.settingKey)) : "•••••••");
-      text.addEventListener("click", () => {
-        this.revealed = !this.revealed;
-        text.setText(this.revealed ? String(storage.peekSecret(this.settingKey)) : "•••••••");
+    const storage = this._app && this._app.secretStorage;
+    const secret = this.settingKey && storage ? storage.peekSecret(this.settingKey) : null;
+    if (secret !== null && secret !== undefined) {
+      const wrap = this.valueEl.createSpan("setting-hotkey");
+      const pw = wrap.createSpan({ cls: "setting-password", text: "•••••••" });
+      let revealed = false;
+      pw.addEventListener("click", () => {
+        revealed = !revealed;
+        pw.setText(revealed ? String(secret) : "•••••••");
       });
-      const clear = this.valueEl.createDiv("clickable-icon", (icon) => {
-        host.setIcon(icon, "lucide-x");
-        icon.addEventListener("click", () => {
+      wrap.createSpan("setting-hotkey-icon", (el) => {
+        host.setIcon(el, "lucide-x");
+        el.addEventListener("click", () => {
           this.setValue(null);
           if (this.changeCallback) this.changeCallback(null);
         });
       });
+      this.buttonEl.setText(NG23SEC_DL_T(host, "buttonChange", "Change"));
+    } else {
+      this.buttonEl.setText(NG23SEC_T(host, "buttonLink", "Link"));
     }
-    this.linkBtn.setText(exists ? NG23SEC_DL_T(host, "buttonChange", "Change") : NG23SEC_T(host, "buttonLink", "Link..."));
-    this.linkBtn.empty();
-    host.setIcon(this.linkBtn, exists ? "lucide-key-round" : "lucide-key-round");
-    this.linkBtn.setText(exists ? NG23SEC_DL_T(host, "buttonChange", "Change") : NG23SEC_T(host, "buttonLink", "Link..."));
+    return this;
   };
 
   proto.onChange = function (cb) { this.changeCallback = cb; };

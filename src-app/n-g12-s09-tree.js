@@ -300,7 +300,7 @@ function ng12SectionHeader(icon, text) {
   const header = env().createDiv("list-item published-section-header");
   const iconEl = header.createSpan("published-section-header-icon");
   env().tv(iconEl, icon);
-  header.createSpan({ cls: "published-section-header-text", text });
+  header.createSpan({ text });
   return header;
 }
 
@@ -582,7 +582,7 @@ export function ng12PublishPasswordModal() {
       const err = content.createDiv({ cls: "message mod-error", text: "Password is incorrect, please try again." });
       err.hide();
       this.passwordIncorrectMsg = err;
-      const form = content.createDiv("password-form");
+      const form = content.createDiv();
       this.passwordEl = form.createEl("input", {
         attr: { type: "password", placeholder: "Enter password..." },
       });

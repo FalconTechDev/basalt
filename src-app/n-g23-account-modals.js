@@ -40,8 +40,8 @@ export function defineLoginModal(host) {
 
     const mkField = (opts) => {
       const p = body.createEl("p", { cls: "form-field" });
+      if (opts.label) p.createEl("label", { cls: "input-label", text: opts.label });
       const input = p.createEl("input", {
-        cls: "prompt-internal-uc-input",
         attr: {
           type: opts.type,
           autocomplete: opts.autocomplete,
@@ -61,6 +61,7 @@ export function defineLoginModal(host) {
     const emailF = mkField({
       type: "email",
       autocomplete: "email",
+      label: ACCT_T(host, "labelEmail", "Email"),
       placeholder: ACCT_T(host, "placeholderEmail", "Email"),
     });
     self._emailP = emailF.p;
@@ -69,6 +70,7 @@ export function defineLoginModal(host) {
     const passF = mkField({
       type: "password",
       autocomplete: "current-password",
+      label: ACCT_T(host, "labelPassword", "Password"),
       placeholder: ACCT_T(host, "placeholderPassword", "Password"),
     });
     self._passP = passF.p;
@@ -79,6 +81,7 @@ export function defineLoginModal(host) {
       autocomplete: "one-time-code",
       inputMode: "numeric",
       maxLength: 6,
+      label: ACCT_T(host, "labelMfaCode", "6-digit 2FA code"),
       placeholder: ACCT_T(host, "labelMfaCode", "6-digit 2FA code"),
       sanitize: (v) => v.replace(/\D/g, "").slice(0, 6),
     });
@@ -174,8 +177,8 @@ export function defineLicenseModal(host) {
     self._errorEl = errEl;
 
     const p = content.createEl("p", { cls: "form-field" });
+    p.createEl("label", { cls: "input-label", text: ABOUT_T(host, "labelLicenseKey", "Licence key") });
     const input = p.createEl("input", {
-      cls: "prompt-internal-uc-input",
       attr: {
         type: "text",
         placeholder: ABOUT_T(host, "licenseKeyPlaceholder", "Licence key"),

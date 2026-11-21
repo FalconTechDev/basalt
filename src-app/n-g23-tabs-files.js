@@ -133,30 +133,39 @@ export function defineIgnoreFiltersModal(host) {
     const self = this;
     const content = this.contentEl;
     content.empty();
-    const empty = this.values.length === 0;
-    content.createEl("p", {
-      text: empty
-        ? FILE_T(host, "labelNoExcludedFiltersApplied", "No exclusion filters are active. Add one below.")
-        : FILE_T(host, "labelExcludedFiltersApplied", "Files caught by these filters are hidden:"),
-    });
+    this.descEl = content.createEl("p");
+    this.listEl = content.createDiv();
+    this.display();
 
-    // input + add row
-    const inputRow = content.createDiv("setting-item");
-    const input = inputRow.createEl("input", {
-      cls: "settings-search-input",
-      attr: { type: "text", placeholder: FILE_T(host, "placeholderExcludedFilter", "Location, e.g. /regex/…") },
-    });
-    input.addEventListener("keydown", (event) => {
-      if (event.isComposing) return;
-      if (event.key === "Enter") self._add(input);
-    });
-    new (defineFolderPathSuggest(host))(this.app, input, false, true);
-    const addBtn = inputRow.createEl("button", { cls: "mod-cta", text: DL_T(host, "buttonAdd", "Add") });
-    addBtn.addEventListener("click", () => self._add(input));
+    let textCmp = null;
+    const add = () => {
+      const value = textCmp ? textCmp.getValue() : "";
+      if (!value || !value.trim()) {
+        try { host.showErrorTooltip(textCmp.inputEl, FILE_T(host, "messageEmptyFilter", "Filters cannot be left blank")); } catch (e) {}
+        return;
+      }
+      self.values.push(value);
+      self.display();
+      textCmp.setValue("");
+    };
 
-    // value rows
-    const listEl = content.createDiv("mobile-option-setting-item-container");
-    this._renderRows(listEl);
+    new host.Setting(content)
+      .setName(FILE_T(host, "labelExcludedFilter", "Excluded filter"))
+      .addText((text) => {
+        textCmp = text;
+        text.setPlaceholder(FILE_T(host, "placeholderExcludedFilter", "Location, e.g. /regex/…"));
+        const inputEl = text.inputEl;
+        inputEl.addEventListener("keydown", (event) => {
+          if (event.isComposing || event.key !== "Enter") return;
+          add();
+        });
+        new (defineFolderPathSuggest(host))(this.app, inputEl, true, false)
+          .onSelect((value) => {
+            if (value && value.item) text.setValue(value.item.path + "/");
+            add();
+          });
+      })
+      .addButton((button) => button.setButtonText(DL_T(host, "buttonAdd", "Add")).onClick(add));
 
     // footer
     this.addButton(["mod-cta"], DL_T(host, "buttonSave", "Save"), () => {
@@ -165,35 +174,28 @@ export function defineIgnoreFiltersModal(host) {
     this.addCancelButton();
   };
 
-  proto._add = function (input) {
-    const value = input.value;
-    if (!value || !value.trim()) {
-      try { host.showErrorTooltip(input, FILE_T(host, "messageEmptyFilter", "Filters cannot be left blank")); } catch (e) {}
-      return;
+  proto.display = function () {
+    const values = this.values;
+    if (values.length === 0) {
+      this.descEl.setText(FILE_T(host, "labelNoExcludedFiltersApplied", "No exclusion filters are active. Add one below."));
+    } else {
+      this.descEl.setText(FILE_T(host, "labelExcludedFiltersApplied", "Files caught by these filters are hidden:"));
     }
-    if (!this.values.includes(value)) this.values.push(value);
-    input.value = "";
-    this._renderRows(this.contentEl.querySelector(".mobile-option-setting-item-container"));
-  };
-
-  proto._renderRows = function (listEl) {
-    if (!listEl) return;
-    listEl.empty();
-    for (let i = 0; i < this.values.length; i++) {
-      const value = this.values[i];
-      const row = listEl.createDiv("mobile-option-setting-item");
-      const name = row.createDiv("mobile-option-setting-item-name");
-      name.setText(value);
-      if (value.length > 2 && value.startsWith("/") && value.endsWith("/")) {
-        const flair = row.createDiv("flair mod-flat");
-        flair.setText("Regex");
-      }
-      const del = row.createDiv("clickable-icon");
+    this.listEl.empty();
+    for (const value of values) {
+      const row = this.listEl.createDiv("mobile-option-setting-item");
+      row.createSpan({ cls: "mobile-option-setting-item-name", text: value }, (nameEl) => {
+        if (value.length > 2 && value.startsWith("/") && value.endsWith("/")) {
+          nameEl.createSpan({ cls: "flair mod-flat", text: "Regex" });
+        }
+      });
+      const del = row.createDiv("clickable-icon mobile-option-setting-item-option-icon");
       host.setIcon(del, "lucide-x");
       try { host.setTooltip(del, IF_T(host, "deleteActionShortName", "Delete")); } catch (e) {}
       del.addEventListener("click", () => {
-        this.values.splice(i, 1);
-        this._renderRows(listEl);
+        const idx = this.values.indexOf(value);
+        if (idx >= 0) this.values.splice(idx, 1);
+        this.display();
       });
     }
   };

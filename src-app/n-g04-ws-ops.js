@@ -437,7 +437,7 @@ export function ng04WsOps(host) {
     event.dataTransfer.setData("text/plain", "");
     const ghost = env().createDiv("drag-ghost mod-leaf");
     ghost.createDiv("drag-ghost-icon", (el) => host.setIcon(el, leaf.getIcon()));
-    ghost.createDiv({ cls: "drag-ghost-title", text: env().gc(leaf.getDisplayText(), 60) });
+    ghost.createSpan({ text: env().gc(leaf.getDisplayText(), 60) });
     doc.body.appendChild(ghost);
     let dragging = false;
     let lastX = event.clientX, lastY = event.clientY;

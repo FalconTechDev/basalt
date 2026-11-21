@@ -265,12 +265,12 @@ export function ng05AttachInteract(proto, host) {
     if (data.modificationDate) {
       const lib = ng05PdfLib();
       const date = lib && lib.PDFDateString && lib.PDFDateString.toDateObject(data.modificationDate);
-      if (date) meta.createDiv("popupDate").setText(`${date.toLocaleDateString()}, ${date.toLocaleTimeString()}`);
+      if (date) meta.createSpan("popupDate").setText(`${date.toLocaleDateString()}, ${date.toLocaleTimeString()}`);
     }
     const pageNumber = parent && parent.dataset ? parseInt(parent.dataset.pageNumber, 10) : NaN;
     const pageView = Number.isFinite(pageNumber) ? this.getPage(pageNumber) : null;
     if (pageView) {
-      const copyEl = meta.createDiv("popup-copy clickable-icon");
+      const copyEl = meta.createDiv("clickable-icon");
       host.setIcon(copyEl, "lucide-copy");
       host.setTooltip(copyEl, host.t.interface.menu.copy());
       copyEl.addEventListener("click", () => {

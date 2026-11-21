@@ -28,10 +28,10 @@ export function ng21DefineS13MobileTabItem(host) {
     this.switcher = switcher;
     this.el = host.createDiv("mobile-tab");
     const preview = this.el.createDiv("mobile-tab-preview");
-    this.pinEl = preview.createDiv("mobile-tab-pin clickable-icon");
+    this.pinEl = preview.createDiv("mobile-tab-pin");
     host.setIcon(this.pinEl, "lucide-pin");
     this.pinEl.addEventListener("click", (e) => { e.stopPropagation(); leaf.setPinned(false); });
-    this.closeEl = preview.createDiv("mobile-tab-close close-button clickable-icon");
+    this.closeEl = preview.createDiv("close-button");
     host.setIcon(this.closeEl, "lucide-x");
     this.closeEl.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -113,15 +113,15 @@ export function ng21DefineS13TabSwitcher(host) {
     });
     const center = this.menuBarEl.createDiv("mobile-tab-switcher-menu-button tappable");
     this.tabCountEl = center.createSpan();
-    const chev = center.createSpan();
+    const chev = center.createSpan("mobile-tab-switcher-menu-button-chevron");
     host.setIcon(chev, "lucide-chevron-down");
     const openMenu = (e) => this.showTabManagementMenu(e);
     center.addEventListener("click", openMenu);
     center.addEventListener("contextmenu", openMenu);
     const right = this.menuBarEl.createDiv("mobile-tab-switcher-menu-spacer");
-    const done = right.createDiv("mobile-tab-switcher-done tappable");
-    done.setText(host.t.dialogue.done ? host.t.dialogue.done() : "Done");
-    done.addEventListener("click", () => this.hide());
+    right.createDiv({ cls: "clickable-icon", text: host.t.dialogue.buttonDone() }, (done) => {
+      done.addEventListener("click", () => this.hide());
+    });
 
     this._renderQueued = debounceCall(() => { if (this.isVisible) this.render(); }, 100);
     app.workspace.on("layout-change", () => this._renderQueued());

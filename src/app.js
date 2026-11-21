@@ -5333,7 +5333,7 @@ function ng03Btn(text, onClick) {
 }
 function ng03Desc(parent, key, vars) {
   const text = ng03T(key, vars);
-  if (text && text !== key) parent.createDiv("mobile-onboarding-description").setText(text);
+  if (text && text !== key) parent.createEl("p").setText(text);
 }
 
 // ---------------------------------------------------------------------------
@@ -5423,11 +5423,20 @@ function ng03DefineSyncRadioGroup(host) {
     const btn = row.createDiv("mobile-onboarding-radio-button");
     const content = row.createDiv("mobile-onboarding-radio-content");
     const option = { row, btn, content, value: undefined, selected: false };
+    let titleEl = null;
+    let pendingFlair = null;
     const api = {
       setValue(v) { option.value = v; },
-      setTitle(t) { content.setText(t); },
-      setDescription(d) { content.createDiv("mobile-onboarding-radio-description u-muted").setText(d); },
-      setFlair(f) { content.createDiv("mobile-onboarding-radio-flair").setText(f); },
+      setTitle(t) {
+        titleEl = content.createDiv({ cls: "mobile-onboarding-radio-option-title" });
+        if (t) titleEl.setText(t);
+        if (pendingFlair) { titleEl.createSpan({ cls: "flair", text: pendingFlair }); pendingFlair = null; }
+      },
+      setDescription(d) { content.createEl("ul", { cls: "mobile-onboarding-radio-option-desc" }, (ul) => ul.createEl("li", { text: d })); },
+      setFlair(f) {
+        if (titleEl) titleEl.createSpan({ cls: "flair", text: f });
+        else pendingFlair = f;
+      },
     };
     if (configure) configure(api);
     const pick = () => this.setValue(option.value);
@@ -5706,22 +5715,19 @@ const ng03DefineSyncSettingsScreen = ng03ScreenFactory({
   render(form, self, name, path, vault) {
     self.vault = vault;
     // feature tables
-    const table = form.createDiv("feature-table");
-    const head = table.createDiv("feature-row feature-header");
-    head.createDiv("feature-cell").setText(ng03T("feature"));
-    head.createDiv("feature-cell").setText(ng03T("synced"));
+    const table = form.createDiv("mobile-onboarding-feature-table");
     for (const type of SYNCABLE_FEATURE_TYPES) {
       const row = table.createDiv("feature-row");
       row.createDiv("feature-cell").setText(ng03T("feature-" + type) || type);
-      row.createDiv("feature-cell").setText("✓");
+      row.createDiv("feature-cell mod-value").setText("✓");
     }
     const row2 = table.createDiv("feature-row");
     row2.createDiv("feature-cell").setText(ng03T("excludedFolders") || "Excluded folders");
-    row2.createDiv("feature-cell").setText(ng03T("none") || "None");
+    row2.createDiv("feature-cell mod-value").setText(ng03T("none") || "None");
     for (const type of MEDIA_FEATURE_TYPES) {
       const row = table.createDiv("feature-row");
       row.createDiv("feature-cell").setText(ng03T("feature-" + type) || type);
-      row.createDiv("feature-cell").setText("✓");
+      row.createDiv("feature-cell mod-value").setText("✓");
     }
     const bar = form.createDiv("button-container");
     bar.appendChild(ng03Cta(ng03IiT("start"), () => {
@@ -5767,7 +5773,7 @@ const ng03DefineVaultListScreen = ng03ScreenFactory({
     const own = data.vaults || [];
     const shared = data.shared || [];
     ng03Desc(form, "labelRemoteVaultSelectionDescription", { email: account.email });
-    const list = form.createDiv("modal-list");
+    const list = form.createDiv("list-container has-row-lines");
     const renderRow = (vault) => {
       const row = list.createDiv("list-item tappable");
       row.createDiv("list-item-part title").setText(vault.name || vault.uid);
@@ -5781,7 +5787,7 @@ const ng03DefineVaultListScreen = ng03ScreenFactory({
     };
     for (const v of own) list.appendChild(renderRow(v));
     if (shared.length) {
-      list.createDiv("list-item-heading").setText(ng03T("labelVaultsSharedWithYou"));
+      list.createDiv({ cls: "list-heading", text: ng03T("labelVaultsSharedWithYou") });
       for (const v of shared) list.appendChild(renderRow(v));
     }
     form.createDiv("button-container").appendChild(
@@ -6077,7 +6083,7 @@ const ng03DefineICloudMissingScreen = ng03ScreenFactory({
   key: "iCloudMissing",
   title: "iCloud",
   render(form, self) {
-    const box = self.contentEl.createDiv("mobile-onboarding-description");
+    const box = self.contentEl.createEl("p");
     box.createDiv().setText(ng03T("iCloudMissingReason1") || "");
     box.createDiv().setText(ng03T("iCloudMissingReason2") || "");
   },
@@ -6545,7 +6551,7 @@ function ng03DefineSyncFileHistoryModal(host) {
     this.modalEl.addClass("mod-lg");
     const header = this.contentEl.createDiv("sync-modal-header");
     const nouns = ng03Nouns();
-    header.createDiv("sync-modal-header-title").setText(
+    header.createDiv().setText(
       (nouns && nouns.fileWithCount ? nouns.fileWithCount({ count: this.items.length }) : this.items.length + " files") +
       " — " + (ti.labelClickToSeeHistory ? ti.labelClickToSeeHistory() : "click to see history"));
     this.listEl = this.contentEl.createDiv("sync-file-tree-container");
@@ -6564,7 +6570,7 @@ function ng03DefineSyncFileHistoryModal(host) {
       const part = row.createDiv("list-item-part mod-extended");
       const title = part.createDiv("list-item-part title");
       title.setText(withoutMd(item.path));
-      const meta = part.createDiv("list-item-part multiline");
+      const meta = part.createDiv("list-item-part list-item-desc");
       let text = "";
       if (item.device) text += "[" + item.device + "] ";
       text += ng03FromNow(item.ts || 0);
@@ -6606,7 +6612,7 @@ function ng03DefineSyncDeletedFilesModal(host) {
     this.modalEl.addClass("mod-lg", "mod-scrollable-content");
     const header = this.contentEl.createDiv("sync-modal-header");
     const nouns = ng03Nouns();
-    header.createDiv("sync-modal-header-title").setText(
+    header.createDiv().setText(
       (nouns && nouns.fileWithCount ? nouns.fileWithCount({ count: this.items.length }) : this.items.length + " files") +
       " — " + (ti.labelClickToSeeHistory ? ti.labelClickToSeeHistory() : ""));
     this.listEl = this.contentEl.createDiv("sync-file-tree-container");
@@ -6645,7 +6651,7 @@ function ng03DefineSyncDeletedFilesModal(host) {
       checkbox.checked = this.selected.has(item.path);
       const part = row.createDiv("list-item-part mod-extended");
       part.createDiv("list-item-part title").setText(withoutMd(item.path));
-      const meta = part.createDiv("list-item-part multiline");
+      const meta = part.createDiv("list-item-part list-item-desc");
       let text = "";
       if (item.device) text += "[" + item.device + "] ";
       text += ng03FromNow(item.ts || 0);
@@ -6732,7 +6738,7 @@ function ng03DefineSyncLogModal(host) {
     const ii = ng03Ii();
     this.titleEl.setText(ti.labelSyncLog ? ti.labelSyncLog() : "Sync log");
     this.modalEl.addClass("mod-sync-log", "mod-lg");
-    const toolbar = this.contentEl.createDiv("modal-toolbar");
+    const toolbar = this.contentEl.createDiv();
     const select = toolbar.createEl("select", { cls: "dropdown" });
     const opts = [["all", ti.optionEventTypeAll ? ti.optionEventTypeAll() : "All"],
       ["errors", ti.optionEventTypeErrors ? ti.optionEventTypeErrors() : "Errors"],
@@ -6744,11 +6750,12 @@ function ng03DefineSyncLogModal(host) {
     }
     select.value = this.filter;
     select.addEventListener("change", () => { this.filter = select.value; this._rerender(); });
-    const search = toolbar.createEl("input", { type: "search", cls: "search-input" });
+    const searchBox = toolbar.createDiv("search-input-container");
+    const search = searchBox.createEl("input", { type: "search" });
     search.placeholder = ii.promptFilter ? ii.promptFilter() : "Filter";
     search.addEventListener("input", () => { this.query = search.value; this._rerender(); });
 
-    this.listEl = this.contentEl.createDiv("modal-list");
+    this.listEl = this.contentEl.createDiv("list-container");
     this._renderAll();
 
     const self = this;
@@ -6816,7 +6823,7 @@ function ng03DefineSyncRemoteVaultsModal(host) {
   proto._load = async function () {
     const ti = ng03Ti();
     this.contentEl.empty();
-    this.contentEl.createDiv("modal-loading" );
+    this.contentEl.createDiv();
     try {
       const res = await acctListVaults(account.token);
       this.vaults = res.vaults || [];
@@ -6832,7 +6839,7 @@ function ng03DefineSyncRemoteVaultsModal(host) {
   proto._renderError = function (error) {
     const ti = ng03Ti();
     this.contentEl.empty();
-    const box = this.contentEl.createDiv("modal-error");
+    const box = this.contentEl.createDiv();
     box.createDiv().setText(ti.msgErrorFailedToFetch ? ti.msgErrorFailedToFetch() : "Failed to fetch");
     const btn = box.createEl("button", { text: ng03Ii().retry ? ng03Ii().retry() : "Retry" });
     btn.addEventListener("click", () => this._load());
@@ -6842,7 +6849,7 @@ function ng03DefineSyncRemoteVaultsModal(host) {
     const ti = ng03Ti();
     const connected = this.sync.vaultId === vault.uid;
     const row = createDiv("list-item vault-list-item");
-    row.createDiv("list-item-icon").appendChild((() => {
+    row.createDiv().appendChild((() => {
       const icon = createDiv("svg-icon");
       host.setIcon(icon, connected ? "open-vault" : "vault");
       return icon;
@@ -6856,7 +6863,7 @@ function ng03DefineSyncRemoteVaultsModal(host) {
     if (vault.created) desc.push(ti.labelVaultCreatedTime ? ti.labelVaultCreatedTime({ time: ng03FromNow(vault.created) }) : ng03FromNow(vault.created));
     part.createDiv("list-item-part description u-muted").setText(desc.join(" · "));
 
-    const actions = row.createDiv("list-item-part list-item-action-icon");
+    const actions = row.createDiv("list-item-part");
     if (connected) {
       if (this.sync.vaultName !== vault.name) this.sync.setVaultName(vault.name);
     }
@@ -6913,7 +6920,7 @@ function ng03DefineSyncRemoteVaultsModal(host) {
         try {
           const subs = await acctListSubscriptions(account.token);
           if (!subs || !subs.sync) {
-            const err = this.contentEl.createDiv("modal-error");
+            const err = this.contentEl.createDiv();
             err.setText(ti.labelRequireSubscriptionToConnect ? ti.labelRequireSubscriptionToConnect() : "Subscription required");
             return;
           }
@@ -6930,7 +6937,7 @@ function ng03DefineSyncRemoteVaultsModal(host) {
         try {
           const subs = await acctListSubscriptions(account.token);
           if (!subs || !subs.sync) {
-            const err = this.contentEl.createDiv("modal-error");
+            const err = this.contentEl.createDiv();
             err.setText(ti.labelRequireSubscriptionToConnect ? ti.labelRequireSubscriptionToConnect() : "Subscription required");
             return;
           }
@@ -7050,7 +7057,7 @@ function ng03DefineSyncCreateVaultModal(host) {
     this.errorEl = this.contentEl.createDiv("message mod-error");
     this.errorEl.hide();
 
-    const nameInput = this.contentEl.createEl("input", { type: "text", cls: "settings-field" });
+    const nameInput = this.contentEl.createEl("input", { type: "text" });
     nameInput.placeholder = ti.optionVaultNamePlaceholder ? ti.optionVaultNamePlaceholder() : "Vault name";
 
     acctVaultRegions(account.token, this.sync.host || "").then((regions) => { this.regions = regions || []; }).catch(() => {});
@@ -7065,7 +7072,7 @@ function ng03DefineSyncCreateVaultModal(host) {
     const std = encSel.createEl("option", { text: "standard" }); std.value = "standard";
     encSel.value = "end-to-end";
 
-    this.passwordEl = this.contentEl.createEl("input", { type: "password", cls: "settings-field" });
+    this.passwordEl = this.contentEl.createEl("input", { type: "password" });
     const sync = this.sync;
     const refreshRegions = () => {
       regionSel.querySelectorAll("option:not([value=''])").forEach((o) => o.remove());
@@ -7171,7 +7178,7 @@ function ng03DefineSyncConnectVaultModal(host) {
       const ti = ng03Ti();
       this.contentEl.empty();
       this.contentEl.createDiv().setText(ti.labelUnlockEncryptedVault ? ti.labelUnlockEncryptedVault() : "Enter password");
-      const input = this.contentEl.createEl("input", { type: "password", cls: "settings-field" });
+      const input = this.contentEl.createEl("input", { type: "password" });
       this.errorEl = this.contentEl.createDiv("message mod-error");
       this.errorEl.hide();
       const bar = this.modalEl.createDiv("modal-button-container");
@@ -7211,7 +7218,7 @@ function ng03DefineSyncConnectVaultModal(host) {
   proto._renderSuccess = function (vault) {
     const ti = ng03Ti();
     this.contentEl.empty();
-    this.contentEl.createDiv("sync-modal-icon").appendChild((() => {
+    this.contentEl.createDiv().appendChild((() => {
       const icon = createDiv("svg-icon");
       host.setIcon(icon, "circle-check");
       return icon;
@@ -7262,7 +7269,7 @@ function ng03DefineSyncRenameVaultModal(host) {
   proto.onOpen = function () {
     const ti = ng03Ti();
     this.titleEl.setText(ti.labelRenameRemoteVault ? ti.labelRenameRemoteVault({ name: this.name }) : "Rename");
-    const input = this.contentEl.createEl("input", { type: "text", cls: "settings-field" });
+    const input = this.contentEl.createEl("input", { type: "text" });
     input.placeholder = this.name;
     const bar = this.modalEl.createDiv("modal-button-container");
     const save = bar.createEl("button", { cls: "mod-cta", text: ng03Ii().save ? ng03Ii().save() : "Save" });
@@ -7300,7 +7307,7 @@ function ng03DefineSyncManageSharingModal(host) {
     this.errorEl = this.contentEl.createDiv("message mod-error");
     this.errorEl.hide();
     const row = this.contentEl.createDiv("setting-item");
-    const input = row.createEl("input", { type: "email", cls: "settings-field" });
+    const input = row.createEl("input", { type: "email" });
     input.placeholder = pub.optionInviteUser ? pub.optionInviteUser() : "Invite user";
     const addBtn = row.createEl("button", { cls: "mod-cta", text: ng03Ii().add ? ng03Ii().add() : "Add" });
     const invite = async () => {
@@ -7325,7 +7332,7 @@ function ng03DefineSyncManageSharingModal(host) {
     };
     addBtn.addEventListener("click", invite);
     input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.isComposing) invite(); });
-    this.listEl = this.contentEl.createDiv("modal-list");
+    this.listEl = this.contentEl.createDiv("list-container");
     this._loadShares();
     const bar = this.modalEl.createDiv("modal-button-container");
     const done = bar.createEl("button", { text: ng03Ii().done ? ng03Ii().done() : "Done" });
@@ -7388,7 +7395,7 @@ function ng03DefineSyncLargestFilesModal(host) {
     this.titleEl.setText(ti.msgLargestFiles ? ti.msgLargestFiles() : "Largest files");
     this.modalEl.addClass("mod-lg");
     this.contentEl.createDiv("setting-item-description").setText(ti.msgLargestFilesDesc ? ti.msgLargestFilesDesc() : "");
-    const list = this.contentEl.createDiv("modal-list");
+    const list = this.contentEl.createDiv("list-container");
     const files = Object.values(this.sync.serverFiles || {})
       .filter((rec) => rec && !rec.folder && (rec.size || 0) > 0)
       .sort((a, b) => (b.size || 0) - (a.size || 0))
@@ -7440,7 +7447,7 @@ function ng03DefineSyncExcludedFoldersSuggest(host) {
     const self = this;
 
     // current exclusions list
-    this.currentEl = this.contentEl.createDiv("modal-list sync-excluded-current");
+    this.currentEl = this.contentEl.createDiv("list-container");
     const renderCurrent = () => {
       this.currentEl.empty();
       for (const folder of this.sync.ignoreFolders) {
@@ -7462,7 +7469,7 @@ function ng03DefineSyncExcludedFoldersSuggest(host) {
 
     // add via suggester
     const wrap = this.contentEl.createDiv("setting-item");
-    const input = wrap.createEl("input", { type: "text", cls: "settings-field" });
+    const input = wrap.createEl("input", { type: "text" });
     input.placeholder = ti.labelAddExcludedFolder ? ti.labelAddExcludedFolder() : "Add excluded folder";
     wrap.createDiv("setting-item-description").setText(ti.labelAddExcludedFolderDesc ? ti.labelAddExcludedFolderDesc() : "");
     this.suggestEl = this.contentEl.createDiv("suggestion-container");
@@ -7553,7 +7560,7 @@ function ng03DefineSyncMigrateVaultModal(host) {
     const ti = ng03Ti();
     this.titleEl.setText(ti.labelMigrateVault ? ti.labelMigrateVault() : "Migrate vault");
     this.modalEl.addClass("mod-lg");
-    this.contentEl.createDiv("modal-loading");
+    this.contentEl.createDiv();
     try {
       const res = await acctListVaults(account.token);
       this.vaults = res.vaults || [];
@@ -7597,7 +7604,7 @@ function ng03DefineSyncMigrateVaultModal(host) {
     const e2e = encSel.createEl("option", { text: "end-to-end" }); e2e.value = "end-to-end";
     const std = encSel.createEl("option", { text: "standard" }); std.value = "standard";
     encSel.value = "end-to-end";
-    this.passwordEl = this.contentEl.createEl("input", { type: "password", cls: "settings-field" });
+    this.passwordEl = this.contentEl.createEl("input", { type: "password" });
     this.passwordEl.hide();
     encSel.addEventListener("change", () => this.passwordEl.toggle(encSel.value === "end-to-end"));
 
@@ -7779,15 +7786,15 @@ function ng03DefineSyncFileHistoryView(host) {
       const first = group.items[0];
       const avatar = ng03CreateAvatar(first, this.sync);
       header.appendChild(avatar);
-      const info = header.createDiv("sync-history-list-item-info");
+      const info = header.createDiv();
       const when = first.ts < Date.now() - 86400000 ? ng03Llll(first.ts) : ng03FromNow(first.ts);
-      info.createDiv("sync-history-list-item-title").setText(when);
+      info.createDiv().setText(when);
       const sub = [];
       if (first.relatedpath) sub.push(ng03Ti().labelFileRenamedFromTo ? ng03Ti().labelFileRenamedFromTo({ from: withoutMd(first.relatedpath), to: withoutMd(first.path) }) : "renamed");
       else if (first.deleted) sub.push(ng03Ti().labelFileDeleted ? ng03Ti().labelFileDeleted() : "deleted");
       else if ((first.size || 0) === 0) sub.push(ng03Ti().labelEmptyFile ? ng03Ti().labelEmptyFile() : "empty");
       else sub.push((ng03Ti().labelRevision ? ng03Ti().labelRevision({ count: group.items.length }) : group.items.length + " revisions") + (first.device ? " " + (ng03Ti().labelViaDevice ? ng03Ti().labelViaDevice({ device: first.device }) : "via " + first.device) : ""));
-      info.createDiv("sync-history-list-item-subtitle u-muted").setText(sub.join(" "));
+      info.createDiv("u-muted").setText(sub.join(" "));
       const flair = header.createDiv("tree-item-flair-outer");
       const icon = flair.createDiv("tree-item-flair");
       host.setIcon(icon, host.Platform.isMobile ? "chevrons-up-down" : "right-triangle");
@@ -7815,7 +7822,7 @@ function ng03DefineSyncFileHistoryView(host) {
     const ext = extensionOf(this.filepath);
     const isMd = ng03ExtHas(host0Markdown(), ext) || ext === "md";
     titlebar.createDiv("modal-setting-title").setText(isMd ? withoutMd(this.filepath) : this.filepath);
-    const actions = titlebar.createDiv("modal-setting-action-buttons");
+    const actions = titlebar.createDiv();
 
     if (item.relatedpath) {
       const renamed = item.relatedpath !== this.filepath;
@@ -7856,7 +7863,7 @@ function ng03DefineSyncFileHistoryView(host) {
       this._openItem(item, groupFirst);
     });
 
-    const loading = pane.createDiv("modal-loading");
+    const loading = pane.createDiv();
     try {
       let data = this.cache[item.uid];
       if (!data) {
@@ -7886,7 +7893,7 @@ function ng03DefineSyncFileHistoryView(host) {
       } else if (ng03ExtHas(host0Image(), ext)) {
         const url = URL.createObjectURL(new Blob([data.buffer || data]));
         const img = pane.createEl("img", { attr: { src: url } });
-        img.addClass("sync-history-image");
+
       } else {
         const o8 = env().o8;
         if (o8) {
@@ -7940,7 +7947,7 @@ function ng03DefineSyncChangesView(host) {
   proto.onOpen = function () {
     const sync = this.sync;
     const scope = this.scope;
-    this.containerEl.addClass("sync-changes-view");
+
 
     // disconnected pane
     this.uninitializedEl = this.contentEl.createDiv("pane-empty sync-uninitialized");
@@ -7949,11 +7956,11 @@ function ng03DefineSyncChangesView(host) {
     // tree container
     const treeWrap = this.contentEl.createDiv("recent-changes-container");
     this.treeBoxEl = treeWrap;
-    this.treeContainerEl = treeWrap.createDiv("sync-changes-tree");
+    this.treeContainerEl = treeWrap.createDiv();
     this.tree = { containerEl: this.treeContainerEl, onResize: () => {} };
 
     // custom header with users button
-    const header = this.contentEl.createDiv("view-header sync-changes-header");
+    const header = this.contentEl.createDiv("view-header");
     const navButtons = header.createDiv("nav-buttons-container");
     this.usersBtn = navButtons.createEl("button", { cls: "clickable-icon" });
     host.setIcon(this.usersBtn, "users");
@@ -7980,11 +7987,11 @@ function ng03DefineSyncChangesView(host) {
       };
       group.vChildren = { children: group.children };
       const el = this.treeContainerEl.createDiv("sync-change-group" + (key === "older" ? " is-collapsed" : ""));
-      const head = el.createDiv("sync-change-group-header clickable-icon");
+      const head = el.createDiv("clickable-icon");
       host.setIcon(head.createDiv("tree-item-flair-outer").createDiv("tree-item-flair"), "right-triangle");
-      head.createDiv("sync-change-group-title").setText(labelFn ? labelFn() : key);
-      group.flairEl = head.createDiv("sync-change-group-count u-muted");
-      group.bodyEl = el.createDiv("sync-change-group-body");
+      head.createDiv().setText(labelFn ? labelFn() : key);
+      group.flairEl = head.createDiv("u-muted");
+      group.bodyEl = el.createDiv();
       group.el = el;
       head.addEventListener("click", () => {
         el.toggleClass("is-collapsed");
@@ -8107,7 +8114,7 @@ function ng03DefineSyncChangesView(host) {
         group.children.push(item);
       }
       if (moreItem) {
-        const el = createDiv("list-item sync-change-more");
+        const el = createDiv("list-item");
         el.setText((ng03Ti().labelShowMore ? ng03Ti().labelShowMore() : "Show more") + " (" + moreItem.count + ")");
         const item = { el, _more: true, count: moreItem.count };
         group.children.push(item);
@@ -8125,7 +8132,7 @@ function ng03DefineSyncChangesView(host) {
   };
 
   proto._makeFileItem = function (rec) {
-    const el = createDiv("list-item sync-change-item tappable");
+    const el = createDiv("list-item tappable");
     const part = el.createDiv("list-item-part");
     part.createDiv("list-item-part title").setText(baseName(rec.path));
     const meta = [];
@@ -12208,7 +12215,7 @@ function ng04WsOps(host) {
     event.dataTransfer.setData("text/plain", "");
     const ghost = env().createDiv("drag-ghost mod-leaf");
     ghost.createDiv("drag-ghost-icon", (el) => host.setIcon(el, leaf.getIcon()));
-    ghost.createDiv({ cls: "drag-ghost-title", text: env().gc(leaf.getDisplayText(), 60) });
+    ghost.createSpan({ text: env().gc(leaf.getDisplayText(), 60) });
     doc.body.appendChild(ghost);
     let dragging = false;
     let lastX = event.clientX, lastY = event.clientY;
@@ -14059,7 +14066,7 @@ function ng05BuildEmbed(host) {
       const right = child.toolbar && child.toolbar.toolbarRightEl;
       if (right) {
         right.createDiv("pdf-toolbar-spacer");
-        const btn = right.createDiv("clickable-icon pdf-embed-open", (el) => {
+        const btn = right.createDiv("clickable-icon", (el) => {
           host.setIcon(el, "lucide-more-vertical");
           host.setTooltip(el, host.t.setting.about.buttonOpen());
         });
@@ -14505,7 +14512,6 @@ function ng05BuildPasswordDialog(host) {
       text: wrong ? pdf.msgInvalidPassword() : pdf.msgEnterPassword(),
     });
     const input = dialogEl.createEl("input", {
-      cls: "pdf-password-input",
       attr: { type: "password", placeholder: host.t.setting.account.labelPassword() },
     });
     input.addEventListener("keydown", (evt) => {
@@ -15043,12 +15049,12 @@ function ng05AttachInteract(proto, host) {
     if (data.modificationDate) {
       const lib = ng05PdfLib();
       const date = lib && lib.PDFDateString && lib.PDFDateString.toDateObject(data.modificationDate);
-      if (date) meta.createDiv("popupDate").setText(`${date.toLocaleDateString()}, ${date.toLocaleTimeString()}`);
+      if (date) meta.createSpan("popupDate").setText(`${date.toLocaleDateString()}, ${date.toLocaleTimeString()}`);
     }
     const pageNumber = parent && parent.dataset ? parseInt(parent.dataset.pageNumber, 10) : NaN;
     const pageView = Number.isFinite(pageNumber) ? this.getPage(pageNumber) : null;
     if (pageView) {
-      const copyEl = meta.createDiv("popup-copy clickable-icon");
+      const copyEl = meta.createDiv("clickable-icon");
       host.setIcon(copyEl, "lucide-copy");
       host.setTooltip(copyEl, host.t.interface.menu.copy());
       copyEl.addEventListener("click", () => {
@@ -16125,7 +16131,7 @@ function ng06DefineTableGroup(host) {
 function ng06DefineHeaderRow(host) {
   function HeaderRow(view) {
     const self = host.s13TableRow.call(this, view) || this;
-    self.el.addClass("bases-thead-row");
+    self.el.dataset.ignoreSwipe = "true";
     return self;
   }
   inherit(HeaderRow, host.s13TableRow);
@@ -16559,8 +16565,8 @@ function ng06BasesController(host) {
     self.sortMenu = new (env().e$)(app, self, toolbarEl);
     self.filterMenu = new (env().AX)(app, self, toolbarEl);
     self.propertyMenu = new (env().GX)(app, self, toolbarEl);
-    const searchRow = toolbarEl.createDiv({ cls: "bases-search-row bases-toolbar-search" });
-    self.searchMenu = new (env().ZX)(app, self, searchRow, headerEl);
+    const searchRow = headerEl.createDiv({ cls: "bases-search-row" });
+    self.searchMenu = new (env().ZX)(app, self, toolbarEl, searchRow);
     const newItemWrap = toolbarEl.createDiv({ cls: "bases-toolbar-item bases-toolbar-new-item-menu" });
     self.newItemMenu = new (env().jX)(app, self, newItemWrap);
     self.errorEl = containerEl.createDiv({ cls: "bases-error", attr: { style: "display:none" } });
@@ -17860,6 +17866,19 @@ function ng06IsEmptyValue(value, host) {
 
 const ng06B = () => env().gm.plugins.bases;
 
+// fallback for `zY` (s09BasesToolbarButton): `bases-toolbar-item` > `text-icon-button`
+function ng06FallbackToolbarButton(parentEl, extraCls, title, icon, onClick) {
+  const item = parentEl.createDiv({ cls: "bases-toolbar-item " + extraCls });
+  const btn = item.createDiv("text-icon-button");
+  btn.createSpan("text-button-icon", (el) => ng06Icon(el, icon));
+  btn.createSpan({ cls: "text-button-label", text: title });
+  btn.addEventListener("click", onClick);
+  item.buttonEl = btn;
+  item.button = { buttonEl: btn };
+  item.containerEl = item;
+  return item;
+}
+
 // `WX` — base class of toolbar dropdown pages.
 function ng06ToolbarPage(host) {
   function ToolbarPage(controller) {
@@ -17988,7 +18007,7 @@ function ng06ViewChooser(host) {
     this.chooser = null;
     this.handleSelect = null;
     this.handleNext = null;
-    this._itemsEl = this.containerEl.createDiv("bases-toolbar-menu-items");
+    this._itemsEl = this.containerEl.createDiv("bases-toolbar-items");
     return this;
   }
   ViewChooser.prototype.scope = null;
@@ -18105,7 +18124,7 @@ function ng06ViewConfigPage(host) {
     const nameRow = this.formEl.createDiv("input-row");
     nameRow.createDiv({ cls: "input-row-label", text: ng06B().labelViewName() });
     const nameContent = nameRow.createDiv("input-row-content");
-    const input = this._nameInput = nameContent.createEl("input", { type: "text", cls: "settings-input" });
+    const input = this._nameInput = nameContent.createEl("input", { type: "text" });
     input.value = view.name || "";
     input.addEventListener("input", () => this._validateName(input));
     input.addEventListener("keydown", (e) => {
@@ -18172,7 +18191,7 @@ function ng06ViewConfigPage(host) {
         break;
       }
       case "text": {
-        const inp = content.createEl("input", { type: "text", cls: "settings-input" });
+        const inp = content.createEl("input", { type: "text" });
         inp.value = get() || "";
         inp.placeholder = opt.placeholder || "";
         inp.addEventListener("change", () => set(inp.value || null));
@@ -18183,13 +18202,13 @@ function ng06ViewConfigPage(host) {
         break;
       }
       case "property": {
-        const inp = content.createEl("input", { type: "text", cls: "settings-input" });
+        const inp = content.createEl("input", { type: "text" });
         inp.value = get() || "";
         inp.addEventListener("change", () => set(inp.value || null));
         break;
       }
       case "file": case "folder": {
-        const inp = content.createEl("input", { type: "text", cls: "settings-input" });
+        const inp = content.createEl("input", { type: "text" });
         inp.value = get() || "";
         inp.addEventListener("change", () => set(inp.value || null));
         break;
@@ -18203,7 +18222,7 @@ function ng06ViewConfigPage(host) {
         break;
       }
       default: {
-        const inp = content.createEl("input", { type: "text", cls: "settings-input" });
+        const inp = content.createEl("input", { type: "text" });
         inp.value = get() == null ? "" : String(get());
         inp.addEventListener("change", () => set(inp.value));
       }
@@ -18305,8 +18324,7 @@ function ng06ResultsMenu(host) {
       this.toolbarItem = new Button(parentEl, ng06B().nouns ? "" : "", "lucide-list-filter", () => this.toggle());
       this.toolbarItem.addContainerClass ? this.toolbarItem.addContainerClass("bases-toolbar-results-menu") : this.toolbarItem.addClass("bases-toolbar-results-menu");
     } else {
-      this.toolbarItem = parentEl.createDiv({ cls: "bases-toolbar-item bases-toolbar-results-menu" });
-      this.toolbarItem.createDiv({ cls: "bases-toolbar-button" });
+      this.toolbarItem = ng06FallbackToolbarButton(parentEl, "bases-toolbar-results-menu", "", "lucide-list-filter", () => this.toggle());
     }
     this.app = app;
     this.controller = controller;
@@ -18326,7 +18344,7 @@ function ng06ResultsMenu(host) {
     // limit row
     const limitRow = scroll.createDiv("input-row");
     limitRow.createDiv({ cls: "input-row-label", text: ng06B().labelLimit() });
-    const input = limitRow.createDiv("input-row-content").createEl("input", { type: "number", cls: "settings-input" });
+    const input = limitRow.createDiv("input-row-content").createEl("input", { type: "number" });
     input.value = limit || "";
     input.placeholder = ng06B().placeholderLimit ? ng06B().placeholderLimit() : "";
     const commit = () => {
@@ -18413,7 +18431,7 @@ function ng06SortRowBase(host) {
   SortRowBase.prototype.render = function (containerEl) {
     this.rowEl = containerEl.createDiv("base-toolbar-sort-item");
     this.wrapperEl = this.rowEl.createDiv("metadata-property bases-sort-property-container");
-    const propInput = this.wrapperEl.createEl("input", { type: "text", cls: "settings-input bases-sort-property" });
+    const propInput = this.wrapperEl.createEl("input", { type: "text", cls: "bases-sort-property" });
     propInput.placeholder = ng06B().labelPropertyKey();
     propInput.value = this.property || "";
     propInput.addEventListener("change", () => { this.property = propInput.value || null; this.handleSave(); });
@@ -18478,8 +18496,7 @@ function ng06SortMenu(host) {
       this.toolbarItem = new Button(parentEl, ng06B().labelSort(), "lucide-arrow-up-down", () => self.toggle());
       this.toolbarItem.addContainerClass ? this.toolbarItem.addContainerClass("bases-toolbar-sort-menu") : this.toolbarItem.addClass("bases-toolbar-sort-menu");
     } else {
-      this.toolbarItem = parentEl.createDiv({ cls: "bases-toolbar-item bases-toolbar-sort-menu" });
-      this.toolbarItem.createDiv({ cls: "bases-toolbar-button", text: ng06B().labelSort() });
+      this.toolbarItem = ng06FallbackToolbarButton(parentEl, "bases-toolbar-sort-menu", ng06B().labelSort(), "lucide-arrow-up-down", () => self.toggle());
     }
     this.flairEl = this.toolbarItem.buttonEl ? this.toolbarItem.buttonEl.createDiv("flair toolbar-badge") : null;
     this._menu = null;
@@ -18604,8 +18621,7 @@ function ng06FilterMenu(host) {
       this.toolbarItem = new Button(parentEl, ng06B().labelFilter(), "lucide-list-filter", () => self.toggle());
       this.toolbarItem.addContainerClass ? this.toolbarItem.addContainerClass("bases-toolbar-filter-menu") : this.toolbarItem.addClass("bases-toolbar-filter-menu");
     } else {
-      this.toolbarItem = parentEl.createDiv({ cls: "bases-toolbar-item bases-toolbar-filter-menu" });
-      this.toolbarItem.createDiv({ cls: "bases-toolbar-button", text: ng06B().labelFilter() });
+      this.toolbarItem = ng06FallbackToolbarButton(parentEl, "bases-toolbar-filter-menu", ng06B().labelFilter(), "lucide-list-filter", () => self.toggle());
     }
     this.flairEl = this.toolbarItem.flairEl || null;
     this._menu = null;
@@ -18649,8 +18665,8 @@ function ng06FilterMenu(host) {
     const section = (title, open, builder) => {
       const box = scroll.createDiv("bases-toolbar-section");
       const header = box.createDiv("bases-toolbar-section-header");
-      header.createDiv({ cls: "collapse-icon" + (open ? "" : " is-collapsed"), text: "▸" });
-      header.createDiv({ cls: "bases-toolbar-section-header-text", text: title });
+      header.createDiv({ cls: "tree-item-icon collapse-icon" + (open ? "" : " is-collapsed") }, (icon) => ng06Icon(icon, "right-triangle"));
+      header.createSpan({ text: title });
       const content = box.createDiv("bases-toolbar-section-content");
       content.style.display = open ? "" : "none";
       header.addEventListener("click", () => {
@@ -18754,7 +18770,7 @@ function ng06PropertyForm(host) {
     // display name row
     const nameRow = form.createDiv("input-row");
     nameRow.createDiv({ cls: "input-row-label", text: ng06B().labelDisplayName() });
-    const nameInput = nameRow.createDiv("input-row-content").createEl("input", { type: "text", cls: "settings-input" });
+    const nameInput = nameRow.createDiv("input-row-content").createEl("input", { type: "text" });
     nameInput.value = displayName || "";
     const commitName = () => {
       const value = nameInput.value.trim();
@@ -18844,7 +18860,7 @@ function ng06PropertyListPage(host) {
     this.chooser = null;
     this.handleSelect = null;
     this.handleNext = null;
-    this._listEl = this.containerEl.createDiv("bases-toolbar-menu-items");
+    this._listEl = this.containerEl.createDiv("bases-toolbar-items");
     return this;
   }
   PropertyListPage.prototype.scope = null;
@@ -18866,7 +18882,7 @@ function ng06PropertyListPage(host) {
     for (const { id } of items) {
       const parsed = parsePropertyId(id);
       const row = el.createDiv({ cls: "bases-toolbar-menu-item" });
-      const cb = row.createEl("input", { type: "checkbox", cls: "metadata-property-checkbox" });
+      const cb = row.createEl("input", { type: "checkbox", prepend: true });
       const inOrder = view && view.getOrder && view.getOrder().includes(id);
       cb.checked = !!inOrder;
       cb.addEventListener("change", () => {
@@ -19045,9 +19061,9 @@ function ng06SearchMenu(host) {
   function SearchMenu(app, controller, parentEl, headerEl) {
     this.app = app;
     this.queryController = controller;
-    this.headerEl = headerEl || parentEl;
-    this._rowEl = parentEl;
-    this.searchBarEl = null;
+    this._buttonParentEl = parentEl;
+    this._rowEl = headerEl || parentEl;
+    this.searchBarEl = this._rowEl;
     this.inputEl = null;
     this.countEl = null;
     this.button = null;
@@ -19058,28 +19074,35 @@ function ng06SearchMenu(host) {
   }
   SearchMenu.prototype._build = function () {
     const row = this._rowEl;
-    this.button = row.createDiv({ cls: "bases-toolbar-button", text: ng06B().labelSearch() });
-    ng06Icon(this.button.createDiv ? this.button : this.button, "lucide-search");
-    this.button.addEventListener("click", () => this.toggle());
-    this.searchBarEl = row.createDiv("document-search-container");
+    const Button = host.s09BasesToolbarButton || env().zY;
+    if (Button) {
+      this.button = new Button(this._buttonParentEl, ng06B().labelSearch(), "lucide-search", () => this.toggle());
+      this.button.containerEl.addClass("bases-toolbar-search");
+    } else {
+      this.button = ng06FallbackToolbarButton(this._buttonParentEl, "bases-toolbar-search", ng06B().labelSearch(), "lucide-search", () => this.toggle());
+    }
     this.searchBarEl.hide();
     const SearchComponent = host.SearchComponent;
     if (SearchComponent) {
-      this.inputEl = new SearchComponent(this.searchBarEl);
-      this.inputEl.inputEl && this.inputEl.inputEl.addClass("document-search-input");
-      this.inputEl.setPlaceholder(env().gm.editor.search.placeholderFind());
-      this.inputEl.onChange(debounceCall((v) => {
-        this.countEl && this.countEl.toggleClass("mod-hidden", !v);
-        this.queryController.updateSearchQuery(v || "");
+      const comp = new SearchComponent(row).setClass("document-search-input");
+      comp.setPlaceholder(env().gm.editor.search.placeholderFind());
+      comp.onChange(debounceCall((v) => {
+        this.countEl && this.countEl.toggle(!!v);
+        this.queryController.updateSearchQuery(v);
       }, 0));
+      this.inputEl = comp.inputEl;
+      this.countEl = comp.containerEl.createDiv("document-search-count");
+      this.countEl.hide();
     } else {
-      this.inputEl = this.searchBarEl.createEl("input", { type: "text", cls: "document-search-input" });
+      const wrap = row.createDiv("search-input-container document-search-input");
+      this.inputEl = wrap.createEl("input", { type: "text" });
       this.inputEl.addEventListener("input", debounceCall(() => {
-        this.countEl && this.countEl.toggleClass("mod-hidden", !this.inputEl.value);
+        this.countEl && this.countEl.toggle(!!this.inputEl.value);
         this.queryController.updateSearchQuery(this.inputEl.value);
       }, 0));
+      this.countEl = wrap.createDiv("document-search-count");
+      this.countEl.hide();
     }
-    this.countEl = this.searchBarEl.createDiv({ cls: "document-search-count mod-hidden" });
   };
   SearchMenu.prototype.open = function () {
     if (this._isOpen) return;
@@ -19087,7 +19110,7 @@ function ng06SearchMenu(host) {
     const current = this.queryController.getSearchQuery();
     const input = this.inputEl.inputEl || this.inputEl;
     if (input && input.value !== undefined) input.value = current || "";
-    this._rowEl.addClass("is-active");
+    if (this.button && this.button.buttonEl) this.button.buttonEl.addClass("is-active");
     this.searchBarEl.show();
     this.app.keymap.pushScope(this.scope);
     this.scope.register && this.scope.register([], "Escape", () => this.close());
@@ -19096,7 +19119,7 @@ function ng06SearchMenu(host) {
   SearchMenu.prototype.close = function () {
     if (!this._isOpen) return;
     this._isOpen = false;
-    this._rowEl.removeClass("is-active");
+    if (this.button && this.button.buttonEl) this.button.buttonEl.removeClass("is-active");
     this.searchBarEl.hide();
     this.app.keymap.popScope(this.scope);
     this.queryController.updateSearchQuery();
@@ -19104,10 +19127,9 @@ function ng06SearchMenu(host) {
   SearchMenu.prototype.toggle = function () { this._isOpen ? this.close() : this.open(); };
   SearchMenu.prototype.updateCount = function (results) {
     const n = results ? results.length : 0;
-    const input = this.inputEl.inputEl || this.inputEl;
-    const has = !!(input && input.value);
     this.countEl && this.countEl.setText(ng06B().labelSearchResults({ count: n }));
-    this.countEl && this.countEl.toggleClass("mod-hidden", !has);
+    const input = this.inputEl.inputEl || this.inputEl;
+    this.countEl && this.countEl.toggle(!!(input && input.value));
   };
   SearchMenu.prototype.onunload = function () { this.close(); };
   return SearchMenu;
@@ -19279,7 +19301,7 @@ function ng06FormulaEditor(host) {
     this.editorEl = this.containerEl.createDiv("formula-editor");
     this.statusEl = this.containerEl.createDiv("formula-editor-status");
     this._iconEl = this.statusEl.createDiv("status-icon");
-    this._labelEl = this.statusEl.createDiv("status-label");
+    this._labelEl = this.statusEl.createSpan();
     this._options = options;
     this._view = null;
     this._build(initial);
@@ -25470,7 +25492,7 @@ function ng08DefineBookmarkLeafItem(host) {
     const view = this.view;
     const app = view.app;
     if (!this.iconEl) {
-      this.iconEl = this.innerEl.createDiv("tree-item-icon bookmark-icon");
+      this.iconEl = this.innerEl.createDiv("tree-item-icon");
       this.innerEl.prepend(this.iconEl);
     }
     let icon = null;
@@ -25763,16 +25785,19 @@ function ng08DefineBookmarkEditModal(host) {
     // buttons
     if (host.Platform.isPhone) {
       // nav-action Cancel/Save in modalEl; existing -> warning remove in content
-      const nav = this.modalEl.createDiv("modal-nav");
-      const cancelBtn = nav.createEl("button", { cls: "mod-cancel", text: hostT.dialogue.buttonCancel() });
-      cancelBtn.addEventListener("click", () => this.close());
-      const saveBtn = nav.createEl("button", { cls: "mod-cta", text: hostT.dialogue.buttonSave() });
-      saveBtn.addEventListener("click", () => this.save());
+      this.modalEl.createEl("button", { cls: "modal-nav-action mod-secondary", text: hostT.dialogue.buttonCancel() }, (el) => {
+        el.addEventListener("click", () => this.close());
+      });
+      this.modalEl.createEl("button", { cls: "modal-nav-action mod-cta", text: hostT.dialogue.buttonSave() }, (el) => {
+        el.addEventListener("click", () => this.save());
+      });
       if (this.isExisting) {
-        const removeBtn = content.createEl("button", { cls: "mod-warning", text: t.menuOptRemove() });
-        removeBtn.addEventListener("click", () => {
-          plugin.removeItem(item);
-          this.close();
+        content.appendChild(this.buttonContainerEl);
+        this.buttonContainerEl.createEl("button", { cls: "mod-warning", text: t.menuOptRemove() }, (el) => {
+          el.addEventListener("click", () => {
+            plugin.removeItem(item);
+            this.close();
+          });
         });
       } else {
         this.buttonContainerEl.detach();
@@ -35592,13 +35617,11 @@ function LinkPaneView(leaf) {
 /** One collapsible pane section: header row (.tree-item-self.is-clickable) + body el. */
 function ng11MakeSection(pane, label, countEl, onToggle) {
   const header = pane.createDiv("tree-item-self is-clickable");
-  header.addClass("search-section-header");
-  const icon = header.createDiv("tree-item-icon collapse-icon");
+  const icon = header.createSpan("tree-item-icon collapse-icon");
   LPH().setIcon(icon, "right-triangle");
-  const inner = header.createDiv("tree-item-inner");
-  inner.createDiv("tree-item-inner-text").setText(label);
+  header.createDiv("tree-item-inner").setText(label);
   const flair = header.createDiv("tree-item-flair-outer").createSpan("tree-item-flair");
-  const body = pane.createDiv();
+  const body = pane.createDiv("search-result-container");
   body.hide();
   const section = {
     header, body, flair, collapsed: true,
@@ -35647,31 +35670,26 @@ const BacklinkComponentProto = {
   _buildDom() {
     const host = LPH();
     const t = host.t.plugins.backlinks;
-    const pane = this.containerEl.createDiv("backlink-pane");
-    this.paneEl = pane;
 
-    // header: collapse-all / more-context / sort / show-search buttons
-    const header = pane.createDiv("backlink-header");
-    this.collapseAllBtn = header.createDiv("clickable-icon");
-    host.setIcon(this.collapseAllBtn, "lucide-list");
-    setElementTooltip(this.collapseAllBtn, host.t.plugins.search.labelCollapseResults());
-    this.collapseAllBtn.addEventListener("click", () => this.setCollapseAll(!this.collapseAll));
-    this.moreContextBtn = header.createDiv("clickable-icon");
-    host.setIcon(this.moreContextBtn, "lucide-move-vertical");
-    setElementTooltip(this.moreContextBtn, host.t.plugins.search.labelMoreContext());
-    this.moreContextBtn.addEventListener("click", () => this.setExtraContext(!this.extraContext));
-    this.sortBtn = header.createDiv("clickable-icon");
-    host.setIcon(this.sortBtn, "lucide-arrow-up-down");
-    this.sortBtn.addEventListener("click", (e) => this._sortMenu(e));
-    this.searchBtn = header.createDiv("clickable-icon");
-    host.setIcon(this.searchBtn, "lucide-search");
-    setElementTooltip(this.searchBtn, t.labelShowSearch());
-    this.searchBtn.addEventListener("click", () => this.setShowSearch(!this.isShowingSearch));
+    // nav header (sibling of the pane, prepended): action buttons + search field
+    const navHeaderEl = this.containerEl.createDiv({ cls: "nav-header", prepend: true });
+    const navButtonsEl = navHeaderEl.createDiv("nav-buttons-container");
+    const addNavButton = (icon, tooltip, cb) => {
+      const btn = navButtonsEl.createDiv("clickable-icon nav-action-button");
+      btn.addEventListener("click", cb);
+      host.setIcon(btn, icon);
+      if (tooltip) setElementTooltip(btn, tooltip);
+      return btn;
+    };
+    this.collapseAllBtn = addNavButton("lucide-list", host.t.plugins.search.labelCollapseResults(), () => this.setCollapseAll(!this.collapseAll));
+    this.moreContextBtn = addNavButton("lucide-move-vertical", host.t.plugins.search.labelMoreContext(), () => this.setExtraContext(!this.extraContext));
+    this.sortBtn = addNavButton("lucide-sort-asc", host.t.plugins.fileExplorer.actionChangeSort(), (e) => this._sortMenu(e));
+    this.searchBtn = addNavButton("lucide-search", t.labelShowSearch(), () => this.setShowSearch(!this.isShowingSearch));
 
-    const searchRow = pane.createDiv("search-row");
-    this.searchComponent = new host.SearchComponent(searchRow);
+    this.searchComponent = new host.SearchComponent(navHeaderEl);
     this.searchComponent.setPlaceholder(host.t.plugins.search.promptStartSearch());
-    this.searchComponent.inputEl.addClass("backlink-search-input");
+    setElementTooltip(this.searchComponent.clearButtonEl, host.t.plugins.search.tooltipClearSearch());
+    this.searchComponent.containerEl.hide();
     this._onSearchChange = debounceCall(() => this.updateSearch(), 300);
     this.searchComponent.onChange(() => {
       const v = this.searchComponent.getValue();
@@ -35681,15 +35699,16 @@ const BacklinkComponentProto = {
     this.searchComponent.inputEl.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); this.updateSearch(); }
     });
-    searchRow.hide();
-    this.searchRowEl = searchRow;
+
+    const pane = this.containerEl.createDiv("backlink-pane");
+    this.paneEl = pane;
 
     // two sections
     this.linkedSection = ng11MakeSection(pane, t.labelLinkedMentions(), null, (c) => this.setBacklinkCollapsed(c, true));
-    this.backlinkDom = new ng11SearchViewClasses.SearchResults(app, this.linkedSection.body.createDiv({ cls: "search-result-container" }), t.labelNoBacklinks(), this.scrollParent);
+    this.backlinkDom = new ng11SearchViewClasses.SearchResults(app, this.linkedSection.body, t.labelNoBacklinks(), this.scrollParent);
     this.linkedSection.body.show();
     this.unlinkedSection = ng11MakeSection(pane, t.labelUnlinkedMentions(), null, (c) => this.setUnlinkedCollapsed(c, true));
-    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body.createDiv({ cls: "search-result-container" }), t.labelNoUnlinkedMentions(), this.scrollParent);
+    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body, t.labelNoUnlinkedMentions(), this.scrollParent);
     this.unlinkedSection.body.show();
     this.linkedSection.setCollapsed(this.backlinkCollapsed, false);
     this.unlinkedSection.setCollapsed(this.unlinkedCollapsed, false);
@@ -35776,7 +35795,7 @@ const BacklinkComponentProto = {
     if (this.isShowingSearch === show) return;
     this.isShowingSearch = show;
     this.searchBtn.toggleClass("is-active", show);
-    ng11ToggleElementVisibility(this.searchRowEl, !show, true);
+    ng11ToggleElementVisibility(this.searchComponent.containerEl, !show, true);
     if (!show) {
       if (this.searchQuery) { this.searchQuery = null; this.searchComponent.setValue(""); }
       this._applySearchFilter();
@@ -36094,7 +36113,6 @@ const OutgoingLinkComponentProto = {
     // Links section
     this.linksSection = ng11MakeSection(pane, t.labelLinks(), null, (c) => this.setLinksCollapsed(c, true));
     const linksBody = this.linksSection.body;
-    linksBody.addClass("search-result-container");
     this.linksListEl = linksBody.createDiv();
     this.linksChildrenEl = linksBody.createDiv("search-results-children");
     this.linksEl = linksBody;
@@ -36103,7 +36121,7 @@ const OutgoingLinkComponentProto = {
 
     // Unlinked mentions section
     this.unlinkedSection = ng11MakeSection(pane, t.labelUnlinkedMentions(), null, (c) => this.setUnlinkedCollapsed(c, true));
-    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body.createDiv({ cls: "search-result-container" }), t.labelUnlinkedMentions(), this.scrollParent);
+    this.unlinkedDom = new ng11SearchViewClasses.SearchResults(app, this.unlinkedSection.body, t.labelUnlinkedMentions(), this.scrollParent);
     this.unlinkedSection.body.show();
     this.unlinkedSection.setCollapsed(this.unlinkedCollapsed, false);
   },
@@ -36264,7 +36282,6 @@ const OutgoingLinkComponentProto = {
       item.setCollapsible(true);
       for (const row of rows) {
         const child = new ng11SearchViewClasses.SearchMatchResult(item, content, cache, row.start, row.end, [[row.start, row.end]]);
-        child.el.addClass("outgoing-unlinked-match");
         this.unlinkedDomInfo.set(child, row);
         child.onMatchRender = (range, el) => this._addDestinationButtons(child, el, row, file, content);
         item.vChildren.addChild(child);
@@ -36312,7 +36329,7 @@ function OutgoingLinkItem(component, sourceFile, linktext, dest, subpath, pos) {
   this.subpath = subpath || "";
   this.pos = pos || 0;
   this.el = createDiv("tree-item-self is-clickable outgoing-link-item");
-  this.iconEl = this.el.createDiv("tree-item-icon");
+  this.iconEl = this.el.createSpan("tree-item-icon");
   this.innerEl = this.el.createDiv("tree-item-inner");
   this.labelEl = this.innerEl.createDiv("tree-item-inner-text");
   this.subEl = this.innerEl.createDiv("tree-item-inner-subtext");
@@ -36406,7 +36423,7 @@ function OutgoingLinkView(leaf) {
   self.navigation = false;
   self.allowNoFile = true;
   self.icon = "links-going-out";
-  self.outgoingLink = new OutgoingLinkComponent(self.app, self.contentEl.createDiv("outgoing-link-view-content"), self.contentEl);
+  self.outgoingLink = new OutgoingLinkComponent(self.app, self.contentEl, self.contentEl);
   self.requestUpdate = debounceCall(() => self.update(), 50);
   return self;
 }
@@ -38560,8 +38577,8 @@ methods(SearchMatchResult, {
     const from = typeof before === "number" ? before : this.start;
     const to = typeof after === "number" ? after : this.end;
     ng11RenderMatchRanges(el, this.content, from, to, this.matches);
-    if (from > this.start) el.prepend(createSpan({ cls: "search-result-file-match-ellipsis", text: "..." }));
-    if (to < this.end) el.appendChild(createSpan({ cls: "search-result-file-match-ellipsis", text: "..." }));
+    if (from > this.start) el.prepend("...");
+    if (to < this.end) el.append("...");
     if (this.onMatchRender) this.onMatchRender(this.matches[0], el);
     if (this.parentDom.invalidateScroller) this.parentDom.invalidateScroller();
   },
@@ -40395,7 +40412,7 @@ function ng12SectionHeader(icon, text) {
   const header = env().createDiv("list-item published-section-header");
   const iconEl = header.createSpan("published-section-header-icon");
   env().tv(iconEl, icon);
-  header.createSpan({ cls: "published-section-header-text", text });
+  header.createSpan({ text });
   return header;
 }
 
@@ -40677,7 +40694,7 @@ function ng12PublishPasswordModal() {
       const err = content.createDiv({ cls: "message mod-error", text: "Password is incorrect, please try again." });
       err.hide();
       this.passwordIncorrectMsg = err;
-      const form = content.createDiv("password-form");
+      const form = content.createDiv();
       this.passwordEl = form.createEl("input", {
         attr: { type: "password", placeholder: "Enter password..." },
       });
@@ -40815,7 +40832,7 @@ function ng12PublishGraphView() {
       const header = outerContainerEl.createDiv("list-item published-section-header");
       const iconEl = header.createSpan("published-section-header-icon");
       env().tv(iconEl, "lucide-git-fork");
-      header.createSpan({ cls: "published-section-header-text", text: "Interactive graph" });
+      header.createSpan({ text: "Interactive graph" });
       this.outerEl = outerContainerEl.createDiv("graph-view-container");
       this.containerEl = this.outerEl.createDiv("graph-view");
 
@@ -41345,12 +41362,12 @@ function ng12PublishPageView() {
         const footerEl = self.footerEl;
         if (!footerEl) return;
         footerEl.empty();
-        const section = footerEl.createDiv("published-section");
+        const section = footerEl.createDiv("backlinks");
         section.appendChild((() => {
-          const header = env().createDiv("list-item published-section-header");
+          const header = env().createDiv("published-section-header");
           const iconEl = header.createSpan("published-section-header-icon");
           env().tv(iconEl, "lucide-link");
-          header.createSpan({ cls: "published-section-header-text", text: "Links to this page" });
+          header.createSpan({ text: "Links to this page" });
           return header;
         })());
         const container = section.createDiv("backlink-items-container");
@@ -42487,10 +42504,10 @@ function ng12mPublishManageSitesSection(host) {
       const modal = this.parentModal;
 
       const rowFor = (site, isShared) => {
-        const row = list.createDiv("site-list-item");
+        const row = list.createDiv("site-list-item list-item");
         const slug = this.slugs[site.id || site.uid] || site.id || site.uid;
-        row.createSpan({ cls: "site-slug", text: slug });
-        const choose = row.createEl("button", { cls: "mod-cta", text: ng12mT("buttonChoose", "Choose") });
+        row.createDiv({ cls: "list-item-part mod-extended", text: slug });
+        const choose = row.createEl("button", { text: ng12mT("buttonChoose", "Choose") });
         choose.addEventListener("click", async () => {
           await plugin.setup(site.id || site.uid, site.host);
           modal.openReviewChanges();
@@ -42583,9 +42600,9 @@ function ng12mPublishManageSitesSection(host) {
         el.createDiv({ cls: "setting-item-name", text: ng12mT("labelSitesSharedWithYou", "Sites shared with you") });
         const sharedList = el.createDiv("site-list-container");
         for (const site of this.shared) {
-          const row = sharedList.createDiv("site-list-item");
-          row.createSpan({ cls: "site-slug", text: this.slugs[site.id || site.uid] || site.id || site.uid });
-          const choose = row.createEl("button", { cls: "mod-cta", text: ng12mT("buttonChoose", "Choose") });
+          const row = sharedList.createDiv("site-list-item list-item");
+          row.createDiv({ cls: "list-item-part mod-extended", text: this.slugs[site.id || site.uid] || site.id || site.uid });
+          const choose = row.createEl("button", { text: ng12mT("buttonChoose", "Choose") });
           choose.addEventListener("click", async () => {
             await plugin.setup(site.id || site.uid, site.host);
             modal.openReviewChanges();
@@ -42812,9 +42829,10 @@ function ng12mPublishTreeItemBaseClass(host) {
       this.children = [];
       this.parent = null;
       this.checked = false;
-      this.el = section.childrenEl.createDiv("publish-tree-item");
-      this.selfEl = this.el.createDiv("publish-tree-item-self");
-      this.innerEl = this.selfEl.createDiv("publish-tree-item-inner");
+      this.el = section.childrenEl.createDiv("tree-item");
+      this.selfEl = this.el.createDiv("tree-item-self");
+      this.innerEl = this.selfEl.createDiv("tree-item-inner");
+      this.innerEl.addClass("file-tree-item");
     }
     setChecked(c) { this.checked = !!c; if (this.checkboxEl) this.checkboxEl.checked = this.checked; }
     setVisible(v) { this.visible = !!v; this.el.toggleVisibility(this.visible); }
@@ -42843,11 +42861,16 @@ function ng12mPublishFileItem(host) {
       this.diff = diff;
       this.path = diff.path;
       this.name = withoutMd(lastSegment(diff.path));
-      this.checkboxEl = this.selfEl.createEl("input", { attr: { type: "checkbox" } });
+      this.selfEl.addClass("mod-file", "mod-" + (diff.type || "changed"));
+      this.checkboxEl = this.innerEl.createEl("input", { cls: "file-tree-item-checkbox", attr: { type: "checkbox" } });
       this.checkboxEl.checked = !!diff.checked;
-      this.innerEl.setText(this.name);
+      this.checkboxEl.addEventListener("change", () => this.updateChecked());
+      this.innerEl.createDiv("file-tree-item-icon", (icon) => env().tv(icon, "lucide-file"));
+      this.innerEl.createDiv({ cls: "file-tree-item-title", text: this.name });
+      const flair = this.innerEl.createDiv("tree-item-flair-outer").createSpan({ cls: "tree-item-flair", text: diff.type === "to-delete" ? "To delete" : (diff.type || "") });
+      this._flairEl = flair;
+      this.updateChecked();
       this.setChecked(!!diff.checked);
-      this.el.addClass("publish-file-item");
       this.el.addEventListener("click", (e) => this.onSelfClick(e));
       this.el.addEventListener("contextmenu", (e) => this.onContextMenu(e));
     }
@@ -42884,9 +42907,12 @@ function ng12mPublishFolderItem(host) {
       super(section);
       this.path = path;
       this.name = lastSegment(path);
-      this.checkboxEl = this.selfEl.createEl("input", { attr: { type: "checkbox" } });
-      this.childrenEl = this.el.createDiv("publish-tree-children");
-      this.el.addClass("publish-folder-item");
+      this.selfEl.addClass("mod-folder");
+      this.checkboxEl = this.innerEl.createEl("input", { cls: "file-tree-item-checkbox", attr: { type: "checkbox" } });
+      this.checkboxEl.addEventListener("change", () => this.updateChecked());
+      this.innerEl.createDiv("file-tree-item-icon", (icon) => env().tv(icon, "lucide-folder-open"));
+      this.innerEl.createDiv({ cls: "file-tree-item-title", text: this.name });
+      this.childrenEl = this.el.createDiv("tree-item-children");
       this.setChecked(false);
     }
     getChecked() {
@@ -42955,20 +42981,23 @@ function ng12mPublishTreeSection(host) {
       this.collapsed = false;
       this.folders = {};
       this.files = {};
-      this.childrenEl = this.el.createDiv("publish-tree-children");
-      const header = this.el.createDiv("publish-tree-header");
+      this.el.addClass("file-tree");
+      const header = this.el.createDiv("publish-section-header");
       this.headerEl = header;
-      const titleEl = header.createDiv({ cls: "publish-tree-title", text: title });
-      this.selectedEl = header.createSpan("publish-tree-selected");
-      this.selectedCountEl = header.createSpan("publish-tree-count");
-      const checkAllBtn = header.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-      env().tv(checkAllBtn, "lucide-check-check");
-      env().Mv(checkAllBtn, "Check all");
-      checkAllBtn.addEventListener("click", () => this.checkAll());
-      const uncheckAllBtn = header.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-      env().tv(uncheckAllBtn, "lucide-square");
-      env().Mv(uncheckAllBtn, "Uncheck all");
-      uncheckAllBtn.addEventListener("click", () => this.uncheckAll());
+      const toggleBtn = header.createDiv("publish-section-header-toggle-collapsed-button collapse-icon");
+      env().tv(toggleBtn, "right-triangle");
+      toggleBtn.addEventListener("click", () => this.toggleCollapsed(true));
+      const titleEl = header.createDiv({ cls: "publish-section-header-text", text: title });
+      titleEl.addEventListener("click", () => this.toggleCollapsed(true));
+      this.selectedEl = header.createDiv("publish-section-header-selected", (sel) => {
+        this.selectedCountEl = sel.createSpan({ cls: "publish-section-header-selected-count", text: "0" });
+        sel.createSpan({ text: ng12mT("labelFileSelected", "file selected") });
+      });
+      header.createDiv({ cls: "publish-section-header-action button", text: ng12mT("buttonSelectAllFiles", "Select all files") })
+        .addEventListener("click", () => this.checkAll());
+      header.createDiv({ cls: "publish-section-header-action", text: ng12mT("buttonDeselectAllFiles", "Deselect all files") })
+        .addEventListener("click", () => this.uncheckAll());
+      this.childrenEl = this.el.createDiv("publish-change-list");
     }
 
     folderFor(path) {
@@ -43096,18 +43125,20 @@ function ng12mPublishReviewSection(host) {
 
       // header
       const header = this.el.createDiv("publish-changes-info");
-      header.createSpan(ng12mT("labelPublishingTo", "Publishing to"));
+      header.createDiv({ cls: "publish-changes-info-publishing-to", text: ng12mT("labelPublishingTo", "Publishing to") });
       this.currentlyPublishedToSiteNameEl = header.createEl("a", {
-        cls: "internal-link",
+        cls: "publish-changes-current-site-name",
         text: plugin.siteId || "",
         attr: { href: ng12PublishUrl + "/" + plugin.siteId, target: "_blank" },
       });
-      const icons = header.createDiv("publish-changes-icons");
+      const icons = header.createDiv("publish-changes-switch-site");
       const mkIcon = (icon, tip, fn) => {
-        const b = icons.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-        env().tv(b, icon);
-        env().Mv(b, tip);
-        b.addEventListener("click", fn);
+        const b = icons.createSpan("clickable-icon", (el) => {
+          env().tv(el, icon);
+          env().Mv(el, tip);
+          el.addEventListener("click", fn);
+        });
+        return b;
       };
       mkIcon("lucide-repeat", ng12mT("tooltipSwitchSite", "Switch site"), () => modal.openManageSites());
       mkIcon("lucide-settings", "Options", () => modal.openSection(modal.siteOptionsSection));
@@ -43262,10 +43293,15 @@ function ng12mPublishUploadSection(host) {
       this.pathToEl = {};
       for (const change of this.changes) {
         const row = this.el.createDiv("publish-upload-item list-item");
-        row.createDiv({ cls: "file-icon" });
-        row.createDiv({ cls: "publish-upload-title", text: withoutExtension(lastSegment(change.path)) });
-        const flair = row.createDiv({ cls: "publish-upload-status" });
-        this.pathToEl[change.path] = { row, flair, change };
+        const iconPart = row.createDiv("list-item-part");
+        env().tv(iconPart, "lucide-file");
+        row.createDiv({ cls: "list-item-part mod-extended publish-upload-item-title", text: withoutExtension(lastSegment(change.path)) });
+        let flairEl = null;
+        const statusPart = row.createDiv("list-item-part", (p) => {
+          flairEl = p.createSpan("flair");
+          flairEl.setText(change.type === "new" || change.type === "changed" ? ng12mT("labelStatusToPublish", "To publish") : change.type === "deleted" ? ng12mT("labelStatusToDelete", "To delete") : (change.type || ""));
+        });
+        this.pathToEl[change.path] = { row, flair: flairEl, statusPart, change };
       }
       const row = this.el.createDiv("modal-button-container");
       this.doneButton = row.createEl("button", { cls: "mod-cta", text: ng12mT("buttonStop", "Stop") });
@@ -43297,7 +43333,7 @@ function ng12mPublishUploadSection(host) {
             attr: { href: ng12PublishUrl + "/" + plugin.siteId, target: "_blank" },
           });
           self.siteLinkEl = link;
-          const msg = self.el.createDiv("publish-upload-success");
+          const msg = self.el.createDiv();
           msg.createDiv({ cls: "paragraph", text: ng12mT("labelClearCache", "Clear your cache") });
           msg.createDiv({ cls: "paragraph", text: ng12mT("labelVisitSite", "Visit your site") });
           self.successMessageEl = msg;
@@ -43425,12 +43461,13 @@ function ng12mPublishPasswordsSection(host) {
         ng12mPara(this.el, null, ng12mT("labelHavePassword", "A password is set."));
         this.el.createEl("hr");
         const list = Array.isArray(this.passwords) ? this.passwords : [];
+        const wrap = this.el.createDiv("passwords-container");
         list.forEach((pw, index) => {
-          const row = this.el.createDiv("password-item list-item");
-          row.createSpan({ text: pw.name || ng12mT("labelUntitledPassword", "Untitled password") });
-          row.createSpan({ cls: "password-time", text: ng12mT("labelPasswordCreatedTime", "Created {time}", { time: "" }) });
-          const del = row.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-          env().tv(del, "lucide-trash-2");
+          const row = wrap.createDiv("list-item password-item");
+          row.createDiv({ cls: "list-item-part", text: pw.name || ng12mT("labelUntitledPassword", "Untitled password") });
+          row.createDiv({ cls: "u-muted u-small list-item-part mod-extended", text: ng12mT("labelPasswordCreatedTime", "Created {time}", { time: pw.ts ? window.moment(pw.ts).fromNow() : "" }) });
+          const del = row.createDiv({ cls: "list-item-part clickable-icon", attr: { role: "button" } });
+          env().tv(del, "lucide-x");
           del.addEventListener("click", async () => {
             try {
               await modal.plugin.apiDelPassword(index);
@@ -43594,13 +43631,13 @@ function ng12mPublishShareModal(host) {
         this.contentEl.createDiv({ cls: "paragraph", text: ng12mT("labelNotSharing", "Not sharing with anyone.") });
       }
       for (const share of this.shares) {
-        const row = this.contentEl.createDiv("share-item list-item");
-        row.createSpan({ text: share.name ? share.name + " <" + (share.email || "") + ">" : (share.email || "") });
+        const row = this.contentEl.createDiv("list-item");
+        row.createDiv({ cls: "list-item-part", text: share.name ? share.name + " <" + (share.email || "") + ">" : (share.email || "") });
         if (share.pending || share.status === "pending") {
-          row.createSpan({ cls: "share-pending", text: ng12mT("labelInvitePending", "Pending") });
+          row.createSpan({ cls: "flair", text: ng12mT("labelInvitePending", "Pending") });
         }
-        const del = row.createDiv({ cls: "clickable-icon", attr: { role: "button" } });
-        env().tv(del, "lucide-trash-2");
+        const del = row.createDiv({ cls: "list-item-part clickable-icon", attr: { role: "button" } });
+        env().tv(del, "lucide-x");
         del.addEventListener("click", async () => {
           try {
             await acctRemovePublishShare(account.token, this.siteId, share.uid || share.id);
@@ -43821,14 +43858,17 @@ function ng12PublishSearch() {
       this._results = [];
     }
 
-    build(containerEl) {
-      this.containerEl = containerEl.createDiv("search-container");
+    build() {
+      this.outerContainerEl = env().createDiv("search-view-outer");
+      this.containerEl = this.outerContainerEl.createDiv("search-view-container");
+      this.containerEl.createSpan("published-search-icon", (el) => env().tv(el, "lucide-search"));
       this.inputEl = this.containerEl.createEl("input", {
-        cls: "search-input",
-        attr: { type: "search", placeholder: "Search" },
+        cls: "search-bar",
+        attr: { type: "text", tabIndex: 0 },
       });
+      this.inputEl.setAttribute("placeholder", "Search page or heading...");
       this.resultsEl = this.containerEl.createDiv("search-results");
-      this.containerEl.hide();
+      this.outerContainerEl.hide();
       let debounce;
       this.inputEl.addEventListener("input", () => {
         clearTimeout(this._timer);
@@ -43846,7 +43886,7 @@ function ng12PublishSearch() {
       this.resultsEl.empty();
       this._results = [];
       if (!query) {
-        this.containerEl.hide();
+        this.outerContainerEl.hide();
         return;
       }
       const site = this.app.site;
@@ -43868,16 +43908,13 @@ function ng12PublishSearch() {
         const row = this.resultsEl.createDiv({ cls: "search-result", text: item.path });
         row.addEventListener("click", () => this.app.navigate(item.path, ""));
       }
-      this.containerEl.show();
+      this.outerContainerEl.show();
     }
 
     updateOptions() {
       const site = this.app.site;
       const show = !!(site && site.getConfig("showSearch")) && !env().Fc;
-      if (this.containerEl) this.containerEl.toggleVisibility(show);
-      if (this.app.containerEl) {
-        this.app.containerEl.toggleClass("has-search", show);
-      }
+      if (this.outerContainerEl) this.outerContainerEl.toggleVisibility(show);
     }
   }
 
@@ -43960,33 +43997,50 @@ function ng12PublishApp() {
 
       // left column
       const left = body.createDiv("site-body-left-column");
-      const leftInner = left.createDiv("site-body-left-column-inner");
-      this.logoEl = leftInner.createDiv("site-body-left-column-site-logo");
-      this.nameEl = leftInner.createDiv("site-body-left-column-site-name");
-      this.themeToggleEl = leftInner.createDiv("site-body-left-column-site-theme-toggle clickable-icon");
-      env().tv(this.themeToggleEl, "lucide-sun-moon");
-      env().Mv(this.themeToggleEl, "Toggle theme");
+      const leftInner = (this.leftColumnInnerEl = left.createDiv("site-body-left-column-inner"));
+      this.leftLogoLinkEl = leftInner.createEl("a", "site-body-left-column-site-logo");
+      this.logoEl = this.leftLogoLinkEl.createEl("img");
+      this.logoEl.setAttr("aria-hidden", "true");
+      this.logoEl.hide();
+      this.leftSiteHeaderEl = leftInner.createEl("a", "site-body-left-column-site-name");
+      this.themeToggleEl = leftInner.createDiv("site-body-left-column-site-theme-toggle");
+      this.themeToggleEl.hide();
+      const darkOpt = this.themeToggleEl.createSpan("option mod-dark");
+      env().tv(darkOpt, "lucide-moon");
+      this.themeCheckboxEl = this.themeToggleEl.createDiv("checkbox-container");
+      const lightOpt = this.themeToggleEl.createSpan("option mod-light");
+      env().tv(lightOpt, "lucide-sun");
       this.themeToggleEl.addEventListener("click", () => this.toggleTheme());
-      this.navContainerEl = leftInner.createDiv("nav-column");
       this.search = new (SearchView())(this);
-      this.search.build(this.navContainerEl);
+      this.search.build();
 
       // center column
       const center = body.createDiv("site-body-center-column");
-      const header = center.createDiv("site-header");
-      this.headerLogoEl = header.createDiv("site-header-logo");
-      this.headerTextEl = header.createDiv("site-header-text");
+      const header = (this.siteHeaderEl = center.createDiv("site-header"));
+      header.createDiv("clickable-icon", (el) => {
+        env().tv(el, "lucide-menu");
+        el.addEventListener("click", () => {
+          root.classList.toggle("is-left-column-open");
+          if (this.site.getConfig("showNavigation") && this.nav && this.nav.init) this.nav.init(true);
+        });
+      });
+      root.createDiv("nav-backdrop", (el) => {
+        el.addEventListener("click", () => root.classList.remove("is-left-column-open"));
+      });
+      this.headerLogoLinkEl = header.createEl("a", "site-header-logo");
+      this.headerLogoLinkEl.setAttr("aria-hidden", "true");
+      this.headerLogoLinkEl.hide();
+      this.headerLogoEl = this.headerLogoLinkEl.createEl("img");
+      this.headerTextEl = header.createEl("a", "site-header-text");
       this.renderContainerEl = center.createDiv("render-container");
       this.renderInnerEl = this.renderContainerEl.createDiv("render-container-inner");
       this.footerEl = center.createDiv("site-footer");
-      this.notFoundEl = center.createDiv("not-found-container");
+      this.notFoundEl = this.renderContainerEl.createDiv("not-found-container");
       this.notFoundEl.setText("Page not found");
 
       // right column
-      const right = body.createDiv("site-body-right-column");
-      const rightInner = right.createDiv("site-body-right-column-inner");
-      this.outlineContainerEl = rightInner.createDiv("outline-column");
-      this.graphContainerEl = rightInner.createDiv("graph-column");
+      const right = (this.rightColumnEl = this.renderContainerEl.createDiv("site-body-right-column"));
+      const rightInner = (this.rightColumnInnerEl = right.createDiv("site-body-right-column-inner"));
 
       doc.body.appendChild(root);
       this._updateHeaderText();
@@ -43994,15 +44048,27 @@ function ng12PublishApp() {
 
     _updateHeaderText() {
       const siteName = this.site.getSiteName();
-      if (this.nameEl) this.nameEl.setText(siteName);
-      if (this.headerTextEl) this.headerTextEl.setText(siteName);
-      const logo = this.site.getSiteLogoUrl();
-      if (logo && this.logoEl) {
-        const img = this.logoEl.createEl("img", { attr: { src: this.site.getPublicHref(logo) } });
-        img.style.maxHeight = "40px";
+      if (this.leftSiteHeaderEl) {
+        this.leftSiteHeaderEl.setText(siteName);
+        this.leftSiteHeaderEl.setAttr("aria-label", siteName);
       }
-      if (logo && this.headerLogoEl) {
-        this.headerLogoEl.createEl("img", { attr: { src: this.site.getPublicHref(logo) } });
+      if (this.headerTextEl) {
+        this.headerTextEl.setText(siteName);
+        this.headerTextEl.setAttr("aria-label", siteName);
+      }
+      const logo = this.site.getSiteLogoUrl();
+      if (logo) {
+        const href = this.site.getPublicHref(logo);
+        if (this.logoEl) {
+          this.logoEl.setAttr("src", href);
+          this.logoEl.show();
+        }
+        if (this.leftLogoLinkEl) this.leftLogoLinkEl.setAttr("aria-label", siteName + " logo");
+        if (this.headerLogoEl) {
+          this.headerLogoEl.setAttr("src", href);
+          this.headerLogoEl.show();
+        }
+        if (this.headerLogoLinkEl) this.headerLogoLinkEl.setAttr("aria-label", siteName + " logo");
       }
       document.title = siteName + " | Basalt Publish";
     }
@@ -44119,13 +44185,41 @@ function ng12PublishApp() {
     mountViews() {
       this.render = new (PageView())(this);
       this.renderInnerEl.appendChild(this.render.renderContainerEl);
-      this.nav = new (NavView())(this, this.navContainerEl);
-      this.outline = new (OutlineView())(this, this.outlineContainerEl);
-      this.graph = new (GraphView())(this, this.graphContainerEl);
+      this.nav = new (NavView())(this, this.leftColumnInnerEl);
+      this.outline = new (OutlineView())(this, this.rightColumnInnerEl);
+      this.graph = new (GraphView())(this, this.rightColumnInnerEl);
       this.search.updateOptions();
+      this._placeSearch();
+      this.site.on("options-updated", () => this._placeSearch());
+      const showToggle = this.site.getConfig("showThemeToggle");
       if (this.themeToggleEl) {
-        const showToggle = this.site.getConfig("showThemeToggle");
         this.themeToggleEl.toggleVisibility(showToggle);
+        if (showToggle) this._updateThemeToggleState();
+      }
+    }
+
+    _placeSearch() {
+      const outer = this.search && this.search.outerContainerEl;
+      if (!outer) return;
+      const site = this.site;
+      const showSearch = !!(site && site.getConfig("showSearch")) && !env().Fc;
+      const showGraph = !!(site && site.getConfig("showGraph"));
+      const showOutline = !!(site && site.getConfig("showOutline"));
+      if (showSearch && this.leftColumnInnerEl && this.themeToggleEl) {
+        this.leftColumnInnerEl.insertBefore(outer, this.themeToggleEl.nextSibling);
+      } else if ((showGraph || showOutline) && this.rightColumnInnerEl) {
+        this.rightColumnInnerEl.insertBefore(outer, this.rightColumnInnerEl.firstChild);
+      } else if (this.siteHeaderEl) {
+        this.siteHeaderEl.insertBefore(outer, this.siteHeaderEl.firstChild);
+      }
+    }
+
+    _updateThemeToggleState() {
+      const dark = this._theme() === "dark" || (this._theme() === "system" && matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+      if (this.themeToggleEl) this.themeToggleEl.toggleClass("is-dark", dark);
+      if (this.themeCheckboxEl) {
+        this.themeCheckboxEl.toggleClass("is-dark", dark);
+        this.themeCheckboxEl.toggleClass("is-enabled", dark);
       }
     }
 
@@ -44222,6 +44316,7 @@ function ng12PublishApp() {
         this.containerEl.setAttribute("data-theme", resolved);
         this.containerEl.toggleClass("theme-dark", resolved === "dark");
       }
+      this._updateThemeToggleState();
     }
 
     registerMarkdownPostProcessor(fn) {
@@ -49085,7 +49180,7 @@ function defineCommunityModal(host) {
     self.statusEl = wrapper.createDiv("community-modal-search-results-status");
     self.resultsEl = wrapper.createDiv("community-modal-search-results");
     // detail pane lives next to the sidebar inside the modal element
-    self.infoEl = self.modalEl.createDiv("community-modal-detail");
+    self.infoEl = self.modalEl.createDiv("community-modal-details");
     self.infoEl.hide();
     return self;
   }
@@ -49464,7 +49559,7 @@ function definePluginBrowserModal(host) {
         return out;
       },
       renderRow: (self, item, el) => {
-        el.addClass("community-item-plugin");
+        el.addClass("community-item");
         const nameEl = el.createDiv("community-item-name");
         renderMatches(nameEl, item.name || "", item.matchScore);
         if (self.app.plugins && self.app.plugins.manifests && self.app.plugins.manifests[item.id]) {
@@ -49482,10 +49577,10 @@ function definePluginBrowserModal(host) {
           el.createDiv("community-item-desc u-muted", (div) => renderMatches(div, desc, item.matchScore));
         }
         if (item.downloads > 0) {
-          el.createDiv("community-item-downloads u-muted", (div) => {
-            const icon = div.createSpan({ cls: "community-item-downloads-icon" });
+          el.createDiv("community-item-downloads", (div) => {
+            const icon = div.createSpan();
             host.setIcon(icon, "lucide-download-cloud");
-            div.appendText(" " + item.downloads.toLocaleString());
+            div.createSpan({ cls: "community-item-downloads-text", text: " " + item.downloads.toLocaleString() });
           });
         }
         if (item.updated) {
@@ -49856,7 +49951,7 @@ function defineThemeBrowserModal(host) {
         const css = self.app.customCss;
         const t = host.t;
         const isDefault = item.name === "";
-        el.addClass("community-item-theme");
+        el.addClass("community-item");
         if (isDefault) {
           el.createDiv("community-item-name", (div) => div.setText(host.t.setting.appearance.labelDefaultTheme()));
         } else {
@@ -50442,7 +50537,7 @@ function defineWebviewerView(host) {
       this.addressBar = env().s30HJ ? env().s30HJ(this, container) : null;
     } catch (err) { this.addressBar = null; }
     this.contentEl.addClass("webviewer-content");
-    this.searchContainerEl = this.contentEl.createDiv("webviewer-search-container");
+    this.searchContainerEl = this.contentEl.createDiv("search-in-page");
     this.searchContainerEl.hide();
     this.errorEl = this.contentEl.createDiv("error-notice");
     this.errorEl.hide();
@@ -52183,9 +52278,10 @@ function ng15DefineFileExplorerItemBase(host) {
     self.tagEl = null;
     self._renameBound = false;
     self.el.addClass("nav-file");
+    self.selfEl.addClass("nav-file-title tappable");
     self.setClickable(true);
-    self.innerEl.createDiv({ cls: "nav-file-title nav-file-title-content" });
-    self.titleEl = self.innerEl.firstChild;
+    self.innerEl.addClass("nav-file-title-content");
+    self.titleEl = self.innerEl;
     return self;
   }
   inherit(FileExplorerItemBase, host.TreeItem);
@@ -52196,12 +52292,8 @@ function ng15DefineFileExplorerItemBase(host) {
   proto.updateTitle = function () {
     const titleEl = this.titleEl;
     if (!titleEl) return;
-    titleEl.empty();
-    const icon = titleEl.createDiv("nav-file-icon");
-    const isFolder = this.file && this.file instanceof host.TFolder;
-    host.setIcon(icon, isFolder ? "lucide-folder" : "lucide-file");
-    titleEl.createSpan({ cls: "nav-file-title-text", text: this.getTitle() });
-    this.tagEl = null;
+    titleEl.setText(this.getTitle());
+    if (this.file) this.selfEl.setAttr("data-path", this.file.path);
   };
 
   /** (Re)binds row behaviour when the virtual scroller mounts the element. */
@@ -52283,6 +52375,7 @@ function ng15DefineFileExplorerItemBase(host) {
 
   proto.isSupportedSafe = function () { return true; };
 
+  ng15FileExplorerItemBaseClass = FileExplorerItemBase;
   return FileExplorerItemBase;
 }
 
@@ -52302,23 +52395,25 @@ function ng15DefineFileItem(host) {
   proto.getTitle = function () {
     const file = this.file;
     if (!file) return "";
-    return file.extension === "md" ? file.basename : file.name;
+    return file.basename || file.name;
   };
 
   proto.updateTitle = function () {
-    const titleEl = this.titleEl;
-    if (!titleEl) return;
-    titleEl.empty();
-    const icon = titleEl.createDiv("nav-file-icon");
-    host.setIcon(icon, "lucide-file");
-    titleEl.createSpan({ cls: "nav-file-title-text", text: this.getTitle() });
+    const Base = ng15FileExplorerItemBaseClass || ng15DefineFileExplorerItemBase(host);
+    Base.prototype.updateTitle.call(this);
+    const selfEl = this.selfEl;
+    selfEl.toggleClass("is-unsupported", !this.isSupported());
     const ext = this.file && this.file.extension;
-    if (ext && ext !== "md") {
-      this.tagEl = titleEl.createSpan({ cls: "nav-file-tag", text: ext });
+    let tagEl = this.tagEl;
+    if (ext === "md") {
+      if (tagEl) {
+        tagEl.detach();
+        this.tagEl = null;
+      }
     } else {
-      this.tagEl = null;
+      if (!tagEl) tagEl = this.tagEl = selfEl.createDiv({ cls: "nav-file-tag" });
+      tagEl.setText(ext || "");
     }
-    this.updateUnsupported();
   };
 
   proto.isSupported = function () {
@@ -52378,10 +52473,11 @@ function ng15DefineFolderItem(host) {
     const self = CollapsibleBase.call(this, view, file) || this;
     self.el.removeClass("nav-file");
     self.el.addClass("nav-folder");
-    if (self.titleEl) {
-      self.titleEl.removeClass("nav-file-title");
-      self.titleEl.addClass("nav-folder-title");
-    }
+    self.selfEl.removeClass("nav-file-title tappable");
+    self.selfEl.addClass("nav-folder-title");
+    self.innerEl.removeClass("nav-file-title-content");
+    self.innerEl.addClass("nav-folder-title-content");
+    if (self.childrenEl) self.childrenEl.addClass("nav-folder-children");
     self.setCollapsible(true);
     self.vChildren = new host.TreeChildren(self);
     self.pusherEl = ng15MakeTreePusher();
@@ -52397,13 +52493,8 @@ function ng15DefineFolderItem(host) {
   };
 
   proto.updateTitle = function () {
-    const titleEl = this.titleEl;
-    if (!titleEl) return;
-    titleEl.empty();
-    const isRoot = this.file && this.file.isRoot && this.file.isRoot();
-    const icon = titleEl.createDiv("nav-file-icon");
-    host.setIcon(icon, isRoot ? "lucide-vault" : (this.collapsed ? "lucide-folder" : "lucide-folder-open"));
-    titleEl.createSpan({ cls: "nav-folder-title-text", text: this.getTitle() });
+    const itemBase = ng15FileExplorerItemBaseClass || ng15DefineFileExplorerItemBase(host);
+    itemBase.prototype.updateTitle.call(this);
   };
 
   proto.onSelfClick = function (event) {
@@ -55210,22 +55301,40 @@ function ng16DefineS06FolderSuggest(host) {
 
 // ---- property-name value + type combobox --------------------------------------------
 
+// `vO` — combobox of all known property names (value + type icon per item).
 function ng16DefineS06TypeCombobox(host) {
+  const Combobox = env().MI;
+  function TypeCombobox(app, buttonContainer) {
+    const self = Combobox.call(this, app, buttonContainer) || this;
+    return self;
+  }
+  inherit(TypeCombobox, Combobox);
+  TypeCombobox.prototype.getItems = function () {
+    const app = this.app;
+    const mgr = app && app.metadataTypeManager;
+    if (!mgr) return [];
+    return Object.values(mgr.getAllProperties()).map((t) => ({
+      value: t.name,
+      icon: mgr.getWidget(t.widget).icon,
+    }));
+  };
+  return TypeCombobox;
+}
+
+// `gO` — "property" type widget: a TypeCombobox bound to ctx.onChange.
+function ng16DefineS06PropertyKeyValue(host) {
+  const TypeCombobox = ng16DefineS06TypeCombobox(host);
   return function (ctx, el, value) {
     const w = ng16MkWidget(ctx, el, value);
-    const box = el.createDiv("combobox-container");
-    const bases = host.t.plugins && host.t.plugins.bases;
-    const input = box.createEl("input", { cls: "metadata-input-text", type: "text", attr: { placeholder: bases && bases.labelPropertyKey ? bases.labelPropertyKey() : "" } });
-    w.input = input;
-    input.value = value == null ? "" : String(value);
-    input.addEventListener("change", () => ctx.onChange(ng16EmptyValue(input.value)));
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === "Escape") { e.preventDefault(); ctx.blur && ctx.blur(); } });
-    w.setValue = (v) => { w.value = v; input.value = v == null ? "" : String(v); };
+    const combobox = w.combobox = new TypeCombobox(ctx.app, el)
+      .setPlaceholder(env().gm.plugins.bases.labelPropertyKey())
+      .onSelect((item) => ctx.onChange(item == null ? undefined : item.value))
+      .setValueById(value);
+    w.onFocus = () => combobox.focus();
+    w.setValue = (v) => { w.value = v; combobox.setValueById(v); };
     return w;
   };
 }
-
-function ng16DefineS06PropertyKeyValue(host) { return ng16DefineS06TypeCombobox(host); }
 
 function ng16DefineS06Combobox(host) {
   return function (ctx, el, value, items) {
@@ -57767,19 +57876,17 @@ function defineS50BasesTableView(host) {
     const el = this.contentEl || this.containerEl;
     if (!el) return;
     el.empty();
-    const wrap = el.createDiv("bases-table-view");
+    const wrap = el.createDiv();
     wrap.createEl("input", {
-      cls: "bases-filter",
       attr: { type: "search", placeholder: "Filter rows" },
     }).addEventListener("input", (e) => {
       this.filterText = e.target.value || "";
       this.renderTable();
     });
-    const table = wrap.createEl("table", { cls: "bases-grid" });
+    const table = wrap.createEl("table");
     const thead = table.createEl("thead").createEl("tr");
     for (const col of this.columns) {
       const th = thead.createEl("th", { text: col });
-      th.addClass("bases-col-" + col.replace(/\W+/g, "-"));
       th.addEventListener("click", () => {
         if (this.sortKey === col) this.sortDir = -this.sortDir;
         else { this.sortKey = col; this.sortDir = 1; }
@@ -57794,7 +57901,7 @@ function defineS50BasesTableView(host) {
       }
     }
     if (!this.visibleRows().length) {
-      wrap.createDiv({ cls: "bases-empty", text: "No rows" });
+      wrap.createDiv({ text: "No rows" });
     }
   };
 
@@ -66046,11 +66153,12 @@ function ng21MakeMobileDrawer(host) {
     this.tabContainerEl = this.innerEl.createDiv("workspace-drawer-tab-container");
     const activeBox = this.tabContainerEl.createDiv("workspace-drawer-active-tab-container");
     this.tabOptionsEl = activeBox.createDiv("workspace-drawer-tab-options");
-    const activeHeader = this.tabOptionsEl.createDiv("workspace-drawer-active-tab-header workspace-tab-header workspace-drawer-tab-select");
+    const activeHeader = this.tabOptionsEl.createDiv("workspace-tab-header workspace-drawer-tab-select");
     activeHeader.setAttribute("data-ignore-swipe", "");
-    this.activeTabHeaderIconEl = activeHeader.createSpan();
-    this.activeTabHeaderTitleEl = activeHeader.createSpan();
-    const chevron = activeHeader.createSpan("workspace-tab-header-inner-chevron");
+    const headerInner = activeHeader.createDiv("workspace-tab-header-inner");
+    this.activeTabHeaderIconEl = headerInner.createSpan("workspace-tab-header-inner-icon");
+    this.activeTabHeaderTitleEl = headerInner.createSpan("workspace-tab-header-inner-title");
+    const chevron = headerInner.createDiv("workspace-tab-header-inner-chevron");
     host.setIcon(chevron, "lucide-chevrons-up-down");
     this.activeTabHeaderEl = activeHeader;
     this.activeTabEl = activeHeader;
@@ -66413,11 +66521,11 @@ function ng21MakeFilesDrawer(host) {
     const left = this.headerEl.createDiv("workspace-drawer-header-left");
     const nameWrap = left.createDiv("workspace-drawer-header-name");
     const label = nameWrap.createEl("label", "workspace-drawer-header-switcher");
-    const nameText = label.createSpan();
+    const nameText = label.createSpan("workspace-drawer-header-name-text");
     nameText.setText(app.vault.getName());
-    const chev = label.createSpan();
+    const chev = label.createSpan("workspace-drawer-header-name-chevron");
     host.setIcon(chev, "lucide-chevron-down");
-    this._vaultSelect = nameWrap.createEl("select", "workspace-drawer-header-vault-select");
+    this._vaultSelect = label.createEl("select");
     this._infoEl = this.headerEl.createDiv("workspace-drawer-header-info");
     this.addHeaderButton("lucide-pin", () => this.togglePinned(), "mod-pin");
     this.addHeaderButton("lucide-settings", () => app.setting.open(), "mod-settings");
@@ -67268,7 +67376,7 @@ function ng21DefineMenuItem(host) {
     this.checked = !!b;
     this.dom.toggleClass("mod-checked", this.checked);
     if (this.checked && !this.checkIconEl) {
-      this.checkIconEl = this.dom.createDiv("menu-item-check");
+      this.checkIconEl = this.dom.createDiv("menu-item-icon mod-checked");
       host.setIcon(this.checkIconEl, "lucide-check");
     } else if (!this.checked && this.checkIconEl) {
       this.checkIconEl.detach();
@@ -68144,10 +68252,10 @@ function ng21DefineS13MobileTabItem(host) {
     this.switcher = switcher;
     this.el = host.createDiv("mobile-tab");
     const preview = this.el.createDiv("mobile-tab-preview");
-    this.pinEl = preview.createDiv("mobile-tab-pin clickable-icon");
+    this.pinEl = preview.createDiv("mobile-tab-pin");
     host.setIcon(this.pinEl, "lucide-pin");
     this.pinEl.addEventListener("click", (e) => { e.stopPropagation(); leaf.setPinned(false); });
-    this.closeEl = preview.createDiv("mobile-tab-close close-button clickable-icon");
+    this.closeEl = preview.createDiv("close-button");
     host.setIcon(this.closeEl, "lucide-x");
     this.closeEl.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -68229,15 +68337,15 @@ function ng21DefineS13TabSwitcher(host) {
     });
     const center = this.menuBarEl.createDiv("mobile-tab-switcher-menu-button tappable");
     this.tabCountEl = center.createSpan();
-    const chev = center.createSpan();
+    const chev = center.createSpan("mobile-tab-switcher-menu-button-chevron");
     host.setIcon(chev, "lucide-chevron-down");
     const openMenu = (e) => this.showTabManagementMenu(e);
     center.addEventListener("click", openMenu);
     center.addEventListener("contextmenu", openMenu);
     const right = this.menuBarEl.createDiv("mobile-tab-switcher-menu-spacer");
-    const done = right.createDiv("mobile-tab-switcher-done tappable");
-    done.setText(host.t.dialogue.done ? host.t.dialogue.done() : "Done");
-    done.addEventListener("click", () => this.hide());
+    right.createDiv({ cls: "clickable-icon", text: host.t.dialogue.buttonDone() }, (done) => {
+      done.addEventListener("click", () => this.hide());
+    });
 
     this._renderQueued = debounceCall(() => { if (this.isVisible) this.render(); }, 100);
     app.workspace.on("layout-change", () => this._renderQueued());
@@ -73674,10 +73782,8 @@ function defineAboutTab(host) {
   proto._renderAccount = function () {
     const group = new host.SettingGroup(this.containerEl)
       .addHeading(() => NG23ACCT_T(host, "name", "Account"));
-    const box = this.containerEl.createDiv("account-settings-rows");
-    this._accountRowsEl = box;
+    this._accountRowsEl = group.listEl;
     this._renderAccountRows();
-    void group;
   };
 
   proto._accountItem = function (name, descNodes, buttons) {
@@ -73947,8 +74053,8 @@ function defineLoginModal(host) {
 
     const mkField = (opts) => {
       const p = body.createEl("p", { cls: "form-field" });
+      if (opts.label) p.createEl("label", { cls: "input-label", text: opts.label });
       const input = p.createEl("input", {
-        cls: "prompt-internal-uc-input",
         attr: {
           type: opts.type,
           autocomplete: opts.autocomplete,
@@ -73968,6 +74074,7 @@ function defineLoginModal(host) {
     const emailF = mkField({
       type: "email",
       autocomplete: "email",
+      label: ACCT_T(host, "labelEmail", "Email"),
       placeholder: ACCT_T(host, "placeholderEmail", "Email"),
     });
     self._emailP = emailF.p;
@@ -73976,6 +74083,7 @@ function defineLoginModal(host) {
     const passF = mkField({
       type: "password",
       autocomplete: "current-password",
+      label: ACCT_T(host, "labelPassword", "Password"),
       placeholder: ACCT_T(host, "placeholderPassword", "Password"),
     });
     self._passP = passF.p;
@@ -73986,6 +74094,7 @@ function defineLoginModal(host) {
       autocomplete: "one-time-code",
       inputMode: "numeric",
       maxLength: 6,
+      label: ACCT_T(host, "labelMfaCode", "6-digit 2FA code"),
       placeholder: ACCT_T(host, "labelMfaCode", "6-digit 2FA code"),
       sanitize: (v) => v.replace(/\D/g, "").slice(0, 6),
     });
@@ -74081,8 +74190,8 @@ function defineLicenseModal(host) {
     self._errorEl = errEl;
 
     const p = content.createEl("p", { cls: "form-field" });
+    p.createEl("label", { cls: "input-label", text: ABOUT_T(host, "labelLicenseKey", "Licence key") });
     const input = p.createEl("input", {
-      cls: "prompt-internal-uc-input",
       attr: {
         type: "text",
         placeholder: ABOUT_T(host, "licenseKeyPlaceholder", "Licence key"),
@@ -76648,7 +76757,6 @@ function defineSecretStorage(host) {
         const notice = new host.Notice(NG23SEC_T(host, "msgSecretsNotEncrypted", "This machine lacks a secret store, so secrets stay unencrypted."), 0);
         if (notice && notice.noticeEl) {
           const learn = notice.noticeEl.createEl("a", {
-            cls: "notice-learn-more",
             text: ng23T(host, "interface.buttonLearnMore", "Learn more"),
           });
           learn.addEventListener("click", (event) => {
@@ -76824,7 +76932,6 @@ function defineKeychainTab(host) {
 
     const group = new host.SettingGroup(this.containerEl);
     this._group = group;
-    group.addClass("keychain-group");
     group.addHeading(() => NG23SEC_T(host, "secrets", "Secrets"));
     group.addExtraButton((b) => {
       b.setIcon("lucide-plus");
@@ -77066,13 +77173,12 @@ function defineSecretPickerModal(host) {
 
     const content = self.contentEl;
     content.empty();
-    const header = content.createDiv("modal-header-search");
+    content.addClass("keychain-list-results");
+    const header = self.headerEl.createDiv("suggestion-filter-toolbar");
     const search = new host.SearchComponent(header);
     search.setPlaceholder(NG23SEC_T(host, "placeholderSearchSecret", "Look up a secret..."));
-    const listBox = content.createDiv("keychain-list-results");
-    self._chooser = new (defineSecretChooser(host))(app, listBox, self.scope);
+    self._chooser = new (defineSecretChooser(host))(app, content, self.scope);
     self._search = search;
-    self._listBox = listBox;
 
     self._refresh = function () {
       const q = (search.getValue() || "").trim();
@@ -77115,29 +77221,28 @@ function defineSecretPickerModal(host) {
 // ===========================================================================
 
 function defineSecretComponent(host) {
-  function SecretComponent(containerEl) {
+  function SecretComponent(app, containerEl) {
     const self = host.BaseComponent.call(this) || this;
-    self.containerEl = containerEl.createDiv("setting-secret-component");
+    self.containerEl = containerEl;
     self.disabled = false;
     self.settingKey = null;
     self.changeCallback = null;
-    self.revealed = false;
+    self._app = app || null;
 
-    const warn = self.containerEl.createDiv("clickable-icon mod-warning");
+    const warn = self.containerEl.createDiv({ cls: "clickable-icon mod-warning" });
     host.setIcon(warn, "lucide-alert-triangle");
     host.setTooltip(warn, NG23SEC_T(host, "msgSecretsNotEncryptedShort", "Secrets stored unencrypted"));
-    warn.addEventListener("click", () => new (defineEncryptionInfoModal(host))(self._app || null).open());
+    warn.addEventListener("click", () => new (defineEncryptionInfoModal(host))(self._app).open());
     self._warnEl = warn;
     self._refreshWarning = function () {
       const app = self._app;
-      const unavailable = app && app.secretStorage && !app.secretStorage.isEncryptionAvailable();
-      warn.toggle(unavailable !== false ? !!unavailable : false);
+      warn.toggle(!!(app && app.secretStorage && !app.secretStorage.isEncryptionAvailable()));
     };
+    self._refreshWarning();
 
-    self.valueEl = self.containerEl.createDiv("setting-secret-value");
-    self.linkBtn = self.containerEl.createDiv("clickable-icon setting-secret-link");
-    host.setIcon(self.linkBtn, "lucide-key-round");
-    self.linkBtn.addEventListener("click", () => {
+    self.valueEl = self.containerEl.createDiv();
+    self.buttonEl = self.containerEl.createEl("button", { text: NG23SEC_T(host, "buttonLink", "Link") });
+    self.buttonEl.addEventListener("click", () => {
       if (self.disabled || !self._app) return;
       const storage = self._app.secretStorage;
       const done = (key) => { self.setValue(key); if (self.changeCallback) self.changeCallback(key); };
@@ -77147,7 +77252,6 @@ function defineSecretComponent(host) {
         new (defineSecretEditModal(host))(self._app, null, done).open();
       }
     });
-    self._render();
     return self;
   }
   inherit(SecretComponent, host.BaseComponent);
@@ -77157,34 +77261,29 @@ function defineSecretComponent(host) {
 
   proto.setValue = function (key) {
     this.settingKey = key || null;
-    this._render();
-    return this;
-  };
-
-  proto._render = function () {
-    const storage = this._app && this._app.secretStorage;
-    const exists = !!(this.settingKey && storage && storage.peekSecret(this.settingKey) !== null);
     this.valueEl.empty();
-    if (exists) {
-      const row = this.valueEl.createDiv("setting-hotkey");
-      const text = row.createSpan("setting-password");
-      text.setText(this.revealed ? String(storage.peekSecret(this.settingKey)) : "•••••••");
-      text.addEventListener("click", () => {
-        this.revealed = !this.revealed;
-        text.setText(this.revealed ? String(storage.peekSecret(this.settingKey)) : "•••••••");
+    const storage = this._app && this._app.secretStorage;
+    const secret = this.settingKey && storage ? storage.peekSecret(this.settingKey) : null;
+    if (secret !== null && secret !== undefined) {
+      const wrap = this.valueEl.createSpan("setting-hotkey");
+      const pw = wrap.createSpan({ cls: "setting-password", text: "•••••••" });
+      let revealed = false;
+      pw.addEventListener("click", () => {
+        revealed = !revealed;
+        pw.setText(revealed ? String(secret) : "•••••••");
       });
-      const clear = this.valueEl.createDiv("clickable-icon", (icon) => {
-        host.setIcon(icon, "lucide-x");
-        icon.addEventListener("click", () => {
+      wrap.createSpan("setting-hotkey-icon", (el) => {
+        host.setIcon(el, "lucide-x");
+        el.addEventListener("click", () => {
           this.setValue(null);
           if (this.changeCallback) this.changeCallback(null);
         });
       });
+      this.buttonEl.setText(NG23SEC_DL_T(host, "buttonChange", "Change"));
+    } else {
+      this.buttonEl.setText(NG23SEC_T(host, "buttonLink", "Link"));
     }
-    this.linkBtn.setText(exists ? NG23SEC_DL_T(host, "buttonChange", "Change") : NG23SEC_T(host, "buttonLink", "Link..."));
-    this.linkBtn.empty();
-    host.setIcon(this.linkBtn, exists ? "lucide-key-round" : "lucide-key-round");
-    this.linkBtn.setText(exists ? NG23SEC_DL_T(host, "buttonChange", "Change") : NG23SEC_T(host, "buttonLink", "Link..."));
+    return this;
   };
 
   proto.onChange = function (cb) { this.changeCallback = cb; };
@@ -77322,30 +77421,39 @@ function defineIgnoreFiltersModal(host) {
     const self = this;
     const content = this.contentEl;
     content.empty();
-    const empty = this.values.length === 0;
-    content.createEl("p", {
-      text: empty
-        ? FILE_T(host, "labelNoExcludedFiltersApplied", "No exclusion filters are active. Add one below.")
-        : FILE_T(host, "labelExcludedFiltersApplied", "Files caught by these filters are hidden:"),
-    });
+    this.descEl = content.createEl("p");
+    this.listEl = content.createDiv();
+    this.display();
 
-    // input + add row
-    const inputRow = content.createDiv("setting-item");
-    const input = inputRow.createEl("input", {
-      cls: "settings-search-input",
-      attr: { type: "text", placeholder: FILE_T(host, "placeholderExcludedFilter", "Location, e.g. /regex/…") },
-    });
-    input.addEventListener("keydown", (event) => {
-      if (event.isComposing) return;
-      if (event.key === "Enter") self._add(input);
-    });
-    new (defineFolderPathSuggest(host))(this.app, input, false, true);
-    const addBtn = inputRow.createEl("button", { cls: "mod-cta", text: DL_T(host, "buttonAdd", "Add") });
-    addBtn.addEventListener("click", () => self._add(input));
+    let textCmp = null;
+    const add = () => {
+      const value = textCmp ? textCmp.getValue() : "";
+      if (!value || !value.trim()) {
+        try { host.showErrorTooltip(textCmp.inputEl, FILE_T(host, "messageEmptyFilter", "Filters cannot be left blank")); } catch (e) {}
+        return;
+      }
+      self.values.push(value);
+      self.display();
+      textCmp.setValue("");
+    };
 
-    // value rows
-    const listEl = content.createDiv("mobile-option-setting-item-container");
-    this._renderRows(listEl);
+    new host.Setting(content)
+      .setName(FILE_T(host, "labelExcludedFilter", "Excluded filter"))
+      .addText((text) => {
+        textCmp = text;
+        text.setPlaceholder(FILE_T(host, "placeholderExcludedFilter", "Location, e.g. /regex/…"));
+        const inputEl = text.inputEl;
+        inputEl.addEventListener("keydown", (event) => {
+          if (event.isComposing || event.key !== "Enter") return;
+          add();
+        });
+        new (defineFolderPathSuggest(host))(this.app, inputEl, true, false)
+          .onSelect((value) => {
+            if (value && value.item) text.setValue(value.item.path + "/");
+            add();
+          });
+      })
+      .addButton((button) => button.setButtonText(DL_T(host, "buttonAdd", "Add")).onClick(add));
 
     // footer
     this.addButton(["mod-cta"], DL_T(host, "buttonSave", "Save"), () => {
@@ -77354,35 +77462,28 @@ function defineIgnoreFiltersModal(host) {
     this.addCancelButton();
   };
 
-  proto._add = function (input) {
-    const value = input.value;
-    if (!value || !value.trim()) {
-      try { host.showErrorTooltip(input, FILE_T(host, "messageEmptyFilter", "Filters cannot be left blank")); } catch (e) {}
-      return;
+  proto.display = function () {
+    const values = this.values;
+    if (values.length === 0) {
+      this.descEl.setText(FILE_T(host, "labelNoExcludedFiltersApplied", "No exclusion filters are active. Add one below."));
+    } else {
+      this.descEl.setText(FILE_T(host, "labelExcludedFiltersApplied", "Files caught by these filters are hidden:"));
     }
-    if (!this.values.includes(value)) this.values.push(value);
-    input.value = "";
-    this._renderRows(this.contentEl.querySelector(".mobile-option-setting-item-container"));
-  };
-
-  proto._renderRows = function (listEl) {
-    if (!listEl) return;
-    listEl.empty();
-    for (let i = 0; i < this.values.length; i++) {
-      const value = this.values[i];
-      const row = listEl.createDiv("mobile-option-setting-item");
-      const name = row.createDiv("mobile-option-setting-item-name");
-      name.setText(value);
-      if (value.length > 2 && value.startsWith("/") && value.endsWith("/")) {
-        const flair = row.createDiv("flair mod-flat");
-        flair.setText("Regex");
-      }
-      const del = row.createDiv("clickable-icon");
+    this.listEl.empty();
+    for (const value of values) {
+      const row = this.listEl.createDiv("mobile-option-setting-item");
+      row.createSpan({ cls: "mobile-option-setting-item-name", text: value }, (nameEl) => {
+        if (value.length > 2 && value.startsWith("/") && value.endsWith("/")) {
+          nameEl.createSpan({ cls: "flair mod-flat", text: "Regex" });
+        }
+      });
+      const del = row.createDiv("clickable-icon mobile-option-setting-item-option-icon");
       host.setIcon(del, "lucide-x");
       try { host.setTooltip(del, IF_T(host, "deleteActionShortName", "Delete")); } catch (e) {}
       del.addEventListener("click", () => {
-        this.values.splice(i, 1);
-        this._renderRows(listEl);
+        const idx = this.values.indexOf(value);
+        if (idx >= 0) this.values.splice(idx, 1);
+        this.display();
       });
     }
   };

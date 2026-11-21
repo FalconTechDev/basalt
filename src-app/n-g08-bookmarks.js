@@ -290,7 +290,7 @@ export function ng08DefineBookmarkLeafItem(host) {
     const view = this.view;
     const app = view.app;
     if (!this.iconEl) {
-      this.iconEl = this.innerEl.createDiv("tree-item-icon bookmark-icon");
+      this.iconEl = this.innerEl.createDiv("tree-item-icon");
       this.innerEl.prepend(this.iconEl);
     }
     let icon = null;
@@ -583,16 +583,19 @@ export function ng08DefineBookmarkEditModal(host) {
     // buttons
     if (host.Platform.isPhone) {
       // nav-action Cancel/Save in modalEl; existing -> warning remove in content
-      const nav = this.modalEl.createDiv("modal-nav");
-      const cancelBtn = nav.createEl("button", { cls: "mod-cancel", text: hostT.dialogue.buttonCancel() });
-      cancelBtn.addEventListener("click", () => this.close());
-      const saveBtn = nav.createEl("button", { cls: "mod-cta", text: hostT.dialogue.buttonSave() });
-      saveBtn.addEventListener("click", () => this.save());
+      this.modalEl.createEl("button", { cls: "modal-nav-action mod-secondary", text: hostT.dialogue.buttonCancel() }, (el) => {
+        el.addEventListener("click", () => this.close());
+      });
+      this.modalEl.createEl("button", { cls: "modal-nav-action mod-cta", text: hostT.dialogue.buttonSave() }, (el) => {
+        el.addEventListener("click", () => this.save());
+      });
       if (this.isExisting) {
-        const removeBtn = content.createEl("button", { cls: "mod-warning", text: t.menuOptRemove() });
-        removeBtn.addEventListener("click", () => {
-          plugin.removeItem(item);
-          this.close();
+        content.appendChild(this.buttonContainerEl);
+        this.buttonContainerEl.createEl("button", { cls: "mod-warning", text: t.menuOptRemove() }, (el) => {
+          el.addEventListener("click", () => {
+            plugin.removeItem(item);
+            this.close();
+          });
         });
       } else {
         this.buttonContainerEl.detach();

@@ -184,7 +184,7 @@ export function ng05BuildEmbed(host) {
       const right = child.toolbar && child.toolbar.toolbarRightEl;
       if (right) {
         right.createDiv("pdf-toolbar-spacer");
-        const btn = right.createDiv("clickable-icon pdf-embed-open", (el) => {
+        const btn = right.createDiv("clickable-icon", (el) => {
           host.setIcon(el, "lucide-more-vertical");
           host.setTooltip(el, host.t.setting.about.buttonOpen());
         });

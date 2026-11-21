@@ -78,7 +78,7 @@ function ng03Btn(text, onClick) {
 }
 function ng03Desc(parent, key, vars) {
   const text = ng03T(key, vars);
-  if (text && text !== key) parent.createDiv("mobile-onboarding-description").setText(text);
+  if (text && text !== key) parent.createEl("p").setText(text);
 }
 
 // ---------------------------------------------------------------------------
@@ -168,11 +168,20 @@ export function ng03DefineSyncRadioGroup(host) {
     const btn = row.createDiv("mobile-onboarding-radio-button");
     const content = row.createDiv("mobile-onboarding-radio-content");
     const option = { row, btn, content, value: undefined, selected: false };
+    let titleEl = null;
+    let pendingFlair = null;
     const api = {
       setValue(v) { option.value = v; },
-      setTitle(t) { content.setText(t); },
-      setDescription(d) { content.createDiv("mobile-onboarding-radio-description u-muted").setText(d); },
-      setFlair(f) { content.createDiv("mobile-onboarding-radio-flair").setText(f); },
+      setTitle(t) {
+        titleEl = content.createDiv({ cls: "mobile-onboarding-radio-option-title" });
+        if (t) titleEl.setText(t);
+        if (pendingFlair) { titleEl.createSpan({ cls: "flair", text: pendingFlair }); pendingFlair = null; }
+      },
+      setDescription(d) { content.createEl("ul", { cls: "mobile-onboarding-radio-option-desc" }, (ul) => ul.createEl("li", { text: d })); },
+      setFlair(f) {
+        if (titleEl) titleEl.createSpan({ cls: "flair", text: f });
+        else pendingFlair = f;
+      },
     };
     if (configure) configure(api);
     const pick = () => this.setValue(option.value);
@@ -451,22 +460,19 @@ export const ng03DefineSyncSettingsScreen = ng03ScreenFactory({
   render(form, self, name, path, vault) {
     self.vault = vault;
     // feature tables
-    const table = form.createDiv("feature-table");
-    const head = table.createDiv("feature-row feature-header");
-    head.createDiv("feature-cell").setText(ng03T("feature"));
-    head.createDiv("feature-cell").setText(ng03T("synced"));
+    const table = form.createDiv("mobile-onboarding-feature-table");
     for (const type of SYNCABLE_FEATURE_TYPES) {
       const row = table.createDiv("feature-row");
       row.createDiv("feature-cell").setText(ng03T("feature-" + type) || type);
-      row.createDiv("feature-cell").setText("✓");
+      row.createDiv("feature-cell mod-value").setText("✓");
     }
     const row2 = table.createDiv("feature-row");
     row2.createDiv("feature-cell").setText(ng03T("excludedFolders") || "Excluded folders");
-    row2.createDiv("feature-cell").setText(ng03T("none") || "None");
+    row2.createDiv("feature-cell mod-value").setText(ng03T("none") || "None");
     for (const type of MEDIA_FEATURE_TYPES) {
       const row = table.createDiv("feature-row");
       row.createDiv("feature-cell").setText(ng03T("feature-" + type) || type);
-      row.createDiv("feature-cell").setText("✓");
+      row.createDiv("feature-cell mod-value").setText("✓");
     }
     const bar = form.createDiv("button-container");
     bar.appendChild(ng03Cta(ng03IiT("start"), () => {
@@ -512,7 +518,7 @@ export const ng03DefineVaultListScreen = ng03ScreenFactory({
     const own = data.vaults || [];
     const shared = data.shared || [];
     ng03Desc(form, "labelRemoteVaultSelectionDescription", { email: account.email });
-    const list = form.createDiv("modal-list");
+    const list = form.createDiv("list-container has-row-lines");
     const renderRow = (vault) => {
       const row = list.createDiv("list-item tappable");
       row.createDiv("list-item-part title").setText(vault.name || vault.uid);
@@ -526,7 +532,7 @@ export const ng03DefineVaultListScreen = ng03ScreenFactory({
     };
     for (const v of own) list.appendChild(renderRow(v));
     if (shared.length) {
-      list.createDiv("list-item-heading").setText(ng03T("labelVaultsSharedWithYou"));
+      list.createDiv({ cls: "list-heading", text: ng03T("labelVaultsSharedWithYou") });
       for (const v of shared) list.appendChild(renderRow(v));
     }
     form.createDiv("button-container").appendChild(
@@ -822,7 +828,7 @@ export const ng03DefineICloudMissingScreen = ng03ScreenFactory({
   key: "iCloudMissing",
   title: "iCloud",
   render(form, self) {
-    const box = self.contentEl.createDiv("mobile-onboarding-description");
+    const box = self.contentEl.createEl("p");
     box.createDiv().setText(ng03T("iCloudMissingReason1") || "");
     box.createDiv().setText(ng03T("iCloudMissingReason2") || "");
   },

@@ -141,7 +141,7 @@ export function defineCommunityModal(host) {
     self.statusEl = wrapper.createDiv("community-modal-search-results-status");
     self.resultsEl = wrapper.createDiv("community-modal-search-results");
     // detail pane lives next to the sidebar inside the modal element
-    self.infoEl = self.modalEl.createDiv("community-modal-detail");
+    self.infoEl = self.modalEl.createDiv("community-modal-details");
     self.infoEl.hide();
     return self;
   }
@@ -520,7 +520,7 @@ export function definePluginBrowserModal(host) {
         return out;
       },
       renderRow: (self, item, el) => {
-        el.addClass("community-item-plugin");
+        el.addClass("community-item");
         const nameEl = el.createDiv("community-item-name");
         renderMatches(nameEl, item.name || "", item.matchScore);
         if (self.app.plugins && self.app.plugins.manifests && self.app.plugins.manifests[item.id]) {
@@ -538,10 +538,10 @@ export function definePluginBrowserModal(host) {
           el.createDiv("community-item-desc u-muted", (div) => renderMatches(div, desc, item.matchScore));
         }
         if (item.downloads > 0) {
-          el.createDiv("community-item-downloads u-muted", (div) => {
-            const icon = div.createSpan({ cls: "community-item-downloads-icon" });
+          el.createDiv("community-item-downloads", (div) => {
+            const icon = div.createSpan();
             host.setIcon(icon, "lucide-download-cloud");
-            div.appendText(" " + item.downloads.toLocaleString());
+            div.createSpan({ cls: "community-item-downloads-text", text: " " + item.downloads.toLocaleString() });
           });
         }
         if (item.updated) {
@@ -912,7 +912,7 @@ export function defineThemeBrowserModal(host) {
         const css = self.app.customCss;
         const t = host.t;
         const isDefault = item.name === "";
-        el.addClass("community-item-theme");
+        el.addClass("community-item");
         if (isDefault) {
           el.createDiv("community-item-name", (div) => div.setText(host.t.setting.appearance.labelDefaultTheme()));
         } else {

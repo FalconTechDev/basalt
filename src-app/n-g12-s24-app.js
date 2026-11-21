@@ -27,14 +27,17 @@ export function ng12PublishSearch() {
       this._results = [];
     }
 
-    build(containerEl) {
-      this.containerEl = containerEl.createDiv("search-container");
+    build() {
+      this.outerContainerEl = env().createDiv("search-view-outer");
+      this.containerEl = this.outerContainerEl.createDiv("search-view-container");
+      this.containerEl.createSpan("published-search-icon", (el) => env().tv(el, "lucide-search"));
       this.inputEl = this.containerEl.createEl("input", {
-        cls: "search-input",
-        attr: { type: "search", placeholder: "Search" },
+        cls: "search-bar",
+        attr: { type: "text", tabIndex: 0 },
       });
+      this.inputEl.setAttribute("placeholder", "Search page or heading...");
       this.resultsEl = this.containerEl.createDiv("search-results");
-      this.containerEl.hide();
+      this.outerContainerEl.hide();
       let debounce;
       this.inputEl.addEventListener("input", () => {
         clearTimeout(this._timer);
@@ -52,7 +55,7 @@ export function ng12PublishSearch() {
       this.resultsEl.empty();
       this._results = [];
       if (!query) {
-        this.containerEl.hide();
+        this.outerContainerEl.hide();
         return;
       }
       const site = this.app.site;
@@ -74,16 +77,13 @@ export function ng12PublishSearch() {
         const row = this.resultsEl.createDiv({ cls: "search-result", text: item.path });
         row.addEventListener("click", () => this.app.navigate(item.path, ""));
       }
-      this.containerEl.show();
+      this.outerContainerEl.show();
     }
 
     updateOptions() {
       const site = this.app.site;
       const show = !!(site && site.getConfig("showSearch")) && !env().Fc;
-      if (this.containerEl) this.containerEl.toggleVisibility(show);
-      if (this.app.containerEl) {
-        this.app.containerEl.toggleClass("has-search", show);
-      }
+      if (this.outerContainerEl) this.outerContainerEl.toggleVisibility(show);
     }
   }
 
@@ -166,33 +166,50 @@ export function ng12PublishApp() {
 
       // left column
       const left = body.createDiv("site-body-left-column");
-      const leftInner = left.createDiv("site-body-left-column-inner");
-      this.logoEl = leftInner.createDiv("site-body-left-column-site-logo");
-      this.nameEl = leftInner.createDiv("site-body-left-column-site-name");
-      this.themeToggleEl = leftInner.createDiv("site-body-left-column-site-theme-toggle clickable-icon");
-      env().tv(this.themeToggleEl, "lucide-sun-moon");
-      env().Mv(this.themeToggleEl, "Toggle theme");
+      const leftInner = (this.leftColumnInnerEl = left.createDiv("site-body-left-column-inner"));
+      this.leftLogoLinkEl = leftInner.createEl("a", "site-body-left-column-site-logo");
+      this.logoEl = this.leftLogoLinkEl.createEl("img");
+      this.logoEl.setAttr("aria-hidden", "true");
+      this.logoEl.hide();
+      this.leftSiteHeaderEl = leftInner.createEl("a", "site-body-left-column-site-name");
+      this.themeToggleEl = leftInner.createDiv("site-body-left-column-site-theme-toggle");
+      this.themeToggleEl.hide();
+      const darkOpt = this.themeToggleEl.createSpan("option mod-dark");
+      env().tv(darkOpt, "lucide-moon");
+      this.themeCheckboxEl = this.themeToggleEl.createDiv("checkbox-container");
+      const lightOpt = this.themeToggleEl.createSpan("option mod-light");
+      env().tv(lightOpt, "lucide-sun");
       this.themeToggleEl.addEventListener("click", () => this.toggleTheme());
-      this.navContainerEl = leftInner.createDiv("nav-column");
       this.search = new (SearchView())(this);
-      this.search.build(this.navContainerEl);
+      this.search.build();
 
       // center column
       const center = body.createDiv("site-body-center-column");
-      const header = center.createDiv("site-header");
-      this.headerLogoEl = header.createDiv("site-header-logo");
-      this.headerTextEl = header.createDiv("site-header-text");
+      const header = (this.siteHeaderEl = center.createDiv("site-header"));
+      header.createDiv("clickable-icon", (el) => {
+        env().tv(el, "lucide-menu");
+        el.addEventListener("click", () => {
+          root.classList.toggle("is-left-column-open");
+          if (this.site.getConfig("showNavigation") && this.nav && this.nav.init) this.nav.init(true);
+        });
+      });
+      root.createDiv("nav-backdrop", (el) => {
+        el.addEventListener("click", () => root.classList.remove("is-left-column-open"));
+      });
+      this.headerLogoLinkEl = header.createEl("a", "site-header-logo");
+      this.headerLogoLinkEl.setAttr("aria-hidden", "true");
+      this.headerLogoLinkEl.hide();
+      this.headerLogoEl = this.headerLogoLinkEl.createEl("img");
+      this.headerTextEl = header.createEl("a", "site-header-text");
       this.renderContainerEl = center.createDiv("render-container");
       this.renderInnerEl = this.renderContainerEl.createDiv("render-container-inner");
       this.footerEl = center.createDiv("site-footer");
-      this.notFoundEl = center.createDiv("not-found-container");
+      this.notFoundEl = this.renderContainerEl.createDiv("not-found-container");
       this.notFoundEl.setText("Page not found");
 
       // right column
-      const right = body.createDiv("site-body-right-column");
-      const rightInner = right.createDiv("site-body-right-column-inner");
-      this.outlineContainerEl = rightInner.createDiv("outline-column");
-      this.graphContainerEl = rightInner.createDiv("graph-column");
+      const right = (this.rightColumnEl = this.renderContainerEl.createDiv("site-body-right-column"));
+      const rightInner = (this.rightColumnInnerEl = right.createDiv("site-body-right-column-inner"));
 
       doc.body.appendChild(root);
       this._updateHeaderText();
@@ -200,15 +217,27 @@ export function ng12PublishApp() {
 
     _updateHeaderText() {
       const siteName = this.site.getSiteName();
-      if (this.nameEl) this.nameEl.setText(siteName);
-      if (this.headerTextEl) this.headerTextEl.setText(siteName);
-      const logo = this.site.getSiteLogoUrl();
-      if (logo && this.logoEl) {
-        const img = this.logoEl.createEl("img", { attr: { src: this.site.getPublicHref(logo) } });
-        img.style.maxHeight = "40px";
+      if (this.leftSiteHeaderEl) {
+        this.leftSiteHeaderEl.setText(siteName);
+        this.leftSiteHeaderEl.setAttr("aria-label", siteName);
       }
-      if (logo && this.headerLogoEl) {
-        this.headerLogoEl.createEl("img", { attr: { src: this.site.getPublicHref(logo) } });
+      if (this.headerTextEl) {
+        this.headerTextEl.setText(siteName);
+        this.headerTextEl.setAttr("aria-label", siteName);
+      }
+      const logo = this.site.getSiteLogoUrl();
+      if (logo) {
+        const href = this.site.getPublicHref(logo);
+        if (this.logoEl) {
+          this.logoEl.setAttr("src", href);
+          this.logoEl.show();
+        }
+        if (this.leftLogoLinkEl) this.leftLogoLinkEl.setAttr("aria-label", siteName + " logo");
+        if (this.headerLogoEl) {
+          this.headerLogoEl.setAttr("src", href);
+          this.headerLogoEl.show();
+        }
+        if (this.headerLogoLinkEl) this.headerLogoLinkEl.setAttr("aria-label", siteName + " logo");
       }
       document.title = siteName + " | Basalt Publish";
     }
@@ -325,13 +354,41 @@ export function ng12PublishApp() {
     mountViews() {
       this.render = new (PageView())(this);
       this.renderInnerEl.appendChild(this.render.renderContainerEl);
-      this.nav = new (NavView())(this, this.navContainerEl);
-      this.outline = new (OutlineView())(this, this.outlineContainerEl);
-      this.graph = new (GraphView())(this, this.graphContainerEl);
+      this.nav = new (NavView())(this, this.leftColumnInnerEl);
+      this.outline = new (OutlineView())(this, this.rightColumnInnerEl);
+      this.graph = new (GraphView())(this, this.rightColumnInnerEl);
       this.search.updateOptions();
+      this._placeSearch();
+      this.site.on("options-updated", () => this._placeSearch());
+      const showToggle = this.site.getConfig("showThemeToggle");
       if (this.themeToggleEl) {
-        const showToggle = this.site.getConfig("showThemeToggle");
         this.themeToggleEl.toggleVisibility(showToggle);
+        if (showToggle) this._updateThemeToggleState();
+      }
+    }
+
+    _placeSearch() {
+      const outer = this.search && this.search.outerContainerEl;
+      if (!outer) return;
+      const site = this.site;
+      const showSearch = !!(site && site.getConfig("showSearch")) && !env().Fc;
+      const showGraph = !!(site && site.getConfig("showGraph"));
+      const showOutline = !!(site && site.getConfig("showOutline"));
+      if (showSearch && this.leftColumnInnerEl && this.themeToggleEl) {
+        this.leftColumnInnerEl.insertBefore(outer, this.themeToggleEl.nextSibling);
+      } else if ((showGraph || showOutline) && this.rightColumnInnerEl) {
+        this.rightColumnInnerEl.insertBefore(outer, this.rightColumnInnerEl.firstChild);
+      } else if (this.siteHeaderEl) {
+        this.siteHeaderEl.insertBefore(outer, this.siteHeaderEl.firstChild);
+      }
+    }
+
+    _updateThemeToggleState() {
+      const dark = this._theme() === "dark" || (this._theme() === "system" && matchMedia && matchMedia("(prefers-color-scheme: dark)").matches);
+      if (this.themeToggleEl) this.themeToggleEl.toggleClass("is-dark", dark);
+      if (this.themeCheckboxEl) {
+        this.themeCheckboxEl.toggleClass("is-dark", dark);
+        this.themeCheckboxEl.toggleClass("is-enabled", dark);
       }
     }
 
@@ -428,6 +485,7 @@ export function ng12PublishApp() {
         this.containerEl.setAttribute("data-theme", resolved);
         this.containerEl.toggleClass("theme-dark", resolved === "dark");
       }
+      this._updateThemeToggleState();
     }
 
     registerMarkdownPostProcessor(fn) {
