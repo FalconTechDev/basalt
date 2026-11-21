@@ -413,8 +413,8 @@ methods(SearchMatchResult, {
     const from = typeof before === "number" ? before : this.start;
     const to = typeof after === "number" ? after : this.end;
     ng11RenderMatchRanges(el, this.content, from, to, this.matches);
-    if (from > this.start) el.prepend(createSpan({ cls: "search-result-file-match-ellipsis", text: "..." }));
-    if (to < this.end) el.appendChild(createSpan({ cls: "search-result-file-match-ellipsis", text: "..." }));
+    if (from > this.start) el.prepend("...");
+    if (to < this.end) el.append("...");
     if (this.onMatchRender) this.onMatchRender(this.matches[0], el);
     if (this.parentDom.invalidateScroller) this.parentDom.invalidateScroller();
   },
