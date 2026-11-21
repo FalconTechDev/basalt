@@ -298,10 +298,6 @@ export function defineCommandPalettePlugin(host) {
     });
     const recents = ng23LoadStorageSafe(app, "recent-commands");
     if (Array.isArray(recents)) self.recentCommands = recents.slice(0, 100);
-  };
-
-  proto.onEnable = function (app, plugin) {
-    const self = this;
     plugin.registerRibbonItem(CP_T(host, "actionOpen", "Command palette"), "lucide-terminal", () => self.onOpen());
     plugin.registerGlobalCommand({
       id: "command-palette:open",
@@ -311,6 +307,10 @@ export function defineCommandPalettePlugin(host) {
       showOnMobileToolbar: true,
       callback: () => self.onOpen(),
     });
+  };
+
+  proto.onEnable = function (app, plugin) {
+    const self = this;
     plugin.addSettingTab(new (defineCommandPaletteSettingTab(host))(app, this, plugin));
   };
 

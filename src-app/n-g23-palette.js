@@ -3,7 +3,7 @@
 import { inherit } from "./inherit.js";
 import { env, hostEnv } from "./env.js";
 import { fileClass } from "./n-g13-vault.js";
-import { withoutMd, withoutExtension, targetText as ng23TargetText } from "./path.js";
+import { withoutMd, withoutExtension, targetText } from "./path.js";
 import { frontmatterAliases } from "./frontmatter.js";
 import { prepareFuzzyFinder, prepareSimpleFinder, renderMatches } from "./search-simple.js";
 import { sortHitsByScore } from "./misc.js";
@@ -41,7 +41,7 @@ export function ng23ShowsExtension(host, app, file, flags, context) {
 
 /** Drag text for a suggestion (delegates to the shared path helper). */
 export function ng23SwTargetText(suggestion) {
-  return ng23TargetText(suggestion) || "";
+  return targetText(suggestion) || "";
 }
 
 // ===========================================================================
@@ -347,7 +347,6 @@ export function defineQuickSwitcherModalBase(host) {
     const file = app.workspace.getActiveFile && app.workspace.getActiveFile();
     return file ? file.path : "";
   };
-  inherit(QuickSwitcherModalBase, host.SuggestModal);
   ng23Sw.ModalBase = QuickSwitcherModalBase;
   return QuickSwitcherModalBase;
 }
@@ -493,13 +492,6 @@ export function defineQuickSwitcherPlugin(host) {
     this.app = app;
     this.plugin = plugin;
     const self = this;
-    plugin.loadData().then((data) => {
-      self.options = Object.assign({}, QUICK_SWITCHER_DEFAULTS, data && typeof data === "object" ? data : {});
-    });
-  };
-
-  proto.onEnable = function (app, plugin) {
-    const self = this;
     plugin.registerRibbonItem(QS_T(host, "actionOpen", "Quick switcher"), "lucide-file-search", () => self.onOpen());
     plugin.registerGlobalCommand({
       id: "switcher:open",
@@ -508,6 +500,13 @@ export function defineQuickSwitcherPlugin(host) {
       hotkeys: [makeHotkey(["Mod"], "O")],
       callback: () => self.onOpen(),
     });
+    plugin.loadData().then((data) => {
+      self.options = Object.assign({}, QUICK_SWITCHER_DEFAULTS, data && typeof data === "object" ? data : {});
+    });
+  };
+
+  proto.onEnable = function (app, plugin) {
+    const self = this;
     plugin.addSettingTab(new (defineQuickSwitcherSettingTab(host))(app, this, plugin));
   };
 

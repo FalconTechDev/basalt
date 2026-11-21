@@ -67057,10 +67057,6 @@ function defineCommandPalettePlugin(host) {
     });
     const recents = ng23LoadStorageSafe(app, "recent-commands");
     if (Array.isArray(recents)) self.recentCommands = recents.slice(0, 100);
-  };
-
-  proto.onEnable = function (app, plugin) {
-    const self = this;
     plugin.registerRibbonItem(CP_T(host, "actionOpen", "Command palette"), "lucide-terminal", () => self.onOpen());
     plugin.registerGlobalCommand({
       id: "command-palette:open",
@@ -67070,6 +67066,10 @@ function defineCommandPalettePlugin(host) {
       showOnMobileToolbar: true,
       callback: () => self.onOpen(),
     });
+  };
+
+  proto.onEnable = function (app, plugin) {
+    const self = this;
     plugin.addSettingTab(new (defineCommandPaletteSettingTab(host))(app, this, plugin));
   };
 
@@ -67118,6 +67118,454 @@ function ng23LoadStorageSafe(app, key) {
   try { return app.loadLocalStorage(key); } catch (e) { return null; }
 }
 
+// ---- n-g23-hotkeys.js ----
+// g23 clean-room: "Hotkeys" settings tab (spec g23 §3.3).
+
+const NG23HK_T = (host, key, fb, arg) => ng23T(host, "setting.hotkeys." + key, fb, arg);
+const NG23HK_OPT_T = (host, key, fb, arg) => ng23T(host, "setting.options." + key, fb, arg);
+const NG23HK_IF_T = (host, key, fb) => ng23T(host, "interface." + key, fb);
+
+const FILTERS = [
+  ["show-all", "labelShowAll", "Everything"],
+  ["show-assigned", "labelShowAssigned", "Assigned"],
+  ["show-user-assigned", "labelShowUserAssigned", "Set by me"],
+  ["show-unassigned", "labelShowUnassigned", "Not assigned"],
+];
+
+/** Removable filter chip: .hotkey-filter > .hotkey-filter-inner + .hotkey-filter-remove-button. */
+function Ng23HotkeyFilterChip(host, containerEl) {
+  const self = this;
+  self.el = containerEl.createDiv("hotkey-filter");
+  self.innerEl = self.el.createDiv("hotkey-filter-inner");
+  self.value = "";
+  self.title = "";
+  self.onRemoveCallback = null;
+  self.removed = false;
+  const btn = self.el.createDiv("hotkey-filter-remove-button clickable-icon");
+  host.setIcon(btn, "lucide-x");
+  host.setTooltip(btn, NG23HK_IF_T(host, "menu.close", "Close"));
+  btn.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    self.remove();
+  });
+  self._render();
+}
+const chipProto = Ng23HotkeyFilterChip.prototype;
+chipProto._render = function () {
+  this.innerEl.setText(this.value || this.title || "");
+};
+chipProto.setValue = function (value) { this.value = value; this._render(); return this; };
+chipProto.setTitle = function (title) { this.title = title; this._render(); return this; };
+chipProto.onRemove = function (cb) { this.onRemoveCallback = cb; return this; };
+chipProto.remove = function () {
+  if (this.removed) return;
+  this.removed = true;
+  if (this.el) this.el.detach();
+  const cb = this.onRemoveCallback;
+  this.onRemoveCallback = null;
+  if (cb) cb();
+};
+
+function defineHotkeysTab(host) {
+  function HotkeysTab(app, setting) {
+    const self = host.SettingTab.call(this, app, setting) || this;
+    self.name = NG23HK_T(host, "name", "Hotkeys");
+    self.id = "hotkeys";
+    self.icon = "command";
+    self.query = "";
+    self.statusFilter = "show-all";
+    self.hotkeyFilter = ""; // formatted hotkey text
+    self.commandBeingCustomized = null;
+    self.setHotkeyScope = null;
+    self.filterHotkeyScope = null;
+    self._searchSetting = null;
+    self._searchInput = null;
+    self._chips = [];
+    self._listEl = null;
+    self._descEl = null;
+    return self;
+  }
+  inherit(HotkeysTab, host.SettingTab);
+  const proto = HotkeysTab.prototype;
+
+  proto._effective = function (id) {
+    const mgr = this.app.hotkeyManager;
+    const custom = mgr.getHotkeys(id);
+    return custom !== undefined ? custom : (mgr.getDefaultHotkeys(id) || []);
+  };
+
+  proto._commands = function () {
+    const list = Object.values(this.app.commands.commands);
+    const nameOf = (c) => (typeof c.name === "function" ? c.name() : c.name) || c.id;
+    return list.slice().sort((a, b) => ng23Collator.compare(nameOf(a), nameOf(b)));
+  };
+
+  proto.display = function () {
+    const self = this;
+    this.containerEl.empty();
+    this._chips = [];
+    const group = new host.SettingGroup(this.containerEl);
+
+    // search setting + status filter + hotkey capture buttons
+    group.addSetting((setting) => {
+      setting.setName(NG23HK_T(host, "optionSearch", "Find hotkeys"));
+      self._descEl = setting.descEl;
+      setting.addSearch((search) => {
+        self._searchInput = search;
+        search.setPlaceholder(NG23HK_T(host, "promptFilter", "Filter..."));
+        search.setValue(self.query);
+        search.onChange((value) => { self.setQuery(value); });
+        search.addRightDecorator((decorator) => {
+          decorator.addClass("clickable-icon");
+          host.setIcon(decorator, "lucide-keyboard");
+          host.setTooltip(decorator, NG23HK_T(host, "labelWaitingForHotkeyPress", "Press a key combination..."));
+          decorator.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            self._armHotkeyFilter();
+          });
+        });
+      });
+      setting.addExtraButton((button) => {
+        button.setIcon("lucide-filter");
+        button.setTooltip(NG23HK_OPT_T(host, "labelFilter", "Filter"));
+        button.extraSettingsEl.addEventListener("click", (event) => self.showFilterMenu(event));
+      });
+      self._searchSetting = setting;
+    });
+
+    // filter chip container + command list container
+    const filterBox = group.listEl.createDiv("setting-filter-container");
+    const listBox = group.listEl.createDiv("hotkey-list-container");
+    this._filterBoxEl = filterBox;
+    this._listEl = listBox;
+
+    // restore chips for active filters
+    if (this.statusFilter !== "show-all") this._addStatusChip();
+    if (this.hotkeyFilter) this._addHotkeyChip();
+
+    this.updateHotkeyVisibility();
+    if (host.Platform.hasPhysicalKeyboard && self._searchInput) {
+      try { self._searchInput.inputEl.focus(); } catch (err) {}
+    }
+  };
+
+  proto._addStatusChip = function () {
+    const found = FILTERS.find((f) => f[0] === this.statusFilter);
+    if (!found) return;
+    const chip = new Ng23HotkeyFilterChip(host, this._filterBoxEl);
+    chip.setTitle(NG23HK_T(host, found[1], found[2]));
+    chip.onRemove(() => { this.statusFilter = "show-all"; this.updateHotkeyVisibility(); });
+    this._chips.push(chip);
+  };
+
+  proto._addHotkeyChip = function () {
+    const chip = new Ng23HotkeyFilterChip(host, this._filterBoxEl);
+    chip.setValue(this.hotkeyFilter);
+    chip.setTitle(this.hotkeyFilter);
+    chip.onRemove(() => { this.hotkeyFilter = ""; this.updateHotkeyVisibility(); });
+    this._chips.push(chip);
+  };
+
+  proto._clearChips = function () {
+    for (const chip of this._chips) chip.remove();
+    this._chips = [];
+  };
+
+  proto.setDescription = function (shown, conflicts) {
+    if (!this._descEl) return;
+    const desc = NG23HK_T(host, "optionSearchDesc", "{{count}} hotkey matches the current filter. ", { count: shown });
+    const conflict = conflicts > 0
+      ? NG23HK_T(host, "optionSearchConflict", "{{count}} command has a clash. ", { count: conflicts })
+      : "";
+    this._descEl.empty();
+    this._descEl.setText(desc + (conflict ? " " : "") + conflict);
+  };
+
+  proto.setQuery = function (query) {
+    this.query = String(query || "");
+    if (this._searchInput) {
+      try { this._searchInput.setValue(this.query); } catch (err) {}
+      try { this._searchInput.inputEl.focus(); } catch (err) {}
+    }
+    this.updateHotkeyVisibility();
+  };
+
+  proto.setStatusFilter = function (filter) {
+    this.statusFilter = FILTERS.some((f) => f[0] === filter) ? filter : "show-all";
+    if (this.statusFilter !== "show-all") {
+      // single-instance chips: a status filter replaces the hotkey filter
+      this.hotkeyFilter = "";
+    }
+    if (this._filterBoxEl) {
+      this._clearChips();
+      if (this.statusFilter !== "show-all") this._addStatusChip();
+      if (this.hotkeyFilter) this._addHotkeyChip();
+    }
+    this.updateHotkeyVisibility();
+  };
+
+  proto.setHotkeyFilter = function (hotkey) {
+    this.hotkeyFilter = hotkey ? ng23FormatHotkey(host, hotkey) : "";
+    if (this.hotkeyFilter) {
+      this.statusFilter = "show-all";
+      if (this._filterBoxEl) {
+        this._clearChips();
+        this._addHotkeyChip();
+      }
+    }
+    this.updateHotkeyVisibility();
+  };
+
+  proto.showFilterMenu = function (event) {
+    const self = this;
+    const menu = new host.Menu();
+    for (const [value, key, fb] of FILTERS) {
+      menu.addItem((item) => {
+        item.setTitle(NG23HK_T(host, key, fb));
+        item.setChecked(self.statusFilter === value);
+        item.onClick(() => self.setStatusFilter(value));
+      });
+    }
+    menu.showAtMouseEvent(event);
+  };
+
+  proto._armHotkeyFilter = function () {
+    // keyboard icon in the search field: capture the next key combo as filter
+    if (this.filterHotkeyScope) return;
+    this._waitingChip = new Ng23HotkeyFilterChip(host, this._filterBoxEl || this.containerEl);
+    this._waitingChip.setValue(NG23HK_T(host, "labelWaitingForHotkeyPress", "Press a key combination..."));
+    this._waitingChip.onRemove(() => this.finishFilteringByHotkey());
+    const scope = new host.Scope(host.Keymap.global.getRootScope());
+    scope.register(null, null, (event, info) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (info.key === "Escape" || info.vkey === "Escape") {
+        self.finishFilteringByHotkey();
+        return false;
+      }
+      self.setHotkeyFilter(makeHotkey(host.Keymap.decompileModifiers(info.modifiers || ""), info.vkey));
+      self.finishFilteringByHotkey();
+      return false;
+    });
+    this.filterHotkeyScope = scope;
+    host.Keymap.global.pushScope(scope);
+  };
+
+  proto.finishFilteringByHotkey = function () {
+    if (this.filterHotkeyScope) {
+      host.Keymap.global.popScope(this.filterHotkeyScope);
+      this.filterHotkeyScope = null;
+    }
+    if (this._waitingChip) {
+      this._waitingChip.remove();
+      this._waitingChip = null;
+    }
+    this.updateHotkeyVisibility();
+  };
+
+  proto._startCustomizing = function (command) {
+    this.finishCustomizingHotkey();
+    this.commandBeingCustomized = command.id;
+    const scope = new host.Scope(host.Keymap.global.getRootScope());
+    scope.register(null, null, (event, info) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const keyName = info.vkey || info.key;
+      if (keyName === "Escape" || info.key === "Escape") {
+        this.finishCustomizingHotkey();
+        return false;
+      }
+      const modifiers = host.Keymap.decompileModifiers(info.modifiers || "");
+      const isFunctionKey = /^F\d+$/.test(keyName);
+      const valid = modifiers.length > 0 || isFunctionKey;
+      const shiftLetter = modifiers.length === 1 && modifiers[0] === "Shift" && keyName.length === 1;
+      if (!valid || shiftLetter) return false;
+      const hotkey = makeHotkey(modifiers, keyName);
+      const mgr = this.app.hotkeyManager;
+      const effective = mgr.getHotkeys(command.id) !== undefined
+        ? mgr.getHotkeys(command.id)
+        : (mgr.getDefaultHotkeys(command.id) || []);
+      const formatted = ng23FormatHotkey(host, hotkey);
+      const duplicate = effective.some((h) => ng23FormatHotkey(host, h) === formatted);
+      if (duplicate) return false;
+      mgr.setHotkeys(command.id, effective.concat([hotkey]));
+      mgr.save();
+      this.finishCustomizingHotkey();
+      return false;
+    });
+    this.setHotkeyScope = scope;
+    host.Keymap.global.pushScope(scope);
+    this.updateHotkeyVisibility();
+  };
+
+  proto.finishCustomizingHotkey = function () {
+    if (this.setHotkeyScope) {
+      host.Keymap.global.popScope(this.setHotkeyScope);
+      this.setHotkeyScope = null;
+    }
+    if (this.commandBeingCustomized !== null) {
+      this.commandBeingCustomized = null;
+      this.updateHotkeyVisibility();
+    }
+  };
+
+  proto.hide = function () {
+    this.finishCustomizingHotkey();
+  };
+
+  proto._removeHotkey = function (command, hotkey) {
+    const mgr = this.app.hotkeyManager;
+    const id = command.id;
+    const custom = mgr.getHotkeys(id);
+    const defaults = mgr.getDefaultHotkeys(id) || [];
+    const base = custom !== undefined ? custom : defaults;
+    const formatted = ng23FormatHotkey(host, hotkey);
+    const remaining = base.filter((h) => ng23FormatHotkey(host, h) !== formatted);
+    if (custom !== undefined) {
+      if (remaining.length === 0 && defaults.length === 0) mgr.removeHotkeys(id);
+      else mgr.setHotkeys(id, remaining);
+    } else {
+      mgr.setHotkeys(id, remaining);
+    }
+    mgr.save();
+    this.updateHotkeyVisibility();
+  };
+
+  proto._restoreHotkeys = function (command) {
+    const mgr = this.app.hotkeyManager;
+    mgr.removeHotkeys(command.id);
+    mgr.save();
+    this.finishCustomizingHotkey();
+    this.updateHotkeyVisibility();
+  };
+
+  proto.updateHotkeyVisibility = function () {
+    const listEl = this._listEl;
+    if (!listEl) return;
+    const app = this.app;
+    const mgr = app.hotkeyManager;
+    const query = this.query.toLowerCase();
+    const nameOf = (c) => (typeof c.name === "function" ? c.name() : c.name) || c.id;
+
+    // formatted hotkey -> set of command names (conflict detection over ALL commands)
+    const owners = new Map();
+    const commands = this._commands();
+    for (const command of commands) {
+      const effective = this._effective(command.id);
+      for (const hotkey of effective) {
+        const text = ng23FormatHotkey(host, hotkey);
+        if (!text) continue;
+        if (!owners.has(text)) owners.set(text, new Set());
+        owners.get(text).add(nameOf(command));
+      }
+    }
+
+    let shown = 0;
+    let conflicts = 0;
+    listEl.empty();
+
+    for (const command of commands) {
+      const name = nameOf(command);
+      const custom = mgr.getHotkeys(command.id);
+      const defaults = mgr.getDefaultHotkeys(command.id) || [];
+      const effective = custom !== undefined ? custom : defaults;
+
+      if (query && !(ng23Contains(name, query) || command.id.toLowerCase().startsWith(query))) continue;
+      if (this.hotkeyFilter && !effective.some((h) => ng23FormatHotkey(host, h) === this.hotkeyFilter)) continue;
+      const hasCustom = custom !== undefined && custom.length > 0;
+      if (this.statusFilter === "show-assigned" && effective.length === 0) continue;
+      if (this.statusFilter === "show-user-assigned" && !hasCustom) continue;
+      if (this.statusFilter === "show-unassigned" && effective.length > 0) continue;
+
+      const commandConflicts = [];
+      for (const hotkey of effective) {
+        const text = ng23FormatHotkey(host, hotkey);
+        const set = owners.get(text);
+        if (set && set.size > 1) {
+          const others = [...set].filter((n) => n !== name);
+          if (others.length) commandConflicts.push({ hotkey, count: set.size - 1, other: others[0] });
+        }
+      }
+      if (commandConflicts.length) conflicts++;
+      shown++;
+
+      const setting = new host.Setting(listEl);
+      setting.setName(name);
+      const box = setting.controlEl.createDiv("setting-command-hotkeys");
+      const customizing = this.commandBeingCustomized === command.id;
+
+      if (customizing) {
+        box.createSpan("setting-hotkey mod-active", (el) => {
+          el.setText(NG23HK_T(host, "labelWaitingForHotkeyPress", "Press a key combination..."));
+        });
+      }
+      if (effective.length === 0 && !customizing) {
+        box.createSpan("setting-hotkey mod-empty", (el) => {
+          el.setText(NG23HK_T(host, "labelBlankHotkey", "Empty"));
+        });
+      }
+      for (const hotkey of effective) {
+        const formatted = ng23FormatHotkey(host, hotkey);
+        const conflict = commandConflicts.find((c) => ng23FormatHotkey(host, c.hotkey) === formatted);
+        const span = box.createSpan("setting-hotkey", (el) => {
+          el.setText(" " + formatted + " ");
+          if (conflict) {
+            el.addClass("has-conflict");
+            const tip = conflict.count === 1
+              ? NG23HK_T(host, "tooltipHotkeySingleConflict", "Clashes with “{{command}}”", { command: conflict.other })
+              : NG23HK_T(host, "tooltipHotkeyMultipleConflicts", "Also bound to {{count}} other commands", { count: conflict.count });
+            host.setTooltip(el, tip);
+            el.addEventListener("click", () => {
+              this.query = "";
+              if (this._searchInput) { try { this._searchInput.setValue(""); } catch (err) {} }
+              this.setHotkeyFilter(hotkey);
+            });
+          }
+        });
+        const del = box.createDiv("setting-hotkey-icon setting-delete-hotkey clickable-icon", (el) => {
+          host.setIcon(el, "lucide-x");
+          host.setTooltip(el, NG23HK_T(host, "tooltipDeleteHotkey", "Remove hotkey"));
+          el.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            this._removeHotkey(command, hotkey);
+          });
+        });
+      }
+
+      // restore-defaults button (only with custom hotkeys)
+      if (custom !== undefined) {
+        box.createDiv("clickable-icon setting-restore-hotkey-button", (el) => {
+          host.setIcon(el, "lucide-rotate-ccw");
+          host.setTooltip(el, NG23HK_T(host, "tooltipRestoreDefault", "Back to default"));
+          el.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            this._restoreHotkeys(command);
+          });
+        });
+      }
+      // add/customize button
+      const addCls = customizing ? "clickable-icon setting-add-hotkey-button mod-active" : "clickable-icon setting-add-hotkey-button";
+      box.createDiv(addCls, (el) => {
+        host.setIcon(el, "lucide-plus-circle");
+        host.setTooltip(el, NG23HK_T(host, "tooltipCustomizeCommand", "Edit this command"));
+        el.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          this._startCustomizing(command);
+        });
+      });
+    }
+
+    this.setDescription(shown, conflicts);
+  };
+
+  return HotkeysTab;
+}
+
 // ---- n-g23-palette.js ----
 // g23 clean-room: quick switcher internal plugin (palette.js replacement, switcher half).
 // Suggestion pipeline: recents / files / aliases / unresolved links / bookmarks -> typed items.
@@ -67153,7 +67601,7 @@ function ng23ShowsExtension(host, app, file, flags, context) {
 
 /** Drag text for a suggestion (delegates to the shared path helper). */
 function ng23SwTargetText(suggestion) {
-  return ng23TargetText(suggestion) || "";
+  return targetText(suggestion) || "";
 }
 
 // ===========================================================================
@@ -67459,7 +67907,6 @@ function defineQuickSwitcherModalBase(host) {
     const file = app.workspace.getActiveFile && app.workspace.getActiveFile();
     return file ? file.path : "";
   };
-  inherit(QuickSwitcherModalBase, host.SuggestModal);
   ng23Sw.ModalBase = QuickSwitcherModalBase;
   return QuickSwitcherModalBase;
 }
@@ -67605,13 +68052,6 @@ function defineQuickSwitcherPlugin(host) {
     this.app = app;
     this.plugin = plugin;
     const self = this;
-    plugin.loadData().then((data) => {
-      self.options = Object.assign({}, QUICK_SWITCHER_DEFAULTS, data && typeof data === "object" ? data : {});
-    });
-  };
-
-  proto.onEnable = function (app, plugin) {
-    const self = this;
     plugin.registerRibbonItem(QS_T(host, "actionOpen", "Quick switcher"), "lucide-file-search", () => self.onOpen());
     plugin.registerGlobalCommand({
       id: "switcher:open",
@@ -67620,6 +68060,13 @@ function defineQuickSwitcherPlugin(host) {
       hotkeys: [makeHotkey(["Mod"], "O")],
       callback: () => self.onOpen(),
     });
+    plugin.loadData().then((data) => {
+      self.options = Object.assign({}, QUICK_SWITCHER_DEFAULTS, data && typeof data === "object" ? data : {});
+    });
+  };
+
+  proto.onEnable = function (app, plugin) {
+    const self = this;
     plugin.addSettingTab(new (defineQuickSwitcherSettingTab(host))(app, this, plugin));
   };
 
@@ -104990,395 +105437,6 @@ function defineEditorTab(host) {
   };
 
   return EditorTab;
-}
-
-// ---- tab-hotkeys.js ----
-// The Hotkeys settings tab: search + status/hotkey filters, the conflict-aware command list and the
-// "press a key" capture scopes. Hotkey records stay { modifiers: ["Mod", ...], key } exactly like the
-// inherited format; the display string comes from the shared formatHotkey helper.
-
-const HOTKEY_STATUS_FILTERS = ["show-all", "show-assigned", "show-user-assigned", "show-unassigned"];
-
-function defineHotkeysTab(host) {
-  const i18n = () => host.t.setting.hotkeys;
-
-  /** Multimap hotkey-text -> command names, used to mark conflicting bindings. */
-  class HotkeyUseIndex {
-    constructor() { this.data = new Map(); }
-    add(key, value) {
-      let list = this.data.get(key);
-      if (!list) { list = []; this.data.set(key, list); }
-      if (!list.contains(value)) list.push(value);
-    }
-    get(key) { return this.data.get(key) || null; }
-  }
-
-  /** The removable filter chip shown above the hotkey list (status filter or captured hotkey). */
-  function HotkeyFilterChip(containerEl) {
-    this.value = null;
-    const self = this;
-    this.el = createDiv({ cls: "hotkey-filter" }, (el) => {
-      self.innerEl = el.createDiv({ cls: "hotkey-filter-inner", text: i18n().labelShowAll() });
-      self.removeEl = el.createDiv("hotkey-filter-remove-button", (btn) => {
-        host.setIcon(btn, "lucide-x");
-        host.setTooltip(btn, host.t.interface.menu.close());
-      });
-    });
-    if (containerEl) containerEl.appendChild(this.el);
-    this.removeEl.addEventListener("click", () => this.remove());
-  }
-  const chipProto = HotkeyFilterChip.prototype;
-  chipProto.setValue = function (value) { this.value = value; return this; };
-  chipProto.setTitle = function (title) { this.innerEl.setText(title); return this; };
-  chipProto.onRemove = function (callback) { this.handleRemove = callback; return this; };
-  chipProto.remove = function () {
-    this.value = null;
-    if (this.el.isShown()) {
-      this.el.detach();
-      if (this.handleRemove) this.handleRemove();
-    }
-  };
-
-  /** A pressed key as a hotkey record, or null for keys that must not be captured (bare letters etc.). */
-  function hotkeyFromInfo(info) {
-    const modifiers = host.Keymap.decompileModifiers(info.modifiers);
-    const key = info.vkey;
-    if (modifiers.length !== 0 || /^F[0-9]+$/i.test(key)) {
-      if (modifiers.length === 1 && /^[a-zA-Z]$/.test(key) && modifiers[0] === "Shift") return null;
-      return makeHotkey(modifiers, key);
-    }
-    return null;
-  }
-
-  const STATUS_FILTER_TITLES = () => ({
-    "show-all": i18n().labelShowAll,
-    "show-assigned": i18n().labelShowAssigned,
-    "show-user-assigned": i18n().labelShowUserAssigned,
-    "show-unassigned": i18n().labelShowUnassigned,
-  });
-
-  /** Settings tab id "hotkeys". */
-  function HotkeysTab(app, setting) {
-    const self = host.SettingTab.apply(this, arguments) || this;
-    self.name = i18n().name();
-    self.id = "hotkeys";
-    self.icon = "command";
-    self.setHotkeyScope = null;
-    self.commandBeingCustomized = null;
-    self.filterHotkeyScope = null;
-    self.filterHotkeyEl = null;
-    self.filterHotkeyActiveEl = null;
-    self.hotkeyListContainerEl = null;
-    self.hotkeyFilter = null;
-    self.searchComponent = null;
-    self.headerComponent = null;
-    self.filterContainerEl = null;
-    self.statusFilter = null;
-
-    // scope that captures the replacement hotkey for the command being customized
-    self.setHotkeyScope = new host.Scope();
-    self.setHotkeyScope.register(null, null, (event, info) => {
-      const command = self.commandBeingCustomized;
-      const manager = app.hotkeyManager;
-      if (command) {
-        const hotkey = hotkeyFromInfo(info);
-        if (hotkey) {
-          let hotkeys = (manager.getHotkeys(command.id) || manager.getDefaultHotkeys(command.id) || []).slice();
-          const already = hotkeys.filter((h) => host.formatHotkey(h) === host.formatHotkey(hotkey)).length > 0;
-          if (!already) {
-            hotkeys.push(hotkey);
-            manager.setHotkeys(command.id, hotkeys);
-            manager.save().then(() => self.finishCustomizingHotkey());
-          }
-        }
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    });
-    self.setHotkeyScope.register([], "Escape", () => {
-      if (self.commandBeingCustomized) {
-        self.finishCustomizingHotkey();
-        return false;
-      }
-    });
-
-    // scope that captures a hotkey to filter the list by
-    self.filterHotkeyScope = new host.Scope();
-    self.filterHotkeyScope.register([], "Escape", (event) => {
-      if (self.hotkeyFilter) self.hotkeyFilter.remove();
-      self.finishFilteringByHotkey();
-      self.updateHotkeyVisibility();
-      return false;
-    });
-    self.filterHotkeyScope.register(null, null, (event, info) => {
-      self.setHotkeyFilter(makeHotkey(host.Keymap.decompileModifiers(info.modifiers), info.vkey));
-      event.preventDefault();
-      event.stopPropagation();
-    });
-    self.filterHotkeyScope.register([], "Escape", () => {
-      self.finishFilteringByHotkey();
-      self.updateHotkeyVisibility();
-    });
-    return self;
-  }
-  inherit(HotkeysTab, host.SettingTab);
-  const proto = HotkeysTab.prototype;
-
-  proto.display = function () {
-    const self = this;
-    const i18nHotkeys = i18n();
-    const containerEl = this.containerEl;
-    containerEl.empty();
-    if (this.hotkeyFilter) this.hotkeyFilter.remove();
-
-    const group = new host.SettingGroup(containerEl);
-    group.addSetting((setting) => {
-      self.headerComponent = setting;
-      setting
-        .setName(i18nHotkeys.optionSearch())
-        .addButton((button) => {
-          host.setIcon(button.buttonEl, "lucide-filter");
-          button.buttonEl.addClass("clickable-icon");
-          button.onClick(self.showFilterMenu.bind(self));
-        })
-        .addSearch((search) => {
-          self.searchComponent = search;
-          search.setPlaceholder(i18nHotkeys.promptFilter()).onChange(self.updateHotkeyVisibility.bind(self));
-          const container = search.containerEl;
-          container.addClass("mod-hotkey");
-          const filterButton = (self.filterHotkeyEl = container.createDiv("input-right-decorator clickable-icon"));
-          host.setIcon(filterButton, "lucide-keyboard");
-          self.filterHotkeyActiveEl = createSpan({
-            cls: "setting-hotkey mod-active input-right-decorator",
-            text: i18nHotkeys.labelWaitingForHotkeyPress(),
-          });
-          filterButton.addEventListener("click", () => {
-            if (self.filterHotkeyActiveEl.isShown()) {
-              self.filterHotkeyActiveEl.detach();
-              self.finishFilteringByHotkey();
-              return;
-            }
-            container.appendChild(self.filterHotkeyActiveEl);
-            self.app.keymap.pushScope(self.filterHotkeyScope);
-          });
-        });
-    });
-
-    self.filterContainerEl = group.listEl.createDiv("setting-filter-container");
-    self.statusFilter = new HotkeyFilterChip(self.filterContainerEl)
-      .onRemove(() => self.setStatusFilter("show-all"))
-      .setTitle(i18nHotkeys.labelShowAll());
-    self.hotkeyListContainerEl = group.listEl.createDiv("hotkey-list-container");
-    self.updateHotkeyVisibility();
-    if (host.Platform.hasPhysicalKeyboard && self.searchComponent) self.searchComponent.inputEl.focus();
-  };
-
-  proto.setHotkeyFilter = function (hotkey) {
-    const self = this;
-    if (this.statusFilter) this.statusFilter.remove();
-    if (this.hotkeyFilter) this.hotkeyFilter.remove();
-    this.hotkeyFilter = new HotkeyFilterChip(this.filterContainerEl)
-      .setValue(hotkey)
-      .setTitle(host.formatHotkey(hotkey))
-      .onRemove(() => self.updateHotkeyVisibility());
-    this.finishFilteringByHotkey();
-    this.updateHotkeyVisibility();
-  };
-
-  proto.setStatusFilter = function (filter) {
-    if (this.hotkeyFilter) this.hotkeyFilter.remove();
-    this.statusFilter.setValue(filter);
-    if (filter === "show-all") {
-      this.statusFilter.remove();
-    } else {
-      if (!this.statusFilter.el.isShown()) this.filterContainerEl.appendChild(this.statusFilter.el);
-      this.statusFilter.setTitle(STATUS_FILTER_TITLES()[filter]());
-    }
-    this.updateHotkeyVisibility();
-  };
-
-  proto.setDescription = function (shown, conflicts) {
-    const i18nHotkeys = i18n();
-    this.headerComponent.setDesc(createFragment((frag) => {
-      frag.createSpan({ text: i18nHotkeys.optionSearchDesc({ count: shown }) });
-      if (conflicts) frag.createSpan({ cls: "mod-warning", text: i18nHotkeys.optionSearchConflict({ count: conflicts }) });
-    }));
-  };
-
-  proto.showFilterMenu = function (event) {
-    const self = this;
-    event.preventDefault();
-    const parent = event.currentTarget;
-    if (parent.hasClass("has-active-menu")) return;
-    const menu = new host.Menu();
-    const current = this.statusFilter && this.statusFilter.value ? this.statusFilter.value : "show-all";
-    const titles = STATUS_FILTER_TITLES();
-    for (const key of HOTKEY_STATUS_FILTERS) {
-      menu.addItem((item) => {
-        item.setTitle(titles[key]()).setChecked(current === key).onClick(() => self.setStatusFilter(key));
-      });
-    }
-    menu.setParentElement(parent).showAtMouseEvent(event);
-  };
-
-  proto.hide = function () { this.finishCustomizingHotkey(); };
-
-  proto.setQuery = function (query) {
-    const input = this.searchComponent.inputEl;
-    input.value = query;
-    input.focus();
-    this.updateHotkeyVisibility();
-  };
-
-  proto.updateHotkeyVisibility = function () {
-    const self = this;
-    const i18nHotkeys = i18n();
-    const app = this.app;
-    const commands = app.commands;
-    const manager = app.hotkeyManager;
-    this.hotkeyListContainerEl.empty();
-
-    // every effective hotkey -> the command names using it (for conflict marks and counts)
-    const uses = new HotkeyUseIndex();
-    for (const id in commands.commands) {
-      if (!commands.commands.hasOwnProperty(id)) continue;
-      const command = commands.commands[id];
-      const custom = manager.getHotkeys(id);
-      const defaults = manager.getDefaultHotkeys(id);
-      const hasCustom = custom !== undefined;
-      const hasDefaults = defaults !== undefined && defaults.length > 0;
-      if (hasCustom) {
-        for (const hotkey of custom) uses.add(host.formatHotkey(hotkey), command.name);
-      } else if (hasDefaults) {
-        for (const hotkey of defaults) uses.add(host.formatHotkey(hotkey), command.name);
-      }
-    }
-
-    const sorted = Object.values(commands.commands);
-    sorted.sort((a, b) => stringCollator.compare(a.name, b.name));
-
-    let shown = 0;
-    const conflicted = new Set();
-    const status = (this.statusFilter && this.statusFilter.value) || "show-all";
-    const hotkeyFilter = this.hotkeyFilter && this.hotkeyFilter.value;
-    const query = this.searchComponent.inputEl.value.toLowerCase();
-
-    for (const command of sorted) {
-      const id = command.id;
-      const name = command.name;
-      if (query !== "" && !name.toLowerCase().contains(query) && !id.startsWith(query)) continue;
-      const custom = manager.getHotkeys(id);
-      const defaults = manager.getDefaultHotkeys(id);
-      const effective = custom || defaults;
-      const hasCustom = custom !== undefined;
-      const hasDefaults = defaults !== undefined;
-
-      if (hasCustom) {
-        for (const hotkey of custom) {
-          const text = host.formatHotkey(hotkey);
-          for (const other of (uses.get(text) || []).filter((n) => n !== name)) conflicted.add(other);
-        }
-      }
-      if (hotkeyFilter && !(effective && effective.find((h) => host.formatHotkey(h) === host.formatHotkey(hotkeyFilter)))) continue;
-      if (status === "show-assigned" && !hasDefaults && !hasCustom) continue;
-      if (status === "show-user-assigned" && !hasCustom) continue;
-      if (status === "show-unassigned" && (hasCustom || hasDefaults)) continue;
-      shown++;
-
-      const row = new host.Setting(this.hotkeyListContainerEl).setName(name);
-      const controlEl = row.controlEl;
-      const hotkeyBox = controlEl.createDiv("setting-command-hotkeys");
-
-      const addHotkeyEl = (hotkey, remove) => {
-        const text = host.formatHotkey(hotkey);
-        hotkeyBox.createSpan("setting-hotkey", (el) => {
-          const others = uses.get(text) ? uses.get(text).filter((n) => n !== name) : null;
-          if (others && others.length > 0) {
-            el.addClass("has-conflict");
-            el.addEventListener("click", (ev) => {
-              if (ev.defaultPrevented) return;
-              self.setQuery("");
-              self.setHotkeyFilter(hotkey);
-            });
-            if (others.length === 1) {
-              host.setTooltip(el, i18nHotkeys.tooltipHotkeySingleConflict({ command: others[0] }));
-            } else {
-              host.setTooltip(el, i18nHotkeys.tooltipHotkeyMultipleConflicts({ count: others.length }));
-            }
-          }
-          el.appendText(" " + text + " ");
-          el.createSpan("setting-hotkey-icon setting-delete-hotkey", (icon) => {
-            host.setIcon(icon, "lucide-x");
-            host.setTooltip(icon, i18nHotkeys.tooltipDeleteHotkey());
-            icon.addEventListener("click", (ev) => {
-              ev.preventDefault();
-              remove();
-            });
-          });
-        });
-      };
-
-      if (hasCustom) {
-        for (const hotkey of custom) {
-          addHotkeyEl(hotkey, () => {
-            const remaining = custom.filter((h) => host.formatHotkey(h) !== host.formatHotkey(hotkey));
-            if (remaining.length !== 0 || hasDefaults) manager.setHotkeys(id, remaining);
-            else manager.removeHotkeys(id);
-            manager.save().then(() => self.updateHotkeyVisibility());
-          });
-        }
-      } else if (hasDefaults) {
-        for (const hotkey of defaults) {
-          addHotkeyEl(hotkey, () => {
-            const remaining = defaults.filter((h) => host.formatHotkey(h) !== host.formatHotkey(hotkey));
-            manager.setHotkeys(id, remaining);
-            manager.save().then(() => self.updateHotkeyVisibility());
-          });
-        }
-      }
-
-      if (self.commandBeingCustomized && id === self.commandBeingCustomized.id) {
-        hotkeyBox.createSpan({ cls: "setting-hotkey mod-active", text: i18nHotkeys.labelWaitingForHotkeyPress() });
-      } else if ((hasCustom && custom.length === 0) || (!hasCustom && !hasDefaults)) {
-        hotkeyBox.createSpan({ cls: "setting-hotkey mod-empty", text: i18nHotkeys.labelBlankHotkey() });
-      }
-
-      if (hasCustom) {
-        controlEl.createSpan("clickable-icon setting-restore-hotkey-button", (el) => {
-          host.setIcon(el, "lucide-rotate-ccw");
-          host.setTooltip(el, i18nHotkeys.tooltipRestoreDefault());
-          el.addEventListener("click", () => {
-            manager.removeHotkeys(id);
-            manager.save().then(() => self.finishCustomizingHotkey());
-          });
-        });
-      }
-      controlEl.createSpan("clickable-icon setting-add-hotkey-button", (el) => {
-        host.setIcon(el, "lucide-plus-circle");
-        host.setTooltip(el, i18nHotkeys.tooltipCustomizeCommand());
-        el.addEventListener("click", () => {
-          self.commandBeingCustomized = command;
-          app.keymap.pushScope(self.setHotkeyScope);
-          self.updateHotkeyVisibility();
-        });
-        el.toggleClass("mod-active", command === self.commandBeingCustomized);
-      });
-    }
-    this.setDescription(shown, conflicted.size);
-  };
-
-  proto.finishFilteringByHotkey = function () {
-    this.filterHotkeyActiveEl.detach();
-    this.app.keymap.popScope(this.filterHotkeyScope);
-  };
-
-  proto.finishCustomizingHotkey = function () {
-    this.app.keymap.popScope(this.setHotkeyScope);
-    this.commandBeingCustomized = null;
-    this.updateHotkeyVisibility();
-  };
-
-  return HotkeysTab;
 }
 
 // ---- tab-plugins.js ----
