@@ -575,7 +575,7 @@
     },
     {
       "orig": "wc",
-      "use": "debounceCall"
+      "use": "ng40DebounceCall"
     },
     {
       "orig": "vl",
@@ -623,47 +623,47 @@
     },
     {
       "orig": "pv",
-      "use": "installTooltipHandlers"
+      "use": "ng40InstallTooltipHandlers"
     },
     {
       "orig": "vv",
-      "use": "onTooltipPointerOver"
+      "use": "ng40OnTooltipPointerOver"
     },
     {
       "orig": "gv",
-      "use": "onTooltipPointerOut"
+      "use": "ng40OnTooltipPointerOut"
     },
     {
       "orig": "bv",
-      "use": "showTooltipFromAttributes"
+      "use": "ng40ShowTooltipFromAttributes"
     },
     {
       "orig": "kv",
-      "use": "displayTooltip"
+      "use": "ng40DisplayTooltip"
     },
     {
       "orig": "Cv",
-      "use": "hideTooltip"
+      "use": "ng40HideTooltip"
     },
     {
       "orig": "Ev",
-      "use": "applyTooltipOptions"
+      "use": "ng40ApplyTooltipOptions"
     },
     {
       "orig": "Mv",
-      "use": "setElementTooltip"
+      "use": "ng40SetElementTooltip"
     },
     {
       "orig": "Sv",
-      "use": "setDynamicTooltip"
+      "use": "ng40SetDynamicTooltip"
     },
     {
       "orig": "fv",
-      "use": "cancelTooltipDelay"
+      "use": "ng40CancelTooltipDelay"
     },
     {
       "orig": "mv",
-      "use": "tooltipsDisabled"
+      "use": "ng40TooltipsDisabled"
     },
     {
       "orig": "wP",
@@ -2513,31 +2513,31 @@
     },
     {
       "orig": "LD",
-      "use": "defineWorkspaceItem"
+      "use": "ng40DefineWorkspaceItem"
     },
     {
       "orig": "ID",
-      "use": "defineWorkspaceParent"
+      "use": "ng40DefineWorkspaceParent"
     },
     {
       "orig": "OD",
-      "use": "defineWorkspaceSplit"
+      "use": "ng40DefineWorkspaceSplit"
     },
     {
       "orig": "ND",
-      "use": "defineWorkspaceContainer"
+      "use": "ng40DefineWorkspaceContainer"
     },
     {
       "orig": "L0",
-      "use": "defineWorkspaceRoot"
+      "use": "ng40DefineWorkspaceRoot"
     },
     {
       "orig": "I0",
-      "use": "defineWorkspaceFloating"
+      "use": "ng40DefineWorkspaceFloating"
     },
     {
       "orig": "O0",
-      "use": "defineWorkspaceWindow"
+      "use": "ng40DefineWorkspaceWindow"
     },
     {
       "orig": "FD",
@@ -2717,15 +2717,15 @@
     },
     {
       "orig": "eD",
-      "use": "defineDeferredView"
+      "use": "ng40DefineDeferredView"
     },
     {
       "orig": "tD",
-      "use": "defineEmptyView"
+      "use": "ng40DefineEmptyView"
     },
     {
       "orig": "nD",
-      "use": "defineUnknownView"
+      "use": "ng40DefineUnknownView"
     },
     {
       "orig": "MD",
@@ -2741,15 +2741,15 @@
     },
     {
       "orig": "OX",
-      "use": "defineEditableFileView"
+      "use": "ng40DefineEditableFileView"
     },
     {
       "orig": "BX",
-      "use": "defineTextFileView"
+      "use": "ng40DefineTextFileView"
     },
     {
       "orig": "hv",
-      "use": "initTooltips"
+      "use": "ng40InitTooltips"
     },
     {
       "orig": "Yl",
@@ -2844,7 +2844,7 @@
     },
     {
       "orig": "R6",
-      "use": "defineViewHeader",
+      "use": "ng40DefineViewHeader",
       "originalBytes": 874
     },
     {
