@@ -17,22 +17,22 @@ function ng26EditorMode(view) {
 
 /** checkCallback wrapper enforcing the editor preconditions of an editor command. */
 function ng26EditorCheck(command, app, markdownView) {
-  return function (checking, editor, view) {
+  // the checkCallback contract passes only `checking`: the editor and the view
+  // are resolved from the workspace's active editor, like the inherited code did.
+  return function (checking) {
     const active = ng26ActiveEditorView(app);
     if (!active) return null;
     if (ng26EditorMode(active) === "preview" && !command.allowPreview) return undefined;
+    const editor = active.editor;
     if (markdownView && active instanceof markdownView) {
+      if (active.inlineTitleEl && active.inlineTitleEl.isActiveElement()) return undefined;
+      if (active.titleEl && active.titleEl.isActiveElement()) return undefined;
       const ae = activeDocument.activeElement;
-      if (ae) {
-        const title = active.inlineTitleEl || active.titleEl;
-        if (title && (ae === title || title.contains(ae))) return undefined;
-        if (!command.allowProperties && ae.closest && ae.closest(".metadata-container")) return undefined;
-      }
+      if (!command.allowProperties && ae && ae.closest && ae.closest(".metadata-container")) return undefined;
     }
-    if (command.editorCheckCallback) return command.editorCheckCallback(checking, editor, view);
+    if (command.editorCheckCallback) return command.editorCheckCallback(checking, editor, active);
     if (command.editorCallback) {
-      if (checking) return undefined;
-      command.editorCallback(editor, view);
+      if (!checking) command.editorCallback(editor, active);
       return true;
     }
     return undefined;
