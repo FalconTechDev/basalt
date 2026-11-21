@@ -36,9 +36,10 @@ export function ng15DefineFileExplorerItemBase(host) {
     self.tagEl = null;
     self._renameBound = false;
     self.el.addClass("nav-file");
+    self.selfEl.addClass("nav-file-title tappable");
     self.setClickable(true);
-    self.innerEl.createDiv({ cls: "nav-file-title nav-file-title-content" });
-    self.titleEl = self.innerEl.firstChild;
+    self.innerEl.addClass("nav-file-title-content");
+    self.titleEl = self.innerEl;
     return self;
   }
   inherit(FileExplorerItemBase, host.TreeItem);
@@ -49,12 +50,8 @@ export function ng15DefineFileExplorerItemBase(host) {
   proto.updateTitle = function () {
     const titleEl = this.titleEl;
     if (!titleEl) return;
-    titleEl.empty();
-    const icon = titleEl.createDiv("nav-file-icon");
-    const isFolder = this.file && this.file instanceof host.TFolder;
-    host.setIcon(icon, isFolder ? "lucide-folder" : "lucide-file");
-    titleEl.createSpan({ cls: "nav-file-title-text", text: this.getTitle() });
-    this.tagEl = null;
+    titleEl.setText(this.getTitle());
+    if (this.file) this.selfEl.setAttr("data-path", this.file.path);
   };
 
   /** (Re)binds row behaviour when the virtual scroller mounts the element. */
@@ -136,6 +133,7 @@ export function ng15DefineFileExplorerItemBase(host) {
 
   proto.isSupportedSafe = function () { return true; };
 
+  ng15FileExplorerItemBaseClass = FileExplorerItemBase;
   return FileExplorerItemBase;
 }
 
@@ -155,23 +153,25 @@ export function ng15DefineFileItem(host) {
   proto.getTitle = function () {
     const file = this.file;
     if (!file) return "";
-    return file.extension === "md" ? file.basename : file.name;
+    return file.basename || file.name;
   };
 
   proto.updateTitle = function () {
-    const titleEl = this.titleEl;
-    if (!titleEl) return;
-    titleEl.empty();
-    const icon = titleEl.createDiv("nav-file-icon");
-    host.setIcon(icon, "lucide-file");
-    titleEl.createSpan({ cls: "nav-file-title-text", text: this.getTitle() });
+    const Base = ng15FileExplorerItemBaseClass || ng15DefineFileExplorerItemBase(host);
+    Base.prototype.updateTitle.call(this);
+    const selfEl = this.selfEl;
+    selfEl.toggleClass("is-unsupported", !this.isSupported());
     const ext = this.file && this.file.extension;
-    if (ext && ext !== "md") {
-      this.tagEl = titleEl.createSpan({ cls: "nav-file-tag", text: ext });
+    let tagEl = this.tagEl;
+    if (ext === "md") {
+      if (tagEl) {
+        tagEl.detach();
+        this.tagEl = null;
+      }
     } else {
-      this.tagEl = null;
+      if (!tagEl) tagEl = this.tagEl = selfEl.createDiv({ cls: "nav-file-tag" });
+      tagEl.setText(ext || "");
     }
-    this.updateUnsupported();
   };
 
   proto.isSupported = function () {
@@ -231,10 +231,11 @@ export function ng15DefineFolderItem(host) {
     const self = CollapsibleBase.call(this, view, file) || this;
     self.el.removeClass("nav-file");
     self.el.addClass("nav-folder");
-    if (self.titleEl) {
-      self.titleEl.removeClass("nav-file-title");
-      self.titleEl.addClass("nav-folder-title");
-    }
+    self.selfEl.removeClass("nav-file-title tappable");
+    self.selfEl.addClass("nav-folder-title");
+    self.innerEl.removeClass("nav-file-title-content");
+    self.innerEl.addClass("nav-folder-title-content");
+    if (self.childrenEl) self.childrenEl.addClass("nav-folder-children");
     self.setCollapsible(true);
     self.vChildren = new host.TreeChildren(self);
     self.pusherEl = ng15MakeTreePusher();
@@ -250,13 +251,8 @@ export function ng15DefineFolderItem(host) {
   };
 
   proto.updateTitle = function () {
-    const titleEl = this.titleEl;
-    if (!titleEl) return;
-    titleEl.empty();
-    const isRoot = this.file && this.file.isRoot && this.file.isRoot();
-    const icon = titleEl.createDiv("nav-file-icon");
-    host.setIcon(icon, isRoot ? "lucide-vault" : (this.collapsed ? "lucide-folder" : "lucide-folder-open"));
-    titleEl.createSpan({ cls: "nav-folder-title-text", text: this.getTitle() });
+    const itemBase = ng15FileExplorerItemBaseClass || ng15DefineFileExplorerItemBase(host);
+    itemBase.prototype.updateTitle.call(this);
   };
 
   proto.onSelfClick = function (event) {
