@@ -8,7 +8,7 @@
 //   s7/l7                    -> dead inherited tree-row constructors (nothing references them);
 //                               declarators become null.
 
-import { anyMetadataRef } from "./metadata-helpers.js";
+import { anyMetadataRef } from "./n-g22-helpers.js";
 import { parseLinktext } from "./path.js";
 
 const s34OutgoingViewType = "outgoing-link";

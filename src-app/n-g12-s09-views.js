@@ -7,7 +7,7 @@ import { ng19GraphRenderer } from "./n-g19-graph-render.js";
 import { ng12PublishGraphData, ng12PublishResolveSub } from "./n-g12-s09-core.js";
 import { ng12PublishTagModal } from "./n-g12-s09-tree.js";
 import { lastSegment, parentPath, baseName, withoutExtension, extensionOf, displayName, withoutMd, parseLinktext, linkPath, isLocalLink, tidyLinkTarget, safeDecodeUri } from "./path.js";
-import { escapeRegExp } from "./metadata-helpers.js";
+import { escapeRegExp } from "./n-g22-helpers.js";
 import { formEncodePath } from "./text.js";
 
 const ng12IsMd = (path) => extensionOf(path) === "md";

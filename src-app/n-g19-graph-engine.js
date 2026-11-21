@@ -4,7 +4,7 @@ import { env } from "./env.js";
 import { debounceCall } from "./timing.js";
 import { fileClass } from "./vault.js";
 import { extensionOf } from "./path.js";
-import { collectTags } from "./metadata-helpers.js";
+import { collectTags } from "./n-g22-helpers.js";
 import { sliderCurve } from "./misc.js";
 import { ng19GraphDefaults, ng19GraphNodeData, ng19GraphLocalData, } from "./n-g19-graph-util.js";
 import { ng19GT, ng19Graph, ng19LocalGraphViewType, ng19Host } from "./n-g19-graph-consts.js";
