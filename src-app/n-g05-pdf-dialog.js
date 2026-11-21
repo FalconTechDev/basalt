@@ -25,7 +25,6 @@ export function ng05BuildPasswordDialog(host) {
       text: wrong ? pdf.msgInvalidPassword() : pdf.msgEnterPassword(),
     });
     const input = dialogEl.createEl("input", {
-      cls: "pdf-password-input",
       attr: { type: "password", placeholder: host.t.setting.account.labelPassword() },
     });
     input.addEventListener("keydown", (evt) => {
