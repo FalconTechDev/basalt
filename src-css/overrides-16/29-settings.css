@@ -10,3 +10,33 @@
 .checkbox-container { border-radius: 0; border: 2px solid var(--background-modifier-border-hover); clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
 .checkbox-container.is-enabled { background: var(--interactive-accent); border-color: var(--interactive-accent); }
 .checkbox-container::after { border-radius: 0; }
+
+/* ---- Basalt settings window (basalt-settings.js, .bset): sheet "05 Settings" ---- */
+.modal.bset { width: min(940px, 94vw); height: min(620px, 88vh); background: var(--background-primary); }
+.bset-nav { flex: 0 0 224px; padding: 12px 0; gap: 0; background: var(--background-secondary); }
+.bset-find { margin: 0 12px 10px; }
+.bset-find input { height: 32px; box-sizing: border-box; padding: 0 10px; border: 1px solid var(--background-modifier-border); border-radius: 0; background: var(--background-modifier-form-field, var(--background-primary)); font-size: 13px; }
+.bset-find input:focus { border-color: var(--interactive-accent); outline: 0; box-shadow: none; }
+.bset-nav button.bset-n { position: relative; display: flex; align-items: center; gap: 10px; width: 100%; height: 34px; padding: 0 16px; border: 0; border-radius: 0; box-shadow: none; clip-path: none; background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 400; }
+.bset-nav button.bset-n:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
+.bset-nav button.bset-n.is-on { background: var(--bs-accent-soft, color-mix(in srgb, var(--interactive-accent) 16%, transparent)); color: var(--text-normal); box-shadow: none; }
+.bset-nav button.bset-n.is-on::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--interactive-accent); }
+.bset-nav svg { color: currentColor; }
+.bset-nav button.bset-n.is-on svg { color: var(--interactive-accent); }
+.bset-main { padding: 24px 36px 32px; }
+.bset-main h2 { font-size: 20px; font-weight: 600; margin: 0 0 8px; }
+.bset-main h3 { margin: 26px 0 4px; font-size: 11px; letter-spacing: .1em; color: var(--text-muted); }
+.bset-row { gap: 24px; padding: 16px 0; }
+.bset-row .bset-t b { font-size: 14px; font-weight: 500; }
+.bset-row .bset-t small { font-size: 12px; margin-top: 4px; max-width: 420px; }
+.bset-row button, .bset-c button { height: 32px; padding: 0 16px; border: 0; border-radius: 0; box-shadow: none; background: var(--background-modifier-hover); color: var(--text-normal); font-size: 13px; font-weight: 500; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.bset-row button:hover, .bset-c button:hover { background: var(--background-modifier-border-hover); }
+.bset-row button.mod-cta, .bset-c button.mod-cta { background: var(--interactive-accent); color: var(--text-on-accent); }
+.bset-row select, .bset-row input[type=text] { height: 32px; box-sizing: border-box; padding: 0 10px; border: 1px solid var(--background-modifier-border); border-radius: 0; background-color: var(--background-modifier-form-field, var(--background-primary)); font-size: 13px; }
+.bset-row select { padding-right: 28px; }
+.bset-row select:focus, .bset-row input[type=text]:focus { border-color: var(--interactive-accent); outline: 0; box-shadow: none; }
+.bset .checkbox-container { position: relative; flex: none; width: 40px; height: 22px; box-sizing: border-box; border: 2px solid var(--background-modifier-border-hover); background: var(--background-modifier-form-field, var(--background-primary)); }
+.bset .checkbox-container::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; margin: 0; background: var(--text-muted); border-radius: 0; transition: left .14s ease; }
+.bset .checkbox-container.is-enabled { background: var(--interactive-accent); border-color: var(--interactive-accent); }
+.bset .checkbox-container.is-enabled::after { left: 20px; background: var(--text-on-accent); transform: none; }
+.bset .checkbox-container input { position: absolute; opacity: 0; inset: 0; }
