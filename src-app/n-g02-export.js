@@ -232,7 +232,7 @@ function ng02InstallExport(proto, host) {
     let watermark = null;
     if (showLogo) {
       watermark = doc.createElement("div");
-      watermark.className = "canvas-export-watermark";
+      watermark.className = "canvas-watermark";
       watermark.style.cssText = "position:absolute;right:16px;bottom:16px;font-size:14px;color:var(--text-muted);user-select:none;";
       watermark.textContent = "Basalt";
       stage.appendChild(watermark);

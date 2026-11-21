@@ -55,7 +55,7 @@ export function defineNg20CanvasNode(host) {
       this.contentBlockerEl = this.containerEl.createDiv("canvas-node-content-blocker");
       this.contentBlockerEl.hide();
       this.placeholderEl = this.containerEl.createDiv("canvas-node-placeholder");
-      this.labelEl = this.containerEl.createDiv("canvas-node-label");
+      this.labelEl = this.nodeEl.createDiv(this.labelClass());
       this.labelEl.hide();
       this.labelEl.setAttribute("contenteditable", "false");
       this.labelEl.addEventListener("blur", () => this.commitLabel());
@@ -64,7 +64,10 @@ export function defineNg20CanvasNode(host) {
         if (evt.key === "Enter") { evt.preventDefault(); this.labelEl.blur(); }
         else if (evt.key === "Escape") { this.labelEl.setText(this.labelText()); this.labelEl.blur(); }
       });
-      this.labelEl.addEventListener("pointerdown", (evt) => evt.stopPropagation());
+      this.labelEl.addEventListener("pointerdown", (evt) => {
+        this.onPointerdown(evt);
+        evt.stopPropagation();
+      });
 
       this.nodeEl.addEventListener("pointerdown", (evt) => this.onPointerdown(evt));
       this.nodeEl.addEventListener("click", (evt) => this.onClick(evt));
@@ -178,7 +181,8 @@ export function defineNg20CanvasNode(host) {
       el.style.width = this.width + "px";
       el.style.height = this.height + "px";
       el.style.zIndex = String(this.zIndex);
-      s13ApplyCanvasColor(this.containerEl, this.color, host);
+      el.setCssProps({ "--canvas-node-width": this.width + "px", "--canvas-node-height": this.height + "px" });
+      s13ApplyCanvasColor(this.nodeEl, this.color, host);
       this.renderZIndex();
       this.renderLabel();
     }
@@ -204,6 +208,8 @@ export function defineNg20CanvasNode(host) {
 
     updateBreakpoint() {}
 
+    labelClass() { return "canvas-node-label"; }
+
     // ---------- label ----------
 
     renderLabel() {
@@ -215,8 +221,12 @@ export function defineNg20CanvasNode(host) {
 
     updateNodeLabel(text) {
       this.labelElText = text || "";
-      if (this.labelEl.getAttribute("contenteditable") !== "true") this.labelEl.setText(this.labelElText);
-      this.labelEl.toggle(this.labelElText.length > 0 || this.labelEl.getAttribute("contenteditable") === "true");
+      const labelEl = this.labelEl;
+      const visibility = this.canvas.options && this.canvas.options.cardLabelVisibility;
+      labelEl.toggleClass("mod-hover-label", visibility === "hover");
+      if (labelEl.getAttribute("contenteditable") !== "true") labelEl.setText(this.labelElText);
+      const editing = labelEl.getAttribute("contenteditable") === "true";
+      labelEl.toggle((this.labelElText.length > 0 && visibility !== "never") || editing);
     }
 
     /** Focuses the node label for inline renaming (group nodes). */
@@ -233,6 +243,7 @@ export function defineNg20CanvasNode(host) {
       const text = (this.labelEl.innerText || "").trim();
       if (typeof this.setLabel === "function") this.setLabel(text);
       else this.updateNodeLabel(this.labelText());
+      this.canvas.requestSave();
     }
 
     // ---------- selection ----------
@@ -466,7 +477,10 @@ export function defineNg20DummyNode(host) {
       this.type = "dummy";
       this.width = 0;
       this.height = 0;
-      this.nodeEl.addClass("canvas-node-dummy");
+      this.nodeEl.addClass("is-dummy");
+      this.placeholderEl.hide();
+      this.contentBlockerEl.hide();
+      this.labelEl.hide();
     }
 
     getData() {
@@ -475,7 +489,6 @@ export function defineNg20DummyNode(host) {
 
     render() {
       super.render();
-      this.nodeEl.toggleClass("is-empty", this.width === 0 && this.height === 0);
     }
   }
   canvas.DummyNode = DummyNode;
@@ -490,9 +503,24 @@ export function defineNg20EditableNode(host) {
     constructor(canvas_, id) {
       super(canvas_, id);
       this.alwaysKeepLoaded = true;
+      this.resizeDirty = false;
+      const self = this;
+      this.containerEl.addEventListener("dblclick", (evt) => {
+        if (evt.defaultPrevented) return;
+        const child = self.child;
+        if (child instanceof host.MarkdownEmbedBase && !child.editMode && !host.isEditableTarget(evt.targetNode)) {
+          self.startEditing({ x: evt.clientX, y: evt.clientY });
+        }
+      });
+      if (host.nativeDblClick) {
+        host.nativeDblClick(this.contentEl, (evt) => {
+          if (self.destroyed || host.isEditableTarget(evt.targetNode)) return;
+          self.startEditing({ x: evt.clientX, y: evt.clientY });
+        });
+      }
     }
 
-    isEditable() { return true; }
+    isEditable() { return this.child instanceof host.MarkdownEmbedBase; }
 
     setIsEditing(editing) {
       this.isEditing = !!editing;
@@ -501,12 +529,32 @@ export function defineNg20EditableNode(host) {
       if (!this.isEditing) this.canvas.markDirty(this);
     }
 
-    startEditing(point_) {
-      this.setIsEditing(true);
+    blur() {
+      super.blur();
       const child = this.child;
-      if (child && typeof child.focus === "function") child.focus();
-      else if (this.contentEl) this.contentEl.focus();
-      void point_;
+      if (child instanceof host.StatefulEmbedBase || (canvas.MarkdownEmbed && child instanceof canvas.MarkdownEmbed)) {
+        child.showPreview(true);
+        if (child.applyScope) child.applyScope(null);
+      }
+    }
+
+    focus() {
+      super.focus();
+      const workspace = this.app.workspace;
+      const editor = this.child instanceof host.MarkdownEmbedBase ? this.child : null;
+      if (workspace) workspace.activeEditor = editor;
+      let file = null;
+      if (this instanceof canvas.FileNode) file = this.file;
+      this.canvas.requestUpdateFileOpen(file);
+    }
+
+    startEditing(point_) {
+      if (this.canvas.readonly) return;
+      const child = this.child;
+      if (child instanceof host.MarkdownEmbedBase) {
+        child.showEditor(point_);
+        this.setIsEditing(true);
+      }
     }
 
     onDoubleClick(evt) {
@@ -514,6 +562,23 @@ export function defineNg20EditableNode(host) {
       if (evt.defaultPrevented) return;
       if (host.isEditableTarget(evt.targetNode)) return;
       this.startEditing({ x: evt.clientX, y: evt.clientY });
+    }
+
+    moveAndResize(rect_) {
+      const child = this.child;
+      if (child instanceof host.MarkdownEmbedBase && rect_ && (this.width !== rect_.width || this.height !== rect_.height)) {
+        this.resizeDirty = true;
+      }
+      super.moveAndResize(rect_);
+    }
+
+    render() {
+      super.render();
+      const child = this.child;
+      if (this.resizeDirty && child instanceof host.MarkdownEmbedBase && child.previewMode && child.previewMode.renderer) {
+        child.previewMode.renderer.onResize();
+      }
+      this.resizeDirty = false;
     }
   }
   canvas.EditableNode = EditableNode;
@@ -529,7 +594,6 @@ export function defineNg20TextNode(host) {
       super(canvas_, id);
       this.type = "text";
       this.text = "";
-      this.editEl = null;
     }
 
     getData() {
@@ -542,47 +606,36 @@ export function defineNg20TextNode(host) {
       super.setData(data);
       if (typeof data.text === "string") {
         this.text = data.text;
-        if (this.editEl) this.editEl.setText(this.text);
+        if (this.child) this.child.set(this.text);
       }
     }
 
     setText(text) {
+      if (this.text === text) return;
       this.text = text || "";
+      if (this.child) this.child.set(this.text);
       this.canvas.markDirty(this);
       this.canvas.requestSave();
     }
 
     renderContent() {
       super.renderContent();
-      const el = this.contentEl.createEl("div", { cls: "canvas-node-text", attr: { contenteditable: "true", spellcheck: "false" } });
-      el.setText(this.text);
-      this.editEl = el;
-      el.addEventListener("input", () => this.setText(el.innerText));
-      el.addEventListener("blur", () => this.setIsEditing(false));
-      el.addEventListener("pointerdown", (evt) => evt.stopPropagation());
-      el.addEventListener("keydown", (evt) => {
-        evt.stopPropagation();
-        if (evt.key === "Escape") { this.setIsEditing(false); el.blur(); }
-      });
-      if (this.isEditing) el.focus();
+      if (!this.placeholderEl.firstChild) {
+        host.setIcon(this.placeholderEl.createDiv("canvas-icon-placeholder"), "lucide-align-left");
+      }
+      if (!this.child) {
+        this.child = new canvas.MarkdownEmbed(this);
+        this.child.set(this.text);
+        if (typeof this.child.load === "function") this.child.load();
+      }
     }
 
     startEditing(point_) {
       super.startEditing(point_);
-      if (this.editEl) {
-        this.editEl.focus();
-        host.focusAndSelectContents(this.editEl);
-      }
-      void point_;
-    }
-
-    setIsEditing(editing) {
-      super.setIsEditing(editing);
-      if (this.editEl) this.editEl.setAttribute("contenteditable", editing ? "true" : "false");
     }
 
     unmountContent() {
-      this.editEl = null;
+      this.child = null;
       super.unmountContent();
     }
 
@@ -626,6 +679,13 @@ export function defineNg20LinkNode(host) {
       this.url = "";
       this.frameEl = null;
       this.pageTitle = "";
+      this.labelEl.addEventListener("click", (evt) => {
+        if (host.Keymap.isModifier(evt, "Mod") && this.url) window.open(this.url, "_blank");
+      });
+      this.labelEl.addEventListener("dblclick", (evt) => {
+        evt.stopPropagation();
+        if (this.url) window.open(this.url, "_blank");
+      });
     }
 
     getData() {
@@ -658,12 +718,12 @@ export function defineNg20LinkNode(host) {
       const wrap = this.contentEl;
       if (env().Yl.isMobile) {
         const framed = host.normalizeEmbedUrl ? host.normalizeEmbedUrl(this.url) : null;
-        const f = wrap.createEl("iframe", { cls: "canvas-node-frame" });
+        const f = wrap.createEl("iframe", { cls: "canvas-node-frame canvas-link" });
         f.setAttr("src", framed || this.url);
         f.setAttr("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups");
         this.frameEl = f;
       } else {
-        const w = wrap.createEl("webview", { cls: "canvas-node-frame" });
+        const w = wrap.createEl("webview", { cls: "canvas-node-frame canvas-link" });
         w.setAttr("src", this.url);
         w.setAttr("partition", "persist:canvas");
         w.addEventListener("page-title-updated", (evt) => {

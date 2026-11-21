@@ -204,11 +204,9 @@ export function ng02CanvasView(host) {
       };
       const addButton = (group, icon, tooltip, onclick) => {
         const item = env().createDiv("canvas-control-item");
-        const btn = env().createEl("button", "canvas-control-button");
-        env().tv(btn, icon);
-        env().Mv(btn, tooltip);
-        btn.addEventListener("click", (evt) => onclick(evt));
-        item.appendChild(btn);
+        env().tv(item, icon);
+        env().Mv(item, tooltip);
+        item.addEventListener("click", (evt) => onclick(evt));
         group.appendChild(item);
         return item;
       };
@@ -246,7 +244,7 @@ export function ng02CanvasView(host) {
     }
 
     syncReadonlyUi() {
-      const btn = this.quickSettingsButton && this.quickSettingsButton.querySelector("button");
+      const btn = this.quickSettingsButton;
       if (btn) {
         const ti = s13CanvasI18n();
         env().tv(btn, this.readonly ? "lucide-settings" : "lucide-lock");

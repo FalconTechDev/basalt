@@ -3,8 +3,10 @@
 //
 // Replaces orig G5 (edge class), o8 (preview), b5/V5/z5 (helpers) and declarators
 // U5/W5/_5 ($5/Z5 live in n-g20-shared.js).
-import { box, boxCenter, sideMidpoint, bezierEdge, boxOfPoints, boxUnion, distance, point, pushOut, rgbTripleToHex, randomHex } from "./misc.js";
+import { box, boxCenter, boxGrow, sideMidpoint, bezierEdge, boxOfPoints, boxUnion, distance, point, pointOfEvent, pushOut, rgbTripleToHex, randomHex } from "./misc.js";
 import { env } from "./env.js";
+import { s13ApplyCanvasColor, s13NearestSide } from "./s13-geom.js";
+import { ng08SuppressNextEvent } from "./n-g08-drag.js";
 import { canvas, ng20EdgeEndRotation, ng20EdgeEndNone, ng20EdgeEndArrow, ng20CanvasViewType, ng20CanvasExtension, ng20FileExplorerViewType, ng20DefaultDateFormat, ng20RecoveryDefaults, ng20InterfaceStrings, ng20CanvasStrings, ng20DailyNotesStrings, ng20FileExplorerStrings, ng20FileRecoveryStrings, ng20EditorStatusStrings, ng20SyncStrings, ng20Finite } from "./n-g20-shared.js";
 
 
@@ -177,25 +179,17 @@ export function defineNg20CanvasEdge(host) {
       this.destroyed = false;
       this.zIndex = canvas_.getZIndex();
 
-      this.lineGroupEl = createSvg("g", "canvas-edge");
+      this.lineGroupEl = createSvg("g");
       this.interactionPathEl = this.lineGroupEl.createSvg("path", { cls: "canvas-interaction-path" });
       this.pathEl = this.lineGroupEl.createSvg("path", { cls: "canvas-display-path" });
-      this.lineEndGroupEl = createSvg("g", "canvas-edge-ends");
-      this.fromEndEl = this.lineEndGroupEl.createSvg("path", { cls: "canvas-edge-end canvas-path-end" });
-      this.toEndEl = this.lineEndGroupEl.createSvg("path", { cls: "canvas-edge-end canvas-path-end" });
+      this.lineEndGroupEl = createSvg("g");
+      this.fromLineEnd = null;
+      this.toLineEnd = null;
+      this.labelElement = null;
 
-      this.labelElement = createDiv("canvas-path-label-wrapper");
-      this.labelElement.style.pointerEvents = "none";
-      this.labelTextEl = this.labelElement.createDiv("canvas-path-label");
-      this.labelInputEl = this.labelElement.createEl("textarea", { cls: "canvas-path-label-input" });
-      this.labelInputEl.setAttribute("rows", "1"); this.labelInputEl.setAttribute("placeholder", "");
-      this.isEditingLabel = false;
-      this.labelInputEl.hide();
-
-      this.lineGroupEl.addEventListener("pointerdown", (evt) => this.onPointerdown(evt));
       this.lineGroupEl.addEventListener("click", (evt) => this.onClick(evt));
       this.lineGroupEl.addEventListener("contextmenu", (evt) => this.onContextMenu(evt));
-      this.interactionPathEl.addEventListener("pointerdown", (evt) => this.onConnectionPointerdown(evt));
+      this.lineGroupEl.addEventListener("pointerdown", (evt) => this.onConnectionPointerdown(evt));
 
       canvas_.markDirty(this);
     }
@@ -255,7 +249,7 @@ export function defineNg20CanvasEdge(host) {
 
     setLabel(label) {
       this.label = label || "";
-      this.labelTextEl.setText(this.label);
+      if (this.labelElement) this.labelElement.setText(this.label);
       this.canvas.markDirty(this);
     }
 
@@ -264,62 +258,67 @@ export function defineNg20CanvasEdge(host) {
     anchorFor(endpoint) {
       const node = endpoint.node;
       if (!node || typeof node.getBBox !== "function") return null;
-      const b = node.getBBox();
-      const mid = sideMidpoint(b, endpoint.side);
-      return ng20EdgeOutset(mid, endpoint.side);
+      return sideMidpoint(node.getBBox(), endpoint.side);
     }
 
     updatePath() {
-      const a = this.anchorFor(this.from);
-      const b = this.anchorFor(this.to);
-      if (!a || !b) {
+      const from = this.from;
+      const to = this.to;
+      const anchorFrom = this.anchorFor(from);
+      const anchorTo = this.anchorFor(to);
+      if (!anchorFrom || !anchorTo) {
         this.bezier = null;
         this.path = null;
         this.pathEl.setAttr("d", "");
         this.interactionPathEl.setAttr("d", "");
         return;
       }
-      const bez = bezierEdge(a, this.from.side, b, this.to.side);
-      this.bezier = bez;
-      this.path = bez.path;
-      this.pathEl.setAttr("d", bez.path);
-      this.interactionPathEl.setAttr("d", bez.path);
-      const stroke = this.color || "var(--canvas-edge, var(--text-muted))";
-      this.pathEl.setAttr("stroke", stroke);
-      this.interactionPathEl.setAttr("stroke", "transparent");
-      this.interactionPathEl.setAttr("stroke-width", "20");
-      this.interactionPathEl.setAttr("pointer-events", "stroke");
-      this.lineGroupEl.toggleClass("is-themed", !!this.color);
-      this.positionLabel(bez);
-      this.positionEnds(a, b);
+      const start = ng20EdgeOutset(anchorFrom, from.side);
+      const end = ng20EdgeOutset(anchorTo, to.side);
+      const curve = (this.bezier = bezierEdge(start, from.side, end, to.side));
+      this.path = curve.path;
+
+      let fromEnd = this.fromLineEnd;
+      if (from.end !== (fromEnd && fromEnd.type)) {
+        if (fromEnd) fromEnd.el.remove();
+        fromEnd = this.fromLineEnd = this.createEdgeEnd(from.end);
+      }
+      let toEnd = this.toLineEnd;
+      if (to.end !== (toEnd && toEnd.type)) {
+        if (toEnd) toEnd.el.remove();
+        toEnd = this.toLineEnd = this.createEdgeEnd(to.end);
+      }
+
+      let d = curve.path;
+      if (fromEnd) {
+        fromEnd.el.style.transform = `translate(${anchorFrom.x}px, ${anchorFrom.y}px) rotate(${ng20EdgeEndRotation[from.side] || "0"}deg)`;
+      } else {
+        d = `M${anchorFrom.x} ${anchorFrom.y} L${start.x} ${start.y} ${d}`;
+      }
+      if (toEnd) {
+        toEnd.el.style.transform = `translate(${anchorTo.x}px, ${anchorTo.y}px) rotate(${ng20EdgeEndRotation[to.side] || "0"}deg)`;
+      } else {
+        d = `${d} M${end.x} ${end.y} L${anchorTo.x} ${anchorTo.y}`;
+      }
+      this.pathEl.setAttr("d", d);
+      this.interactionPathEl.setAttr("d", d);
+      this.positionLabel(curve);
+    }
+
+    /** Arrow/marker element for an edge end (`g > polygon.canvas-path-end`), or null for "none". */
+    createEdgeEnd(end) {
+      if (end === ng20EdgeEndNone) return null;
+      const custom = window.__fpEndPoints && window.__fpEndPoints(end);
+      const points = custom || "0,0 6.5,10.4 -6.5,10.4";
+      const g = this.lineEndGroupEl.createSvg("g");
+      g.createSvg("polygon", { cls: "canvas-path-end", attr: { points } });
+      return { el: g, type: end };
     }
 
     positionLabel(bez) {
-      const mid = ng20Cubic(bez.from, bez.cp1, bez.cp2, bez.to, 0.5);
-      const angle = ng20CubicTangent(bez.from, bez.cp1, bez.cp2, bez.to, 0.5);
       const el = this.labelElement;
-      el.style.left = mid.x + "px";
-      el.style.top = mid.y + "px";
-      el.style.transform = `translate(-50%,-50%) rotate(${angle}deg)`;
-      const show = !!this.label || this.isEditingLabel;
-      el.style.display = show ? "" : "none";
-      if (!this.isEditingLabel) this.labelInputEl.hide(), this.labelTextEl.show();
-    }
-
-    positionEnds(a, b) {
-      const draw = (endpoint, anchor, pathEl) => {
-        const isArrow = endpoint.end === ng20EdgeEndArrow;
-        pathEl.style.display = isArrow ? "" : "none";
-        if (!isArrow) return;
-        const rot = ng20EdgeEndRotation[endpoint.side] || "0";
-        const size = 10;
-        // small filled arrow head pointing along the side normal, rotated per side
-        pathEl.setAttr("d", `M0,0 L${-size},${-size * 0.6} L${-size},${size * 0.6} Z`);
-        pathEl.setAttr("transform", `translate(${anchor.x},${anchor.y}) rotate(${rot})`);
-        pathEl.setAttr("fill", this.color || "var(--canvas-edge, var(--text-muted))");
-      };
-      draw(this.from, a, this.fromEndEl);
-      draw(this.to, b, this.toEndEl);
+      if (el) el.render();
+      void bez;
     }
 
     update(from, to) {
@@ -352,6 +351,16 @@ export function defineNg20CanvasEdge(host) {
 
     render() {
       this.updatePath();
+      if (this.labelElement && !this.label) this.labelElement.destroy(true);
+      if (this.label) {
+        if (!this.labelElement && canvas.EdgeLabel) this.labelElement = new canvas.EdgeLabel(this);
+        if (this.labelElement) this.labelElement.setText(this.label);
+      }
+      if (this.labelElement) this.labelElement.render();
+      s13ApplyCanvasColor(this.lineGroupEl, this.color, host);
+      s13ApplyCanvasColor(this.lineEndGroupEl, this.color, host);
+      this.lineGroupEl.toggleClass("is-themed", !!this.color);
+      this.lineEndGroupEl.toggleClass("is-themed", !!this.color);
     }
 
     // ---------- lifecycle ----------
@@ -360,74 +369,51 @@ export function defineNg20CanvasEdge(host) {
       if (this.isAttached) return;
       this.canvas.edgeContainerEl.appendChild(this.lineGroupEl);
       this.canvas.edgeEndContainerEl.appendChild(this.lineEndGroupEl);
-      this.canvas.canvasEl.appendChild(this.labelElement);
+      if (this.labelElement) this.canvas.canvasEl.appendChild(this.labelElement.wrapperEl);
       this.render();
     }
 
     detach() {
       this.lineGroupEl.detach();
       this.lineEndGroupEl.detach();
-      this.labelElement.detach();
+      if (this.labelElement) this.labelElement.wrapperEl.detach();
     }
 
     destroy() {
       if (this.destroyed) return;
       this.destroyed = true;
       this.detach();
-      this.labelElement.remove();
+      if (this.labelElement) this.labelElement.destroy();
     }
 
     // ---------- selection ----------
 
-    focus() { this.lineGroupEl.addClass("is-focused"); }
-    blur() { this.lineGroupEl.removeClass("is-focused"); }
-    select() { this.lineGroupEl.addClass("is-selected"); }
-    deselect() { this.lineGroupEl.removeClass("is-selected"); }
-
-    // ---------- label editing ----------
-
-    editLabel() {
-      this.isEditingLabel = true;
-      this.labelElement.style.pointerEvents = "auto";
-      this.labelTextEl.hide();
-      this.labelInputEl.show();
-      this.labelInputEl.value = this.label || "";
-      this.labelInputEl.focus();
-      host.focusAndSelectContents(this.labelInputEl);
-      const commit = () => {
-        this.labelInputEl.removeEventListener("blur", commit);
-        this.labelInputEl.removeEventListener("keydown", onKey);
-        this.isEditingLabel = false;
-        this.labelElement.style.pointerEvents = "none";
-        this.setLabel(this.labelInputEl.value.trim());
-        this.render();
-      };
-      const onKey = (evt) => {
-        if (evt.key === "Enter" && !evt.shiftKey) { evt.preventDefault(); commit(); }
-        else if (evt.key === "Escape") { this.labelInputEl.value = this.label || ""; commit(); }
-      };
-      this.labelInputEl.addEventListener("blur", commit);
-      this.labelInputEl.addEventListener("keydown", onKey);
-      this.render();
-    }
+    focus() { this.lineGroupEl.addClass("is-focused"); this.lineEndGroupEl.addClass("is-focused"); }
+    blur() { this.lineGroupEl.removeClass("is-focused"); this.lineEndGroupEl.removeClass("is-focused"); }
+    select() { this.lineGroupEl.addClass("is-selected"); this.lineEndGroupEl.addClass("is-selected"); }
+    deselect() { this.lineGroupEl.removeClass("is-selected"); this.lineEndGroupEl.removeClass("is-selected"); }
 
     // ---------- pointer / menus ----------
 
-    onPointerdown(evt) {
-      if (evt.button !== 0 || !evt.isPrimary) return;
-      const canvas_ = this.canvas;
-      if (canvas_.selection.has(this)) return;
-      canvas_.selectOnly(this);
-      evt.stopPropagation();
-    }
-
     onClick(evt) {
-      void evt;
-      this.canvas.selectOnly(this);
+      const canvas_ = this.canvas;
+      if (evt.button !== 0 || canvas_.readonly) return;
+      if (evt.shiftKey) { canvas_.toggleSelect(this); return; }
+      if (canvas_.selection.size === 1 && canvas_.selection.has(this) && this.labelElement && !this.labelElement.isEditing) {
+        this.labelElement.focus(pointOfEvent(evt));
+      } else {
+        canvas_.selectOnly(this);
+      }
     }
 
     onContextMenu(evt) {
       if (evt.defaultPrevented) return;
+      const canvas_ = this.canvas;
+      if (canvas_.selection.has(this) && canvas_.selection.size > 1) {
+        canvas_.onSelectionContextMenu(evt);
+        return;
+      }
+      if (!canvas_.readonly) canvas_.selectOnly(this);
       evt.preventDefault();
       this.showMenu(evt);
     }
@@ -438,7 +424,10 @@ export function defineNg20CanvasEdge(host) {
       const ti = ng20CanvasStrings();
       const self = this;
       menu.addSections(["title", "action", "danger"]);
-      menu.addItem((item) => item.setSection("action").setTitle(ti.actionEditLabel ? ti.actionEditLabel() : "Edit label").setIcon("lucide-edit").onClick(() => self.editLabel()));
+      menu.addItem((item) => item.setSection("action").setTitle(ti.actionEditLabel ? ti.actionEditLabel() : "Edit label").setIcon("lucide-edit").onClick(() => {
+        if (!self.labelElement && canvas.EdgeLabel) self.labelElement = new canvas.EdgeLabel(self);
+        if (self.labelElement) self.labelElement.focus();
+      }));
       menu.addItem((item) => item.setSection("action").setTitle(ti.actionZoomToFit ? ti.actionZoomToFit() : "Zoom to fit").setIcon("lucide-maximize").onClick(() => canvas_.zoomToBbox(self.getBBox())));
       if (window.__fpEdgeMenu) window.__fpEdgeMenu(menu, this);
       canvas_.app.workspace.trigger("canvas:edge-menu", menu, this);
@@ -448,44 +437,59 @@ export function defineNg20CanvasEdge(host) {
       menu.showAtMouseEvent(evt);
     }
 
-    /** Drag an edge end dot to re-anchor it to the nearest node side. */
+    /**
+     * Dragging an edge re-targets its nearest end; dropping on empty canvas removes
+     * the edge. Live preview follows the pointer through a zero-size dummy node.
+     */
     onConnectionPointerdown(evt) {
-      if (evt.button !== 0 || !evt.isPrimary || this.canvas.readonly) return;
-      evt.preventDefault();
-      evt.stopPropagation();
+      if (window.__fpEdgeGrab && window.__fpEdgeGrab(this, evt)) return;
       const canvas_ = this.canvas;
-      canvas_.wrapperEl.addClass("is-connecting");
-      const endpoint = evt.target && evt.target.dataset && evt.target.dataset.end === "from" ? "from" : "to";
-      const other = endpoint === "from" ? this.to : this.from;
-      const start = canvas_.posFromEvt(evt);
-      let target = null;
-      let side = null;
-      host.dragWithThreshold(evt, () => ({
-        move: (moveEvt) => {
-          const p = canvas_.posFromEvt(moveEvt);
-          const node = canvas_.hitTestNode(p, canvas_.snapDistance);
-          if (node && node !== other.node) {
-            target = node;
-            side = ng20EdgeDirection(node, other.node) === undefined ? "right" : ng20EdgeSideOf(node, other.node, p);
-          } else {
-            target = null;
-            side = null;
-          }
-        },
-        end: () => {
-          canvas_.wrapperEl.removeClass("is-connecting");
-          if (target) {
-            this[endpoint] = { node: target, side: side || ng20EdgeDirection(target, other.node), end: this[endpoint].end };
-            canvas_.markMoved(this);
+      if (!evt.isPrimary || evt.button !== 0 || canvas_.readonly) return;
+      if (evt.pointerType === "touch" && !canvas_.selection.has(this)) return;
+      evt.preventDefault();
+      host.dragWithThreshold(evt, () => {
+        const from = this.from;
+        const to = this.to;
+        const pos = canvas_.posFromEvt(evt);
+        const fromAnchor = this.anchorFor(from);
+        const toAnchor = this.anchorFor(to);
+        if (!fromAnchor || !toAnchor) return;
+        const dragged = distance(pos, fromAnchor) > distance(pos, toAnchor) ? "to" : "from";
+        const fixed = dragged === "from" ? to : from;
+        const dummy = new canvas_.DummyNode(canvas_);
+        let snapped = null;
+        canvas_.canvasEl.addClass("is-connecting");
+        canvas_.deselectAll();
+        canvas_.handleDragWithPan(evt, {
+          move: (moveEvt) => {
+            const p = canvas_.posFromEvt(moveEvt);
+            dummy.x = p.x;
+            dummy.y = p.y;
+            dummy.width = 0;
+            dummy.height = 0;
+            const candidates = canvas_.getIntersectingNodes(boxGrow(dummy.getBBox(), canvas_.config.objectSnapDistance));
+            const at = candidates.indexOf(fixed.node);
+            if (at >= 0) candidates.splice(at, 1);
+            snapped = s13NearestSide(p, candidates, canvas_.config.objectSnapDistance);
+            if (dragged === "from") {
+              if (snapped) this.update({ side: snapped.side, node: snapped.node, end: from.end }, to);
+              else this.update({ side: from.side, node: dummy, end: from.end }, to);
+            } else {
+              if (snapped) this.update(from, { side: snapped.side, node: snapped.node, end: to.end });
+              else this.update(from, { side: to.side, node: dummy, end: to.end });
+            }
+          },
+          end: () => {
+            if (!snapped) canvas_.removeEdge(this);
             canvas_.requestSave();
-          } else {
-            canvas_.removeEdge(this);
-            canvas_.requestSave();
-          }
-        },
-        cleanup: () => canvas_.wrapperEl.removeClass("is-connecting"),
-      }), 0);
-      void start;
+          },
+          cancel: () => this.update(from, to),
+          cleanup: () => {
+            canvas_.canvasEl.removeClass("is-connecting");
+            ng08SuppressNextEvent(this.lineGroupEl, "click");
+          },
+        });
+      });
     }
   }
 
