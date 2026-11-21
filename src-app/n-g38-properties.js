@@ -53,6 +53,10 @@ export function ng38PropertiesPlugin(host) {
     this.app.workspace.ensureSideLeaf(ng38ViewTypeAllProperties, side, { reveal: false });
   };
 
+  PropertiesPlugin.prototype.onUserEnable = function () {
+    this.initLeaf();
+  };
+
   PropertiesPlugin.prototype.countProperties = function (cache) {
     const fm = cache && cache.frontmatter;
     return fm ? Object.keys(fm).length : 0;
