@@ -1,64 +1,10 @@
-// Slice s26 — the PDF viewer glue: base configuration for pdf.js, the find bar,
-// the outline (bookmark) tree and its items, and the l10n adapter that feeds the
-// viewer's data-l10n-* attributes from the app's string table.
+// g05 pdf chrome helpers ported off the retired s26-pdf.js slice: the find
+// bar and the outline (bookmark) tree used by the pdf.js viewer.
 import { env } from "./env.js";
 import { inherit } from "./inherit.js";
 
-/** `var TZ` — base configuration handed to `pdfjsViewer.createObsidianPDFViewer`.
- *  Scripting and evaluation stay off; telemetry is disabled; workers/cmaps/fonts
- *  resolve under /lib/pdfjs/. Mobile lowers the canvas pixel budget at runtime. */
-export const s26PdfBaseConfig = {
-  enableScripting: false,
-  externalLinkTarget: 2,
-  imageResourcesPath: "/lib/pdfjs/images/",
-  maxCanvasPixels: 16777216,
-  pdfBugEnabled: false,
-  sidebarViewOnLoad: 0,
-  viewerCssTheme: 0,
-  disablePreferences: false,
-  disableHistory: true,
-  verbosity: 0,
-  defaultZoomValue: "page-width",
-  cMapPacked: true,
-  cMapUrl: "/lib/pdfjs/cmaps/",
-  standardFontDataUrl: "/lib/pdfjs/standard_fonts/",
-  wasmUrl: "/lib/pdfjs/wasm/",
-  iccUrl: "/lib/pdfjs/iccs/",
-  workerSrc: "/lib/pdfjs/pdf.worker.min.js",
-  defaultUrl: "",
-  disableTelemetry: true,
-  isEvalSupported: false,
-};
+const s26PdfSearchSettingsKey = "pdfjs-search-settings";
 
-/** `var PZ` — localStorage key of the persisted find-bar settings. */
-export const s26PdfSearchSettingsKey = "pdfjs-search-settings";
-
-/** `var OZ` — l10n adapter for the pdf.js viewer: strings come from `gm.pdf`,
- *  `translate` fills every `[data-l10n-id]` descendant of a container. */
-export function s26PdfL10n(host) {
-  function PdfL10n() {}
-  PdfL10n.prototype.getLanguage = function () { return env().sm(); };
-  PdfL10n.prototype.get = async function (id, args = null, fallback) {
-    return host.t.pdf[id](args) || fallback;
-  };
-  PdfL10n.prototype.translate = async function (root) {
-    const nodes = root ? Array.from(root.querySelectorAll("*[data-l10n-id]")) : [];
-    for (const node of nodes) {
-      const ds = node.dataset;
-      const id = ds.l10nId;
-      const args = ds.l10nArgs ? JSON.parse(ds.l10nArgs) : null;
-      if (id && args) {
-        if (args.attr) node.setAttr(args.attr, host.t.pdf[id](args));
-        else node.setText(host.t.pdf[id](args));
-      }
-    }
-  };
-  PdfL10n.prototype.pause = function () {};
-  PdfL10n.prototype.resume = function () {};
-  return PdfL10n;
-}
-
-/** `var LZ` — the find bar shown inside the PDF viewer toolbar area. */
 export function s26PdfFindBar(host) {
   function PdfFindBar(app, containerEl, eventBus, scope) {
     const self = this;

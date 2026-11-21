@@ -6,7 +6,7 @@
 // the l10n adapter is written here because the contract adds getDirection().
 import { env } from "./env.js";
 import { inherit } from "./inherit.js";
-import { s26PdfFindBar, s26PdfOutlineItem, s26PdfOutlineTree } from "./s26-pdf.js";
+import { s26PdfFindBar, s26PdfOutlineItem, s26PdfOutlineTree } from "./n-g05-pdf-s26.js";
 import { ng05BuildPasswordDialog, ng05BuildToolbar } from "./n-g05-pdf-dialog.js";
 import { ng05PdfViewerClass, ng05PdfComponentClass, ng05PdfViewClass, ng05PdfEmbedClass, ng05PdfKitGet } from "./n-g05-pdf-viewer.js";
 
