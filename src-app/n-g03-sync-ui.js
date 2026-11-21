@@ -424,7 +424,7 @@ export function ng03DefineSyncFileHistoryModal(host) {
     this.modalEl.addClass("mod-lg");
     const header = this.contentEl.createDiv("sync-modal-header");
     const nouns = ng03Nouns();
-    header.createDiv("sync-modal-header-title").setText(
+    header.createDiv().setText(
       (nouns && nouns.fileWithCount ? nouns.fileWithCount({ count: this.items.length }) : this.items.length + " files") +
       " — " + (ti.labelClickToSeeHistory ? ti.labelClickToSeeHistory() : "click to see history"));
     this.listEl = this.contentEl.createDiv("sync-file-tree-container");
@@ -443,7 +443,7 @@ export function ng03DefineSyncFileHistoryModal(host) {
       const part = row.createDiv("list-item-part mod-extended");
       const title = part.createDiv("list-item-part title");
       title.setText(withoutMd(item.path));
-      const meta = part.createDiv("list-item-part multiline");
+      const meta = part.createDiv("list-item-part list-item-desc");
       let text = "";
       if (item.device) text += "[" + item.device + "] ";
       text += ng03FromNow(item.ts || 0);
@@ -485,7 +485,7 @@ export function ng03DefineSyncDeletedFilesModal(host) {
     this.modalEl.addClass("mod-lg", "mod-scrollable-content");
     const header = this.contentEl.createDiv("sync-modal-header");
     const nouns = ng03Nouns();
-    header.createDiv("sync-modal-header-title").setText(
+    header.createDiv().setText(
       (nouns && nouns.fileWithCount ? nouns.fileWithCount({ count: this.items.length }) : this.items.length + " files") +
       " — " + (ti.labelClickToSeeHistory ? ti.labelClickToSeeHistory() : ""));
     this.listEl = this.contentEl.createDiv("sync-file-tree-container");
@@ -524,7 +524,7 @@ export function ng03DefineSyncDeletedFilesModal(host) {
       checkbox.checked = this.selected.has(item.path);
       const part = row.createDiv("list-item-part mod-extended");
       part.createDiv("list-item-part title").setText(withoutMd(item.path));
-      const meta = part.createDiv("list-item-part multiline");
+      const meta = part.createDiv("list-item-part list-item-desc");
       let text = "";
       if (item.device) text += "[" + item.device + "] ";
       text += ng03FromNow(item.ts || 0);
@@ -611,7 +611,7 @@ export function ng03DefineSyncLogModal(host) {
     const ii = ng03Ii();
     this.titleEl.setText(ti.labelSyncLog ? ti.labelSyncLog() : "Sync log");
     this.modalEl.addClass("mod-sync-log", "mod-lg");
-    const toolbar = this.contentEl.createDiv("modal-toolbar");
+    const toolbar = this.contentEl.createDiv();
     const select = toolbar.createEl("select", { cls: "dropdown" });
     const opts = [["all", ti.optionEventTypeAll ? ti.optionEventTypeAll() : "All"],
       ["errors", ti.optionEventTypeErrors ? ti.optionEventTypeErrors() : "Errors"],
@@ -623,11 +623,12 @@ export function ng03DefineSyncLogModal(host) {
     }
     select.value = this.filter;
     select.addEventListener("change", () => { this.filter = select.value; this._rerender(); });
-    const search = toolbar.createEl("input", { type: "search", cls: "search-input" });
+    const searchBox = toolbar.createDiv("search-input-container");
+    const search = searchBox.createEl("input", { type: "search" });
     search.placeholder = ii.promptFilter ? ii.promptFilter() : "Filter";
     search.addEventListener("input", () => { this.query = search.value; this._rerender(); });
 
-    this.listEl = this.contentEl.createDiv("modal-list");
+    this.listEl = this.contentEl.createDiv("list-container");
     this._renderAll();
 
     const self = this;
@@ -695,7 +696,7 @@ export function ng03DefineSyncRemoteVaultsModal(host) {
   proto._load = async function () {
     const ti = ng03Ti();
     this.contentEl.empty();
-    this.contentEl.createDiv("modal-loading" );
+    this.contentEl.createDiv();
     try {
       const res = await acctListVaults(account.token);
       this.vaults = res.vaults || [];
@@ -711,7 +712,7 @@ export function ng03DefineSyncRemoteVaultsModal(host) {
   proto._renderError = function (error) {
     const ti = ng03Ti();
     this.contentEl.empty();
-    const box = this.contentEl.createDiv("modal-error");
+    const box = this.contentEl.createDiv();
     box.createDiv().setText(ti.msgErrorFailedToFetch ? ti.msgErrorFailedToFetch() : "Failed to fetch");
     const btn = box.createEl("button", { text: ng03Ii().retry ? ng03Ii().retry() : "Retry" });
     btn.addEventListener("click", () => this._load());
@@ -721,7 +722,7 @@ export function ng03DefineSyncRemoteVaultsModal(host) {
     const ti = ng03Ti();
     const connected = this.sync.vaultId === vault.uid;
     const row = createDiv("list-item vault-list-item");
-    row.createDiv("list-item-icon").appendChild((() => {
+    row.createDiv().appendChild((() => {
       const icon = createDiv("svg-icon");
       host.setIcon(icon, connected ? "open-vault" : "vault");
       return icon;
@@ -735,7 +736,7 @@ export function ng03DefineSyncRemoteVaultsModal(host) {
     if (vault.created) desc.push(ti.labelVaultCreatedTime ? ti.labelVaultCreatedTime({ time: ng03FromNow(vault.created) }) : ng03FromNow(vault.created));
     part.createDiv("list-item-part description u-muted").setText(desc.join(" · "));
 
-    const actions = row.createDiv("list-item-part list-item-action-icon");
+    const actions = row.createDiv("list-item-part");
     if (connected) {
       if (this.sync.vaultName !== vault.name) this.sync.setVaultName(vault.name);
     }
@@ -792,7 +793,7 @@ export function ng03DefineSyncRemoteVaultsModal(host) {
         try {
           const subs = await acctListSubscriptions(account.token);
           if (!subs || !subs.sync) {
-            const err = this.contentEl.createDiv("modal-error");
+            const err = this.contentEl.createDiv();
             err.setText(ti.labelRequireSubscriptionToConnect ? ti.labelRequireSubscriptionToConnect() : "Subscription required");
             return;
           }
@@ -809,7 +810,7 @@ export function ng03DefineSyncRemoteVaultsModal(host) {
         try {
           const subs = await acctListSubscriptions(account.token);
           if (!subs || !subs.sync) {
-            const err = this.contentEl.createDiv("modal-error");
+            const err = this.contentEl.createDiv();
             err.setText(ti.labelRequireSubscriptionToConnect ? ti.labelRequireSubscriptionToConnect() : "Subscription required");
             return;
           }
@@ -929,7 +930,7 @@ export function ng03DefineSyncCreateVaultModal(host) {
     this.errorEl = this.contentEl.createDiv("message mod-error");
     this.errorEl.hide();
 
-    const nameInput = this.contentEl.createEl("input", { type: "text", cls: "settings-field" });
+    const nameInput = this.contentEl.createEl("input", { type: "text" });
     nameInput.placeholder = ti.optionVaultNamePlaceholder ? ti.optionVaultNamePlaceholder() : "Vault name";
 
     acctVaultRegions(account.token, this.sync.host || "").then((regions) => { this.regions = regions || []; }).catch(() => {});
@@ -944,7 +945,7 @@ export function ng03DefineSyncCreateVaultModal(host) {
     const std = encSel.createEl("option", { text: "standard" }); std.value = "standard";
     encSel.value = "end-to-end";
 
-    this.passwordEl = this.contentEl.createEl("input", { type: "password", cls: "settings-field" });
+    this.passwordEl = this.contentEl.createEl("input", { type: "password" });
     const sync = this.sync;
     const refreshRegions = () => {
       regionSel.querySelectorAll("option:not([value=''])").forEach((o) => o.remove());
@@ -1050,7 +1051,7 @@ export function ng03DefineSyncConnectVaultModal(host) {
       const ti = ng03Ti();
       this.contentEl.empty();
       this.contentEl.createDiv().setText(ti.labelUnlockEncryptedVault ? ti.labelUnlockEncryptedVault() : "Enter password");
-      const input = this.contentEl.createEl("input", { type: "password", cls: "settings-field" });
+      const input = this.contentEl.createEl("input", { type: "password" });
       this.errorEl = this.contentEl.createDiv("message mod-error");
       this.errorEl.hide();
       const bar = this.modalEl.createDiv("modal-button-container");
@@ -1090,7 +1091,7 @@ export function ng03DefineSyncConnectVaultModal(host) {
   proto._renderSuccess = function (vault) {
     const ti = ng03Ti();
     this.contentEl.empty();
-    this.contentEl.createDiv("sync-modal-icon").appendChild((() => {
+    this.contentEl.createDiv().appendChild((() => {
       const icon = createDiv("svg-icon");
       host.setIcon(icon, "circle-check");
       return icon;
@@ -1141,7 +1142,7 @@ export function ng03DefineSyncRenameVaultModal(host) {
   proto.onOpen = function () {
     const ti = ng03Ti();
     this.titleEl.setText(ti.labelRenameRemoteVault ? ti.labelRenameRemoteVault({ name: this.name }) : "Rename");
-    const input = this.contentEl.createEl("input", { type: "text", cls: "settings-field" });
+    const input = this.contentEl.createEl("input", { type: "text" });
     input.placeholder = this.name;
     const bar = this.modalEl.createDiv("modal-button-container");
     const save = bar.createEl("button", { cls: "mod-cta", text: ng03Ii().save ? ng03Ii().save() : "Save" });
@@ -1179,7 +1180,7 @@ export function ng03DefineSyncManageSharingModal(host) {
     this.errorEl = this.contentEl.createDiv("message mod-error");
     this.errorEl.hide();
     const row = this.contentEl.createDiv("setting-item");
-    const input = row.createEl("input", { type: "email", cls: "settings-field" });
+    const input = row.createEl("input", { type: "email" });
     input.placeholder = pub.optionInviteUser ? pub.optionInviteUser() : "Invite user";
     const addBtn = row.createEl("button", { cls: "mod-cta", text: ng03Ii().add ? ng03Ii().add() : "Add" });
     const invite = async () => {
@@ -1204,7 +1205,7 @@ export function ng03DefineSyncManageSharingModal(host) {
     };
     addBtn.addEventListener("click", invite);
     input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.isComposing) invite(); });
-    this.listEl = this.contentEl.createDiv("modal-list");
+    this.listEl = this.contentEl.createDiv("list-container");
     this._loadShares();
     const bar = this.modalEl.createDiv("modal-button-container");
     const done = bar.createEl("button", { text: ng03Ii().done ? ng03Ii().done() : "Done" });
@@ -1267,7 +1268,7 @@ export function ng03DefineSyncLargestFilesModal(host) {
     this.titleEl.setText(ti.msgLargestFiles ? ti.msgLargestFiles() : "Largest files");
     this.modalEl.addClass("mod-lg");
     this.contentEl.createDiv("setting-item-description").setText(ti.msgLargestFilesDesc ? ti.msgLargestFilesDesc() : "");
-    const list = this.contentEl.createDiv("modal-list");
+    const list = this.contentEl.createDiv("list-container");
     const files = Object.values(this.sync.serverFiles || {})
       .filter((rec) => rec && !rec.folder && (rec.size || 0) > 0)
       .sort((a, b) => (b.size || 0) - (a.size || 0))
@@ -1319,7 +1320,7 @@ export function ng03DefineSyncExcludedFoldersSuggest(host) {
     const self = this;
 
     // current exclusions list
-    this.currentEl = this.contentEl.createDiv("modal-list sync-excluded-current");
+    this.currentEl = this.contentEl.createDiv("list-container");
     const renderCurrent = () => {
       this.currentEl.empty();
       for (const folder of this.sync.ignoreFolders) {
@@ -1341,7 +1342,7 @@ export function ng03DefineSyncExcludedFoldersSuggest(host) {
 
     // add via suggester
     const wrap = this.contentEl.createDiv("setting-item");
-    const input = wrap.createEl("input", { type: "text", cls: "settings-field" });
+    const input = wrap.createEl("input", { type: "text" });
     input.placeholder = ti.labelAddExcludedFolder ? ti.labelAddExcludedFolder() : "Add excluded folder";
     wrap.createDiv("setting-item-description").setText(ti.labelAddExcludedFolderDesc ? ti.labelAddExcludedFolderDesc() : "");
     this.suggestEl = this.contentEl.createDiv("suggestion-container");
@@ -1432,7 +1433,7 @@ export function ng03DefineSyncMigrateVaultModal(host) {
     const ti = ng03Ti();
     this.titleEl.setText(ti.labelMigrateVault ? ti.labelMigrateVault() : "Migrate vault");
     this.modalEl.addClass("mod-lg");
-    this.contentEl.createDiv("modal-loading");
+    this.contentEl.createDiv();
     try {
       const res = await acctListVaults(account.token);
       this.vaults = res.vaults || [];
@@ -1476,7 +1477,7 @@ export function ng03DefineSyncMigrateVaultModal(host) {
     const e2e = encSel.createEl("option", { text: "end-to-end" }); e2e.value = "end-to-end";
     const std = encSel.createEl("option", { text: "standard" }); std.value = "standard";
     encSel.value = "end-to-end";
-    this.passwordEl = this.contentEl.createEl("input", { type: "password", cls: "settings-field" });
+    this.passwordEl = this.contentEl.createEl("input", { type: "password" });
     this.passwordEl.hide();
     encSel.addEventListener("change", () => this.passwordEl.toggle(encSel.value === "end-to-end"));
 
@@ -1658,15 +1659,15 @@ export function ng03DefineSyncFileHistoryView(host) {
       const first = group.items[0];
       const avatar = ng03CreateAvatar(first, this.sync);
       header.appendChild(avatar);
-      const info = header.createDiv("sync-history-list-item-info");
+      const info = header.createDiv();
       const when = first.ts < Date.now() - 86400000 ? ng03Llll(first.ts) : ng03FromNow(first.ts);
-      info.createDiv("sync-history-list-item-title").setText(when);
+      info.createDiv().setText(when);
       const sub = [];
       if (first.relatedpath) sub.push(ng03Ti().labelFileRenamedFromTo ? ng03Ti().labelFileRenamedFromTo({ from: withoutMd(first.relatedpath), to: withoutMd(first.path) }) : "renamed");
       else if (first.deleted) sub.push(ng03Ti().labelFileDeleted ? ng03Ti().labelFileDeleted() : "deleted");
       else if ((first.size || 0) === 0) sub.push(ng03Ti().labelEmptyFile ? ng03Ti().labelEmptyFile() : "empty");
       else sub.push((ng03Ti().labelRevision ? ng03Ti().labelRevision({ count: group.items.length }) : group.items.length + " revisions") + (first.device ? " " + (ng03Ti().labelViaDevice ? ng03Ti().labelViaDevice({ device: first.device }) : "via " + first.device) : ""));
-      info.createDiv("sync-history-list-item-subtitle u-muted").setText(sub.join(" "));
+      info.createDiv("u-muted").setText(sub.join(" "));
       const flair = header.createDiv("tree-item-flair-outer");
       const icon = flair.createDiv("tree-item-flair");
       host.setIcon(icon, host.Platform.isMobile ? "chevrons-up-down" : "right-triangle");
@@ -1694,7 +1695,7 @@ export function ng03DefineSyncFileHistoryView(host) {
     const ext = extensionOf(this.filepath);
     const isMd = ng03ExtHas(host0Markdown(), ext) || ext === "md";
     titlebar.createDiv("modal-setting-title").setText(isMd ? withoutMd(this.filepath) : this.filepath);
-    const actions = titlebar.createDiv("modal-setting-action-buttons");
+    const actions = titlebar.createDiv();
 
     if (item.relatedpath) {
       const renamed = item.relatedpath !== this.filepath;
@@ -1735,7 +1736,7 @@ export function ng03DefineSyncFileHistoryView(host) {
       this._openItem(item, groupFirst);
     });
 
-    const loading = pane.createDiv("modal-loading");
+    const loading = pane.createDiv();
     try {
       let data = this.cache[item.uid];
       if (!data) {
@@ -1765,7 +1766,7 @@ export function ng03DefineSyncFileHistoryView(host) {
       } else if (ng03ExtHas(host0Image(), ext)) {
         const url = URL.createObjectURL(new Blob([data.buffer || data]));
         const img = pane.createEl("img", { attr: { src: url } });
-        img.addClass("sync-history-image");
+
       } else {
         const o8 = env().o8;
         if (o8) {
@@ -1819,7 +1820,7 @@ export function ng03DefineSyncChangesView(host) {
   proto.onOpen = function () {
     const sync = this.sync;
     const scope = this.scope;
-    this.containerEl.addClass("sync-changes-view");
+
 
     // disconnected pane
     this.uninitializedEl = this.contentEl.createDiv("pane-empty sync-uninitialized");
@@ -1828,11 +1829,11 @@ export function ng03DefineSyncChangesView(host) {
     // tree container
     const treeWrap = this.contentEl.createDiv("recent-changes-container");
     this.treeBoxEl = treeWrap;
-    this.treeContainerEl = treeWrap.createDiv("sync-changes-tree");
+    this.treeContainerEl = treeWrap.createDiv();
     this.tree = { containerEl: this.treeContainerEl, onResize: () => {} };
 
     // custom header with users button
-    const header = this.contentEl.createDiv("view-header sync-changes-header");
+    const header = this.contentEl.createDiv("view-header");
     const navButtons = header.createDiv("nav-buttons-container");
     this.usersBtn = navButtons.createEl("button", { cls: "clickable-icon" });
     host.setIcon(this.usersBtn, "users");
@@ -1859,11 +1860,11 @@ export function ng03DefineSyncChangesView(host) {
       };
       group.vChildren = { children: group.children };
       const el = this.treeContainerEl.createDiv("sync-change-group" + (key === "older" ? " is-collapsed" : ""));
-      const head = el.createDiv("sync-change-group-header clickable-icon");
+      const head = el.createDiv("clickable-icon");
       host.setIcon(head.createDiv("tree-item-flair-outer").createDiv("tree-item-flair"), "right-triangle");
-      head.createDiv("sync-change-group-title").setText(labelFn ? labelFn() : key);
-      group.flairEl = head.createDiv("sync-change-group-count u-muted");
-      group.bodyEl = el.createDiv("sync-change-group-body");
+      head.createDiv().setText(labelFn ? labelFn() : key);
+      group.flairEl = head.createDiv("u-muted");
+      group.bodyEl = el.createDiv();
       group.el = el;
       head.addEventListener("click", () => {
         el.toggleClass("is-collapsed");
@@ -1986,7 +1987,7 @@ export function ng03DefineSyncChangesView(host) {
         group.children.push(item);
       }
       if (moreItem) {
-        const el = createDiv("list-item sync-change-more");
+        const el = createDiv("list-item");
         el.setText((ng03Ti().labelShowMore ? ng03Ti().labelShowMore() : "Show more") + " (" + moreItem.count + ")");
         const item = { el, _more: true, count: moreItem.count };
         group.children.push(item);
@@ -2004,7 +2005,7 @@ export function ng03DefineSyncChangesView(host) {
   };
 
   proto._makeFileItem = function (rec) {
-    const el = createDiv("list-item sync-change-item tappable");
+    const el = createDiv("list-item tappable");
     const part = el.createDiv("list-item-part");
     part.createDiv("list-item-part title").setText(baseName(rec.path));
     const meta = [];
