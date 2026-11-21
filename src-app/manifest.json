@@ -563,15 +563,15 @@
     },
     {
       "orig": "My",
-      "use": "prepareQuery"
+      "use": "ng39PrepareQuery"
     },
     {
       "orig": "Dy",
-      "use": "fuzzyMatchJs"
+      "use": "ng39FuzzyMatchJs"
     },
     {
       "orig": "xy",
-      "use": "matchScore"
+      "use": "ng39MatchScore"
     },
     {
       "orig": "wc",
@@ -591,35 +591,35 @@
     },
     {
       "orig": "Sy",
-      "use": "prepareFuzzyFinder"
+      "use": "ng39PrepareFuzzyFinder"
     },
     {
       "orig": "Oy",
-      "use": "prepareSimpleFinder"
+      "use": "ng39PrepareSimpleFinder"
     },
     {
       "orig": "Ly",
-      "use": "containsAllWords"
+      "use": "ng39ContainsAllWords"
     },
     {
       "orig": "Iy",
-      "use": "simpleMatch"
+      "use": "ng39SimpleMatch"
     },
     {
       "orig": "wy",
-      "use": "mergeSpans"
+      "use": "ng39MergeSpans"
     },
     {
       "orig": "Ny",
-      "use": "renderMatches"
+      "use": "ng39RenderMatches"
     },
     {
       "orig": "Fy",
-      "use": "renderResults"
+      "use": "ng39RenderResults"
     },
     {
       "orig": "FT",
-      "use": "resolveSubpath"
+      "use": "ng39ResolveSubpath"
     },
     {
       "orig": "pv",
