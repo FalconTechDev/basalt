@@ -2075,7 +2075,7 @@
     },
     {
       "orig": "kte",
-      "use": "s36WindowChrome",
+      "use": "ng38WindowChrome",
       "originalBytes": 55245
     },
     {
@@ -2377,7 +2377,7 @@
     },
     {
       "orig": "EV",
-      "use": "s40FoldedRangeAt",
+      "use": "ng38FoldedRangeAt",
       "originalBytes": 105
     },
     {
@@ -5506,17 +5506,17 @@
     },
     {
       "orig": "f7",
-      "use": "definePagePreviewPlugin",
+      "use": "ng38PagePreviewPlugin",
       "originalBytes": 2307
     },
     {
       "orig": "m7",
-      "use": "definePagePreviewSettingTab",
+      "use": "ng38PagePreviewSettingTab",
       "originalBytes": 612
     },
     {
       "orig": "k7",
-      "use": "definePropertiesPlugin",
+      "use": "ng38PropertiesPlugin",
       "originalBytes": 3383
     },
     {
@@ -5536,42 +5536,42 @@
     },
     {
       "orig": "P7",
-      "use": "s35PublishNavTree",
+      "use": "ng38PublishNavTree",
       "originalBytes": 1696
     },
     {
       "orig": "T7",
-      "use": "s35PublishNavItem",
+      "use": "ng38PublishNavItem",
       "originalBytes": 1098
     },
     {
       "orig": "A7",
-      "use": "s35PublishNavFolderItem",
+      "use": "ng38PublishNavFolderItem",
       "originalBytes": 334
     },
     {
       "orig": "D7",
-      "use": "s35PublishNavFileItem",
+      "use": "ng38PublishNavFileItem",
       "originalBytes": 275
     },
     {
       "orig": "x7",
-      "use": "s35PublishNavModal",
+      "use": "ng38PublishNavModal",
       "originalBytes": 1310
     },
     {
       "orig": "L7",
-      "use": "s35StartupStat",
+      "use": "ng38StartupStat",
       "originalBytes": 520
     },
     {
       "orig": "I7",
-      "use": "s35StartupModal",
+      "use": "ng38StartupModal",
       "originalBytes": 3943
     },
     {
       "orig": "V7",
-      "use": "s35FolderSuggestBase",
+      "use": "ng38FolderSuggestBase",
       "originalBytes": 1695
     },
     {
@@ -5581,17 +5581,17 @@
     },
     {
       "orig": "z7",
-      "use": "s35PublishChangesModal",
+      "use": "ng38PublishChangesModal",
       "originalBytes": 5627
     },
     {
       "orig": "MV",
-      "use": "s40FoldIndicator",
+      "use": "ng38FoldIndicator",
       "originalBytes": 669
     },
     {
       "orig": "TV",
-      "use": "s40FoldViewPlugin",
+      "use": "ng38FoldViewPlugin",
       "originalBytes": 719
     },
     {
@@ -9129,25 +9129,25 @@
     },
     {
       "orig": "g7",
-      "expr": "__basaltOwn.s34ViewTypeAllProperties",
+      "expr": "__basaltOwn.ng38ViewTypeAllProperties",
       "sha1": "ea095ef63d46e8013d0263142d854da62a37a270",
       "originalBytes": 16
     },
     {
       "orig": "y7",
-      "expr": "__basaltOwn.s34ViewTypeFileProperties",
+      "expr": "__basaltOwn.ng38ViewTypeFileProperties",
       "sha1": "427c02538799e0915827cfc216e9b50e350ee589",
       "originalBytes": 17
     },
     {
       "orig": "b7",
-      "expr": "__basaltOwn.s34PropertySortOrders",
+      "expr": "__basaltOwn.ng38PropertySortOrders",
       "sha1": "9f37d4c684c2c4404339a895f84b3057246c77a3",
       "originalBytes": 73
     },
     {
       "orig": "w7",
-      "expr": "__basaltOwn.s34PropertySortLabels(__basaltHost.t.plugins.properties)",
+      "expr": "__basaltOwn.ng38PropertySortLabels(__basaltHost.t.plugins.properties)",
       "sha1": "65b62c00cef89016a779da28cbe0f0996f584849",
       "originalBytes": 173
     },
@@ -9177,49 +9177,49 @@
     },
     {
       "orig": "SV",
-      "expr": "__basaltOwn.s40FoldedDeco(__basaltHost)",
+      "expr": "__basaltOwn.ng38FoldedDeco(__basaltHost)",
       "sha1": "d498acf260fcc3312da6618c8b892eed1848608e",
       "originalBytes": 30
     },
     {
       "orig": "xV",
-      "expr": "__basaltOwn.s40FoldableDeco(__basaltHost)",
+      "expr": "__basaltOwn.ng38FoldableDeco(__basaltHost)",
       "sha1": "21bf5f5a7e9cab20a4e4e194e620f094d4a0388a",
       "originalBytes": 30
     },
     {
       "orig": "DV",
-      "expr": "__basaltOwn.s40FoldTransactionFilter(__basaltHost)",
+      "expr": "__basaltOwn.ng38FoldTransactionFilter(__basaltHost)",
       "sha1": "7f4826fa0d785556bf63d427ddfd4e430128e173",
       "originalBytes": 263
     },
     {
       "orig": "AV",
-      "expr": "__basaltOwn.s40FoldDecorations(__basaltHost)",
+      "expr": "__basaltOwn.ng38FoldDecorations(__basaltHost)",
       "sha1": "2d58b88298688307155d1909d6e261df92135df1",
       "originalBytes": 149
     },
     {
       "orig": "PV",
-      "expr": "__basaltOwn.s40IndentMarkPlain(__basaltHost)",
+      "expr": "__basaltOwn.ng38IndentMarkPlain(__basaltHost)",
       "sha1": "087c3be34bae6277e532c96e8f7fb4f50b2ad74e",
       "originalBytes": 28
     },
     {
       "orig": "LV",
-      "expr": "__basaltOwn.s40IndentMarkActive(__basaltHost)",
+      "expr": "__basaltOwn.ng38IndentMarkActive(__basaltHost)",
       "sha1": "b719655a56789945fd68521c8a258b0a0cc8f487",
       "originalBytes": 45
     },
     {
       "orig": "IV",
-      "expr": "__basaltOwn.s40IndentMarkSpacing(__basaltHost)",
+      "expr": "__basaltOwn.ng38IndentMarkSpacing(__basaltHost)",
       "sha1": "6ad5765617c7c767ea401fcd83f9eb50a74b8586",
       "originalBytes": 36
     },
     {
       "orig": "OV",
-      "expr": "__basaltOwn.s40IndentGuides(__basaltHost)",
+      "expr": "__basaltOwn.ng38IndentGuides(__basaltHost)",
       "sha1": "9fca539e7d2b7988b631341c874561b9daa4f8d3",
       "originalBytes": 1296
     },
