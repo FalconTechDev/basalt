@@ -18,7 +18,7 @@ export function ng32DefineStartupTimeModal(host) {
   }
 
   function Ng32StartupTimeModal(app) {
-    const self = host.DialogModal.call(this, app) || this;
+    const self = Reflect.construct(host.DialogModal, [app], Ng32StartupTimeModal);
     self.app = app;
     self.setTitle("Startup time");
     self.modalEl.addClass("mod-lg", "mod-scrollable-content", "mod-plugin-debug");

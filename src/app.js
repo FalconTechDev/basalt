@@ -73758,7 +73758,9 @@ function ng32DefineSlashCommandSuggest() {
 
   proto.selectSuggestion = function (suggestion) {
     this.close();
-    if (this.context) this.context.editor.replaceRange("", this.context.start, this.context.end);
+    const context = this.context;
+    if (!context) return;
+    context.editor.replaceRange("", context.start, context.end);
     env().K6(suggestion.item);
   };
 
@@ -73913,7 +73915,8 @@ function ng32DefineSlidesView() {
         this.deck = new Reveal(this.revealEl, {
           embedded: true, keyboardCondition: "focused", controlsTutorial: false, overview: false,
         }).initialize();
-        setTimeout(() => this.revealEl.dispatchEvent(new PointerEvent("pointerdown")), 0);
+        const revealEl = this.revealEl;
+        if (revealEl) setTimeout(() => revealEl.dispatchEvent(new PointerEvent("pointerdown")), 0);
       } catch (error) {
         console.error(error);
         this.close();
@@ -73966,7 +73969,7 @@ function ng32DefineStartupTimeModal(host) {
   }
 
   function Ng32StartupTimeModal(app) {
-    const self = host.DialogModal.call(this, app) || this;
+    const self = Reflect.construct(host.DialogModal, [app], Ng32StartupTimeModal);
     self.app = app;
     self.setTitle("Startup time");
     self.modalEl.addClass("mod-lg", "mod-scrollable-content", "mod-plugin-debug");

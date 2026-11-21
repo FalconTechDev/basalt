@@ -41,7 +41,8 @@ export function ng32DefineSlidesView() {
         this.deck = new Reveal(this.revealEl, {
           embedded: true, keyboardCondition: "focused", controlsTutorial: false, overview: false,
         }).initialize();
-        setTimeout(() => this.revealEl.dispatchEvent(new PointerEvent("pointerdown")), 0);
+        const revealEl = this.revealEl;
+        if (revealEl) setTimeout(() => revealEl.dispatchEvent(new PointerEvent("pointerdown")), 0);
       } catch (error) {
         console.error(error);
         this.close();

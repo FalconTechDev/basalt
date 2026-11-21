@@ -71,7 +71,9 @@ export function ng32DefineSlashCommandSuggest() {
 
   proto.selectSuggestion = function (suggestion) {
     this.close();
-    if (this.context) this.context.editor.replaceRange("", this.context.start, this.context.end);
+    const context = this.context;
+    if (!context) return;
+    context.editor.replaceRange("", context.start, context.end);
     env().K6(suggestion.item);
   };
 
