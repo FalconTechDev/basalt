@@ -8,7 +8,7 @@ import { binaryFind, randomHex } from "./misc.js";
 import { displayName, withoutMd, parseLinktext, firstHeadingText } from "./path.js";
 import { linkSafeHeading } from "./text.js";
 import { defineDialogModal } from "./modal.js";
-import { Runnable } from "./metadata-helpers.js";
+import { Runnable } from "./n-g22-helpers.js";
 import { ng08SetPlainText } from "./n-g08-drag.js";
 import { searchViewClasses } from "./search-view.js";
 import { ng19BookmarkParentSymbol } from "./n-g19-graph-consts.js";

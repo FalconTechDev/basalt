@@ -14,7 +14,7 @@ import { hostEnv } from "./env.js";
 import { lastSegment, isLocalLink, linkPath } from "./path.js";
 import { isStringArray, shiftRanges } from "./misc.js";
 import { toStringList } from "./text.js";
-import { tagValid } from "./metadata-helpers.js";
+import { tagValid } from "./n-g22-helpers.js";
 import { prepareQuery, fuzzyMatchJs, matchScore } from "./search.js";
 import { renderMatches, renderResults, containsAllWords } from "./search-simple.js";
 import { s04StringCompare } from "./n-g24-themes.js";

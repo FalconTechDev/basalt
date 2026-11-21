@@ -232,7 +232,7 @@ export function tagValid(tag) {
 }
 
 /** Split "path|alias" / "#sub" / "^block" linktext into parts. */
-export function parseLinktext(linktext) {
+export function ng22ParseLinktext(linktext) {
   const out = { path: "", alias: "", subpath: "", display: "" };
   if (linktext == null) return out;
   let s = String(linktext);
@@ -250,7 +250,7 @@ export function parseLinktext(linktext) {
 }
 
 /** frontmatter.aliases -> flat string array (string or list). */
-export function frontmatterAliases(fm) {
+export function ng22FrontmatterAliases(fm) {
   if (!fm) return null;
   const raw = fm.aliases;
   if (raw == null) return null;
@@ -373,7 +373,7 @@ export function sharesLinkTarget(linkCache, sourcePath, targetPath) {
   if (!entry) return false;
   const norm = linkCacheKey(targetPath).replace(/\.md$/, "");
   return anyMetadataRef(entry, (ref) => {
-    const p = parseLinktext(ref.link).path;
+    const p = ng22ParseLinktext(ref.link).path;
     return linkCacheKey(p).replace(/\.md$/, "") === norm || linkCacheKey(p) === linkCacheKey(targetPath);
   });
 }
@@ -408,26 +408,92 @@ export function applyLinkUpdates(content, updates) {
   return out;
 }
 
+function ng22BlockText(content, position) {
+  const s = position && position.start && position.start.offset != null ? position.start.offset : 0;
+  const e = position && position.end && position.end.offset != null ? position.end.offset : content.length;
+  return String(content).slice(s, e).replace(/\s+/g, " ").trim();
+}
+
+function ng22StripMd(text) {
+  return String(text || "")
+    .replace(/!\[\[([^\]]+)\]\]/g, "$1")
+    .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, "$2")
+    .replace(/\[\[([^\]]+)\]\]/g, "$1")
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/`{1,3}[^`]*`{1,3}/g, " ")
+    .replace(/[*_~>#]/g, "")
+    .replace(/\[\^[^\]]+\]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Candidate suggestion blocks for one file: headings, list items, id'd blocks, ^id lines. */
+function ng22BuildBlocks(content, cache) {
+  const out = [];
+  const seen = new Set();
+  const push = (display, node, position) => {
+    display = String(display || "").replace(/\s+/g, " ").trim();
+    if (!display) return;
+    const key = display + "|" + (position && position.start && position.start.offset);
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push({ display, content: display, node: node || {}, position: position || null });
+  };
+  if (cache && Array.isArray(cache.headings)) {
+    for (const h of cache.headings) {
+      const text = ng22StripMd(h.heading || "");
+      push("#".repeat(Math.max(1, h.level || 1)) + " " + text, { type: "heading", level: h.level, heading: h.heading }, h.position);
+    }
+  }
+  if (cache && Array.isArray(cache.listItems)) {
+    for (const item of cache.listItems) {
+      const raw = ng22BlockText(content, item.position);
+      const text = ng22StripMd(raw.replace(/^[-*+]\s+/, "").replace(/^\d+[.)]\s+/, "").replace(/^\[[ xX]\]\s+/, ""));
+      push(text, { type: "listItem", id: item.id || null, task: item.task || null }, item.position);
+    }
+  }
+  if (cache && cache.blocks && typeof cache.blocks === "object") {
+    for (const id of Object.keys(cache.blocks)) {
+      const b = cache.blocks[id];
+      const text = ng22StripMd(ng22BlockText(content, b && b.position));
+      push(text, { type: "block", id: (b && b.id) || id }, b && b.position);
+    }
+  }
+  // paragraph/line blocks carrying an explicit ^id marker
+  const lines = String(content || "").split("\n");
+  let offset = 0;
+  for (const line of lines) {
+    const m = line.match(/\s*\^(\S+)\s*$/);
+    if (m) {
+      const text = ng22StripMd(line.slice(0, m.index));
+      push(text, { type: "block", id: m[1] }, { start: { offset }, end: { offset: offset + line.length } });
+    }
+    offset += line.length + 1;
+  }
+  return out;
+}
+
 /** Block cache: parses cached block data for editor block refs. */
 export class BlockCache {
   constructor(app) { this.app = app; this._cache = new Map(); }
   clear() { this._cache.clear(); }
   async getForFile(cancellation, file) {
-    if (!file) return null;
+    if (!file || !file.path || file.extension !== "md" || file.children) return null;
     const key = file.path;
-    let entry = this._cache.get(key);
     const mtime = file.stat && file.stat.mtime;
+    let entry = this._cache.get(key);
     if (!entry || entry.mtime !== mtime) {
-      const cache = this.app.metadataCache.getCache(file.path);
-      entry = { file, mtime, content: null, blocks: [] };
-      if (cache && Array.isArray(cache.blocks)) entry.blocks = cache.blocks;
+      const cache = this.app.metadataCache && this.app.metadataCache.getCache ? this.app.metadataCache.getCache(key) : null;
+      let content = "";
+      try { content = await this.app.vault.cachedRead(file); } catch (e) {}
+      entry = { file, content, mtime, blocks: ng22BuildBlocks(content, cache) };
       this._cache.set(key, entry);
     }
     if (cancellation && cancellation.isCancelled && cancellation.isCancelled()) return null;
     return entry;
   }
   async *getAll(cancellation) {
-    const files = this.app.vault.getFiles ? this.app.vault.getFiles() : [];
+    const files = this.app.vault.getMarkdownFiles ? this.app.vault.getMarkdownFiles() : (this.app.vault.getFiles ? this.app.vault.getFiles() : []);
     for (const file of files) {
       if (cancellation && cancellation.isCancelled && cancellation.isCancelled()) return;
       const entry = await this.getForFile(cancellation, file);

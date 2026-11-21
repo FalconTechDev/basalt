@@ -3,7 +3,7 @@
 // mermaid/math/code/image/link nodes, and the MathJax stylesheet flush.
 
 import { env } from "./env.js";
-import { escapeRegExp } from "./metadata-helpers.js";
+import { escapeRegExp } from "./n-g22-helpers.js";
 import { s04CreateDeferred } from "./n-g24-themes.js";
 import { s07weakMapFactory } from "./s07-helpers.js";
 

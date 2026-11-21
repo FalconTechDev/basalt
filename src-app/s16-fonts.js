@@ -2,7 +2,7 @@
 // of every installed family (desktop via IPC, mobile via the Capacitor fonts plugin,
 // plus a built-in list), and the modal that edits the ordered custom font list.
 import { inherit } from "./inherit.js";
-import { idleOrTimeout } from "./metadata-helpers.js";
+import { idleOrTimeout } from "./n-g22-helpers.js";
 import { s16FontAvailable, s16SystemFontList, s16FontProbeSeen } from "./s16-constants.js";
 
 // Shared probe state: the cache array fills asynchronously while suggest instances read it.

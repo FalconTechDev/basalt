@@ -15,7 +15,7 @@ import { s06TagSuggestions, s06DateFormats, s06DateTimeFormats, s06DropLinkTexts
 import { prepareQuery, fuzzyMatchJs } from "./search.js";
 import { renderResults, renderMatches } from "./search-simple.js";
 import { setElementTooltip, hideTooltip, displayTooltip } from "./tooltip.js";
-import { tagValid } from "./metadata-helpers.js";
+import { tagValid } from "./n-g22-helpers.js";
 import { copyTextToClipboard } from "./n-g11-view.js";
 import { toStringList } from "./text.js";
 import { isStringArray } from "./misc.js";

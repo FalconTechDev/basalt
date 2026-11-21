@@ -7,7 +7,7 @@
 // All four extend the shared rename-prompt modal (lI, host.TextInputModal).
 
 import { inherit } from "./inherit.js";
-import { RefMultimap, applyLinkUpdates } from "./metadata-helpers.js";
+import { RefMultimap, applyLinkUpdates } from "./n-g22-helpers.js";
 import { parseLinktext } from "./path.js";
 import { plainHeading, linkSafeHeading } from "./text.js";
 import { s20RewriteLinkText } from "./s20-links.js";

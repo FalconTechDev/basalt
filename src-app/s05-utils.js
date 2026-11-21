@@ -5,7 +5,7 @@
 import { env } from "./env.js";
 import { baseName, isLocalLink, lastSegment } from "./path.js";
 import { frontmatterStrings } from "./frontmatter.js";
-import { anyRefMatch } from "./metadata-helpers.js";
+import { anyRefMatch } from "./n-g22-helpers.js";
 import { chromeVersion } from "./text.js";
 
 // mdast position {line, column, offset} -> editor-style {line, col, offset}
