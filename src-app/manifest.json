@@ -587,7 +587,7 @@
     },
     {
       "orig": "jg",
-      "use": "closeAllMenus"
+      "use": "ng21CloseAllMenus"
     },
     {
       "orig": "Sy",
@@ -2546,7 +2546,7 @@
     },
     {
       "orig": "zD",
-      "use": "defineWorkspaceTabs"
+      "use": "ng21DefineWorkspaceTabs"
     },
     {
       "orig": "dl",
@@ -2578,75 +2578,75 @@
     },
     {
       "orig": "jk",
-      "use": "defineBaseComponent"
+      "use": "ng21DefineBaseComponent"
     },
     {
       "orig": "Uk",
-      "use": "defineValueComponent"
+      "use": "ng21DefineValueComponent"
     },
     {
       "orig": "Wk",
-      "use": "defineButtonComponent"
+      "use": "ng21DefineButtonComponent"
     },
     {
       "orig": "_k",
-      "use": "defineExtraButtonComponent"
+      "use": "ng21DefineExtraButtonComponent"
     },
     {
       "orig": "Gk",
-      "use": "defineToggleComponent"
+      "use": "ng21DefineToggleComponent"
     },
     {
       "orig": "Kk",
-      "use": "defineAbstractTextComponent"
+      "use": "ng21DefineAbstractTextComponent"
     },
     {
       "orig": "Yk",
-      "use": "defineTextComponent"
+      "use": "ng21DefineTextComponent"
     },
     {
       "orig": "Qk",
-      "use": "defineSearchComponent"
+      "use": "ng21DefineSearchComponent"
     },
     {
       "orig": "Xk",
-      "use": "defineTextAreaComponent"
+      "use": "ng21DefineTextAreaComponent"
     },
     {
       "orig": "Zk",
-      "use": "defineMomentFormatComponent"
+      "use": "ng21DefineMomentFormatComponent"
     },
     {
       "orig": "Jk",
-      "use": "defineDropdownComponent"
+      "use": "ng21DefineDropdownComponent"
     },
     {
       "orig": "eC",
-      "use": "defineProgressBarComponent"
+      "use": "ng21DefineProgressBarComponent"
     },
     {
       "orig": "tC",
-      "use": "defineSliderComponent"
+      "use": "ng21DefineSliderComponent"
     },
     {
       "orig": "nC",
-      "use": "defineColorComponent"
+      "use": "ng21DefineColorComponent"
     },
     {
       "orig": "zk",
-      "use": "defineSetting"
+      "use": "ng21DefineSetting"
     },
     {
       "orig": "qk",
-      "use": "defineSettingGroup"
+      "use": "ng21DefineSettingGroup"
     },
     {
       "orig": "_1",
-      "use": "defineSettingTab"
+      "use": "ng21DefineSettingTab"
     },
     {
       "orig": "K0",
-      "use": "definePluginSettingTab"
+      "use": "ng21DefinePluginSettingTab"
     },
     {
       "orig": "fb",
@@ -2658,15 +2658,15 @@
     },
     {
       "orig": "Hg",
-      "use": "defineMenuItem"
+      "use": "ng21DefineMenuItem"
     },
     {
       "orig": "zg",
-      "use": "defineMenuSeparator"
+      "use": "ng21DefineMenuSeparator"
     },
     {
       "orig": "Ug",
-      "use": "defineMenu"
+      "use": "ng21DefineMenu"
     },
     {
       "orig": "ob",
@@ -3071,7 +3071,7 @@
     },
     {
       "orig": "Y0",
-      "use": "defineInstanceSettingTab"
+      "use": "ng21DefineInstanceSettingTab"
     },
     {
       "orig": "U2",
@@ -4001,39 +4001,39 @@
     },
     {
       "orig": "n4",
-      "use": "defineS13FilePickerModal"
+      "use": "ng21DefineS13FilePickerModal"
     },
     {
       "orig": "s4",
-      "use": "defineS13Thumbnailer"
+      "use": "ng21DefineS13Thumbnailer"
     },
     {
       "orig": "h3",
-      "use": "defineS13CanvasHelpModal"
+      "use": "ng21DefineS13CanvasHelpModal"
     },
     {
       "orig": "e4",
-      "use": "defineS13QuickActions"
+      "use": "ng21DefineS13QuickActions"
     },
     {
       "orig": "$6",
-      "use": "defineS13MobileTabItem"
+      "use": "ng21DefineS13MobileTabItem"
     },
     {
       "orig": "Z6",
-      "use": "defineS13TabSwitcher"
+      "use": "ng21DefineS13TabSwitcher"
     },
     {
       "orig": "J6",
-      "use": "defineS13MobileToolbar"
+      "use": "ng21DefineS13MobileToolbar"
     },
     {
       "orig": "t4",
-      "use": "defineS13ShareIntent"
+      "use": "ng21DefineS13ShareIntent"
     },
     {
       "orig": "a4",
-      "use": "defineS13AudioRecorder"
+      "use": "ng21DefineS13AudioRecorder"
     },
     {
       "orig": "f4",
@@ -4083,22 +4083,22 @@
     },
     {
       "orig": "BD",
-      "use": "defineTitlebar",
+      "use": "ng21DefineTitlebar",
       "originalBytes": 2964
     },
     {
       "orig": "_D",
-      "use": "defineFilesDrawer",
+      "use": "ng21DefineFilesDrawer",
       "originalBytes": 2025
     },
     {
       "orig": "GD",
-      "use": "defineInfoDrawer",
+      "use": "ng21DefineInfoDrawer",
       "originalBytes": 1425
     },
     {
       "orig": "WD",
-      "use": "defineMobileDrawer"
+      "use": "ng21DefineMobileDrawer"
     },
     {
       "orig": "AK",
@@ -7460,7 +7460,7 @@
     },
     {
       "orig": "DD",
-      "expr": "__basaltOwn.s05VaultProfile(__basaltHost)",
+      "expr": "__basaltOwn.ng21VaultProfile(__basaltHost)",
       "sha1": "839a294d0209d71fefa024a243b235687605a26f",
       "originalBytes": 2427
     },

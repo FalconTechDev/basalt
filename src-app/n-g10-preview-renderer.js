@@ -204,7 +204,7 @@ export function defineMarkdownPreviewRenderer(host) {
   // ------------------------------------------------------------- lifecycle --
 
   proto.set = function (text) {
-    this.text = text;
+    this.text = text == null ? "" : text;
     this.queueRender();
   };
 
