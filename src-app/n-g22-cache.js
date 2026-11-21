@@ -435,7 +435,7 @@ export function defineMetadataCache(host) {
   };
 
   P._normLink = function (linkpath) {
-    return String(linkpath || "").replace(new RegExp("\\","g"), "/").trim();
+    return String(linkpath || "").replace(/\\/g, "/").trim();
   };
 
   P._resolveRelative = function (linkpath, sourcePath) {
@@ -622,9 +622,11 @@ export function defineMetadataCache(host) {
     const counts = {};
     const spellings = {};
     const addTag = (raw, seen) => {
-      const tag = "#" + String(raw || "").replace(/^#/, "").trim();
-      if (!tag || tag === "#" || !tagValid(tag)) return;
-      const parts = tag.split("/");
+      let s = String(raw || "").trim();
+      if (!s) return;
+      if (!s.startsWith("#")) s = "#" + s;
+      if (!tagValid(s)) return;
+      const parts = s.slice(1).split("/");
       for (let i = 1; i <= parts.length; i++) {
         const t = "#" + parts.slice(0, i).join("/");
         if (seen.has(t)) continue;
@@ -908,6 +910,8 @@ export function defineMetadataCache(host) {
       r(data);
     }
   };
+
+  return MetadataCache;
 }
 
 export { ng22ParseLinktext, ng22FrontmatterAliases, applyLinkUpdates, deserializeMetadata, collectTags, anyMetadataRef, anyRefMatch, forEachLinkField, linkPosToPos, positionToArray, positionFromArray, linkPosFromArray, escapeRegExp, tagValid, isOutdatedMetadata, sharesLinkTarget, linkCacheKey, contentHash, batchedAsync, idleOrTimeout, iterateIdbBatches, Runnable, Deque, RefMultimap, SerialTaskQueue, LinkQueue, BlockCache };

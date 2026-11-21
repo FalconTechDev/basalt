@@ -38,6 +38,7 @@ export function defineS20GalleryItem(host) {
     });
     cb.addEventListener("click", (ev) => ev.stopPropagation());
     cb.addEventListener("change", () => self.setChecked(cb.checked));
+    this.setChecked(cb.checked);
     return this;
   }
   const P = GalleryItem.prototype;
@@ -102,6 +103,7 @@ export function defineS20UrlAttachmentItem(host) {
     const cb = this.el.createEl("input", { cls: "file-tree-item-checkbox", attr: { type: "checkbox" } });
     this.checkboxEl = cb;
     cb.checked = true;
+    this.el.toggleClass("is-selected", true);
     const label = this.el.createSpan({ cls: "file-tree-item-title" });
     label.setText(String(url));
     try { host.setTooltip(label, String(url)); } catch (e) {}
@@ -180,6 +182,9 @@ export function defineS20OrphanAttachmentsModal(host) {
   P.setViewMode = function (mode) {
     this.viewMode = mode === "gallery" ? "gallery" : "tree";
     for (const b of this._viewButtons) b.el.toggleClass("is-active", b.mode === this.viewMode);
+    const tree = this.fileTree && this.fileTree.containerEl;
+    if (tree) tree.style.display = this.viewMode === "tree" ? "" : "none";
+    if (this.gallery && this.gallery.el) this.gallery.el.style.display = this.viewMode === "gallery" ? "" : "none";
     if (this.treeWrap) this.treeWrap.toggle(this.viewMode === "tree");
     if (this.galleryWrap) this.galleryWrap.toggle(this.viewMode === "gallery");
     if (this.gallery && this.gallery.refresh) this.gallery.refresh();

@@ -370,6 +370,11 @@ export function definePopoverSuggest(host) {
     if (this.isOpen) return;
     this.isOpen = true;
     this.attachDom();
+    const self = this;
+    this._escHandler = function (event) {
+      if (event.key === "Escape" && self.isOpen) { event.preventDefault(); self.onEscapeKey(event); }
+    };
+    (ng22Doc()).addEventListener("keydown", this._escHandler);
     try { this.app.keymap.pushScope(this.scope); } catch (e) {}
     try { host.registerOpenModal(this); } catch (e) {}
   };
@@ -377,6 +382,7 @@ export function definePopoverSuggest(host) {
   proto.close = function () {
     if (!this.isOpen) return;
     this.isOpen = false;
+    if (this._escHandler) { (ng22Doc()).removeEventListener("keydown", this._escHandler); this._escHandler = null; }
     try { this.app.keymap.popScope(this.scope); } catch (e) {}
     try { host.unregisterOpenModal(this); } catch (e) {}
     this.detachDom();
@@ -607,8 +613,9 @@ export function defineEditorSuggest(host) {
     if (selection && !forceOpen) { this.close(); return false; }
     const cursor = editor.getCursor ? editor.getCursor() : null;
     if (!cursor) { this.close(); return false; }
-    const context = this.onTrigger(cursor, editor, file);
-    if (!context) { this.close(); return false; }
+    const raw = this.onTrigger(cursor, editor, file);
+    if (!raw) { this.close(); return false; }
+    const context = Object.assign({ editor, file }, raw);
     this.context = context;
     let result;
     try { result = this.getSuggestions(context); } catch (e) { result = []; }

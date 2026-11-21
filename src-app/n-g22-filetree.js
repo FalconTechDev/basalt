@@ -99,21 +99,26 @@ export function defineS20FolderTreeItem(host) {
     this.checked = true;
     this.parent = null;
     this.children = [];
-    this.collapsed = false;
+    this.collapsed = true;
+    // nodeEl wraps the row and its children so the row's own text stays clean;
+    // children render as siblings of the row, not descendants of it.
+    this.nodeEl = ng22Div()("file-tree-folder");
     const selfEl = ng22Div()("file-tree-item");
     selfEl.style.display = "flex";
     selfEl.style.alignItems = "center";
     this.selfEl = selfEl;
+    this.nodeEl.appendChild(selfEl);
     this.innerEl = selfEl;
     const collapse = selfEl.createSpan({ cls: "clickable-icon collapse-icon" });
-    host.setIcon(collapse, "lucide-chevron-down");
+    host.setIcon(collapse, "lucide-chevron-right");
     collapse.addClass("is-collapsed");
     this.collapseEl = collapse;
     this.checkboxEl = ng22Checkbox(selfEl, true);
     const iconEl = selfEl.createSpan({ cls: "file-tree-item-icon" });
     host.setIcon(iconEl, "lucide-folder");
     selfEl.createSpan({ cls: "file-tree-item-title", text: this.name });
-    this.childrenEl = selfEl.createDiv("file-tree-item-children");
+    this.childrenEl = this.nodeEl.createDiv("file-tree-item-children");
+    this.childrenEl.addClass("is-hidden");
     const self = this;
     collapse.addEventListener("click", (ev) => {
       ev.stopPropagation();
@@ -182,7 +187,7 @@ export function defineS20FolderTreeItem(host) {
 
   P.render = function () {
     const kids = (this.children || []).slice().sort(s20TreeItemCompare);
-    this.childrenEl.setChildrenInPlace(kids.map((c) => c.selfEl || c.el));
+    this.childrenEl.setChildrenInPlace(kids.map((c) => c.nodeEl || c.selfEl));
     for (const c of kids) if (c.render) c.render();
   };
 
@@ -254,7 +259,7 @@ export function defineS20FileTree(host) {
 
   P.render = function () {
     const kids = this._root.children.slice().sort(s20TreeItemCompare);
-    this.containerEl.setChildrenInPlace(kids.map((c) => c.selfEl));
+    this.containerEl.setChildrenInPlace(kids.map((c) => c.nodeEl || c.selfEl));
     for (const c of kids) if (c.render) c.render();
     // re-render nested folders so newly added children appear
     for (const path of Object.keys(this.folders)) this.folders[path].render();

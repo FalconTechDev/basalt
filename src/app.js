@@ -66702,7 +66702,7 @@ function defineMetadataCache(host) {
   };
 
   P._normLink = function (linkpath) {
-    return String(linkpath || "").replace(new RegExp("\\","g"), "/").trim();
+    return String(linkpath || "").replace(/\\/g, "/").trim();
   };
 
   P._resolveRelative = function (linkpath, sourcePath) {
@@ -66889,9 +66889,11 @@ function defineMetadataCache(host) {
     const counts = {};
     const spellings = {};
     const addTag = (raw, seen) => {
-      const tag = "#" + String(raw || "").replace(/^#/, "").trim();
-      if (!tag || tag === "#" || !tagValid(tag)) return;
-      const parts = tag.split("/");
+      let s = String(raw || "").trim();
+      if (!s) return;
+      if (!s.startsWith("#")) s = "#" + s;
+      if (!tagValid(s)) return;
+      const parts = s.slice(1).split("/");
       for (let i = 1; i <= parts.length; i++) {
         const t = "#" + parts.slice(0, i).join("/");
         if (seen.has(t)) continue;
@@ -67175,6 +67177,8 @@ function defineMetadataCache(host) {
       r(data);
     }
   };
+
+  return MetadataCache;
 }
 
 // ---- n-g22-filemanager.js ----
@@ -67709,21 +67713,26 @@ function defineS20FolderTreeItem(host) {
     this.checked = true;
     this.parent = null;
     this.children = [];
-    this.collapsed = false;
+    this.collapsed = true;
+    // nodeEl wraps the row and its children so the row's own text stays clean;
+    // children render as siblings of the row, not descendants of it.
+    this.nodeEl = ng22Div()("file-tree-folder");
     const selfEl = ng22Div()("file-tree-item");
     selfEl.style.display = "flex";
     selfEl.style.alignItems = "center";
     this.selfEl = selfEl;
+    this.nodeEl.appendChild(selfEl);
     this.innerEl = selfEl;
     const collapse = selfEl.createSpan({ cls: "clickable-icon collapse-icon" });
-    host.setIcon(collapse, "lucide-chevron-down");
+    host.setIcon(collapse, "lucide-chevron-right");
     collapse.addClass("is-collapsed");
     this.collapseEl = collapse;
     this.checkboxEl = ng22Checkbox(selfEl, true);
     const iconEl = selfEl.createSpan({ cls: "file-tree-item-icon" });
     host.setIcon(iconEl, "lucide-folder");
     selfEl.createSpan({ cls: "file-tree-item-title", text: this.name });
-    this.childrenEl = selfEl.createDiv("file-tree-item-children");
+    this.childrenEl = this.nodeEl.createDiv("file-tree-item-children");
+    this.childrenEl.addClass("is-hidden");
     const self = this;
     collapse.addEventListener("click", (ev) => {
       ev.stopPropagation();
@@ -67792,7 +67801,7 @@ function defineS20FolderTreeItem(host) {
 
   P.render = function () {
     const kids = (this.children || []).slice().sort(s20TreeItemCompare);
-    this.childrenEl.setChildrenInPlace(kids.map((c) => c.selfEl || c.el));
+    this.childrenEl.setChildrenInPlace(kids.map((c) => c.nodeEl || c.selfEl));
     for (const c of kids) if (c.render) c.render();
   };
 
@@ -67864,7 +67873,7 @@ function defineS20FileTree(host) {
 
   P.render = function () {
     const kids = this._root.children.slice().sort(s20TreeItemCompare);
-    this.containerEl.setChildrenInPlace(kids.map((c) => c.selfEl));
+    this.containerEl.setChildrenInPlace(kids.map((c) => c.nodeEl || c.selfEl));
     for (const c of kids) if (c.render) c.render();
     // re-render nested folders so newly added children appear
     for (const path of Object.keys(this.folders)) this.folders[path].render();
@@ -67886,7 +67895,6 @@ function defineS20FileTree(host) {
 // ---- n-g22-helpers.js ----
 // g22 clean-room: shared collections and task queues for the metadata index.
 // Own architecture: small purpose-built classes behind the frozen export names.
-
 
 // ---------------------------------------------------------------- Deque ----
 
@@ -68206,10 +68214,10 @@ function stripAlias(link) { const i = String(link).indexOf("|"); return i >= 0 ?
 function stripSubpath(link) { const s = stripAlias(link); const i = Math.min(...["#","^"].map(c => { const j = s.indexOf(c); return j < 0 ? Infinity : j; })); return i === Infinity ? s : s.slice(0, i); }
 
 function linkMatchesTarget(refLink, targets) {
-  const link = stripSubpath(refLink).replace(new RegExp("\\","g"), "/");
+  const link = stripSubpath(refLink).replace(/\\/g, "/");
   const base = link.split("/").pop().toLowerCase();
   for (const t of targets) {
-    const s = String(t).replace(new RegExp("\\","g"), "/");
+    const s = String(t).replace(/\\/g, "/");
     if (link === s || link.toLowerCase() === s.toLowerCase()) return true;
     if (base && base === s.split("/").pop().toLowerCase()) return true;
     if (stripSubpath(s).toLowerCase() === link.toLowerCase()) return true;
@@ -68249,7 +68257,7 @@ function isOutdatedMetadata(metadata, cache, file) {
 
 /** Shared normalized cache key for a linkpath+source lookup. */
 function linkCacheKey(linkpath) {
-  return String(linkpath || "").replace(new RegExp("\\","g"), "/").toLowerCase();
+  return String(linkpath || "").replace(/\\/g, "/").toLowerCase();
 }
 
 /** Whether any cached link in `sourcePath` resolves to `targetPath`. */
@@ -69043,6 +69051,7 @@ function defineS20GalleryItem(host) {
     });
     cb.addEventListener("click", (ev) => ev.stopPropagation());
     cb.addEventListener("change", () => self.setChecked(cb.checked));
+    this.setChecked(cb.checked);
     return this;
   }
   const P = GalleryItem.prototype;
@@ -69107,6 +69116,7 @@ function defineS20UrlAttachmentItem(host) {
     const cb = this.el.createEl("input", { cls: "file-tree-item-checkbox", attr: { type: "checkbox" } });
     this.checkboxEl = cb;
     cb.checked = true;
+    this.el.toggleClass("is-selected", true);
     const label = this.el.createSpan({ cls: "file-tree-item-title" });
     label.setText(String(url));
     try { host.setTooltip(label, String(url)); } catch (e) {}
@@ -69185,6 +69195,9 @@ function defineS20OrphanAttachmentsModal(host) {
   P.setViewMode = function (mode) {
     this.viewMode = mode === "gallery" ? "gallery" : "tree";
     for (const b of this._viewButtons) b.el.toggleClass("is-active", b.mode === this.viewMode);
+    const tree = this.fileTree && this.fileTree.containerEl;
+    if (tree) tree.style.display = this.viewMode === "tree" ? "" : "none";
+    if (this.gallery && this.gallery.el) this.gallery.el.style.display = this.viewMode === "gallery" ? "" : "none";
     if (this.treeWrap) this.treeWrap.toggle(this.viewMode === "tree");
     if (this.galleryWrap) this.galleryWrap.toggle(this.viewMode === "gallery");
     if (this.gallery && this.gallery.refresh) this.gallery.refresh();
@@ -70015,6 +70028,11 @@ function definePopoverSuggest(host) {
     if (this.isOpen) return;
     this.isOpen = true;
     this.attachDom();
+    const self = this;
+    this._escHandler = function (event) {
+      if (event.key === "Escape" && self.isOpen) { event.preventDefault(); self.onEscapeKey(event); }
+    };
+    (ng22Doc()).addEventListener("keydown", this._escHandler);
     try { this.app.keymap.pushScope(this.scope); } catch (e) {}
     try { host.registerOpenModal(this); } catch (e) {}
   };
@@ -70022,6 +70040,7 @@ function definePopoverSuggest(host) {
   proto.close = function () {
     if (!this.isOpen) return;
     this.isOpen = false;
+    if (this._escHandler) { (ng22Doc()).removeEventListener("keydown", this._escHandler); this._escHandler = null; }
     try { this.app.keymap.popScope(this.scope); } catch (e) {}
     try { host.unregisterOpenModal(this); } catch (e) {}
     this.detachDom();
@@ -70252,8 +70271,9 @@ function defineEditorSuggest(host) {
     if (selection && !forceOpen) { this.close(); return false; }
     const cursor = editor.getCursor ? editor.getCursor() : null;
     if (!cursor) { this.close(); return false; }
-    const context = this.onTrigger(cursor, editor, file);
-    if (!context) { this.close(); return false; }
+    const raw = this.onTrigger(cursor, editor, file);
+    if (!raw) { this.close(); return false; }
+    const context = Object.assign({ editor, file }, raw);
     this.context = context;
     let result;
     try { result = this.getSuggestions(context); } catch (e) { result = []; }

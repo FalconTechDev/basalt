@@ -321,10 +321,10 @@ function stripAlias(link) { const i = String(link).indexOf("|"); return i >= 0 ?
 function stripSubpath(link) { const s = stripAlias(link); const i = Math.min(...["#","^"].map(c => { const j = s.indexOf(c); return j < 0 ? Infinity : j; })); return i === Infinity ? s : s.slice(0, i); }
 
 function linkMatchesTarget(refLink, targets) {
-  const link = stripSubpath(refLink).replace(new RegExp("\\","g"), "/");
+  const link = stripSubpath(refLink).replace(/\\/g, "/");
   const base = link.split("/").pop().toLowerCase();
   for (const t of targets) {
-    const s = String(t).replace(new RegExp("\\","g"), "/");
+    const s = String(t).replace(/\\/g, "/");
     if (link === s || link.toLowerCase() === s.toLowerCase()) return true;
     if (base && base === s.split("/").pop().toLowerCase()) return true;
     if (stripSubpath(s).toLowerCase() === link.toLowerCase()) return true;
@@ -364,7 +364,7 @@ export function isOutdatedMetadata(metadata, cache, file) {
 
 /** Shared normalized cache key for a linkpath+source lookup. */
 export function linkCacheKey(linkpath) {
-  return String(linkpath || "").replace(new RegExp("\\","g"), "/").toLowerCase();
+  return String(linkpath || "").replace(/\\/g, "/").toLowerCase();
 }
 
 /** Whether any cached link in `sourcePath` resolves to `targetPath`. */
