@@ -2386,15 +2386,15 @@
     },
     {
       "orig": "hf",
-      "use": "s90TrimWhitespace"
+      "use": "ng39TrimWhitespace"
     },
     {
       "orig": "pf",
-      "use": "s90CursorToContentSide"
+      "use": "ng39CursorToContentSide"
     },
     {
       "orig": "df",
-      "use": "s90DetectFormatting"
+      "use": "ng39DetectFormatting"
     },
     {
       "orig": "Kf",
@@ -2428,77 +2428,77 @@
     },
     {
       "orig": "ff",
-      "use": "s91FormatSkips",
+      "use": "ng39FormatSkips",
       "host": true,
       "originalBytes": 236
     },
     {
       "orig": "mf",
-      "use": "s91FormatLineRange",
+      "use": "ng39FormatLineRange",
       "host": true,
       "originalBytes": 369
     },
     {
       "orig": "vf",
-      "use": "s91FormatRemoveMarks",
+      "use": "ng39FormatRemoveMarks",
       "host": true,
       "originalBytes": 278
     },
     {
       "orig": "gf",
-      "use": "s91FormatInnerMark",
+      "use": "ng39FormatInnerMark",
       "host": true,
       "originalBytes": 256
     },
     {
       "orig": "yf",
-      "use": "s91FormatNodeRange",
+      "use": "ng39FormatNodeRange",
       "host": true,
       "originalBytes": 435
     },
     {
       "orig": "If",
-      "use": "s91Require",
+      "use": "ng39Require",
       "originalBytes": 32
     },
     {
       "orig": "Of",
-      "use": "s91WithElectron",
+      "use": "ng39WithElectron",
       "originalBytes": 44
     },
     {
       "orig": "Ff",
-      "use": "s91ReadFileIfExists",
+      "use": "ng39ReadFileIfExists",
       "originalBytes": 236
     },
     {
       "orig": "Nf",
-      "use": "s91FetchUrl",
+      "use": "ng39FetchUrl",
       "originalBytes": 298
     },
     {
       "orig": "jf",
-      "use": "s91PrintToPdf",
+      "use": "ng39PrintToPdf",
       "originalBytes": 122
     },
     {
       "orig": "Uf",
-      "use": "s91IsMacOS",
+      "use": "ng39IsMacOS",
       "originalBytes": 48
     },
     {
       "orig": "Wf",
-      "use": "s91SetVibrancy",
+      "use": "ng39SetVibrancy",
       "originalBytes": 129
     },
     {
       "orig": "_f",
-      "use": "s91IsWebviewElement",
+      "use": "ng39IsWebviewElement",
       "originalBytes": 59
     },
     {
       "orig": "Gf",
-      "use": "s91ContextMenuInfo",
+      "use": "ng39ContextMenuInfo",
       "originalBytes": 434
     }
   ],
@@ -9225,7 +9225,7 @@
     },
     {
       "orig": "uf",
-      "expr": "__basaltOwn.s90FormatSpecs",
+      "expr": "__basaltOwn.ng39S90FormatSpecs",
       "sha1": "657de48c2bc76c3c7cb693ed54ad8636d195424d",
       "originalBytes": 405
     },
@@ -9303,49 +9303,49 @@
     },
     {
       "orig": "xf",
-      "expr": "__basaltOwn.s91CryptoSubtle()",
+      "expr": "__basaltOwn.ng39CryptoSubtle()",
       "sha1": "076048f2217adccb871d7a336de43fb2072d73c7",
       "originalBytes": 20
     },
     {
       "orig": "Lf",
-      "expr": "__basaltOwn.s91WindowRequire()",
+      "expr": "__basaltOwn.ng39WindowRequire()",
       "sha1": "ff0ce8d53f0c830d17ea9d2e5587e803321b2ec5",
       "originalBytes": 14
     },
     {
       "orig": "Rf",
-      "expr": "__basaltOwn.s91DevFlagInit()",
+      "expr": "__basaltOwn.ng39DevFlagInit()",
       "sha1": "229db9bc4ef680cb90e1ef2793d6c761a444884f",
       "originalBytes": 2
     },
     {
       "orig": "Bf",
-      "expr": "__basaltOwn.s91ElectronVersionInit()",
+      "expr": "__basaltOwn.ng39ElectronVersionInit()",
       "sha1": "7594d89ff2b5acfa4bb8f662f700f1b6627d178d",
       "originalBytes": 7
     },
     {
       "orig": "Vf",
-      "expr": "__basaltOwn.s91ElectronMajorInit()",
+      "expr": "__basaltOwn.ng39ElectronMajorInit()",
       "sha1": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
       "originalBytes": 1
     },
     {
       "orig": "Hf",
-      "expr": "__basaltOwn.s91DevFlagSnapshot(Rf)",
+      "expr": "__basaltOwn.ng39DevFlagSnapshot(Rf)",
       "sha1": "c6dae5d6f50189df8b795e0380c81ffdd486103f",
       "originalBytes": 2
     },
     {
       "orig": "zf",
-      "expr": "__basaltOwn.s91VersionSnapshot(Bf)",
+      "expr": "__basaltOwn.ng39VersionSnapshot(Bf)",
       "sha1": "8edeebd80a656ae4fce670684d3ca3ce34ec356e",
       "originalBytes": 2
     },
     {
       "orig": "qf",
-      "expr": "__basaltOwn.s91MajorSnapshot(Vf)",
+      "expr": "__basaltOwn.ng39MajorSnapshot(Vf)",
       "sha1": "85d40c2f9de777cba80df079e9e94af8bdb30c10",
       "originalBytes": 2
     }
