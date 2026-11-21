@@ -23,7 +23,7 @@
     fpSnapDist: 8,          // how close (screen px) a card must come to snap to another one
     fpMinimap: true,        // overview of the whole canvas in a corner
     fpMinimapSize: 220,     // its width, px
-    fpShape: 1,             // card outline: 0 rounded, 1 Грань, 2 Базальт, 3 Скол, 4 Кристалл
+    fpShape: 0,             // card outline: 0 rounded, 1 Грань, 2 Базальт, 3 Скол, 4 Кристалл
     fpTrLang: "en",         // default target language of the card translation
     fpTrSrc: "auto",        // source language of the card translation (auto = detect)
   };

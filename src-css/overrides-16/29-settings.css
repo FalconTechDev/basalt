@@ -7,7 +7,7 @@
 .modal.mod-settings .setting-item-name { font-size: var(--font-ui-medium); font-weight: 500; }
 .modal.mod-settings .setting-item-description { font-size: var(--font-ui-smaller); color: var(--text-muted); }
 .modal.mod-settings .setting-item-heading { border-bottom: 0; font-size: var(--font-ui-large); font-weight: 600; }
-.checkbox-container { border-radius: 0; border: 2px solid var(--background-modifier-border-hover); clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+.checkbox-container { border-radius: 0; border: 2px solid var(--background-modifier-border-hover); clip-path: none; }
 .checkbox-container.is-enabled { background: var(--interactive-accent); border-color: var(--interactive-accent); }
 .checkbox-container::after { border-radius: 0; }
 
@@ -29,7 +29,7 @@
 .bset-row { gap: 24px; padding: 16px 0; }
 .bset-row .bset-t b { font-size: 14px; font-weight: 500; }
 .bset-row .bset-t small { font-size: 12px; margin-top: 4px; max-width: 420px; }
-.bset-row button, .bset-c button { height: 32px; padding: 0 16px; border: 0; border-radius: 0; box-shadow: none; background: var(--background-modifier-hover); color: var(--text-normal); font-size: 13px; font-weight: 500; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.bset-row button, .bset-c button { height: 32px; padding: 0 16px; border: 0; border-radius: 0; box-shadow: none; background: var(--background-modifier-hover); color: var(--text-normal); font-size: 13px; font-weight: 500; clip-path: none; }
 .bset-row button:hover, .bset-c button:hover { background: var(--background-modifier-border-hover); }
 .bset-row button.mod-cta, .bset-c button.mod-cta { background: var(--interactive-accent); color: var(--text-on-accent); }
 .bset-row select, .bset-row input[type=text] { height: 32px; box-sizing: border-box; padding: 0 10px; border: 1px solid var(--background-modifier-border); border-radius: 0; background-color: var(--background-modifier-form-field, var(--background-primary)); font-size: 13px; }

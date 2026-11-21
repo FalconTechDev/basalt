@@ -1079,9 +1079,9 @@ body {
 /* ---------- basalt design tokens (--bs-*) ---------- */
 
 body {
-  --bs-cut-sm: 4px;
-  --bs-cut-md: 8px;
-  --bs-cut-lg: 12px;
+  --bs-cut-sm: 0px;
+  --bs-cut-md: 0px;
+  --bs-cut-lg: 0px;
 
   --bs-dur-instant: 60ms;
   --bs-dur-fast: 120ms;

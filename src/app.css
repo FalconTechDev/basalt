@@ -2037,9 +2037,9 @@ body{
     -webkit-tap-highlight-color:rgba(255,255,255,0)
 }
 body{
-    --bs-cut-sm:4px;
-    --bs-cut-md:8px;
-    --bs-cut-lg:12px;
+    --bs-cut-sm:0px;
+    --bs-cut-md:0px;
+    --bs-cut-lg:0px;
     --bs-dur-instant:60ms;
     --bs-dur-fast:120ms;
     --bs-dur-normal:200ms;
@@ -17715,7 +17715,7 @@ button:focus-visible{
 .checkbox-container{
     border-radius:0;
     border:2px solid var(--background-modifier-border-hover);
-    clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)
+    clip-path:none
 }
 .checkbox-container.is-enabled{
     background:var(--interactive-accent);
@@ -17830,7 +17830,7 @@ button:focus-visible{
     color:var(--text-normal);
     font-size:13px;
     font-weight:500;
-    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)
+    clip-path:none
 }
 .bset-row button:hover,.bset-c button:hover{
     background:var(--background-modifier-border-hover)
@@ -17901,6 +17901,12 @@ button:focus-visible{
 }
 .workspace-tab-header-new-tab .clickable-icon:hover{
     background:var(--background-modifier-hover)
+}
+.workspace-tab-header-new-tab{
+    margin-inline-start:var(--size-4-2)
+}
+.workspace-tab-header-new-tab .clickable-icon{
+    margin-inline-start:0
 }
 .is-hidden-frameless{
     --frame-right-space:140px
