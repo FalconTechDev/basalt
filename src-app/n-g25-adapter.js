@@ -60,7 +60,7 @@ export function s04CapacitorAdapter(host) {
       return p;
     }
 
-    getFullRealPath(p) { return collapseSlashes(this.basePath + "/" + p); }
+    getFullRealPath(p) { return (this.basePath + "/" + p).replace(/\/{2,}/g, "/"); }
     getFullPath(path) { return this.getFullRealPath(this.getRealPath(path)); }
 
     // ---- listing / watch ----
@@ -301,7 +301,8 @@ export function s04CapacitorAdapter(host) {
 
     list(prefix) {
       return this.queue(() => {
-        const pre = normalizePath(prefix || "");
+        let pre = prefix ? normalizePath(prefix) : "";
+        if (pre === "/") pre = "";
         const folders = new Set(), filesOut = new Set();
         for (const key of Object.keys(this.files)) {
           if (key === "/") continue;
@@ -502,6 +503,7 @@ export function s04CapacitorAdapter(host) {
         if (destExists && (!this.insensitive || o.toLowerCase() !== n.toLowerCase())) {
           throw new Error("Destination file already exists!");
         }
+        await this.fs.rename(this.getFullPath(o), this.getFullPath(n));
         const entry = this.files[o];
         if (entry) {
           this.files[n] = { ...entry, realpath: this.getRealPath(n) };

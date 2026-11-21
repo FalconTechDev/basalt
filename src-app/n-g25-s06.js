@@ -176,18 +176,17 @@ export function s06UpdateFrontmatter(text, mutate) {
 
 /** True for a header row: THEAD row, first TABLE row, or first TBODY row after absent/blank THEAD — all-TH cells. */
 export function s06IsHeaderRow(el) {
+  const p = el.parentNode;
+  if (!p) return false;
+  if (p.nodeName === "THEAD") return true;
   const cells = el.childNodes;
   let allTh = cells.length > 0;
   for (let i = 0; i < cells.length; i++) {
     if (cells[i].nodeName !== "TH") { allTh = false; break; }
   }
   if (!allTh) return false;
-  const p = el.parentNode;
-  if (!p) return false;
-  if (p.nodeName === "THEAD") return true;
-  if (el !== p.firstChild) return false;
-  if (p.nodeName === "TABLE") return true;
-  if (p.nodeName === "TBODY") {
+  if (p.nodeName === "TABLE") return el === p.firstChild;
+  if (p.nodeName === "TBODY" && el === p.firstChild) {
     const prev = p.previousSibling;
     if (!prev) return true;
     if (prev.nodeName === "THEAD") return !prev.textContent || !prev.textContent.trim();
@@ -385,14 +384,17 @@ export function s06DropLinkTexts(app, target, sourcePath, embed, host) {
     if (embed && host && host.isImageExtension && host.isImageExtension(file.extension)) link = "!" + link;
     out.push(link);
   };
+  const isFile = (f) => !!f && typeof f === "object" && typeof f.path === "string" && typeof f.extension === "string";
   const resolve = (f) => {
     if (!f) return null;
-    if (host && host.TFile && f instanceof host.TFile) return f;
-    if (typeof f === "string" && vault) {
+    if (typeof f === "string") {
+      if (!vault) return null;
       const r = vault.getAbstractFileByPath(f);
-      return host && host.TFile && r instanceof host.TFile ? r : null;
+      if (host && host.TFile) return r instanceof host.TFile ? r : null;
+      return isFile(r) ? r : null;
     }
-    return null;
+    if (host && host.TFile) return f instanceof host.TFile ? f : null;
+    return isFile(f) ? f : null;
   };
   const t = target && target.type;
   if (t === "file") {

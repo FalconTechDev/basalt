@@ -51,18 +51,20 @@ export function s17CreateApp(host) {
 
   function s17StartupButtons(app, prominent) {
     const S = host.i18n.interface.startUp;
-    const pluginsOn = app.plugins && app.plugins.isEnabled && app.plugins.isEnabled();
-    return [
-      { label: S.buttonReloadApp(), prominent, action: () => window.location.reload() },
-      {
-        label: S.buttonReloadAppInSafeMode(), prominent: true, hidden: !pluginsOn,
-        action: async () => {
-          if (app.plugins && app.plugins.setEnable) await app.plugins.setEnable(false);
-          window.location.reload();
-        },
-      },
-      { label: S.buttonOpenAnotherVault(), prominent, action: () => app.openVaultChooser() },
-    ];
+    const pluginsOn = !!(app.plugins && app.plugins.isEnabled && app.plugins.isEnabled());
+    return (el) => {
+      const add = (label, cta, hidden, action) => {
+        const b = el.createEl("button", { text: label, cls: cta ? "mod-cta" : "" });
+        if (hidden && b.hide) b.hide();
+        b.addEventListener("click", action);
+      };
+      add(S.buttonReloadApp(), prominent, false, () => window.location.reload());
+      add(S.buttonReloadAppInSafeMode(), true, !pluginsOn, async () => {
+        if (app.plugins && app.plugins.setEnable) await app.plugins.setEnable(false);
+        window.location.reload();
+      });
+      add(S.buttonOpenAnotherVault(), prominent, false, () => app.openVaultChooser());
+    };
   }
 
   function s17PersistStorage() {
@@ -83,6 +85,7 @@ export function s17CreateApp(host) {
         await app.initializeWithAdapter(adapter);
         overlay.hide();
       } catch (e) {
+        console.error("Basalt startup failed:", e);
         try {
           overlay.setMessage(host.i18n.interface.startUp.obsidianLoadError() + " " + (e && e.message || e));
           overlay.setContext(s17StartupButtons(app, true));
@@ -103,6 +106,7 @@ export function s17CreateApp(host) {
     const body = document.body;
     if (isMobile) {
       body.classList.add("is-mobile");
+      try { if (window.frameDom && window.frameDom.titleBarEl && window.frameDom.titleBarEl.hide) window.frameDom.titleBarEl.hide(); } catch (e) {}
       body.addEventListener("mouseover", (e) => {
         if (host.isTouchSyntheticMouse && host.isTouchSyntheticMouse(e)) return;
         const t = e.target && e.target.closest ? e.target.closest(NG25S17_TAP_SELECTOR) : null;
@@ -205,19 +209,8 @@ export function s17CreateApp(host) {
 
   function s17NeuterServiceWorker() {
     try {
-      if (!("serviceWorker" in navigator)) return;
-      Object.defineProperty(navigator, "serviceWorker", {
-        configurable: true,
-        get() {
-          return {
-            register: () => Promise.reject(new Error("Service workers are disabled")),
-            getRegistration: () => Promise.resolve(undefined),
-            getRegistrations: () => Promise.resolve([]),
-            addEventListener: () => {},
-            ready: Promise.resolve(undefined),
-          };
-        },
-      });
+      const SWC = typeof window !== "undefined" && window.ServiceWorkerContainer;
+      if (SWC && SWC.prototype) SWC.prototype.register = () => new Promise(() => {});
     } catch (e) {}
   }
 
@@ -229,21 +222,22 @@ export function s17CreateApp(host) {
       this.viewRegistry = new host.s17ViewRegistry();
       this.nextFrameEvents = [];
       this.nextFrameTimer = null;
+      this.isMobile = false;
       this.lastEvent = null;
       console.log("%cBasalt Developer Console", "font-weight:bold");
       this.title = document.title;
       this.appId = appId;
       this.keymap = host.Keymap.init();
       this.scope = this.keymap.getRootScope();
-      this.commands = new host.s17Commands();
-      this.hotkeyManager = new host.s17HotkeyManager();
-      this.dragManager = new host.s17DragManager();
-      this.dom = new host.s17AppDom();
-      this.customCss = new host.s17CustomCss();
-      this.shareReceiver = new host.s17ShareReceiver();
-      this.renderContext = new host.s17RenderContext();
-      this.secretStorage = new host.SecretStorage();
-      this.cli = new host.s17Cli();
+      this.commands = new host.s17Commands(this);
+      this.hotkeyManager = new host.s17HotkeyManager(this);
+      this.dragManager = new host.s17DragManager(this);
+      this.dom = new host.s17AppDom(document.body);
+      this.customCss = new host.s17CustomCss(this);
+      this.shareReceiver = new host.s17ShareReceiver(this);
+      this.renderContext = new host.s17RenderContext(this);
+      this.secretStorage = new host.SecretStorage(this);
+      this.cli = new host.s17Cli(this);
       window.__bsApi = {
         ItemView: host.ItemView, Modal: host.Modal, Notice: host.Notice,
         Menu: host.Menu, setIcon: host.setIcon, Setting: host.Setting,

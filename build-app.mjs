@@ -25,7 +25,7 @@ import { loadBase } from "./tools/app-base.mjs";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.join(root, "src-app");
 // order matters only for readability: every module is a flat scope, names must be unique across them
-const FIRST = ["path.js", "text.js", "frontmatter.js", "search.js"];
+const FIRST = ["n-g25-misc.js", "path.js", "text.js", "frontmatter.js", "search.js"];
 // spec-test aliases: files kept under the original module names so the acceptance tests can
 // `import()` them; they only re-export the clean-room n-g25-* modules and must not be bundled
 const SHIMS = new Set(["misc.js", "s65-locale-name.js", "s06-util.js", "s05-utils.js", "s07-helpers.js", "s12-consts.js", "view.js", "vault-crypto.js", "s17-app-class.js", "s16-sync-socket.js", "s04-mobile-adapter.js"]);

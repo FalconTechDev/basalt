@@ -218,6 +218,8 @@ export function s07outlineHtml(markdown) {
   const ast = env().Kx(markdown);
   const children = (ast && ast.children) || [];
   const markTypes = ["checklist", "listItem", "code"];
+  const defs = ast ? { definitions: env().oT(ast) } : undefined;
+  const frontmatter = env().$x(ast);
   const sections = [];
   for (const child of children) {
     if (!child || !child.position) continue;
@@ -230,13 +232,14 @@ export function s07outlineHtml(markdown) {
       const cs = child.position && child.position.start;
       if (ns && cs) hp["data-line"] = ns.line - cs.line;
     });
+    ast.children = [child];
     sections.push({
-      html: env().Zx({ children: [child] }),
+      html: env().Zx(ast, defs),
       pos: env().hT(child.position),
       level,
     });
   }
-  return { sections, frontmatter: env().$x(ast) };
+  return { sections, frontmatter };
 }
 
 // ---------------------------------------------------------------- sorting

@@ -34,13 +34,12 @@ function ng25ssCloseText(code) {
 }
 
 export function defineSyncSocket(host) {
-  const SerialTaskQueue = host.SerialTaskQueue;
 
   class SyncSocket {
     constructor(encryptionProvider) {
       this.socket = null;
-      this.queue = new SerialTaskQueue();
-      this.notifyQueue = new SerialTaskQueue();
+      this.queue = new host.SerialTaskQueue();
+      this.notifyQueue = new host.SerialTaskQueue();
       this.perFileMax = 208666624;
       this.userId = -1;
       this.justPushed = null;
