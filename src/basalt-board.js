@@ -23,8 +23,8 @@
       getViewType() { return VIEW; }
       getDisplayText() { return this.path ? this.path.replace(/^.*\//, "").replace(/\.board$/, "") : "Доска"; }
       getIcon() { return "lucide-layout-dashboard"; }
-      getState() { return { path: this.path }; }
-      async setState(s, r) { if (s && s.path && s.path !== this.path) { this.path = s.path; if (!this.root) this.build(); await this.openBoard(); } return super.setState ? super.setState(s, r) : undefined; }
+      getState() { return { path: this.path, file: this.path }; }
+      async setState(s, r) { const np = s && (s.path || s.file); if (np && np !== this.path) { this.path = np; if (!this.root) this.build(); try { this.leaf.updateHeader && this.leaf.updateHeader(); } catch (e) { /* ok */ } await this.openBoard(); } return super.setState ? super.setState(s, r) : undefined; }
       async onOpen() { if (!this.root) this.build(); if (this.path && !this.doc) await this.openBoard(); }
       // ---------- chrome ----------
       build() {
@@ -135,6 +135,26 @@
         r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
         r.addEventListener("wheel", (e) => { const ta = e.target.closest && e.target.closest(".osb-ta"); if (ta && !e.ctrlKey && ta.scrollHeight > ta.clientHeight) return; e.preventDefault(); const p = this.pt(e), b = this.worldPt(p.sx, p.sy); this.cam.k = Math.max(.1, Math.min(3, this.cam.k * Math.exp(-e.deltaY * .0015))); const a = this.worldPt(p.sx, p.sy); this.cam.x += b.x - a.x; this.cam.y += b.y - a.y; this.applyCam(); }, { passive: false });
         r.addEventListener("dblclick", (e) => { if (e.target.closest(".osb-card, g")) return; const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.addCard(w.x - 130, w.y - 30); });
+        r.addEventListener("contextmenu", (e) => {
+          e.preventDefault(); if (!this.doc) return; const M = api.Menu; const m = new M(), p = this.pt(e), w = this.worldPt(p.sx, p.sy), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));
+          const card = e.target.closest && e.target.closest(".osb-card"), eg = e.target.closest && e.target.closest("g");
+          if (card) {
+            const id = card.dataset.id; if (!this.sel.has(id)) this.select(new Set([id]));
+            it("Дублировать", "lucide-copy", () => { for (const s of Array.from(this.sel)) { const n = this.yn.get(s); if (n) this.addCard(n.get("x") + 30, n.get("y") + 30, n.get("text").toString()); } });
+            it("Копировать текст", "lucide-clipboard", () => { const n = this.yn.get(id); if (n) navigator.clipboard.writeText(n.get("text").toString()).catch(() => {}); });
+            m.addItem((i) => { i.setTitle("Цвет").setIcon("lucide-palette"); const sub = i.setSubmenu(); [["Без цвета", ""], ["Красный", COLORS[1]], ["Оранжевый", COLORS[2]], ["Жёлтый", COLORS[3]], ["Зелёный", COLORS[4]], ["Голубой", COLORS[5]], ["Фиолетовый", COLORS[6]]].forEach(([t, c]) => sub.addItem((x) => x.setTitle(t).setIcon("lucide-circle").onClick(() => this.setColor(c)))); });
+            it("На передний план", "lucide-bring-to-front", () => { const n = this.yn.get(id), e2 = this.els.get(id); if (e2) this.cards.appendChild(e2.el); });
+            m.addSeparator(); it("Удалить", "lucide-trash-2", () => this.removeSel());
+          } else if (eg) {
+            const id = Array.from(this.edgeEls).find(([, r2]) => r2.g === eg || eg.contains(r2.g))?.[0]; const ed = id && this.ye.get(id);
+            if (ed) { it("Подписать связь", "lucide-type", async () => { const v = await ask("Подпись связи", ed.get("label")); if (v != null) ed.set("label", v); }); m.addSeparator(); it("Удалить связь", "lucide-trash-2", () => this.ye.delete(id)); }
+          } else {
+            it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30));
+            it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
+            m.addSeparator(); it("Показать всё", "lucide-maximize", () => this.fit()); it("Совместная работа", "lucide-users", () => this.shareDialog());
+          }
+          m.showAtMouseEvent(e);
+        });
         this.contentEl.tabIndex = 0;
         this.contentEl.addEventListener("keydown", (e) => { if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return; if ((e.key === "Delete" || e.key === "Backspace") && (this.sel.size || this.selEdge)) { e.preventDefault(); this.removeSel(); } });
       }
