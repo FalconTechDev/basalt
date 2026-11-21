@@ -4,8 +4,7 @@
 // vault.process, with a loading->success Notice reporting the counts.
 
 function ng26CanvasStrings(host) {
-  const c = host.canvasI18n;
-  return typeof c === "function" ? c() : c;
+  return host.canvasI18n;
 }
 
 export async function ng26ProcessCanvasRenames(plugin, host) {

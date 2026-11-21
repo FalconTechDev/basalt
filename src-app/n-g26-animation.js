@@ -76,7 +76,8 @@ export function ng26CancelTransition(el, silent) {
   if (run) ng26Finish(run, !!silent);
 }
 
-export { ng26RunTransition as runTransition, ng26CancelTransition as cancelTransition };
+export const runTransition = ng26RunTransition;
+export const cancelTransition = ng26CancelTransition;
 
 export function ng26DefineTransition(host) {
   class Transition {

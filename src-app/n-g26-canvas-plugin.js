@@ -11,13 +11,11 @@ import { fileClass } from "./n-g13-vault.js";
 import { ng26ProcessCanvasRenames } from "./n-g26-canvas-renames.js";
 
 function ng26Strings(host) {
-  const c = host.canvasI18n;
-  return typeof c === "function" ? c() : c;
+  return host.canvasI18n;
 }
 
 function ng26T(host) {
-  const t = host.t;
-  return typeof t === "function" ? t() : t;
+  return host.t;
 }
 
 export function ng26DefineCanvasPlugin(host) {
