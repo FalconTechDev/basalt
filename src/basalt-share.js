@@ -275,6 +275,37 @@
       document.querySelectorAll(".bsf-tree [data-path]").forEach((row) => { const path = row.getAttribute("data-path"), hit = relOf(path); const host = row.querySelector(".bsf-n") ? row.querySelector(".bsf-n").parentElement : row; if (!hit) return; dots(host, peersOn(hit.rel), path); });
       for (const leaf of app.workspace.getLeavesOfType("markdown").concat(app.workspace.getLeavesOfType("basalt-board"), app.workspace.getLeavesOfType("canvas"), app.workspace.getLeavesOfType("basalt-textfile"))) { const f = leaf.view && (leaf.view.file || (leaf.view.path ? { path: leaf.view.path } : null)); if (!f || !leaf.tabHeaderEl) continue; const hit = relOf(f.path); if (hit) dots(leaf.tabHeaderEl.querySelector(".workspace-tab-header-inner") || leaf.tabHeaderEl, peersOn(hit.rel), f.path); }
     }, 1500);
+    // the mouse pointer of other people, in any file (notes, text files, images, pdf ...): sent as a position inside the pane, drawn over the same pane
+    let lastPtr = 0;
+    const paneOf = (el) => (el && el.closest ? el.closest(".workspace-leaf-content") : null);
+    const viewOfPane = (pane) => { for (const l of app.workspace.getLeavesOfType("")) { /* none */ } let found = null; app.workspace.iterateAllLeaves((l) => { if (l.view && l.view.containerEl === pane) found = l.view; }); return found; };
+    const scrollerOf = (pane) => pane.querySelector(".cm-scroller, .markdown-preview-view, .bs-text-scroll, .view-content");
+    document.addEventListener("pointermove", (e) => {
+      if (!shares.size || Date.now() - lastPtr < 50) return; lastPtr = Date.now();
+      const pane = paneOf(e.target), v = pane && viewOfPane(pane), f = v && (v.file || (v.path ? { path: v.path } : null)), hit = f && relOf(f.path);
+      if (!hit || (v.getViewType && v.getViewType() === "basalt-board")) { for (const sh of shares.values()) if (sh.extra && sh.extra.ptr) sh.publish({ ptr: null }); return; }
+      const host = v.contentEl || pane, r = host.getBoundingClientRect(), sc = scrollerOf(pane);
+      hit.sh.publish({ ptr: { f: hit.rel, x: Math.round(e.clientX - r.left), y: Math.round(e.clientY - r.top + (sc ? sc.scrollTop : 0)) } });
+    }, true);
+    document.addEventListener("pointerleave", () => { for (const sh of shares.values()) sh.publish({ ptr: null }); }, true);
+    setInterval(() => {
+      if (!shares.size) return;
+      app.workspace.iterateAllLeaves((leaf) => {
+        const v = leaf.view; if (!v || !v.containerEl || !v.containerEl.isConnected || (v.getViewType && v.getViewType() === "basalt-board")) return;
+        const f = v.file || (v.path ? { path: v.path } : null), hit = f && relOf(f.path), host = v.contentEl || v.containerEl;
+        let layer = host.querySelector(":scope > .bsh-ptrs");
+        const list = []; if (hit) for (const sh of shares.values()) for (const u of sh.peers) if (u.ptr && u.ptr.f === hit.rel) list.push(u);
+        if (!list.length) { if (layer) layer.remove(); return; }
+        if (!layer) { if (getComputedStyle(host).position === "static") host.style.position = "relative"; layer = document.createElement("div"); layer.className = "bsh-ptrs"; host.appendChild(layer); }
+        const sc = scrollerOf(v.containerEl), st = sc ? sc.scrollTop : 0, seen = new Set();
+        for (const u of list) {
+          const key = u.name + u.color; seen.add(key); let el = layer.querySelector('[data-k="' + CSS.escape(key) + '"]');
+          if (!el) { el = document.createElement("div"); el.className = "bsh-ptr"; el.dataset.k = key; el.style.color = u.color; el.innerHTML = '<svg width="16" height="18" viewBox="0 0 14 16"><path d="M1 1l11 5-5 2-2 6z" fill="currentColor" stroke="#000" stroke-opacity=".35"/></svg><span></span>'; el.lastChild.textContent = u.name; el.lastChild.style.background = u.color; layer.appendChild(el); }
+          el.style.transform = "translate(" + u.ptr.x + "px," + (u.ptr.y - st) + "px)";
+        }
+        for (const el of Array.from(layer.children)) if (!seen.has(el.dataset.k)) el.remove();
+      });
+    }, 70);
     // carets of other people inside the open note
     setInterval(() => {
       if (!shares.size) return;
