@@ -12,6 +12,18 @@
   const signaling = () => { try { const j = JSON.parse(localStorage.getItem("board-signaling") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return []; };
   const join = (a, b) => (!a || a === "/" ? "" : a.replace(/\/$/, "") + "/") + b;
   const shares = new Map();
+  let PREFS = null;
+  const prefs = () => { if (PREFS) return PREFS; let j = {}; try { j = JSON.parse(localStorage.getItem("board-prefs") || "{}") || {}; } catch (e) { /* default */ } PREFS = Object.assign({ notify: true, sound: true, pointers: true }, j); return PREFS; };
+  const setPrefs = (patch) => { PREFS = Object.assign(prefs(), patch); try { localStorage.setItem("board-prefs", JSON.stringify(PREFS)); } catch (e) { /* private */ } };
+  let AC = null;
+  function beep(kind) {
+    try {
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); const t = AC.currentTime;
+      const seq = { join: [[660, 0], [880, .11]], leave: [[660, 0], [440, .11]], request: [[784, 0], [784, .15], [1046, .3]], edit: [[540, 0]], warn: [[330, 0], [262, .14]] }[kind] || [[600, 0]];
+      for (const [f, d] of seq) { const o = AC.createOscillator(), g = AC.createGain(); o.type = "sine"; o.frequency.value = f; g.gain.setValueAtTime(0, t + d); g.gain.linearRampToValueAtTime(kind === "edit" ? .05 : .12, t + d + .012); g.gain.exponentialRampToValueAtTime(.0001, t + d + .2); o.connect(g); g.connect(AC.destination); o.start(t + d); o.stop(t + d + .22); }
+    } catch (e) { /* no audio */ }
+  }
+  function notify(kind, text) { const pr = prefs(); if (pr.notify && text) new window.__bsApi.Notice(text, 4500); if (pr.sound) beep(kind); }
   let resolveReady; window.__bsShareReady = new Promise((r) => { resolveReady = r; });
 
   class Share {
@@ -37,7 +49,7 @@
     }
     onPending(pid, uid) {
       if (this.pendingList.some((r) => r.pid === pid)) return; this.pendingList.push({ pid, uid, t: Date.now() }); this.ping();
-      if (!this.owner) return;
+      if (prefs().sound) beep("request"); if (!this.owner) return;
       const frag = document.createDocumentFragment(), t = document.createElement("div"); t.textContent = "Кто-то хочет войти в «" + (this.folder ? this.folder.split("/").pop() : app.vault.getName()) + "»"; frag.appendChild(t);
       const row = document.createElement("div"); row.style.cssText = "display:flex;gap:6px;margin-top:6px"; const a = document.createElement("button"), d = document.createElement("button"); a.textContent = "Принять"; d.textContent = "Отклонить"; a.className = "mod-cta"; row.append(a, d); frag.appendChild(row);
       const n = new window.__bsApi.Notice(frag, 0); (this.notices = this.notices || new Map()).set(pid, n); a.onclick = () => { this.approve(pid, uid); try { n.hide(); } catch (e) { /* ignore */ } }; d.onclick = () => { this.pendingList = this.pendingList.filter((r) => r.pid !== pid); this.ping(); try { n.hide(); } catch (e) { /* ignore */ } };
@@ -77,8 +89,12 @@
       this.doc.on("update", () => this.queueSave());
       const L = window.__bsY; this.prov = new L.TrysteroProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, relayUrls: signaling(), isReadOnly: () => this.readOnly, canWrite: (uid) => this.canWrite(uid), ok: (pid, uid) => this.okPeer(uid), onPending: (pid, uid) => this.onPending(pid, uid) }); this.prov.onStatus(() => document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })));
       this.aw = this.prov.awareness; this.publish();
-      this.aw.on("change", () => { this.peers = Array.from(this.aw.getStates().entries()).filter(([id]) => id !== this.aw.clientID).map(([, s]) => s.user).filter(Boolean); document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })); });
-      this.meta.observeDeep(() => { if (this.prov) { this.prov.recheck(); this.assignRoles(); } this.ping(); });
+      this.aw.on("change", () => { const was = new Set(this.peers.map((u) => u.name + "|" + u.color)); this.peers = Array.from(this.aw.getStates().entries()).filter(([id]) => id !== this.aw.clientID).map(([, s]) => s.user).filter(Boolean);
+        if (this.ready) { const now = new Set(this.peers.map((u) => u.name + "|" + u.color)); for (const u of this.peers) if (!was.has(u.name + "|" + u.color)) notify("join", u.name + " подключился(лась)"); for (const k of was) if (!now.has(k)) notify("leave", k.split("|")[0] + " вышел(ла)"); } document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })); });
+      this.meta.observeDeep(() => {
+        if (this.prov) { this.prov.recheck(); this.assignRoles(); } this.ping();
+        const id = this.prov && this.prov.selfUserId; if (id && !this.owner) { const now = this.roleOf(id); if (this._role && this._role !== now) { if (now === "view") notify("warn", "Владелец сделал вас наблюдателем: правки отключены"); else if (now === "edit") notify("join", "Теперь вы можете редактировать"); else if (now === "banned") notify("warn", "Вас удалили из проекта"); } this._role = now; }
+      });
       this.prov.onStatus(() => this.assignRoles());
       { const t1 = setInterval(() => { if (this.stopped) return clearInterval(t1); if (this.prov && this.prov.selfUserId) { clearInterval(t1); this.publish(); } }, 400); }
       if (this.owner) { const t0 = setInterval(() => { if (this.stopped) return clearInterval(t0); if (this.prov && this.prov.selfUserId) { clearInterval(t0); if (this.meta.get("owner") !== this.prov.selfUserId) this.meta.set("owner", this.prov.selfUserId); } }, 400); }
@@ -121,6 +137,8 @@
     boardJson(e) { const nodes = {}, edges = {}; e.get("nodes").forEach((m, id) => { nodes[id] = { x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "" }; }); e.get("edges").forEach((m, id) => { edges[id] = { a: m.get("a"), b: m.get("b"), label: m.get("label") || "" }; }); return JSON.stringify({ v: 3, nodes, edges }, null, 1); }
     noteRemote(rel) {
       if (this.skip(rel)) return; this.lastRemote.set(rel, Date.now());
+      { const af = app.workspace.getActiveFile(); this._nt = this._nt || new Map(); const last = this._nt.get(rel) || 0;
+        if (this.ready && Date.now() - last > 20000 && !(af && af.path === this.abs(rel)) && !this.joining) { this._nt.set(rel, Date.now()); const who0 = this.peers.filter((u) => u.file === rel || u.board === rel).map((u) => u.name); notify("edit", (who0[0] || "Кто-то") + ": изменения в «" + rel.replace(/^.*\//, "") + "»"); } }
       const who = this.peers.filter((u) => u.file === rel || u.board === rel).map((u) => u.name); const e = this.activity[0];
       if (e && e.rel === rel && Date.now() - e.t < 4000) { e.t = Date.now(); return; }
       this.activity.unshift({ t: Date.now(), rel, who: who.length ? who.join(", ") : "Кто-то" }); if (this.activity.length > 30) this.activity.pop();
@@ -211,9 +229,9 @@
     if (panelEl) { panelEl.close(); return; }
     const api = window.__bsApi, M = new api.Modal(app); panelEl = M; M.modalEl.classList.add("bsm"); M.titleEl.setText("Совместная работа"); const root = M.contentEl; root.classList.add("bsm-root");
     const copy = (t) => { try { navigator.clipboard.writeText(t); new api.Notice("Скопировано"); } catch (e) { /* none */ } };
-    let tickFn = null;
+    let tickFn = null, watchFn = null;
     const el = (parent, tag, cls, text) => { const x = parent.createEl(tag, { cls }); if (text != null) x.textContent = text; return x; };
-    const show = (build) => { tickFn = null; root.empty(); const prof = root.createDiv({ cls: "bsm-prof" }); profile(prof); const v = root.createDiv({ cls: "bsm-view" }); build(v); };
+    const show = (build) => { tickFn = null; watchFn = null; root.empty(); const prof = root.createDiv({ cls: "bsm-prof" }); profile(prof); const v = root.createDiv({ cls: "bsm-view" }); build(v); };
     const back = (v, title) => { const h = v.createDiv({ cls: "bsm-head" }); const b = h.createDiv({ cls: "bsm-back", attr: { title: "Назад" } }); api.setIcon(b, "lucide-arrow-left"); b.onclick = home; h.createDiv({ cls: "bsm-ttl", text: title }); };
     const sec = (v, t) => v.createDiv({ cls: "bsm-sub", text: t });
     const projName = (sh) => (sh.folder ? sh.folder.split("/").pop() : app.vault.getName());
@@ -243,28 +261,37 @@
       });
     }
 
-    // ----- this project: four tabs (overview / people / settings / log). Rights are set per person by the owner, never by the invite.
+    // ----- this project. What you see depends on who you are here: the owner gets everything, an editor gets no controls, a viewer gets only the basics.
     const ROLE = { edit: "Редактор", view: "Только просмотр", banned: "Удалён" };
+    const myRole = () => { const all = Array.from(shares.values()); if (!all.length || all.some((s) => s.owner)) return "owner"; return all.some((s) => s.readOnly) ? "view" : "edit"; };
+    const TABS = { owner: [["ov", "Обзор"], ["pp", "Участники"], ["st", "Настройки"], ["lg", "Журнал"]], edit: [["ov", "Обзор"], ["pp", "Участники"], ["lg", "Журнал"], ["st", "Мои настройки"]], view: [["ov", "Обзор"], ["pp", "Участники"], ["st", "Мои настройки"]] };
+    const copyTo = (btn, text, label) => { try { navigator.clipboard.writeText(text); } catch (e) { return; } const was = btn.textContent; btn.textContent = "Скопировано ✓"; btn.classList.add("is-done"); setTimeout(() => { btn.textContent = was; btn.classList.remove("is-done"); }, 1600); };
     function projectScreen(startTab) {
       show((v) => {
         back(v, "Этот проект");
-        const tabs = v.createDiv({ cls: "bsm-seg" }), body = v.createDiv({ cls: "bsm-tabbody" }); let cur = startTab || "ov"; const tabEls = {};
-        const draw = () => { for (const k in tabEls) tabEls[k].classList.toggle("is-on", k === cur); body.empty(); tickFn = null; const f = { ov: tabOverview, pp: tabPeople, st: tabSettings, lg: tabLog }[cur]; f(body); };
-        for (const [k, t] of [["ov", "Обзор"], ["pp", "Участники"], ["st", "Настройки"], ["lg", "Журнал"]]) { const b = el(tabs, "div", "bsm-segb", t); tabEls[k] = b; b.onclick = () => { if (cur !== k) { cur = k; draw(); } }; }
+        const role = myRole(), list = TABS[role]; let cur = list.some((t) => t[0] === startTab) ? startTab : "ov"; const tabs = v.createDiv({ cls: "bsm-seg" }), body = v.createDiv({ cls: "bsm-tabbody" }), tabEls = {};
+        const draw = () => { for (const k in tabEls) tabEls[k].classList.toggle("is-on", k === cur); body.empty(); tickFn = null; ({ ov: tabOverview, pp: tabPeople, st: tabSettings, lg: tabLog })[cur](body, role); };
+        for (const [k, t] of list) { const b = el(tabs, "div", "bsm-segb"); b.createSpan({ text: t }); b.createSpan({ cls: "bsm-badge" }); tabEls[k] = b; b.onclick = () => { if (cur !== k) { cur = k; draw(); } }; }
         draw();
+        // the rights can change while the window is open: rebuild at once, and keep the counters on the tabs fresh
+        watchFn = () => {
+          if (myRole() !== role) { projectScreen(cur); return; }
+          const pend = Array.from(shares.values()).reduce((a, s) => a + (s.owner ? s.pendingList.length : 0), 0), pp = tabEls.pp && tabEls.pp.querySelector(".bsm-badge");
+          if (pp) { pp.textContent = pend ? String(pend) : ""; pp.classList.toggle("is-on", !!pend); }
+        };
       });
     }
-    // overview: is it on, start / stop, the invite code
-    function tabOverview(b) {
+    // overview: is it on; the owner also starts / stops it and sees the invite
+    function tabOverview(b, role) {
       let pick = "/", more = false;
       const card = b.createDiv({ cls: "bsm-card" }); const dot = el(card, "span", "bsm-dot"); const ct = card.createDiv({ cls: "bsm-ct" }); const c1 = el(ct, "div", "bsm-c1"), c2 = el(ct, "div", "bsm-c2");
-      const scope = b.createDiv({ cls: "bsm-opts" }), inv = b.createDiv();
-      let sigS = "", sigI = null;
+      const scope = b.createDiv({ cls: "bsm-opts" }), inv = b.createDiv(); let sigS = "", sigI = null;
       const tick = () => {
         const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), searching = all.some((s) => s.prov && s.prov.status === "connecting"), pend0 = all.reduce((a, s) => a + s.q.size, 0), tot = all.reduce((a, s) => a + s.total, 0);
         dot.className = "bsm-dot " + (!all.length ? "" : n ? "is-live" : searching || pend0 ? "is-wait" : "");
-        const t1 = !all.length ? "Раздача выключена" : pend0 ? "Загрузка файлов: " + (tot - pend0) + "/" + tot : n ? "Раздача включена · онлайн " + (n + 1) : searching ? "Раздача включена · поиск участников…" : "Раздача включена · вы один", t2 = all.length ? all.map(projName).join(", ") : app.vault.getName();
+        const t1 = !all.length ? "Раздача выключена" : pend0 ? "Загрузка файлов: " + (tot - pend0) + "/" + tot : n ? "Раздача включена · онлайн " + (n + 1) : searching ? "Раздача включена · поиск участников…" : "Раздача включена · вы один", t2 = (all.length ? all.map(projName).join(", ") : app.vault.getName()) + (role === "view" ? " · вы только смотрите" : role === "edit" ? " · вы редактор" : "");
         if (c1.textContent !== t1) c1.textContent = t1; if (c2.textContent !== t2) c2.textContent = t2;
+        if (role !== "owner") return;
         const f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null, free = [];
         if (!shares.has("")) free.push(["/", "lucide-box", "Всё хранилище «" + app.vault.getName() + "»"]); if (dir && !shares.has(dir)) free.push([dir, "lucide-folder", "Папка «" + dir.split("/").pop() + "»"]);
         if (free.length && !free.some((x) => x[0] === pick)) pick = free[0][0];
@@ -281,55 +308,64 @@
         const si = all.map((s) => s.folder).join(";"); if (si !== sigI) {
           sigI = si; inv.empty();
           if (all.length) {
-            sec(inv, "Код приглашения"); el(inv, "div", "bsm-hint", "Один код для всех. Права каждого участника вы задаёте потом, во вкладке «Участники».");
+            sec(inv, "Пригласить"); el(inv, "div", "bsm-hint", "Один код для всех. Права каждого вы зададите потом, во вкладке «Участники».");
             for (const [k, sh] of shares) {
               const c = inv.createDiv({ cls: "bsm-code" }); el(c, "div", "bsm-cn", projName(sh) + (k ? " (папка)" : " (всё хранилище)"));
               const row = c.createDiv({ cls: "bsm-crow" }); const i = row.createEl("input", { attr: { readonly: "true" } }); i.value = sh.code(); i.onfocus = () => i.select();
-              const cb = el(row, "button", "mod-cta", "Копировать"); cb.onclick = () => copy(sh.code()); const st = el(row, "button", "", "Остановить"); st.onclick = async () => { await stop(k || "/"); sigS = ""; sigI = null; tick(); };
+              const cb = el(row, "button", "mod-cta", "Копировать код"); cb.onclick = () => copyTo(cb, sh.code());
+              const row2 = c.createDiv({ cls: "bsm-crow" }); const ib = el(row2, "button", "", "Копировать приглашение с инструкцией"); ib.onclick = () => copyTo(ib, "Присоединяйся к проекту «" + projName(sh) + "» в Basalt.\nОткрой «Совместная работа» (кнопка с человечком слева) → «Подключиться к проекту» → вставь код:\n" + sh.code());
+              const st = el(row2, "button", "bsm-danger", "Остановить"); st.onclick = async () => { await stop(k || "/"); sigS = ""; sigI = null; tick(); };
             }
           }
         }
       };
       tickFn = tick; tick();
     }
-    // people: who is here, what they are doing, and (for the owner) what each of them may do
-    function tabPeople(b) {
+    // people: who is here and what they do; only the owner sets rights
+    function tabPeople(b, role) {
       const pend = b.createDiv({ cls: "bsm-pend" }), list = b.createDiv({ cls: "bsm-people" }); let sigW = "", sigP = "";
       const tick = () => {
-        const all = Array.from(shares.values()), reqs = all.flatMap((s) => (s.owner ? s.pendingList.map((r) => ({ s, r })) : [])), sp = reqs.map((x) => x.r.pid).join("|");
+        const all = Array.from(shares.values()), reqs = role === "owner" ? all.flatMap((s) => s.pendingList.map((r) => ({ s, r }))) : [], sp = reqs.map((x) => x.r.pid).join("|");
         if (sp !== sigP) { sigP = sp; pend.empty(); for (const { s, r } of reqs) { const row = pend.createDiv({ cls: "bsm-req" }); row.createSpan({ text: "Кто-то хочет войти в «" + projName(s) + "»" }); const a = el(row, "button", "mod-cta", "Принять"), d = el(row, "button", "", "Отклонить"); a.onclick = () => { s.approve(r.pid, r.uid); sigP = ""; tick(); }; d.onclick = () => { s.pendingList = s.pendingList.filter((x) => x.pid !== r.pid); sigP = ""; tick(); }; } }
-        const af = app.workspace.getActiveFile(), me0 = all.find((s) => s.owner), rows = [{ u: me(), self: true, sh: all[0], what: af ? "«" + af.basename + "»" : "в сети" }], seen = new Set();
+        const af = app.workspace.getActiveFile(), rows = [{ u: me(), self: true, sh: all[0], what: af ? "«" + af.basename + "»" : "в сети" }], seen = new Set();
         for (const sh of all) for (const u of sh.peers) { const k = peerKey(u); if (!seen.has(k)) { seen.add(k); rows.push({ u, sh, self: false, what: where(u) }); } }
-        const sw = rows.map((p) => peerKey(p.u) + "|" + p.what + "|" + (p.sh && !p.self ? p.sh.roleOf(p.u.uid) : "") + "|" + (following === peerKey(p.u))).join(";") + (me0 ? "O" : "");
+        const sw = role + rows.map((p) => peerKey(p.u) + "|" + p.what + "|" + (p.sh && !p.self ? p.sh.roleOf(p.u.uid) : "") + "|" + (following === peerKey(p.u))).join(";");
         if (sw === sigW) return; sigW = sw; list.empty();
         for (const p of rows) {
           const row = list.createDiv({ cls: "bsm-person" }); const d = el(row, "span", "bsm-pd"); d.style.background = p.u.color; const tx = row.createDiv({ cls: "bsm-tx" });
-          el(tx, "div", "bsm-n", p.u.name + (p.self ? " (вы)" : "")); el(tx, "div", "bsm-s", p.self ? (me0 ? "Владелец · " : (p.sh && p.sh.readOnly ? "Только просмотр · " : "")) + p.what : p.what);
+          el(tx, "div", "bsm-n", p.u.name + (p.self ? " (вы)" : "")); el(tx, "div", "bsm-s", p.self ? (role === "owner" ? "Владелец · " : role === "view" ? "Только просмотр · " : "Редактор · ") + p.what : p.what);
           if (p.self) continue;
           const act = row.createDiv({ cls: "bsm-pa" });
-          if (me0 && p.sh && p.sh.owner && p.u.uid) {
-            const sel = act.createEl("select", { cls: "bsm-role" }); for (const k of ["edit", "view", "banned"]) { const o = sel.createEl("option", { text: ROLE[k] }); o.value = k; } sel.value = p.sh.roleOf(p.u.uid); sel.onchange = () => { p.sh.setRole(p.u.uid, sel.value); sigW = ""; };
-          } else if (p.sh) el(act, "span", "bsm-rl", ROLE[p.sh.roleOf(p.u.uid)] || "Редактор");
-          const go = el(act, "button", "bsm-b", "Перейти"); go.onclick = () => { if (!openWhere(p.sh, p.u)) new api.Notice("Он пока ничего не открыл"); };
-          const fl = el(act, "button", "bsm-b" + (following === peerKey(p.u) ? " is-on" : ""), following === peerKey(p.u) ? "Слежу" : "Следить"); fl.onclick = () => { following = following === peerKey(p.u) ? null : peerKey(p.u); followSig = ""; sigW = ""; tick(); if (following) new api.Notice("Вы следите за " + p.u.name + ". Нажмите ещё раз, чтобы остановить."); };
+          if (role === "owner" && p.sh && p.u.uid) { const sel = act.createEl("select", { cls: "bsm-role" }); for (const k of ["edit", "view", "banned"]) { const o = sel.createEl("option", { text: ROLE[k] }); o.value = k; } sel.value = p.sh.roleOf(p.u.uid); sel.onchange = () => { p.sh.setRole(p.u.uid, sel.value); sigW = ""; }; }
+          const go = el(act, "button", "bsm-ib", ""); api.setIcon(go, "lucide-crosshair"); go.title = "Перейти туда, где он сейчас"; go.onclick = () => { if (!openWhere(p.sh, p.u)) new api.Notice("Он пока ничего не открыл"); };
+          const fl = el(act, "button", "bsm-ib" + (following === peerKey(p.u) ? " is-on" : ""), ""); api.setIcon(fl, "lucide-eye"); fl.title = following === peerKey(p.u) ? "Перестать следить" : "Следить за ним"; fl.onclick = () => { following = following === peerKey(p.u) ? null : peerKey(p.u); followSig = ""; sigW = ""; tick(); if (following) new api.Notice("Вы следите за " + p.u.name + ". Нажмите на глаз ещё раз, чтобы остановить."); };
         }
-        if (rows.length === 1) el(list, "div", "bsm-empty", all.length ? "Пока никого рядом. Отправьте код приглашения (вкладка «Обзор»)." : "Раздача выключена — подключённых нет.");
+        if (rows.length === 1) el(list, "div", "bsm-empty", all.length ? "Пока никого рядом." : "Раздача выключена — подключённых нет.");
       };
       tickFn = tick; tick();
     }
-    // settings
-    function tabSettings(b) {
+    // settings: the project ones for the owner only, the personal ones for everybody
+    function toggleRow(parent, icon, title, sub, on, fn) {
+      const r = parent.createDiv({ cls: "bsm-trow" }); const ic = el(r, "span", "bsm-oi"); api.setIcon(ic, icon); const tx = r.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", title); el(tx, "div", "bsm-s", sub);
+      const sw = el(r, "span", "bsm-switch" + (on ? " is-on" : "")); el(sw, "span", "bsm-knob"); r.onclick = () => { fn(!sw.classList.contains("is-on")); sw.classList.toggle("is-on"); };
+    }
+    function tabSettings(b, role) {
       const own = Array.from(shares.values()).find((s) => s.owner);
-      const toggle = (icon, title, sub, on, fn) => { const r = b.createDiv({ cls: "bsm-opt" + (on ? " is-pick" : "") }); const ic = el(r, "span", "bsm-oi"); api.setIcon(ic, icon); const tx = r.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", title); el(tx, "div", "bsm-s", sub); if (fn) r.onclick = fn; else r.style.opacity = ".6"; };
-      sec(b, "Доступ");
-      toggle("lucide-shield-check", "Подтверждать входы", own ? "Новый участник входит, только когда вы нажмёте «Принять». Работает, пока вы в сети." : "Доступно владельцу проекта (тому, кто начал раздачу).", !!(own && own.meta.get("approval")), own ? () => { own.setApproval(!own.meta.get("approval")); b.empty(); tabSettings(b); } : null);
-      sec(b, "Права новых участников"); el(b, "div", "bsm-hint", "Что смогут делать новые участники сразу после входа. Менять права каждого можно во вкладке «Участники».");
-      const seg = b.createDiv({ cls: "bsm-seg" }); const def = own && own.meta.get("defaultRole") === "view" ? "view" : "edit";
-      for (const k of ["edit", "view"]) { const s2 = el(seg, "div", "bsm-segb" + (def === k ? " is-on" : ""), ROLE[k]); if (own) s2.onclick = () => { own.setDefaultRole(k); b.empty(); tabSettings(b); }; else s2.style.opacity = ".6"; }
+      if (role === "owner" && own) {
+        sec(b, "Проект");
+        toggleRow(b, "lucide-shield-check", "Подтверждать входы", "Новый участник входит, только когда вы нажмёте «Принять». Работает, пока вы в сети.", !!own.meta.get("approval"), (on) => own.setApproval(on));
+        el(b, "div", "bsm-hint", "Права новых участников").style.margin = "12px 0 6px";
+        const seg = b.createDiv({ cls: "bsm-seg" }); const def = own.meta.get("defaultRole") === "view" ? "view" : "edit"; const segs = {};
+        for (const k of ["edit", "view"]) { const s2 = el(seg, "div", "bsm-segb" + (def === k ? " is-on" : ""), ROLE[k]); segs[k] = s2; s2.onclick = () => { own.setDefaultRole(k); for (const x in segs) segs[x].classList.toggle("is-on", x === k); }; }
+      }
+      sec(b, "Мои настройки"); const p = prefs();
+      toggleRow(b, "lucide-bell", "Уведомления", "Сообщать, когда кто-то подключился, вышел или изменил файл.", p.notify, (on) => setPrefs({ notify: on }));
+      toggleRow(b, "lucide-volume-2", "Звуки", "Тихий сигнал при входе, выходе и запросе на вход.", p.sound, (on) => { setPrefs({ sound: on }); if (on) beep("join"); });
+      toggleRow(b, "lucide-pointer", "Мышь других участников", "Показывать их указатели и курсоры в файлах.", p.pointers, (on) => setPrefs({ pointers: on }));
       sec(b, "Серверы"); el(b, "div", "bsm-hint", "Свои relay-серверы Nostr, через запятую (необязательно). По умолчанию используются публичные.");
       const sg = b.createEl("input", { attr: { style: "width:100%", placeholder: "wss://…" } }); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
     }
-    // log with rollback
+    // log with rollback (owner and editors)
     function tabLog(b) {
       const list = b.createDiv({ cls: "bsm-loglist" }); let sig = "";
       const draw = () => {
@@ -355,7 +391,7 @@
       });
     }
 
-    const iv = setInterval(() => { if (tickFn) tickFn(); }, 1200); const onPeers = () => { if (tickFn) tickFn(); }; document.addEventListener("basalt-share-peers", onPeers);
+    const iv = setInterval(() => { if (tickFn) tickFn(); if (watchFn) watchFn(); }, 1200); const onPeers = () => { if (tickFn) tickFn(); }; document.addEventListener("basalt-share-peers", onPeers);
     M.onClose = () => { clearInterval(iv); document.removeEventListener("basalt-share-peers", onPeers); panelEl = null; };
     home(); M.open();
   }
@@ -427,7 +463,7 @@
     document.addEventListener("mouseleave", () => { pending = null; for (const sh of shares.values()) if (sh.extra && sh.extra.ptr) sh.publish({ ptr: null }); }, true);
     const ptrs = new Map(); let leaves = [], leavesAt = 0;
     const frame = () => {
-      requestAnimationFrame(frame); if (!shares.size) { if (ptrs.size) { for (const o of ptrs.values()) o.el.remove(); ptrs.clear(); } return; }
+      requestAnimationFrame(frame); if (!shares.size || !prefs().pointers) { if (ptrs.size) { for (const o of ptrs.values()) o.el.remove(); ptrs.clear(); } return; }
       const now = performance.now();
       if (now - leavesAt > 400) { leavesAt = now; leaves = []; app.workspace.iterateAllLeaves((l) => { const v = l.view; if (v && v.containerEl && v.containerEl.isConnected && !(v.getViewType && v.getViewType() === "basalt-board")) { const p = pathOf(v), hit = p && relOf(p); if (hit) leaves.push({ pane: v.containerEl.closest(PANE) || v.containerEl, hit, v }); } }); }
       const live = new Set();

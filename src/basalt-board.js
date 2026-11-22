@@ -124,7 +124,7 @@
       setColor(col) { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) { m.set("color", col); this.stampM(m); } } }); for (const id of this.sel) this.feed("color", id, this.label(id)); }
       // ---------- DOM sync ----------
       sync() {
-        const seen = new Set(); const ro = this.ro; if (this.root) this.root.classList.toggle("is-ro", ro);
+        const seen = new Set(); const ro = this.ro; if (this.root) this.root.classList.toggle("is-ro", ro); if (this.feedEl) this.feedEl.style.display = ro ? "none" : "";
         this.yn.forEach((m, id) => {
           seen.add(id); let e = this.els.get(id); if (!e) e = this.mkCard(id, m); e.ta.readOnly = ro;
           const s = e.el.style; s.left = m.get("x") + "px"; s.top = m.get("y") + "px"; s.width = m.get("w") + "px"; s.height = m.get("h") + "px";
@@ -160,7 +160,7 @@
         });
         for (const [id, r] of this.edgeEls) if (!seen.has(id)) { r.g.remove(); this.edgeEls.delete(id); }
       }
-      select(set) { this.sel = set; if (set.size) this.selEdge = null; this.mark(); this.publish(); }
+      select(set) { if (this.ro) { if (this.sel.size) { this.sel = new Set(); this.mark(); } return; } this.sel = set; if (set.size) this.selEdge = null; this.mark(); this.publish(); }
       mark() { for (const [id, e] of this.els) e.el.classList.toggle("is-sel", this.sel.has(id)); this.palette.classList.toggle("is-on", this.sel.size > 0); for (const [id, r] of this.edgeEls) r.g.classList.toggle("is-sel", this.selEdge === id); this.paintPeers(); }
       // ---------- camera ----------
       pt(e) { const r = this.root.getBoundingClientRect(); return { sx: e.clientX - r.left, sy: e.clientY - r.top }; }
