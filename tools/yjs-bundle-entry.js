@@ -1,7 +1,8 @@
 import * as Y from "yjs";
 import { WebrtcProvider } from "y-webrtc";
 import * as awareness from "y-protocols/awareness";
-import { joinRoom } from "trystero";
+import { joinRoom as joinNostr } from "trystero";
+import { joinRoom as joinTorrent } from "@trystero-p2p/torrent";
 
 // A Yjs provider over Trystero: peers find each other through public relays (Nostr), then talk directly over WebRTC.
 // Options: password, relayUrls, readOnly (never sends document changes), ok(peerId, userId) (peers failing it are held back until admit()), onPending(peerId, userId).
@@ -9,8 +10,8 @@ class TrysteroProvider {
   constructor(roomId, doc, opts = {}) {
     this.doc = doc; this.awareness = new awareness.Awareness(doc); this.peers = new Map(); this.status = "connecting"; this.listeners = new Set();
     this.readOnly = !!opts.readOnly; this.isReadOnly = opts.isReadOnly || (() => this.readOnly); this.canWrite = opts.canWrite || (() => true); this.ok = opts.ok || (() => true); this.onPending = opts.onPending || (() => {}); this.selfUserId = null;
-    const cfg = { appId: "basalt-share" }; if (opts.password) cfg.password = opts.password; if (opts.relayUrls && opts.relayUrls.length) cfg.relayUrls = opts.relayUrls; if (opts.turnConfig) cfg.turnConfig = opts.turnConfig;
-    this.room = joinRoom(cfg, roomId);
+    const cfg = { appId: "basalt-share" }; if (opts.password) cfg.password = opts.password; if (opts.relayUrls && opts.relayUrls.length) cfg.relayConfig = { urls: opts.relayUrls }; if (opts.turnConfig) cfg.turnConfig = opts.turnConfig;
+    this.room = (opts.strategy === "nostr" ? joinNostr : joinTorrent)(cfg, roomId);
     try { const g = this.room.getSelf(); if (g && g.then) g.then((s) => { this.selfUserId = s && s.userId; }).catch(() => {}); } catch (e) { /* ignore */ }
     const sync = this.room.makeAction("sync"), upd = this.room.makeAction("upd"), aws = this.room.makeAction("aw"), hi = this.room.makeAction("hi"), blob = this.room.makeAction("blob", { kind: "request" });
     const aw = this.awareness, safe = (p) => { if (p && p.catch) p.catch(() => {}); };
