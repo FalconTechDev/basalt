@@ -195,3 +195,8 @@
 .osb-fe-w { color: var(--text-normal); font-weight: 600; }
 .osb-fe-time { color: var(--text-faint); font-size: 11px; flex: none; }
 .osb-fe-empty { padding: 4px 6px 8px; font-size: 12px; color: var(--text-faint); }
+
+.bsm-tabbody { margin-top: 4px; }
+.bsm-seg { margin-bottom: 14px; }
+.bsm-role { font-size: 12px; padding: 2px 6px; border-radius: 8px; }
+.bsm-rl { font-size: 12px; color: var(--text-muted); align-self: center; }
