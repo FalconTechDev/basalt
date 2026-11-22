@@ -12,6 +12,20 @@
   const signaling = () => { try { const j = JSON.parse(localStorage.getItem("board-signaling") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return []; };
   const join = (a, b) => (!a || a === "/" ? "" : a.replace(/\/$/, "") + "/") + b;
   const shares = new Map();
+  const turnCfg = () => { try { const j = JSON.parse(localStorage.getItem("board-turn") || "null"); if (j && j.url) return [{ urls: j.url.split(",").map((x) => x.trim()).filter(Boolean), username: j.user || undefined, credential: j.pass || undefined }]; } catch (e) { /* none */ } return undefined; };
+  const RELAYS = ["wss://nos.lol", "wss://relay.primal.net", "wss://nostr.data.haus", "wss://relay.damus.io", "wss://relay.ditto.pub", "wss://nostr.sathoarder.com", "wss://nostr.hifish.org", "wss://fanfares.nostr1.com"];
+  // what can this computer reach: the discovery servers and the STUN server, and what that means for connecting to another computer
+  async function diagnose() {
+    const rows = []; const list = signaling().length ? signaling() : RELAYS; let ok = 0;
+    await Promise.all(list.map((u) => new Promise((res) => { let done = false; let w; try { w = new WebSocket(u); } catch (e) { return res(); } const t = setTimeout(() => { if (!done) { done = true; try { w.close(); } catch (e) { /* ignore */ } res(); } }, 5000); w.onopen = () => { if (!done) { done = true; ok++; clearTimeout(t); try { w.close(); } catch (e) { /* ignore */ } res(); } }; w.onerror = () => { if (!done) { done = true; clearTimeout(t); res(); } }; })));
+    rows.push({ ok: ok > 0, text: "Серверы обнаружения: доступно " + ok + " из " + list.length, hint: ok ? "" : "Компьютер не достучался ни до одного. Проверьте интернет, отключите VPN или укажите свои серверы в «Настройки»." });
+    const ice = async (servers) => { const types = new Set(); try { const pc = new RTCPeerConnection({ iceServers: servers }); pc.createDataChannel("x"); pc.onicecandidate = (e) => { if (e.candidate) { const m = / typ (\w+)/.exec(e.candidate.candidate); if (m) types.add(m[1]); } }; await pc.setLocalDescription(await pc.createOffer()); await new Promise((r) => setTimeout(r, 4500)); pc.close(); } catch (e) { /* ignore */ } return types; };
+    const st = await ice([{ urls: "stun:stun.cloudflare.com:3478" }]);
+    rows.push({ ok: st.has("srflx"), text: st.has("srflx") ? "Выход в интернет для прямой связи: есть" : "Выход в интернет для прямой связи: не определён", hint: st.has("srflx") ? "" : "Сеть блокирует вспомогательный сервер. Связь возможна только если оба компьютера в одной локальной сети. Для разных сетей нужен TURN-сервер («Настройки»)." });
+    const tc = turnCfg(); if (tc) { const t = await ice([{ urls: "stun:stun.cloudflare.com:3478" }].concat(tc)); rows.push({ ok: t.has("relay"), text: t.has("relay") ? "TURN-сервер отвечает" : "TURN-сервер не отвечает", hint: t.has("relay") ? "" : "Проверьте адрес, логин и пароль TURN-сервера." }); }
+    const all = Array.from(shares.values()); rows.push({ ok: all.length > 0, text: all.length ? "Раздача включена, участников рядом: " + all.reduce((a, x) => a + x.peers.length, 0) : "Раздача на этом компьютере не включена", hint: all.length ? "" : "Включите раздачу или подключитесь по коду." });
+    return rows;
+  }
   let PREFS = null;
   const prefs = () => { if (PREFS) return PREFS; let j = {}; try { j = JSON.parse(localStorage.getItem("board-prefs") || "{}") || {}; } catch (e) { /* default */ } PREFS = Object.assign({ notify: true, sound: true, pointers: true }, j); return PREFS; };
   const setPrefs = (patch) => { PREFS = Object.assign(prefs(), patch); try { localStorage.setItem("board-prefs", JSON.stringify(PREFS)); } catch (e) { /* private */ } };
@@ -119,7 +133,7 @@
         this.queueSave();
       });
       this.doc.on("update", () => this.queueSave());
-      const L = window.__bsY; this.prov = new L.TrysteroProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, relayUrls: signaling(), helloData: () => (this.invite ? { invite: this.invite } : null), onHello: (pid, d) => this.onHello(pid, d), isReadOnly: () => this.readOnly, canWrite: (uid) => this.canWrite(uid), ok: (pid, uid) => this.okPeer(uid), onPending: (pid, uid) => this.onPending(pid, uid) }); this.prov.onStatus(() => document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })));
+      const L = window.__bsY; this.prov = new L.TrysteroProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, relayUrls: signaling(), turnConfig: turnCfg(), helloData: () => (this.invite ? { invite: this.invite } : null), onHello: (pid, d) => this.onHello(pid, d), isReadOnly: () => this.readOnly, canWrite: (uid) => this.canWrite(uid), ok: (pid, uid) => this.okPeer(uid), onPending: (pid, uid) => this.onPending(pid, uid) }); this.prov.onStatus(() => document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })));
       this.aw = this.prov.awareness; this.publish();
       this.aw.on("change", () => { const was = new Set(this.peers.map((u) => u.name + "|" + u.color)); this.peers = Array.from(this.aw.getStates().entries()).filter(([id]) => id !== this.aw.clientID).map(([, s]) => s.user).filter(Boolean);
         if (this.ready) { const now = new Set(this.peers.map((u) => u.name + "|" + u.color)); for (const u of this.peers) if (!was.has(u.name + "|" + u.color)) notify("join", u.name + " подключился(лась)"); for (const k of was) if (!now.has(k)) notify("leave", k.split("|")[0] + " вышел(ла)"); } document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })); });
@@ -350,6 +364,12 @@
     // ---- overview
     function tabOverview(b, role) {
       const banner = el(b, "div", "bsm-banner"); const bdot = el(banner, "span", "bsm-bdot"); const bt = el(banner, "div", "bsm-bt"); const b1 = el(bt, "div", "bsm-b1"), b2 = el(bt, "div", "bsm-b2");
+      const dr = el(b, "div", "bsm-diagrow"); const dres = el(b, "div", "bsm-diag");
+      const dbtn = btn(dr, "Проверить соединение", "ghost sm", async () => {
+        dbtn.disabled = true; dres.empty(); const w = el(dres, "div", "bsm-dwait", "Проверяю… около 6 секунд");
+        const rows = await diagnose(); dbtn.disabled = false; dres.empty();
+        for (const r of rows) { const line = el(dres, "div", "bsm-dl " + (r.ok ? "is-ok" : "is-bad")); icon(line, r.ok ? "lucide-check-circle-2" : "lucide-alert-circle", "bsm-dli"); const t = el(line, "div", "bsm-dlt"); el(t, "div", "", r.text); if (r.hint) el(t, "div", "bsm-dlh", r.hint); }
+      }, "lucide-activity");
       const mid = el(b, "div"), inv = el(b, "div"); let sigM = null, sigI = null, mode = "perm", pickChoice = draft ? "custom" : "all", chosen = draft ? draft.slice() : [];
       const tick = () => {
         setPill(); const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), srch = all.some((s) => s.prov && s.prov.status === "connecting"), pend0 = all.reduce((a, s) => a + s.q.size, 0), tot = all.reduce((a, s) => a + s.total, 0);
@@ -449,7 +469,10 @@
       toggleRow(s3, "lucide-bell", "Уведомления", "Сообщать, когда кто-то подключился, вышел или изменил файл.", p.notify, (on) => setPrefs({ notify: on }));
       toggleRow(s3, "lucide-volume-2", "Звуки", "Тихий сигнал при входе, выходе и запросе на вход.", p.sound, (on) => { setPrefs({ sound: on }); if (on) beep("join"); });
       toggleRow(s3, "lucide-mouse-pointer-2", "Мышь других участников", "Показывать их указатели и курсоры в файлах.", p.pointers, (on) => setPrefs({ pointers: on }));
-      const s4 = section(b, "Серверы", "Свои relay-серверы Nostr, через запятую (необязательно). По умолчанию используются публичные."); const sg = el(s4, "input", "bsm-input"); sg.placeholder = "wss://…"; sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
+      const s4 = section(b, "Серверы", "Свои relay-серверы Nostr, через запятую (необязательно). По умолчанию используются публичные. Изменения вступают в силу после перезапуска раздачи."); const sg = el(s4, "input", "bsm-input"); sg.placeholder = "wss://…"; sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
+      const s5 = section(b, "TURN-сервер", "Нужен, если компьютеры в разных сетях и напрямую не соединяются (мобильный интернет, строгий роутер). Адрес вида turn:host:3478. Можно взять бесплатный у провайдеров TURN или поднять свой."); let tj = {}; try { tj = JSON.parse(localStorage.getItem("board-turn") || "{}") || {}; } catch (e) { /* none */ }
+      const tf = (ph, key, type) => { const i = el(s5, "input", "bsm-input"); i.placeholder = ph; if (type) i.type = type; i.value = tj[key] || ""; i.style.marginBottom = "6px"; i.onchange = () => { tj[key] = i.value.trim(); try { localStorage.setItem("board-turn", JSON.stringify(tj)); } catch (e) { /* private */ } }; };
+      tf("turn:host:3478", "url"); tf("Логин", "user"); tf("Пароль", "pass", "password");
     }
     // ---- log
     function tabLog(b) {
