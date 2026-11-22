@@ -3,7 +3,7 @@
 // Notes and other text files are Y.Text, boards are native Y.Map structures (the board view edits them directly), images and the like are stored as base64.
 (() => {
   "use strict";
-  const STATE = ".basalt-share", TEXT = /\.(md|txt|csv|json|canvas|base|css|html?|xml|ya?ml|toml|js|mjs|ts|py|sh|log|ini|cfg)$/i, MAXBIN = 8 * 1024 * 1024;
+  const STATE = ".basalt-share", TEXT = /\.(md|txt|csv|json|canvas|base|css|html?|xml|ya?ml|toml|js|mjs|ts|py|sh|log|ini|cfg)$/i, MAXBIN = 400 * 1024 * 1024;
   const b64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
   const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
   const uid = () => Math.random().toString(36).slice(2, 10);
@@ -42,7 +42,7 @@
 
   class Share {
     constructor(folder, room, pass, opts = {}) {
-      this.owner = !!opts.owner; this.pendingList = []; this.ready = false; this.inc0 = opts.include || null; this.hellos = new Map();
+      this.owner = !!opts.owner; this.pendingList = []; this.ready = false; this.inc0 = opts.include || null; this.hellos = new Map(); this.cache = new Map(); this.hashIndex = new Map(); this.blobQ = new Map(); this.blobBusy = 0; this.blobDone = 0; this.blobBytes = 0; this.hashing = 0; this.quietUntil = Date.now() + 30000; this._pingT = 0;
       this.folder = folder === "/" ? "" : folder; this.room = room; this.pass = pass; const Y = window.__bsY.Y;
       this.doc = new Y.Doc(); this.files = this.doc.getMap("files"); this.meta = this.doc.getMap("meta"); this.log = this.doc.getArray("log"); this.written = new Map(); this.q = new Set(); this.total = 0; this.done = 0; this.pumping = false; this.activity = []; this.lastRemote = new Map(); this.timers = new Map(); this.saveT = 0; this.peers = [];
     }
@@ -126,6 +126,7 @@
       await this.scan();
       if (this.joining && this.files.size === 0) loadingCard(this); else this.joining = false;
       this.files.observeDeep((evs) => {
+        let burst = 0; for (const ev of evs) burst += ev.path.length === 0 ? ev.keysChanged.size : 1; if (burst > 4) this.quietUntil = Date.now() + 20000;
         for (const ev of evs) {
           const remote = !!(this.prov && ev.transaction.origin === this.prov), keys = ev.path.length === 0 ? Array.from(ev.keysChanged) : [ev.path[0]];
           for (const k of keys) { this.toDisk(k); if (remote) this.noteRemote(k); }
@@ -133,7 +134,7 @@
         this.queueSave();
       });
       this.doc.on("update", () => this.queueSave());
-      const L = window.__bsY; this.prov = new L.TrysteroProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, relayUrls: signaling(), turnConfig: turnCfg(), helloData: () => (this.invite ? { invite: this.invite } : null), onHello: (pid, d) => this.onHello(pid, d), isReadOnly: () => this.readOnly, canWrite: (uid) => this.canWrite(uid), ok: (pid, uid) => this.okPeer(uid), onPending: (pid, uid) => this.onPending(pid, uid) }); this.prov.onStatus(() => document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })));
+      const L = window.__bsY; this.prov = new L.TrysteroProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, relayUrls: signaling(), turnConfig: turnCfg(), getBlob: (h) => this.getBlob(h), helloData: () => (this.invite ? { invite: this.invite } : null), onHello: (pid, d) => this.onHello(pid, d), isReadOnly: () => this.readOnly, canWrite: (uid) => this.canWrite(uid), ok: (pid, uid) => this.okPeer(uid), onPending: (pid, uid) => this.onPending(pid, uid) }); this.prov.onStatus(() => document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })));
       this.aw = this.prov.awareness; this.publish();
       this.aw.on("change", () => { const was = new Set(this.peers.map((u) => u.name + "|" + u.color)); this.peers = Array.from(this.aw.getStates().entries()).filter(([id]) => id !== this.aw.clientID).map(([, s]) => s.user).filter(Boolean);
         if (this.ready) { const now = new Set(this.peers.map((u) => u.name + "|" + u.color)); for (const u of this.peers) if (!was.has(u.name + "|" + u.color)) notify("join", u.name + " подключился(лась)"); for (const k of was) if (!now.has(k)) notify("leave", k.split("|")[0] + " вышел(ла)"); } document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })); });
@@ -141,7 +142,7 @@
         if (this.prov) { this.prov.recheck(); this.assignRoles(); } this.ping();
         const id = this.prov && this.prov.selfUserId; if (id && !this.owner) { const now = this.roleOf(id); if (this._role && this._role !== now) { if (now === "view") notify("warn", "Владелец сделал вас наблюдателем: правки отключены"); else if (now === "edit") notify("join", "Теперь вы можете редактировать"); else if (now === "banned") notify("warn", "Вас удалили из проекта"); } this._role = now; }
       });
-      this.prov.onStatus(() => this.assignRoles());
+      this.prov.onStatus(() => { this.assignRoles(); clearTimeout(this._rt); this._rt = setTimeout(() => this.retryBlobs(), 1500); });
       { const t1 = setInterval(() => { if (this.stopped) return clearInterval(t1); if (this.prov && this.prov.selfUserId) { clearInterval(t1); this.publish(); } }, 400); }
       if (this.owner) { const t0 = setInterval(() => { if (this.stopped) return clearInterval(t0); if (this.prov && this.prov.selfUserId) { clearInterval(t0); if (this.meta.get("owner") !== this.prov.selfUserId) this.meta.set("owner", this.prov.selfUserId); } }, 400); }
       this.onVault = (type) => (f, old) => this.vaultEvent(type, f, old);
@@ -158,7 +159,9 @@
     }
     async scan() {
       const disk = await this.list(this.folder);
-      for (const rel of disk) await this.fromDisk(rel);
+      const texts = disk.filter((r) => TEXT.test(r) || this.isBoard(r)), bins = disk.filter((r) => !(TEXT.test(r) || this.isBoard(r)));
+      for (const rel of texts) await this.fromDisk(rel);
+      if (bins.length) { this.hashing += bins.length; (async () => { for (const rel of bins) { if (this.stopped) break; await this.fromDisk(rel); this.hashing--; if (this.hashing % 8 === 0) { this.ping(); await new Promise((r) => setTimeout(r, 0)); } } this.hashing = Math.max(0, this.hashing); this.ping(); })(); }
       for (const rel of this.files.keys()) if (!disk.includes(rel)) await this.toDiskNow(rel);
     }
     isBoard(rel) { return /\.board$/i.test(rel); }
@@ -175,8 +178,9 @@
           if (!e || e.get("t") !== "text") { const m = new Y.Map(), t = new Y.Text(); t.insert(0, txt); m.set("t", "text"); m.set("text", t); this.files.set(rel, m); if (!e) this.addLog("create", rel); }
           else { const t = e.get("text"), old = t.toString(); if (old !== txt) { this.addLog("edit", rel, old); this.diff(t, old, txt); } }
         } else {
-          const buf = await ad.readBinary(p); if (buf.byteLength > MAXBIN) return; const d = b64(new Uint8Array(buf));
-          if (!e || e.get("data") !== d) { const m = new Y.Map(); m.set("t", "bin"); m.set("data", d); this.files.set(rel, m); }
+          let st = null; try { st = await ad.stat(p); } catch (er) { /* gone */ } if (!st || st.size > MAXBIN) return;
+          const h = await this.localHash(rel); if (!h) return;
+          if (!e || e.get("t") !== "bin" || e.get("hash") !== h) { const m = new Y.Map(); m.set("t", "bin"); m.set("hash", h); m.set("size", st.size); this.files.set(rel, m); if (!e) this.addLog("create", rel); }
         }
       } catch (er) { console.error("share read", rel, er); }
     }
@@ -185,18 +189,50 @@
     noteRemote(rel) {
       if (this.skip(rel)) return; this.lastRemote.set(rel, Date.now());
       { const af = app.workspace.getActiveFile(); this._nt = this._nt || new Map(); const last = this._nt.get(rel) || 0;
-        if (this.ready && Date.now() - last > 20000 && !(af && af.path === this.abs(rel)) && !this.joining) { this._nt.set(rel, Date.now()); const who0 = this.peers.filter((u) => u.file === rel || u.board === rel).map((u) => u.name); notify("edit", (who0[0] || "Кто-то") + ": изменения в «" + rel.replace(/^.*\//, "") + "»"); } }
+        if (this.ready && Date.now() - last > 20000 && !(af && af.path === this.abs(rel)) && !this.quiet()) { this._nt.set(rel, Date.now()); const who0 = this.peers.filter((u) => u.file === rel || u.board === rel).map((u) => u.name); notify("edit", (who0[0] || "Кто-то") + ": изменения в «" + rel.replace(/^.*\//, "") + "»"); } }
       const who = this.peers.filter((u) => u.file === rel || u.board === rel).map((u) => u.name); const e = this.activity[0];
       if (e && e.rel === rel && Date.now() - e.t < 4000) { e.t = Date.now(); return; }
       this.activity.unshift({ t: Date.now(), rel, who: who.length ? who.join(", ") : "Кто-то" }); if (this.activity.length > 30) this.activity.pop();
     }
     toDisk(rel) { if (this.skip(rel)) return; this.q.add(rel); this.total = Math.max(this.total, this.done + this.q.size); this.pump(); }
     async pump() {
-      if (this.pumping) return; this.pumping = true; await new Promise((r) => setTimeout(r, 150));
-      try { while (this.q.size) { const rel = this.q.values().next().value; this.q.delete(rel); await this.toDiskNow(rel); this.done++; this.ping(); if (this.joining || this.q.size > 6) await new Promise((r) => setTimeout(r, 40)); } }
+      if (this.pumping) return; this.pumping = true; await new Promise((r) => setTimeout(r, 150)); let n = 0;
+      try { while (this.q.size) { const rel = this.q.values().next().value; this.q.delete(rel); await this.toDiskNow(rel); this.done++; this.ping(); if (++n % 6 === 0) await new Promise((r) => setTimeout(r, 30)); } }
       finally { this.pumping = false; if (!this.q.size) { this.total = 0; this.done = 0; } this.ping(); }
     }
-    ping() { document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })); }
+    ping() { if (this._pingT) return; this._pingT = setTimeout(() => { this._pingT = 0; document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })); }, 250); }
+    quiet() { return !!this.joining || this.q.size > 3 || this.blobQ.size > 0 || Date.now() < this.quietUntil; }
+    pendingCount() { return this.q.size + this.blobQ.size; }
+    async sha(buf) { const d = await crypto.subtle.digest("SHA-256", buf); return Array.from(new Uint8Array(d)).map((b) => b.toString(16).padStart(2, "0")).join(""); }
+    async localHash(rel) {
+      const ad = app.vault.adapter, p = this.abs(rel); let st; try { st = await ad.stat(p); } catch (e) { return null; } if (!st) return null;
+      const c = this.cache.get(rel); if (c && c.m === st.mtime && c.s === st.size) return c.h;
+      let buf; try { buf = await ad.readBinary(p); } catch (e) { return null; } const h = await this.sha(buf); this.cache.set(rel, { m: st.mtime, s: st.size, h }); this.hashIndex.set(h, rel); return h;
+    }
+    async getBlob(hash) { const rel = this.hashIndex.get(hash); if (!rel) return null; if ((await this.localHash(rel)) !== hash) return null; return new Uint8Array(await app.vault.adapter.readBinary(this.abs(rel))); }
+    // a binary file listed in the document is fetched from a peer that has it, checked against its hash, written, and only then counted as done
+    async wantBlob(rel, hash, size) {
+      if ((await this.localHash(rel)) === hash) return; const j = this.blobQ.get(rel); if (j && j.hash === hash) return; this.blobQ.set(rel, { hash, size, tries: 0, busy: false }); this.blobTotal = (this.blobTotal || 0) + 1; this.blobPump();
+    }
+    blobPump() {
+      if (!this.prov) return;
+      for (const [rel, job] of this.blobQ) { if (this.blobBusy >= 2) break; if (job.busy || (job.retryAt && job.retryAt > Date.now())) continue; job.busy = true; this.blobBusy++; this.blobWork(rel, job).catch(() => {}).finally(() => { job.busy = false; this.blobBusy--; this.blobPump(); }); }
+    }
+    async blobWork(rel, job) {
+      const ids = Array.from(this.prov.peers).filter(([, i]) => i.admitted).map(([id]) => id);
+      if (!ids.length) { job.retryAt = Date.now() + 4000; setTimeout(() => this.blobPump(), 4200); return; }
+      for (const id of ids) {
+        try {
+          const data = await this.prov.fetchBlob(id, job.hash); const u8 = new Uint8Array(data); if (!u8.length) continue; const h = await this.sha(u8.buffer); if (h !== job.hash) continue;
+          const ad = app.vault.adapter, p = this.abs(rel), dir = p.includes("/") ? p.slice(0, p.lastIndexOf("/")) : ""; if (dir && !(await ad.exists(dir))) await ad.mkdir(dir);
+          this.written.set(rel, Date.now()); await ad.writeBinary(p, u8.buffer); this.written.set(rel, Date.now());
+          let st = null; try { st = await ad.stat(p); } catch (e) { /* ignore */ } if (st) this.cache.set(rel, { m: st.mtime, s: st.size, h }); this.hashIndex.set(h, rel);
+          this.blobQ.delete(rel); this.blobDone++; this.blobBytes += u8.length; this.ping(); return;
+        } catch (e) { /* try the next peer */ }
+      }
+      job.tries++; job.retryAt = Date.now() + 3000 * job.tries; if (job.tries >= 6) this.blobQ.delete(rel); else setTimeout(() => this.blobPump(), 3000 * job.tries + 100);
+    }
+    retryBlobs() { for (const [rel, e] of this.files.entries()) { if (e.get("t") === "bin" && e.get("hash") && !this.skip(rel)) this.wantBlob(rel, e.get("hash"), e.get("size") || 0); } }
     async toDiskNow(rel) {
       const ad = app.vault.adapter, p = this.abs(rel), e = this.files.get(rel); this.written.set(rel, Date.now());
       try {
@@ -205,7 +241,7 @@
         const t = e.get("t");
         if (t === "board") { const s = this.boardJson(e); let cur = null; try { cur = await ad.read(p); } catch (er) { /* none */ } if (cur !== s) await ad.write(p, s); }
         else if (t === "text") { const s = e.get("text").toString(); let cur = null; try { cur = await ad.read(p); } catch (er) { /* none */ } if (cur !== s) await ad.write(p, s); }
-        else if (t === "bin") { const u = unb64(e.get("data")); let same = false; try { const c = new Uint8Array(await ad.readBinary(p)); same = c.length === u.length && c.every((x, i) => x === u[i]); } catch (er) { /* none */ } if (!same) await ad.writeBinary(p, u.buffer); }
+        else if (t === "bin") { if (e.get("hash")) { this.wantBlob(rel, e.get("hash"), e.get("size") || 0); } else if (e.get("data")) { const u = unb64(e.get("data")); let same = false; try { const c = new Uint8Array(await ad.readBinary(p)); same = c.length === u.length && c.every((x, i) => x === u[i]); } catch (er) { /* none */ } if (!same) await ad.writeBinary(p, u.buffer); } }
       } catch (er) { console.error("share write", rel, er); }
       this.written.set(rel, Date.now());
     }
@@ -373,9 +409,9 @@
       }, "lucide-activity");
       const mid = el(b, "div"), inv = el(b, "div"); let sigM = null, sigI = null, sigE = null, mode = "perm", pickChoice = draft ? "custom" : "all", chosen = draft ? draft.slice() : [];
       const tick = () => {
-        setPill(); const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), srch = all.some((s) => s.prov && s.prov.status === "connecting"), pend0 = all.reduce((a, s) => a + s.q.size, 0), tot = all.reduce((a, s) => a + s.total, 0);
+        setPill(); const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), srch = all.some((s) => s.prov && s.prov.status === "connecting"), pend0 = all.reduce((a, s) => a + s.pendingCount(), 0), tot = Math.max(pend0, all.reduce((a, s) => a + s.total + (s.blobTotal || 0), 0));
         banner.className = "bsm-banner " + (!all.length ? "is-off" : n ? "is-live" : srch || pend0 ? "is-wait" : "is-idle");
-        const t1 = !all.length ? "Раздача выключена" : pend0 ? "Загрузка файлов: " + (tot - pend0) + " из " + tot : n ? "Раздача включена · онлайн " + (n + 1) : srch ? "Раздача включена · поиск участников…" : "Раздача включена · вы один", t2 = !all.length ? "Никто, кроме вас, не видит файлы этого хранилища" : (role === "view" ? "Вы только смотрите" : role === "edit" ? "Вы редактор" : "Вы владелец проекта");
+        const t1 = !all.length ? "Раздача выключена" : pend0 ? "Загрузка файлов: осталось " + pend0 : n ? "Раздача включена · онлайн " + (n + 1) : srch ? "Раздача включена · поиск участников…" : "Раздача включена · вы один", t2 = !all.length ? "Никто, кроме вас, не видит файлы этого хранилища" : (role === "view" ? "Вы только смотрите" : role === "edit" ? "Вы редактор" : "Вы владелец проекта");
         if (b1.textContent !== t1) b1.textContent = t1; if (b2.textContent !== t2) b2.textContent = t2;
         if (role === "view") return;
         if (role === "edit") { const ke = all.map((s2) => s2.folder).join(";") + "#" + all.length; if (ke !== sigE) { sigE = ke; inv.empty(); if (all.length) { const s2 = section(inv, "Код приглашения", "Любой, у кого этот код, сможет войти в проект."); const c2 = surface(s2); const f2 = el(c2, "div", "bsm-field"); const i2 = el(f2, "input", "bsm-code2"); i2.readOnly = true; i2.value = all[0].code(); i2.onfocus = () => i2.select(); btn(f2, "Копировать", "primary", function () { copyTo(this, all[0].code()); }, "lucide-copy"); } } return; }
@@ -512,16 +548,21 @@
   function loadingCard(sh) {
     const el = document.createElement("div"); el.className = "bsh-load"; const t1 = document.createElement("div"); t1.className = "bsh-load-t"; const t2 = document.createElement("div"); t2.className = "bsh-load-s"; const bar = document.createElement("div"); bar.className = "bsh-load-bar"; const fill = document.createElement("div"); bar.appendChild(fill);
     el.append(t1, t2, bar); document.body.appendChild(el); requestAnimationFrame(() => el.classList.add("is-on"));
-    const t0 = Date.now(); let quiet = 0, last = -1;
+    const t0 = Date.now(); let quiet = 0, last = -1, lastProgress = Date.now();
+    const mb = (b) => (b / 1048576).toFixed(b > 10485760 ? 0 : 1) + " МБ";
     const iv = setInterval(() => {
-      const n = sh.files.size, pend = sh.q.size, online = sh.peers.length > 0;
-      if (n !== last) { last = n; quiet = Date.now(); }
-      t1.textContent = n ? "Загружаю проект…" : online ? "Получаю список файлов…" : "Подключаюсь к участникам…";
-      t2.textContent = n ? "Файлов: " + n + (pend ? " · записано " + (n - pend) : "") : "Это занимает несколько секунд";
-      fill.style.width = n ? Math.round(((n - pend) / n) * 100) + "%" : "8%"; el.classList.toggle("is-wait", !n);
-      const done = n > 0 && !pend && Date.now() - quiet > 1800, timeout = Date.now() - t0 > 90000;
+      const n = sh.files.size, pend = sh.pendingCount(), online = sh.peers.length > 0 || (sh.prov && sh.prov.peers.size > 0), rc = sh.prov && sh.prov.recv, waited = (Date.now() - t0) / 1000;
+      if (n !== last || (rc && Date.now() - rc.t < 3000)) { last = n; quiet = Date.now(); lastProgress = Date.now(); }
+      if (!n) {
+        if (rc && rc.pct > 0 && rc.pct < 1) { t1.textContent = "Получаю список файлов…"; t2.textContent = Math.round(rc.pct * 100) + "%" + (sh.prov.recvBytes ? " из " + mb(sh.prov.recvBytes) : ""); fill.style.width = Math.max(6, Math.round(rc.pct * 100)) + "%"; el.classList.remove("is-wait"); }
+        else { t1.textContent = online ? "Жду ответа от участников…" : "Подключаюсь к участникам…"; t2.textContent = online ? (waited > 25 ? "Владелец ещё не подтвердил вход или проект очень большой. Подождите." : "Это занимает несколько секунд") : (waited > 25 ? "Пока никого не нашёл. Проверьте код и соединение (кнопка «Проверить соединение»)." : "Ищу владельца проекта"); fill.style.width = "8%"; el.classList.add("is-wait"); }
+      } else {
+        const got = sh.blobDone, bytes = sh.blobBytes; t1.textContent = pend ? "Загружаю проект…" : "Почти готово…";
+        t2.textContent = "Файлов в проекте: " + n + (pend ? " · осталось " + pend : "") + (bytes ? " · получено " + mb(bytes) : ""); fill.style.width = Math.max(4, Math.round(((n - Math.min(n, pend)) / n) * 100)) + "%"; el.classList.remove("is-wait");
+      }
+      const done = n > 0 && !pend && Date.now() - quiet > 1800, timeout = Date.now() - lastProgress > 180000;
       if (done || timeout || sh.stopped) { clearInterval(iv); sh.joining = false; if (!n && timeout) { t1.textContent = "Пока никого нет в сети"; t2.textContent = "Файлы появятся, когда кто-то из участников подключится."; setTimeout(() => el.remove(), 6000); } else { el.classList.remove("is-on"); setTimeout(() => el.remove(), 500); } }
-    }, 300);
+    }, 350);
   }
 
   // ---- who is where: markers in the file list and tabs, the other people's carets inside notes, "typing…" badges
@@ -633,7 +674,7 @@
     try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", () => togglePanel()); } catch (e) { /* no ribbon */ }
     if (app.statusBar && app.statusBar.registerStatusBarItem) {
       const chip = app.statusBar.registerStatusBarItem(); chip.classList.add("bsh-chip"); chip.style.display = "none";
-      const upd = () => { const all = Array.from(shares.values()); if (!all.length) { chip.style.display = "none"; return; } const n = all.reduce((a, s) => a + s.peers.length, 0), st = all.some((s) => s.prov && s.prov.status === "connecting"); chip.style.display = ""; chip.classList.toggle("is-searching", st && !n); chip.classList.toggle("is-live", n > 0); chip.textContent = ""; const d = document.createElement("span"); d.className = "bsh-dot"; const pend = all.reduce((x, s2) => x + s2.q.size, 0), tot = all.reduce((x, s2) => x + s2.total, 0); chip.append(d, pend ? "Загрузка файлов: " + (tot - pend) + "/" + tot : n ? "Онлайн: " + (n + 1) : st ? "Поиск участников…" : "Один в сети"); chip.classList.toggle("is-searching", pend > 0 || (st && !n)); for (const sh of all) for (const u of sh.peers) { const pd = document.createElement("span"); pd.className = "bsh-wd"; pd.style.background = u.color; chip.appendChild(pd); }
+      const upd = () => { const all = Array.from(shares.values()); if (!all.length) { chip.style.display = "none"; return; } const n = all.reduce((a, s) => a + s.peers.length, 0), st = all.some((s) => s.prov && s.prov.status === "connecting"); chip.style.display = ""; chip.classList.toggle("is-searching", st && !n); chip.classList.toggle("is-live", n > 0); chip.textContent = ""; const d = document.createElement("span"); d.className = "bsh-dot"; const pend = all.reduce((x, s2) => x + s2.pendingCount(), 0); chip.append(d, pend ? "Загрузка файлов: осталось " + pend : n ? "Онлайн: " + (n + 1) : st ? "Поиск участников…" : "Один в сети"); chip.classList.toggle("is-searching", pend > 0 || (st && !n)); for (const sh of all) for (const u of sh.peers) { const pd = document.createElement("span"); pd.className = "bsh-wd"; pd.style.background = u.color; chip.appendChild(pd); }
       chip.title = all.map((s) => (s.folder || "весь vault") + ": " + (s.peers.length ? s.peers.map((p) => p.name).join(", ") : "никого рядом")).join(String.fromCharCode(10)); };
       chip.style.cursor = "pointer"; chip.onclick = () => panel();
       document.addEventListener("basalt-share-peers", upd); setInterval(upd, 2000); upd();

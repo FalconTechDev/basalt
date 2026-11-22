@@ -91,7 +91,7 @@
         this.treeEl.addEventListener("contextmenu", (e) => { if (e.target === this.treeEl) { e.preventDefault(); const ws = this.ws(); if (ws && ws.rootNode()) this.wsMenu(ws.rootNode(), e); else this.menuFor(app.vault.getRoot(), e); } });
         this.treeEl.addEventListener("dragover", (e) => { if (e.target === this.treeEl && this.dragging) { e.preventDefault(); } });
         this.treeEl.addEventListener("drop", (e) => { if (e.target === this.treeEl) this.dropOn(app.vault.getRoot(), e); });
-        const again = () => { clearTimeout(this.t); this.t = setTimeout(() => this.render(), 120); };
+        const hits = []; const again = () => { const now = Date.now(); hits.push(now); while (hits.length && now - hits[0] > 1500) hits.shift(); clearTimeout(this.t); this.t = setTimeout(() => this.render(), hits.length > 8 ? 1100 : 120); };
         for (const ev of ["create", "delete", "rename", "modify"]) this.registerEvent(app.vault.on(ev, again));
         this.registerEvent(app.workspace.on("file-open", (f) => { if (f && !(window.__bsMiniFeatures && window.__bsMiniFeatures.cfg.explorer.keepFolders)) { this.reveal(f.path, false); } this.render(); }));
         pinsApi().onChange(again);

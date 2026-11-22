@@ -12,7 +12,7 @@ class TrysteroProvider {
     const cfg = { appId: "basalt-share" }; if (opts.password) cfg.password = opts.password; if (opts.relayUrls && opts.relayUrls.length) cfg.relayUrls = opts.relayUrls; if (opts.turnConfig) cfg.turnConfig = opts.turnConfig;
     this.room = joinRoom(cfg, roomId);
     try { const g = this.room.getSelf(); if (g && g.then) g.then((s) => { this.selfUserId = s && s.userId; }).catch(() => {}); } catch (e) { /* ignore */ }
-    const sync = this.room.makeAction("sync"), upd = this.room.makeAction("upd"), aws = this.room.makeAction("aw"), hi = this.room.makeAction("hi");
+    const sync = this.room.makeAction("sync"), upd = this.room.makeAction("upd"), aws = this.room.makeAction("aw"), hi = this.room.makeAction("hi"), blob = this.room.makeAction("blob", { kind: "request" });
     const aw = this.awareness, safe = (p) => { if (p && p.catch) p.catch(() => {}); };
     const bcast = (act, data) => { for (const [id, i] of this.peers) if (i.admitted) safe(act.send(data, { target: id })); };
     this.onUpdate = (u, origin) => { if (origin !== this && !this.isReadOnly()) bcast(upd, u); };
@@ -32,6 +32,11 @@ class TrysteroProvider {
       const i = this.peers.get(peerId); this.peers.delete(peerId); if (i && i.ids.size) awareness.removeAwarenessStates(aw, Array.from(i.ids), this);
       if (!this.peers.size) this.status = "alone"; this.emit();
     });
+    // big files do not live in the document: they are requested by content hash, one at a time, from whoever has them
+    blob.onRequest(async (hash) => { try { const d = opts.getBlob ? await opts.getBlob(hash) : null; return d || new Uint8Array(0); } catch (e) { return new Uint8Array(0); } });
+    this.fetchBlob = (peerId, hash) => blob.request(hash, { target: peerId, timeoutMs: 120000 });
+    this.recv = null;
+    try { sync.onReceiveProgress((pct, ctx) => { this.recv = { pct, t: Date.now(), peerId: ctx && ctx.peerId }; this.emit(); }); sync.onReceive((c) => { this.recvBytes = c && c.byteLength; return true; }); } catch (e) { /* older API */ }
     hi.onMessage((d, { peerId }) => { try { if (opts.onHello) opts.onHello(peerId, d); } catch (e) { /* ignore */ } });
     sync.onMessage((d, { peerId }) => { const i = this.peers.get(peerId); if (i && !this.canWrite(i.userId)) return; Y.applyUpdate(doc, new Uint8Array(d), this); });
     upd.onMessage((d, { peerId }) => { const i = this.peers.get(peerId); if (i && !this.canWrite(i.userId)) return; Y.applyUpdate(doc, new Uint8Array(d), this); });
