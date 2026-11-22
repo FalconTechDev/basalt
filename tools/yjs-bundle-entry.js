@@ -12,7 +12,7 @@ class TrysteroProvider {
     const cfg = { appId: "basalt-share" }; if (opts.password) cfg.password = opts.password; if (opts.relayUrls && opts.relayUrls.length) cfg.relayUrls = opts.relayUrls;
     this.room = joinRoom(cfg, roomId);
     try { const g = this.room.getSelf(); if (g && g.then) g.then((s) => { this.selfUserId = s && s.userId; }).catch(() => {}); } catch (e) { /* ignore */ }
-    const sync = this.room.makeAction("sync"), upd = this.room.makeAction("upd"), aws = this.room.makeAction("aw");
+    const sync = this.room.makeAction("sync"), upd = this.room.makeAction("upd"), aws = this.room.makeAction("aw"), hi = this.room.makeAction("hi");
     const aw = this.awareness, safe = (p) => { if (p && p.catch) p.catch(() => {}); };
     const bcast = (act, data) => { for (const [id, i] of this.peers) if (i.admitted) safe(act.send(data, { target: id })); };
     this.onUpdate = (u, origin) => { if (origin !== this && !this.isReadOnly()) bcast(upd, u); };
@@ -24,6 +24,7 @@ class TrysteroProvider {
     this.recheck = () => { for (const [id, i] of this.peers) { const ok = this.ok(id, i.userId); if (!i.admitted && ok) this.admit(id); else if (i.admitted && !ok) { i.admitted = false; this.emit(); } } };
     this.room.onPeerJoin(({ peerId, userId }) => {
       const i = { ids: new Set(), userId, admitted: false }; this.peers.set(peerId, i); this.status = "online";
+      if (opts.helloData) { try { const d = opts.helloData(); if (d) safe(hi.send(d, { target: peerId })); } catch (e) { /* ignore */ } }
       if (this.ok(peerId, userId)) { i.admitted = true; full(peerId); } else { try { this.onPending(peerId, userId); } catch (e) { /* ignore */ } }
       this.emit();
     });
@@ -31,6 +32,7 @@ class TrysteroProvider {
       const i = this.peers.get(peerId); this.peers.delete(peerId); if (i && i.ids.size) awareness.removeAwarenessStates(aw, Array.from(i.ids), this);
       if (!this.peers.size) this.status = "alone"; this.emit();
     });
+    hi.onMessage((d, { peerId }) => { try { if (opts.onHello) opts.onHello(peerId, d); } catch (e) { /* ignore */ } });
     sync.onMessage((d, { peerId }) => { const i = this.peers.get(peerId); if (i && !this.canWrite(i.userId)) return; Y.applyUpdate(doc, new Uint8Array(d), this); });
     upd.onMessage((d, { peerId }) => { const i = this.peers.get(peerId); if (i && !this.canWrite(i.userId)) return; Y.applyUpdate(doc, new Uint8Array(d), this); });
     aws.onMessage((d, { peerId }) => { const before = new Set(aw.getStates().keys()); awareness.applyAwarenessUpdate(aw, new Uint8Array(d), this); const i = this.peers.get(peerId); if (i) for (const k of aw.getStates().keys()) if (!before.has(k) && k !== aw.clientID) i.ids.add(k); });
