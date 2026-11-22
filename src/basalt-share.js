@@ -15,9 +15,35 @@
   let resolveReady; window.__bsShareReady = new Promise((r) => { resolveReady = r; });
 
   class Share {
-    constructor(folder, room, pass) {
+    constructor(folder, room, pass, opts = {}) {
+      this.readOnly = opts.role === "view"; this.owner = !!opts.owner; this.pendingList = []; this.ready = false;
       this.folder = folder === "/" ? "" : folder; this.room = room; this.pass = pass; const Y = window.__bsY.Y;
-      this.doc = new Y.Doc(); this.files = this.doc.getMap("files"); this.meta = this.doc.getMap("meta"); this.written = new Map(); this.q = new Set(); this.total = 0; this.done = 0; this.pumping = false; this.activity = []; this.lastRemote = new Map(); this.timers = new Map(); this.saveT = 0; this.peers = [];
+      this.doc = new Y.Doc(); this.files = this.doc.getMap("files"); this.meta = this.doc.getMap("meta"); this.log = this.doc.getArray("log"); this.written = new Map(); this.q = new Set(); this.total = 0; this.done = 0; this.pumping = false; this.activity = []; this.lastRemote = new Map(); this.timers = new Map(); this.saveT = 0; this.peers = [];
+    }
+    okPeer(uid) {
+      if (!this.meta.get("approval")) return true; if (uid && uid === this.meta.get("owner")) return true;
+      const al = this.meta.get("allowed"); return !!(al && al.get && uid && al.get(uid));
+    }
+    onPending(pid, uid) {
+      if (this.pendingList.some((r) => r.pid === pid)) return; this.pendingList.push({ pid, uid, t: Date.now() }); this.ping();
+      if (!this.owner) return;
+      const frag = document.createDocumentFragment(), t = document.createElement("div"); t.textContent = "Кто-то хочет войти в «" + (this.folder ? this.folder.split("/").pop() : app.vault.getName()) + "»"; frag.appendChild(t);
+      const row = document.createElement("div"); row.style.cssText = "display:flex;gap:6px;margin-top:6px"; const a = document.createElement("button"), d = document.createElement("button"); a.textContent = "Принять"; d.textContent = "Отклонить"; a.className = "mod-cta"; row.append(a, d); frag.appendChild(row);
+      const n = new window.__bsApi.Notice(frag, 0); (this.notices = this.notices || new Map()).set(pid, n); a.onclick = () => { this.approve(pid, uid); try { n.hide(); } catch (e) { /* ignore */ } }; d.onclick = () => { this.pendingList = this.pendingList.filter((r) => r.pid !== pid); this.ping(); try { n.hide(); } catch (e) { /* ignore */ } };
+    }
+    approve(pid, uid) {
+      const Y = window.__bsY.Y; this.doc.transact(() => { let al = this.meta.get("allowed"); if (!al) { al = new Y.Map(); this.meta.set("allowed", al); } al.set(uid, true); });
+      this.pendingList = this.pendingList.filter((r) => r.pid !== pid); if (this.prov) this.prov.admit(pid); try { const n = this.notices && this.notices.get(pid); if (n) n.hide(); } catch (e) { /* ignore */ } this.ping();
+    }
+    setApproval(on) { this.meta.set("approval", !!on); }
+    addLog(kind, rel, before) {
+      if (!this.ready) return; const who = me().name, now = Date.now(), n = this.log.length, last = n ? this.log.get(n - 1) : null;
+      if (last && last.rel === rel && last.who === who && last.kind === kind && now - last.t < 60000) { const keep = last.before; this.doc.transact(() => { this.log.delete(n - 1, 1); this.log.push([Object.assign({}, last, { t: now, before: keep })]); }); return; }
+      const e = { t: now, who, rel, kind }; if (before != null && before.length < 30000) e.before = before; this.doc.transact(() => { this.log.push([e]); if (this.log.length > 300) this.log.delete(0, this.log.length - 300); });
+    }
+    rollback(e) {
+      const en = this.files.get(e.rel); if (!en || en.get("t") !== "text" || e.before == null) return false; const t = en.get("text"), cur = t.toString(); if (cur === e.before) return true;
+      this.diff(t, cur, e.before); this.addLog("rollback", e.rel, cur); return true;
     }
     abs(rel) { return join(this.folder, rel); }
     rel(path) { return this.folder ? (path.startsWith(this.folder + "/") ? path.slice(this.folder.length + 1) : null) : path; }
@@ -26,6 +52,7 @@
       const Y = window.__bsY.Y, ad = app.vault.adapter; let st = null;
       try { st = JSON.parse(await ad.read(this.abs(STATE))); } catch (e) { /* first time */ }
       if (st && st.state) Y.applyUpdate(this.doc, unb64(st.state));
+      if (st) { if (st.role === "view") this.readOnly = true; if (st.owner) this.owner = true; }
       this.joining = !!(st && st.room && !st.state);
       await this.scan();
       if (this.joining && this.files.size === 0) loadingCard(this); else this.joining = false;
@@ -37,12 +64,14 @@
         this.queueSave();
       });
       this.doc.on("update", () => this.queueSave());
-      const L = window.__bsY; this.prov = new L.TrysteroProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, relayUrls: signaling() }); this.prov.onStatus(() => document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })));
+      const L = window.__bsY; this.prov = new L.TrysteroProvider("basalt-share-" + this.room, this.doc, { password: this.pass || undefined, relayUrls: signaling(), readOnly: this.readOnly, ok: (pid, uid) => this.okPeer(uid), onPending: (pid, uid) => this.onPending(pid, uid) }); this.prov.onStatus(() => document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })));
       this.aw = this.prov.awareness; this.publish();
       this.aw.on("change", () => { this.peers = Array.from(this.aw.getStates().entries()).filter(([id]) => id !== this.aw.clientID).map(([, s]) => s.user).filter(Boolean); document.dispatchEvent(new CustomEvent("basalt-share-peers", { detail: this })); });
+      this.meta.observeDeep(() => { if (this.prov) this.prov.recheck(); });
+      if (this.owner) { const t0 = setInterval(() => { if (this.stopped) return clearInterval(t0); if (this.prov && this.prov.selfUserId) { clearInterval(t0); if (this.meta.get("owner") !== this.prov.selfUserId) this.meta.set("owner", this.prov.selfUserId); } }, 400); }
       this.onVault = (type) => (f, old) => this.vaultEvent(type, f, old);
       this.evs = ["create", "modify", "delete", "rename"].map((t) => app.vault.on(t, this.onVault(t)));
-      this.queueSave();
+      this.queueSave(); this.ready = true;
     }
     publish(extra) { if (!this.aw) return; if (extra) this.extra = Object.assign(this.extra || {}, extra); const m = me(); this.aw.setLocalStateField("user", Object.assign({ name: m.name, color: m.color }, this.extra || {})); }
     async list(dir) {
@@ -58,7 +87,7 @@
     }
     isBoard(rel) { return /\.board$/i.test(rel); }
     async fromDisk(rel) {
-      const Y = window.__bsY.Y, ad = app.vault.adapter, p = this.abs(rel); if (this.skip(rel)) return;
+      const Y = window.__bsY.Y, ad = app.vault.adapter, p = this.abs(rel); if (this.skip(rel) || this.readOnly) return;
       let e = this.files.get(rel);
       try {
         if (this.isBoard(rel)) {
@@ -67,8 +96,8 @@
           this.doc.transact(() => { if (this.files.get(rel)) return; for (const [id, n] of Object.entries(j.nodes || {})) { const c = new Y.Map(), t = new Y.Text(); t.insert(0, n.text || ""); c.set("x", n.x || 0); c.set("y", n.y || 0); c.set("w", n.w || 260); c.set("h", n.h || 110); c.set("color", n.color || ""); c.set("text", t); nodes.set(id, c); } for (const [id, ed] of Object.entries(j.edges || {})) { const c = new Y.Map(); c.set("a", ed.a); c.set("b", ed.b); c.set("label", ed.label || ""); edges.set(id, c); } m.set("t", "board"); m.set("nodes", nodes); m.set("edges", edges); this.files.set(rel, m); });
         } else if (TEXT.test(rel)) {
           const txt = await ad.read(p);
-          if (!e || e.get("t") !== "text") { const m = new Y.Map(), t = new Y.Text(); t.insert(0, txt); m.set("t", "text"); m.set("text", t); this.files.set(rel, m); }
-          else { const t = e.get("text"), old = t.toString(); if (old !== txt) this.diff(t, old, txt); }
+          if (!e || e.get("t") !== "text") { const m = new Y.Map(), t = new Y.Text(); t.insert(0, txt); m.set("t", "text"); m.set("text", t); this.files.set(rel, m); if (!e) this.addLog("create", rel); }
+          else { const t = e.get("text"), old = t.toString(); if (old !== txt) { this.addLog("edit", rel, old); this.diff(t, old, txt); } }
         } else {
           const buf = await ad.readBinary(p); if (buf.byteLength > MAXBIN) return; const d = b64(new Uint8Array(buf));
           if (!e || e.get("data") !== d) { const m = new Y.Map(); m.set("t", "bin"); m.set("data", d); this.files.set(rel, m); }
@@ -103,24 +132,25 @@
       this.written.set(rel, Date.now());
     }
     vaultEvent(type, f, old) {
-      const rel = this.rel(f.path); const orel = old ? this.rel(old) : null; if (f.children) return;
+      const rel = this.rel(f.path); const orel = old ? this.rel(old) : null; if (f.children || this.readOnly) return;
       if (type === "rename") { if (orel && !this.skip(orel) && this.files.has(orel)) { this.doc.transact(() => this.files.delete(orel)); } if (rel && !this.skip(rel)) this.fromDisk(rel); return; }
       if (rel == null || this.skip(rel)) return;
       if (Date.now() - (this.written.get(rel) || 0) < 1500) return;
-      if (type === "delete") { if (this.files.has(rel)) this.doc.transact(() => this.files.delete(rel)); return; }
+      if (this.readOnly) return;
+      if (type === "delete") { if (this.files.has(rel)) { this.addLog("delete", rel); this.doc.transact(() => this.files.delete(rel)); } return; }
       if (this.isBoard(rel) && this.files.has(rel)) return;
       this.fromDisk(rel);
     }
     queueSave() { clearTimeout(this.saveT); this.saveT = setTimeout(() => this.save(), 800); }
-    async save() { const Y = window.__bsY.Y; try { await app.vault.adapter.write(this.abs(STATE), JSON.stringify({ room: this.room, pass: this.pass, state: b64(Y.encodeStateAsUpdate(this.doc)) })); } catch (e) { /* ignore */ } }
+    async save() { const Y = window.__bsY.Y; try { await app.vault.adapter.write(this.abs(STATE), JSON.stringify({ room: this.room, pass: this.pass, role: this.readOnly ? "view" : undefined, owner: this.owner || undefined, state: b64(Y.encodeStateAsUpdate(this.doc)) })); } catch (e) { /* ignore */ } }
     stop() { this.stopped = true; clearTimeout(this.saveT); for (const ev of this.evs || []) app.vault.offref(ev); if (this.prov) this.prov.destroy(); }
-    code() { return "basalt-share:" + this.room + ":" + this.pass + ":" + encodeURIComponent(this.folder ? this.folder.split("/").pop() : (app.vault.getName ? app.vault.getName() : "Общая папка")); }
+    code(role) { return "basalt-share:" + this.room + ":" + this.pass + ":" + encodeURIComponent(this.folder ? this.folder.split("/").pop() : (app.vault.getName ? app.vault.getName() : "Общая папка")) + (role === "view" ? ":view" : ""); }
   }
 
   const store = () => { try { return JSON.parse(localStorage.getItem("basalt-shares:" + app.vault.getName()) || "[]"); } catch (e) { return []; } };
   const setStore = (a) => { try { localStorage.setItem("basalt-shares:" + app.vault.getName(), JSON.stringify(a)); } catch (e) { /* private */ } };
-  async function begin(folder, room, pass) { const key = folder === "/" ? "" : folder; if (shares.has(key)) return shares.get(key); const s = new Share(folder, room, pass); shares.set(key, s); await s.start(); const l = store().filter((x) => x.folder !== key); l.push({ folder: key, room, pass }); setStore(l); return s; }
-  async function host(folder) { const key = folder === "/" ? "" : folder; return shares.get(key) || begin(folder, uid() + uid(), uid() + uid()); }
+  async function begin(folder, room, pass, opts) { const key = folder === "/" ? "" : folder; if (shares.has(key)) return shares.get(key); const s = new Share(folder, room, pass, opts || {}); shares.set(key, s); await s.start(); const l = store().filter((x) => x.folder !== key); l.push({ folder: key, room, pass, owner: !!(opts && opts.owner) }); setStore(l); return s; }
+  async function host(folder) { const key = folder === "/" ? "" : folder; return shares.get(key) || begin(folder, uid() + uid(), uid() + uid(), { owner: true }); }
   async function stop(folder) { const key = folder === "/" ? "" : folder; const s = shares.get(key); if (!s) return; s.stop(); shares.delete(key); setStore(store().filter((x) => x.folder !== key)); }
   function forPath(path) { let best = null; for (const [k, s] of shares) { if (k === "" || path.startsWith(k + "/")) if (!best || k.length > best.folder.length) best = s; } return best; }
 
@@ -143,93 +173,161 @@
     setTimeout(() => { try { window.onbeforeunload = null; app.workspace.saveLayout && app.workspace.saveLayout(); } catch (e) { /* ignore */ } try { window.close(); } catch (e) { /* ignore */ } }, 1400); return true;
   }
   async function joinCode(code) {
-    const m = /^basalt-share:([^:]+):([^:]+):?(.*)$/.exec(String(code || "").trim()); if (!m) { new window.__bsApi.Notice("Неверный код приглашения"); return false; }
+    const m = /^basalt-share:([^:]+):([^:]+):?([^:]*):?(.*)$/.exec(String(code || "").trim()); if (!m) { new window.__bsApi.Notice("Неверный код приглашения"); return false; }
     const fs = nodeReq("fs"), pa = nodeReq("path"), r = ipc(); if (!fs || !pa || !r) { new window.__bsApi.Notice("Не удалось создать хранилище"); return false; }
     const name = (decodeURIComponent(m[3] || "") || "Общий проект").replace(/[\\/:*?"<>|]/g, "_"); let dir = r.sendSync("get-default-vault-path"); dir = pa.join(pa.dirname(dir), "Basalt shared"); fs.mkdirSync(dir, { recursive: true });
     let target = pa.join(dir, name), k = 1; while (fs.existsSync(target)) target = pa.join(dir, name + " " + ++k);
-    fs.mkdirSync(target, { recursive: true }); fs.writeFileSync(pa.join(target, STATE), JSON.stringify({ room: m[1], pass: m[2], state: "" }));
+    fs.mkdirSync(target, { recursive: true }); fs.writeFileSync(pa.join(target, STATE), JSON.stringify({ room: m[1], pass: m[2], role: m[4] === "view" ? "view" : undefined, state: "" }));
     new window.__bsApi.Notice("Открываю проект «" + baseName(target) + "»…"); return switchTo(target);
   }
-  // ---- the "Совместная работа" window: two big choices (share / join); each opens its own simple screen inside the same window
+  // ---- follow mode: the window of the followed person is mirrored (the same note / board opens on this screen)
+  let following = null;
+  const peerKey = (u) => u.name + "|" + u.color;
+  function openWhere(sh, u) {
+    const rel = u.board || u.file; if (!rel) return false; const f = app.vault.getAbstractFileByPath(sh.abs(rel)); if (!f) return false;
+    const cur = app.workspace.getActiveFile(); if (cur && cur.path === f.path) return true;
+    const leaf = app.workspace.getLeaf(false); leaf.openFile(f); return true;
+  }
+  function findPeer(key) { for (const sh of shares.values()) for (const u of sh.peers) if (peerKey(u) === key) return { sh, u }; return null; }
+  setInterval(() => { if (!following) return; const hit = findPeer(following); if (hit) openWhere(hit.sh, hit.u); }, 900);
+
+  // ---- the "Совместная работа" window
   let panelEl = null;
   function panel() {
     if (panelEl) { panelEl.close(); return; }
     const api = window.__bsApi, M = new api.Modal(app); panelEl = M; M.modalEl.classList.add("bsm"); M.titleEl.setText("Совместная работа"); const root = M.contentEl; root.classList.add("bsm-root");
     const copy = (t) => { try { navigator.clipboard.writeText(t); new api.Notice("Скопировано"); } catch (e) { /* none */ } };
-    let tickFn = null, screen = null;
-    const show = (name, build) => { screen = name; tickFn = null; root.empty(); const v = root.createDiv({ cls: "bsm-view" }); build(v); };
+    let tickFn = null;
+    const el = (parent, tag, cls, text) => { const x = parent.createEl(tag, { cls }); if (text != null) x.textContent = text; return x; };
+    const show = (build) => { tickFn = null; root.empty(); const prof = root.createDiv({ cls: "bsm-prof" }); profile(prof); const v = root.createDiv({ cls: "bsm-view" }); build(v); };
     const back = (v, title) => { const h = v.createDiv({ cls: "bsm-head" }); const b = h.createDiv({ cls: "bsm-back", attr: { title: "Назад" } }); api.setIcon(b, "lucide-arrow-left"); b.onclick = home; h.createDiv({ cls: "bsm-ttl", text: title }); };
-    const statusText = () => { const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), searching = all.some((s) => s.prov && s.prov.status === "connecting"); return { all, n, searching }; };
+    const sec = (v, t) => v.createDiv({ cls: "bsm-sub", text: t });
+    const projName = (sh) => (sh.folder ? sh.folder.split("/").pop() : app.vault.getName());
 
-    // ----- home
+    // your name and colour are always at the top
+    function profile(host) {
+      const m = me(), sw = host.createDiv({ cls: "bsm-me" }); const dot = el(sw, "span", "bsm-mdot"); dot.style.background = m.color; const inp = host.createEl("input", { cls: "bsm-name", attr: { placeholder: "Как вас называть?", spellcheck: "false" } }); inp.value = m.name;
+      const pal = host.createDiv({ cls: "bsm-pal" });
+      const save = (patch) => { const m2 = Object.assign(me(), patch); try { localStorage.setItem("board-me", JSON.stringify(m2)); localStorage.setItem("board-me-set", "1"); } catch (e) { /* private */ } for (const sh of shares.values()) sh.publish(); dot.style.background = m2.color; };
+      inp.onchange = () => save({ name: inp.value.trim() || me().name });
+      for (const c of PEER) { const s = pal.createDiv({ cls: "bsm-sw" + (c === m.color ? " is-on" : "") }); s.style.background = c; s.onclick = () => { save({ color: c }); pal.querySelectorAll(".bsm-sw").forEach((x) => x.classList.toggle("is-on", x === s)); }; }
+      let hint = null; try { hint = localStorage.getItem("board-me-set"); } catch (e) { /* private */ } if (!hint) setTimeout(() => { inp.focus(); inp.select(); }, 80);
+    }
+
+    // ----- home: two choices when nothing is shared, a live dashboard when something is
     function home() {
-      show("home", (v) => {
-        const tiles = v.createDiv({ cls: "bsm-tiles" });
-        const tile = (icon, t, s, fn) => { const x = tiles.createDiv({ cls: "bsm-tile" }); const i = x.createDiv({ cls: "bsm-ti" }); api.setIcon(i, icon); x.createDiv({ cls: "bsm-tt", text: t }); x.createDiv({ cls: "bsm-ts", text: s }); x.onclick = fn; };
-        tile("lucide-share-2", "Поделиться", "хранилищем или папкой", shareScreen);
-        tile("lucide-log-in", "Присоединиться", "по коду приглашения", joinScreen);
-        const act = v.createDiv({ cls: "bsm-act" }); const now = v.createDiv({ cls: "bsm-now" }); const line = now.createDiv({ cls: "bsm-line" }); const dot = line.createSpan({ cls: "bsm-dot" }); const lt = line.createSpan(); const who = now.createDiv({ cls: "bsm-who" }); const projs = now.createDiv({ cls: "bsm-projs" });
-        let sigP = "";
+      show((v) => {
+        if (!shares.size) {
+          const tiles = v.createDiv({ cls: "bsm-tiles" });
+          const tile = (icon, t, s, fn) => { const x = tiles.createDiv({ cls: "bsm-tile" }); const i = x.createDiv({ cls: "bsm-ti" }); api.setIcon(i, icon); x.createDiv({ cls: "bsm-tt", text: t }); x.createDiv({ cls: "bsm-ts", text: s }); x.onclick = fn; };
+          tile("lucide-share-2", "Поделиться", "хранилищем или папкой", () => shareScreen());
+          tile("lucide-log-in", "Присоединиться", "по коду приглашения", joinScreen);
+          tickFn = () => { if (shares.size) home(); };
+          return;
+        }
+        const card = v.createDiv({ cls: "bsm-card" }); const dot = el(card, "span", "bsm-dot"); const ct = card.createDiv({ cls: "bsm-ct" }); const c1 = el(ct, "div", "bsm-c1"), c2 = el(ct, "div", "bsm-c2");
+        const inv = el(card, "button", "mod-cta bsm-inv", "Пригласить"); inv.onclick = () => shareScreen(); const more = card.createDiv({ cls: "bsm-more", attr: { title: "Ещё" } }); api.setIcon(more, "lucide-more-horizontal");
+        more.onclick = (e) => { const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)); it("Поделиться ещё…", "lucide-share-2", () => shareScreen(true)); it("Присоединиться по коду…", "lucide-log-in", joinScreen); mn.addSeparator(); it("Журнал изменений", "lucide-history", logScreen); it("Настройки", "lucide-settings", settingsScreen); mn.showAtMouseEvent(e); };
+        const pend = v.createDiv({ cls: "bsm-pend" });
+        sec(v, "Участники"); const people = v.createDiv({ cls: "bsm-people" });
+        const foot = v.createDiv({ cls: "bsm-foot" }); const fb = (t, fn) => { const b = el(foot, "button", "bsm-link", t); b.onclick = fn; }; fb("Журнал изменений", logScreen); fb("Настройки", settingsScreen);
+        let sigW = "", sigP = "";
         tickFn = () => {
-          const { all, n, searching } = statusText();
-          now.style.display = all.length ? "" : "none"; dot.className = "bsm-dot " + (n ? "is-live" : searching ? "is-wait" : "");
-          const t = n ? "Онлайн: " + (n + 1) : searching ? "Поиск участников…" : "Вы один в сети"; if (lt.textContent !== t) lt.textContent = t;
-          const names = [me().name + " (вы)"].concat(Array.from(new Set(all.flatMap((s) => s.peers.map((p) => p.name + (p.board || p.file ? " — " + where(p) : "")))))).join("\n"); if (who.textContent !== names) who.textContent = names; who.style.display = n ? "" : "none";
-          const sp = all.map((s) => (s.folder || "/") + "|" + s.peers.length + "|" + (s.prov ? s.prov.status : "")).join(";");
-          if (sp !== sigP) { sigP = sp; projs.empty(); for (const s of all) { const r = projs.createDiv({ cls: "bsm-pr" }); r.createSpan({ text: s.folder ? s.folder.split("/").pop() : app.vault.getName() }); r.createSpan({ cls: "bsm-prs", text: s.peers.length ? "онлайн: " + (s.peers.length + 1) : s.prov && s.prov.status === "connecting" ? "поиск…" : "один" }); } }
-        };
-        let sigA = "";
-        const tick0 = tickFn; tickFn = () => {
-          tick0();
-          const ev = Array.from(shares.values()).flatMap((s2) => s2.activity.map((e) => Object.assign({ proj: s2 }, e))).sort((a, b) => b.t - a.t).slice(0, 6), sa = ev.map((e) => e.t + e.rel).join("|");
-          if (sa !== sigA) { sigA = sa; act.empty(); if (ev.length) { act.createDiv({ cls: "bsm-sub", text: "Последние изменения" }); for (const e of ev) { const r = act.createDiv({ cls: "bsm-ev" }); r.createSpan({ cls: "bsm-evt", text: new Date(e.t).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) }); r.createSpan({ text: e.who + " — «" + e.rel.replace(/^.*\//, "") + "»" }); } } }
+          const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), searching = all.some((s) => s.prov && s.prov.status === "connecting"), pend0 = all.reduce((a, s) => a + s.q.size, 0);
+          dot.className = "bsm-dot " + (n ? "is-live" : searching || pend0 ? "is-wait" : "");
+          const t1 = pend0 ? "Загрузка файлов: " + (all.reduce((a, s) => a + s.total, 0) - pend0) + "/" + all.reduce((a, s) => a + s.total, 0) : n ? "Онлайн: " + (n + 1) : searching ? "Поиск участников…" : "Вы один в сети", t2 = all.map(projName).join(", ") + (all.some((s) => s.readOnly) ? " · только просмотр" : "");
+          if (c1.textContent !== t1) c1.textContent = t1; if (c2.textContent !== t2) c2.textContent = t2;
+          // pending join requests (owner only)
+          const reqs = all.flatMap((s) => (s.owner ? s.pendingList.map((r) => ({ s, r })) : []));
+          const sp = reqs.map((x) => x.r.pid).join("|"); if (sp !== sigP) { sigP = sp; pend.empty(); for (const { s, r } of reqs) { const row = pend.createDiv({ cls: "bsm-req" }); row.createSpan({ text: "Кто-то хочет войти в «" + projName(s) + "»" }); const a = el(row, "button", "mod-cta", "Принять"), d = el(row, "button", "", "Отклонить"); a.onclick = () => { s.approve(r.pid, r.uid); sigP = ""; tickFn(); }; d.onclick = () => { s.pendingList = s.pendingList.filter((x) => x.pid !== r.pid); sigP = ""; tickFn(); }; } }
+          // people
+          const af = app.workspace.getActiveFile(), list = [{ u: me(), self: true, what: af ? "«" + af.basename + "»" : "в сети" }]; const seen = new Set();
+          for (const sh of all) for (const u of sh.peers) { const k = peerKey(u); if (!seen.has(k)) { seen.add(k); list.push({ u, sh, self: false, what: where(u) }); } }
+          const sw = list.map((p) => peerKey(p.u) + "|" + p.what + "|" + (following === peerKey(p.u))).join(";");
+          if (sw !== sigW) {
+            sigW = sw; people.empty();
+            for (const p of list) {
+              const row = people.createDiv({ cls: "bsm-person" }); const d = el(row, "span", "bsm-pd"); d.style.background = p.u.color; const tx = row.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", p.u.name + (p.self ? " (вы)" : "")); el(tx, "div", "bsm-s", p.what);
+              if (!p.self) { const act = row.createDiv({ cls: "bsm-pa" }); const go = el(act, "button", "bsm-b", "Перейти"); go.onclick = () => { if (!openWhere(p.sh, p.u)) new api.Notice("Он пока ничего не открыл"); }; const fl = el(act, "button", "bsm-b" + (following === peerKey(p.u) ? " is-on" : ""), following === peerKey(p.u) ? "Слежу" : "Следить"); fl.onclick = () => { following = following === peerKey(p.u) ? null : peerKey(p.u); sigW = ""; tickFn(); if (following) new api.Notice("Вы следите за " + p.u.name + ". Нажмите ещё раз, чтобы остановить."); }; }
+            }
+            if (list.length === 1) el(people, "div", "bsm-empty", "Пока никого рядом. Нажмите «Пригласить» и отправьте код.");
+          }
         };
         tickFn();
-        const set = v.createEl("details", { cls: "bsm-set" }); set.createEl("summary", { text: "Имя и серверы" });
-        set.createEl("label", { text: "Ваше имя" }); const nm = set.createEl("input"); nm.value = me().name; nm.onchange = () => { const m2 = me(); m2.name = nm.value.trim() || m2.name; try { localStorage.setItem("board-me", JSON.stringify(m2)); } catch (e) { /* private */ } for (const sh of shares.values()) sh.publish(); };
-        set.createEl("label", { text: "Свои relay-серверы Nostr, через запятую (необязательно)" }); const sg = set.createEl("input"); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
       });
     }
-    // ----- share
-    function shareScreen() {
-      show("share", (v) => {
-        back(v, "Поделиться");
+
+    // ----- invite / share
+    function shareScreen(startNew) {
+      show((v) => {
+        back(v, shares.size && !startNew ? "Пригласить" : "Поделиться");
+        let role = "edit", pick = "/", sig = "";
+        const seg = v.createDiv({ cls: "bsm-seg" }); const segs = {};
+        for (const [k, t] of [["edit", "Редактировать"], ["view", "Только смотреть"]]) { const b = el(seg, "div", "bsm-segb", t); segs[k] = b; b.onclick = () => { role = k; sig = ""; draw(); }; }
         const list = v.createDiv({ cls: "bsm-codes" }), opts = v.createDiv({ cls: "bsm-opts" });
-        let sig = "", pick = "/";
         const draw = () => {
-          const f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null, s2 = Array.from(shares.keys()).join("|") + "#" + (dir || "") + "#" + pick;
-          if (s2 === sig) return; sig = s2; list.empty(); opts.empty();
+          for (const k in segs) segs[k].classList.toggle("is-on", k === role);
+          const f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null, s2 = Array.from(shares.keys()).join("|") + "#" + (dir || "") + "#" + pick + "#" + role;
+          if (s2 === sig) return; sig = s2; list.empty(); opts.empty(); seg.style.display = shares.size ? "" : "none";
           for (const [k, sh] of shares) {
-            const c = list.createDiv({ cls: "bsm-code" }); c.createDiv({ cls: "bsm-cn", text: (k ? k.split("/").pop() + " (папка)" : app.vault.getName() + " (всё хранилище)") });
-            const row = c.createDiv({ cls: "bsm-crow" }); const i = row.createEl("input", { attr: { readonly: "true" } }); i.value = sh.code(); i.onfocus = () => i.select();
-            const b = row.createEl("button", { text: "Копировать", cls: "mod-cta" }); b.onclick = () => copy(sh.code());
-            const st = row.createEl("button", { text: "Остановить" }); st.onclick = async () => { await stop(k || "/"); sig = ""; draw(); };
+            const c = list.createDiv({ cls: "bsm-code" }); el(c, "div", "bsm-cn", projName(sh) + (k ? " (папка)" : " (всё хранилище)") + (sh.readOnly ? " · вы только смотрите" : ""));
+            const row = c.createDiv({ cls: "bsm-crow" }); const i = row.createEl("input", { attr: { readonly: "true" } }); i.value = sh.code(role); i.onfocus = () => i.select();
+            const b = el(row, "button", "mod-cta", "Копировать"); b.onclick = () => copy(sh.code(role)); const st = el(row, "button", "", "Остановить"); st.onclick = async () => { await stop(k || "/"); sig = ""; if (!shares.size) home(); else draw(); };
+            if (role === "view") el(c, "div", "bsm-hint", "Эти участники увидят всё, но их правки не будут отправляться. Это правило клиента: оно защищает от случайных правок, но не от злого умысла.");
           }
-          const free = [];
-          if (!shares.has("")) free.push(["/", "lucide-box", "Всё хранилище «" + app.vault.getName() + "»"]);
-          if (dir && !shares.has(dir)) free.push([dir, "lucide-folder", "Папка «" + dir.split("/").pop() + "»"]);
-          if (!free.length) return;
-          if (!free.some((x) => x[0] === pick)) pick = free[0][0];
-          if (!list.children.length) opts.createDiv({ cls: "bsm-hint", text: "Выберите, чем поделиться, и нажмите «Начать раздачу». Появится код — отправьте его тем, кто будет работать с вами." });
-          for (const [key, icon, label] of free) { const b = opts.createDiv({ cls: "bsm-opt" + (pick === key ? " is-pick" : "") }); const ic = b.createSpan({ cls: "bsm-oi" }); api.setIcon(ic, icon); b.createSpan({ text: label }); b.onclick = () => { pick = key; sig = ""; draw(); }; }
-          const go = opts.createEl("button", { text: "Начать раздачу", cls: "mod-cta bsm-go" }); go.onclick = async () => { go.disabled = true; go.textContent = "Запускаю…"; await host(pick); sig = ""; draw(); };
+          const free = []; if (!shares.has("")) free.push(["/", "lucide-box", "Всё хранилище «" + app.vault.getName() + "»"]); if (dir && !shares.has(dir)) free.push([dir, "lucide-folder", "Папка «" + dir.split("/").pop() + "»"]);
+          if (!free.length) return; if (!free.some((x) => x[0] === pick)) pick = free[0][0];
+          if (!list.children.length) el(opts, "div", "bsm-hint", "Выберите, чем поделиться, и нажмите «Начать раздачу». Появится код — отправьте его тем, кто будет работать с вами.");
+          for (const [key, icon, label] of free) { const b = opts.createDiv({ cls: "bsm-opt" + (pick === key ? " is-pick" : "") }); const ic = el(b, "span", "bsm-oi"); api.setIcon(ic, icon); el(b, "span", "", label); b.onclick = () => { pick = key; sig = ""; draw(); }; }
+          const go = el(opts, "button", "mod-cta bsm-go", "Начать раздачу"); go.onclick = async () => { go.disabled = true; go.textContent = "Запускаю…"; await host(pick); sig = ""; draw(); };
         };
         draw();
       });
     }
+
     // ----- join
     function joinScreen() {
-      show("join", (v) => {
+      show((v) => {
         back(v, "Присоединиться");
-        v.createDiv({ cls: "bsm-hint", text: "Вставьте код приглашения. Проект откроется отдельным хранилищем в новом окне." });
-        const row = v.createDiv({ cls: "bsm-crow" }); const inp = row.createEl("input", { attr: { placeholder: "basalt-share:…" } }); const go = row.createEl("button", { text: "Войти", cls: "mod-cta" });
+        el(v, "div", "bsm-hint", "Вставьте код приглашения. Проект откроется в этом окне.");
+        const row = v.createDiv({ cls: "bsm-crow" }); const inp = row.createEl("input", { attr: { placeholder: "basalt-share:…" } }); const go = el(row, "button", "mod-cta", "Войти");
         go.onclick = async () => { if (await joinCode(inp.value)) M.close(); }; inp.onkeydown = (e) => { if (e.key === "Enter") go.click(); }; setTimeout(() => inp.focus(), 60);
-        const others = otherVaults();
-        if (others.length) { v.createDiv({ cls: "bsm-sub", text: "Уже подключённые проекты" }); for (const o of others) { const r = v.createDiv({ cls: "bsm-opt" }); const ic = r.createSpan({ cls: "bsm-oi" }); api.setIcon(ic, "lucide-box"); r.createSpan({ text: o.name }); r.onclick = () => { const rr = ipc(); switchTo(o.path); }; } }
+        const others = otherVaults(); if (others.length) { sec(v, "Уже подключённые проекты"); for (const o of others) { const r = v.createDiv({ cls: "bsm-opt" }); const ic = el(r, "span", "bsm-oi"); api.setIcon(ic, "lucide-box"); el(r, "span", "", o.name); r.onclick = () => { switchTo(o.path); }; } }
       });
     }
-    const iv = setInterval(() => { if (tickFn) tickFn(); }, 1500); document.addEventListener("basalt-share-peers", () => { if (tickFn) tickFn(); });
-    M.onClose = () => { clearInterval(iv); panelEl = null; };
+
+    // ----- change log with rollback
+    function logScreen() {
+      show((v) => {
+        back(v, "Журнал изменений");
+        const list = v.createDiv({ cls: "bsm-loglist" }); let sig = "";
+        const draw = () => {
+          const items = Array.from(shares.values()).flatMap((sh) => sh.log.toArray().map((e) => ({ sh, e }))).sort((a, b) => b.e.t - a.e.t).slice(0, 80), s2 = items.map((x) => x.e.t + x.e.rel).join("|"); if (s2 === sig) return; sig = s2; list.empty();
+          if (!items.length) el(list, "div", "bsm-empty", "Пока нет записей. Здесь появится, кто и когда менял файлы.");
+          for (const { sh, e } of items) {
+            const r = list.createDiv({ cls: "bsm-ev" }); el(r, "span", "bsm-evt", new Date(e.t).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })); const tx = r.createDiv({ cls: "bsm-tx" });
+            el(tx, "div", "bsm-n", e.who + " — " + ({ edit: "изменил", create: "создал", delete: "удалил", rollback: "откатил" }[e.kind] || e.kind) + " «" + e.rel.replace(/^.*\//, "") + "»"); el(tx, "div", "bsm-s", e.rel);
+            if (e.before != null && (e.kind === "edit" || e.kind === "rollback")) { const b = el(r, "button", "bsm-b", "Откатить"); b.onclick = () => { if (sh.rollback(e)) { new api.Notice("Откачено: «" + e.rel.replace(/^.*\//, "") + "»"); sig = ""; draw(); } }; }
+          }
+        };
+        draw(); tickFn = draw;
+      });
+    }
+
+    // ----- settings
+    function settingsScreen() {
+      show((v) => {
+        back(v, "Настройки");
+        const first = Array.from(shares.values()).find((s) => s.owner);
+        const row = v.createDiv({ cls: "bsm-opt" + (first && first.meta.get("approval") ? " is-pick" : "") }); const ic = el(row, "span", "bsm-oi"); api.setIcon(ic, "lucide-shield-check"); const tx = row.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", "Подтверждать входы"); el(tx, "div", "bsm-s", first ? "Новый участник входит, только когда вы нажмёте «Принять». Работает, пока вы в сети." : "Доступно владельцу проекта (тому, кто начал раздачу).");
+        if (first) row.onclick = () => { first.setApproval(!first.meta.get("approval")); settingsScreen(); }; else row.style.opacity = ".6";
+        sec(v, "Серверы"); el(v, "div", "bsm-hint", "Свои relay-серверы Nostr, через запятую (необязательно). По умолчанию используются публичные.");
+        const sg = v.createEl("input", { attr: { style: "width:100%", placeholder: "wss://…" } }); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
+      });
+    }
+
+    const iv = setInterval(() => { if (tickFn) tickFn(); }, 1200); const onPeers = () => { if (tickFn) tickFn(); }; document.addEventListener("basalt-share-peers", onPeers);
+    M.onClose = () => { clearInterval(iv); document.removeEventListener("basalt-share-peers", onPeers); panelEl = null; };
     home(); M.open();
   }
   async function togglePanel() { panel(); }
@@ -264,48 +362,62 @@
       const hit = relOf(v.file.path); if (hit) hit.sh.publish({ file: hit.rel, cur: { h: sel.head, a: sel.anchor } });
     }, 300);
     // markers in the explorer and on tabs
-    const dots = (host, list, key) => {
-      let w = host.querySelector(":scope > .bsh-who"); const sig = list.map((x) => x.u.name + x.u.color).join("|");
-      if (!list.length) { if (w) w.remove(); return; }
+    const dots = (host, list, key, pending) => {
+      let w = host.querySelector(":scope > .bsh-who"); const sig = list.map((x) => x.u.name + x.u.color).join("|") + (pending ? "#p" : "") + (list.some((x) => Date.now() - (x.sh.lastRemote.get(key) || 0) < 2500) ? "#t" : "");
+      if (!list.length && !pending) { if (w) w.remove(); return; }
       if (!w) { w = document.createElement("span"); w.className = "bsh-who"; host.appendChild(w); } if (w.dataset.sig === sig) return; w.dataset.sig = sig; w.textContent = "";
-      for (const x of list) { const d = document.createElement("span"); d.className = "bsh-wd"; d.style.background = x.u.color; d.title = x.u.name; w.appendChild(d); } w.title = list.map((x) => x.u.name).join(", ");
+      if (pending) { const sp = document.createElement("span"); sp.className = "bsh-spin"; sp.title = "Синхронизируется…"; w.appendChild(sp); }
+      for (const x of list) { const d = document.createElement("span"); d.className = "bsh-wd"; d.style.background = x.u.color; d.title = x.u.name; w.appendChild(d); }
+      if (list.length) { const lb = document.createElement("span"); lb.className = "bsh-wl"; lb.style.color = list[0].u.color; lb.textContent = list[0].u.name + (list.length > 1 ? " +" + (list.length - 1) : "") + (list.some((x) => Date.now() - (x.sh.lastRemote.get(key) || 0) < 2500) ? " ✎" : ""); w.appendChild(lb); }
+      w.title = list.map((x) => x.u.name).join(", ");
     };
     setInterval(() => {
       if (!shares.size) return;
-      document.querySelectorAll(".bsf-tree [data-path]").forEach((row) => { const path = row.getAttribute("data-path"), hit = relOf(path); const host = row.querySelector(".bsf-n") ? row.querySelector(".bsf-n").parentElement : row; if (!hit) return; dots(host, peersOn(hit.rel), path); });
-      for (const leaf of app.workspace.getLeavesOfType("markdown").concat(app.workspace.getLeavesOfType("basalt-board"), app.workspace.getLeavesOfType("canvas"), app.workspace.getLeavesOfType("basalt-textfile"))) { const f = leaf.view && (leaf.view.file || (leaf.view.path ? { path: leaf.view.path } : null)); if (!f || !leaf.tabHeaderEl) continue; const hit = relOf(f.path); if (hit) dots(leaf.tabHeaderEl.querySelector(".workspace-tab-header-inner") || leaf.tabHeaderEl, peersOn(hit.rel), f.path); }
+      document.querySelectorAll(".bsf-tree [data-path]").forEach((row) => { const path = row.getAttribute("data-path"), hit = relOf(path); const host = row.querySelector(".bsf-n") ? row.querySelector(".bsf-n").parentElement : row; if (!hit) return; dots(host, peersOn(hit.rel), hit.rel, hit.sh.q.has(hit.rel)); });
+      for (const leaf of app.workspace.getLeavesOfType("markdown").concat(app.workspace.getLeavesOfType("basalt-board"), app.workspace.getLeavesOfType("canvas"), app.workspace.getLeavesOfType("basalt-textfile"))) { const f = leaf.view && (leaf.view.file || (leaf.view.path ? { path: leaf.view.path } : null)); if (!f || !leaf.tabHeaderEl) continue; const hit = relOf(f.path); if (hit) dots(leaf.tabHeaderEl.querySelector(".workspace-tab-header-inner") || leaf.tabHeaderEl, peersOn(hit.rel), hit.rel, hit.sh.q.has(hit.rel)); }
     }, 1500);
-    // the mouse pointer of other people, in any file (notes, text files, images, pdf ...): sent as a position inside the pane, drawn over the same pane
-    let lastPtr = 0;
-    const paneOf = (el) => (el && el.closest ? el.closest(".workspace-leaf-content") : null);
-    const viewOfPane = (pane) => { for (const l of app.workspace.getLeavesOfType("")) { /* none */ } let found = null; app.workspace.iterateAllLeaves((l) => { if (l.view && l.view.containerEl === pane) found = l.view; }); return found; };
-    const scrollerOf = (pane) => pane.querySelector(".cm-scroller, .markdown-preview-view, .bs-text-scroll, .view-content");
+    // the mouse pointer of other people, in any file (notes, text files, images, pdf, json ...): sent as a position inside the pane, drawn over the same pane,
+    // smoothed on the receiving side (every frame the arrow glides towards the latest position)
+    const PANE = ".workspace-leaf-content";
+    const SCROLLERS = ".cm-scroller, .markdown-preview-view, .pdf-viewer-container, #viewerContainer, .bs-text-scroll, .bsf-scroll, .view-content, .image-container";
+    const scrollerOf = (pane) => { const list = pane.querySelectorAll(SCROLLERS); for (const el of list) if (el.scrollHeight > el.clientHeight + 2 && el.clientHeight > 80) return el; return null; };
+    const leafOfPane = (pane) => { let found = null; app.workspace.iterateAllLeaves((l) => { if (!found && l.view && l.view.containerEl && (l.view.containerEl === pane || l.view.containerEl.closest(PANE) === pane)) found = l; }); return found; };
+    const pathOf = (v) => (v.file && v.file.path) || v.path || (v.getState && v.getState() && (v.getState().file || v.getState().path)) || null;
+    let sendT = 0, pending = null;
+    const flushPtr = () => { sendT = 0; if (!pending) return; const { sh, ptr } = pending; pending = null; lastSent = Date.now(); sh.publish({ ptr }); };
+    let lastSent = 0;
     document.addEventListener("pointermove", (e) => {
-      if (!shares.size || Date.now() - lastPtr < 50) return; lastPtr = Date.now();
-      const pane = paneOf(e.target), v = pane && viewOfPane(pane), f = v && (v.file || (v.path ? { path: v.path } : null)), hit = f && relOf(f.path);
-      if (!hit || (v.getViewType && v.getViewType() === "basalt-board")) { for (const sh of shares.values()) if (sh.extra && sh.extra.ptr) sh.publish({ ptr: null }); return; }
-      const host = v.contentEl || pane, r = host.getBoundingClientRect(), sc = scrollerOf(pane);
-      hit.sh.publish({ ptr: { f: hit.rel, x: Math.round(e.clientX - r.left), y: Math.round(e.clientY - r.top + (sc ? sc.scrollTop : 0)) } });
-    }, true);
-    document.addEventListener("pointerleave", () => { for (const sh of shares.values()) sh.publish({ ptr: null }); }, true);
-    setInterval(() => {
       if (!shares.size) return;
-      app.workspace.iterateAllLeaves((leaf) => {
-        const v = leaf.view; if (!v || !v.containerEl || !v.containerEl.isConnected || (v.getViewType && v.getViewType() === "basalt-board")) return;
-        const f = v.file || (v.path ? { path: v.path } : null), hit = f && relOf(f.path), host = v.contentEl || v.containerEl;
-        let layer = host.querySelector(":scope > .bsh-ptrs");
-        const list = []; if (hit) for (const sh of shares.values()) for (const u of sh.peers) if (u.ptr && u.ptr.f === hit.rel) list.push(u);
-        if (!list.length) { if (layer) layer.remove(); return; }
-        if (!layer) { if (getComputedStyle(host).position === "static") host.style.position = "relative"; layer = document.createElement("div"); layer.className = "bsh-ptrs"; host.appendChild(layer); }
-        const sc = scrollerOf(v.containerEl), st = sc ? sc.scrollTop : 0, seen = new Set();
+      const pane = e.target && e.target.closest ? e.target.closest(PANE) : null, leaf = pane && leafOfPane(pane), v = leaf && leaf.view;
+      const path = v && pathOf(v), hit = path && relOf(path);
+      if (!hit || (v.getViewType && v.getViewType() === "basalt-board")) { if (pending !== "none") { for (const sh of shares.values()) if (sh.extra && sh.extra.ptr) sh.publish({ ptr: null }); } return; }
+      const r = pane.getBoundingClientRect(), sc = scrollerOf(pane);
+      pending = { sh: hit.sh, ptr: { f: hit.rel, x: Math.round(e.clientX - r.left), y: Math.round(e.clientY - r.top + (sc ? sc.scrollTop : 0)) } };
+      const wait = 28 - (Date.now() - lastSent); if (wait <= 0) flushPtr(); else if (!sendT) sendT = setTimeout(flushPtr, wait);
+    }, true);
+    document.addEventListener("mouseleave", () => { pending = null; for (const sh of shares.values()) if (sh.extra && sh.extra.ptr) sh.publish({ ptr: null }); }, true);
+    const ptrs = new Map(); let leaves = [], leavesAt = 0;
+    const frame = () => {
+      requestAnimationFrame(frame); if (!shares.size) { if (ptrs.size) { for (const o of ptrs.values()) o.el.remove(); ptrs.clear(); } return; }
+      const now = performance.now();
+      if (now - leavesAt > 400) { leavesAt = now; leaves = []; app.workspace.iterateAllLeaves((l) => { const v = l.view; if (v && v.containerEl && v.containerEl.isConnected && !(v.getViewType && v.getViewType() === "basalt-board")) { const p = pathOf(v), hit = p && relOf(p); if (hit) leaves.push({ pane: v.containerEl.closest(PANE) || v.containerEl, hit, v }); } }); }
+      const live = new Set();
+      for (const L of leaves) {
+        if (!L.pane.isConnected) continue; let layer = L.pane.querySelector(":scope > .bsh-ptrs");
+        const list = []; for (const sh of shares.values()) for (const u of sh.peers) if (u.ptr && u.ptr.f === L.hit.rel) list.push(u);
+        if (!list.length) { if (layer) layer.remove(); continue; }
+        if (!layer) { if (getComputedStyle(L.pane).position === "static") L.pane.style.position = "relative"; layer = document.createElement("div"); layer.className = "bsh-ptrs"; L.pane.appendChild(layer); }
+        const sc = scrollerOf(L.pane), st = sc ? sc.scrollTop : 0;
         for (const u of list) {
-          const key = u.name + u.color; seen.add(key); let el = layer.querySelector('[data-k="' + CSS.escape(key) + '"]');
-          if (!el) { el = document.createElement("div"); el.className = "bsh-ptr"; el.dataset.k = key; el.style.color = u.color; el.innerHTML = '<svg width="16" height="18" viewBox="0 0 14 16"><path d="M1 1l11 5-5 2-2 6z" fill="currentColor" stroke="#000" stroke-opacity=".35"/></svg><span></span>'; el.lastChild.textContent = u.name; el.lastChild.style.background = u.color; layer.appendChild(el); }
-          el.style.transform = "translate(" + u.ptr.x + "px," + (u.ptr.y - st) + "px)";
+          const key = L.hit.rel + "|" + u.name + u.color; live.add(key); let o = ptrs.get(key);
+          if (!o || !o.el.isConnected) { const el = document.createElement("div"); el.className = "bsh-ptr"; el.style.color = u.color; el.innerHTML = '<svg width="16" height="18" viewBox="0 0 14 16"><path d="M1 1l11 5-5 2-2 6z" fill="currentColor" stroke="#000" stroke-opacity=".35"/></svg><span></span>'; el.lastChild.textContent = u.name; el.lastChild.style.background = u.color; layer.appendChild(el); o = { el, cx: u.ptr.x, cy: u.ptr.y - st }; ptrs.set(key, o); }
+          const tx = u.ptr.x, ty = u.ptr.y - st; o.cx += (tx - o.cx) * 0.3; o.cy += (ty - o.cy) * 0.3; if (Math.abs(tx - o.cx) < .3) o.cx = tx; if (Math.abs(ty - o.cy) < .3) o.cy = ty;
+          o.el.style.transform = "translate(" + o.cx.toFixed(1) + "px," + o.cy.toFixed(1) + "px)";
         }
-        for (const el of Array.from(layer.children)) if (!seen.has(el.dataset.k)) el.remove();
-      });
-    }, 70);
+      }
+      for (const [k, o] of ptrs) if (!live.has(k)) { o.el.remove(); ptrs.delete(k); }
+    };
+    requestAnimationFrame(frame);
     // carets of other people inside the open note
     setInterval(() => {
       if (!shares.size) return;
@@ -339,13 +451,15 @@
     try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", () => togglePanel()); } catch (e) { /* no ribbon */ }
     if (app.statusBar && app.statusBar.registerStatusBarItem) {
       const chip = app.statusBar.registerStatusBarItem(); chip.classList.add("bsh-chip"); chip.style.display = "none";
-      const upd = () => { const all = Array.from(shares.values()); if (!all.length) { chip.style.display = "none"; return; } const n = all.reduce((a, s) => a + s.peers.length, 0), st = all.some((s) => s.prov && s.prov.status === "connecting"); chip.style.display = ""; chip.classList.toggle("is-searching", st && !n); chip.classList.toggle("is-live", n > 0); chip.textContent = ""; const d = document.createElement("span"); d.className = "bsh-dot"; const pend = all.reduce((x, s2) => x + s2.q.size, 0), tot = all.reduce((x, s2) => x + s2.total, 0); chip.append(d, pend ? "Загрузка файлов: " + (tot - pend) + "/" + tot : n ? "Онлайн: " + (n + 1) : st ? "Поиск участников…" : "Один в сети"); chip.classList.toggle("is-searching", pend > 0 || (st && !n)); chip.title = all.map((s) => (s.folder || "весь vault") + ": " + (s.peers.length ? s.peers.map((p) => p.name).join(", ") : "никого рядом")).join(String.fromCharCode(10)); };
+      const upd = () => { const all = Array.from(shares.values()); if (!all.length) { chip.style.display = "none"; return; } const n = all.reduce((a, s) => a + s.peers.length, 0), st = all.some((s) => s.prov && s.prov.status === "connecting"); chip.style.display = ""; chip.classList.toggle("is-searching", st && !n); chip.classList.toggle("is-live", n > 0); chip.textContent = ""; const d = document.createElement("span"); d.className = "bsh-dot"; const pend = all.reduce((x, s2) => x + s2.q.size, 0), tot = all.reduce((x, s2) => x + s2.total, 0); chip.append(d, pend ? "Загрузка файлов: " + (tot - pend) + "/" + tot : n ? "Онлайн: " + (n + 1) : st ? "Поиск участников…" : "Один в сети"); chip.classList.toggle("is-searching", pend > 0 || (st && !n)); for (const sh of all) for (const u of sh.peers) { const pd = document.createElement("span"); pd.className = "bsh-wd"; pd.style.background = u.color; chip.appendChild(pd); }
+      chip.title = all.map((s) => (s.folder || "весь vault") + ": " + (s.peers.length ? s.peers.map((p) => p.name).join(", ") : "никого рядом")).join(String.fromCharCode(10)); };
+      chip.style.cursor = "pointer"; chip.onclick = () => panel();
       document.addEventListener("basalt-share-peers", upd); setInterval(upd, 2000); upd();
     }
     const pubFile = () => { const f = app.workspace.getActiveFile(); for (const sh of shares.values()) { const r = f ? sh.rel(f.path) : null; sh.publish({ file: r && !/\.board$/.test(r) ? r : null, cur: null }); } };
     app.workspace.on("file-open", pubFile); app.workspace.on("active-leaf-change", pubFile);
     startPresence();
     window.__bsShare = { forPath, host, stop, dialog, join: joinDialog, begin, shares };
-    (async () => { try { const st = JSON.parse(await app.vault.adapter.read(STATE)); if (st && st.room && !shares.has("")) await begin("/", st.room, st.pass); } catch (e) { /* not a shared vault */ } })().then(() => Promise.all(store().filter((x) => !shares.has(x.folder || "")).map((x) => begin(x.folder || "/", x.room, x.pass).catch((e) => console.error(e))))).then(resolveReady, resolveReady);
+    (async () => { try { const st = JSON.parse(await app.vault.adapter.read(STATE)); if (st && st.room && !shares.has("")) await begin("/", st.room, st.pass, { role: st.role, owner: !!st.owner }); } catch (e) { /* not a shared vault */ } })().then(() => Promise.all(store().filter((x) => !shares.has(x.folder || "")).map((x) => begin(x.folder || "/", x.room, x.pass, { owner: !!x.owner }).catch((e) => console.error(e))))).then(resolveReady, resolveReady);
   }, 600);
 })();
