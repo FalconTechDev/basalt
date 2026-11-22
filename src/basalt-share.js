@@ -215,74 +215,90 @@
       let hint = null; try { hint = localStorage.getItem("board-me-set"); } catch (e) { /* private */ } if (!hint) setTimeout(() => { inp.focus(); inp.select(); }, 80);
     }
 
-    // ----- home: two choices when nothing is shared, a live dashboard when something is
+    // ----- home: always two choices - this project / connect to a project
     function home() {
       show((v) => {
-        if (!shares.size) {
-          const tiles = v.createDiv({ cls: "bsm-tiles" });
-          const tile = (icon, t, s, fn) => { const x = tiles.createDiv({ cls: "bsm-tile" }); const i = x.createDiv({ cls: "bsm-ti" }); api.setIcon(i, icon); x.createDiv({ cls: "bsm-tt", text: t }); x.createDiv({ cls: "bsm-ts", text: s }); x.onclick = fn; };
-          tile("lucide-share-2", "Поделиться", "хранилищем или папкой", () => shareScreen());
-          tile("lucide-log-in", "Присоединиться", "по коду приглашения", joinScreen);
-          tickFn = () => { if (shares.size) home(); };
-          return;
-        }
-        const card = v.createDiv({ cls: "bsm-card" }); const dot = el(card, "span", "bsm-dot"); const ct = card.createDiv({ cls: "bsm-ct" }); const c1 = el(ct, "div", "bsm-c1"), c2 = el(ct, "div", "bsm-c2");
-        const inv = el(card, "button", "mod-cta bsm-inv", "Пригласить"); inv.onclick = () => shareScreen(); const more = card.createDiv({ cls: "bsm-more", attr: { title: "Ещё" } }); api.setIcon(more, "lucide-more-horizontal");
-        more.onclick = (e) => { const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)); it("Поделиться ещё…", "lucide-share-2", () => shareScreen(true)); it("Присоединиться по коду…", "lucide-log-in", joinScreen); mn.addSeparator(); it("Журнал изменений", "lucide-history", logScreen); it("Настройки", "lucide-settings", settingsScreen); mn.showAtMouseEvent(e); };
-        const pend = v.createDiv({ cls: "bsm-pend" });
-        sec(v, "Участники"); const people = v.createDiv({ cls: "bsm-people" });
-        const foot = v.createDiv({ cls: "bsm-foot" }); const fb = (t, fn) => { const b = el(foot, "button", "bsm-link", t); b.onclick = fn; }; fb("Журнал изменений", logScreen); fb("Настройки", settingsScreen);
-        let sigW = "", sigP = "";
+        const tiles = v.createDiv({ cls: "bsm-tiles" });
+        const tile = (icon, t, fn) => { const x = tiles.createDiv({ cls: "bsm-tile" }); const i = x.createDiv({ cls: "bsm-ti" }); api.setIcon(i, icon); x.createDiv({ cls: "bsm-tt", text: t }); const sub = x.createDiv({ cls: "bsm-ts" }); x.onclick = fn; return sub; };
+        const s1 = tile("lucide-box", "Этот проект", () => projectScreen());
+        const s2 = tile("lucide-log-in", "Подключиться к проекту", joinScreen); s2.textContent = "по коду приглашения";
         tickFn = () => {
-          const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), searching = all.some((s) => s.prov && s.prov.status === "connecting"), pend0 = all.reduce((a, s) => a + s.q.size, 0);
-          dot.className = "bsm-dot " + (n ? "is-live" : searching || pend0 ? "is-wait" : "");
-          const t1 = pend0 ? "Загрузка файлов: " + (all.reduce((a, s) => a + s.total, 0) - pend0) + "/" + all.reduce((a, s) => a + s.total, 0) : n ? "Онлайн: " + (n + 1) : searching ? "Поиск участников…" : "Вы один в сети", t2 = all.map(projName).join(", ") + (all.some((s) => s.readOnly) ? " · только просмотр" : "");
-          if (c1.textContent !== t1) c1.textContent = t1; if (c2.textContent !== t2) c2.textContent = t2;
-          // pending join requests (owner only)
-          const reqs = all.flatMap((s) => (s.owner ? s.pendingList.map((r) => ({ s, r })) : []));
-          const sp = reqs.map((x) => x.r.pid).join("|"); if (sp !== sigP) { sigP = sp; pend.empty(); for (const { s, r } of reqs) { const row = pend.createDiv({ cls: "bsm-req" }); row.createSpan({ text: "Кто-то хочет войти в «" + projName(s) + "»" }); const a = el(row, "button", "mod-cta", "Принять"), d = el(row, "button", "", "Отклонить"); a.onclick = () => { s.approve(r.pid, r.uid); sigP = ""; tickFn(); }; d.onclick = () => { s.pendingList = s.pendingList.filter((x) => x.pid !== r.pid); sigP = ""; tickFn(); }; } }
-          // people
-          const af = app.workspace.getActiveFile(), list = [{ u: me(), self: true, what: af ? "«" + af.basename + "»" : "в сети" }]; const seen = new Set();
-          for (const sh of all) for (const u of sh.peers) { const k = peerKey(u); if (!seen.has(k)) { seen.add(k); list.push({ u, sh, self: false, what: where(u) }); } }
-          const sw = list.map((p) => peerKey(p.u) + "|" + p.what + "|" + (following === peerKey(p.u))).join(";");
-          if (sw !== sigW) {
-            sigW = sw; people.empty();
-            for (const p of list) {
-              const row = people.createDiv({ cls: "bsm-person" }); const d = el(row, "span", "bsm-pd"); d.style.background = p.u.color; const tx = row.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", p.u.name + (p.self ? " (вы)" : "")); el(tx, "div", "bsm-s", p.what);
-              if (!p.self) { const act = row.createDiv({ cls: "bsm-pa" }); const go = el(act, "button", "bsm-b", "Перейти"); go.onclick = () => { if (!openWhere(p.sh, p.u)) new api.Notice("Он пока ничего не открыл"); }; const fl = el(act, "button", "bsm-b" + (following === peerKey(p.u) ? " is-on" : ""), following === peerKey(p.u) ? "Слежу" : "Следить"); fl.onclick = () => { following = following === peerKey(p.u) ? null : peerKey(p.u); followSig = ""; sigW = ""; tickFn(); if (following) new api.Notice("Вы следите за " + p.u.name + ". Нажмите ещё раз, чтобы остановить."); }; }
-            }
-            if (list.length === 1) el(people, "div", "bsm-empty", "Пока никого рядом. Нажмите «Пригласить» и отправьте код.");
-          }
+          const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0);
+          const t = all.length ? "раздача включена · " + (n ? "онлайн " + (n + 1) : "вы один") : "раздача выключена"; if (s1.textContent !== t) s1.textContent = t;
         };
         tickFn();
       });
     }
 
-    // ----- invite / share
-    function shareScreen(startNew) {
+    // ----- this project: sharing on/off, invite, people, settings - all in one place
+    function projectScreen() {
       show((v) => {
-        back(v, shares.size && !startNew ? "Пригласить" : "Поделиться");
-        let role = "edit", pick = "/", sig = "";
-        const seg = v.createDiv({ cls: "bsm-seg" }); const segs = {};
-        for (const [k, t] of [["edit", "Редактировать"], ["view", "Только смотреть"]]) { const b = el(seg, "div", "bsm-segb", t); segs[k] = b; b.onclick = () => { role = k; sig = ""; draw(); }; }
-        const list = v.createDiv({ cls: "bsm-codes" }), opts = v.createDiv({ cls: "bsm-opts" });
-        const draw = () => {
-          for (const k in segs) segs[k].classList.toggle("is-on", k === role);
-          const f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null, s2 = Array.from(shares.keys()).join("|") + "#" + (dir || "") + "#" + pick + "#" + role;
-          if (s2 === sig) return; sig = s2; list.empty(); opts.empty(); seg.style.display = shares.size ? "" : "none";
-          for (const [k, sh] of shares) {
-            const c = list.createDiv({ cls: "bsm-code" }); el(c, "div", "bsm-cn", projName(sh) + (k ? " (папка)" : " (всё хранилище)") + (sh.readOnly ? " · вы только смотрите" : ""));
-            const row = c.createDiv({ cls: "bsm-crow" }); const i = row.createEl("input", { attr: { readonly: "true" } }); i.value = sh.code(role); i.onfocus = () => i.select();
-            const b = el(row, "button", "mod-cta", "Копировать"); b.onclick = () => copy(sh.code(role)); const st = el(row, "button", "", "Остановить"); st.onclick = async () => { await stop(k || "/"); sig = ""; if (!shares.size) home(); else draw(); };
-            if (role === "view") el(c, "div", "bsm-hint", "Эти участники увидят всё, но их правки не будут отправляться. Это правило клиента: оно защищает от случайных правок, но не от злого умысла.");
-          }
+        back(v, "Этот проект");
+        let role = "edit", pick = "/", more = false;
+        const card = v.createDiv({ cls: "bsm-card" }); const dot = el(card, "span", "bsm-dot"); const ct = card.createDiv({ cls: "bsm-ct" }); const c1 = el(ct, "div", "bsm-c1"), c2 = el(ct, "div", "bsm-c2");
+        const scope = v.createDiv({ cls: "bsm-opts" });
+        const invSec = v.createDiv(); const pend = v.createDiv({ cls: "bsm-pend" });
+        const pplSec = v.createDiv(); const setSec = v.createDiv(); const foot = v.createDiv({ cls: "bsm-foot" }); const fb = el(foot, "button", "bsm-link", "Журнал изменений"); fb.onclick = logScreen;
+        let sigS = "", sigI = "", sigW = "", sigP = "", sigSet = "";
+        const tick = () => {
+          const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), searching = all.some((s) => s.prov && s.prov.status === "connecting"), pend0 = all.reduce((a, s) => a + s.q.size, 0), tot = all.reduce((a, s) => a + s.total, 0);
+          dot.className = "bsm-dot " + (!all.length ? "" : n ? "is-live" : searching || pend0 ? "is-wait" : "");
+          const t1 = !all.length ? "Раздача выключена" : pend0 ? "Загрузка файлов: " + (tot - pend0) + "/" + tot : n ? "Раздача включена · онлайн " + (n + 1) : searching ? "Раздача включена · поиск участников…" : "Раздача включена · вы один", t2 = all.length ? all.map(projName).join(", ") + (all.some((s) => s.readOnly) ? " · только просмотр" : "") : app.vault.getName();
+          if (c1.textContent !== t1) c1.textContent = t1; if (c2.textContent !== t2) c2.textContent = t2;
+          // what can be shared + the start button
+          const f = app.workspace.getActiveFile(), dir = f && f.parent && f.parent.path !== "/" ? f.parent.path : null;
           const free = []; if (!shares.has("")) free.push(["/", "lucide-box", "Всё хранилище «" + app.vault.getName() + "»"]); if (dir && !shares.has(dir)) free.push([dir, "lucide-folder", "Папка «" + dir.split("/").pop() + "»"]);
-          if (!free.length) return; if (!free.some((x) => x[0] === pick)) pick = free[0][0];
-          if (!list.children.length) el(opts, "div", "bsm-hint", "Выберите, чем поделиться, и нажмите «Начать раздачу». Появится код — отправьте его тем, кто будет работать с вами.");
-          for (const [key, icon, label] of free) { const b = opts.createDiv({ cls: "bsm-opt" + (pick === key ? " is-pick" : "") }); const ic = el(b, "span", "bsm-oi"); api.setIcon(ic, icon); el(b, "span", "", label); b.onclick = () => { pick = key; sig = ""; draw(); }; }
-          const go = el(opts, "button", "mod-cta bsm-go", "Начать раздачу"); go.onclick = async () => { go.disabled = true; go.textContent = "Запускаю…"; await host(pick); sig = ""; draw(); };
+          if (!free.some((x) => x[0] === pick) && free.length) pick = free[0][0];
+          const ss = (all.length && !more ? "hide" : free.map((x) => x[0]).join("|")) + "#" + pick + "#" + more + "#" + all.length;
+          if (ss !== sigS) {
+            sigS = ss; scope.empty();
+            if (all.length && !more) { if (free.length) { const l = el(scope, "button", "bsm-link", "Поделиться ещё…"); l.onclick = () => { more = true; sigS = ""; tick(); }; } }
+            else if (free.length) {
+              if (!all.length) el(scope, "div", "bsm-hint", "Выберите, чем поделиться, и нажмите «Начать раздачу». Появится код — отправьте его тем, кто будет работать с вами.");
+              for (const [key, icon, label] of free) { const b = scope.createDiv({ cls: "bsm-opt" + (pick === key ? " is-pick" : "") }); const ic = el(b, "span", "bsm-oi"); api.setIcon(ic, icon); el(b, "span", "", label); b.onclick = () => { pick = key; sigS = ""; tick(); }; }
+              const go = el(scope, "button", "mod-cta bsm-go", "Начать раздачу"); go.onclick = async () => { go.disabled = true; go.textContent = "Запускаю…"; await host(pick); more = false; sigS = ""; sigI = ""; sigSet = ""; sigW = ""; tick(); };
+            }
+          }
+          // invite codes
+          const si = all.map((s) => s.folder + "|" + s.readOnly).join(";") + "#" + role; if (si !== sigI) {
+            sigI = si; invSec.empty();
+            if (all.length) {
+              sec(invSec, "Приглашение"); const seg = invSec.createDiv({ cls: "bsm-seg" });
+              for (const [k, t] of [["edit", "Редактировать"], ["view", "Только смотреть"]]) { const b = el(seg, "div", "bsm-segb" + (role === k ? " is-on" : ""), t); b.onclick = () => { role = k; sigI = ""; tick(); }; }
+              for (const [k, sh] of shares) {
+                const c = invSec.createDiv({ cls: "bsm-code" }); el(c, "div", "bsm-cn", projName(sh) + (k ? " (папка)" : " (всё хранилище)"));
+                const row = c.createDiv({ cls: "bsm-crow" }); const i = row.createEl("input", { attr: { readonly: "true" } }); i.value = sh.code(role); i.onfocus = () => i.select();
+                const b = el(row, "button", "mod-cta", "Копировать"); b.onclick = () => copy(sh.code(role)); const st = el(row, "button", "", "Остановить"); st.onclick = async () => { await stop(k || "/"); sigS = sigI = sigSet = sigW = ""; tick(); };
+                if (role === "view") el(c, "div", "bsm-hint", "Эти участники увидят всё, но их правки не отправляются. Это правило клиента: оно защищает от случайных правок, но не от злого умысла.");
+              }
+            }
+          }
+          // pending join requests (owner)
+          const reqs = all.flatMap((s) => (s.owner ? s.pendingList.map((r) => ({ s, r })) : [])), sp = reqs.map((x) => x.r.pid).join("|");
+          if (sp !== sigP) { sigP = sp; pend.empty(); for (const { s, r } of reqs) { const row = pend.createDiv({ cls: "bsm-req" }); row.createSpan({ text: "Кто-то хочет войти в «" + projName(s) + "»" }); const a = el(row, "button", "mod-cta", "Принять"), d = el(row, "button", "", "Отклонить"); a.onclick = () => { s.approve(r.pid, r.uid); sigP = ""; tick(); }; d.onclick = () => { s.pendingList = s.pendingList.filter((x) => x.pid !== r.pid); sigP = ""; tick(); }; } }
+          // people
+          const af = app.workspace.getActiveFile(), list = [{ u: me(), self: true, what: af ? "«" + af.basename + "»" : "в сети" }], seen = new Set();
+          for (const sh of all) for (const u of sh.peers) { const k = peerKey(u); if (!seen.has(k)) { seen.add(k); list.push({ u, sh, self: false, what: where(u) }); } }
+          const sw = (all.length ? "1" : "0") + list.map((p) => peerKey(p.u) + "|" + p.what + "|" + (following === peerKey(p.u))).join(";");
+          if (sw !== sigW) {
+            sigW = sw; pplSec.empty(); sec(pplSec, "Участники"); const people = pplSec.createDiv({ cls: "bsm-people" });
+            for (const p of list) {
+              const row = people.createDiv({ cls: "bsm-person" }); const d = el(row, "span", "bsm-pd"); d.style.background = p.u.color; const tx = row.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", p.u.name + (p.self ? " (вы)" : "")); el(tx, "div", "bsm-s", p.what);
+              if (!p.self) { const act = row.createDiv({ cls: "bsm-pa" }); const go = el(act, "button", "bsm-b", "Перейти"); go.onclick = () => { if (!openWhere(p.sh, p.u)) new api.Notice("Он пока ничего не открыл"); }; const fl = el(act, "button", "bsm-b" + (following === peerKey(p.u) ? " is-on" : ""), following === peerKey(p.u) ? "Слежу" : "Следить"); fl.onclick = () => { following = following === peerKey(p.u) ? null : peerKey(p.u); followSig = ""; sigW = ""; tick(); if (following) new api.Notice("Вы следите за " + p.u.name + ". Нажмите ещё раз, чтобы остановить."); }; }
+            }
+            if (list.length === 1) el(people, "div", "bsm-empty", all.length ? "Пока никого рядом. Отправьте код приглашения." : "Раздача выключена — подключённых нет.");
+          }
+          // settings (built once per change of ownership / approval, never while you type)
+          const own = all.find((s) => s.owner), ssg = (own ? "o" + !!own.meta.get("approval") : "n") + all.length;
+          if (ssg !== sigSet) {
+            sigSet = ssg; setSec.empty(); sec(setSec, "Настройки");
+            const row = setSec.createDiv({ cls: "bsm-opt" + (own && own.meta.get("approval") ? " is-pick" : "") }); const ic = el(row, "span", "bsm-oi"); api.setIcon(ic, "lucide-shield-check"); const tx = row.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", "Подтверждать входы"); el(tx, "div", "bsm-s", own ? "Новый участник входит, только когда вы нажмёте «Принять». Работает, пока вы в сети." : all.length ? "Доступно владельцу проекта (тому, кто начал раздачу)." : "Появится, когда включите раздачу.");
+            if (own) row.onclick = () => { own.setApproval(!own.meta.get("approval")); sigSet = ""; tick(); }; else row.style.opacity = ".6";
+            el(setSec, "div", "bsm-hint", "Свои relay-серверы Nostr, через запятую (необязательно). По умолчанию используются публичные.").style.marginTop = "10px";
+            const sg = setSec.createEl("input", { attr: { style: "width:100%", placeholder: "wss://…" } }); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
+          }
         };
-        draw();
+        tickFn = tick; tick();
       });
     }
 
@@ -312,18 +328,6 @@
           }
         };
         draw(); tickFn = draw;
-      });
-    }
-
-    // ----- settings
-    function settingsScreen() {
-      show((v) => {
-        back(v, "Настройки");
-        const first = Array.from(shares.values()).find((s) => s.owner);
-        const row = v.createDiv({ cls: "bsm-opt" + (first && first.meta.get("approval") ? " is-pick" : "") }); const ic = el(row, "span", "bsm-oi"); api.setIcon(ic, "lucide-shield-check"); const tx = row.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", "Подтверждать входы"); el(tx, "div", "bsm-s", first ? "Новый участник входит, только когда вы нажмёте «Принять». Работает, пока вы в сети." : "Доступно владельцу проекта (тому, кто начал раздачу).");
-        if (first) row.onclick = () => { first.setApproval(!first.meta.get("approval")); settingsScreen(); }; else row.style.opacity = ".6";
-        sec(v, "Серверы"); el(v, "div", "bsm-hint", "Свои relay-серверы Nostr, через запятую (необязательно). По умолчанию используются публичные.");
-        const sg = v.createEl("input", { attr: { style: "width:100%", placeholder: "wss://…" } }); sg.value = signaling().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
       });
     }
 
