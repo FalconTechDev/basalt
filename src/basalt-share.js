@@ -147,6 +147,7 @@
       this.onVault = (type) => (f, old) => this.vaultEvent(type, f, old);
       this.evs = ["create", "modify", "delete", "rename"].map((t) => app.vault.on(t, this.onVault(t)));
       this.queueSave(); this.ready = true;
+      setTimeout(() => { if (!this.stopped && !this.owner && !this.meta.get("owner") && !this.peers.length && this.prov && this.prov.status !== "connecting") { this.owner = true; this.queueSave(); const t0 = setInterval(() => { if (this.stopped) return clearInterval(t0); if (this.prov && this.prov.selfUserId) { clearInterval(t0); this.meta.set("owner", this.prov.selfUserId); this.ping(); } }, 400); this.ping(); } }, 10000);
     }
     publish(extra) { if (!this.aw) return; if (extra) this.extra = Object.assign(this.extra || {}, extra); const m = me(); this.aw.setLocalStateField("user", Object.assign({ name: m.name, color: m.color, uid: (this.prov && this.prov.selfUserId) || undefined }, this.extra || {})); }
     async list(dir) {
@@ -370,13 +371,14 @@
         const rows = await diagnose(); dbtn.disabled = false; dres.empty();
         for (const r of rows) { const line = el(dres, "div", "bsm-dl " + (r.ok ? "is-ok" : "is-bad")); icon(line, r.ok ? "lucide-check-circle-2" : "lucide-alert-circle", "bsm-dli"); const t = el(line, "div", "bsm-dlt"); el(t, "div", "", r.text); if (r.hint) el(t, "div", "bsm-dlh", r.hint); }
       }, "lucide-activity");
-      const mid = el(b, "div"), inv = el(b, "div"); let sigM = null, sigI = null, mode = "perm", pickChoice = draft ? "custom" : "all", chosen = draft ? draft.slice() : [];
+      const mid = el(b, "div"), inv = el(b, "div"); let sigM = null, sigI = null, sigE = null, mode = "perm", pickChoice = draft ? "custom" : "all", chosen = draft ? draft.slice() : [];
       const tick = () => {
         setPill(); const all = Array.from(shares.values()), n = all.reduce((a, s) => a + s.peers.length, 0), srch = all.some((s) => s.prov && s.prov.status === "connecting"), pend0 = all.reduce((a, s) => a + s.q.size, 0), tot = all.reduce((a, s) => a + s.total, 0);
         banner.className = "bsm-banner " + (!all.length ? "is-off" : n ? "is-live" : srch || pend0 ? "is-wait" : "is-idle");
         const t1 = !all.length ? "Раздача выключена" : pend0 ? "Загрузка файлов: " + (tot - pend0) + " из " + tot : n ? "Раздача включена · онлайн " + (n + 1) : srch ? "Раздача включена · поиск участников…" : "Раздача включена · вы один", t2 = !all.length ? "Никто, кроме вас, не видит файлы этого хранилища" : (role === "view" ? "Вы только смотрите" : role === "edit" ? "Вы редактор" : "Вы владелец проекта");
         if (b1.textContent !== t1) b1.textContent = t1; if (b2.textContent !== t2) b2.textContent = t2;
-        if (role !== "owner") return;
+        if (role === "view") return;
+        if (role === "edit") { const ke = all.map((s2) => s2.folder).join(";") + "#" + all.length; if (ke !== sigE) { sigE = ke; inv.empty(); if (all.length) { const s2 = section(inv, "Код приглашения", "Любой, у кого этот код, сможет войти в проект."); const c2 = surface(s2); const f2 = el(c2, "div", "bsm-field"); const i2 = el(f2, "input", "bsm-code2"); i2.readOnly = true; i2.value = all[0].code(); i2.onfocus = () => i2.select(); btn(f2, "Копировать", "primary", function () { copyTo(this, all[0].code()); }, "lucide-copy"); } } return; }
         const sh = Array.from(shares.values())[0], sm = all.length + "|" + (sh ? JSON.stringify(sh.includeList()) : "") + "|" + pickChoice + "|" + chosen.join(",");
         if (sm !== sigM) { sigM = sm; mid.empty(); all.length ? shared(mid, sh) : notShared(mid); }
         const si = all.map((s) => s.folder + JSON.stringify(s.invites())).join(";") + mode; if (si !== sigI || (mode === "tmp" && all.length)) { if (si !== sigI) { sigI = si; inv.empty(); if (all.length) invite(inv, all[0], () => { sigI = null; }); } else if (all.length) updateInvites(); }
