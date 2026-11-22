@@ -20210,4 +20210,112 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .osb-root.is-ro .osb-h,.osb-root.is-ro .osb-rs,.osb-root.is-ro .osb-x{
     display:none
 }
+.osb-by{
+    margin-left:6px;
+    font-size:11px;
+    color:var(--text-muted);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:60%
+}
+.osb-by::before{
+    content:"";
+    display:inline-block;
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--c,var(--text-faint));
+    margin-right:5px;
+    vertical-align:1px
+}
+.osb-by:empty{
+    display:none
+}
+.osb-card.flash{
+    animation:osb-flash 1.6s ease-out
+}
+@keyframes osb-flash{
+    0%{
+        box-shadow:0 0 0 0 var(--flash),0 0 24px 4px var(--flash)
+    }
+    100%{
+        box-shadow:0 2px 10px rgba(0,0,0,.25)
+    }
+}
+.osb-feed{
+    position:absolute;
+    right:12px;
+    bottom:12px;
+    width:260px;
+    z-index:5;
+    border-radius:12px;
+    background:var(--background-secondary);
+    border:1px solid var(--background-modifier-border);
+    box-shadow:0 6px 22px rgba(0,0,0,.35);
+    overflow:hidden;
+    animation:osb-fade .3s ease backwards
+}
+.osb-feed-h{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:7px 12px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    color:var(--text-muted)
+}
+.osb-feed-c{
+    font-weight:400;
+    color:var(--text-faint)
+}
+.osb-feed-l{
+    max-height:220px;
+    overflow-y:auto;
+    padding:0 6px 6px
+}
+.osb-feed.is-closed .osb-feed-l{
+    display:none
+}
+.osb-fe{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    padding:4px 6px;
+    border-radius:8px;
+    font-size:12px;
+    cursor:pointer;
+    animation:osb-slide .25s ease backwards
+}
+.osb-fe:hover{
+    background:var(--background-modifier-hover)
+}
+.osb-fe-d{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    margin-top:4px;
+    flex:none
+}
+.osb-fe-t{
+    flex:1;
+    min-width:0;
+    color:var(--text-muted);
+    overflow-wrap:anywhere
+}
+.osb-fe-w{
+    color:var(--text-normal);
+    font-weight:600
+}
+.osb-fe-time{
+    color:var(--text-faint);
+    font-size:11px;
+    flex:none
+}
+.osb-fe-empty{
+    padding:4px 6px 8px;
+    font-size:12px;
+    color:var(--text-faint)
+}
 

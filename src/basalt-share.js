@@ -181,15 +181,16 @@
     new window.__bsApi.Notice("Открываю проект «" + baseName(target) + "»…"); return switchTo(target);
   }
   // ---- follow mode: the window of the followed person is mirrored (the same note / board opens on this screen)
-  let following = null;
+  let following = null, followSig = "";
   const peerKey = (u) => u.name + "|" + u.color;
   function openWhere(sh, u) {
     const rel = u.board || u.file; if (!rel) return false; const f = app.vault.getAbstractFileByPath(sh.abs(rel)); if (!f) return false;
-    const cur = app.workspace.getActiveFile(); if (cur && cur.path === f.path) return true;
+    const v = app.workspace.activeLeaf && app.workspace.activeLeaf.view, cur = v && ((v.file && v.file.path) || v.path); if (cur === f.path) return true;
     const leaf = app.workspace.getLeaf(false); leaf.openFile(f); return true;
   }
   function findPeer(key) { for (const sh of shares.values()) for (const u of sh.peers) if (peerKey(u) === key) return { sh, u }; return null; }
-  setInterval(() => { if (!following) return; const hit = findPeer(following); if (hit) openWhere(hit.sh, hit.u); }, 900);
+  // following: the screen changes only when the followed person opens something else (never every tick)
+  setInterval(() => { if (!following) { followSig = ""; return; } const hit = findPeer(following); if (!hit) return; const rel = hit.u.board || hit.u.file; const sig = (hit.sh.folder || "/") + "|" + (rel || ""); if (!rel || sig === followSig) return; followSig = sig; openWhere(hit.sh, hit.u); }, 700);
 
   // ---- the "Совместная работа" window
   let panelEl = null;
@@ -248,7 +249,7 @@
             sigW = sw; people.empty();
             for (const p of list) {
               const row = people.createDiv({ cls: "bsm-person" }); const d = el(row, "span", "bsm-pd"); d.style.background = p.u.color; const tx = row.createDiv({ cls: "bsm-tx" }); el(tx, "div", "bsm-n", p.u.name + (p.self ? " (вы)" : "")); el(tx, "div", "bsm-s", p.what);
-              if (!p.self) { const act = row.createDiv({ cls: "bsm-pa" }); const go = el(act, "button", "bsm-b", "Перейти"); go.onclick = () => { if (!openWhere(p.sh, p.u)) new api.Notice("Он пока ничего не открыл"); }; const fl = el(act, "button", "bsm-b" + (following === peerKey(p.u) ? " is-on" : ""), following === peerKey(p.u) ? "Слежу" : "Следить"); fl.onclick = () => { following = following === peerKey(p.u) ? null : peerKey(p.u); sigW = ""; tickFn(); if (following) new api.Notice("Вы следите за " + p.u.name + ". Нажмите ещё раз, чтобы остановить."); }; }
+              if (!p.self) { const act = row.createDiv({ cls: "bsm-pa" }); const go = el(act, "button", "bsm-b", "Перейти"); go.onclick = () => { if (!openWhere(p.sh, p.u)) new api.Notice("Он пока ничего не открыл"); }; const fl = el(act, "button", "bsm-b" + (following === peerKey(p.u) ? " is-on" : ""), following === peerKey(p.u) ? "Слежу" : "Следить"); fl.onclick = () => { following = following === peerKey(p.u) ? null : peerKey(p.u); followSig = ""; sigW = ""; tickFn(); if (following) new api.Notice("Вы следите за " + p.u.name + ". Нажмите ещё раз, чтобы остановить."); }; }
             }
             if (list.length === 1) el(people, "div", "bsm-empty", "Пока никого рядом. Нажмите «Пригласить» и отправьте код.");
           }
@@ -456,7 +457,10 @@
       chip.style.cursor = "pointer"; chip.onclick = () => panel();
       document.addEventListener("basalt-share-peers", upd); setInterval(upd, 2000); upd();
     }
-    const pubFile = () => { const f = app.workspace.getActiveFile(); for (const sh of shares.values()) { const r = f ? sh.rel(f.path) : null; sh.publish({ file: r && !/\.board$/.test(r) ? r : null, cur: null }); } };
+    const pubFile = () => {
+      const lf = app.workspace.activeLeaf, v = lf && lf.view, isBoard = v && v.getViewType && v.getViewType() === "basalt-board", path = v ? (isBoard ? v.path : (v.file && v.file.path) || v.path || null) : null;
+      for (const sh of shares.values()) { const r = path ? sh.rel(path) : null; sh.publish({ file: r && !isBoard ? r : null, board: r && isBoard ? r : null, cur: null }); }
+    };
     app.workspace.on("file-open", pubFile); app.workspace.on("active-leaf-change", pubFile);
     startPresence();
     window.__bsShare = { forPath, host, stop, dialog, join: joinDialog, begin, shares };

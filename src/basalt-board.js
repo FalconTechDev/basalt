@@ -42,6 +42,8 @@
         this.palette = bar.createDiv({ cls: "osb-pal" });
         COLORS.forEach((col) => { const d = this.palette.createDiv({ cls: "osb-sw" }); d.style.background = col || "var(--background-modifier-border)"; d.onclick = () => this.setColor(col); });
         this.people = c.createDiv({ cls: "osb-people" });
+        const fe = this.feedEl = c.createDiv({ cls: "osb-feed" }); const fh = fe.createDiv({ cls: "osb-feed-h" }); fh.createSpan({ text: "Активность" }); this.feedCount = fh.createSpan({ cls: "osb-feed-c" }); this.feedList = fe.createDiv({ cls: "osb-feed-l" });
+        let open = true; try { open = localStorage.getItem("board-feed-open") !== "0"; } catch (e) { /* private */ } fe.classList.toggle("is-closed", !open); fh.onclick = () => { fe.classList.toggle("is-closed"); try { localStorage.setItem("board-feed-open", fe.classList.contains("is-closed") ? "0" : "1"); } catch (e) { /* private */ } };
         this.bindInput(); this.ro = new ResizeObserver(() => this.applyCam()); this.ro.observe(c);
       }
       // ---------- data ----------
@@ -52,18 +54,18 @@
         if (sh) { const rel = sh.rel(this.path); if (!sh.files.has(rel)) await sh.fromDisk(rel); const e = sh.files.get(rel);
           if (e && e.get("t") === "board") {
             this.sh = sh; this.ro = !!sh.readOnly; if (this.ro) this.root.classList.add("is-ro"); this.relPath = rel; this.doc = sh.doc; this.yn = e.get("nodes"); this.ye = e.get("edges"); this.ym = sh.meta;
-            this.yn.observeDeep(() => this.sync()); this.ye.observeDeep(() => this.syncEdges());
+            this.yn.observeDeep((evs) => { this.sync(); this.flash(evs); }); this.ye.observeDeep(() => this.syncEdges());
             this.aw = sh.aw; this.pc = () => { this.peers = sh.peers.filter((u) => u.board === rel); this.paintPeers(); }; if (sh.aw) sh.aw.on("change", this.pc); this.pc();
-            this.sync(); this.fit(); this.share.classList.add("is-on"); return;
+            this.sync(); this.fit(); this.feedArr(); this.renderFeed(); this.share.classList.add("is-on"); return;
           } }
         let raw = null; try { raw = await app.vault.adapter.read(this.path); } catch (e) { /* new */ }
         this.doc = new Y.Doc(); this.yn = this.doc.getMap("nodes"); this.ye = this.doc.getMap("edges"); this.ym = this.doc.getMap("meta");
         let meta = {}; try { meta = raw ? JSON.parse(raw) : {}; } catch (e) { meta = {}; }
         if (meta.ydoc) Y.applyUpdate(this.doc, unb64(meta.ydoc));
         if (!this.ym.get("id")) this.ym.set("id", uid() + uid());
-        this.yn.observeDeep(() => { this.sync(); this.queueSave(); });
+        this.yn.observeDeep((evs) => { this.sync(); this.flash(evs); this.queueSave(); });
         this.ye.observeDeep(() => { this.syncEdges(); this.queueSave(); });
-        this.sync(); this.fit();
+        this.sync(); this.fit(); this.feedArr(); this.renderFeed();
         if (this.ym.get("room")) this.connect(this.ym.get("room"), this.ym.get("pass") || "");
       }
       queueSave() { if (this.sh) return; clearTimeout(this.saveT); this.saveT = setTimeout(() => this.save(), 400); }
@@ -73,19 +75,52 @@
         const out = { v: 2, id: this.ym.get("id"), room: this.ym.get("room") || null, nodes, edges: this.ye.toJSON(), ydoc: b64(Y.encodeStateAsUpdate(this.doc)) };
         try { await app.vault.adapter.write(this.path, JSON.stringify(out, null, 1)); } catch (e) { console.error(e); }
       }
+      stampM(m) { m.set("lastBy", me.name); m.set("lastAt", Date.now()); m.set("lastColor", me.color); }
+      label(id) { const m = this.yn.get(id); const t = m && m.get("text") ? m.get("text").toString().trim().split("\n")[0] : ""; return t ? (t.length > 28 ? t.slice(0, 28) + "…" : t) : "карточка"; }
+      feedArr() {
+        if (this._feed) return this._feed; const Y = window.__bsY.Y;
+        if (this.sh) { const e = this.sh.files.get(this.relPath); if (!e) return null; let f = e.get("feed"); if (!f) { f = new Y.Array(); e.set("feed", f); } this._feed = f; } else this._feed = this.doc.getArray("feed");
+        this._feed.observe(() => this.renderFeed()); return this._feed;
+      }
+      feed(kind, id, note) {
+        const f = this.feedArr(); if (!f) return; const now = Date.now(), n = f.length, last = n ? f.get(n - 1) : null;
+        if (last && last.who === me.name && last.kind === kind && last.id === id && now - last.t < 30000 && (kind === "edit" || kind === "move")) { this.doc.transact(() => { f.delete(n - 1, 1); f.push([Object.assign({}, last, { t: now })]); }); return; }
+        this.doc.transact(() => { f.push([{ t: now, who: me.name, color: me.color, kind, id: id || null, note: note || "" }]); if (f.length > 120) f.delete(0, f.length - 120); });
+      }
+      flash(evs) {
+        const prov = this.sh ? this.sh.prov : this.prov; if (!prov) return;
+        for (const ev of evs) {
+          if (ev.transaction.origin !== prov) continue; const ids = ev.path.length ? [ev.path[0]] : Array.from(ev.keysChanged || []);
+          for (const i of ids) { const e = this.els.get(i), m = this.yn.get(i); if (!e || !m) continue; e.el.style.setProperty("--flash", m.get("lastColor") || "var(--interactive-accent)"); e.el.classList.remove("flash"); void e.el.offsetWidth; e.el.classList.add("flash"); }
+        }
+      }
+      renderFeed() {
+        if (!this.feedEl || !this._feed) return; const list = this.feedList; list.empty(); const items = this._feed.toArray().slice(-14).reverse();
+        this.feedCount.textContent = this._feed.length ? String(this._feed.length) : "";
+        if (!items.length) { list.createDiv({ cls: "osb-fe-empty", text: "Пока нет действий" }); return; }
+        const TXT = { add: (e) => "новая карточка «" + e.note + "»", edit: (e) => "правка «" + e.note + "»", move: (e) => "перемещена «" + e.note + "»", color: (e) => "цвет «" + e.note + "»", del: (e) => "удалена «" + e.note + "»", link: (e) => "связь " + e.note, unlink: () => "связь удалена" };
+        for (const e of items) {
+          const r = list.createDiv({ cls: "osb-fe" }); const d = r.createSpan({ cls: "osb-fe-d" }); d.style.background = e.color || "var(--text-faint)"; const tx = r.createDiv({ cls: "osb-fe-t" });
+          tx.createSpan({ cls: "osb-fe-w", text: e.who }); tx.createSpan({ text: " " + (TXT[e.kind] ? TXT[e.kind](e) : e.kind) }); r.createSpan({ cls: "osb-fe-time", text: new Date(e.t).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) });
+          if (e.id && this.yn.get(e.id)) r.onclick = () => { const m = this.yn.get(e.id); this.cam.x = m.get("x") + m.get("w") / 2; this.cam.y = m.get("y") + m.get("h") / 2; this.applyCam(); this.select(new Set([e.id])); this.flash2(e.id); };
+        }
+      }
+      flash2(id) { const e = this.els.get(id); if (!e) return; e.el.style.setProperty("--flash", "var(--interactive-accent)"); e.el.classList.remove("flash"); void e.el.offsetWidth; e.el.classList.add("flash"); }
       addCard(x, y, text) {
         if (this.ro) return;
         const Y = window.__bsY.Y, c = this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2), id = uid(), m = new Y.Map(), t = new Y.Text();
-        this.doc.transact(() => { m.set("x", x == null ? c.x - 130 + (Math.random() - .5) * 80 : x); m.set("y", y == null ? c.y - 50 + (Math.random() - .5) * 80 : y); m.set("w", 260); m.set("h", 110); m.set("color", ""); m.set("by", me.name); t.insert(0, text || ""); m.set("text", t); this.yn.set(id, m); });
+        this.doc.transact(() => { m.set("x", x == null ? c.x - 130 + (Math.random() - .5) * 80 : x); m.set("y", y == null ? c.y - 50 + (Math.random() - .5) * 80 : y); m.set("w", 260); m.set("h", 110); m.set("color", ""); m.set("by", me.name); this.stampM(m); t.insert(0, text || ""); m.set("text", t); this.yn.set(id, m); });
+        this.feed("add", id, this.label(id));
         this.select(new Set([id])); setTimeout(() => { const e = this.els.get(id); if (e) e.ta.focus(); }, 30); return id;
       }
       addEdge(a, b) {
         if (this.ro) return;
         if (a === b) return; for (const e of this.ye.values()) if ((e.get("a") === a && e.get("b") === b) || (e.get("a") === b && e.get("b") === a)) return;
         const Y = window.__bsY.Y, m = new Y.Map(); this.doc.transact(() => { m.set("a", a); m.set("b", b); m.set("label", ""); this.ye.set(uid(), m); });
+        this.feed("link", null, "«" + this.label(a) + "» → «" + this.label(b) + "»");
       }
-      removeSel() { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { this.yn.delete(id); for (const [k, e] of Array.from(this.ye.entries())) if (e.get("a") === id || e.get("b") === id) this.ye.delete(k); } if (this.selEdge) this.ye.delete(this.selEdge); }); this.sel = new Set(); this.selEdge = null; this.mark(); }
-      setColor(col) { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) m.set("color", col); } }); }
+      removeSel() { if (this.ro) return; for (const id of this.sel) this.feed("del", id, this.label(id)); if (this.selEdge) this.feed("unlink", null, ""); this.doc.transact(() => { for (const id of this.sel) { this.yn.delete(id); for (const [k, e] of Array.from(this.ye.entries())) if (e.get("a") === id || e.get("b") === id) this.ye.delete(k); } if (this.selEdge) this.ye.delete(this.selEdge); }); this.sel = new Set(); this.selEdge = null; this.mark(); }
+      setColor(col) { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) { m.set("color", col); this.stampM(m); } } }); for (const id of this.sel) this.feed("color", id, this.label(id)); }
       // ---------- DOM sync ----------
       sync() {
         const seen = new Set();
@@ -93,6 +128,7 @@
           seen.add(id); let e = this.els.get(id); if (!e) e = this.mkCard(id, m);
           const s = e.el.style; s.left = m.get("x") + "px"; s.top = m.get("y") + "px"; s.width = m.get("w") + "px"; s.height = m.get("h") + "px";
           const col = m.get("color") || ""; s.setProperty("--card", col || "var(--background-modifier-border)"); e.el.classList.toggle("has-color", !!col);
+          const lb = m.get("lastBy") || m.get("by"), la = m.get("lastAt"); const bt = lb ? lb + (la ? " · " + new Date(la).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) : "") : ""; if (e.by.textContent !== bt) e.by.textContent = bt; e.by.style.setProperty("--c", m.get("lastColor") || "var(--text-faint)"); e.by.title = (m.get("by") ? "Создал: " + m.get("by") + "\n" : "") + (lb ? "Последним менял: " + lb : "");
           const txt = m.get("text").toString(); if (e.ta.value !== txt) { const f = document.activeElement === e.ta, p = e.ta.selectionStart; e.ta.value = txt; if (f) { try { e.ta.setSelectionRange(Math.min(p, txt.length), Math.min(p, txt.length)); } catch (er) { /* ok */ } } }
         });
         for (const [id, e] of this.els) if (!seen.has(id)) { e.el.remove(); this.els.delete(id); this.sel.delete(id); }
@@ -100,7 +136,7 @@
       }
       mkCard(id, m) {
         const el = this.cards.createDiv({ cls: "osb-card" }); el.dataset.id = id;
-        const grip = el.createDiv({ cls: "osb-grip" }); const tag = grip.createSpan({ cls: "osb-tag" }); const x = grip.createDiv({ cls: "osb-x", attr: { title: "Удалить" } }); api.setIcon(x, "lucide-x");
+        const grip = el.createDiv({ cls: "osb-grip" }); const tag = grip.createSpan({ cls: "osb-tag" }); const by = grip.createSpan({ cls: "osb-by" }); const x = grip.createDiv({ cls: "osb-x", attr: { title: "Удалить" } }); api.setIcon(x, "lucide-x");
         x.onclick = (ev) => { ev.stopPropagation(); this.select(new Set([id])); this.removeSel(); };
         const ta = el.createEl("textarea", { cls: "osb-ta", attr: { placeholder: "Текст…", spellcheck: "false" } }); if (this.ro) ta.readOnly = true;
         for (const side of ["t", "r", "b", "l"]) { const h = el.createDiv({ cls: "osb-h osb-h-" + side }); h.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); ev.preventDefault(); if (this.ro) return; this.drag = { kind: "link", from: id }; this.root.setPointerCapture(ev.pointerId); }); }
@@ -108,8 +144,8 @@
         grip.addEventListener("pointerdown", (ev) => { if (ev.target.closest(".osb-x") || ev.button !== 0 || this.ro) return; ev.preventDefault(); if (!this.sel.has(id)) this.select(ev.ctrlKey ? new Set([...this.sel, id]) : new Set([id])); const o = new Map(); for (const s of this.sel) { const n = this.yn.get(s); if (n) o.set(s, [n.get("x"), n.get("y")]); } const p = this.pt(ev); this.drag = { kind: "move", o, p: this.worldPt(p.sx, p.sy) }; this.root.setPointerCapture(ev.pointerId); });
         ta.addEventListener("focus", () => { this.select(new Set([id])); this.publish({ typing: id }); });
         ta.addEventListener("blur", () => this.publish({ typing: null }));
-        ta.addEventListener("input", () => { const t = m.get("text"), old = t.toString(), now = ta.value; let a = 0; while (a < old.length && a < now.length && old[a] === now[a]) a++; let b = 0; while (b < old.length - a && b < now.length - a && old[old.length - 1 - b] === now[now.length - 1 - b]) b++; this.doc.transact(() => { if (old.length - a - b) t.delete(a, old.length - a - b); if (now.length - a - b) t.insert(a, now.slice(a, now.length - b)); }); });
-        const rec = { el, ta, tag }; this.els.set(id, rec); return rec;
+        ta.addEventListener("input", () => { const t = m.get("text"), old = t.toString(), now = ta.value; let a = 0; while (a < old.length && a < now.length && old[a] === now[a]) a++; let b = 0; while (b < old.length - a && b < now.length - a && old[old.length - 1 - b] === now[now.length - 1 - b]) b++; this.doc.transact(() => { if (old.length - a - b) t.delete(a, old.length - a - b); if (now.length - a - b) t.insert(a, now.slice(a, now.length - b)); this.stampM(m); }); this.feed("edit", id, this.label(id)); });
+        const rec = { el, ta, tag, by }; this.els.set(id, rec); return rec;
       }
       anchor(id, toward) { const m = this.yn.get(id); if (!m) return null; const x = m.get("x"), y = m.get("y"), w = m.get("w"), h = m.get("h"), cx = x + w / 2, cy = y + h / 2, dx = toward.x - cx, dy = toward.y - cy; if (!dx && !dy) return { x: cx, y: cy }; const k = Math.min(dx ? (w / 2) / Math.abs(dx) : 1e9, dy ? (h / 2) / Math.abs(dy) : 1e9); return { x: cx + dx * k, y: cy + dy * k }; }
       center(id) { const m = this.yn.get(id); return m ? { x: m.get("x") + m.get("w") / 2, y: m.get("y") + m.get("h") / 2 } : null; }
@@ -137,12 +173,12 @@
         r.addEventListener("pointermove", (e) => {
           const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.myCur = w; const d = this.drag;
           if (d && d.kind === "pan") { this.cam.x = d.cx - (p.sx - d.sx) / this.cam.k; this.cam.y = d.cy - (p.sy - d.sy) / this.cam.k; this.applyCam(); }
-          else if (d && d.kind === "move") { this.doc.transact(() => { for (const [s, [x, y]] of d.o) { const n = this.yn.get(s); if (n) { n.set("x", Math.round(x + w.x - d.p.x)); n.set("y", Math.round(y + w.y - d.p.y)); } } }); }
-          else if (d && d.kind === "size") { const n = this.yn.get(d.id); if (n) this.doc.transact(() => { n.set("w", Math.max(120, Math.round(d.w + w.x - d.p.x))); n.set("h", Math.max(60, Math.round(d.h + w.y - d.p.y))); }); }
+          else if (d && d.kind === "move") { d.moved = true; this.doc.transact(() => { for (const [s, [x, y]] of d.o) { const n = this.yn.get(s); if (n) { n.set("x", Math.round(x + w.x - d.p.x)); n.set("y", Math.round(y + w.y - d.p.y)); } } }); }
+          else if (d && d.kind === "size") { d.moved = true; const n = this.yn.get(d.id); if (n) this.doc.transact(() => { n.set("w", Math.max(120, Math.round(d.w + w.x - d.p.x))); n.set("h", Math.max(60, Math.round(d.h + w.y - d.p.y))); }); }
           else if (d && d.kind === "link") this.drawTemp(w);
           this.publish();
         });
-        const up = (e) => { const d = this.drag; this.drag = null; if (this.temp) { this.temp.remove(); this.temp = null; } if (d && d.kind === "link") { const t = document.elementFromPoint(e.clientX, e.clientY), c = t && t.closest && t.closest(".osb-card"); if (c && c.dataset.id !== d.from) this.addEdge(d.from, c.dataset.id); else if (!c) { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } };
+        const up = (e) => { const d = this.drag; this.drag = null; if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } if (d && d.kind === "link") { const t = document.elementFromPoint(e.clientX, e.clientY), c = t && t.closest && t.closest(".osb-card"); if (c && c.dataset.id !== d.from) this.addEdge(d.from, c.dataset.id); else if (!c) { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } };
         r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
         r.addEventListener("wheel", (e) => { const ta = e.target.closest && e.target.closest(".osb-ta"); if (ta && !e.ctrlKey && ta.scrollHeight > ta.clientHeight) return; e.preventDefault(); const p = this.pt(e), b = this.worldPt(p.sx, p.sy); this.cam.k = Math.max(.1, Math.min(3, this.cam.k * Math.exp(-e.deltaY * .0015))); const a = this.worldPt(p.sx, p.sy); this.cam.x += b.x - a.x; this.cam.y += b.y - a.y; this.applyCam(); }, { passive: false });
         r.addEventListener("dblclick", (e) => { if (e.target.closest(".osb-card, g")) return; const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.addCard(w.x - 130, w.y - 30); });
@@ -158,7 +194,7 @@
             m.addSeparator(); it("Удалить", "lucide-trash-2", () => this.removeSel());
           } else if (eg) {
             const id = Array.from(this.edgeEls).find(([, r2]) => r2.g === eg || eg.contains(r2.g))?.[0]; const ed = id && this.ye.get(id);
-            if (ed) { it("Подписать связь", "lucide-type", async () => { const v = await ask("Подпись связи", ed.get("label")); if (v != null) ed.set("label", v); }); m.addSeparator(); it("Удалить связь", "lucide-trash-2", () => this.ye.delete(id)); }
+            if (ed) { it("Подписать связь", "lucide-type", async () => { const v = await ask("Подпись связи", ed.get("label")); if (v != null) ed.set("label", v); }); m.addSeparator(); it("Удалить связь", "lucide-trash-2", () => { this.feed("unlink", null, ""); this.ye.delete(id); }); }
           } else {
             it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30));
             it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
