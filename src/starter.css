@@ -18,21 +18,21 @@ h2 { margin: 26px 0 10px; font-size: 11px; font-weight: 600; letter-spacing: .09
 .row .main { flex: 1; min-width: 0; }
 .row .name { font-weight: 600; }
 .row .path { color: var(--faint); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.row .x { width: 26px; height: 26px; border: 0; background: transparent; color: var(--faint); font-size: 16px; line-height: 1; cursor: pointer; border-radius: 4px; }
+.row .x { width: 26px; height: 26px; border: 0; background: transparent; color: var(--faint); font-size: 16px; line-height: 1; cursor: pointer; border-radius: 5px; }
 .row .x:hover { background: var(--bg-alt); color: var(--danger); }
 .empty { color: var(--faint); padding: 10px 2px; }
 .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 button.big { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--side); color: var(--text); border: 1px solid var(--border); font: inherit; font-weight: 600; text-align: left; cursor: pointer;  }
 button.big:hover { background: var(--hover); border-color: var(--accent); }
-button.big .ico { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; background: var(--hover); color: var(--accent); border-radius: 4px; font-size: 15px; }
+button.big .ico { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; background: var(--hover); color: var(--accent); border-radius: 5px; font-size: 15px; }
 form.create { display: none; margin-top: 10px; padding: 14px; background: var(--side); border: 1px solid var(--border); gap: 10px; flex-direction: column; }
 form.create.open { display: flex; }
 label { display: flex; flex-direction: column; gap: 5px; color: var(--muted); font-size: 12px; }
-input[type=text] { height: 32px; padding: 0 10px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; font: inherit; outline: none; }
+input[type=text] { height: 30px; padding: 0 10px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 5px; font: inherit; outline: none; }
 input[type=text]:focus { border-color: var(--accent); }
 .pathrow { display: flex; gap: 8px; }
 .pathrow input { flex: 1; min-width: 0; }
-button.btn { height: 32px; padding: 0 16px; background: var(--hover); color: var(--text); border: 1px solid var(--border); border-radius: 4px; font: inherit; cursor: pointer; }
+button.btn { height: 30px; padding: 0 16px; background: var(--hover); color: var(--text); border: 1px solid var(--border); border-radius: 5px; font: inherit; cursor: pointer; }
 button.btn:hover { border-color: var(--accent); }
 button.btn.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
 .err { color: var(--danger); font-size: 12px; min-height: 16px; }
@@ -44,7 +44,7 @@ button.btn.primary { background: var(--accent); color: var(--accent-text); borde
 .help li { margin: 3px 0; }
 .help b { color: var(--text); font-weight: 600; }
 .keys { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 8px 0; }
-kbd { font: 12px Consolas, monospace; padding: 2px 7px; background: var(--hover); border: 1px solid var(--border); border-radius: 4px; color: var(--text); white-space: nowrap; }
+kbd { font: 12px Consolas, monospace; padding: 2px 7px; background: var(--hover); border: 1px solid var(--border); border-radius: 5px; color: var(--text); white-space: nowrap; }
 .keys span { color: var(--muted); }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -54,7 +54,7 @@ html, body { background: radial-gradient(900px 420px at 50% -120px, color-mix(in
 .page { max-width: 700px; padding: 44px 32px 40px; }
 .brand { margin-bottom: 30px; } .brand img { width: 56px; height: 56px; filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .5)); } .brand h1 { font-size: 32px; }
 h2 { margin: 28px 0 10px; }
-.row { gap: 14px; padding: 12px 14px; border-radius: 6px; background: color-mix(in srgb, var(--side) 85%, transparent); } .row .ico { color: var(--accent); display: grid; place-items: center; width: 34px; height: 34px; background: var(--hover); border-radius: 4px; flex: none; } .row:hover { transform: translateX(2px); }
+.row { gap: 14px; padding: 12px 14px; border-radius: 6px; background: color-mix(in srgb, var(--side) 85%, transparent); } .row .ico { color: var(--accent); display: grid; place-items: center; width: 34px; height: 34px; background: var(--hover); border-radius: 5px; flex: none; } .row:hover { transform: translateX(2px); }
 .row .x { opacity: 0; transition: opacity .12s; } .row:hover .x { opacity: 1; }
-.actions { gap: 10px; } button.big { border-radius: 6px; padding: 14px 16px; background: color-mix(in srgb, var(--side) 85%, transparent); transition: border-color .12s, background .12s, transform .12s; } button.big:hover { transform: translateY(-1px); } button.big .ico { width: 34px; height: 34px; border-radius: 4px; }
+.actions { gap: 10px; } button.big { border-radius: 6px; padding: 14px 16px; background: color-mix(in srgb, var(--side) 85%, transparent); transition: border-color .12s, background .12s, transform .12s; } button.big:hover { transform: translateY(-1px); } button.big .ico { width: 34px; height: 34px; border-radius: 5px; }
 .foot { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--border); }
