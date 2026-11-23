@@ -203,6 +203,19 @@
   window.__basaltUi = { sweep, ROW_NAMES };
 })();
 
+// A short notice with one action button (Undo): window.__bsUndoNotice(text, onUndo, label)
+(() => {
+  window.__bsUndoNotice = (text, onUndo, label) => {
+    const Notice = window.__bsApi && window.__bsApi.Notice; if (!Notice) return null;
+    const f = document.createDocumentFragment(), sp = document.createElement("span"); sp.textContent = text + " "; f.append(sp);
+    const b = document.createElement("button"); b.textContent = label || "Отменить"; b.className = "bs-notice-undo"; b.setAttribute("aria-label", (label || "Отменить") + ": " + text);
+    const n = new Notice(f, 9000); let used = false;
+    b.addEventListener("click", async (e) => { e.stopPropagation(); if (used) return; used = true; try { n.hide(); } catch (er) { /* gone */ } try { await onUndo(); } catch (er) { console.error("[undo]", er); new Notice("Не получилось отменить. Попробуйте вручную."); } });
+    f.append(b); return n;
+  };
+  const st = document.createElement("style"); st.textContent = ".notice .bs-notice-undo { margin-left: 8px; padding: 2px 10px; height: auto; font-size: var(--font-ui-smaller); cursor: var(--bs-cursor-hand, pointer); }"; document.head.appendChild(st);
+})();
+
 // Our own confirmation dialog (the browser's native one is a grey system window): window.__bsConfirm(text, {ok, cancel, danger}) -> Promise<boolean>
 (() => {
   const css = document.createElement("style");

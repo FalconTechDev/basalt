@@ -20,6 +20,8 @@
     .bsf-r.is-active { background: color-mix(in srgb, var(--interactive-accent) 20%, transparent); border-left-color: var(--interactive-accent); color: var(--text-normal); }
     .bsf-r.is-focus { outline: 1px solid color-mix(in srgb, var(--interactive-accent) 55%, transparent); outline-offset: -1px; }
     .bsf-r.is-drop { background: color-mix(in srgb, var(--interactive-accent) 28%, transparent); outline: 1px dashed var(--interactive-accent); }
+    .bsf-r.is-dragging { opacity: .45; } .bsf-tree.is-drop { outline: 1px dashed var(--interactive-accent); outline-offset: -3px; background: color-mix(in srgb, var(--interactive-accent) 6%, transparent); }
+    .bsf-empty button { margin-top: 10px; display: block; } .bsf-empty .bsf-empty-t { color: var(--text-muted); line-height: 1.45; }
     .bsf-r.is-dir { color: var(--text-normal); font-weight: 600; }
     .bsf-r { position: relative; }
     .bsf-guide { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--background-modifier-border); pointer-events: none; }
@@ -89,8 +91,9 @@
         };
         window.addEventListener("keydown", this.keyUndo, true);
         this.treeEl.addEventListener("contextmenu", (e) => { if (e.target === this.treeEl) { e.preventDefault(); const ws = this.ws(); if (ws && ws.rootNode()) this.wsMenu(ws.rootNode(), e); else this.menuFor(app.vault.getRoot(), e); } });
-        this.treeEl.addEventListener("dragover", (e) => { if (e.target === this.treeEl && this.dragging) { e.preventDefault(); } });
-        this.treeEl.addEventListener("drop", (e) => { if (e.target === this.treeEl) this.dropOn(app.vault.getRoot(), e); });
+        this.treeEl.addEventListener("dragover", (e) => { if (e.target === this.treeEl && this.dragging) { e.preventDefault(); this.treeEl.classList.add("is-drop"); } });
+        this.treeEl.addEventListener("dragleave", (e) => { if (e.target === this.treeEl) this.treeEl.classList.remove("is-drop"); });
+        this.treeEl.addEventListener("drop", (e) => { this.treeEl.classList.remove("is-drop"); if (e.target === this.treeEl) this.dropOn(app.vault.getRoot(), e); });
         const hits = []; const again = () => { const now = Date.now(); hits.push(now); while (hits.length && now - hits[0] > 1500) hits.shift(); clearTimeout(this.t); this.t = setTimeout(() => this.render(), hits.length > 8 ? 1100 : 120); };
         for (const ev of ["create", "delete", "rename", "modify"]) this.registerEvent(app.vault.on(ev, (f) => { if (ev === "modify" && this.sort !== "mtime") return; if (f && f.path && /(^|\/)\./.test(f.path)) return; again(); }));
         this.registerEvent(app.workspace.on("file-open", (f) => { if (f && !(window.__bsMiniFeatures && window.__bsMiniFeatures.cfg.explorer.keepFolders)) { this.reveal(f.path, false); } this.render(); }));
@@ -108,8 +111,8 @@
         if (this._barMode === mode) return;
         this._barMode = mode;
         const bar = this.contentEl.querySelector(".bsf-bar"); bar.textContent = "";
-        const btn = (icon, title, fn) => { const b = document.createElement("button"); b.title = title; try { api.setIcon(b, icon); } catch (e) { b.textContent = "•"; } b.addEventListener("click", fn); bar.appendChild(b); return b; };
-        const sortBtn = () => btn("lucide-arrow-up-down", "Сортировка", (e) => {
+        const btn = (icon, title, fn) => { const b = document.createElement("button"); b.title = title; b.setAttribute("aria-label", title); try { api.setIcon(b, icon); } catch (e) { b.textContent = "•"; } b.addEventListener("click", fn); bar.appendChild(b); return b; };
+        const sortBtn = () => btn("lucide-arrow-up-down", "Порядок файлов: по имени, дате или типу", (e) => {
           const m = new api.Menu();
           for (const [k, label] of SORTS) m.addItem((i) => i.setTitle(label[0].toUpperCase() + label.slice(1)).setIcon(this.sort === k ? "lucide-check" : "lucide-blank").onClick(() => { this.sort = k; this.save(); this.render(); }));
           m.showAtMouseEvent(e);
@@ -117,15 +120,15 @@
         if (ws) {
           const label = document.createElement("span"); label.className = "bsf-wsroot"; label.textContent = ws.rootName(); label.title = ws.root();
           bar.appendChild(label);
-          btn(ws.showIgnored() ? "lucide-eye" : "lucide-eye-off", ws.showIgnored() ? "Скрыть игнорируемые" : "Показывать игнорируемые", () => ws.setShowIgnored(!ws.showIgnored()));
-          btn("lucide-rotate-cw", "Обновить", () => ws.refresh());
-          btn("lucide-folder-open", "Сменить папку", () => ws.pick());
-          btn("lucide-x", "Закрыть папку", () => ws.close());
+          btn(ws.showIgnored() ? "lucide-eye" : "lucide-eye-off", ws.showIgnored() ? "Скрыть файлы из .gitignore" : "Показать файлы из .gitignore", () => ws.setShowIgnored(!ws.showIgnored()));
+          btn("lucide-rotate-cw", "Обновить список файлов", () => ws.refresh());
+          btn("lucide-folder-open", "Открыть другую папку", () => ws.pick());
+          btn("lucide-x", "Закрыть папку (файлы останутся на диске)", () => ws.close());
           sortBtn();
           return;
         }
         // one "new" button with a menu, like before: note, folder, canvas, database
-        btn("lucide-plus", "Создать", (e) => {
+        btn("lucide-plus", "Создать заметку, папку или доску", (e) => {
           const m = new api.Menu();
           m.addItem((i) => i.setTitle("Новая заметка").setIcon("lucide-square-pen").onClick(() => this.create("md")));
           m.addItem((i) => i.setTitle("Новая папка").setIcon("lucide-folder-open").onClick(() => this.createFolder()));
@@ -244,8 +247,16 @@
           frag.appendChild(r);
         }
         this.treeEl.textContent = ""; this.treeEl.appendChild(frag);
-        if (!this.rowList.length) this.treeEl.innerHTML = `<div class="bsf-empty">${this.filter ? "Ничего не найдено" : ws ? "Папка пуста" : "В хранилище пока нет файлов. Нажмите «Новая заметка» выше."}</div>`;
+        if (!this.rowList.length) this.emptyState(ws);
         this.treeEl.scrollTop = scroll;
+      }
+      emptyState(ws) {
+        const box = document.createElement("div"); box.className = "bsf-empty"; const t = document.createElement("div"); t.className = "bsf-empty-t"; box.appendChild(t);
+        const act = (label, fn) => { const b = document.createElement("button"); b.className = "mod-cta"; b.textContent = label; b.addEventListener("click", fn); box.appendChild(b); };
+        if (this.filter) { t.textContent = "Ничего не нашли по запросу «" + this.filter + "». Проверьте написание или сбросьте фильтр."; act("Сбросить фильтр", () => { this.find.value = ""; this.filter = ""; this.wsResults = []; this.render(); }); }
+        else if (ws) t.textContent = "Эта папка пуста. Файлы появятся здесь, как только вы их добавите.";
+        else { t.textContent = "В хранилище пока нет заметок. Создайте первую, чтобы начать."; act("Создать заметку", () => this.create("md")); }
+        this.treeEl.textContent = ""; this.treeEl.appendChild(box);
       }
       wire(r, f) {
         const ws = this.ws(), isDir = ws ? !!f.isDir : !!f.children;
@@ -260,13 +271,13 @@
         r.addEventListener("contextmenu", (e) => { e.preventDefault(); if (!this.sel.has(f.path)) { this.sel = new Set([f.path]); this.render(); } ws ? this.wsMenu(f, e) : this.menuFor(f, e); });
         r.addEventListener("dragstart", (e) => {
           if (ws) return;
-          const paths = this.sel.has(f.path) ? Array.from(this.sel) : [f.path]; this.dragging = paths; e.dataTransfer.effectAllowed = "copyMove";
+          const paths = this.sel.has(f.path) ? Array.from(this.sel) : [f.path]; this.dragging = paths; e.dataTransfer.effectAllowed = "copyMove"; setTimeout(() => { for (const p of paths) { const el = this.treeEl.querySelector('[data-path="' + CSS.escape(p) + '"]'); if (el) el.classList.add("is-dragging"); } }, 0);
           try { const files = paths.map((p) => app.vault.getAbstractFileByPath(p)).filter((x) => x && !x.children); const d = files.length > 1 ? app.dragManager.dragFiles(e, files) : f.children ? app.dragManager.dragFolder(e, f) : app.dragManager.dragFile(e, f); app.dragManager.onDragStart(e, d); } catch (err) { /* drop into notes unavailable */ }
         });
-        r.addEventListener("dragend", () => { this.dragging = null; this.treeEl.querySelectorAll(".is-drop").forEach((x) => x.classList.remove("is-drop")); });
+        r.addEventListener("dragend", () => { this.dragging = null; clearTimeout(this._spring); this.treeEl.classList.remove("is-drop"); this.treeEl.querySelectorAll(".is-drop, .is-dragging").forEach((x) => x.classList.remove("is-drop", "is-dragging")); });
         if (isDir && !ws) {
-          r.addEventListener("dragover", (e) => { if (this.dragging && !this.dragging.some((p) => p === f.path || f.path.startsWith(p + "/"))) { e.preventDefault(); r.classList.add("is-drop"); } });
-          r.addEventListener("dragleave", () => r.classList.remove("is-drop"));
+          r.addEventListener("dragover", (e) => { if (this.dragging && !this.dragging.some((p) => p === f.path || f.path.startsWith(p + "/"))) { e.preventDefault(); this.treeEl.classList.remove("is-drop"); if (!r.classList.contains("is-drop")) { r.classList.add("is-drop"); clearTimeout(this._spring); if (!this.open.has(f.path)) this._spring = setTimeout(() => { if (r.classList.contains("is-drop")) { this.open.add(f.path); this.save(); this.renderKeepDrag(); } }, 700); } } });
+          r.addEventListener("dragleave", () => { r.classList.remove("is-drop"); clearTimeout(this._spring); });
           r.addEventListener("drop", (e) => { r.classList.remove("is-drop"); this.dropOn(f, e); });
         }
       }
@@ -275,16 +286,19 @@
       openFile(f, newTab) { if (f.extension === undefined) return; const ws = app.workspace; let leaf = newTab ? null : ws.getMostRecentLeaf(ws.rootSplit); if (!leaf || leaf.getRoot() !== ws.rootSplit) leaf = ws.getLeaf("tab"); leaf.openFile(f).then(() => ws.setActiveLeaf(leaf, { focus: true })).catch((e) => console.error("[files] open", e)); }
       async dropOn(folder, e) {
         if (this.ws()) return;
-        const paths = this.dragging; this.dragging = null; if (!paths) return; e.preventDefault(); e.stopPropagation();
+        const paths = this.dragging; this.dragging = null; if (!paths) return; e.preventDefault(); e.stopPropagation(); const moved = [];
         for (const p of paths) {
           const f = app.vault.getAbstractFileByPath(p); if (!f || (f.parent && f.parent.path === folder.path)) continue;
           const dest = (folder.path === "/" ? "" : folder.path + "/") + f.name;
-          if (app.vault.getAbstractFileByPath(dest)) { new api.Notice(`«${f.name}» уже есть в «${folder.name || "корне"}»`); continue; }
-          try { { const fromPath = f.path; await app.fileManager.renameFile(f, dest); this.pushOp({ t: "rename", from: fromPath, to: dest }); } } catch (err) { new api.Notice("Не удалось переместить: " + err.message); }
+          if (app.vault.getAbstractFileByPath(dest)) { new api.Notice(`В папке «${folder.name || "корень"}» уже есть «${f.name}». Переименуйте один из файлов и повторите.`, 6000); continue; }
+          try { { const fromPath = f.path; await app.fileManager.renameFile(f, dest); const op = { t: "rename", from: fromPath, to: dest }; this.pushOp(op); moved.push(op); } } catch (err) { console.error("[files] move", err); this.fail("переместить «" + f.name + "»"); }
         }
+        if (moved.length) { const where = folder.name || "корень"; (window.__bsUndoNotice || ((m) => new api.Notice(m)))(moved.length > 1 ? `Перемещено: ${moved.length} в «${where}»` : `Перемещено в «${where}»`, async () => { for (const op of moved.slice().reverse()) await this.undoOp(op, true); this.render(); }); }
         if (folder.path !== "/") { this.open.add(folder.path); this.save(); }
         this.render();
       }
+      renderKeepDrag() { const d = this.dragging; this.render(); this.dragging = d; }
+      fail(what) { new api.Notice("Не удалось " + what + ". Возможно, файл открыт в другой программе или нет прав. Попробуйте ещё раз.", 6000); }
       targetFolder() { const p = this.focus && app.vault.getAbstractFileByPath(this.focus); return p ? (p.children ? p : p.parent) : app.vault.getRoot(); }
       async create(ext) {
         if (this.ws()) return;
@@ -299,7 +313,7 @@
         if (this.ws()) return;
         const folder = this.targetFolder() || app.vault.getRoot(), join = (n) => (folder.path === "/" ? "" : folder.path + "/") + n;
         let n = "Новая папка", i = 1; while (app.vault.getAbstractFileByPath(join(n))) n = `Новая папка ${++i}`;
-        await app.vault.createFolder(join(n)); const f = app.vault.getAbstractFileByPath(join(n)); this.pushOp({ t: "create", path: join(n), folder: true });
+        try { await app.vault.createFolder(join(n)); } catch (err) { console.error("[files] mkdir", err); this.fail("создать папку"); return; } const f = app.vault.getAbstractFileByPath(join(n)); this.pushOp({ t: "create", path: join(n), folder: true });
         if (folder.path !== "/") this.open.add(folder.path); this.save(); this.focus = f.path; this.render(); setTimeout(() => this.rename(f), 200);
       }
       rename(f) {
@@ -313,7 +327,7 @@
           if (done) return; done = true; this.renaming = false;
           const v = input.value.trim().replace(/[\\/:*?"<>|]/g, "");
           const typedExt = !f.children && /\.(md|py|pyw|js|mjs|cjs|jsx|ts|tsx|json|jsonc|txt|css|scss|html|htm|yml|yaml|toml|ini|cfg|conf|sh|bat|cmd|ps1|rs|go|java|kt|c|cc|cpp|h|hpp|cs|rb|php|lua|sql|xml|csv|tsv|log|canvas|base|png|jpe?g|gif|svg|webp|avif|pdf|zip)$/i.test(v), newName = typedExt ? v : v + ext;
-          if (ok && /^\./.test(newName) && !/^\./.test(f.name)) new api.Notice("Имя не может начинаться с точки (такой файл станет скрытым)"); else if (ok && v && newName !== f.name) { const dest = (f.parent && f.parent.path !== "/" ? f.parent.path + "/" : "") + newName; if (app.vault.getAbstractFileByPath(dest)) new api.Notice("Такое имя уже занято"); else { try { { const fromPath = f.path; await app.fileManager.renameFile(f, dest); this.pushOp({ t: "rename", from: fromPath, to: dest }); } } catch (err) { new api.Notice("Не удалось переименовать: " + err.message); } } }
+          if (ok && /^\./.test(newName) && !/^\./.test(f.name)) new api.Notice("Имя не может начинаться с точки: такой файл станет скрытым. Уберите точку в начале.", 6000); else if (ok && v && newName !== f.name) { const dest = (f.parent && f.parent.path !== "/" ? f.parent.path + "/" : "") + newName; if (app.vault.getAbstractFileByPath(dest)) new api.Notice("Файл с таким именем уже есть в этой папке. Выберите другое имя.", 6000); else { try { { const fromPath = f.path; await app.fileManager.renameFile(f, dest); this.pushOp({ t: "rename", from: fromPath, to: dest }); } } catch (err) { console.error("[files] rename", err); this.fail("переименовать"); } } }
           this.render(); this.root.focus();
         };
         input.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") finish(true); else if (e.key === "Escape") finish(false); });
@@ -324,37 +338,49 @@
       async snapshotOf(f) {
         if (!f.children) return { path: f.path, folder: false, data: await app.vault.adapter.readBinary(f.path) };
         const kids = []; const budget = { n: 0, bytes: 0 };
-        const walk = async (d) => { for (const c of d.children) { if (c.children) { kids.push({ path: c.path, folder: true }); await walk(c); } else { if (budget.n++ > 500 || budget.bytes > 50e6) return; const data = await app.vault.adapter.readBinary(c.path); budget.bytes += data.byteLength; kids.push({ path: c.path, folder: false, data }); } } };
-        await walk(f); return { path: f.path, folder: true, kids };
+        const walk = async (d) => { for (const c of d.children) { if (c.children) { kids.push({ path: c.path, folder: true }); await walk(c); } else { if (budget.n++ > 500 || budget.bytes > 50e6) { budget.cut = true; return; } const data = await app.vault.adapter.readBinary(c.path); budget.bytes += data.byteLength; kids.push({ path: c.path, folder: false, data }); } } };
+        await walk(f); return { path: f.path, folder: true, kids, partial: !!budget.cut };
       }
       async restoreSnap(snap) {
         if (snap.folder) { try { await app.vault.createFolder(snap.path); } catch (e) { /* exists */ } for (const k of snap.kids) { try { if (k.folder) await app.vault.createFolder(k.path); else await app.vault.createBinary(k.path, k.data); } catch (e) { /* exists */ } } }
         else await app.vault.createBinary(snap.path, snap.data);
       }
-      async undoOp() {
-        const op = (this.undoOps || []).pop(); if (!op) { new api.Notice("Нечего отменять"); return; }
+      async undoOp(which, quiet) {
+        let op; if (which) { const i = (this.undoOps || []).indexOf(which); if (i < 0) { if (!quiet) new api.Notice("Это действие уже отменено или устарело."); return; } op = this.undoOps.splice(i, 1)[0]; } else op = (this.undoOps || []).pop();
+        if (!op) { new api.Notice("Пока нечего отменять: отменяются действия с файлами в этой сессии."); return; }
         try {
           if (op.t === "rename") { const f = app.vault.getAbstractFileByPath(op.to); if (f) await app.fileManager.renameFile(f, op.from); }
           else if (op.t === "delete") { for (const snap of op.snaps) await this.restoreSnap(snap); }
           else if (op.t === "create") { const f = app.vault.getAbstractFileByPath(op.path); if (f) { op.snap = await this.snapshotOf(f); await app.fileManager.trashFile(f); } }
-          (this.redoOps = this.redoOps || []).push(op); new api.Notice("Действие отменено"); this.render();
-        } catch (err) { new api.Notice("Не удалось отменить: " + err.message); }
+          (this.redoOps = this.redoOps || []).push(op); if (!quiet) new api.Notice("Действие отменено. Вернуть его: Ctrl+Y.", 3000); this.render();
+        } catch (err) { console.error("[files] undo", err); this.fail("отменить действие"); }
       }
       async redoOp() {
-        const op = (this.redoOps || []).pop(); if (!op) { new api.Notice("Нечего повторять"); return; }
+        const op = (this.redoOps || []).pop(); if (!op) { new api.Notice("Пока нечего повторять."); return; }
         try {
           if (op.t === "rename") { const f = app.vault.getAbstractFileByPath(op.from); if (f) await app.fileManager.renameFile(f, op.to); }
           else if (op.t === "delete") { for (const snap of op.snaps) { const f = app.vault.getAbstractFileByPath(snap.path); if (f) await app.fileManager.trashFile(f); } }
           else if (op.t === "create") { if (op.snap) await this.restoreSnap(op.snap); }
           (this.undoOps = this.undoOps || []).push(op); new api.Notice("Действие повторено"); this.render();
-        } catch (err) { new api.Notice("Не удалось повторить: " + err.message); }
+        } catch (err) { console.error("[files] redo", err); this.fail("повторить действие"); }
       }
       async remove(files) {
-        if (this.ws()) return;
-        const names = files.map((f) => f.name).slice(0, 4).join(", ") + (files.length > 4 ? "…" : "");
-        if (!(await window.__bsConfirm(`Удалить в корзину: ${names}?`, { title: files.length > 1 ? "Удалить " + files.length + " элементов?" : "Удалить файл?", lead: files.length > 1 ? "Эти элементы будут перемещены в корзину:" : "Файл будет перемещён в корзину:", items: files.map((f) => f.name), ok: "В корзину", danger: true }))) return;
-        const snaps = []; for (const f of files) { try { let snap = null; try { snap = await this.snapshotOf(f); } catch (e) { /* too big or unreadable: no undo for this one */ } await app.fileManager.trashFile(f); if (snap) snaps.push(snap); } catch (err) { new api.Notice("Не удалось удалить: " + err.message); } } if (snaps.length) this.pushOp({ t: "delete", snaps });
+        if (this.ws() || !files.length) return;
+        const names = files.map((f) => f.name).slice(0, 3).join(", ") + (files.length > 3 ? " и ещё " + (files.length - 3) : "");
+        // everything that can be brought back is deleted at once with an Undo notice; a question is asked only when it cannot
+        const snaps = [], risky = [];
+        for (const f of files) { let snap = null; try { snap = await this.snapshotOf(f); } catch (e) { /* too big or unreadable */ } if (snap && !snap.partial) snaps.push(snap); else risky.push(f.name); }
+        if (risky.length) {
+          const okAsk = await window.__bsConfirm("Эти файлы слишком велики, чтобы вернуть их кнопкой «Отменить»: " + risky.slice(0, 4).join(", ") + ". Они всё равно попадут в корзину, оттуда их можно достать вручную.", { title: "Удалить " + (files.length > 1 ? files.length + " элементов" : "«" + files[0].name + "»") + "?", ok: "В корзину", danger: true });
+          if (!okAsk) return;
+        }
+        const done = [], keep = [];
+        for (const f of files) { const snap = snaps.find((x) => x.path === f.path); try { await app.fileManager.trashFile(f); done.push(f); if (snap) keep.push(snap); } catch (err) { console.error("[files] delete", err); this.fail("удалить «" + f.name + "»"); } }
         this.sel.clear(); this.render();
+        if (!done.length) return;
+        let op = null; if (keep.length) { op = { t: "delete", snaps: keep }; this.pushOp(op); }
+        const text = done.length > 1 ? "В корзину: " + done.length + " (" + names + ")" : "В корзину: «" + done[0].name + "»";
+        if (op && window.__bsUndoNotice) window.__bsUndoNotice(text, () => this.undoOp(op), "Вернуть"); else new api.Notice(text + ". Файлы можно достать из корзины.", 5000);
       }
       menuFor(f, e) {
         const menu = new api.Menu(), many = this.sel.size > 1, list = () => Array.from(this.sel).map((p) => app.vault.getAbstractFileByPath(p)).filter(Boolean);
@@ -362,9 +388,10 @@
         if (f.children) { const t = f.path === "/" ? app.vault.getRoot() : f; menu.addItem((i) => i.setTitle("Новая заметка здесь").setIcon("lucide-file-plus").onClick(() => { this.focus = t.path === "/" ? null : t.path; this.create("md"); })); menu.addItem((i) => i.setTitle("Новая папка здесь").setIcon("lucide-folder-plus").onClick(() => { this.focus = t.path === "/" ? null : t.path; this.createFolder(); })); menu.addItem((i) => i.setTitle("Новая доска здесь").setIcon("lucide-layout-dashboard").onClick(() => { this.focus = t.path === "/" ? null : t.path; this.create("board"); })); menu.addItem((i) => i.setTitle("Создать базу данных здесь").setIcon("lucide-layout-list").onClick(() => { this.focus = t.path === "/" ? null : t.path; this.create("base"); })); menu.addSeparator(); }
         if (!f.children && !many && f.extension === "canvas" && window.__bsBoard) menu.addItem((i) => i.setTitle("Преобразовать в доску").setIcon("lucide-layout-dashboard").onClick(() => window.__bsBoard.convert(f)));
         if (!f.children && !many && f.extension === "board") { menu.addItem((i) => i.setTitle("История версий").setIcon("lucide-history").onClick(async () => { const leaf = app.workspace.getLeaf(false); await leaf.openFile(f); let n = 0; const go = () => { const v = leaf.view; if (v && v.historyDialog && v.path === f.path && v.doc) v.historyDialog(); else if (n++ < 40) setTimeout(go, 100); }; go(); })); } else if (!f.children && !many && window.__vaultSyncHistory) { menu.addItem((i) => i.setTitle("История версий").setIcon("lucide-history").onClick(() => window.__vaultSyncHistory(f.path))); }
-        if (!f.children && !many) menu.addItem((i) => i.setTitle("Дублировать").setIcon("lucide-copy").onClick(async () => { const dot = f.name.lastIndexOf("."), stem = f.name.slice(0, dot), ext = f.name.slice(dot), dir = f.parent && f.parent.path !== "/" ? f.parent.path + "/" : ""; let n = `${stem} копия`, i = 1; while (app.vault.getAbstractFileByPath(dir + n + ext)) n = `${stem} копия ${++i}`; try { await app.vault.copy(f, dir + n + ext); } catch (err) { new api.Notice("Не удалось скопировать: " + err.message); } }));
         if (f.path !== "/" && !many) menu.addItem((i) => i.setTitle("Переименовать").setIcon("lucide-pencil").onClick(() => this.rename(f)));
+        if (!f.children && !many) menu.addItem((i) => i.setTitle("Дублировать").setIcon("lucide-copy").onClick(async () => { const dot = f.name.lastIndexOf("."), stem = f.name.slice(0, dot), ext = f.name.slice(dot), dir = f.parent && f.parent.path !== "/" ? f.parent.path + "/" : ""; let n = `${stem} копия`, i = 1; while (app.vault.getAbstractFileByPath(dir + n + ext)) n = `${stem} копия ${++i}`; try { await app.vault.copy(f, dir + n + ext); } catch (err) { console.error("[files] copy", err); this.fail("создать копию"); } }));
         try { app.workspace.trigger("file-menu", menu, f, "file-explorer"); } catch (err) { /* plugins */ }
+        if (f.path !== "/" && !many) menu.addItem((i) => i.setTitle("Копировать путь").setIcon("lucide-clipboard-copy").onClick(() => { navigator.clipboard.writeText(f.path).then(() => new api.Notice("Путь скопирован: " + f.path, 2500)); }));
         if (f.path !== "/") { menu.addSeparator(); menu.addItem((i) => { i.setTitle(many ? `Удалить (${this.sel.size})` : "Удалить").setIcon("lucide-trash-2"); if (i.setWarning) i.setWarning(true); i.onClick(() => this.remove(many ? list() : [f])); }); }
         menu.showAtMouseEvent(e);
       }
@@ -389,6 +416,9 @@
         else if (e.key === "ArrowRight" && cur && cur.children) { e.preventDefault(); this.open.add(cur.path); this.save(); this.render(); }
         else if (e.key === "ArrowLeft" && cur) { e.preventDefault(); if (cur.children && this.open.has(cur.path)) { this.open.delete(cur.path); this.save(); this.render(); } else if (cur.parent && cur.parent.path !== "/") { this.focus = cur.parent.path; this.sel = new Set([this.focus]); this.render(); } }
         else if (e.key === "Enter" && cur) { e.preventDefault(); if (cur.children) { this.open.has(cur.path) ? this.open.delete(cur.path) : this.open.add(cur.path); this.save(); this.render(); } else this.openFile(cur, e.ctrlKey || e.metaKey); }
+        else if (e.key === "Home") { e.preventDefault(); go(0); }
+        else if (e.key === "End") { e.preventDefault(); go(paths.length - 1); }
+        else if (e.key === "Escape" && this.sel.size > 1) { e.preventDefault(); this.sel = new Set(this.focus ? [this.focus] : []); this.render(); }
         else if (e.key === "F2" && cur) { e.preventDefault(); this.rename(cur); }
         else if (e.key === "Delete" && cur) { e.preventDefault(); this.remove(this.sel.size ? Array.from(this.sel).map((p) => app.vault.getAbstractFileByPath(p)).filter(Boolean) : [cur]); }
         else if ((e.ctrlKey || e.metaKey) && lk(e) === "f") { e.preventDefault(); this.find.focus(); this.find.select(); }

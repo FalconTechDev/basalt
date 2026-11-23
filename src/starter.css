@@ -58,3 +58,6 @@ h2 { margin: 28px 0 10px; }
 .row .x { opacity: 0; transition: opacity .12s; } .row:hover .x { opacity: 1; }
 .actions { gap: 10px; } button.big { border-radius: 6px; padding: 14px 16px; background: color-mix(in srgb, var(--side) 85%, transparent); transition: border-color .12s, background .12s, transform .12s; } button.big:hover { transform: translateY(-1px); } button.big .ico { width: 34px; height: 34px; border-radius: 5px; }
 .foot { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--border); }
+.row .x:focus-visible { opacity: 1; outline: 2px solid var(--accent); }
+.row:focus-visible, button.big:focus-visible, button.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.hint { color: var(--faint); font-size: 12px; }

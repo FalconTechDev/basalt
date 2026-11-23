@@ -29,24 +29,32 @@
 	};
 	const ico = (n) => { const s = document.createElement('span'); s.className = 'ico'; s.innerHTML = ICONS[n]; return s; };
 
-	const state = { creating: false, error: '', location: ipcRenderer.sendSync('get-default-vault-path') ? path.dirname(ipcRenderer.sendSync('get-default-vault-path')) : '', name: 'My vault' };
+	const plainError = (e) => {
+		const s = String(e || '');
+		if (/already exists/i.test(s)) return t('A folder with this name already exists here. Pick another name, or use "Open a folder as vault".', 'Папка с таким именем уже есть. Выберите другое имя или откройте её кнопкой «Открыть папку как хранилище».');
+		if (/not found/i.test(s)) return t('That folder is gone. Remove it from the list and pick it again.', 'Эта папка больше не существует. Уберите её из списка и выберите заново.');
+		if (/EACCES|EPERM/i.test(s)) return t('No permission to write there. Choose another location, for example Documents.', 'Нет прав на запись в это место. Выберите другое расположение, например «Документы».');
+		if (/ENOENT/i.test(s)) return t('The location does not exist. Choose an existing folder.', 'Такого расположения нет. Выберите существующую папку.');
+		return t('Could not open the vault. Check the folder and try again.', 'Не удалось открыть хранилище. Проверьте папку и попробуйте ещё раз.');
+	};
+	const state = { creating: !Object.keys(ipcRenderer.sendSync('vault-list') || {}).length, error: '', location: ipcRenderer.sendSync('get-default-vault-path') ? path.dirname(ipcRenderer.sendSync('get-default-vault-path')) : '', name: 'My vault' };
 
 	function open(p, create) {
 		const err = ipcRenderer.sendSync('vault-open', p, !!create);
-		if (err) { state.error = String(err); render(); return; }
+		if (err) { state.error = plainError(err); render(); return; }
 		window.close();
 	}
 
 	function vaultRows() {
 		const vaults = ipcRenderer.sendSync('vault-list') || {};
 		const items = Object.keys(vaults).map((id) => ({ id, ...vaults[id] })).sort((a, b) => (b.ts || 0) - (a.ts || 0));
-		if (!items.length) return [el('div', { class: 'empty' }, t('No vaults yet. Create one or open a folder.', 'Хранилищ пока нет. Создайте новое или откройте папку.'))];
-		return items.map((v) => el('div', { class: 'row', on: { click: () => open(v.path, false) } },
+		if (!items.length) return [el('div', { class: 'empty' }, t('No vaults yet. Fill in the form below and press "Create", or open a folder you already have.', 'Хранилищ пока нет. Заполните форму ниже и нажмите «Создать» или откройте уже существующую папку.'))];
+		return items.map((v) => el('div', { class: 'row', tabindex: 0, role: 'button', title: t('Open this vault', 'Открыть это хранилище'), on: { click: () => open(v.path, false), keydown: (e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(v.path, false); } } } },
 			ico('folder'),
 			el('div', { class: 'main' }, el('div', { class: 'name' }, path.basename(v.path)), el('div', { class: 'path', title: v.path }, v.path)),
 			el('button', {
-				class: 'x', title: t('Remove from the list', 'Убрать из списка'),
-				on: { click: (e) => { e.stopPropagation(); if (!ipcRenderer.sendSync('vault-remove', v.path)) state.error = t('Close the vault window first.', 'Сначала закройте окно этого хранилища.'); else state.error = ''; render(); } },
+				class: 'x', title: t('Remove from the list (the folder and notes stay on disk)', 'Убрать из списка (папка и заметки останутся на диске)'), 'aria-label': t('Remove from the list', 'Убрать из списка'),
+				on: { click: (e) => { e.stopPropagation(); if (!ipcRenderer.sendSync('vault-remove', v.path)) state.error = t('This vault is open in a window. Close that window first, then remove it from the list.', 'Это хранилище открыто в окне. Сначала закройте окно, потом уберите его из списка.'); else state.error = ''; render(); } },
 			}, '×')));
 	}
 
@@ -56,16 +64,17 @@
 	}
 
 	function createForm() {
-		const name = el('input', { type: 'text', value: state.name, on: { input: (e) => { state.name = e.target.value; } } });
+		const name = el('input', { type: 'text', autofocus: true, placeholder: t('For example: Notes', 'Например: Заметки'), value: state.name, on: { input: (e) => { state.name = e.target.value; } } });
 		const loc = el('input', { type: 'text', value: state.location, on: { input: (e) => { state.location = e.target.value; } } });
 		const submit = () => {
 			const n = state.name.trim();
-			if (!n || /[\\/:*?"<>|]/.test(n)) { state.error = t('Use a plain folder name.', 'Введите простое имя папки.'); render(); return; }
+			if (!n || /[\\/:*?"<>|]/.test(n)) { state.error = t('Enter a plain name without \ / : * ? " < > |.', 'Введите простое название без символов \ / : * ? " < > |.'); render(); return; }
 			open(path.join(state.location, n), true);
 		};
 		return el('form', { class: 'create' + (state.creating ? ' open' : ''), on: { submit: (e) => { e.preventDefault(); submit(); } } },
 			el('label', null, t('Vault name', 'Название хранилища'), name),
 			el('label', null, t('Location', 'Расположение'), el('div', { class: 'pathrow' }, loc, el('button', { class: 'btn', type: 'button', on: { click: () => choose((p) => { state.location = p; render(); }) } }, t('Choose…', 'Выбрать…')))),
+			el('div', { class: 'hint' }, t('A folder with this name will be created in the chosen location; your notes are stored in it as ordinary files.', 'В выбранном расположении появится папка с этим названием, заметки лежат в ней обычными файлами.')),
 			el('div', null, el('button', { class: 'btn primary', type: 'submit' }, t('Create', 'Создать'))));
 	}
 
@@ -77,10 +86,10 @@
 			el('div', { class: 'list' }, ...vaultRows()),
 			el('h2', null, t('Start', 'Начать')),
 			el('div', { class: 'actions' },
-				el('button', { class: 'big', on: { click: () => { state.creating = !state.creating; state.error = ''; render(); } } }, ico('plus'), t('Create a new vault', 'Создать хранилище')),
-				el('button', { class: 'big', on: { click: () => choose((p) => open(p, false)) } }, ico('open'), t('Open a folder as vault', 'Открыть папку как хранилище')),
-				el('button', { class: 'big', on: { click: () => { ipcRenderer.sendSync('sandbox'); window.close(); } } }, ico('box'), t('Open the sandbox', 'Открыть песочницу')),
-				el('button', { class: 'big', on: { click: () => ipcRenderer.sendSync('help') } }, ico('help'), t('Help', 'Справка'))),
+				el('button', { class: 'big', title: t('A new empty folder for your notes', 'Новая пустая папка для ваших заметок'), on: { click: () => { state.creating = !state.creating; state.error = ''; render(); } } }, ico('plus'), t('Create a new vault', 'Создать хранилище')),
+				el('button', { class: 'big', title: t('Use a folder with notes you already have', 'Взять папку, в которой уже лежат ваши заметки'), on: { click: () => choose((p) => open(p, false)) } }, ico('open'), t('Open a folder as vault', 'Открыть папку как хранилище')),
+				el('button', { class: 'big', title: t('A ready vault with example notes to try things out', 'Готовое хранилище с примерами заметок, чтобы всё попробовать'), on: { click: () => { ipcRenderer.sendSync('sandbox'); window.close(); } } }, ico('box'), t('Open the sandbox', 'Открыть песочницу')),
+				el('button', { class: 'big', title: t('How Basalt works and the main shortcuts', 'Как устроен Basalt и основные сочетания клавиш'), on: { click: () => ipcRenderer.sendSync('help') } }, ico('help'), t('Help', 'Справка'))),
 			createForm(),
 			el('div', { class: 'err' }, state.error),
 			el('div', { class: 'foot' }, el('span', null, t('Your notes stay as plain files in the folder you pick.', 'Заметки остаются обычными файлами в выбранной папке.')))));
