@@ -15,6 +15,7 @@
   const VIEWS = new Set(); // every open graph view of the vault
   const HIDDEN_ID = "hidden"; // the built-in group "Скрытые": what you hide goes there, its eye is off
   const plural = (n) => { const a = n % 100, b = n % 10; return n + (a > 10 && a < 15 ? " узлов" : b === 1 ? " узел" : b > 1 && b < 5 ? " узла" : " узлов"); };
+  const NODE_COLORS = [["Медный", "#c98d5b"], ["Песочный", "#d8c8a8"], ["Стальной", "#7c9cc0"], ["Мшистый", "#86b08a"], ["Аметистовый", "#a692c4"], ["Розовый", "#c88080"], ["Охристый", "#c8aa64"], ["Бирюзовый", "#64aaaa"]];
   const GROUP_COLORS = ["#c98d5b", "#6e96be", "#7fbe8b", "#af8ceb", "#e17878", "#e6be5a", "#5abebe", "#dccdb9"];
   const storeFile = () => app.vault.configDir + "/graph-groups.json";
   async function loadStore() {
@@ -224,7 +225,31 @@
     .bsg-panel .bsg-off .setting-item-name, .bsg-panel .bsg-off .setting-item-description { opacity: .45; } .bsg-panel .bsg-solo { background: color-mix(in srgb, var(--interactive-accent) 12%, transparent); }
     .bsg-status { position: absolute; left: 14px; bottom: 10px; font-size: 11.5px; color: var(--text-faint); pointer-events: none; display: flex; gap: 14px; }
     .bsg-status b { color: var(--text-muted); font-weight: 600; }
-    .bsg-empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--text-faint); pointer-events: none; }`;
+    .bsg-empty { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; color: var(--text-faint); pointer-events: none; }
+    /* ---- one look: 6px shapes, calm accents, nearly opaque floating pieces */
+    .bsg { --bs-r: 6px; --bs-clip: none; }
+    .bsg-seg, .bsg-panel, .bsg-focus, .bsg-card, .bsg-help, .bsg-menu { border-radius: 6px !important; clip-path: none !important; }
+    .bsg-seg { padding: 2px; gap: 2px; height: 34px; align-items: center; background: color-mix(in srgb, var(--background-secondary) 94%, transparent); }
+    .bsg-seg button { height: 28px; border-radius: 4px !important; display: inline-flex; align-items: center; gap: 6px; }
+    .bsg-seg button.is-on { background: color-mix(in srgb, var(--interactive-accent) 22%, transparent); color: var(--text-normal); }
+    .bsg-seg button .bsg-sic { display: inline-flex; width: 15px; height: 15px; } .bsg-seg button .bsg-sic svg { width: 15px; height: 15px; }
+    .bsg-search { height: 34px; border-radius: 6px !important; background: color-mix(in srgb, var(--background-secondary) 94%, transparent); }
+    .bsg-panel { background: color-mix(in srgb, var(--background-secondary) 97%, transparent); box-shadow: 0 8px 28px rgba(0, 0, 0, .35); top: 54px; max-height: calc(100% - 66px); }
+    .bsg-card { background: color-mix(in srgb, var(--background-secondary) 96%, transparent); }
+    .bsg-controls .canvas-control-item.is-on { background: color-mix(in srgb, var(--interactive-accent) 24%, transparent) !important; color: var(--text-normal) !important; }
+    .bsg-depth { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; background: color-mix(in srgb, var(--background-secondary) 94%, transparent); border: 1px solid var(--background-modifier-border); border-radius: 6px; font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+    .bsg-depth input[type=range] { width: 90px; } .bsg-depth b { min-width: 12px; color: var(--text-normal); font-weight: 600; }
+    .bsg-legend { position: absolute; right: 60px; bottom: 12px; display: none; flex-wrap: wrap; justify-content: flex-end; gap: 4px 14px; max-width: min(560px, 55%); padding: 7px 12px; background: color-mix(in srgb, var(--background-secondary) 94%, transparent); border: 1px solid var(--background-modifier-border); border-radius: 6px; font-size: 11.5px; color: var(--text-muted); pointer-events: none; }
+    .bsg-legend .lg { display: inline-flex; align-items: center; gap: 6px; } .bsg-legend svg { width: 12px; height: 12px; flex: none; } .bsg-legend b { font-weight: 500; color: var(--text-faint); }
+    .bsg-pathbar { position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%); display: none; align-items: center; gap: 10px; max-width: min(720px, calc(100% - 140px)); padding: 6px 6px 6px 14px; background: color-mix(in srgb, var(--background-secondary) 97%, transparent); border: 1px solid color-mix(in srgb, var(--interactive-accent) 55%, var(--background-modifier-border)); border-radius: 6px; font-size: 12.5px; z-index: 6; box-shadow: 0 6px 22px rgba(0, 0, 0, .3); }
+    .bsg-pathbar.is-on { display: flex; } .bsg-pathbar .t { color: var(--text-normal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsg-pathbar .n { color: var(--text-faint); white-space: nowrap; }
+    .bsg-pathbar button, .bsg-time button { width: 26px; height: 26px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; border-radius: 4px; color: var(--text-muted); cursor: pointer; flex: none; } .bsg-pathbar button:hover, .bsg-time button:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-pathbar svg, .bsg-time svg { width: 16px; height: 16px; }
+    .bsg-time { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); display: none; align-items: center; gap: 10px; width: min(520px, calc(100% - 340px)); padding: 5px 6px 5px 8px; background: color-mix(in srgb, var(--background-secondary) 97%, transparent); border: 1px solid var(--background-modifier-border); border-radius: 6px; z-index: 6; box-shadow: 0 6px 22px rgba(0, 0, 0, .3); }
+    .bsg-time.is-on { display: flex; } .bsg-time input[type=range] { flex: 1; min-width: 80px; } .bsg-time .dt { min-width: 92px; text-align: right; font-size: 12px; color: var(--text-muted); }
+    .bsg-empty { flex-direction: column; gap: 8px; text-align: center; padding: 0 40px; } .bsg-empty .et { font-size: 15px; color: var(--text-muted); } .bsg-empty .ed { font-size: 12.5px; color: var(--text-faint); max-width: 380px; line-height: 1.5; }
+    .bsg-empty button { pointer-events: auto; margin-top: 6px; height: 30px; padding: 0 14px; border-radius: 6px; background: var(--background-modifier-hover); color: var(--text-normal); border: 1px solid var(--background-modifier-border); box-shadow: none; clip-path: none; cursor: pointer; font-size: 12.5px; } .bsg-empty button:hover { border-color: var(--interactive-accent); }
+    .bsg-empty .spin { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--background-modifier-border); border-top-color: var(--interactive-accent); animation: bsg-spin .9s linear infinite; } @keyframes bsg-spin { to { transform: rotate(360deg); } }
+`;
   const injectCss = () => { if (document.getElementById("bsg-css")) return; const s = document.createElement("style"); s.id = "bsg-css"; s.textContent = CSS; document.head.appendChild(s); };
   const cssColor = (name, fb) => { const p = document.createElement("div"); p.style.cssText = "display:none;color:var(" + name + "," + fb + ")"; document.body.appendChild(p); const m = /(\d+)\D+(\d+)\D+(\d+)/.exec(getComputedStyle(p).color); p.remove(); return m ? (+m[1] << 16) | (+m[2] << 8) | +m[3] : parseInt(fb.slice(1), 16); };
 
@@ -242,11 +267,11 @@
     open2() {
       injectCss();
       const root = this.contentEl; root.empty && root.empty(); root.style.padding = "0"; root.style.overflow = "hidden"; root.style.position = "relative";
-      root.innerHTML = '<div class="bsg"><canvas></canvas><div class="bsg-top"></div><div class="bsg-panel"></div><div class="bsg-card"></div><div class="bsg-status"></div><div class="bsg-empty">В графе пока нет заметок</div></div>';
+      root.innerHTML = '<div class="bsg"><canvas></canvas><div class="bsg-top"></div><div class="bsg-panel"></div><div class="bsg-card"></div><div class="bsg-status"></div><div class="bsg-legend"></div><div class="bsg-pathbar"></div><div class="bsg-time"></div><div class="bsg-empty"></div></div>';
       this.root = root.querySelector(".bsg"); this.cv = this.root.querySelector("canvas"); this.ctx = this.cv.getContext("2d");
-      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = { classList: { add() {}, remove() {}, contains() { return false; }, toggle() {} } }; this.empty = this.root.querySelector(".bsg-empty");
+      this.top = this.root.querySelector(".bsg-top"); this.panel = this.root.querySelector(".bsg-panel"); this.status = this.root.querySelector(".bsg-status"); this.card = this.root.querySelector(".bsg-card"); this.helpEl = { classList: { add() {}, remove() {}, contains() { return false; }, toggle() {} } }; this.empty = this.root.querySelector(".bsg-empty"); this.legend = this.root.querySelector(".bsg-legend"); this.pathbar = this.root.querySelector(".bsg-pathbar"); this.timebar = this.root.querySelector(".bsg-time");
       this.ex = instance();
-      this.buildTop(); this.buildPanel(); this.bind();
+      this.buildTop(); this.buildPanel(); this.bind(); this.updateEmpty(0, true);
       this.alive = true; this.ready = true; VIEWS.add(this);
       this.keyUndo = (e) => {
         if (!this.alive || !(e.ctrlKey || e.metaKey)) return;
@@ -332,6 +357,7 @@
         else if (e.key === "Escape") { search.value = ""; find(); search.blur(); }
       });
       box.append(search, count); t.appendChild(box);
+      if (type === "localgraph") { const dp = document.createElement("div"); dp.className = "bsg-depth"; const lb = document.createElement("span"); lb.textContent = "Глубина"; const rg = document.createElement("input"); rg.type = "range"; rg.min = 1; rg.max = 6; rg.step = 1; rg.value = this.c.localDepth; const vl = document.createElement("b"); vl.textContent = this.c.localDepth; rg.addEventListener("input", () => { this.c.localDepth = +rg.value; vl.textContent = rg.value; save(this.c); clearTimeout(this.dpT); this.dpT = setTimeout(() => this.rebuild(), 120); }); dp.append(lb, rg, vl); t.appendChild(dp); }
       const sp = document.createElement("div"); sp.className = "sp"; t.appendChild(sp);
       // the controls column of the canvas, built from the same stock classes: settings | zoom | history | help
       const gl = this.root; const old = gl.querySelector(".canvas-controls"); if (old) old.remove();
@@ -347,6 +373,10 @@
       const h = grp();
       this.undoB = mk(h, "lucide-undo-2", "Отменить (Ctrl+Z)", () => { goHist(-1); this.updHist(); });
       this.redoB = mk(h, "lucide-redo-2", "Повторить (Ctrl+Y)", () => { goHist(1); this.updHist(); });
+      const xg = grp();
+      this.recentB = mk(xg, "lucide-clock", "Подсветить недавно изменённые заметки", (e) => this.recentMenu(e)); this.recentB.classList.toggle("is-on", (this.c.recent || 0) > 0);
+      this.timeB = mk(xg, "lucide-history", "Хронология: как рос граф", () => this.toggleTime());
+      mk(xg, "lucide-download", "Сохранить картинку или данные графа", (e) => this.exportMenu(e));
       mk(grp(), "lucide-circle-help", "Справка", () => { this.panel.classList.remove("is-open"); this.openHelp(); });
       this.updHist();
     }
@@ -361,23 +391,38 @@
         .addToggle((t) => { t.setTooltip("Показывать в графе"); t.setValue(!!g1()).onChange((v) => { s1(v); save(c); }); })
         .addToggle((t) => { t.setTooltip("Рисовать значком (выключено: простой шарик)"); t.toggleEl.addClass("bsg-t2"); t.setValue(!!g2()).onChange((v) => { s2(v); save(c); }); });
       const slider = (name, ic, desc, key, min, max, step, apply) => lead(new S(p).setName(name).setDesc(desc || ""), ic).addSlider((sl) => sl.setLimits(min, max, step).setValue(c[key]).setDynamicTooltip().onChange((v) => { c[key] = v; save(c); apply(); }));
-      heading("Что показывать", "lucide-eye");
+      heading("Фильтры", "lucide-filter");
       pair("Холсты", "lucide-layout-dashboard", "в графе · значком", () => c.canvases, (v) => { c.canvases = v; this.rebuild(); }, () => c.thumbCanvas, (v) => { c.thumbCanvas = v; this.dirty = true; });
       pair("Картинки", "lucide-image", "в графе · значком", () => c.images, (v) => { c.images = v; this.rebuild(); }, () => c.thumbImg, (v) => { c.thumbImg = v; this.dirty = true; });
       toggle("Заметки без связей", "lucide-circle-dashed", "", () => c.orphans, (v) => { c.orphans = v; this.rebuild(); });
-      toggle("Ссылки на несозданные", "lucide-file-question", "", () => c.unresolved, (v) => { c.unresolved = v; this.rebuild(); });
+      toggle("Доски", "lucide-square-kanban", "", () => c.boards !== false, (v) => { c.boards = v; this.rebuild(); });
+      toggle("Теги как узлы", "lucide-tag", "Каждый тег становится узлом, заметки тянутся к нему", () => c.tagNodes, (v) => { c.tagNodes = v; this.rebuild(); });
+      toggle("Ссылки на несозданные", "lucide-file-question", "Выключено: только существующие файлы", () => c.unresolved, (v) => { c.unresolved = v; this.rebuild(); });
+      { const fo = { "": "Все папки" }; for (const f of this.app.vault.getAllLoadedFiles().filter((x) => x.children && x.path !== "/").map((x) => x.path).sort().slice(0, 400)) fo[f] = f; if (c.folderOnly && !fo[c.folderOnly]) fo[c.folderOnly] = c.folderOnly;
+        lead(new S(p).setName("Папка"), "lucide-folder").addDropdown((d) => d.addOptions(fo).setValue(c.folderOnly || "").onChange((v) => { c.folderOnly = v; save(c); this.rebuild(); }));
+        const tc = this.app.metadataCache.getTags ? this.app.metadataCache.getTags() : {}, to = { "": "Все теги" }; for (const t of Object.keys(tc).sort().slice(0, 400)) to[t.replace(/^#/, "")] = t + " (" + tc[t] + ")"; if (c.tagOnly && !to[c.tagOnly]) to[c.tagOnly] = "#" + c.tagOnly;
+        lead(new S(p).setName("Тег"), "lucide-hash").addDropdown((d) => d.addOptions(to).setValue(c.tagOnly || "").onChange((v) => { c.tagOnly = v; save(c); this.rebuild(); })); }
       if (type === "localgraph") slider("Глубина", "lucide-layers", "Сколько шагов от открытой заметки", "localDepth", 1, 6, 1, () => this.rebuild());
       heading("Вид", "lucide-palette");
+      lead(new S(p).setName("Цвет узлов"), "lucide-palette").addDropdown((d) => d.addOptions({ kind: "По виду", folder: "По папке", tag: "По тегу" }).setValue(c.colorBy || "kind").onChange((v) => { c.colorBy = v; save(c); this.fIdx = new Map(); this.updateLegend(); this.dirty = true; }));
       lead(new S(p).setName("Подписи"), "lucide-type").addDropdown((d) => d.addOptions({ auto: "Авто", all: "Все", none: "Нет" }).setValue(c.labelMode).onChange((v) => { c.labelMode = v; save(c); this.style(); }));
+      slider("Плотность подписей", "lucide-text-cursor", "", "labelDensity", 0.4, 2.5, 0.1, () => { this.dirty = true; });
+      lead(new S(p).setName("Форма связей"), "lucide-spline").addDropdown((d) => d.addOptions({ curve: "Изогнутые", straight: "Прямые" }).setValue(c.edgeStyle || "curve").onChange((v) => { c.edgeStyle = v; save(c); this.dirty = true; }));
+      toggle("Стрелки на связях", "lucide-move-right", "Направление ссылки: от заметки к той, на которую она ссылается", () => c.arrows, (v) => { c.arrows = v; this.dirty = true; });
+      toggle("Легенда", "lucide-list", "", () => c.legend !== false, (v) => { c.legend = v; this.updateLegend(); });
       slider("Размер узлов", "lucide-circle-dot", "", "nodeScale", 0.5, 2.5, 0.1, () => this.style());
       slider("Яркость связей", "lucide-sun", "", "edgeAlpha", 0.1, 1, 0.05, () => this.style());
+      heading("Время", "lucide-clock");
+      lead(new S(p).setName("Недавние изменения"), "lucide-clock").addDropdown((d) => d.addOptions({ 0: "Не подсвечивать", 1: "За сутки", 7: "За неделю", 30: "За месяц", 90: "За три месяца" }).setValue(String(c.recent || 0)).onChange((v) => this.setRecent(+v)));
+      lead(new S(p).setName("Хронология"), "lucide-history").addButton((b) => b.setIcon("lucide-play").setTooltip("Показать, как рос граф").onClick(() => this.toggleTime()));
       heading("Раскладка", "lucide-network");
       slider("Длина связей", "lucide-ruler", "", "linkDistance", 10, 120, 2, () => this.forces());
       slider("Притяжение", "lucide-magnet", "", "linkStrength", 0.1, 1.5, 0.05, () => this.forces());
       lead(new S(p).setName("Пересчитать раскладку"), "lucide-shuffle").addButton((b) => b.setIcon("lucide-shuffle").setTooltip("Пересчитать").onClick(() => { this.ex.ge_reheat(1); this.running = true; }));
       lead(new S(p).setName("Сбросить силы"), "lucide-rotate-ccw").addButton((b) => b.setIcon("lucide-rotate-ccw").setTooltip("Сбросить").onClick(() => { c.linkDistance = CFG0.linkDistance; c.linkStrength = CFG0.linkStrength; save(c); this.forces(); this.buildPanel(); }));
+      lead(new S(p).setName("Открепить все узлы"), "lucide-pin-off").addButton((b) => b.setIcon("lucide-pin-off").setTooltip("Отпустить узлы, которые вы перетащили").onClick(() => this.unpinAll()));
       this.panelFocus(p, heading);
-      this.panelGroups(p, heading);
+      this.panelGroups(p, heading); this.updateLegend();
     }
     // the focus (a picture built around some nodes) is a part of the settings
     panelFocus(p, heading) {
@@ -437,7 +482,7 @@
       if (mode === 1) { this.cv.style.transition = "none"; this.cv.style.opacity = "0"; requestAnimationFrame(() => requestAnimationFrame(() => { this.cv.style.transition = "opacity .3s ease"; this.cv.style.opacity = "1"; })); }
       this.keyIndex = new Map(g.nodes.map((x, k) => [x.key, k])); this.oldNodes = g.nodes.map((x) => x.key);
       this.hover = -1; this.hlTo = undefined; { const k = prevSel && this.keyIndex.has(prevSel) ? this.keyIndex.get(prevSel) : -1; this.sel = k; ex.ge_select(k, 1); this.cardFor(k); }
-      this.tweening = n > 0; this.running = false; this.lastT = performance.now(); this.growLabels = n > 0; this.style(); ex.ge_freeze_bounds(1); this.frozen = true; this.dirty = true; this.empty.style.display = n ? "none" : "flex";
+      this.tweening = n > 0; this.running = false; this.lastT = performance.now(); this.growLabels = n > 0; this.style(); ex.ge_freeze_bounds(1); this.frozen = true; this.dirty = true; this.updateEmpty(n); this.calcRecent(); this.tlRefresh(); this.updateLegend(); this.pinned = new Set();
     }
 
     // ---- pointer
@@ -459,7 +504,8 @@
       });
       const end = (e) => {
         if (!drag) return; const d = drag; drag = null;
-        if (d.node >= 0) this.ex.ge_unpin(d.node);
+        if (d.node >= 0 && d.moved) (this.pinned || (this.pinned = new Set())).add(d.node); /* a dragged node stays where it is put (a pin mark; the menu lets it go) */
+        if (!d.moved && d.button === 0 && this.pathPick >= 0 && d.hit >= 0 && d.hit !== this.pathPick) { this.pathFind(this.pathPick, d.hit); this.lastDrag = { moved: false, t: performance.now() }; return; }
         if (!d.moved && d.button === 0) {
           if (e && e.shiftKey && d.hit >= 0) { this.multi = this.multi || new Set(); this.multi.has(d.hit) ? this.multi.delete(d.hit) : this.multi.add(d.hit); this.dirty = true; }
           else { if (this.multi && this.multi.size) { this.multi = new Set(); this.dirty = true; } this.setSel(d.hit, d.hit >= 0); }
@@ -475,7 +521,7 @@
       cv.addEventListener("pointerdown", () => { this.closeMenu(); this.panel.classList.remove("is-open"); this.root.focus({ preventScroll: true }); }, true);
       this.root.addEventListener("keydown", (e) => {
         const tag = (e.target && e.target.tagName) || ""; if (/INPUT|TEXTAREA/.test(tag)) return;
-        if (e.key === "Escape") { if (this.menuEl) this.closeMenu(); else if (this.panel.classList.contains("is-open") || this.helpEl.classList.contains("is-open")) { this.panel.classList.remove("is-open"); this.helpEl.classList.remove("is-open"); } else { this.multi = new Set(); this.setSel(-1); } e.preventDefault(); }
+        if (e.key === "Escape") { if (this.path || this.pathPick >= 0 || this.pathMsg) { this.clearPath(); e.preventDefault(); return; } if (this.menuEl) this.closeMenu(); else if (this.panel.classList.contains("is-open") || this.helpEl.classList.contains("is-open")) { this.panel.classList.remove("is-open"); this.helpEl.classList.remove("is-open"); } else { this.multi = new Set(); this.setSel(-1); } e.preventDefault(); }
         else if ((e.key === "f" || e.key === "F" || e.code === "KeyF" || e.key === "/") && (e.ctrlKey || e.metaKey || e.key === "/")) { e.preventDefault(); this.searchEl.focus(); this.searchEl.select(); }
         else if (e.code === "Digit0" || e.key === "Home") { this.fitView(); e.preventDefault(); }
         else if ((e.key === "Delete" || e.key === "Backspace") && (this.sel >= 0 || (this.multi && this.multi.size))) { this.hideNodes(this.multi && this.multi.size ? Array.from(this.multi) : [this.sel]); e.preventDefault(); }
@@ -666,7 +712,10 @@
       const tg = this.targets(hit), many = tg.length > 1, nodes = tg.map((i) => this.g.nodes[i]).filter(Boolean);
       const add = (menu, title, icon, fn, o = {}) => menu.addItem((it) => { it.setTitle(title).setIcon(icon).onClick(fn); if (o.checked) it.setChecked(true); if (o.disabled) it.setDisabled(true); if (o.section) it.setSection(o.section); });
       if (nodes.length) {
-        if (!many && nodes[0].file) { add(m, "Открыть", "lucide-file-text", () => this.openNote(hit, false)); add(m, "Открыть в новой вкладке", "lucide-file-plus", () => this.openNote(hit, true)); m.addSeparator(); }
+        if (!many && nodes[0].file) { add(m, "Открыть", "lucide-file-text", () => this.openNote(hit, false)); add(m, "Открыть в новой вкладке", "lucide-file-plus", () => this.openNote(hit, true)); add(m, "Показать в папке", "lucide-folder-open", () => this.revealNode(hit)); add(m, "Копировать ссылку", "lucide-link", () => this.copyLink(hit)); m.addSeparator(); }
+        if (!many && nodes[0].kind === "tag") { add(m, "Показать только этот тег", "lucide-tag", () => { this.c.tagOnly = nodes[0].name.slice(1); save(this.c); this.rebuild(); this.buildPanel(); }); m.addSeparator(); }
+        if (!many) { add(m, "Как связаны с…", "lucide-route", () => this.startPath(hit)); add(m, "Выбрать соседей", "lucide-network", () => { this.multi = new Set([hit, ...this.adjOf(hit)]); this.dirty = true; }); if (this.pinned && this.pinned.has(hit)) add(m, "Открепить узел", "lucide-pin-off", () => this.unpin(hit)); m.addSeparator(); }
+        if (tg.length === 2) { add(m, "Как связаны эти два узла", "lucide-route", () => this.pathFind(tg[0], tg[1])); m.addSeparator(); }
         m.addItem((it) => {
           it.setTitle("Группа").setIcon("lucide-folder-tree"); const sub = it.setSubmenu();
           for (const g of STORE.groups) { if (g.system) continue; sub.addItem((x) => x.setTitle(g.name).setIcon("lucide-circle").setChecked(nodes.every((n) => STORE.assign[n.key] === g.id)).onClick(() => { for (const n of nodes) STORE.assign[n.key] = g.id; saveStore(); this.buildPanel(); this.dirty = true; })); }
@@ -674,6 +723,7 @@
           sub.addItem((x) => x.setTitle("Новая группа…").setIcon("lucide-plus").onClick(() => this.newGroup("", nodes.map((n) => n.key))));
           if (nodes.some((n) => STORE.assign[n.key])) sub.addItem((x) => x.setTitle("Убрать из группы").setIcon("lucide-minus").onClick(() => { for (const n of nodes) delete STORE.assign[n.key]; saveStore(); this.buildPanel(); this.dirty = true; }));
         });
+        m.addItem((it) => { it.setTitle("Цвет").setIcon("lucide-palette"); const sub = it.setSubmenu(); for (const [nm, hex] of NODE_COLORS) sub.addItem((x) => { x.setTitle(nm).setIcon("lucide-circle").onClick(() => this.setNodeColor(nodes, hex, nm)); try { const ic = x.dom.querySelector(".menu-item-icon"); ic.style.color = hex; ic.style.fill = hex; } catch (e) { /* plain icon */ } }); sub.addSeparator(); sub.addItem((x) => x.setTitle("Без цвета").setIcon("lucide-circle-off").onClick(() => this.setNodeColor(nodes, "", ""))); });
         m.addSeparator();
         add(m, many ? "Скрыть выбранные" : "Скрыть", "lucide-eye-off", () => this.hideNodes(tg));
         add(m, many ? "Показать только их и окружение" : "Показать только его и окружение", "lucide-focus", () => this.focusOn(tg));
@@ -713,7 +763,7 @@
       el.textContent = "";
       const mk = (cls, text) => { const d = document.createElement("div"); d.className = cls; d.textContent = text; el.appendChild(d); return d; };
       this.cardPreview(n, el);
-      mk("t", n.name); mk("m", (n.kind === "img" ? "картинка · " : n.kind === "canvas" ? "холст · " : n.file && n.file.extension === "board" ? "доска · " : "") + (n.folder || "корень") + " · связей: " + nb.length);
+      mk("t", n.name); mk("m", (n.unresolved ? "не создана · " : n.kind === "tag" ? "тег · " : n.kind === "img" ? "картинка · " : n.kind === "canvas" ? "холст · " : n.file && n.file.extension === "board" ? "доска · " : "") + (n.folder || "корень") + " · связей: " + nb.length + (n.mtime ? " · изменено " + new Date(n.mtime).toLocaleDateString(window.__bsLang === "ru" ? "ru-RU" : undefined) : ""));
       const list = document.createElement("div"); list.className = "nb"; el.appendChild(list);
       for (const j of nb.slice(0, 14)) { const b = document.createElement("button"); b.textContent = this.g.nodes[j].name; b.addEventListener("click", () => this.setSel(j, true)); list.appendChild(b); }
       if (nb.length > 14) mk("m", "и ещё " + (nb.length - 14));
@@ -883,6 +933,139 @@
         for (const i of ord) { if (shown >= cap || tried > cap * 5) break; if (done.has(i) || AL[i] < 0.5) continue; const x = P[2 * i], y = P[2 * i + 1]; if (x < 4 || y < 4 || x > w - 4 || y > h - 4) continue; tried++; if (put(i, false)) shown++; }
       }
       c.globalAlpha = 1;
+    }
+    // ================================================================ path between two nodes, pins, colour, reveal, copy link
+    startPath(i) { this.pathPick = i; this.path = null; this.pathMsg = ""; this.updatePathBar(); this.dirty = true; }
+    pathFind(a, b) {
+      this.pathPick = -1; const n = this.g.nodes.length, prev = new Int32Array(n).fill(-2); prev[a] = -1; const q = [a];
+      for (let h = 0; h < q.length && prev[b] === -2; h++) { const u = q[h]; for (const v of this.adjOf(u)) if (prev[v] === -2) { prev[v] = u; q.push(v); } }
+      if (prev[b] === -2) { this.path = null; this.pathMsg = "Пути нет: «" + this.g.nodes[a].name + "» и «" + this.g.nodes[b].name + "» не связаны"; this.pathNone = true; this.updatePathBar(); this.dirty = true; return; }
+      const nodes = []; for (let v = b; v >= 0; v = prev[v]) nodes.push(v); nodes.reverse();
+      const edges = new Set(); for (let k = 1; k < nodes.length; k++) { const x = nodes[k - 1], y = nodes[k]; edges.add(x < y ? x + "-" + y : y + "-" + x); }
+      this.path = { from: a, to: b, nodes, set: new Set(nodes), edges }; this.pathNone = false; this.pathMsg = ""; this.sel = -1; this.cardFor(-1); this.updatePathBar(); this.dirty = true;
+    }
+    clearPath() { this.path = null; this.pathPick = -1; this.pathMsg = ""; this.pathNone = false; this.updatePathBar(); this.dirty = true; }
+    updatePathBar() {
+      const el = this.pathbar; if (!el) return; el.textContent = "";
+      const span = (t, cls) => { const s = document.createElement("span"); s.className = cls || "t"; s.textContent = t; el.appendChild(s); return s; };
+      if (this.pathPick >= 0) span("Как связаны: «" + this.g.nodes[this.pathPick].name + "». Выберите второй узел");
+      else if (this.path) { const nm = this.path.nodes.map((i) => this.g.nodes[i].name), steps = this.path.nodes.length - 1; span("Как связаны: " + (nm.length > 5 ? nm.slice(0, 2).join(" → ") + " → … → " + nm.slice(-2).join(" → ") : nm.join(" → "))); span(steps + " " + (steps === 1 ? "шаг" : steps < 5 ? "шага" : "шагов"), "n"); }
+      else if (this.pathMsg) span(this.pathMsg);
+      else { el.classList.remove("is-on"); return; }
+      const x = document.createElement("button"); x.title = "Закрыть"; try { api2().setIcon(x, "lucide-x"); } catch (e) { /* no icon */ } x.addEventListener("click", () => this.clearPath()); el.appendChild(x); el.classList.add("is-on");
+    }
+    unpin(i) { if (this.pinned) this.pinned.delete(i); this.ex.ge_unpin(i); this.running = true; this.dirty = true; }
+    unpinAll() { if (this.pinned) for (const i of this.pinned) this.ex.ge_unpin(i); this.pinned = new Set(); this.running = true; this.dirty = true; }
+    revealNode(i) { const n = this.g.nodes[i]; if (!n || !n.file) return; try { if (this.app.showInFolder) this.app.showInFolder(n.file.path); else new (api2().Notice)(n.file.path); } catch (e) { new (api2().Notice)(n.file.path); } }
+    copyLink(i) {
+      const n = this.g.nodes[i]; if (!n || !n.file) return;
+      let t = "[[" + n.file.basename + "]]"; try { t = this.app.fileManager.generateMarkdownLink(n.file, ""); } catch (e) { /* plain wikilink */ }
+      try { navigator.clipboard.writeText(t); new (api2().Notice)("Ссылка скопирована: " + t); } catch (e) { new (api2().Notice)(t); }
+    }
+    setNodeColor(nodes, hex, name) {
+      let g = STORE.groups.find((x) => x.id === "col-" + hex.slice(1));
+      if (!hex) { for (const n of nodes) delete STORE.assign[n.key]; saveStore(); this.buildPanel(); this.dirty = true; return; }
+      if (!g) { g = { id: "col-" + hex.slice(1), name: "Цвет: " + name.toLowerCase(), color: hex }; STORE.groups.push(g); }
+      for (const n of nodes) STORE.assign[n.key] = g.id; saveStore(); this.buildPanel(); this.dirty = true;
+    }
+    // ================================================================ recent changes, time-lapse
+    setRecent(days) { this.c.recent = days; save(this.c); this.calcRecent(); this.dirty = true; if (this.recentB) this.recentB.classList.toggle("is-on", days > 0); }
+    calcRecent() {
+      const d = this.c.recent; if (!d || !this.g) { this.recentSet = null; return; }
+      const lim = Date.now() - d * 86400000, s = new Set(); this.g.nodes.forEach((n, i) => { if (n.mtime && n.mtime >= lim) s.add(i); }); this.recentSet = s.size ? s : null; if (!s.size) new (api2().Notice)("За этот период ничего не менялось");
+    }
+    recentMenu(e) {
+      const m = new (api2().Menu)(); const cur = this.c.recent || 0;
+      for (const [d, t] of [[0, "Не подсвечивать"], [1, "Изменённые за сутки"], [7, "Изменённые за неделю"], [30, "Изменённые за месяц"], [90, "Изменённые за три месяца"]]) m.addItem((it) => it.setTitle(t).setChecked(cur === d).onClick(() => this.setRecent(d)));
+      m.showAtMouseEvent(e);
+    }
+    toggleTime() { if (this.tl && this.tl.on) this.closeTime(); else this.openTime(); }
+    closeTime() { if (this.tl) { this.tl.on = false; this.tl.playing = false; } this.timebar.classList.remove("is-on"); if (this.timeB) this.timeB.classList.remove("is-on"); this.dirty = true; }
+    tlRefresh() { if (this.tl && this.tl.on) { this.tl.hid = new Uint8Array(this.g.nodes.length); this.tlApply(); } }
+    tlApply() {
+      const tl = this.tl; if (!tl) return; this.g.nodes.forEach((n, i) => { tl.hid[i] = n.ctime && n.ctime > tl.t ? 1 : 0; });
+      if (this.tlLabel) this.tlLabel.textContent = new Date(tl.t).toLocaleDateString(window.__bsLang === "ru" ? "ru-RU" : undefined, { day: "numeric", month: "short", year: "numeric" });
+      if (this.tlRange) this.tlRange.value = String(Math.round(((tl.t - tl.lo) / Math.max(1, tl.hi - tl.lo)) * 1000));
+      this.dirty = true;
+    }
+    openTime() {
+      let lo = Infinity, hi = 0; for (const n of this.g.nodes) if (n.ctime) { lo = Math.min(lo, n.ctime); hi = Math.max(hi, n.ctime); }
+      if (!hi) return; if (hi - lo < 86400000) lo = hi - 86400000;
+      const tl = this.tl = { on: true, lo, hi, t: hi, playing: false, hid: new Uint8Array(this.g.nodes.length) };
+      const el = this.timebar; el.textContent = "";
+      const play = document.createElement("button"); play.className = "pl"; const setIc = () => { play.textContent = ""; try { api2().setIcon(play, tl.playing ? "lucide-pause" : "lucide-play"); } catch (e) { /* no icon */ } play.title = tl.playing ? "Пауза" : "Показать, как рос граф"; };
+      const range = document.createElement("input"); range.type = "range"; range.min = "0"; range.max = "1000"; range.value = "1000"; this.tlRange = range;
+      const lab = document.createElement("span"); lab.className = "dt"; this.tlLabel = lab;
+      const cl = document.createElement("button"); cl.title = "Закрыть хронологию"; try { api2().setIcon(cl, "lucide-x"); } catch (e) { /* no icon */ } cl.addEventListener("click", () => this.closeTime());
+      const step = (t0, from) => { if (!tl.playing || !this.alive) return; const k = Math.min(1, (performance.now() - t0) / 9000); tl.t = from + (tl.hi - from) * k; this.tlApply(); if (k >= 1) { tl.playing = false; setIc(); } else requestAnimationFrame(() => step(t0, from)); };
+      play.addEventListener("click", () => { if (tl.playing) { tl.playing = false; setIc(); return; } tl.playing = true; setIc(); const from = tl.t >= tl.hi - 1 ? tl.lo : tl.t; step(performance.now(), from); });
+      range.addEventListener("input", () => { tl.playing = false; setIc(); tl.t = tl.lo + (tl.hi - tl.lo) * (+range.value / 1000); this.tlApply(); });
+      setIc(); el.append(play, range, lab, cl); el.classList.add("is-on"); if (this.timeB) this.timeB.classList.add("is-on"); this.tlApply();
+    }
+    // ================================================================ export
+    exportMenu(e) {
+      const m = new (api2().Menu)(), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));
+      it("Копировать картинку, белый фон", "lucide-clipboard-copy", () => this.exportPng("white", "clip"));
+      it("Сохранить PNG, белый фон", "lucide-image-down", () => this.exportPng("white", "file"));
+      it("Сохранить PNG, прозрачный фон", "lucide-image", () => this.exportPng("none", "file"));
+      it("Сохранить PNG, тёмный фон", "lucide-moon", () => this.exportPng("dark", "file"));
+      it("Сохранить PNG, как на экране", "lucide-monitor", () => this.exportPng("orig", "file"));
+      m.addSeparator(); it("Сохранить данные графа (JSON)", "lucide-file-json", () => this.exportJson());
+      m.showAtMouseEvent(e);
+    }
+    async saveFile(blob, name, ext, label) {
+      const Notice = api2().Notice;
+      try {
+        const remote = window.electron && window.electron.remote;
+        if (remote && remote.dialog) {
+          const picked = await remote.dialog.showSaveDialog({ defaultPath: name + "." + ext, filters: [{ name: label, extensions: [ext] }, { name: "Все файлы", extensions: ["*"] }] }), fp = picked && (picked.filePath || (picked[1] && picked[1]));
+          if (!picked || picked.canceled || !fp) return false;
+          await window.require("fs").promises.writeFile(fp, window.require("buffer").Buffer.from(await blob.arrayBuffer())); new Notice(fp, 10000); return true;
+        }
+      } catch (e) { new Notice("Не удалось сохранить файл"); return false; }
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + "." + ext; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); return true;
+    }
+    async exportPng(mode, dest) {
+      if (!this.g || !this.g.nodes.length || !this.W) return;
+      const W = this.W, H = this.H, k = 2, cv = document.createElement("canvas"); cv.width = W * k; cv.height = H * k; const main = this.ctx; this.ctx = cv.getContext("2d");
+      try {
+        const dark = mode === "dark" || (mode !== "white" && this.isDark), pal = this.palette(dark);
+        if (mode === "white") pal.bg = [255, 255, 255]; else if (mode === "dark") pal.bg = this.isDark ? this.bgRgb : [23, 19, 15];
+        const bg = mode === "none" ? null : pal.bg;
+        if (this.c.view === "2d") this.paint2d(this.ex, W, H, k, { pal, bg, exp: true });
+        else { if (bg) { this.ctx.fillStyle = "rgb(" + bg + ")"; this.ctx.fillRect(0, 0, cv.width, cv.height); } this.ctx.drawImage(this.cv, 0, 0, cv.width, cv.height); }
+      } finally { this.ctx = main; this.dirty = true; }
+      const blob = await new Promise((r) => cv.toBlob(r, "image/png")); if (!blob) { new (api2().Notice)("Не удалось собрать картинку"); return; }
+      if (dest === "clip") { try { await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]); new (api2().Notice)("Картинка графа скопирована"); } catch (e) { new (api2().Notice)("Не удалось скопировать картинку"); } return; }
+      await this.saveFile(blob, "Граф", "png", "PNG"); return blob;
+    }
+    async exportJson() {
+      const g = this.g, P = this.P2 ? this.P : null;
+      const out = { app: "Basalt", kind: "graph", created: new Date().toISOString(), nodes: g.nodes.map((n, i) => ({ id: n.key, name: n.name, kind: n.unresolved ? "unresolved" : n.kind, folder: n.dir || "", tags: n.tags || [], links: this.adjOf(i).size, modified: n.mtime || undefined, x: P ? Math.round(P[2 * i]) : undefined, y: P ? Math.round(P[2 * i + 1]) : undefined })), edges: g.edges.map(([a, b]) => ({ source: g.nodes[a].key, target: g.nodes[b].key })) };
+      await this.saveFile(new Blob([JSON.stringify(out, null, 2)], { type: "application/json" }), "Граф", "json", "JSON");
+    }
+    // ================================================================ legend, empty and loading states
+    updateLegend() {
+      const el = this.legend; if (!el) return; el.textContent = ""; if (!this.c.legend || !this.g || !this.g.nodes.length) { el.style.display = "none"; return; }
+      const pal = this.palette(this.isDark), rgb = (a) => "rgb(" + a + ")", cnt = {}; for (const n of this.g.nodes) { const k = n.unresolved ? "unres" : n.kind; cnt[k] = (cnt[k] || 0) + 1; }
+      const SH = { note: (c) => '<circle cx="6" cy="6" r="4.2" fill="' + c + '"/>', board: (c) => '<rect x="2" y="2" width="8" height="8" rx="2" fill="' + c + '"/>', canvas: (c) => '<path d="M6 .8 11.2 6 6 11.2.8 6z" fill="' + c + '"/>', img: (c) => '<rect x="2.4" y="2.4" width="7.2" height="7.2" rx="1.6" fill="none" stroke="' + c + '" stroke-width="1.6"/>', tag: (c) => '<path d="M6 .9 10.4 3.4v5.2L6 11.1 1.6 8.6V3.4z" fill="' + c + '"/>', unres: (c) => '<circle cx="6" cy="6" r="4" fill="none" stroke="' + c + '" stroke-width="1.3" stroke-dasharray="2 1.6"/>' };
+      const LB = { note: "заметки", board: "доски", canvas: "холсты", img: "картинки", tag: "теги", unres: "несозданные" };
+      const row = (svg, label, n) => { const d = document.createElement("span"); d.className = "lg"; d.innerHTML = '<svg viewBox="0 0 12 12">' + svg + "</svg>"; const t = document.createElement("span"); t.textContent = label; d.appendChild(t); if (n !== undefined) { const b = document.createElement("b"); b.textContent = n; d.appendChild(b); } el.appendChild(d); };
+      for (const k of ["note", "board", "canvas", "img", "tag", "unres"]) if (cnt[k]) row(SH[k](rgb(pal[k])), LB[k], cnt[k]);
+      const gc = {}; for (const n of this.g.nodes) { const gid = STORE.assign[n.key]; if (gid) gc[gid] = (gc[gid] || 0) + 1; }
+      for (const gr of STORE.groups.filter((x) => gc[x.id] && !x.hidden).slice(0, 6)) row('<circle cx="6" cy="6" r="4.6" fill="' + gr.color + '"/>', gr.name, gc[gr.id]);
+      if (this.c.colorBy === "folder") { const fc = {}; for (const n of this.g.nodes) if (n.folder && n.kind === "note") fc[n.folder] = (fc[n.folder] || 0) + 1; for (const f of Object.keys(fc).sort((a, b) => fc[b] - fc[a]).slice(0, 6)) row('<circle cx="6" cy="6" r="4.6" fill="' + rgb(this.folderRgb(f, pal)) + '"/>', f, fc[f]); }
+      el.style.display = el.childNodes.length ? "flex" : "none";
+    }
+    updateEmpty(n, loading) {
+      const el = this.empty; if (!el) return; if (n > 0) { el.style.display = "none"; return; }
+      el.textContent = ""; const mk = (cls, t) => { const d = document.createElement("div"); d.className = cls; d.textContent = t; el.appendChild(d); return d; };
+      if (loading) { mk("spin", ""); mk("et", "Строю граф…"); mk("ed", "Читаю заметки, доски и холсты хранилища"); el.style.display = "flex"; return; }
+      const c = this.c, filt = c.folderOnly || c.tagOnly || STORE.solo.length || STORE.focusKeys.length, btn = (t, fn) => { const b = document.createElement("button"); b.textContent = t; b.addEventListener("click", fn); el.appendChild(b); };
+      if (!this.app.vault.getFiles().length) { mk("et", "Здесь пока пусто"); mk("ed", "Создайте заметку и свяжите её с другой через [[двойные скобки]]: связанные заметки соединятся линиями"); btn("Создать заметку", () => { try { this.app.commands.executeCommandById("file-explorer:new-file"); } catch (e) { /* no explorer */ } }); }
+      else if (filt) { mk("et", "Ничего не подошло под фильтры"); mk("ed", "Уберите фильтр по папке, тегу или группе, чтобы увидеть весь граф"); btn("Сбросить фильтры", () => { c.folderOnly = ""; c.tagOnly = ""; save(c); STORE.solo = []; STORE.focusKeys = []; saveStore(); this.afterState(); }); }
+      else { mk("et", "В графе пока ничего нет"); mk("ed", "Заметки без связей скрыты: покажите их или свяжите заметки между собой через [[ссылки]]"); btn("Показать заметки без связей", () => { c.orphans = true; save(c); this.rebuild(); this.buildPanel(); }); }
+      el.style.display = "flex";
     }
     paint(d, w, h, dpr) {
       const c = this.ctx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
