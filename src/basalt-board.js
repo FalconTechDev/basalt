@@ -4,7 +4,7 @@
   "use strict";
   const VIEW = "basalt-board", EXT = "board";
   // big boards: below CULL_MIN cards everything is drawn in full as before; above it only cards near the view get a DOM node, and below zoom LOD_K they are plain rectangles
-  const CULL_MIN = 120, LOD_K = 0.32, MD_CAP = 6000, LITE_CAP = 12000, EDGE_CAP = 9000;
+  const CULL_MIN = 120, LOD_K = 0.32, MD_CAP = 4000, LITE_CAP = 12000, EDGE_CAP = 9000;
   const COLORS = ["", "#e5484d", "#f59f3b", "#d6b43c", "#46a758", "#3fa7d6", "#8e6bd8"];
   const PEER = ["#e5484d", "#f59f3b", "#3fa7d6", "#46a758", "#8e6bd8", "#c0699f", "#d6b43c"];
   const b64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
@@ -77,7 +77,7 @@
         this.searchBox = c.createDiv({ cls: "osb-search" }); const sb = this.searchBox; const sIc = sb.createSpan({ cls: "osb-si" }); api.setIcon(sIc, "lucide-search");
         const si = this.searchInput = sb.createEl("input", { attr: { placeholder: "Поиск по карточкам", spellcheck: "false" } }); this.searchCount = sb.createSpan({ cls: "osb-sc" });
         const sbtn = (ic, tip, fn) => { const x = sb.createDiv({ cls: "osb-sb2", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = fn; return x; }; sbtn("lucide-chevron-up", "Предыдущая", () => this.runSearch(-1, true)); sbtn("lucide-chevron-down", "Следующая", () => this.runSearch(1, true)); sbtn("lucide-x", "Закрыть", () => this.toggleSearch(false));
-        si.oninput = () => this.runSearch(0, true); si.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); this.runSearch(e.shiftKey ? -1 : 1, true); } else if (e.key === "Escape") this.toggleSearch(false); };
+        si.oninput = () => { clearTimeout(this._sT); if (this.geo && this.geo.size > 1500) this._sT = setTimeout(() => this.runSearch(0, true), 150); else this.runSearch(0, true); }; si.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); this.runSearch(e.shiftKey ? -1 : 1, true); } else if (e.key === "Escape") this.toggleSearch(false); };
         this.mini = this.root.createDiv({ cls: "osb-mini", attr: { title: "Обзор доски: нажмите или потяните, чтобы перейти" } }); this.miniCv = this.mini.createEl("canvas"); this.miniCv.width = 320; this.miniCv.height = 220;
         { const go = (ev) => { const m = this._mini; if (!m) return; const r = this.miniCv.getBoundingClientRect(), k = this.miniCv.width / r.width, px = (ev.clientX - r.left) * k, py = (ev.clientY - r.top) * k; this.cam.x = (px - m.ox) / m.sc + m.x1; this.cam.y = (py - m.oy) / m.sc + m.y1; this.applyCam(); };
           this.mini.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); ev.preventDefault(); this.mini.setPointerCapture(ev.pointerId); this._miniDrag = true; go(ev); }); this.mini.addEventListener("pointermove", (ev) => { if (this._miniDrag) go(ev); }); this.mini.addEventListener("pointerup", () => { this._miniDrag = false; }); }
@@ -136,9 +136,11 @@
       guide(d, dx, dy) {
         if (!d.box) {
           let a = 1e9, b = 1e9, c = -1e9, e = -1e9; for (const [id, [x, y]] of d.o) { const m = this.yn.get(id); if (!m) continue; a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x + m.get("w")); e = Math.max(e, y + m.get("h")); } d.box = { x: a, y: b, w: c - a, h: e - b }; d.others = [];
-          for (const [id, m] of this.yn.entries()) if (!d.o.has(id)) d.others.push({ x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h") });
-          d.gx = new Set(); d.gy = new Set(); const O = d.others.slice(0, 150); for (const A of O) for (const B of O) { if (A === B) continue; const oy = Math.min(A.y + A.h, B.y + B.h) - Math.max(A.y, B.y), ox = Math.min(A.x + A.w, B.x + B.w) - Math.max(A.x, B.x); if (oy > 0 && B.x >= A.x + A.w) { const g = Math.round(B.x - A.x - A.w); if (g >= 4 && g <= 800) d.gx.add(g); } if (ox > 0 && B.y >= A.y + A.h) { const g = Math.round(B.y - A.y - A.h); if (g >= 4 && g <= 800) d.gy.add(g); } }
+          d.q = null;
         }
+        { const cxw = d.box.x + dx + d.box.w / 2, cyw = d.box.y + dy + d.box.h / 2; if (!d.q || Math.abs(cxw - d.q[0]) > 400 || Math.abs(cyw - d.q[1]) > 400) { d.q = [cxw, cyw]; d.others = this.nearRects(d.box.x + dx, d.box.y + dy, d.box.w, d.box.h, 1000, d.o);
+          d.gx = new Set(); d.gy = new Set(); const O = d.others.slice(0, 150); for (const A of O) for (const B of O) { if (A === B) continue; const oy = Math.min(A.y + A.h, B.y + B.h) - Math.max(A.y, B.y), ox = Math.min(A.x + A.w, B.x + B.w) - Math.max(A.x, B.x); if (oy > 0 && B.x >= A.x + A.w) { const g = Math.round(B.x - A.x - A.w); if (g >= 4 && g <= 800) d.gx.add(g); } if (ox > 0 && B.y >= A.y + A.h) { const g = Math.round(B.y - A.y - A.h); if (g >= 4 && g <= 800) d.gy.add(g); } }
+        } }
         const k = this.cam.k, T = 9 / k, R = 18 / k, bx = d.box.x + dx, by = d.box.y + dy, W = d.box.w, H = d.box.h, xs = [bx, bx + W / 2, bx + W], ys = [by, by + H / 2, by + H];
         const bestOf = (cands, st, ref) => { if (st) { const cur = st.at - ref[st.ai]; if (Math.abs(cur) < R) return Object.assign({}, st, { d: cur }); } let best = null; for (const c of cands) if (Math.abs(c.d) < T && (!best || Math.abs(c.d) < Math.abs(best.d))) best = c; return best; };
         const cx = [], cy = [];
@@ -169,7 +171,7 @@
       }
       // resizing sticks to the edges and the sizes of other cards
       sizeSnap(d, x, y, w, h) {
-        if (!d.others) { d.others = []; for (const [id, m] of this.yn.entries()) if (id !== d.id) d.others.push({ x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h") }); }
+        { const cxw = x + w / 2, cyw = y + h / 2; if (!d.others || !d.q || Math.abs(cxw - d.q[0]) > 500 || Math.abs(cyw - d.q[1]) > 500) { d.q = [cxw, cyw]; d.others = this.nearRects(x, y, w, h, 1500, new Set([d.id])); } }
         const T = 9 / this.cam.k, best = (v, list) => { let b = null; for (const t of list) { const dd = t - v; if (Math.abs(dd) < T && (!b || Math.abs(dd) < Math.abs(b.d))) b = { d: dd, at: t }; } return b; }; let gx = null, gy = null;
         const xsT = [], ysT = []; for (const o of d.others) { xsT.push(o.x, o.x + o.w / 2, o.x + o.w); ysT.push(o.y, o.y + o.h / 2, o.y + o.h); }
         if (d.dir.includes("e")) { const b = best(x + w, xsT); if (b) { w += b.d; gx = b.at; } } if (d.dir.includes("w")) { const b = best(x, xsT); if (b) { x += b.d; w -= b.d; gx = b.at; } }
@@ -177,6 +179,8 @@
         let gl = this.guides; if (!gl) gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); gl.empty(); this.edgeLines(gl, { x, y, w, h }, d.others);
         return { x, y, w, h };
       }
+      // plain rectangles of the cards within pad of a box (from the geometry cache, no scan of the Yjs maps)
+      nearRects(x, y, w, h, pad, skip) { this.flush(); const out = [], x1 = x - pad, y1 = y - pad, x2 = x + w + pad, y2 = y + h + pad; for (const [id, g] of this.geo) { if (skip && skip.has(id)) continue; if (g.x + g.w < x1 || g.x > x2 || g.y + g.h < y1 || g.y > y2) continue; out.push({ x: g.x, y: g.y, w: g.w, h: g.h }); } return out; }
       clearGuides() { if (this.guides) this.guides.empty(); }
       // tidy up: put the selected (or all) cards in order in one go
       tidy(mode, ids) {
@@ -211,22 +215,37 @@
       inkArr() {
         if (this._ink) return this._ink; const Y = window.__bsY.Y;
         if (this.sh) { const e = this.sh.files.get(this.relPath); if (!e) return null; let a = e.get("ink"); if (!a) { a = new Y.Array(); e.set("ink", a); } this._ink = a; } else this._ink = this.doc.getArray("ink");
-        this._ink.observe(() => this.renderInk()); return this._ink;
+        this._ink.observe((ev) => this.onInk(ev)); return this._ink;
       }
-      inkEl(st) {
+      inkEl(st, step) {
         const NS = "http://www.w3.org/2000/svg", mk = (n) => document.createElementNS(NS, n); let e;
         if (st.k === "t") { e = mk("text"); const sz = this.textSize(st); e.setAttribute("x", st.a[0]); e.setAttribute("y", st.a[1]); e.setAttribute("font-size", sz); e.setAttribute("dominant-baseline", "hanging"); e.style.fill = st.c || "var(--text-normal)"; e.style.stroke = "none"; e.style.fontFamily = "var(--font-interface)"; String(st.txt || "").split("\n").forEach((ln, i) => { const t = mk("tspan"); t.setAttribute("x", st.a[0]); t.setAttribute("dy", i ? sz * 1.25 : 0); t.textContent = ln || " "; e.appendChild(t); }); return e; }
-        if (st.k === "pen" || st.k === "hl") { e = mk("path"); const p = st.pts; let d = "M" + p[0][0] + " " + p[0][1]; if (p.length === 1) d += " l0.01 0"; for (let i = 1; i < p.length - 1; i++) { const mx = (p[i][0] + p[i + 1][0]) / 2, my = (p[i][1] + p[i + 1][1]) / 2; d += " Q" + p[i][0] + " " + p[i][1] + " " + mx + " " + my; } if (p.length > 1) d += " L" + p[p.length - 1][0] + " " + p[p.length - 1][1]; e.setAttribute("d", d); }
+        if (st.k === "pen" || st.k === "hl") { e = mk("path"); const p = step > 1 && st.pts.length > 12 ? st.pts.filter((q, i) => i % step === 0 || i === st.pts.length - 1) : st.pts; let d = "M" + p[0][0] + " " + p[0][1]; if (p.length === 1) d += " l0.01 0"; for (let i = 1; i < p.length - 1; i++) { const mx = (p[i][0] + p[i + 1][0]) / 2, my = (p[i][1] + p[i + 1][1]) / 2; d += " Q" + p[i][0] + " " + p[i][1] + " " + mx + " " + my; } if (p.length > 1) d += " L" + p[p.length - 1][0] + " " + p[p.length - 1][1]; e.setAttribute("d", d); }
         else if (st.k === "line" || st.k === "arrow") { e = mk("line"); e.setAttribute("x1", st.a[0]); e.setAttribute("y1", st.a[1]); e.setAttribute("x2", st.b[0]); e.setAttribute("y2", st.b[1]); if (st.k === "arrow") e.setAttribute("marker-end", "url(#osb-inkarrow)"); }
         else if (st.k === "rect") { e = mk("rect"); e.setAttribute("x", Math.min(st.a[0], st.b[0])); e.setAttribute("y", Math.min(st.a[1], st.b[1])); e.setAttribute("width", Math.abs(st.b[0] - st.a[0])); e.setAttribute("height", Math.abs(st.b[1] - st.a[1])); e.setAttribute("rx", 6); }
         else { e = mk("ellipse"); e.setAttribute("cx", (st.a[0] + st.b[0]) / 2); e.setAttribute("cy", (st.a[1] + st.b[1]) / 2); e.setAttribute("rx", Math.abs(st.b[0] - st.a[0]) / 2); e.setAttribute("ry", Math.abs(st.b[1] - st.a[1]) / 2); }
         e.setAttribute("fill", "none"); e.style.stroke = st.c || "var(--text-normal)"; e.style.strokeWidth = String(st.k === "hl" ? (st.w || 4) * 3 : (st.w || 4)); if (st.k === "hl") { e.style.opacity = ".38"; e.style.mixBlendMode = "multiply"; } e.setAttribute("stroke-linecap", "round"); e.setAttribute("stroke-linejoin", "round"); e.style.color = st.c || "var(--text-normal)"; return e;
       }
-      renderInk() {
-        if (!this.inkSvg || !this._ink) return; const have = this.inkEls || (this.inkEls = new Map()), seen = new Set();
-        for (const st of this._ink.toArray()) { seen.add(st.id); if (!have.has(st.id)) { const e = this.inkEl(st); e.dataset.id = st.id; this.inkSvg.appendChild(e); have.set(st.id, e); } }
-        for (const [id, e] of have) if (!seen.has(id)) { e.remove(); have.delete(id); if (this.inkSel === id) this.inkSel = null; }
-        if (this.inkSet) for (const id of this.inkSet) { const e = have.get(id); if (e) e.classList.add("is-sel"); }
+      renderInk() { if (!this.inkSvg || !this._ink) return; this.inkMirror = this._ink.toArray(); this.inkIds = new Set(this.inkMirror.map((s) => s.id)); this.cullInk(); }
+      onInk(ev) {
+        let mir = this.inkMirror, ids = this.inkIds;
+        if (mir && ids) { let pos = 0; try { for (const d of ev.changes.delta) { if (d.retain) pos += d.retain; else if (d.delete) { for (const s of mir.splice(pos, d.delete)) ids.delete(s.id); } else if (d.insert) { const arr = d.insert; mir = this.inkMirror = mir.slice(0, pos).concat(arr, mir.slice(pos)); for (const s of arr) ids.add(s.id); pos += arr.length; } } } catch (e) { mir = null; } if (mir && mir.length !== this._ink.length) mir = null; }
+        if (!mir) { this.inkMirror = this._ink.toArray(); this.inkIds = new Set(this.inkMirror.map((s) => s.id)); }
+        this.scheduleCull(true);
+      }
+      // many strokes: only the ones near the view get an SVG node, and a zoomed-out stroke keeps a few of its points
+      cullInk() {
+        if (!this.inkSvg || !this._ink || !this.root) return; const mir = this.inkMirror || (this.inkMirror = this._ink.toArray()); if (!this.inkIds) this.inkIds = new Set(mir.map((s) => s.id)); const have = this.inkEls || (this.inkEls = new Map());
+        const c = this.cam, k = c.k, W = this.root.clientWidth, H = this.root.clientHeight; if (!(W > 0 && H > 0 && k > 0)) return;
+        const big = mir.length > 300, vw = W / k, vh = H / k, X1 = c.x - vw, X2 = c.x + vw, Y1 = c.y - vh, Y2 = c.y + vh, step = !big ? 1 : k >= 0.3 ? 1 : k >= 0.12 ? 3 : k >= 0.05 ? 8 : 20, seen = new Set();
+        for (const s of mir) {
+          let b = this.inkBoxC.get(s); if (!b) { b = this.inkBox(s); this.inkBoxC.set(s, b); }
+          if (big && (b.x2 < X1 || b.x1 > X2 || b.y2 < Y1 || b.y1 > Y2)) continue;
+          seen.add(s.id); let e = have.get(s.id);
+          if (e && e.__step !== step && (s.k === "pen" || s.k === "hl")) { e.remove(); have.delete(s.id); e = null; }
+          if (!e) { e = this.inkEl(s, step); e.__step = step; e.dataset.id = s.id; this.inkSvg.appendChild(e); have.set(s.id, e); if (this.inkSet && this.inkSet.has(s.id)) e.classList.add("is-sel"); }
+        }
+        for (const [id, e] of have) if (!seen.has(id)) { e.remove(); have.delete(id); if (this.inkSel === id && !this.inkIds.has(id)) this.inkSel = null; }
       }
       toggleDraw(on) {
         this.renderMini();
@@ -285,6 +304,7 @@
       hitStroke(st, w, r) {
         const dist = (px, py, x1, y1, x2, y2) => { const dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy; let t = l2 ? ((px - x1) * dx + (py - y1) * dy) / l2 : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy)); };
         const sw = st.k === "hl" ? (st.w || 4) * 3 : (st.w || 4), tol = r + sw / 2;
+        { let bx = this.inkBoxC.get(st); if (!bx) { bx = this.inkBox(st); this.inkBoxC.set(st, bx); } if (w.x < bx.x1 - tol || w.x > bx.x2 + tol || w.y < bx.y1 - tol || w.y > bx.y2 + tol) return false; }
         if (st.k === "t") { const sz = this.textSize(st), lines = String(st.txt || "").split("\n"), wd = Math.max.apply(null, lines.map((l) => l.length)) * sz * 0.6; return w.x >= st.a[0] - r && w.x <= st.a[0] + wd + r && w.y >= st.a[1] - r && w.y <= st.a[1] + lines.length * sz * 1.25 + r; }
         if (st.k === "pen" || st.k === "hl") { const p = st.pts; if (p.length === 1) return Math.hypot(w.x - p[0][0], w.y - p[0][1]) < tol; for (let i = 0; i < p.length - 1; i++) if (dist(w.x, w.y, p[i][0], p[i][1], p[i + 1][0], p[i + 1][1]) < tol) return true; return false; }
         if (st.k === "line" || st.k === "arrow") return dist(w.x, w.y, st.a[0], st.a[1], st.b[0], st.b[1]) < tol;
@@ -680,11 +700,11 @@
       screenPt(wx, wy) { return { x: (wx - this.cam.x) * this.cam.k + this.root.clientWidth / 2, y: (wy - this.cam.y) * this.cam.k + this.root.clientHeight / 2 }; }
       setLock(on) { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) m.set("locked", !!on); } }); this.selBar.dataset.sig = ""; this.sync(); }
       duplicate() { this.copy(); this.paste(30, 30); }
-      copy() { const ids = Array.from(this.sel).filter((i) => this.yn.get(i)); if (!ids.length) return; const nodes = ids.map((i) => { const m = this.yn.get(i); return { id: i, x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text").toString() }; }); const edges = []; this.ye.forEach((e) => { if (ids.includes(e.get("a")) && ids.includes(e.get("b"))) edges.push({ a: e.get("a"), b: e.get("b"), label: e.get("label") || "" }); }); BOARD_CLIP = { nodes, edges }; try { navigator.clipboard.writeText(nodes.map((n) => n.text).join("\n\n")); } catch (e) { /* ignore */ } }
+      copy() { const ids = Array.from(this.sel).filter((i) => this.yn.get(i)); if (!ids.length) return; const nodes = ids.map((i) => { const m = this.yn.get(i); return { id: i, x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text").toString() }; }); const idSet = new Set(ids), edges = []; this.ye.forEach((e) => { if (idSet.has(e.get("a")) && idSet.has(e.get("b"))) edges.push({ a: e.get("a"), b: e.get("b"), label: e.get("label") || "" }); }); BOARD_CLIP = { nodes, edges }; try { navigator.clipboard.writeText(nodes.map((n) => n.text).join("\n\n")); } catch (e) { /* ignore */ } }
       paste(dx, dy) {
         if (this.ro || !BOARD_CLIP) return; const Y = window.__bsY.Y, map = {}, ids = [];
         this.doc.transact(() => { for (const n of BOARD_CLIP.nodes) { const id = uid(), m = new Y.Map(), t = new Y.Text(); t.insert(0, n.text); m.set("x", n.x + dx); m.set("y", n.y + dy); m.set("w", n.w); m.set("h", n.h); m.set("color", n.color); m.set("by", me.name); this.stampM(m); m.set("text", t); this.yn.set(id, m); map[n.id] = id; ids.push(id); } for (const e of BOARD_CLIP.edges) { const m = new Y.Map(); m.set("a", map[e.a]); m.set("b", map[e.b]); m.set("label", e.label); this.ye.set(uid(), m); } });
-        for (const id of ids) this.feed("add", id, this.label(id)); this.select(new Set(ids));
+        if (ids.length > 20) this.feed("add", ids[0], ids.length + " карточек"); else for (const id of ids) this.feed("add", id, this.label(id)); this.select(new Set(ids));
       }
       tidyMenu(e, ids) { const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)); it("По сетке", "lucide-grid-3x3", () => this.tidy("grid", ids)); it("В ряд", "lucide-rows-3", () => this.tidy("row", ids)); it("В столбец", "lucide-columns-3", () => this.tidy("col", ids)); it("Сеткой", "lucide-layout-grid", () => this.tidy("cells", ids)); mn.showAtMouseEvent(e); }
       alignMenu(e) {
@@ -698,11 +718,12 @@
       // ---------- search ----------
       toggleSearch(on) { const open = on == null ? !this.searchBox.classList.contains("is-on") : on; this.searchBox.classList.toggle("is-on", open); this.searchBtn.classList.toggle("is-on", open); if (open) { this.searchInput.focus(); this.searchInput.select(); } else { this.searchInput.value = ""; this.runSearch(); this.root.classList.remove("has-q"); this.contentEl.focus(); } }
       runSearch(step, jump) {
-        const q = this.searchInput.value.trim().toLowerCase(), hits = []; for (const [id, m] of this.yn.entries()) if (q && m.get("text").toString().toLowerCase().includes(q)) hits.push(id);
-        const prev = this._hits && this._hits[this._hi || 0]; this._hits = hits; this._hi = hits.length ? (step ? ((this._hi || 0) + step + hits.length) % hits.length : Math.max(0, hits.indexOf(prev))) : 0;
-        this.root.classList.toggle("has-q", !!q); for (const [id, e] of this.els) { e.el.classList.toggle("is-hit", hits.includes(id)); e.el.classList.toggle("is-cur", !!q && hits[this._hi] === id); }
+        this.flush(); const q = this.searchInput.value.trim().toLowerCase(), hits = [];
+        if (q) for (const [id, g] of this.geo) { let t = g.tl; if (t == null) { t = g.m.get("text"); t = g.tl = t ? t.toString().toLowerCase() : ""; } if (t.includes(q)) hits.push(id); }
+        const prev = this._hits && this._hits[this._hi || 0]; this._hits = hits; this._hitSet = new Set(hits); this._hi = hits.length ? (step ? ((this._hi || 0) + step + hits.length) % hits.length : Math.max(0, hits.indexOf(prev))) : 0; this._curHit = q && hits.length ? hits[this._hi] : null;
+        this.root.classList.toggle("has-q", !!q); for (const [id, e] of this.els) { e.el.classList.toggle("is-hit", this._hitSet.has(id)); e.el.classList.toggle("is-cur", !!q && this._curHit === id); }
         this.searchCount.textContent = q ? (hits.length ? (this._hi + 1) + " / " + hits.length : "нет совпадений") : ""; this.searchBox.classList.toggle("is-empty", !!q && !hits.length);
-        if (jump && hits.length) { const m = this.yn.get(hits[this._hi]); const bb = { x: m.get("x") + m.get("w") / 2, y: m.get("y") + m.get("h") / 2 }; this.cam.x = bb.x; this.cam.y = bb.y; this.applyCam(); }
+        if (jump && hits.length) { const m = this.yn.get(hits[this._hi]); const bb = { x: m.get("x") + m.get("w") / 2, y: m.get("y") + m.get("h") / 2 }; this.cam.x = bb.x; this.cam.y = bb.y; this.applyCam(); this.cull(); }
       }
       stampM(m) { m.set("lastBy", me.name); m.set("lastAt", Date.now()); m.set("lastColor", me.color); }
       label(id) { const m = this.yn.get(id); const t = m && m.get("text") ? m.get("text").toString().trim().split("\n")[0] : ""; return t ? (t.length > 28 ? t.slice(0, 28) + "…" : t) : "карточка"; }
@@ -733,6 +754,12 @@
         }
       }
       flash2(id) { const e = this.els.get(id); if (!e) return; e.el.style.setProperty("--flash", "var(--interactive-accent)"); e.el.classList.remove("flash"); void e.el.offsetWidth; e.el.classList.add("flash"); }
+      // many cards in one transaction (one redraw, one activity entry); returns their ids
+      pasteLines(lines, w, cols) {
+        if (this.ro || !lines.length) return []; const Y = window.__bsY.Y, ids = []; cols = cols || Math.max(1, Math.min(5, Math.ceil(Math.sqrt(lines.length))));
+        this.doc.transact(() => { lines.forEach((ln, k) => { const id = uid(), m = new Y.Map(), t = new Y.Text(); m.set("x", Math.round(w.x + (k % cols) * 290)); m.set("y", Math.round(w.y + Math.floor(k / cols) * 140)); m.set("w", 260); m.set("h", 110); m.set("color", ""); m.set("by", me.name); this.stampM(m); t.insert(0, ln); m.set("text", t); this.yn.set(id, m); ids.push(id); }); });
+        this.feed("add", ids[0], ids.length + " карточек"); this.select(new Set(ids)); return ids;
+      }
       addCard(x, y, text) {
         if (this.ro) return;
         const Y = window.__bsY.Y, c = this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2), id = uid(), m = new Y.Map(), t = new Y.Text();
@@ -746,7 +773,7 @@
         const Y = window.__bsY.Y, m = new Y.Map(); this.doc.transact(() => { m.set("a", a); m.set("b", b); m.set("label", ""); if (sa) m.set("sa", sa); if (sb) m.set("sb", sb); this.ye.set(uid(), m); });
         this.feed("link", null, "«" + this.label(a) + "» → «" + this.label(b) + "»");
       }
-      removeSel() { if (this.ro) return; if (this.sel.size) for (const id of Array.from(this.sel)) { const m0 = this.yn.get(id); if (m0 && m0.get("locked")) this.sel.delete(id); } for (const id of this.sel) this.feed("del", id, this.label(id)); if (this.selEdge) this.feed("unlink", null, ""); this.doc.transact(() => { for (const id of this.sel) { this.yn.delete(id); for (const [k, e] of Array.from(this.ye.entries())) if (e.get("a") === id || e.get("b") === id) this.ye.delete(k); } if (this.selEdge) this.ye.delete(this.selEdge); }); this.sel = new Set(); this.selEdge = null; this.mark(); }
+      removeSel() { if (this.ro) return; if (this.sel.size) for (const id of Array.from(this.sel)) { const m0 = this.yn.get(id); if (m0 && m0.get("locked")) this.sel.delete(id); } if (this.sel.size > 20) this.feed("del", null, this.sel.size + " карточек"); else for (const id of this.sel) this.feed("del", id, this.label(id)); if (this.selEdge) this.feed("unlink", null, ""); const del = this.sel; this.doc.transact(() => { for (const id of del) this.yn.delete(id); for (const [k, e] of Array.from(this.ye.entries())) if (del.has(e.get("a")) || del.has(e.get("b"))) this.ye.delete(k); if (this.selEdge) this.ye.delete(this.selEdge); }); this.sel = new Set(); this.selEdge = null; this.mark(); }
       setColor(col) { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) { m.set("color", col); this.stampM(m); } } }); for (const id of this.sel) this.feed("color", id, this.label(id)); }
       // ---------- DOM sync ----------
       // ---------- DOM sync ----------
@@ -754,7 +781,7 @@
       // far or small, a full card when near and big enough). Yjs changes only mark ids dirty; one flush per frame applies them.
       initIdx() {
         this.geo = new Map(); this.mid = new WeakMap(); this.dirty = new Map(); this.fullDirty = true; this.eg = new Map(); this.emid = new WeakMap(); this.edirty = new Set(); this.efull = false; this.adj = new Map(); this.fm = new Map();
-        this.flushRaf = 0; this.cullRaf = 0; this.fillRaf = 0; this._selVer = 0; this._dataVer = 0; this._flashQ = new Set(); this._cc = null; this.fillQ = []; this._markSel = new Set(); this._markEdge = null; this._slotC = null; this._bb = null; this._peerBy = new Map();
+        this.flushRaf = 0; this.cullRaf = 0; this.fillRaf = 0; this._selVer = 0; this._dataVer = 0; this._flashQ = new Set(); this._cc = null; this.fillQ = []; this._markSel = new Set(); this._markEdge = null; this._slotC = null; this._bb = null; this._peerBy = new Map(); this.tsum = 0; this.inkBoxC = new WeakMap(); this.inkMirror = null; this.inkIds = null;
       }
       resetIdx() { for (const k of ["flushRaf", "cullRaf", "fillRaf"]) if (this[k]) cancelAnimationFrame(this[k]); for (const e of this.els.values()) e.el.remove(); for (const r of this.edgeEls.values()) r.g.remove(); this.els.clear(); this.edgeEls.clear(); this.initIdx(); }
       onNodes(evs) {
@@ -791,7 +818,7 @@
           this.mid.set(m, id); let g = this.geo.get(id), mask = mk; const isNew = !g;
           if (isNew) { g = { m, x: 0, y: 0, w: 0, h: 0, f: "", col: "", grp: false, tl: null }; this.geo.set(id, g); mask = 7; } else if (g.m !== m) { g.m = m; mask = 7; }
           if (mask & 1) { const x = m.get("x"), y = m.get("y"), w = m.get("w"), h = this.effH(m); if (isNew || x !== g.x || y !== g.y || w !== g.w || h !== g.h) { g.x = x; g.y = y; g.w = w; g.h = h; moved.push(id); } }
-          if (mask & 2) g.tl = null;
+          if (mask & 2) { g.tl = null; const tt = m.get("text"), n = tt ? tt.length : 0; this.tsum += n - (g.n || 0); g.n = n; }
           if (mask & 4) { const f = m.get("frame") || ""; if (f !== g.f) { this.fmSet(id, g.f, f); g.f = f; } g.col = m.get("color") || ""; g.grp = !!m.get("group"); }
           const e = this.els.get(id); if (e) this.syncCard(id, m, e, mask);
         }
@@ -809,9 +836,11 @@
         this.mark(); this.renderMini(); if (this.emptyEl) this.emptyEl.classList.toggle("is-hidden", this.yn.size > 0);
       }
       dropCard(id) {
-        const g = this.geo.get(id); if (g) { this.fmSet(id, g.f, ""); this.geo.delete(id); } const e = this.els.get(id); if (e) { e.el.remove(); this.els.delete(id); } this.sel.delete(id);
+        const g = this.geo.get(id); if (g) { this.fmSet(id, g.f, ""); this.tsum -= g.n || 0; this.geo.delete(id); } const e = this.els.get(id); if (e) { e.el.remove(); this.els.delete(id); } this.sel.delete(id);
         const s = this.adj.get(id); if (s) for (const eid of s) { this.edirty.add(eid); const r = this.eg.get(eid); if (r) { const o = this.adj.get(r.a === id ? r.b : r.a); if (o && o.size < 800) for (const x of o) this.edirty.add(x); } }
       }
+      // small boards with ordinary text are drawn in full as always; many cards or a lot of text switch culling on
+      isAll() { return this.geo.size <= CULL_MIN && this.tsum < 150000; }
       keepEl(id, e) { const d = this.drag; if (d && ((d.o && d.o.has(id)) || d.id === id || d.from === id)) return true; return !e.lite && (e.el.classList.contains("is-editing") || e.el.contains(document.activeElement)); }
       ensureEl(id) { const g = this.geo.get(id); if (!g) return null; return this.els.get(id) || this.mkLite(id, g); }
       upgrade(id, e) { if (!e || !e.lite) return e; const m = this.yn.get(id); if (!m) return e; this.fillCard(id, e); this.syncCard(id, m, e, 7); this.decor(id, e); return e; }
@@ -819,7 +848,7 @@
       cull() {
         if (!this.root || !this.yn || !this.cards) return; const W = this.root.clientWidth, H = this.root.clientHeight, c = this.cam, k = c.k; if (!(W > 0 && H > 0 && k > 0)) return;
         this._cc = { x: c.x, y: c.y, k, W, H };
-        const all = this.geo.size <= CULL_MIN, lod = !all && k < LOD_K, vw = W / k, vh = H / k;
+        const all = this.isAll(), lod = !all && k < LOD_K, vw = W / k, vh = H / k;
         const ix1 = c.x - vw * 0.75, ix2 = c.x + vw * 0.75, iy1 = c.y - vh * 0.75, iy2 = c.y + vh * 0.75, ox1 = c.x - vw * 1.4, ox2 = c.x + vw * 1.4, oy1 = c.y - vh * 1.4, oy2 = c.y + vh * 1.4;
         const fill = [], far = [], evict = this.els.size > LITE_CAP;
         for (const [id, g] of this.geo) {
@@ -846,7 +875,7 @@
       pumpFill() {
         if (this.fillRaf) return; const run = () => {
           this.fillRaf = 0; const t0 = performance.now(), q = this.fillQ; let n = 0;
-          while (q.length && (n < 2 || performance.now() - t0 < 10)) { if (this.cam.k < LOD_K && this.geo.size > CULL_MIN) { q.length = 0; break; } const id = q.pop(), e = this.els.get(id); if (e && e.lite) { this.upgrade(id, e); n++; } }
+          while (q.length && (n < 2 || performance.now() - t0 < 10)) { if (this.cam.k < LOD_K && !this.isAll()) { q.length = 0; break; } const id = q.pop(), e = this.els.get(id); if (e && e.lite) { this.upgrade(id, e); n++; } }
           if (q.length) this.fillRaf = requestAnimationFrame(run);
         }; run();
       }
@@ -856,12 +885,12 @@
         if (this.cullRaf) return; this.cullRaf = requestAnimationFrame(() => { this.cullRaf = 0; this.cull(); this.cullInk && this.cullInk(); });
       }
       mkLite(id, g) {
-        const el = document.createElement("div"); el.className = "osb-card is-lite" + (this.geo.size > CULL_MIN ? " no-pop" : ""); el.dataset.id = id; this.cards.appendChild(el);
+        const el = document.createElement("div"); el.className = "osb-card is-lite" + (this.isAll() ? "" : " no-pop"); el.dataset.id = id; this.cards.appendChild(el);
         const rec = { el, lite: true }; this.els.set(id, rec); this.syncCard(id, g.m, rec, 7); this.decor(id, rec); return rec;
       }
       // marks that depend on state outside the card: selection, search hits, focus mode, other people
       decor(id, e) {
-        const cl = e.el.classList; if (this.sel.has(id)) cl.add("is-sel"); if (this._hitSet && this._hitSet.has(id)) cl.add("is-hit"); if (this._fo) { cl.toggle("is-dim", !this._fo.ids.has(id)); if (this._fo.path) cl.toggle("is-path", this._fo.ids.has(id)); }
+        const cl = e.el.classList; if (this.sel.has(id)) cl.add("is-sel"); if (this._hitSet && this._hitSet.has(id)) { cl.add("is-hit"); if (this._curHit === id) cl.add("is-cur"); } if (this._fo) { cl.toggle("is-dim", !this._fo.ids.has(id)); if (this._fo.path) cl.toggle("is-path", this._fo.ids.has(id)); }
         const u = this._peerBy.get(id); if (u) this.decoPeer(e, u, id);
       }
       decoPeer(e, u, id) { e.el.style.setProperty("--peer", u.color); e.el.classList.add("has-peer"); if (!e.lite) { e.tag.textContent = u.name + (u.typing === id ? " печатает…" : ""); e.tag.style.background = u.color; } }
@@ -907,7 +936,7 @@
         Object.assign(rec, { ta, tag, by, kindEl, mdEl, lite: false }); el.classList.remove("is-lite"); return rec;
       }
       mkCard(id, m) { return this.upgrade(id, this.ensureEl(id) || this.mkLite(id, this.geo.get(id) || { m, x: 0, y: 0, w: 0, h: 0, col: "", grp: false })); }
-      startMove(ev, id) { if (ev.target.closest(".osb-x, .osb-kind") || ev.button !== 0 || this.ro) return; if (ev.shiftKey || ev.ctrlKey) { const n2 = new Set(this.sel); n2.has(id) ? n2.delete(id) : n2.add(id); this.select(n2); if (!n2.has(id)) return; } else if (!this.sel.has(id)) this.select(new Set([id])); const o = new Map(); for (const s of this.sel) { const n = this.yn.get(s); if (n && !n.get("locked")) o.set(s, [n.get("x"), n.get("y")]); } for (const s of Array.from(o.keys())) { const gm = this.yn.get(s); if (gm && gm.get("group")) { let mem = []; for (const [i2, m2] of this.yn.entries()) if (m2.get("frame") === s && !o.has(i2) && !m2.get("locked")) mem.push([i2, m2]);
+      startMove(ev, id) { if (ev.target.closest(".osb-x, .osb-kind") || ev.button !== 0 || this.ro) return; if (ev.shiftKey || ev.ctrlKey) { const n2 = new Set(this.sel); n2.has(id) ? n2.delete(id) : n2.add(id); this.select(n2); if (!n2.has(id)) return; } else if (!this.sel.has(id)) this.select(new Set([id])); const o = new Map(); for (const s of this.sel) { const n = this.yn.get(s); if (n && !n.get("locked")) o.set(s, [n.get("x"), n.get("y")]); } for (const s of Array.from(o.keys())) { const gm = this.yn.get(s); if (gm && gm.get("group")) { let mem = []; this.flush(); for (const i2 of (this.fm.get(s) || [])) { const m2 = this.yn.get(i2); if (m2 && !o.has(i2) && !m2.get("locked")) mem.push([i2, m2]); }
             if (!mem.length) { const gx = gm.get("x"), gy = gm.get("y"), gw = gm.get("w"), gh = gm.get("h"); for (const [i2, m2] of this.yn.entries()) { if (o.has(i2) || m2.get("group") || m2.get("locked")) continue; const cx = m2.get("x") + m2.get("w") / 2, cy = m2.get("y") + m2.get("h") / 2; if (cx >= gx && cx <= gx + gw && cy >= gy && cy <= gy + gh) mem.push([i2, m2]); } if (mem.length) this.doc.transact(() => { for (const [, m2] of mem) m2.set("frame", s); }); }
             for (const [i2, m2] of mem) o.set(i2, [m2.get("x"), m2.get("y")]); } } if (!o.size) return; const p = this.pt(ev); this.drag = { kind: "move", o, p: this.worldPt(p.sx, p.sy) }; this.root.setPointerCapture(ev.pointerId); }
       effH(m) { return m.get("fold") ? 52 : m.get("h"); }
@@ -931,7 +960,7 @@
       }
       refitFrames(ids) {
         const fids = new Set(); for (const id of ids) { const m = this.yn.get(id), f = m && m.get("frame"); if (f && this.yn.get(f)) fids.add(f); } if (!fids.size) return;
-        const mem = new Map(); for (const m of this.yn.values()) { const f = m.get("frame"); if (f && fids.has(f)) { if (!mem.has(f)) mem.set(f, []); mem.get(f).push(m); } }
+        this.flush(); const mem = new Map(); for (const f of fids) { const s = this.fm.get(f); if (!s) continue; const l = []; for (const i of s) { const m = this.yn.get(i); if (m) l.push(m); } if (l.length) mem.set(f, l); }
         this.doc.transact(() => { for (const [f, ms] of mem) { let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const m of ms) { a = Math.min(a, m.get("x")); b = Math.min(b, m.get("y")); c = Math.max(c, m.get("x") + m.get("w")); d = Math.max(d, m.get("y") + this.effH(m)); } const g = this.yn.get(f), x = Math.round(a - 28), y = Math.round(b - 56), w = Math.round(c - a + 56), h = Math.round(d - b + 84); if (g.get("x") !== x) g.set("x", x); if (g.get("y") !== y) g.set("y", y); if (g.get("w") !== w) g.set("w", w); if (g.get("h") !== h) g.set("h", h); } });
       }
       joinFrames(ids) {
@@ -1097,7 +1126,7 @@
               it("Цвет связи…", "lucide-palette", () => window.__bsColors.pick({ x: e.clientX, y: e.clientY }, ed.get("ec") || "", (c) => this.setEdge(id, { ec: c }), { none: true })); it("Поменять направление", "lucide-arrow-left-right", () => this.flipEdge(id)); m.addSeparator(); it("Удалить связь", "lucide-trash-2", () => { this.feed("unlink", null, ""); this.ye.delete(id); }); }
           } else {
             it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30));
-            it("Вставить построчно: строка — карточка", "lucide-list-plus", async () => { try { const t = await navigator.clipboard.readText(), ls = t.replace(/\r/g, "").split("\n").map((x) => x.trim()).filter(Boolean).slice(0, 200); if (!ls.length) return; this.um && this.um.stopCapturing(); const cols = Math.max(1, Math.min(5, Math.ceil(Math.sqrt(ls.length)))), ids = []; ls.forEach((ln, k) => { ids.push(this.addCard(w.x + (k % cols) * 290, w.y + Math.floor(k / cols) * 140, ln)); }); this.um && this.um.stopCapturing(); this.select(new Set(ids)); } catch (er) { /* no access */ } }); it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
+            it("Вставить построчно: строка — карточка", "lucide-list-plus", async () => { try { const t = await navigator.clipboard.readText(), ls = t.replace(/\r/g, "").split("\n").map((x) => x.trim()).filter(Boolean).slice(0, 200); if (!ls.length) return; this.um && this.um.stopCapturing(); const cols = Math.max(1, Math.min(5, Math.ceil(Math.sqrt(ls.length)))), ids = []; ids.push(...this.pasteLines(ls, w, cols)); this.um && this.um.stopCapturing(); this.select(new Set(ids)); } catch (er) { /* no access */ } }); it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
             m.addSeparator(); if (this.yn.size > 1) { it("Упорядочить всё по сетке", "lucide-grid-3x3", () => this.tidy("grid", null)); it("Расставить сеткой", "lucide-layout-grid", () => this.tidy("cells", null)); m.addSeparator(); } it("Показать всё", "lucide-maximize", () => this.fit());
           }
           m.showAtMouseEvent(e);
@@ -1149,7 +1178,12 @@
         this.portDot("a", a); this.temp.setAttribute("x1", a.x); this.temp.setAttribute("y1", a.y); this.temp.setAttribute("x2", end.x); this.temp.setAttribute("y2", end.y);
       }
       // ---------- people ----------
-      publish(extra) { if (this.sh) { this.sh.publish(Object.assign({ board: this.relPath, cur: this.myCur || null, sel: Array.from(this.sel) }, extra || {})); return; } if (!this.aw) return; if (extra) this.extra = Object.assign(this.extra || {}, extra); this.aw.setLocalStateField("user", Object.assign({ name: me.name, color: me.color, cur: this.myCur || null, sel: Array.from(this.sel) }, this.extra || {})); }
+      selArr() { if (this._selArrV !== this._selVer) { this._selArr = Array.from(this.sel); this._selArrV = this._selVer; } return this._selArr; }
+      publish(extra) {
+        if (extra) return this.publish0(extra); const now = performance.now(); if (now - (this._pubT || 0) >= 80) { this._pubT = now; return this.publish0(); }
+        if (!this._pubTm) this._pubTm = setTimeout(() => { this._pubTm = 0; this._pubT = performance.now(); this.publish0(); }, 80);
+      }
+      publish0(extra) { if (this.sh) { this.sh.publish(Object.assign({ board: this.relPath, cur: this.myCur || null, sel: this.selArr() }, extra || {})); return; } if (!this.aw) return; if (extra) this.extra = Object.assign(this.extra || {}, extra); this.aw.setLocalStateField("user", Object.assign({ name: me.name, color: me.color, cur: this.myCur || null, sel: this.selArr() }, this.extra || {})); }
       connect(room, pass) {
         const L = window.__bsY; if (this.prov) this.prov.destroy();
         this.prov = new L.TrysteroProvider("basalt-board-" + room, this.doc, { password: pass || undefined, relayUrls: signalingList() });
