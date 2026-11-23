@@ -1,4 +1,4 @@
-.osb { position: relative; height: 100%; overflow: hidden; padding: 0 !important; outline: 0; }
+﻿.osb { position: relative; height: 100%; overflow: hidden; padding: 0 !important; outline: 0; }
 .osb-root { position: absolute; inset: 0; overflow: hidden; cursor: grab; background-image: radial-gradient(color-mix(in srgb, var(--text-faint) 35%, transparent) 1px, transparent 1px); background-size: 24px 24px; }
 .osb-root:active { cursor: grabbing; }
 .osb-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; width: 0; height: 0; }
@@ -225,3 +225,11 @@
 /* ---- keep the floating bottom items clear of the status bar ---- */
 .osb-feed { bottom: 46px; } .osb-people { bottom: 46px; } .osb-dtb { bottom: 46px; }
 .osb-root.is-draw ~ .osb-feed, .osb-root.is-draw ~ .osb-people { display: none; } .osb-dtb { max-width: calc(100% - 24px); flex-wrap: wrap; justify-content: center; }
+/* ---- bottom row: you / others and the activity pill sit together on one baseline ---- */
+.osb-bottom { position: absolute; left: 12px; bottom: 1px; z-index: 5; display: flex; align-items: flex-end; gap: 8px; max-width: calc(100% - 96px); }
+.osb-bottom .osb-people { position: static; display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px; }
+.osb-bottom .osb-chip { height: 28px; box-sizing: border-box; }
+.osb-bottom .osb-feed { position: static; width: 270px; flex: none; }
+.osb-bottom .osb-feed.is-closed { width: auto; } .osb-bottom .osb-feed.is-closed .osb-feed-h { height: 28px; box-sizing: border-box; padding: 0 12px; gap: 14px; }
+.osb-root.is-draw ~ .osb-bottom { display: none; } .osb-dtb { bottom: 10px; }
+
