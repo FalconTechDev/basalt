@@ -115,7 +115,6 @@ body:not(.is-grabbing) .tree-item-self.is-being-dragged:hover .tree-item-icon,
 .backlink-pane,
 .outgoing-link-pane,
 .search-result-container {
-  scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-bg);
 }
 
 .nav-files-container {

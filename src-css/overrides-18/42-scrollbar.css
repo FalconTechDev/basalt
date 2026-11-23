@@ -1,0 +1,8 @@
+/* ===== Basalt scrollbars: a thin copper bar, no arrows, the same everywhere (vertical and horizontal) ===== */
+::-webkit-scrollbar { width: 12px; height: 12px; background: transparent; }
+::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-scrollbar-thumb { min-height: 40px; min-width: 40px; border: 4px solid transparent; border-radius: 6px; background-clip: padding-box; background-color: color-mix(in srgb, var(--interactive-accent) 32%, var(--text-faint) 36%); transition: background-color .15s ease; }
+::-webkit-scrollbar-thumb:hover { border-width: 3px; background-color: color-mix(in srgb, var(--interactive-accent) 70%, var(--text-muted)); }
+::-webkit-scrollbar-thumb:active { border-width: 3px; background-color: var(--interactive-accent); }
+::-webkit-scrollbar:horizontal { height: 12px; }

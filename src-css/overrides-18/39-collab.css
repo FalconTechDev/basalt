@@ -184,7 +184,7 @@
 .bsm-btn.stop .bsm-bi svg { width: 15px; height: 15px; }
 .bsm-card2.is-danger { border-color: color-mix(in srgb, var(--bs-danger) 38%, transparent); background: color-mix(in srgb, var(--bs-danger) 5%, transparent) !important; } .bsm-card2.is-danger .bsm-ch { color: var(--bs-danger-text); }
 .bsm-dz { display: flex; align-items: center; justify-content: space-between; gap: 16px; } .bsm-dzt { font-size: 13px; color: var(--text-muted); }
-.bsm-content { scrollbar-width: thin; }
+
 
 /* ---- status bar chip: dot + people icon + number, no animation loops except while searching ---- */
 .bsh-chip { display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 5px; }
