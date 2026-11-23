@@ -18,7 +18,7 @@
     i.onkeydown = (e) => { if (e.key === "Enter") ok.click(); }; M.onClose = () => fin(null); M.open(); setTimeout(() => { i.focus(); i.select(); }, 50);
   });
 
-  const sfx = (n) => { try { window.dispatchEvent(new CustomEvent("bs-sfx", { detail: n })); } catch (e) { /* no sound */ } };
+  const sfx = () => {};
   let BOARD_CLIP = null;
   function makeView(api) {
     return class BoardView extends api.ItemView {
