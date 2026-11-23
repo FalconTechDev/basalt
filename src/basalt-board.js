@@ -576,17 +576,17 @@
       async renderExport(o) {
         const ids = o.ids, bg = o.bg;
         const all = ids && ids.length ? ids.filter((i) => this.yn.get(i)) : Array.from(this.yn.keys()); let ink = o.ink === false ? [] : (this._ink ? this._ink.toArray() : []); if (!all.length && !ink.length) return null;
-        const dark = bg === "dark", ink1 = dark ? "#e5e7eb" : "#111827", card0 = dark ? "#1f2330" : "#ffffff", line0 = dark ? "#8b93a7" : "#6b7280", bord = dark ? "#3a4052" : "#d1d5db";
+        const pageLight = bg === "white", dark = !pageLight, ink1 = dark ? "#e5e7eb" : "#111827", card0 = dark ? "#1f2330" : "#ffffff", line0 = dark ? "#8b93a7" : "#6b7280", bord = dark ? "#3a4052" : "#d1d5db";
         let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; const grow = (a, b, c, d) => { x1 = Math.min(x1, a); y1 = Math.min(y1, b); x2 = Math.max(x2, c); y2 = Math.max(y2, d); };
         for (const id of all) { const m = this.yn.get(id); grow(m.get("x"), m.get("y"), m.get("x") + m.get("w"), m.get("y") + this.effH(m)); } if (ids && ids.length && all.length) { const nb = { x1, y1, x2, y2 }; ink = ink.filter((st) => { const b = this.inkBox(st); return b.x1 < nb.x2 && b.x2 > nb.x1 && b.y1 < nb.y2 && b.y2 > nb.y1; }); } for (const st of ink) { const b = this.inkBox(st); grow(b.x1, b.y1, b.x2, b.y2); }
         const pad = o.pad == null ? 40 : o.pad, sc = o.scale || 2, cw0 = Math.min(8000, Math.ceil((x2 - x1 + pad * 2) * sc)), chh0 = Math.min(8000, Math.ceil((y2 - y1 + pad * 2) * sc)), ar = Math.min(1, Math.sqrt(3.6e7 / (cw0 * chh0))), cw = Math.max(1, Math.floor(cw0 * ar)), chh = Math.max(1, Math.floor(chh0 * ar)), cv = document.createElement("canvas"); cv.width = cw; cv.height = chh; const ctx = cv.getContext("2d"); ctx.scale(cw / ((x2 - x1 + pad * 2)), chh / ((y2 - y1 + pad * 2))); ctx.translate(pad - x1, pad - y1);
-        if (bg !== "none") { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = dark ? "#14161d" : "#ffffff"; ctx.fillRect(0, 0, cw, chh); ctx.restore(); }
+        if (bg !== "none") { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = bg === "white" ? "#ffffff" : bg === "black" ? "#000000" : ((getComputedStyle(this.root).getPropertyValue("--background-primary") || "").trim() || "#14110f"); ctx.fillRect(0, 0, cw, chh); ctx.restore(); }
         const FONT = '"Segoe UI", system-ui, sans-serif', rrect = (x, y, w, h, r) => { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); };
         const wrap = (text, mw, font) => { ctx.font = font; const out = []; for (const para of String(text).split("\n")) { let line = ""; for (const word of para.split(/(\s+)/)) { const t = line + word; if (ctx.measureText(t).width > mw && line) { out.push(line.trimEnd()); line = word.trimStart(); } else line = t; } out.push(line); } return out; };
         all.sort((a, b) => (this.yn.get(b).get("group") ? 1 : 0) - (this.yn.get(a).get("group") ? 1 : 0)); const idSet = new Set(all);
         // the same look as on the board: coloured header with the type, formatted text, curved links, frames
         const cs = getComputedStyle(this.root), cv0 = (n, d) => (cs.getPropertyValue(n) || "").trim() || d;
-        const T = dark ? { card: cv0("--background-secondary", "#1f2330"), text: cv0("--text-normal", "#e5e7eb"), muted: cv0("--text-muted", "#9ca3af"), border: cv0("--background-modifier-border", "#3a4052"), line: cv0("--text-faint", "#8b93a7"), accent: cv0("--interactive-accent", "#c98d5b"), code: "rgba(255,255,255,.10)", halo: "#14161d" }
+        const T = true ? { card: cv0("--background-secondary", "#1f2330"), text: cv0("--text-normal", "#e5e7eb"), muted: cv0("--text-muted", "#9ca3af"), border: cv0("--background-modifier-border", "#3a4052"), line: cv0("--text-faint", "#8b93a7"), accent: cv0("--interactive-accent", "#c98d5b"), code: "rgba(255,255,255,.10)", halo: "#14161d" }
           : { card: "#ffffff", text: "#111827", muted: "#6b7280", border: "#d1d5db", line: "#6b7280", accent: "#a05a2c", code: "rgba(0,0,0,.07)", halo: "#ffffff" };
         const NV = { t: [0, -1], b: [0, 1], l: [-1, 0], r: [1, 0] }, head = (x, y, an, col) => { ctx.save(); ctx.fillStyle = col; ctx.translate(x, y); ctx.rotate(an); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-11, -5); ctx.lineTo(-11, 5); ctx.closePath(); ctx.fill(); ctx.restore(); };
         ctx.lineCap = "round"; ctx.lineJoin = "round";
@@ -596,13 +596,13 @@
           ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash(ls === "dash" ? [9, 6] : ls === "dot" ? [1, 7] : []); ctx.stroke(new Path2D(ep.d)); ctx.restore();
           const dirEnd = sh === "straight" ? Math.atan2(q0.y - p0.y, q0.x - p0.x) : Math.atan2(-NV[sb0][1], -NV[sb0][0]), dirStart = sh === "straight" ? Math.atan2(p0.y - q0.y, p0.x - q0.x) : Math.atan2(-NV[sa0][1], -NV[sa0][0]);
           if (ad !== "none") head(q0.x, q0.y, dirEnd, col); if (ad === "both") head(p0.x, p0.y, dirStart, col);
-          const lb = e.get("label"); if (lb) { ctx.save(); ctx.font = "12px " + FONT; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.lineWidth = 4; ctx.strokeStyle = T.halo; ctx.strokeText(lb, ep.mid.x, ep.mid.y - 8); ctx.fillStyle = T.text; ctx.fillText(lb, ep.mid.x, ep.mid.y - 8); ctx.restore(); }
+          const lb = e.get("label"); if (lb) { ctx.save(); ctx.font = "12px " + FONT; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.lineWidth = 4; ctx.strokeStyle = pageLight ? "#ffffff" : T.halo; ctx.strokeText(lb, ep.mid.x, ep.mid.y - 8); ctx.fillStyle = pageLight ? "#111827" : T.text; ctx.fillText(lb, ep.mid.x, ep.mid.y - 8); ctx.restore(); }
         }
         // cards
         let yc = 0; const yieldNow = () => (++yc % 150 === 0 ? new Promise((r) => setTimeout(r, 0)) : null), tint = (hex, al) => { const h = /^#([0-9a-f]{6})$/i.exec(hex || ""); if (!h) return "rgba(128,128,128," + al + ")"; const n = parseInt(h[1], 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + al + ")"; };
         for (const id of all) { await yieldNow(); const m = this.yn.get(id), x = m.get("x"), y = m.get("y"), w = m.get("w"), h = this.effH(m), col = m.get("color") || "", im = m.get("img"), grp = !!m.get("group"), kind = m.get("kind") || "", txt = m.get("text").toString();
           ctx.save(); rrect(x, y, w, h, 4);
-          if (grp) { ctx.fillStyle = tint(col || (dark ? T.accent : "#6b7280"), dark ? 0.07 : 0.06); ctx.fill(); ctx.setLineDash([7, 5]); ctx.lineWidth = 1.5; ctx.strokeStyle = col || T.border; ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = T.text; ctx.textBaseline = "top"; ctx.font = "600 15px " + FONT; ctx.fillText(txt.split("\n")[0], x + 12, y + 9); ctx.restore(); continue; }
+          if (grp) { ctx.fillStyle = tint(col || T.accent, 0.07); ctx.fill(); ctx.setLineDash([7, 5]); ctx.lineWidth = 1.5; ctx.strokeStyle = col || T.border; ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = pageLight ? "#111827" : T.text; ctx.textBaseline = "top"; ctx.font = "600 15px " + FONT; ctx.fillText(txt.split("\n")[0], x + 12, y + 9); ctx.restore(); continue; }
           ctx.fillStyle = T.card; ctx.fill(); ctx.lineWidth = col ? 2 : 1.2; ctx.strokeStyle = col || T.border; ctx.stroke(); ctx.clip();
           ctx.fillStyle = tint(col || T.border, col ? 0.3 : 0.5); ctx.fillRect(x, y, w, 22);
           if (kind) { ctx.font = "600 10.5px " + FONT; ctx.textBaseline = "middle"; const tw = ctx.measureText(kind).width + 10; ctx.fillStyle = col || T.muted; ctx.fillRect(x + 5, y + 3, Math.min(tw, w - 10), 16); ctx.fillStyle = "#fff"; ctx.fillText(kind, x + 10, y + 11.5); }
@@ -633,7 +633,7 @@
         const el = window.require("electron"), remote = el.remote || window.electron.remote; if (!remote) throw new Error("no remote");
         const contents = remote.getCurrentWebContents(), zf = (el.webFrame && el.webFrame.getZoomFactor && el.webFrame.getZoomFactor()) || 1, sf = window.devicePixelRatio / zf || 1, root = this.root;
         const selIds = o.scope === "sel" ? Array.from(this.sel).filter((x) => this.yn.get(x)) : null, selSet = selIds ? new Set(selIds) : null, ids = selIds || Array.from(this.yn.keys());
-        const keep = { cam: Object.assign({}, this.cam), sel: this.sel, edge: this.selEdge }; this.exporting = true; this.contentEl.classList.add("osb-exporting"); root.classList.add("is-exporting"); root.classList.toggle("is-exp-light", !!o.light); root.classList.toggle("is-text-garbled", !!o.privacy); if (o.ink === false) this.contentEl.classList.add("osb-noink"); if (o.bgCss) root.style.setProperty("background-color", o.bgCss, "important");
+        const keep = { cam: Object.assign({}, this.cam), sel: this.sel, edge: this.selEdge }; this.exporting = true; this.contentEl.classList.add("osb-exporting"); root.classList.add("is-exporting"); root.classList.toggle("is-exp-white", !!o.pageLight); root.classList.toggle("is-text-garbled", !!o.privacy); if (o.ink === false) this.contentEl.classList.add("osb-noink"); if (o.bgCss) root.style.setProperty("background-color", o.bgCss, "important");
         this.sel = new Set(); this.selEdge = null; this.mark(); const sleep = (ms) => new Promise((r) => setTimeout(r, ms)), raf = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         const shot = async () => { const r = root.getBoundingClientRect(), img = await contents.capturePage({ x: Math.round((r.left + 1) * zf), y: Math.round((r.top + 1) * zf), width: Math.round((r.width - 2) * zf), height: Math.round((r.height - 2) * zf) }); return createImageBitmap(new Blob([img.toPNG()], { type: "image/png" })); };
         const prep = () => { if (!selSet) return; for (const [id, e] of this.els) e.el.style.visibility = selSet.has(id) ? "" : "hidden"; for (const [id, r] of this.edgeEls) { const m = this.ye.get(id); r.g.style.visibility = m && selSet.has(m.get("a")) && selSet.has(m.get("b")) ? "" : "hidden"; } };
@@ -644,7 +644,7 @@
           if (!selSet && o.ink !== false && this._ink) for (const st of this._ink.toArray()) { const b = this.inkBox(st); x1 = Math.min(x1, b.x1); y1 = Math.min(y1, b.y1); x2 = Math.max(x2, b.x2); y2 = Math.max(y2, b.y2); }
           if (!isFinite(x1)) return null; const pad = o.pad == null ? 60 : o.pad; x1 -= pad; y1 -= pad; x2 += pad; y2 += pad; const bw = x2 - x1, bh = y2 - y1; let k = o.k || 1; const ppu0 = zf * sf; while ((bw * k * ppu0 > 15000 || bh * k * ppu0 > 15000 || bw * k * ppu0 * bh * k * ppu0 > 6e7) && k > 0.05) k *= 0.9;
           const ppu = k * ppu0, W = root.clientWidth - 2, H = root.clientHeight - 2, sw = W / k, sh = H / k, cols = Math.ceil(bw / sw), rows = Math.ceil(bh / sh), cv = document.createElement("canvas"); cv.width = Math.max(1, Math.ceil(bw * ppu)); cv.height = Math.max(1, Math.ceil(bh * ppu)); const ctx = cv.getContext("2d");
-          ctx.fillStyle = o.bgCss || (o.light ? "#ffffff" : getComputedStyle(root).getPropertyValue("--background-primary").trim() || "#14110f"); ctx.fillRect(0, 0, cv.width, cv.height); let n = 0;
+          ctx.fillStyle = o.bgCss || (getComputedStyle(root).getPropertyValue("--background-primary").trim() || "#14110f"); ctx.fillRect(0, 0, cv.width, cv.height); let n = 0;
           for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
             const ox = x1 + c * sw, oy = y1 + r * sh; this.cam = { x: ox + sw / 2, y: oy + sh / 2, k }; this.applyCam(); await raf(); await sleep(this.geo && this.geo.size > 1500 ? 380 : 220); prep(); await sleep(40);
             const b = await shot(); ctx.drawImage(b, 0, 0, b.width, b.height, Math.round((ox - x1) * ppu), Math.round((oy - y1) * ppu), Math.ceil(sw * ppu), Math.ceil(sh * ppu)); if (b.close) b.close(); n++; if (onProgress) onProgress(n / (cols * rows));
@@ -652,7 +652,7 @@
           if (o.logo) this.exportLogo(ctx, cv.width, cv.height, o.light, ppu / k); return cv;
         } finally {
           for (const [, e] of this.els) e.el.style.visibility = ""; for (const [, r] of this.edgeEls) r.g.style.visibility = "";
-          this.exporting = false; this.contentEl.classList.remove("osb-exporting", "osb-noink"); root.style.removeProperty("background-color"); root.classList.remove("is-exporting", "is-exp-light", "is-text-garbled"); this.cam = keep.cam; this.sel = keep.sel; this.selEdge = keep.edge; this.applyCam(); this.mark();
+          this.exporting = false; this.contentEl.classList.remove("osb-exporting", "osb-noink"); root.style.removeProperty("background-color"); root.classList.remove("is-exporting", "is-exp-white", "is-text-garbled"); this.cam = keep.cam; this.sel = keep.sel; this.selEdge = keep.edge; this.applyCam(); this.mark();
         }
       }
       exportLogo(ctx, w, h, light, u) { ctx.save(); ctx.font = "600 " + Math.round(15 * u) + "px 'Segoe UI', system-ui, sans-serif"; ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillStyle = light ? "rgba(0,0,0,.45)" : "rgba(255,255,255,.55)"; ctx.fillText("Basalt", w - 18 * u, h - 14 * u); ctx.restore(); }
@@ -664,9 +664,9 @@
       }
       exportDialog() {
         const M = new api.Modal(app); M.modalEl.addClass("bs-exp"); M.titleEl.setText("Экспорт в картинку"); const c = M.contentEl, sel = Array.from(this.sel).filter((i) => this.yn.get(i));
-        const o = { scope: sel.length ? "sel" : "all", bg: "white", scale: 2, pad: 40, ink: true }; const body = c.createDiv({ cls: "bs-exp-body" }), pv = body.createDiv({ cls: "bs-exp-pv" }), opts = body.createDiv({ cls: "bs-exp-opts" }); const info = pv.createDiv({ cls: "bs-exp-info" }); let cvEl = null, tk = 0, tm = 0;
+        const o = { scope: sel.length ? "sel" : "all", bg: "orig", scale: 2, pad: 40, ink: true }; const body = c.createDiv({ cls: "bs-exp-body" }), pv = body.createDiv({ cls: "bs-exp-pv" }), opts = body.createDiv({ cls: "bs-exp-opts" }); const info = pv.createDiv({ cls: "bs-exp-info" }); let cvEl = null, tk = 0, tm = 0;
         const seg = (title, list, key) => { opts.createDiv({ cls: "bs-exp-l", text: title }); const g = opts.createDiv({ cls: "bs-exp-seg" }); const bs = []; for (const [v, t, dis] of list) { const b = g.createDiv({ cls: "bs-exp-b" + (dis ? " is-dis" : ""), text: t }); b.onclick = () => { if (dis) return; o[key] = v; bs.forEach(([x, y]) => y.classList.toggle("is-on", x === v)); draw(); }; b.classList.toggle("is-on", o[key] === v); bs.push([v, b]); } };
-        seg("Что экспортировать", [["all", "Вся доска"], ["sel", "Выделенное" + (sel.length ? " (" + sel.length + ")" : ""), !sel.length]], "scope"); seg("Фон картинки", [["white", "Белый"], ["none", "Прозрачный"], ["dark", "Тёмный"]], "bg"); seg("Размер картинки", [[1, "1×"], [2, "2×"], [3, "3×"]], "scale"); seg("Поля картинки", [[0, "Без полей"], [20, "Малые"], [40, "Средние"], [80, "Большие"]], "pad");
+        seg("Что экспортировать", [["all", "Вся доска"], ["sel", "Выделенное" + (sel.length ? " (" + sel.length + ")" : ""), !sel.length]], "scope"); seg("Фон картинки", [["orig", "Оригинальный"], ["white", "Белый"], ["black", "Чёрный"], ["none", "Прозрачный"]], "bg"); seg("Размер картинки", [[1, "1×"], [2, "2×"], [3, "3×"]], "scale"); seg("Поля картинки", [[0, "Без полей"], [20, "Малые"], [40, "Средние"], [80, "Большие"]], "pad");
         const lb = opts.createEl("label", { cls: "bs-exp-ck" }); const ck = lb.createEl("input", { attr: { type: "checkbox" } }); ck.checked = true; lb.createSpan({ text: " Включить рисунок" }); ck.onchange = () => { o.ink = ck.checked; draw(); };
         opts.createDiv({ cls: "bs-exp-l", text: "Имя файла" }); const nm = opts.createEl("input", { attr: { placeholder: (this.getDisplayText() || "Доска"), spellcheck: "false" } }); nm.style.width = "100%";
         const build = () => this.renderExport({ ids: o.scope === "sel" ? sel : null, bg: o.bg, scale: o.scale, pad: o.pad, ink: o.ink });
@@ -676,8 +676,8 @@
           M.close(); const nt = new api.Notice("Снимаю доску…", 0), pr = (f) => nt.setMessage("Снимаю доску: " + Math.round(f * 100) + " %");
           try {
             const k = o.scale, common = { scope: o.scope, k, pad: o.pad, ink: o.ink }; let cv;
-            if (o.bg === "none") { const b = await this.exportCapture(Object.assign({ light: true, bgCss: "#000000" }, common), (f) => pr(f / 2)); const w = await this.exportCapture(Object.assign({ light: true, bgCss: "#ffffff" }, common), (f) => pr(0.5 + f / 2)); cv = b && w ? this.mergeAlpha(b, w) : null; }
-            else cv = await this.exportCapture(Object.assign({ light: o.bg === "white" }, common), pr);
+            if (o.bg === "none") { const b = await this.exportCapture(Object.assign({ bgCss: "#000000" }, common), (f) => pr(f / 2)); const w = await this.exportCapture(Object.assign({ bgCss: "#ffffff" }, common), (f) => pr(0.5 + f / 2)); cv = b && w ? this.mergeAlpha(b, w) : null; }
+            else cv = await this.exportCapture(Object.assign(o.bg === "white" ? { bgCss: "#ffffff", pageLight: true } : o.bg === "black" ? { bgCss: "#000000" } : {}, common), pr);
             nt.hide(); if (!cv) new api.Notice("Нечего экспортировать"); return cv;
           } catch (e) { nt.hide(); console.error(e); new api.Notice("Не удалось снять картинку с экрана, рисую упрощённую"); return build(); }
         };

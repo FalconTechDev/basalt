@@ -21757,6 +21757,16 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .osb-noink .osb-ink{
     display:none!important
 }
+.osb-root.is-exp-white .osb-card.is-group .osb-ta{
+    color:#111827!important
+}
+.osb-root.is-exp-white .osb-et{
+    fill:#111827;
+    stroke:#ffffff
+}
+.osb-root.is-exp-white .osb-ink{
+    --text-normal:#111827
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
