@@ -1,0 +1,14 @@
+/* ===== calmer accents: copper only where it means something (primary action, selection, hover), not on every icon and badge ===== */
+/* collaboration window: neutral icon tiles, plain status text, a small round colour dot instead of a loud square */
+.bsm-bigic { color: var(--text-muted); background: var(--background-modifier-hover); }
+.bsm-bigcard:hover .bsm-bigic { color: var(--interactive-accent); }
+.bsm-bigcard:hover { translate: 0 0; box-shadow: none; border-color: var(--background-modifier-border-hover); }
+.bsm-bigs { color: var(--text-muted); }
+.bsm-mdot3 { width: 12px; height: 12px; border-radius: 50%; border-width: 0; box-shadow: 0 0 0 2px var(--background-modifier-border-hover); margin: 0 4px 0 2px; }
+.bsm-mdot3:hover { scale: 1.2; }
+.bsm-you2 { padding: 3px 10px; background: transparent; }
+.bsm-pill { background: transparent; border: 1px solid var(--background-modifier-border); }
+/* start window and other tinted icon boxes */
+.bsm-ci, .bsh-ti { background: none; }
+/* the user colour square in lists */
+.bsm .bsm-dot, .bsm .bsm-avatar-sq { border-radius: 50%; }

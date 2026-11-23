@@ -6,49 +6,34 @@
 
   const css = document.createElement("style");
   css.textContent = `
-    .empty-state { position: relative; display: block !important; } .bsh { position: absolute; inset: 0; overflow: auto; display: flex; justify-content: center; padding: 5vh 24px 32px; box-sizing: border-box; }
-    .bsh-in { width: min(760px, 100%); display: flex; flex-direction: column; gap: 26px; }
-    .bsh-brand { display: flex; align-items: center; gap: 18px; }
-    .bsh-brand img { height: 64px; width: auto; flex: none; }
-    .bsh-brand h1 { margin: 0; font-size: 34px; letter-spacing: .04em; font-weight: 700; line-height: 1; }
-    .bsh-brand p { margin: 6px 0 0; color: var(--text-muted); font-size: var(--font-ui-small); }
-    .bsh-search { display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: var(--bs-cursor-text, text); color: var(--text-muted); background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);  transition: border-color .12s, background .12s; }
-    .bsh-search:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); }
-    .bsh-search svg { width: 18px; height: 18px; flex: none; }
-    .bsh-search span { flex: 1; font-size: 15px; }
-    .bsh kbd { font-family: var(--font-monospace); font-size: 11px; padding: 2px 7px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); color: var(--text-faint); }
-    .bsh-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .bsh-tile { position: relative; display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 12px 14px; min-height: 60px; cursor: var(--bs-cursor-hand, pointer); background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  transition: transform .12s, border-color .12s, background .12s; }
-    .bsh-tile:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); }
-    .bsh-keys { display: flex; gap: 4px; }
-    .bsh-tile > div { display: flex; flex-direction: row; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-    .bsh-tile .bsh-keys { margin-left: auto; }
-    .bsh-tile .bsh-ti { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--bs-r); background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); color: var(--interactive-accent); flex: none; }
-    .bsh-tile .bsh-ti svg { width: 20px; height: 20px; padding: 0; box-sizing: border-box; background: none; border-radius: 0; }
-    .bsh-tile svg { padding: 7px; box-sizing: content-box; width: 22px; height: 22px; border-radius: var(--bs-r); background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); }
-    .bsh-tile svg { color: var(--interactive-accent); }
-    .bsh-tile b { font-weight: 600; } .bsh-tile small { color: var(--text-faint); font-size: var(--font-ui-smaller); }
-    .bsh-cols { display: grid; grid-template-columns: 1fr; gap: 32px; }
-    .bsh-hint { color: var(--text-faint); font-size: var(--font-ui-smaller); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-    .bsh-hint kbd { font-family: var(--font-monospace); font-size: 11.5px; padding: 1px 6px; border-radius: var(--bs-r); background: var(--background-modifier-hover); color: var(--text-muted); }
-    .bsh-recent { display: grid; grid-template-columns: 1fr; column-gap: 14px; }
-    @media (max-width: 720px) { .bsh-cols { grid-template-columns: 1fr; } }
-    .bsh h3 { margin: 0 0 8px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-faint); font-weight: 600; }
-    .bsh-rec { display: flex; align-items: center; gap: 12px; padding: 8px 10px; cursor: var(--bs-cursor-hand, pointer); border-left: 2px solid transparent; }
-    .bsh-rec:hover { background: var(--background-modifier-hover); border-left-color: var(--interactive-accent); }
-    .bsh-rec svg { width: 18px; height: 18px; color: var(--text-muted); flex: none; }
-    .bsh-rec div { flex: 1; min-width: 0; } .bsh-rec b { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .bsh-rec small { display: block; color: var(--text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsh-rec time { color: var(--text-faint); font-size: var(--font-ui-smaller); flex: none; }
-    .bsh-stat { display: flex; flex-direction: column; gap: 6px; }
-    .bsh-stat div { border-radius: 0; display: flex; justify-content: space-between; padding: 11px 12px; background: var(--background-secondary); border-left: 2px solid var(--background-modifier-border); }
-    .bsh-stat b { color: var(--text-normal); } .bsh-stat span { color: var(--text-muted); }
-    .bsh-close { color: var(--text-faint); font-size: var(--font-ui-smaller); cursor: var(--bs-cursor-hand, pointer); align-self: flex-start; } .bsh-close:hover { color: var(--text-normal); }
-    .bsh-search, .bsh-tile { border: 0; clip-path: none; background: var(--interactive-normal); }
-    .bsh-search:hover, .bsh-tile:hover { background: var(--interactive-hover); box-shadow: inset 2px 0 0 var(--interactive-accent); border: 0; }
-    .bsh-tile .bsh-ti, .bsh-tile svg { border-radius: 0; }
-    .bsh kbd { border-radius: var(--bs-r, 5px); }
-    .bsh h3 { color: var(--text-muted); border-bottom: 1px solid var(--background-modifier-border); padding-bottom: 8px; }
-    .empty-state .empty-state-container { display: none; }
+    .empty-state { position: relative; display: block !important; } .empty-state .empty-state-container { display: none; }
+    .bsh { position: absolute; inset: 0; overflow: auto; display: flex; justify-content: center; padding: 7vh 28px 40px; box-sizing: border-box; }
+    .bsh-in { width: min(720px, 100%); display: flex; flex-direction: column; gap: 26px; }
+    .bsh-brand { display: flex; align-items: center; gap: 16px; }
+    .bsh-brand img { height: 52px; width: auto; flex: none; }
+    .bsh-brand h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: .02em; line-height: 1.1; }
+    .bsh-brand p { margin: 4px 0 0; color: var(--text-faint); font-size: 12.5px; }
+    .bsh-search { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; cursor: var(--bs-cursor-text, text); color: var(--text-faint); background: transparent; border: 1px solid var(--background-modifier-border); border-radius: 5px; transition: border-color .12s ease, background-color .12s ease; }
+    .bsh-search:hover { border-color: var(--background-modifier-border-hover); background: var(--background-modifier-hover); }
+    .bsh-search svg { width: 16px; height: 16px; flex: none; } .bsh-search span { flex: 1; font-size: 14px; }
+    .bsh kbd { font-family: var(--font-monospace); font-size: 11px; padding: 1px 6px; border-radius: 3px; background: transparent; border: 1px solid var(--background-modifier-border); color: var(--text-faint); }
+    .bsh-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .bsh-tile { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; cursor: var(--bs-cursor-hand, pointer); color: var(--text-normal); background: transparent; border: 1px solid var(--background-modifier-border); border-radius: 5px; transition: border-color .12s ease, background-color .12s ease; }
+    .bsh-tile:hover { background: var(--background-modifier-hover); border-color: var(--background-modifier-border-hover); }
+    .bsh-tile > div { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; } .bsh-tile b { font-weight: 500; font-size: 13.5px; white-space: nowrap; }
+    .bsh-tile .bsh-ti { display: grid; place-items: center; width: 20px; height: 20px; flex: none; color: var(--text-muted); background: none; transition: color .12s ease; } .bsh-tile .bsh-ti svg { width: 18px; height: 18px; padding: 0; background: none; color: inherit; }
+    .bsh-tile:hover .bsh-ti { color: var(--interactive-accent); }
+    .bsh-keys { display: flex; gap: 3px; margin-left: auto; }
+    .bsh h3 { margin: 0 0 6px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); font-weight: 600; border: 0; padding: 0; }
+    .bsh-recent { display: flex; flex-direction: column; }
+    .bsh-rec { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 10px; border-radius: 4px; cursor: var(--bs-cursor-hand, pointer); border: 0; }
+    .bsh-rec:hover { background: var(--background-modifier-hover); }
+    .bsh-rec svg { width: 16px; height: 16px; color: var(--text-faint); flex: none; }
+    .bsh-rec > div { flex: 1; min-width: 0; } .bsh-rec b { display: block; font-weight: 500; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bsh-rec small { display: block; color: var(--text-faint); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsh-rec time { color: var(--text-faint); font-size: 12px; flex: none; }
+    .bsh-foot { display: flex; gap: 18px; color: var(--text-faint); font-size: 12px; padding-top: 4px; }
+    .bsh-tile:hover, .bsh-search:hover { transform: none !important; box-shadow: none !important; }
+    @media (max-width: 640px) { .bsh-tiles { grid-template-columns: repeat(2, 1fr); } }
   `;
   document.head.appendChild(css);
 
@@ -81,28 +66,31 @@
     const el = document.createElement("div"); el.className = "bsh";
     el.innerHTML = `<div class="bsh-in">
       <div class="bsh-brand"><img src="basalt-logo.png" alt=""><div><h1>Basalt</h1><p></p></div></div>
-      <div class="bsh-search">${svg("search")}<span>Искать по заметкам и холстам…</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></div>
+      <div class="bsh-search">${svg("search")}<span>Искать по заметкам и доскам…</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></div>
       <div class="bsh-tiles"></div>
-      <div class="bsh-cols"><div><h3>Недавние</h3><div class="bsh-recent"></div></div></div></div>`;
+      <div class="bsh-cols"><div><h3>Недавние</h3><div class="bsh-recent"></div></div></div><div class="bsh-foot"></div></div>`;
     el.querySelector("p").textContent = app.vault.getName();
     el.querySelector(".bsh-search").addEventListener("click", () => cmd("basalt:quick-search"));
     const tiles = [
       ["folder", "Открыть папку", "", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
       ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
-      ["canvas", "Новая доска", "", () => cmd("canvas:new-file")],
+      ["canvas", "Новая доска", "", () => (window.__bsBoard && window.__bsBoard.create ? window.__bsBoard.create() : cmd("canvas:new-file"))],
       ["graph", "Граф", "", () => cmd("graph:open")],
+      ["share", "Совместная работа", "", () => { if (window.__bsShare) window.__bsShare.dialog("/"); }],
+      ["gear", "Настройки", "", () => cmd("app:open-settings")],
     ];
     const tl = el.querySelector(".bsh-tiles");
-    const LI = { folder: "folder-open", note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };
+    const LI = { folder: "folder-open", note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", share: "users", file: "file-search", history: "history", plug: "plug", gear: "settings" };
     for (const [ic, t, sub, fn] of tiles) { const [desc, keys] = sub.split("|"); const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `<span class="bsh-ti"></span><div><b>${esc(t)}</b>${desc ? `<br><small>${esc(desc)}</small>` : ""}${keys ? `<span class="bsh-keys">${keys.split("+").map((k) => `<kbd>${esc(k)}</kbd>`).join("")}</span>` : ""}</div>`; try { window.__bsApi.setIcon(d.firstChild, "lucide-" + LI[ic]); } catch (e) { d.firstChild.innerHTML = svg(ic); } d.addEventListener("click", fn); tl.appendChild(d); }
     const rl = el.querySelector(".bsh-recent");
     if (!recent.length) rl.innerHTML = '<div class="bsh-rec" style="cursor: var(--bs-cursor-arrow, default)"><div><small>Пока ничего не открывали</small></div></div>';
     for (const f of recent) {
       const d = document.createElement("div"); d.className = "bsh-rec";
-      d.innerHTML = `${svg(f.extension === "canvas" ? "canvas" : "note")}<div><b>${esc(f.basename || f.name)}</b><small>${esc(f.parent && f.parent.path && f.parent.path !== "/" ? f.parent.path : "корень")}</small></div><time>${f.stat ? ago(f.stat.mtime) : ""}</time>`;
+      d.innerHTML = `${svg(f.extension === "canvas" || f.extension === "board" ? "canvas" : "note")}<div><b>${esc(f.basename || f.name)}</b><small>${esc(f.parent && f.parent.path && f.parent.path !== "/" ? f.parent.path : "корень")}</small></div><time>${f.stat ? ago(f.stat.mtime) : ""}</time>`;
       d.addEventListener("click", () => { (leaf || mainLeaf(false)).openFile(f); });
       rl.appendChild(d);
     }
+    { const ft = el.querySelector(".bsh-foot"), boards = files.filter((f) => f.extension === "board").length; for (const t of [notes.length + " заметок", boards + " досок", links + " связей"]) ft.createSpan({ text: t }); }
     state.appendChild(el);
   }
 
