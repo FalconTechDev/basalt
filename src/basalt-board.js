@@ -18,7 +18,6 @@
     i.onkeydown = (e) => { if (e.key === "Enter") ok.click(); }; M.onClose = () => fin(null); M.open(); setTimeout(() => { i.focus(); i.select(); }, 50);
   });
 
-  const sfx = () => {};
   let BOARD_CLIP = null;
   function makeView(api) {
     return class BoardView extends api.ItemView {
@@ -452,7 +451,7 @@
           return layered(comp, kind === "lr");
         };
         const res = comps.map((comp) => place(comp, mode)); let area = 0, maxW = 0; for (const r of res) { area += (r.w + 80) * (r.h + 80); maxW = Math.max(maxW, r.w); } const rowW = Math.max(maxW, Math.sqrt(area) * 1.5); this.doc.transact(() => { let x = 0, y = 0, rh = 0; for (const r of res) { if (x > 0 && x + r.w > rowW) { x = 0; y += rh + 80; rh = 0; } for (const [v, c] of r.pos) { g(v).set("x", Math.round(bb.x + x + c[0])); g(v).set("y", Math.round(bb.y + y + c[1])); } x += r.w + 80; rh = Math.max(rh, r.h); } });
-        this.resetSides(ids); this.um && this.um.stopCapturing(); this.fit(); sfx("done"); this.toastUndo("Раскладка применена.");
+        this.resetSides(ids); this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка применена.");
       }
       // ----- export to a picture (white background for documents)
       exportMenu(e, ids) {
@@ -715,16 +714,16 @@
         if (this.ro) return;
         const Y = window.__bsY.Y, c = this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2), id = uid(), m = new Y.Map(), t = new Y.Text();
         this.doc.transact(() => { m.set("x", x == null ? c.x - 130 + (Math.random() - .5) * 80 : x); m.set("y", y == null ? c.y - 50 + (Math.random() - .5) * 80 : y); m.set("w", 260); m.set("h", 110); m.set("color", ""); m.set("by", me.name); this.stampM(m); t.insert(0, text || ""); m.set("text", t); this.yn.set(id, m); });
-        this.feed("add", id, this.label(id)); sfx("add");
+        this.feed("add", id, this.label(id));
         this.select(new Set([id])); setTimeout(() => { const e = this.els.get(id); if (e) e.ta.focus(); }, 30); return id;
       }
       addEdge(a, b, sa, sb) {
         if (this.ro) return;
         if (a === b) return; for (const e of this.ye.values()) if ((e.get("a") === a && e.get("b") === b) || (e.get("a") === b && e.get("b") === a)) return;
         const Y = window.__bsY.Y, m = new Y.Map(); this.doc.transact(() => { m.set("a", a); m.set("b", b); m.set("label", ""); if (sa) m.set("sa", sa); if (sb) m.set("sb", sb); this.ye.set(uid(), m); });
-        this.feed("link", null, "«" + this.label(a) + "» → «" + this.label(b) + "»"); sfx("link");
+        this.feed("link", null, "«" + this.label(a) + "» → «" + this.label(b) + "»");
       }
-      removeSel() { if (this.ro) return; if (this.sel.size) sfx("delete"); for (const id of Array.from(this.sel)) { const m0 = this.yn.get(id); if (m0 && m0.get("locked")) this.sel.delete(id); } for (const id of this.sel) this.feed("del", id, this.label(id)); if (this.selEdge) this.feed("unlink", null, ""); this.doc.transact(() => { for (const id of this.sel) { this.yn.delete(id); for (const [k, e] of Array.from(this.ye.entries())) if (e.get("a") === id || e.get("b") === id) this.ye.delete(k); } if (this.selEdge) this.ye.delete(this.selEdge); }); this.sel = new Set(); this.selEdge = null; this.mark(); }
+      removeSel() { if (this.ro) return; if (this.sel.size) for (const id of Array.from(this.sel)) { const m0 = this.yn.get(id); if (m0 && m0.get("locked")) this.sel.delete(id); } for (const id of this.sel) this.feed("del", id, this.label(id)); if (this.selEdge) this.feed("unlink", null, ""); this.doc.transact(() => { for (const id of this.sel) { this.yn.delete(id); for (const [k, e] of Array.from(this.ye.entries())) if (e.get("a") === id || e.get("b") === id) this.ye.delete(k); } if (this.selEdge) this.ye.delete(this.selEdge); }); this.sel = new Set(); this.selEdge = null; this.mark(); }
       setColor(col) { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) { m.set("color", col); this.stampM(m); } } }); for (const id of this.sel) this.feed("color", id, this.label(id)); }
       // ---------- DOM sync ----------
       sync() {
@@ -780,7 +779,7 @@
         const x1 = +r.ln.getAttribute("x1"), y1 = +r.ln.getAttribute("y1"), x2 = +r.ln.getAttribute("x2"), y2 = +r.ln.getAttribute("y2"); this.cutEl.setAttribute("d", "M" + x1 + " " + y1 + " Q" + w.x + " " + w.y + " " + x2 + " " + y2); this.cutEl.classList.toggle("is-far", d.far);
       }
       cutEnd(d) { if (this.cutEl) { this.cutEl.remove(); this.cutEl = null; } const r = this.edgeEls.get(d.id); if (r) r.g.style.opacity = ""; if (d.far) this.removeEdge(d.id); }
-      removeEdge(id) { const m = this.ye.get(id); if (!m) return; sfx("cut"); this.feed("unlink", null, ""); this.doc.transact(() => { this.ye.delete(id); }); this.selEdge = null; this.syncEdges(); }
+      removeEdge(id) { const m = this.ye.get(id); if (!m) return; this.feed("unlink", null, ""); this.doc.transact(() => { this.ye.delete(id); }); this.selEdge = null; this.syncEdges(); }
       splitEdge(id) {
         const m = this.ye.get(id); if (!m) return; const a = m.get("a"), b = m.get("b"), sa = m.get("sa") || "", sb = m.get("sb") || "", A = this.center(a), B = this.center(b); if (!A || !B) return; this.um && this.um.stopCapturing();
         const nid = this.addCard((A.x + B.x) / 2 - 130, (A.y + B.y) / 2 - 30); this.doc.transact(() => { this.ye.delete(id); }); this.addEdge(a, nid, sa, ""); this.addEdge(nid, b, "", sb); this.um && this.um.stopCapturing(); this.selEdge = null;
