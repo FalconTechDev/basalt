@@ -2174,5 +2174,10 @@
 " (будет уменьшена)": " (will be reduced)",
 "Предпросмотр примерный · ": "The preview is approximate · ",
 "Оригинальный": "Original",
-"Чёрный": "Black"
+"Чёрный": "Black",
+"Обвести область…": "Draw an area…",
+"Обведите область для экспорта. Esc — отмена.": "Draw the area to export. Esc cancels.",
+"Куда сохранить": "Where to save",
+"В хранилище, рядом с доской": "In the vault, next to the board",
+"На диск, выбрать папку…": "To disk, choose a folder…"
 }

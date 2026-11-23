@@ -21844,6 +21844,33 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     gap:8px;
     justify-content:flex-end
 }
+.osb-region{
+    position:absolute;
+    inset:0;
+    z-index:60;
+    cursor:crosshair;
+    background:rgba(0,0,0,.18)
+}
+.osb-region-h{
+    position:absolute;
+    left:50%;
+    top:16px;
+    translate:-50% 0;
+    padding:8px 14px;
+    border-radius:6px;
+    background:var(--background-secondary);
+    border:1px solid var(--background-modifier-border-hover);
+    box-shadow:0 6px 20px rgba(0,0,0,.4);
+    font-size:13px;
+    pointer-events:none
+}
+.osb-region-r{
+    display:none;
+    position:absolute;
+    border:2px dashed var(--interactive-accent);
+    background:color-mix(in srgb,var(--interactive-accent) 14%,transparent);
+    pointer-events:none
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
