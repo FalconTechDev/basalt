@@ -8,7 +8,7 @@
     // 1. reading progress: a thin line at the top of the window follows the scroll of the open note
     const bar = document.createElement("div"); bar.className = "bp-progress"; document.body.appendChild(bar);
     // 2. "back to top" button for long notes
-    const top = document.createElement("div"); top.className = "bp-top"; top.title = "Наверх";
+    const top = document.createElement("div"); top.className = "bp-top"; top.title = "Наверх страницы";
     try { window.__bsApi.setIcon(top, "lucide-arrow-up"); } catch (e) { top.textContent = "↑"; }
     document.body.appendChild(top);
     let scroller = null;

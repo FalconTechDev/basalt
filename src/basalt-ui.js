@@ -221,9 +221,9 @@
     const no = bar.createEl("button", { text: opts.cancel || "Отмена" }), yes = bar.createEl("button", { text: opts.ok || "OK", cls: opts.danger ? "mod-warning" : "mod-cta" });
     const done = (v) => { answer = v; m.close(); };
     yes.addEventListener("click", () => done(true)); no.addEventListener("click", () => done(false));
-    m.scope.register([], "Enter", () => { done(true); return false; });
+    m.scope.register([], "Enter", () => { const a = document.activeElement; done(a === no ? false : a === yes ? true : !opts.danger); return false; });
     m.onClose = () => resolve(answer);
-    m.open(); setTimeout(() => yes.focus(), 30);
+    m.open(); setTimeout(() => (opts.danger ? no : yes).focus(), 30);
   });
 })();
 
@@ -296,4 +296,25 @@
     if (window.__bsShare && window.__bsShare.flush) { st.textContent = "Сохраняем совместную работу…"; await lim(window.__bsShare.flush(), 1600); }
     st.textContent = "Готово"; return true;
   };
+})();
+
+// Keyboard in dialogs and lists, one behaviour everywhere: Enter in a text field presses the dialog's main button, arrows walk settings navigation, Tab reaches every nav item
+(() => {
+  const NAV = ".vertical-tab-nav-item, .bset-n, .bsm-navit";
+  const mark = () => document.querySelectorAll(NAV).forEach((n) => { if (!n.hasAttribute("tabindex")) { n.tabIndex = 0; n.setAttribute("role", "tab"); } });
+  let timer = 0; const watch = () => new MutationObserver(() => { clearTimeout(timer); timer = setTimeout(mark, 120); }).observe(document.body, { childList: true, subtree: true }); if (document.body) watch(); else document.addEventListener("DOMContentLoaded", watch);
+  document.addEventListener("keydown", (e) => {
+    if (e.defaultPrevented || e.isComposing || e.altKey || e.ctrlKey || e.metaKey) return;
+    const t = e.target; if (!t || !t.closest) return;
+    if (e.key === "Enter") {
+      const modal = t.closest(".modal"); if (!modal || t.tagName !== "INPUT" || /^(checkbox|radio|button|range|color|file)$/.test(t.type)) return;
+      const go = modal.querySelector(".modal-button-container button.mod-cta:not(:disabled)"); if (go) { e.preventDefault(); go.click(); }
+      return;
+    }
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+    const cur = t.closest(NAV); if (!cur) return;
+    const all = [...cur.parentElement.querySelectorAll(NAV)].filter((x) => x.offsetParent); const i = all.indexOf(cur); if (i < 0) return;
+    e.preventDefault(); const n = all[(i + (e.key === "ArrowDown" ? 1 : all.length - 1)) % all.length]; n.focus();
+  });
+  document.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target && e.target.matches && e.target.matches(NAV) && !e.defaultPrevented) { e.preventDefault(); e.target.click(); } });
 })();

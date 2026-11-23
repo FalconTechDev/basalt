@@ -337,7 +337,7 @@
           if (op.t === "rename") { const f = app.vault.getAbstractFileByPath(op.to); if (f) await app.fileManager.renameFile(f, op.from); }
           else if (op.t === "delete") { for (const snap of op.snaps) await this.restoreSnap(snap); }
           else if (op.t === "create") { const f = app.vault.getAbstractFileByPath(op.path); if (f) { op.snap = await this.snapshotOf(f); await app.fileManager.trashFile(f); } }
-          (this.redoOps = this.redoOps || []).push(op); new api.Notice("Отменено"); this.render();
+          (this.redoOps = this.redoOps || []).push(op); new api.Notice("Действие отменено"); this.render();
         } catch (err) { new api.Notice("Не удалось отменить: " + err.message); }
       }
       async redoOp() {
@@ -346,7 +346,7 @@
           if (op.t === "rename") { const f = app.vault.getAbstractFileByPath(op.from); if (f) await app.fileManager.renameFile(f, op.to); }
           else if (op.t === "delete") { for (const snap of op.snaps) { const f = app.vault.getAbstractFileByPath(snap.path); if (f) await app.fileManager.trashFile(f); } }
           else if (op.t === "create") { if (op.snap) await this.restoreSnap(op.snap); }
-          (this.undoOps = this.undoOps || []).push(op); new api.Notice("Повторено"); this.render();
+          (this.undoOps = this.undoOps || []).push(op); new api.Notice("Действие повторено"); this.render();
         } catch (err) { new api.Notice("Не удалось повторить: " + err.message); }
       }
       async remove(files) {

@@ -5,14 +5,14 @@
   const MIN_ITEMS = 4, COLS_FROM = 10;
   const css = document.createElement("style");
   css.textContent = `
-    .bm-pop { position: fixed; z-index: 60; display: flex; flex-direction: column; gap: 4px; padding: 6px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto;
+    .bm-pop { position: fixed; z-index: var(--bs-z-menu, 65); display: flex; flex-direction: column; gap: 4px; padding: 6px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto;
       background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); color: var(--text-normal); user-select: none; }
     .bm-cols { display: flex; gap: 6px; align-items: stretch; }
     .bm-col { display: flex; flex-direction: column; min-width: 168px; }
     .bm-col + .bm-col { border-left: 1px solid var(--background-modifier-border); padding-left: 6px; }
     .bm-h { padding: 5px 8px 3px; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-faint); }
     .bm-i { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: var(--bs-r, 5px); cursor: pointer; white-space: nowrap; }
-    .bm-i:hover, .bm-i.is-on { background: var(--background-modifier-hover); }
+    .bm-i:hover, .bm-i:focus, .bm-i.is-on { background: var(--background-modifier-hover); }
     .bm-i.is-off { opacity: .45; pointer-events: none; }
     .bm-i.is-danger, .bm-i.is-danger .bm-ic { color: var(--text-error, #e5675f); }
     .bm-ic { display: inline-flex; width: 16px; height: 16px; flex: none; color: var(--text-muted); } .bm-ic svg { width: 16px; height: 16px; }
@@ -26,7 +26,7 @@
     .bm-split { display: flex; border-radius: var(--bs-r, 5px); background: var(--background-secondary); border: 1px solid var(--background-modifier-border); }
     .bm-split > div { display: flex; align-items: center; gap: 6px; padding: 7px 10px; cursor: pointer; }
     .bm-split > div:hover { background: var(--background-modifier-hover); } .bm-split > div + div { border-left: 1px solid var(--background-modifier-border); padding: 7px 8px; }
-    .bm-drop { position: fixed; z-index: 61; min-width: 190px; padding: 5px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); }
+    .bm-drop { position: fixed; z-index: calc(var(--bs-z-menu, 65) + 1); min-width: 190px; padding: 5px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); box-shadow: var(--shadow-l, 0 8px 24px rgba(0,0,0,.35)); font-size: var(--font-ui-small); }
   `;
   document.head.appendChild(css);
 
@@ -42,7 +42,18 @@
   let cur = null;
   function closeAll() { if (cur) { cur.remove(); cur = null; } document.querySelectorAll(".bm-drop").forEach((x) => x.remove()); document.removeEventListener("mousedown", onDown, true); document.removeEventListener("keydown", onKey, true); window.removeEventListener("blur", closeAll); }
   function onDown(e) { if (!e.target.closest(".bm-pop, .bm-drop")) closeAll(); }
-  function onKey(e) { if (e.key === "Escape") { e.stopPropagation(); closeAll(); } }
+  function items() { const dr = document.querySelector(".bm-drop"); const root = dr || cur; return root ? [...root.querySelectorAll(".bm-i:not(.is-off), .bm-find, .bm-split > div")] : []; }
+  function onKey(e) {
+    if (e.key === "Escape") { e.stopPropagation(); closeAll(); return; }
+    const all = items(); if (!all.length) return;
+    const i = all.indexOf(document.activeElement);
+    if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Home" || e.key === "End") {
+      e.preventDefault(); e.stopPropagation();
+      const n = e.key === "Home" ? 0 : e.key === "End" ? all.length - 1 : e.key === "ArrowDown" ? (i + 1) % all.length : (i <= 0 ? all.length - 1 : i - 1);
+      all[n].focus();
+    } else if ((e.key === "Enter" || e.key === " ") && i >= 0) { e.preventDefault(); e.stopPropagation(); all[i].click(); }
+    else if (e.key === "Tab") { e.preventDefault(); e.stopPropagation(); closeAll(); }
+  }
 
   const txt = (it) => (it.titleEl ? it.titleEl.textContent : "").trim();
   function run(menu, it, ev, row) {
@@ -57,7 +68,7 @@
   }
 
   function row(menu, it, ev) {
-    const d = document.createElement("div"); d.className = "bm-i";
+    const d = document.createElement("div"); d.className = "bm-i"; d.tabIndex = -1; d.setAttribute("role", "menuitem");
     const ic = document.createElement("span"); ic.className = "bm-ic"; if (it.iconEl) ic.innerHTML = it.iconEl.innerHTML; d.appendChild(ic);
     const t = document.createElement("span"); t.className = "bm-t"; t.textContent = (it.checked ? "✓ " : "") + txt(it); d.appendChild(t);
     if (it.submenu && it.submenu.items && it.submenu.items.length) { const k = document.createElement("span"); k.className = "bm-k"; k.textContent = "›"; d.appendChild(k); }
@@ -134,7 +145,7 @@
       }
       pop.appendChild(bar);
     }
-    document.body.appendChild(pop); cur = pop;
+    document.body.appendChild(pop); cur = pop; pop.querySelectorAll(".bm-find, .bm-split > div").forEach((x) => { x.tabIndex = -1; x.setAttribute("role", "menuitem"); });
     const r = pop.getBoundingClientRect();
     pop.style.left = Math.max(8, Math.min(x, innerWidth - r.width - 8)) + "px";
     pop.style.top = Math.max(8, Math.min(y, innerHeight - r.height - 8)) + "px";
