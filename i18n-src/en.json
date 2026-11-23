@@ -2154,5 +2154,22 @@
 "Форма: изогнутая": "Shape: curved",
 "Форма: под прямым углом": "Shape: right angles",
 "Связи выделенных: изогнуть": "Links of the selection: curve",
-"Связи выделенных: выпрямить": "Links of the selection: straighten"
+"Связи выделенных: выпрямить": "Links of the selection: straighten",
+"Картинка доски снимается с экрана так, как вы её видите, и склеивается из кусков. Большая доска может сниматься несколько секунд: вид будет двигаться сам.": "The picture of the board is captured from the screen as you see it and stitched together from pieces. A big board can take a few seconds: the view moves by itself.",
+"Всю доску, выделенные карточки или то, что сейчас на экране.": "The whole board, the selected cards or what is on the screen now.",
+"Текущий вид": "Current view",
+"Качество": "Quality",
+"Как на доске": "As on the board",
+"Светлый": "Light",
+"Как на доске или светлый, для вставки в документы.": "As on the board or light, for pasting into documents.",
+"Логотип Basalt": "Basalt logo",
+"Подпись в правом нижнем углу картинки.": "A signature in the bottom right corner of the picture.",
+"Скрыть текст": "Hide text",
+"Режим приватности: текст размыт, видна только структура.": "Privacy mode: the text is blurred, only the structure shows.",
+"Снимаю доску…": "Capturing the board…",
+"Снимаю доску: ": "Capturing the board: ",
+"Не удалось снять картинку с экрана, рисую упрощённую": "Could not capture the screen, drawing a simplified picture",
+"Сохранить как файл…": "Save as a file…",
+"Размер картинки: ": "Picture size: ",
+" (будет уменьшена)": " (will be reduced)"
 }

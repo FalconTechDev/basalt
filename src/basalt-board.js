@@ -627,18 +627,63 @@
         const dir = this.path.replace(/[^/]*$/, ""), base = (name && name.trim()) || ((this.getDisplayText() || "Доска") + (suffix || "")); let n = "", path; do { path = dir + base + n + ".png"; n = n ? n + 1 : 2; } while (app.vault.getAbstractFileByPath(path));
         try { await app.vault.createBinary(path, await blob.arrayBuffer()); new api.Notice("Сохранено: " + path); return true; } catch (e) { new api.Notice("Не удалось сохранить файл"); return false; }
       }
+      // Export as Obsidian does it: the real, themed picture of the board is captured from the window piece by piece and stitched together
+      // o: { scope: "all" | "sel" | "view", k: pixels per board unit, light, logo, privacy }
+      async exportCapture(o, onProgress) {
+        const el = window.require("electron"), remote = el.remote || window.electron.remote; if (!remote) throw new Error("no remote");
+        const contents = remote.getCurrentWebContents(), zf = (el.webFrame && el.webFrame.getZoomFactor && el.webFrame.getZoomFactor()) || 1, sf = window.devicePixelRatio / zf || 1, root = this.root;
+        const selIds = o.scope === "sel" ? Array.from(this.sel).filter((x) => this.yn.get(x)) : null, selSet = selIds ? new Set(selIds) : null, ids = selIds || Array.from(this.yn.keys());
+        const keep = { cam: Object.assign({}, this.cam), sel: this.sel, edge: this.selEdge }; this.exporting = true; this.contentEl.classList.add("osb-exporting"); root.classList.add("is-exporting"); root.classList.toggle("is-exp-light", !!o.light); root.classList.toggle("is-text-garbled", !!o.privacy);
+        this.sel = new Set(); this.selEdge = null; this.mark(); const sleep = (ms) => new Promise((r) => setTimeout(r, ms)), raf = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const shot = async () => { const r = root.getBoundingClientRect(), img = await contents.capturePage({ x: Math.round((r.left + 1) * zf), y: Math.round((r.top + 1) * zf), width: Math.round((r.width - 2) * zf), height: Math.round((r.height - 2) * zf) }); return createImageBitmap(new Blob([img.toPNG()], { type: "image/png" })); };
+        const prep = () => { if (!selSet) return; for (const [id, e] of this.els) e.el.style.visibility = selSet.has(id) ? "" : "hidden"; for (const [id, r] of this.edgeEls) { const m = this.ye.get(id); r.g.style.visibility = m && selSet.has(m.get("a")) && selSet.has(m.get("b")) ? "" : "hidden"; } };
+        try {
+          await raf(); await sleep(60);
+          if (o.scope === "view") { prep(); await sleep(120); const b = await shot(), cv0 = document.createElement("canvas"); cv0.width = b.width; cv0.height = b.height; cv0.getContext("2d").drawImage(b, 0, 0); if (o.logo) this.exportLogo(cv0.getContext("2d"), cv0.width, cv0.height, o.light, b.width / (root.clientWidth - 2)); return cv0; }
+          let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; for (const id of ids) { const m = this.yn.get(id); x1 = Math.min(x1, m.get("x")); y1 = Math.min(y1, m.get("y")); x2 = Math.max(x2, m.get("x") + m.get("w")); y2 = Math.max(y2, m.get("y") + this.effH(m)); }
+          if (!selSet && this._ink) for (const st of this._ink.toArray()) { const b = this.inkBox(st); x1 = Math.min(x1, b.x1); y1 = Math.min(y1, b.y1); x2 = Math.max(x2, b.x2); y2 = Math.max(y2, b.y2); }
+          if (!isFinite(x1)) return null; const pad = 60; x1 -= pad; y1 -= pad; x2 += pad; y2 += pad; const bw = x2 - x1, bh = y2 - y1; let k = o.k || 1; const ppu0 = zf * sf; while ((bw * k * ppu0 > 15000 || bh * k * ppu0 > 15000 || bw * k * ppu0 * bh * k * ppu0 > 6e7) && k > 0.05) k *= 0.9;
+          const ppu = k * ppu0, W = root.clientWidth - 2, H = root.clientHeight - 2, sw = W / k, sh = H / k, cols = Math.ceil(bw / sw), rows = Math.ceil(bh / sh), cv = document.createElement("canvas"); cv.width = Math.max(1, Math.ceil(bw * ppu)); cv.height = Math.max(1, Math.ceil(bh * ppu)); const ctx = cv.getContext("2d");
+          ctx.fillStyle = o.light ? "#ffffff" : (getComputedStyle(root).getPropertyValue("--background-primary").trim() || "#14110f"); ctx.fillRect(0, 0, cv.width, cv.height); let n = 0;
+          for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+            const ox = x1 + c * sw, oy = y1 + r * sh; this.cam = { x: ox + sw / 2, y: oy + sh / 2, k }; this.applyCam(); await raf(); await sleep(this.geo && this.geo.size > 1500 ? 380 : 220); prep(); await sleep(40);
+            const b = await shot(); ctx.drawImage(b, 0, 0, b.width, b.height, Math.round((ox - x1) * ppu), Math.round((oy - y1) * ppu), Math.ceil(sw * ppu), Math.ceil(sh * ppu)); if (b.close) b.close(); n++; if (onProgress) onProgress(n / (cols * rows));
+          }
+          if (o.logo) this.exportLogo(ctx, cv.width, cv.height, o.light, ppu / k); return cv;
+        } finally {
+          for (const [, e] of this.els) e.el.style.visibility = ""; for (const [, r] of this.edgeEls) r.g.style.visibility = "";
+          this.exporting = false; this.contentEl.classList.remove("osb-exporting"); root.classList.remove("is-exporting", "is-exp-light", "is-text-garbled"); this.cam = keep.cam; this.sel = keep.sel; this.selEdge = keep.edge; this.applyCam(); this.mark();
+        }
+      }
+      exportLogo(ctx, w, h, light, u) { ctx.save(); ctx.font = "600 " + Math.round(15 * u) + "px 'Segoe UI', system-ui, sans-serif"; ctx.textAlign = "right"; ctx.textBaseline = "bottom"; ctx.fillStyle = light ? "rgba(0,0,0,.45)" : "rgba(255,255,255,.55)"; ctx.fillText("Basalt", w - 18 * u, h - 14 * u); ctx.restore(); }
       exportDialog() {
-        const M = new api.Modal(app); M.modalEl.addClass("bs-exp"); M.titleEl.setText("Экспорт в картинку"); const c = M.contentEl, sel = Array.from(this.sel).filter((i) => this.yn.get(i));
-        const o = { scope: sel.length ? "sel" : "all", bg: "white", scale: 2, pad: 40, ink: true }; const body = c.createDiv({ cls: "bs-exp-body" }), pv = body.createDiv({ cls: "bs-exp-pv" }), opts = body.createDiv({ cls: "bs-exp-opts" }); const info = pv.createDiv({ cls: "bs-exp-info" }); let cvEl = null, tk = 0, tm = 0;
-        const seg = (title, list, key) => { opts.createDiv({ cls: "bs-exp-l", text: title }); const g = opts.createDiv({ cls: "bs-exp-seg" }); const bs = []; for (const [v, t, dis] of list) { const b = g.createDiv({ cls: "bs-exp-b" + (dis ? " is-dis" : ""), text: t }); b.onclick = () => { if (dis) return; o[key] = v; bs.forEach(([x, y]) => y.classList.toggle("is-on", x === v)); draw(); }; b.classList.toggle("is-on", o[key] === v); bs.push([v, b]); } };
-        seg("Что экспортировать", [["all", "Вся доска"], ["sel", "Выделенное" + (sel.length ? " (" + sel.length + ")" : ""), !sel.length]], "scope"); seg("Фон картинки", [["white", "Белый"], ["none", "Прозрачный"], ["dark", "Тёмный"]], "bg"); seg("Размер картинки", [[1, "1×"], [2, "2×"], [3, "3×"]], "scale"); seg("Поля картинки", [[0, "Без полей"], [20, "Малые"], [40, "Средние"], [80, "Большие"]], "pad");
-        const lb = opts.createEl("label", { cls: "bs-exp-ck" }); const ck = lb.createEl("input", { attr: { type: "checkbox" } }); ck.checked = true; lb.createSpan({ text: " Включить рисунок" }); ck.onchange = () => { o.ink = ck.checked; draw(); };
-        opts.createDiv({ cls: "bs-exp-l", text: "Имя файла" }); const nm = opts.createEl("input", { attr: { placeholder: (this.getDisplayText() || "Доска"), spellcheck: "false" } }); nm.style.width = "100%";
-        const build = () => this.renderExport({ ids: o.scope === "sel" ? sel : null, bg: o.bg, scale: o.scale, pad: o.pad, ink: o.ink });
-        const draw = () => { clearTimeout(tm); tm = setTimeout(async () => { const my = ++tk; const cv = await build(); if (my !== tk) return; if (cvEl) cvEl.remove(); if (!cv) { info.setText("Нечего экспортировать"); return; } cvEl = pv.createEl("canvas", { cls: "bs-exp-cv" }); cvEl.width = cv.width; cvEl.height = cv.height; cvEl.getContext("2d").drawImage(cv, 0, 0); pv.dataset.bg = o.bg; info.setText(cv.width + " × " + cv.height + " px"); }, 120); };
-        const foot = c.createDiv({ cls: "modal-button-container" }); const cl = foot.createEl("button", { text: "Закрыть" }), cp = foot.createEl("button", { text: "Копировать" }), sv = foot.createEl("button", { text: "Сохранить PNG", cls: "mod-cta" });
-        cl.onclick = () => M.close(); cp.onclick = async () => { const cv = await build(); if (cv) this.outputPng(cv, "clip"); }; sv.onclick = async () => { const cv = await build(); if (cv && await this.outputPng(cv, "file", o.scope === "sel" ? " (часть)" : "", nm.value)) M.close(); };
-        M.open(); draw();
+        const hasSel = Array.from(this.sel).filter((i) => this.yn.get(i)).length > 0, M = new api.Modal(app); M.modalEl.addClass("mod-narrow"); M.titleEl.setText("Экспорт в картинку");
+        const c = M.contentEl, o = { scope: hasSel ? "sel" : "all", q: 1, light: false, logo: true, privacy: false }; c.createDiv({ cls: "setting-item-description", text: "Картинка доски снимается с экрана так, как вы её видите, и склеивается из кусков. Большая доска может сниматься несколько секунд: вид будет двигаться сам." });
+        const S = api.Setting, mk = () => new S(c).setClass("canvas-export-setting"); let sizeSet = null;
+        const dims = () => { let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; const ids = o.scope === "sel" ? Array.from(this.sel) : Array.from(this.yn.keys()); for (const id of ids) { const m = this.yn.get(id); if (!m) continue; x1 = Math.min(x1, m.get("x")); y1 = Math.min(y1, m.get("y")); x2 = Math.max(x2, m.get("x") + m.get("w")); y2 = Math.max(y2, m.get("y") + this.effH(m)); } if (o.scope === "view") return { w: Math.round(this.root.clientWidth * window.devicePixelRatio), h: Math.round(this.root.clientHeight * window.devicePixelRatio) }; if (!isFinite(x1)) return { w: 0, h: 0 }; const ppu = o.q * window.devicePixelRatio; return { w: Math.round((x2 - x1 + 120) * ppu), h: Math.round((y2 - y1 + 120) * ppu) }; };
+        const upd = () => { const d = dims(); if (sizeSet) sizeSet.setDesc(d.w ? "Размер картинки: " + d.w + " × " + d.h + " px" + (d.w > 15000 || d.h > 15000 ? " (будет уменьшена)" : "") : "Нечего экспортировать"); };
+        const sc = mk().setName("Что экспортировать").setDesc("Всю доску, выделенные карточки или то, что сейчас на экране."); sc.addDropdown((dd) => { dd.addOption("all", "Вся доска"); if (hasSel) dd.addOption("sel", "Выделенное"); dd.addOption("view", "Текущий вид"); dd.setValue(o.scope).onChange((v) => { o.scope = v; zs.settingEl.style.display = v === "view" ? "none" : ""; upd(); }); });
+        const zs = mk().setName("Качество").setDesc(""); sizeSet = zs; zs.addSlider((sl) => { sl.setLimits(-2, 2, 0.05).setValue(0).setDynamicTooltip().onChange((v) => { o.q = Math.pow(2, v); upd(); }); });
+        mk().setName("Вид").setDesc("Как на доске или светлый, для вставки в документы.").addDropdown((dd) => dd.addOption("dark", "Как на доске").addOption("light", "Светлый").setValue("dark").onChange((v) => { o.light = v === "light"; }));
+        mk().setName("Логотип Basalt").setDesc("Подпись в правом нижнем углу картинки.").addToggle((t) => t.setValue(true).onChange((v) => { o.logo = v; }));
+        mk().setName("Скрыть текст").setDesc("Режим приватности: текст размыт, видна только структура.").addToggle((t) => t.setValue(false).onChange((v) => { o.privacy = v; }));
+        upd();
+        const run = async (to) => {
+          M.close(); const nt = new api.Notice("Снимаю доску…", 0);
+          try {
+            const cv = await this.exportCapture({ scope: o.scope, k: o.q, light: o.light, logo: o.logo, privacy: o.privacy }, (f) => nt.setMessage("Снимаю доску: " + Math.round(f * 100) + " %")); nt.hide(); if (!cv) { new api.Notice("Нечего экспортировать"); return; }
+            if (to === "clip") await this.outputPng(cv, "clip"); else await this.saveCapture(cv);
+          } catch (e) {
+            nt.hide(); console.error(e); new api.Notice("Не удалось снять картинку с экрана, рисую упрощённую");
+            const cv = await this.renderExport({ ids: o.scope === "sel" ? Array.from(this.sel) : null, bg: o.light ? "white" : "dark", scale: 2, pad: 40 }); if (cv) { if (to === "clip") await this.outputPng(cv, "clip"); else await this.saveCapture(cv); }
+          }
+        };
+        const foot = c.createDiv({ cls: "modal-button-container" }); foot.createEl("button", { text: "Отмена" }).onclick = () => M.close(); foot.createEl("button", { text: "Копировать" }).onclick = () => run("clip"); foot.createEl("button", { text: "Сохранить как файл…", cls: "mod-cta" }).onclick = () => run("file"); M.open();
+      }
+      async saveCapture(cv) {
+        const blob = await new Promise((r) => cv.toBlob(r, "image/png")); if (!blob) { new api.Notice("Не удалось собрать картинку"); return false; }
+        const remote = window.electron.remote, picked = await remote.dialog.showSaveDialog({ defaultPath: (this.getDisplayText() || "Доска") + ".png", filters: [{ name: "PNG", extensions: ["png"] }, { name: "Все файлы", extensions: ["*"] }] }), fp = picked && (picked.filePath || (picked[1] && picked[1]));
+        if (!picked || picked.canceled || !fp) return false; try { await window.require("fs").promises.writeFile(fp, window.require("buffer").Buffer.from(await blob.arrayBuffer())); new api.Notice(fp, 10000); return true; } catch (e) { new api.Notice("Не удалось сохранить файл"); return false; }
       }
       // ---------- version history ----------
       histDir() { return ".basalt-history/" + this.path.replace(/[\\/]/g, "__") + "/"; }

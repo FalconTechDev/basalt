@@ -21723,6 +21723,37 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     height:140px;
     pointer-events:auto
 }
+.osb-root.is-exporting{
+    background-image:none!important;
+    cursor:default!important
+}
+.osb-root.is-exporting .osb-rail,.osb-root.is-exporting .osb-bar,.osb-root.is-exporting .osb-sel,.osb-root.is-exporting .osb-search,.osb-root.is-exporting .osb-bottom,.osb-root.is-exporting .osb-dtb,.osb-root.is-exporting .osb-help,.osb-root.is-exporting .osb-cursors,.osb-root.is-exporting .osb-guides,.osb-root.is-exporting .osb-box,.osb-root.is-exporting .osb-ring,.osb-root.is-exporting .osb-empty,.osb-root.is-exporting .osb-h,.osb-root.is-exporting .osb-rz,.osb-root.is-exporting .osb-x,.osb-root.is-exporting .osb-ep,.osb-root.is-exporting .osb-lbl{
+    display:none!important
+}
+.osb-root.is-exporting *,.osb-root.is-exporting{
+    transition:none!important;
+    animation:none!important
+}
+.osb-root.is-exp-light{
+    --background-primary:#ffffff;
+    --background-secondary:#ffffff;
+    --background-secondary-alt:#f6f7f9;
+    --text-normal:#111827;
+    --text-muted:#4b5563;
+    --text-faint:#6b7280;
+    --background-modifier-border:#d1d5db;
+    --background-modifier-border-hover:#c0c4cc;
+    --background-modifier-hover:#eef0f3;
+    --interactive-accent:#a05a2c;
+    background-color:#ffffff!important;
+    color:#111827
+}
+.osb-root.is-text-garbled .osb-md,.osb-root.is-text-garbled .osb-ta,.osb-root.is-text-garbled .osb-et{
+    filter:blur(5px)
+}
+.osb-exporting .osb-rail,.osb-exporting .osb-bar,.osb-exporting .osb-sel,.osb-exporting .osb-search,.osb-exporting .osb-bottom,.osb-exporting .osb-dtb,.osb-exporting .osb-help,.osb-exporting .osb-people,.osb-exporting .osb-feed,.osb-exporting .osb-cursors,.osb-exporting .osb-lbl{
+    display:none!important
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
