@@ -172,7 +172,6 @@
 "Вписать весь граф в окно": "Fit the whole graph to the window",
 "Вписать граф в окно": "Fit the graph to the window",
 "Вручную": "Manual",
-"Все": "All",
 "Все записи, отмена одного действия и откат к моменту.": "All entries, undo of a single action and rollback to a moment.",
 "Всегда в максимальном разрешении": "Always at maximum resolution",
 "Вставить": "Paste",
@@ -1418,7 +1417,6 @@
 " вышел(ла)": " left",
 " дн": " d",
 " и ": " and ",
-" из ": " of ",
 " мин": " min",
 " печатает…": " is typing…",
 " подключился(лась)": " joined",
@@ -1715,8 +1713,6 @@
 "Это не файл доски": "This is not a board file",
 "Добавлено карточек: ": "Cards added: ",
 "Импорт: ": "Import: ",
-"Ничего": "None",
-"Выбрано ": "Selected ",
 "[изображение] ": "[image] ",
 "Без текста": "No text",
 " вместе с рисунком": " with the drawing",
@@ -1747,6 +1743,7 @@
 "свёрнуто": "collapsed",
 "Выбрано объектов: ": "Items selected: ",
 "Один объект": "One item",
-"и ещё ": "and ",
-"Удалённое попадёт в корзину, откуда его можно вернуть.": "Deleted items go to the trash, where you can restore them from."
+"Удалённое попадёт в корзину, откуда его можно вернуть.": "Deleted items go to the trash, where you can restore them from.",
+"Выбрать все": "Select all",
+"Ещё: ": "More: "
 }
