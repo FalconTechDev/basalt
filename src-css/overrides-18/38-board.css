@@ -344,3 +344,5 @@
 .osb-card.is-lite.is-hit { box-shadow: none; outline: 3px solid var(--bs-warn); }
 .osb-md-more { margin: 8px 0 2px; padding: 4px 8px; border-radius: 4px; border: 1px dashed var(--background-modifier-border-hover); color: var(--text-muted); font-size: 12px; text-align: center; cursor: var(--bs-cursor-hand, pointer); user-select: none; } .osb-md-more:hover { color: var(--text-normal); background: var(--background-modifier-hover); }
 .osb-inkcv { position: absolute; pointer-events: none; }
+/* a frame drawn as a plain rectangle (zoomed out) can still be grabbed by a strip along its top */
+.osb-card.is-lite.is-group::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 140px; pointer-events: auto; }

@@ -21742,6 +21742,15 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     position:absolute;
     pointer-events:none
 }
+.osb-card.is-lite.is-group::before{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    height:140px;
+    pointer-events:auto
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;

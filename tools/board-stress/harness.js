@@ -10,7 +10,7 @@
   const sum = (a) => { if (!a.length) return { n: 0 }; const s = a.slice().sort((x, y) => x - y), q = (p) => s[Math.min(s.length - 1, Math.floor(p * s.length))]; return { n: s.length, med: +q(0.5).toFixed(1), p95: +q(0.95).toFixed(1), max: +s[s.length - 1].toFixed(1), over50: s.filter((x) => x > 50).length }; };
   S.sum = sum;
   S.wrap = (v) => {
-    for (const n of ['sync', 'syncEdges', 'renderMd', 'paintMini', 'applyCam', 'renderInk', 'guide', 'sizeSnap', 'publish', 'mark', 'renderSelBar']) {
+    for (const n of ['sync', 'flush', 'cull', 'cullInk', 'syncEdges', 'renderMd', 'paintMini', 'applyCam', 'renderInk', 'guide', 'sizeSnap', 'publish', 'mark', 'renderSelBar', 'refitFrames', 'drawEdge', 'fillCard']) {
       const o = v[n]; if (typeof o !== 'function' || o.__w) continue;
       v[n] = function (...a) { const t = performance.now(); try { return o.apply(this, a); } finally { const d = performance.now() - t, r = S.timers[n] || (S.timers[n] = { n: 0, t: 0, max: 0 }); r.n++; r.t += d; if (d > r.max) r.max = d; } }; v[n].__w = 1;
     }
@@ -50,7 +50,7 @@
   S.addCards = (n, o) => {
     o = o || {}; const v = S.view(), y = Y(), cols = o.cols || Math.ceil(Math.sqrt(n * 1.5)), W = o.w || 260, H = o.h || 110, dx = o.dx || 300, dy = o.dy || 150, pre = o.prefix || 'c', ids = [];
     const t0 = performance.now();
-    v.doc.transact(() => { for (let i = 0; i < n; i++) { const m = new y.Map(), t = new y.Text(); m.set('x', (i % cols) * dx); m.set('y', Math.floor(i / cols) * dy); m.set('w', W); m.set('h', H); m.set('color', o.color ? (i % 7 ? '' : '#e5484d') : ''); m.set('by', 'stress'); v.stampM(m); t.insert(0, o.text ? o.text(i) : ''); m.set('text', t); if (o.img) m.set('img', o.img(i)); const id = pre + i; v.yn.set(id, m); ids.push(id); } });
+    v.doc.transact(() => { for (let i = 0; i < n; i++) { const m = new y.Map(), t = new y.Text(); m.set('x', (o.ox || 0) + (i % cols) * dx); m.set('y', (o.oy || 0) + Math.floor(i / cols) * dy); m.set('w', W); m.set('h', H); m.set('color', o.color ? (i % 7 ? '' : '#e5484d') : ''); m.set('by', 'stress'); v.stampM(m); t.insert(0, o.text ? o.text(i) : ''); m.set('text', t); if (o.img) m.set('img', o.img(i)); const id = pre + i; v.yn.set(id, m); ids.push(id); } });
     return { ms: Math.round(performance.now() - t0), n: ids.length };
   };
   S.addEdges = (n, o) => {

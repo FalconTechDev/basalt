@@ -16,6 +16,7 @@ export async function connect(port, urlRe) {
   ws.addEventListener('message', (m) => {
     const d = JSON.parse(m.data);
     if (d.id && pend.has(d.id)) { pend.get(d.id)(d); pend.delete(d.id); return; }
+    for (const f of listeners) f(d);
     if (d.method === 'Runtime.exceptionThrown') events.exceptions.push((d.params.exceptionDetails.exception && d.params.exceptionDetails.exception.description || d.params.exceptionDetails.text || '').slice(0, 300));
     if (d.method === 'Inspector.targetCrashed') events.crashed = true;
     if (d.method === 'Runtime.consoleAPICalled' && d.params.type === 'error') events.logs.push(d.params.args.map((a) => a.value || a.description || '').join(' ').slice(0, 300));
@@ -23,7 +24,7 @@ export async function connect(port, urlRe) {
   const send = (method, params = {}) => new Promise((res) => { const i = ++id; pend.set(i, res); ws.send(JSON.stringify({ id: i, method, params })); });
   await send('Runtime.enable'); await send('Inspector.enable');
   return {
-    send, events, target: t,
+    send, events, target: t, onEvent(f) { listeners.push(f); },
     // evaluate an expression (promises awaited); throws on exception; timeout in ms
     async eval(expr, timeout = 300000) {
       const r = await Promise.race([send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true, timeout }), new Promise((_, rej) => setTimeout(() => rej(new Error('eval timeout')), timeout + 5000))]);

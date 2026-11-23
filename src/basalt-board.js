@@ -773,7 +773,7 @@
       feedArr() {
         if (this._feed) return this._feed; const Y = window.__bsY.Y;
         if (this.sh) { const e = this.sh.files.get(this.relPath); if (!e) return null; let f = e.get("feed"); if (!f) { f = new Y.Array(); e.set("feed", f); } this._feed = f; } else this._feed = this.doc.getArray("feed");
-        this._feed.observe(() => this.renderFeed()); return this._feed;
+        this._feed.observe(() => this.renderFeedSoon()); return this._feed;
       }
       feed(kind, id, note) {
         const f = this.feedArr(); if (!f) return; const now = Date.now(), n = f.length, last = n ? f.get(n - 1) : null;
@@ -785,6 +785,7 @@
         for (const [e, m] of list) { e.el.style.setProperty("--flash", m.get("lastColor") || "var(--interactive-accent)"); e.el.classList.remove("flash"); }
         void this.cards.offsetWidth; for (const [e] of list) e.el.classList.add("flash");
       }
+      renderFeedSoon() { if (this._feedRaf) return; this._feedRaf = requestAnimationFrame(() => { this._feedRaf = 0; this.renderFeed(); }); }
       renderFeed() {
         if (!this.feedEl || !this._feed) return; const list = this.feedList; list.empty(); const items = this._feed.toArray().slice(-14).reverse();
         this.feedCount.textContent = this._feed.length ? String(this._feed.length) : "";
@@ -834,7 +835,7 @@
           if (t === this.yn) { for (const k of ev.keysChanged) { const m = this.yn.get(k); if (m) this.mid.set(m, k); D.set(k, 7); if (own) this._flashQ.add(k); } continue; }
           let p = t, id; while (p && !(id = this.mid.get(p))) p = p.parent;
           if (!id) { this.fullDirty = true; continue; }
-          let mask = 2; if (p === t) { mask = 0; for (const k of ev.keysChanged) mask |= k === "text" ? 2 : (k === "x" || k === "y" || k === "w" || k === "h" || k === "fold") ? 1 : 4; if (!mask) mask = 4; }
+          let mask = 2; if (p === t) { mask = 0; for (const k of ev.keysChanged) mask |= k === "text" ? 2 : k === "fold" ? 5 : (k === "x" || k === "y" || k === "w" || k === "h") ? 1 : 4; if (!mask) mask = 4; }
           D.set(id, (D.get(id) || 0) | mask); if (own) this._flashQ.add(id);
         }
         this._dataVer++; this.scheduleFlush(); this.queueSave();
@@ -1136,7 +1137,7 @@
           else if (d && d.kind === "box") { const x = Math.min(d.x0, p.sx), y = Math.min(d.y0, p.sy), bw = Math.abs(p.sx - d.x0), bh = Math.abs(p.sy - d.y0); if (bw + bh > 6) { d.live = true; this.box.style.cssText = "display:block;left:" + x + "px;top:" + y + "px;width:" + bw + "px;height:" + bh + "px"; const a = this.worldPt(x, y), b2 = this.worldPt(x + bw, y + bh), hit = new Set(d.base); for (const [id, m] of this.yn.entries()) { const cx = m.get("x"), cy = m.get("y"); if (cx < b2.x && cx + m.get("w") > a.x && cy < b2.y && cy + m.get("h") > a.y) hit.add(id); } this.sel = hit; this.mark(); } }
           this.publish();
         });
-        const up = (e) => { const d = this.drag; this.drag = null; if (d && d.kind === "edgecut") this.cutEnd(d); if (d && d.kind === "ink") this.endInk(d); r.classList.remove("is-panning"); this.clearGuides(); if (d && d.kind === "pan" && !d.moved && !this.ro) { this.select(new Set()); this.selEdge = null; this.mark(); } if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; if (d.kind === "move") this.joinFrames(ids); this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } const endW = (() => { const p = this.pt(e); return this.worldPt(p.sx, p.sy); })(); const tgt = this.lt || ((d && (d.kind === "link" || d.kind === "relink")) ? this.linkTarget(endW, d.kind === "link" ? d.from : d.fixed) : null); this.clearPorts();
+        const up = (e) => { const d = this.drag; this.drag = null; if (d && d.kind === "edgecut") this.cutEnd(d); if (d && d.kind === "ink") this.endInk(d); r.classList.remove("is-panning"); this.clearGuides(); if (d && d.kind === "pan" && !d.moved && !this.ro) { this.select(new Set()); this.selEdge = null; this.mark(); } if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; if (d.kind === "move") this.joinFrames(ids); this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); if (ids.length > 20) this.feed("move", ids[0], ids.length + " карточек"); else for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } const endW = (() => { const p = this.pt(e); return this.worldPt(p.sx, p.sy); })(); const tgt = this.lt || ((d && (d.kind === "link" || d.kind === "relink")) ? this.linkTarget(endW, d.kind === "link" ? d.from : d.fixed) : null); this.clearPorts();
           if (d && d.kind === "link") { const w = endW; if (tgt) this.addEdge(d.from, tgt, d.side || this.nearSide(d.from, this.center(tgt)), this.nearSide(tgt, w), true); else { const near = Array.from(this.yn.entries()).some(([i, m]) => i !== d.from && w.x >= m.get("x") && w.x <= m.get("x") + m.get("w") && w.y >= m.get("y") && w.y <= m.get("y") + m.get("h")); if (!near && Math.hypot(w.x - this.center(d.from).x, w.y - this.center(d.from).y) > 40) { const sd = this.nearSide(d.from, w), CW = 260, CH = 110, opp = { t: "b", b: "t", l: "r", r: "l" }[sd], id = this.addCard(sd === "r" ? w.x : sd === "l" ? w.x - CW : w.x - CW / 2, sd === "b" ? w.y : sd === "t" ? w.y - CH : w.y - CH / 2); this.addEdge(d.from, id, sd, opp); } } }
           else if (d && d.kind === "relink") { const m = this.ye.get(d.id); if (m && !tgt) { this.feed("unlink", null, ""); this.doc.transact(() => { this.ye.delete(d.id); }); this.selEdge = null; } else if (m && tgt && tgt !== d.fixed) { const sd = this.nearSide(tgt, endW); this.doc.transact(() => { m.set(d.end, tgt); m.set(d.end === "a" ? "sa" : "sb", sd); }); } this.syncEdges(); } };
         r.addEventListener("pointerleave", () => { if (this.ringEl) this.ringEl.style.opacity = "0"; }); r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
@@ -1258,7 +1259,7 @@
         c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me.name; n.maxLength = 32; n.onchange = () => { me.name = (n.value || me.name).slice(0, 32); try { localStorage.setItem("board-me", JSON.stringify(me)); } catch (e) { /* private */ } this.publish(); };
         M.open();
       }
-      async onClose() { clearTimeout(this.saveT); clearInterval(this._hT); await this.save(); this.snapshot().catch(() => {}); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.rso) this.rso.disconnect(); }
+      async onClose() { for (const k of ["flushRaf", "cullRaf", "fillRaf"]) if (this[k]) { cancelAnimationFrame(this[k]); this[k] = 0; } clearTimeout(this._pubTm); clearTimeout(this._sT); clearTimeout(this.saveT); clearInterval(this._hT); await this.save(); this.snapshot().catch(() => {}); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.rso) this.rso.disconnect(); }
     };
   }
 
