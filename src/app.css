@@ -21754,6 +21754,9 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .osb-exporting .osb-rail,.osb-exporting .osb-bar,.osb-exporting .osb-sel,.osb-exporting .osb-search,.osb-exporting .osb-bottom,.osb-exporting .osb-dtb,.osb-exporting .osb-help,.osb-exporting .osb-people,.osb-exporting .osb-feed,.osb-exporting .osb-cursors,.osb-exporting .osb-lbl{
     display:none!important
 }
+.osb-noink .osb-ink{
+    display:none!important
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
