@@ -7,3 +7,21 @@ node_modules/
 *.bak-claude
 tools/css-compare-out/
 tools/_*.mjs
+# local runtime, user data, build output
+.claude/
+*.session
+*.session-journal
+*.bak*
+*.orig
+*.rej
+*~
+.env
+.env.*
+*.pem
+*.key
+**/results.jsonl
+tools/board-stress/results*
+tools/board-stress/out/
+Users*AppData*/
+**/target/
+**/node_modules/

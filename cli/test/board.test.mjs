@@ -82,11 +82,11 @@ test("export formats and import round trip (json, csv cards + edges)", () => {
     assert.deepEqual(cli(r, ["board", "show", "c", "--json"]).json().cards.map((x) => x.text).sort(), js.cards.map((x) => x.text).sort());
     assert.equal(cli(r, ["board", "show", "c", "--json"]).json().links.length, 2);
     // csv
-    put(r, "cards.csv", 'id,title,body,color,owner\nk1,"Hello, world","line ""two""",green,sasha\nk2,Second,,,\n');
+    put(r, "cards.csv", 'id,title,body,color,owner\nk1,"Hello, world","line ""two""",green,alex\nk2,Second,,,\n');
     put(r, "edges.csv", "from,to,label\nk1,Second,uses\n");
     assert.equal(cli(r, ["board", "import", "d", "--cards", "cards.csv", "--edges", "edges.csv", "--create"].map((x, i, a) => (a[i - 1] === "--cards" || a[i - 1] === "--edges" ? path.join(r, x) : x))).code, 0);
     const d = cli(r, ["board", "show", "d", "--json"]).json();
-    assert.equal(d.cards.find((x) => x.id === "k1").text, 'Hello, world\n\nline "two"\n\nowner: sasha');
+    assert.equal(d.cards.find((x) => x.id === "k1").text, 'Hello, world\n\nline "two"\n\nowner: alex');
     assert.equal(d.cards.find((x) => x.id === "k1").color, "#46a758");
     assert.equal(d.links[0].label, "uses");
     assert.equal(cli(r, ["board", "import", "zzz", "--from-json", path.join(r, "out.json")]).code, 3);

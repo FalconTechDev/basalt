@@ -80,7 +80,6 @@ function corpus() {
   walk(path.join(here, "worker-corpus"), files);
   walk(path.join(repo, "src", "sandbox"), files);
   for (const r of optAll("--root")) walk(r, files);
-  if (!flag("--no-default-root")) walk("C:/Users/sasha/OneDrive/Desktop/GithubRepos", files);
   const seen = new Set();
   const uniq = [];
   for (const f of files) {
