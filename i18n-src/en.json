@@ -2188,5 +2188,14 @@
 "Список задач": "Task list",
 "Ссылка на заметку (Ctrl+K)": "Link to a note (Ctrl+K)",
 "Жирный, курсив, ссылка в тексте карточки": "Bold, italic, link in the card text",
-"Отступ в списке": "Indent in a list"
+"Отступ в списке": "Indent in a list",
+"Зачёркнутый (Ctrl+Shift+X)": "Strikethrough (Ctrl+Shift+X)",
+"Выделение маркером (Ctrl+Shift+H)": "Highlight (Ctrl+Shift+H)",
+"Цитата (Ctrl+Shift+9)": "Quote (Ctrl+Shift+9)",
+"Список (Ctrl+Shift+8)": "List (Ctrl+Shift+8)",
+"Нумерованный список (Ctrl+Shift+7)": "Numbered list (Ctrl+Shift+7)",
+"Ссылка на сайт": "Web link",
+"Заголовок 1": "Heading 1",
+"Заголовок 2": "Heading 2",
+"Заголовок 3": "Heading 3"
 }
