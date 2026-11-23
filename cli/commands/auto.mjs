@@ -17,7 +17,7 @@ register([
     name: "run", usage: "run <script.mjs> [args...]", passthrough: true,
     ru: "Запустить скрипт. Ему передаётся готовый объект: export default async ({ vault, board, app, args, flags }) => { ... }\n(или глобальный `basalt`). vault: read/write/search/links/move/..., board(путь): cards/addCard/layout/save, app: status/open/command/events.\nРезультат, если он есть, печатается как JSON.",
     en: "Run a script. It receives a ready object: export default async ({ vault, board, app, args, flags }) => { ... }\n(or the global `basalt`). vault: read/write/search/links/move/..., board(path): cards/addCard/layout/save, app: status/open/command/events.\nThe returned value, if any, is printed as JSON.",
-    async run(ctx) { ctx.need(1, "script"); if (!fs.existsSync(ctx.args[0])) throw notFound(`script not found: ${ctx.args[0]}`); show(ctx, await runScript(ctx.args[0], apiFor(ctx, ctx.args.slice(1)))); },
+    async run(ctx) { ctx.need(1, "script"); let f = ctx.args[0]; if (!fs.existsSync(f) && !path.isAbsolute(f)) { try { const g = ctx.vault.abs(f); if (fs.existsSync(g)) f = g; } catch { /* no vault */ } } if (!fs.existsSync(f)) throw notFound(`script not found: ${ctx.args[0]}`); show(ctx, await runScript(f, apiFor(ctx, ctx.args.slice(1)))); },
   },
   {
     name: "x list", usage: "x list", ru: "Скрипты-плагины из .basalt/scripts/*.mjs (запуск: basalt x <имя>).", en: "Plugin scripts from .basalt/scripts/*.mjs (run: basalt x <name>).",

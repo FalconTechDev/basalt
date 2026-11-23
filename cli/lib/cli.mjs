@@ -16,7 +16,7 @@ function findCommand(argv) {
     const t = argv[i];
     if (t === "--") break;
     if (t.startsWith("-")) { const n = t.replace(/^--?/, ""); if ((n === "vault" || n === "v" || n === "lang") && !t.includes("=")) i++; continue; }
-    words.push(i); if (words.length >= 3) break;
+    words.push(i); if (words.length >= 4) break;
   }
   for (let n = words.length; n >= 1; n--) {
     const name = words.slice(0, n).map((i) => argv[i]).join(" ");
