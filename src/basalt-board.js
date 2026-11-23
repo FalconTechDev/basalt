@@ -47,8 +47,10 @@
         const zoom = this.zoomEl = c.createDiv({ cls: "osb-zoom" });
         const zb = (ic, tip, fn) => { const x = zoom.createDiv({ cls: "osb-zb", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = fn; return x; };
         zb("lucide-minus", "Уменьшить", () => this.zoomBy(1 / 1.25)); this.zoomPct = zoom.createDiv({ cls: "osb-zp", attr: { title: "Вернуть 100%" } }); this.zoomPct.onclick = () => { this.cam.k = 1; this.applyCam(); }; zb("lucide-plus", "Увеличить", () => this.zoomBy(1.25)); zb("lucide-maximize", "Показать всё (F)", () => this.fit());
-        this.searchBox = c.createDiv({ cls: "osb-search" }); const si = this.searchInput = this.searchBox.createEl("input", { attr: { placeholder: "Найти карточку…", spellcheck: "false" } }); this.searchCount = this.searchBox.createSpan({ cls: "osb-sc" });
-        si.oninput = () => this.runSearch(); si.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); this.runSearch(e.shiftKey ? -1 : 1, true); } else if (e.key === "Escape") this.toggleSearch(false); };
+        this.searchBox = c.createDiv({ cls: "osb-search" }); const sb = this.searchBox; const sIc = sb.createSpan({ cls: "osb-si" }); api.setIcon(sIc, "lucide-search");
+        const si = this.searchInput = sb.createEl("input", { attr: { placeholder: "Поиск по карточкам", spellcheck: "false" } }); this.searchCount = sb.createSpan({ cls: "osb-sc" });
+        const sbtn = (ic, tip, fn) => { const x = sb.createDiv({ cls: "osb-sb2", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = fn; return x; }; sbtn("lucide-chevron-up", "Предыдущая", () => this.runSearch(-1, true)); sbtn("lucide-chevron-down", "Следующая", () => this.runSearch(1, true)); sbtn("lucide-x", "Закрыть", () => this.toggleSearch(false));
+        si.oninput = () => this.runSearch(0, true); si.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); this.runSearch(e.shiftKey ? -1 : 1, true); } else if (e.key === "Escape") this.toggleSearch(false); };
         this.selBar = c.createDiv({ cls: "osb-sel" }); this.box = this.root.createDiv({ cls: "osb-box" });
         this.people = c.createDiv({ cls: "osb-people" });
         const fe = this.feedEl = c.createDiv({ cls: "osb-feed" }); const fh = fe.createDiv({ cls: "osb-feed-h" }); fh.createSpan({ text: "Активность" }); this.feedCount = fh.createSpan({ cls: "osb-feed-c" }); this.feedList = fe.createDiv({ cls: "osb-feed-l" });
@@ -87,17 +89,51 @@
       get ro() { return !!(this.sh && this.sh.readOnly); }
       // smart guides: while moving, edges and centres line up with other cards, and the guide lines show what is aligned with what
       guide(d, dx, dy) {
-        if (!d.box) { let a = 1e9, b = 1e9, c = -1e9, e = -1e9; for (const [id, [x, y]] of d.o) { const m = this.yn.get(id); if (!m) continue; a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x + m.get("w")); e = Math.max(e, y + m.get("h")); } d.box = { x: a, y: b, w: c - a, h: e - b }; d.others = []; for (const [id, m] of this.yn.entries()) if (!d.o.has(id)) d.others.push({ x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h") }); }
-        const T = 7 / this.cam.k, bx = d.box.x + dx, by = d.box.y + dy, xs = [bx, bx + d.box.w / 2, bx + d.box.w], ys = [by, by + d.box.h / 2, by + d.box.h]; let bestX = null, bestY = null;
-        for (const o of d.others) { const ox = [o.x, o.x + o.w / 2, o.x + o.w], oy = [o.y, o.y + o.h / 2, o.y + o.h]; for (const a of xs) for (const b of ox) { const dd = b - a; if (Math.abs(dd) < T && (!bestX || Math.abs(dd) < Math.abs(bestX.d))) bestX = { d: dd, at: b, o }; } for (const a of ys) for (const b of oy) { const dd = b - a; if (Math.abs(dd) < T && (!bestY || Math.abs(dd) < Math.abs(bestY.d))) bestY = { d: dd, at: b, o }; } }
-        const out = { dx: dx + (bestX ? bestX.d : 0), dy: dy + (bestY ? bestY.d : 0), sx: !!bestX, sy: !!bestY }; this.drawGuides(bestX, bestY, d, out); return out;
+        if (!d.box) {
+          let a = 1e9, b = 1e9, c = -1e9, e = -1e9; for (const [id, [x, y]] of d.o) { const m = this.yn.get(id); if (!m) continue; a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x + m.get("w")); e = Math.max(e, y + m.get("h")); } d.box = { x: a, y: b, w: c - a, h: e - b }; d.others = [];
+          for (const [id, m] of this.yn.entries()) if (!d.o.has(id)) d.others.push({ x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h") });
+          d.gx = new Set(); d.gy = new Set(); const O = d.others.slice(0, 150); for (const A of O) for (const B of O) { if (A === B) continue; const oy = Math.min(A.y + A.h, B.y + B.h) - Math.max(A.y, B.y), ox = Math.min(A.x + A.w, B.x + B.w) - Math.max(A.x, B.x); if (oy > 0 && B.x >= A.x + A.w) { const g = Math.round(B.x - A.x - A.w); if (g >= 4 && g <= 800) d.gx.add(g); } if (ox > 0 && B.y >= A.y + A.h) { const g = Math.round(B.y - A.y - A.h); if (g >= 4 && g <= 800) d.gy.add(g); } }
+        }
+        const k = this.cam.k, T = 9 / k, R = 18 / k, bx = d.box.x + dx, by = d.box.y + dy, W = d.box.w, H = d.box.h, xs = [bx, bx + W / 2, bx + W], ys = [by, by + H / 2, by + H];
+        const bestOf = (cands, st, ref) => { if (st) { const cur = st.at - ref[st.ai]; if (Math.abs(cur) < R) return Object.assign({}, st, { d: cur }); } let best = null; for (const c of cands) if (Math.abs(c.d) < T && (!best || Math.abs(c.d) < Math.abs(best.d))) best = c; return best; };
+        const cx = [], cy = [];
+        for (const o of d.others) {
+          const ox = [o.x, o.x + o.w / 2, o.x + o.w], oy = [o.y, o.y + o.h / 2, o.y + o.h];
+          for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) { cx.push({ d: ox[j] - xs[i], at: ox[j], ai: i, o, kind: "edge" }); cy.push({ d: oy[j] - ys[i], at: oy[j], ai: i, o, kind: "edge" }); }
+          const vo = Math.min(by + H, o.y + o.h) - Math.max(by, o.y), ho = Math.min(bx + W, o.x + o.w) - Math.max(bx, o.x);
+          if (vo > 0) { const gr = o.x - (bx + W), gl = bx - (o.x + o.w); for (const g of d.gx) { if (gr > 0) cx.push({ d: gr - g, at: bx + (gr - g) + W, ai: 2, o, kind: "gap", g, side: "r" }); if (gl > 0) cx.push({ d: g - gl, at: bx + (g - gl), ai: 0, o, kind: "gap", g, side: "l" }); } }
+          if (ho > 0) { const gb = o.y - (by + H), gt = by - (o.y + o.h); for (const g of d.gy) { if (gb > 0) cy.push({ d: gb - g, at: by + (gb - g) + H, ai: 2, o, kind: "gap", g, side: "b" }); if (gt > 0) cy.push({ d: g - gt, at: by + (g - gt), ai: 0, o, kind: "gap", g, side: "t" }); } }
+        }
+        const sx = bestOf(cx, d.stX, xs), sy = bestOf(cy, d.stY, ys); d.stX = sx; d.stY = sy; const out = { dx: dx + (sx ? sx.d : 0), dy: dy + (sy ? sy.d : 0), sx: !!sx, sy: !!sy }; this.drawGuides(sx, sy, { x: d.box.x + out.dx, y: d.box.y + out.dy, w: W, h: H }); return out;
       }
-      drawGuides(bx, by, d, out) {
-        let gl = this.guides; if (!gl) { gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); } gl.empty(); const box = { x: d.box.x + out.dx, y: d.box.y + out.dy, w: d.box.w, h: d.box.h };
-        if (bx) { const y1 = Math.min(box.y, bx.o.y), y2 = Math.max(box.y + box.h, bx.o.y + bx.o.h), l = gl.createDiv({ cls: "osb-gl is-v" }); l.style.cssText = "left:" + bx.at + "px;top:" + y1 + "px;height:" + (y2 - y1) + "px"; }
-        if (by) { const x1 = Math.min(box.x, by.o.x), x2 = Math.max(box.x + box.w, by.o.x + by.o.w), l = gl.createDiv({ cls: "osb-gl is-h" }); l.style.cssText = "top:" + by.at + "px;left:" + x1 + "px;width:" + (x2 - x1) + "px"; }
+      drawGuides(sx, sy, box) {
+        let gl = this.guides; if (!gl) gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); gl.empty(); const line = (o, at, a, b) => { const l = gl.createDiv({ cls: "osb-gl is-" + o }); if (o === "v") l.style.cssText = "left:" + at + "px;top:" + a + "px;height:" + (b - a) + "px"; else l.style.cssText = "top:" + at + "px;left:" + a + "px;width:" + (b - a) + "px"; };
+        const gapLbl = (x, y, g) => { const t = gl.createDiv({ cls: "osb-gap", text: String(Math.round(g)) }); t.style.cssText = "left:" + x + "px;top:" + y + "px"; };
+        if (sx) { if (sx.kind === "edge") line("v", sx.at, Math.min(box.y, sx.o.y), Math.max(box.y + box.h, sx.o.y + sx.o.h)); else { const y = Math.max(box.y, sx.o.y) + Math.min(box.h, sx.o.h) / 2; if (sx.side === "r") { line("h", y, box.x + box.w, sx.o.x); gapLbl((box.x + box.w + sx.o.x) / 2, y, sx.g); } else { line("h", y, sx.o.x + sx.o.w, box.x); gapLbl((sx.o.x + sx.o.w + box.x) / 2, y, sx.g); } } }
+        if (sy) { if (sy.kind === "edge") line("h", sy.at, Math.min(box.x, sy.o.x), Math.max(box.x + box.w, sy.o.x + sy.o.w)); else { const x = Math.max(box.x, sy.o.x) + Math.min(box.w, sy.o.w) / 2; if (sy.side === "b") { line("v", x, box.y + box.h, sy.o.y); gapLbl(x, (box.y + box.h + sy.o.y) / 2, sy.g); } else { line("v", x, sy.o.y + sy.o.h, box.y); gapLbl(x, (sy.o.y + sy.o.h + box.y) / 2, sy.g); } } }
+      }
+      // resizing sticks to the edges and the sizes of other cards
+      sizeSnap(d, x, y, w, h) {
+        if (!d.others) { d.others = []; for (const [id, m] of this.yn.entries()) if (id !== d.id) d.others.push({ x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h") }); }
+        const T = 9 / this.cam.k, best = (v, list) => { let b = null; for (const t of list) { const dd = t - v; if (Math.abs(dd) < T && (!b || Math.abs(dd) < Math.abs(b.d))) b = { d: dd, at: t }; } return b; }; let gx = null, gy = null;
+        const xsT = [], ysT = []; for (const o of d.others) { xsT.push(o.x, o.x + o.w / 2, o.x + o.w); ysT.push(o.y, o.y + o.h / 2, o.y + o.h); }
+        if (d.dir.includes("e")) { const b = best(x + w, xsT); if (b) { w += b.d; gx = b.at; } } if (d.dir.includes("w")) { const b = best(x, xsT); if (b) { x += b.d; w -= b.d; gx = b.at; } }
+        if (d.dir.includes("s")) { const b = best(y + h, ysT); if (b) { h += b.d; gy = b.at; } } if (d.dir.includes("n")) { const b = best(y, ysT); if (b) { y += b.d; h -= b.d; gy = b.at; } }
+        let gl = this.guides; if (!gl) gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); gl.empty();
+        if (gx != null) { const l = gl.createDiv({ cls: "osb-gl is-v" }); l.style.cssText = "left:" + gx + "px;top:" + (y - 30) + "px;height:" + (h + 60) + "px"; } if (gy != null) { const l = gl.createDiv({ cls: "osb-gl is-h" }); l.style.cssText = "top:" + gy + "px;left:" + (x - 30) + "px;width:" + (w + 60) + "px"; }
+        return { x, y, w, h };
       }
       clearGuides() { if (this.guides) this.guides.empty(); }
+      // tidy up: put the selected (or all) cards in order in one go
+      tidy(mode, ids) {
+        ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 1 || this.ro) return; const g = (i) => this.yn.get(i), G = 20, snap = (v) => Math.round(v / G) * G, bb = this.bounds(ids), gap = 40;
+        this.doc.transact(() => {
+          if (mode === "grid") for (const i of ids) { const m = g(i); m.set("x", snap(m.get("x"))); m.set("y", snap(m.get("y"))); m.set("w", Math.max(120, snap(m.get("w")))); m.set("h", Math.max(60, snap(m.get("h")))); }
+          else if (mode === "row") { const o = ids.slice().sort((a, b) => g(a).get("x") - g(b).get("x")); let x = bb.x; for (const i of o) { g(i).set("x", Math.round(x)); g(i).set("y", bb.y); x += g(i).get("w") + gap; } }
+          else if (mode === "col") { const o = ids.slice().sort((a, b) => g(a).get("y") - g(b).get("y")); let y = bb.y; for (const i of o) { g(i).set("y", Math.round(y)); g(i).set("x", bb.x); y += g(i).get("h") + gap; } }
+          else if (mode === "cells") { const o = ids.slice().sort((a, b) => (Math.abs(g(a).get("y") - g(b).get("y")) > 60 ? g(a).get("y") - g(b).get("y") : g(a).get("x") - g(b).get("x"))), cols = Math.max(1, Math.round(Math.sqrt(o.length))); const cw = Math.max(...o.map((i) => g(i).get("w"))), ch = Math.max(...o.map((i) => g(i).get("h"))); o.forEach((i, n) => { g(i).set("x", Math.round(bb.x + (n % cols) * (cw + gap))); g(i).set("y", Math.round(bb.y + Math.floor(n / cols) * (ch + gap))); }); }
+        });
+      }
       initHistory() {
         const Y = window.__bsY.Y; if (this.um) { try { this.um.destroy(); } catch (e) { /* ignore */ } } this.um = new Y.UndoManager([this.yn, this.ye], { captureTimeout: 500 });
         const upd = () => { if (this.undoBtn) { this.undoBtn.classList.toggle("is-off", !this.um.undoStack.length); this.redoBtn.classList.toggle("is-off", !this.um.redoStack.length); } };
@@ -113,10 +149,11 @@
         const bar = this.selBar; if (!bar) return; const ids = Array.from(this.sel).filter((i) => this.yn.get(i)); if (!ids.length || this.ro || (this.drag && this.drag.kind === "move")) { bar.classList.remove("is-on"); return; }
         const sig = ids.length + "|" + ids.map((i) => this.yn.get(i).get("locked") ? 1 : 0).join(""); if (bar.dataset.sig !== sig) {
           bar.dataset.sig = sig; bar.empty(); const mk = (ic, tip, fn) => { const x = bar.createDiv({ cls: "osb-sb", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = (e) => fn(e); return x; };
-          const cols = new Set(ids.map((i) => this.yn.get(i).get("color") || "")), cur = cols.size === 1 ? Array.from(cols)[0] : ""; const cb = bar.createDiv({ cls: "osb-sb osb-colorbtn", attr: { title: "Цвет" } }); const dot = cb.createDiv({ cls: "osb-cdot" }); dot.style.background = cur || "transparent"; if (!cur) dot.classList.add("is-none"); cb.onclick = () => window.__bsColors.pick(cb, cur, (c) => this.setColor(c));
+          const cols = new Set(ids.map((i) => this.yn.get(i).get("color") || "")), cur = cols.size === 1 ? Array.from(cols)[0] : ""; const cb = bar.createDiv({ cls: "osb-sb osb-colorbtn", attr: { title: "Цвет" } }); const ci = cb.createSpan({ cls: "osb-cico" }); api.setIcon(ci, "lucide-palette"); const cbar = cb.createDiv({ cls: "osb-cbar" }); if (cur) cbar.style.background = cur; else cbar.classList.add("is-none"); cb.onclick = () => window.__bsColors.pick(cb, cur, (c) => this.setColor(c));
           bar.createDiv({ cls: "osb-bsep" }); mk("lucide-copy", "Дублировать (Ctrl+D)", () => this.duplicate());
           const locked = ids.every((i) => this.yn.get(i).get("locked")); mk(locked ? "lucide-unlock" : "lucide-lock", locked ? "Разблокировать" : "Закрепить на месте", () => this.setLock(!locked));
           if (ids.length > 1) mk("lucide-align-horizontal-distribute-center", "Выровнять", (e) => this.alignMenu(e));
+          if (ids.length > 1) mk("lucide-layout-grid", "Упорядочить", (e) => this.tidyMenu(e, ids));
           bar.createDiv({ cls: "osb-bsep" }); mk("lucide-trash-2", "Удалить (Del)", () => this.removeSel()).classList.add("is-danger");
         }
         const bb = this.bounds(ids); if (!bb) { bar.classList.remove("is-on"); return; } const tl = this.screenPt(bb.x + bb.w / 2, bb.y); bar.classList.add("is-on"); const w = bar.offsetWidth || 260, rw = this.root.clientWidth;
@@ -131,6 +168,7 @@
         this.doc.transact(() => { for (const n of BOARD_CLIP.nodes) { const id = uid(), m = new Y.Map(), t = new Y.Text(); t.insert(0, n.text); m.set("x", n.x + dx); m.set("y", n.y + dy); m.set("w", n.w); m.set("h", n.h); m.set("color", n.color); m.set("by", me.name); this.stampM(m); m.set("text", t); this.yn.set(id, m); map[n.id] = id; ids.push(id); } for (const e of BOARD_CLIP.edges) { const m = new Y.Map(); m.set("a", map[e.a]); m.set("b", map[e.b]); m.set("label", e.label); this.ye.set(uid(), m); } });
         for (const id of ids) this.feed("add", id, this.label(id)); this.select(new Set(ids));
       }
+      tidyMenu(e, ids) { const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)); it("По сетке", "lucide-grid-3x3", () => this.tidy("grid", ids)); it("В ряд", "lucide-rows-3", () => this.tidy("row", ids)); it("В столбец", "lucide-columns-3", () => this.tidy("col", ids)); it("Сеткой", "lucide-layout-grid", () => this.tidy("cells", ids)); mn.showAtMouseEvent(e); }
       alignMenu(e) {
         const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)), ids = Array.from(this.sel).filter((i) => this.yn.get(i)), g = (i) => this.yn.get(i), bb = this.bounds(ids);
         const set = (fn) => { this.doc.transact(() => { for (const id of ids) fn(g(id), id); }); };
@@ -140,12 +178,13 @@
         mn.showAtMouseEvent(e);
       }
       // ---------- search ----------
-      toggleSearch(on) { const open = on == null ? !this.searchBox.classList.contains("is-on") : on; this.searchBox.classList.toggle("is-on", open); this.searchBtn.classList.toggle("is-on", open); if (open) { this.searchInput.focus(); this.searchInput.select(); } else { this.searchInput.value = ""; this.runSearch(); this.contentEl.focus(); } }
+      toggleSearch(on) { const open = on == null ? !this.searchBox.classList.contains("is-on") : on; this.searchBox.classList.toggle("is-on", open); this.searchBtn.classList.toggle("is-on", open); if (open) { this.searchInput.focus(); this.searchInput.select(); } else { this.searchInput.value = ""; this.runSearch(); this.root.classList.remove("has-q"); this.contentEl.focus(); } }
       runSearch(step, jump) {
-        const q = this.searchInput.value.trim().toLowerCase(); this._hits = []; for (const [id, m] of this.yn.entries()) if (q && m.get("text").toString().toLowerCase().includes(q)) this._hits.push(id);
-        for (const [id, e] of this.els) e.el.classList.toggle("is-hit", this._hits.includes(id)); this._hi = step ? ((this._hi || 0) + step + this._hits.length) % Math.max(1, this._hits.length) : 0;
-        this.searchCount.textContent = q ? (this._hits.length ? (this._hi + 1) + " из " + this._hits.length : "нет") : "";
-        if (jump && this._hits.length) { const m = this.yn.get(this._hits[this._hi]); this.cam.x = m.get("x") + m.get("w") / 2; this.cam.y = m.get("y") + m.get("h") / 2; this.applyCam(); this.flash2(this._hits[this._hi]); }
+        const q = this.searchInput.value.trim().toLowerCase(), hits = []; for (const [id, m] of this.yn.entries()) if (q && m.get("text").toString().toLowerCase().includes(q)) hits.push(id);
+        const prev = this._hits && this._hits[this._hi || 0]; this._hits = hits; this._hi = hits.length ? (step ? ((this._hi || 0) + step + hits.length) % hits.length : Math.max(0, hits.indexOf(prev))) : 0;
+        this.root.classList.toggle("has-q", !!q); for (const [id, e] of this.els) { e.el.classList.toggle("is-hit", hits.includes(id)); e.el.classList.toggle("is-cur", !!q && hits[this._hi] === id); }
+        this.searchCount.textContent = q ? (hits.length ? (this._hi + 1) + " / " + hits.length : "нет совпадений") : ""; this.searchBox.classList.toggle("is-empty", !!q && !hits.length);
+        if (jump && hits.length) { const m = this.yn.get(hits[this._hi]); const bb = { x: m.get("x") + m.get("w") / 2, y: m.get("y") + m.get("h") / 2 }; this.cam.x = bb.x; this.cam.y = bb.y; this.applyCam(); }
       }
       stampM(m) { m.set("lastBy", me.name); m.set("lastAt", Date.now()); m.set("lastColor", me.color); }
       label(id) { const m = this.yn.get(id); const t = m && m.get("text") ? m.get("text").toString().trim().split("\n")[0] : ""; return t ? (t.length > 28 ? t.slice(0, 28) + "…" : t) : "карточка"; }
@@ -256,7 +295,7 @@
             d.moved = true; const n = this.yn.get(d.id); if (n) { const dx = w.x - d.p.x, dy = w.y - d.p.y, MW = 120, MH = 60; let x = d.x, y = d.y, ww = d.w, hh = d.h;
               if (d.dir.includes("e")) ww = Math.max(MW, this.sn(d.w + dx)); if (d.dir.includes("s")) hh = Math.max(MH, this.sn(d.h + dy));
               if (d.dir.includes("w")) { ww = Math.max(MW, this.sn(d.w - dx)); x = d.x + d.w - ww; } if (d.dir.includes("n")) { hh = Math.max(MH, this.sn(d.h - dy)); y = d.y + d.h - hh; }
-              this.doc.transact(() => { n.set("x", Math.round(x)); n.set("y", Math.round(y)); n.set("w", Math.round(ww)); n.set("h", Math.round(hh)); }); } }
+              const sn2 = this.sizeSnap(d, x, y, ww, hh); x = sn2.x; y = sn2.y; ww = Math.max(MW, sn2.w); hh = Math.max(MH, sn2.h); this.doc.transact(() => { n.set("x", Math.round(x)); n.set("y", Math.round(y)); n.set("w", Math.round(ww)); n.set("h", Math.round(hh)); }); } }
           else if (d && d.kind === "link") this.drawTemp(w);
           else if (d && d.kind === "box") { const x = Math.min(d.x0, p.sx), y = Math.min(d.y0, p.sy), bw = Math.abs(p.sx - d.x0), bh = Math.abs(p.sy - d.y0); if (bw + bh > 6) { d.live = true; this.box.style.cssText = "display:block;left:" + x + "px;top:" + y + "px;width:" + bw + "px;height:" + bh + "px"; const a = this.worldPt(x, y), b2 = this.worldPt(x + bw, y + bh), hit = new Set(d.base); for (const [id, m] of this.yn.entries()) { const cx = m.get("x"), cy = m.get("y"); if (cx < b2.x && cx + m.get("w") > a.x && cy < b2.y && cy + m.get("h") > a.y) hit.add(id); } this.sel = hit; this.mark(); } }
           this.publish();
@@ -278,7 +317,6 @@
             const id = card.dataset.id; if (!this.sel.has(id)) this.select(new Set([id]));
             it("Дублировать", "lucide-copy", () => { for (const s of Array.from(this.sel)) { const n = this.yn.get(s); if (n) this.addCard(n.get("x") + 30, n.get("y") + 30, n.get("text").toString()); } });
             it("Копировать текст", "lucide-clipboard", () => { const n = this.yn.get(id); if (n) navigator.clipboard.writeText(n.get("text").toString()).catch(() => {}); });
-            it("Цвет…", "lucide-palette", () => { const m0 = this.yn.get(id); window.__bsColors.pick({ x: e.clientX, y: e.clientY }, (m0 && m0.get("color")) || "", (c) => this.setColor(c)); });
             it("На передний план", "lucide-bring-to-front", () => { const n = this.yn.get(id), e2 = this.els.get(id); if (e2) this.cards.appendChild(e2.el); });
             m.addSeparator(); it("Удалить", "lucide-trash-2", () => this.removeSel());
           } else if (eg) {
@@ -287,7 +325,7 @@
           } else {
             it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30));
             it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
-            m.addSeparator(); it("Показать всё", "lucide-maximize", () => this.fit());
+            m.addSeparator(); if (this.yn.size > 1) { it("Упорядочить всё по сетке", "lucide-grid-3x3", () => this.tidy("grid", null)); it("Расставить сеткой", "lucide-layout-grid", () => this.tidy("cells", null)); m.addSeparator(); } it("Показать всё", "lucide-maximize", () => this.fit());
           }
           m.showAtMouseEvent(e);
         });
