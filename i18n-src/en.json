@@ -2149,5 +2149,10 @@
 "Каталог по адресу ": "The catalog at ",
 "Двойной щелчок — писать": "Double click to write",
 "доска · ": "board · ",
-"Убрать из рамки": "Remove from the frame"
+"Убрать из рамки": "Remove from the frame",
+"Форма: прямая": "Shape: straight",
+"Форма: изогнутая": "Shape: curved",
+"Форма: под прямым углом": "Shape: right angles",
+"Связи выделенных: изогнуть": "Links of the selection: curve",
+"Связи выделенных: выпрямить": "Links of the selection: straighten"
 }

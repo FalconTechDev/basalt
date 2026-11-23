@@ -332,3 +332,8 @@
 .osb-card.is-group .osb-grip { position: absolute; left: 0; right: 0; top: 0; height: 36px; z-index: 2; background: transparent; border-radius: 4px 4px 0 0; }
 .osb-card.is-group .osb-ta { pointer-events: none; height: 36px; padding: 7px 12px; background: transparent !important; } .osb-card.is-group.is-editing .osb-ta { pointer-events: auto; z-index: 3; }
 .osb-card.is-group .osb-ta::placeholder { opacity: 0; } .osb-card.is-group.is-editing .osb-ta::placeholder { opacity: .5; }
+
+/* ---- links: easy to grab ---- */
+.osb-eh { stroke-width: 20; fill: none; pointer-events: stroke; cursor: var(--bs-cursor-hand, pointer); } .osb-el { fill: none; }
+.osb-edges g:hover .osb-el, .osb-edges g.is-sel .osb-el { stroke-width: 3.5; } .osb-et { paint-order: stroke; stroke: var(--background-primary); stroke-width: 4px; stroke-linejoin: round; }
+.osb-ep { r: 8; } .osb-edges g:hover .osb-ep, .osb-edges g.is-sel .osb-ep { opacity: 1; }
