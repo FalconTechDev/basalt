@@ -6,7 +6,7 @@
   const mainLeaf = (newTab) => { const ws = app.workspace; let l = newTab ? null : ws.getMostRecentLeaf(ws.rootSplit); if (!l || l.getRoot() !== ws.rootSplit) l = ws.getLeaf("tab"); return l; }; /* a file opens in the main area, never in a side panel that happens to be focused */
 
   const KEY = "basalt-graph-engine-v1";
-  const CFG0 = { view: "2d", orphans: true, unresolved: false, canvases: true, images: true, thumbImg: true, thumbCanvas: true, labelMode: "auto", labels: true, nodeScale: 1, edgeAlpha: 0.5, repulsion: 900, linkDistance: 34, linkStrength: 0.7, localDepth: 2, maxNodes: 4000 };
+  const CFG0 = { view: "2d", orphans: true, unresolved: false, canvases: true, images: true, thumbImg: true, thumbCanvas: true, labelMode: "auto", labels: true, nodeScale: 1, edgeAlpha: 0.5, repulsion: 900, linkDistance: 34, linkStrength: 0.7, localDepth: 2, maxNodes: 4000, colorBy: "kind", edgeStyle: "curve", arrows: false, boards: true, tagNodes: false, legend: true, folderOnly: "", tagOnly: "", recent: 0 };
   const load = () => { try { return Object.assign({}, CFG0, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { return Object.assign({}, CFG0); } };
   const save = (c) => { try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) { /* private mode */ } };
 
@@ -96,15 +96,17 @@
     const IMGX = /^(png|jpe?g|gif|webp|bmp|avif|svg)$/i;
     const resolved = resolvedWithCanvases(app);
     const linkedTo = new Set(); if (c.images) for (const dests of Object.values(resolved)) for (const d of Object.keys(dests)) linkedTo.add(d);
-    const files = app.vault.getFiles().filter((f) => (f.extension === "md" || f.extension === "board" || (c.canvases && f.extension === "canvas") || (c.images && IMGX.test(f.extension) && linkedTo.has(f.path))));
+    const files = app.vault.getFiles().filter((f) => (f.extension === "md" || (c.boards !== false && f.extension === "board") || (c.canvases && f.extension === "canvas") || (c.images && IMGX.test(f.extension) && linkedTo.has(f.path))));
     const unres = app.metadataCache.unresolvedLinks || {};
+    const tagsOf = (f) => { if (f.extension !== "md") return []; try { const ch = app.metadataCache.getFileCache(f) || {}, out = new Set(); for (const t of ch.tags || []) out.add(String(t.tag).replace(/^#/, "")); const fm = ch.frontmatter && ch.frontmatter.tags; for (const t of Array.isArray(fm) ? fm : typeof fm === "string" ? fm.split(/[,\s]+/) : []) if (t) out.add(String(t).replace(/^#/, "")); return Array.from(out); } catch (e) { return []; } };
     const idx = new Map(), nodes = [];
     const add = (key, name, extra) => { if (idx.has(key)) return idx.get(key); const i = nodes.length; idx.set(key, i); nodes.push(Object.assign({ key, name, file: null, unresolved: false, folder: "" }, extra)); return i; };
-    for (const f of files) add(f.path, f.basename, { kind: f.extension === "canvas" ? "canvas" : f.extension === "board" ? "board" : f.extension === "md" ? "note" : "img", file: f, folder: f.parent && f.parent.path !== "/" ? f.parent.path.split("/")[0] : "" });
+    for (const f of files) add(f.path, f.basename, { kind: f.extension === "canvas" ? "canvas" : f.extension === "board" ? "board" : f.extension === "md" ? "note" : "img", file: f, mtime: f.stat.mtime, ctime: f.stat.ctime, tags: tagsOf(f), dir: f.parent && f.parent.path !== "/" ? f.parent.path : "", folder: f.parent && f.parent.path !== "/" ? f.parent.path.split("/")[0] : "" });
     const have = new Set(files.map((f) => f.path)), seen = new Set(), edges = [];
     const link = (a, b) => { if (a === b) return; const k = a < b ? a * 1048576 + b : b * 1048576 + a; if (seen.has(k)) return; seen.add(k); edges.push([a, b]); };
     for (const [src, dests] of Object.entries(resolved)) if (have.has(src)) for (const dest of Object.keys(dests)) if (have.has(dest)) link(idx.get(src), idx.get(dest));
     if (c.unresolved) for (const [src, dests] of Object.entries(unres)) if (have.has(src)) for (const name of Object.keys(dests)) link(idx.get(src), add("?" + name, name, { unresolved: true }));
+    if (c.tagNodes) for (const nd of nodes.slice()) if (nd.tags && nd.tags.length) for (const t of nd.tags) { const ti = add("tag:" + t, "#" + t, { kind: "tag" }); have.add("tag:" + t); link(idx.get(nd.key), ti); }
     const deg = new Array(nodes.length).fill(0); edges.forEach(([a, b]) => { deg[a]++; deg[b]++; });
     let keep = nodes.map((_, i) => c.orphans || local || deg[i] > 0);
     if (local) {
@@ -115,6 +117,8 @@
       for (let h = 0; h < q.length; h++) { const u = q[h]; if (dist[u] >= c.localDepth) continue; for (const v of nb[u]) if (dist[v] < 0) { dist[v] = dist[u] + 1; q.push(v); } }
       keep = dist.map((d) => d >= 0);
     }
+    if (c.folderOnly) keep = keep.map((k, i) => k && (nodes[i].kind === "tag" || nodes[i].unresolved || nodes[i].dir === c.folderOnly || String(nodes[i].dir || "").startsWith(c.folderOnly + "/")));
+    if (c.tagOnly) keep = keep.map((k, i) => k && (nodes[i].kind === "tag" ? nodes[i].name === "#" + c.tagOnly : (nodes[i].tags || []).includes(c.tagOnly)));
     // groups decide what is shown: a group with its eye off is gone; with "only this" on, the picture is built around those groups
     {
       const grp = (nd) => { const id = STORE.assign[nd.key]; return id ? STORE.groups.find((g) => g.id === id) : null; };
@@ -390,6 +394,7 @@
       if (!this.ex) return; const c = this.c;
       this.ex.ge_set_style(cssColor("--background-primary", "#14161a"), cssColor("--text-faint", "#4a5260"), cssColor("--text-muted", "#c8ced8"), cssColor("--interactive-accent", "#c98d5b"), cssColor("--text-faint", "#5a606c"), 0, c.labelMode !== "none" && !this.growLabels ? 1 : 0, c.labelMode === "all" ? 0 : (this.nodesTotal > 400 ? 6 : this.nodesTotal > 150 ? 4 : this.nodesTotal > 60 ? 3 : 0), c.nodeScale, c.edgeAlpha);
       this.bgCss = "rgba(" + [(cssColor("--background-primary", "#14161a") >> 16) & 255, (cssColor("--background-primary", "#14161a") >> 8) & 255, cssColor("--background-primary", "#14161a") & 255] + ",.85)";
+      { const n2 = (v) => [(v >> 16) & 255, (v >> 8) & 255, v & 255]; this.bgRgb = n2(cssColor("--background-primary", "#14161a")); this.accRgb = n2(cssColor("--interactive-accent", "#c98d5b")); this.accentCss = "rgb(" + this.accRgb + ")"; this.isDark = document.body.classList.contains("theme-dark"); }
       this.dirty = true;
     }
     // the engine colours groups with its own colours; here they become Basalt's: copper, sand, steel, moss, amethyst, rose
@@ -419,7 +424,7 @@
       g.nodes.forEach((x, i) => { u[2 + i * 3] = folders.get(x.folder); f[3 + i * 3] = 1; u[4 + i * 3] = x.unresolved ? 1 : 0; });
       g.edges.forEach(([a, b], k) => { u[2 + n * 3 + k * 2] = a; u[3 + n * 3 + k * 2] = b; });
       new Uint8Array(ex.memory.buffer, pb, bytes.length).set(bytes);
-      this.nodesTotal = n; this.style(); this.forces();
+      this.nodesTotal = n; this.order = g.nodes.map((_, i) => i).sort((a, b) => { const da = this.adjOf(a).size, db = this.adjOf(b).size; return db - da; }); this.path = null; this.pathPick = -1; this.style(); this.forces();
       const grow = false; /* the growing intro is off: the graph opens already laid out */ /* the first picture is watched growing: a tight knot that the forces push out, links stretching as it goes */
       this.introDone = true;
       ex.ge_set_intro(grow ? 0 : -1, grow ? 0.5 : 1); ex.ge_lock_bounds(grow ? 1 : 0); ex.ge_set_max_step(grow ? 5 : 0); this.grow = grow ? performance.now() : 0; this.growLabels = grow;
@@ -501,8 +506,8 @@
       const target = this.hover >= 0 ? this.hover : this.sel;
       if (this.hlTo === undefined) this.hlTo = this.hlFrom = target;
       if (target !== this.hlTo) { this.hlFrom = this.hlTo; this.hlTo = target; this.hlT0 = now; }
-      const hk = Math.min(1, (now - this.hlT0) / 200), blend = !this.anim && hk < 1 && this.hlFrom !== this.hlTo;
-      this.hlK = blend ? ease(hk) : 1;
+      const hk = Math.min(1, (now - this.hlT0) / 200), fading = !this.anim && hk < 1 && this.hlFrom !== this.hlTo, blend = fading && this.c.view !== "2d";
+      this.hlK = fading ? ease(hk) : 1; if (fading) this.dirty = true;
       if (blend) { this.dirty = true; this.paintBlend(ex, w, h, dpr, target, ease(hk)); this.halos(ex); this.drawGroups(ex); this.drawThumbs(ex); this.status.innerHTML = this.statusHtml(); return; }
       ex.ge_select(target, 1);
       const layered = !!(this.anim || this.fade);
@@ -510,8 +515,7 @@
       const ptr = ex.ge_render(w, h, this.hover >= 0 ? this.hover : this.sel), len = ex.ge_out_len();
       const main = this.ctx;
       if (layered) { if (!this.buf || this.buf.width !== this.cv.width || this.buf.height !== this.cv.height) { this.buf = document.createElement("canvas"); this.buf.width = this.cv.width; this.buf.height = this.cv.height; } this.ctx = this.buf.getContext("2d"); }
-      this.paint(new Float32Array(ex.memory.buffer, ptr, len), w, h, dpr);
-      this.halos(ex); this.drawGroups(ex); this.drawThumbs(ex);
+      if (this.c.view === "2d") this.paint2d(ex, w, h, dpr); else { this.P2 = null; this.paint(new Float32Array(ex.memory.buffer, ptr, len), w, h, dpr); this.halos(ex); this.drawGroups(ex); this.drawThumbs(ex); }
       this.ctx = main;
       if (layered) this.compose(now, ease);
       const st = (this.running ? "считается" : "готов");
@@ -539,27 +543,28 @@
       load.then((b) => { if (b) { t.bmp = b; this.dirty = true; } }).catch(() => {});
       return null;
     }
-    drawThumbs(ex) {
+    drawThumbs(ex, pal) {
       // Basalt's shape: the top-left and bottom-right corners are cut
-      const cut = (c, x, y, w, h, k) => { c.beginPath(); c.moveTo(x + k, y); c.lineTo(x + w, y); c.lineTo(x + w, y + h - k); c.lineTo(x + w - k, y + h); c.lineTo(x, y + h); c.lineTo(x, y + k); c.closePath(); };
+      const cut = (c, x, y, w, h, k) => { c.roundRect(x, y, w, h, 5); };
       if (!this.g.nodes.some((x) => x.kind !== "note") || (!this.c.thumbImg && !this.c.thumbCanvas)) { this.thumbRects = []; return; }
       const c = this.ctx, target = this.hlTo === undefined ? -1 : this.hlTo, nbs = target >= 0 ? this.adjOf(target) : null;
       const sc = this.c.nodeScale, acc = this.accentCss || "#c98d5b";
       let drawn = 0; this.thumbRects = [];
       for (let i = 0; i < this.g.nodes.length && drawn < 260; i++) {
         const n = this.g.nodes[i]; if (n.kind === "note" || !n.file) continue;
-        if (n.kind === "img" ? !this.c.thumbImg : !this.c.thumbCanvas) continue; /* switched off: the plain ball of the engine shows */
-        if (!ex.ge_screen_of(i)) continue; const f = new Float32Array(ex.memory.buffer, ex.ge_input(2), 2), x = f[0], y = f[1];
+        if (n.kind === "img" ? !this.c.thumbImg : !this.c.thumbCanvas) continue; /* switched off: the plain shape shows */
+        let x, y; if (this.P2) { x = this.P2[2 * i]; y = this.P2[2 * i + 1]; } else { if (!ex.ge_screen_of(i)) continue; const f = new Float32Array(ex.memory.buffer, ex.ge_input(2), 2); x = f[0]; y = f[1]; }
+        if (this.P2 && this.al[i] <= 0.01) continue;
         if (x < -40 || y < -40 || x > this.W + 40 || y > this.H + 40) continue;
-        const t = this.thumb(n); drawn++; { const hw = n.kind === "img" ? 22 * sc : 34 * sc * 0.9, hh2 = n.kind === "img" ? 22 * sc : 17 * sc; this.thumbRects.push([i, x - hw, y - hh2, x + hw, y + hh2]); }
+        const t = this.thumb(n); drawn++; { const hw = n.kind === "img" ? 18 * sc : 28 * sc * 0.9, hh2 = n.kind === "img" ? 18 * sc : 14 * sc; this.thumbRects.push([i, x - hw, y - hh2, x + hw, y + hh2]); }
         const hot = i === target;
         c.save(); c.globalAlpha = this.alphaOf(i); try {
         if (n.kind === "img") {
-          const r = 22 * sc, q = 6; c.beginPath(); cut(c, x - r, y - r, r * 2, r * 2, Math.min(8, r * 0.4)); c.save(); c.clip();
+          const r = 18 * sc, q = 6; c.beginPath(); cut(c, x - r, y - r, r * 2, r * 2, Math.min(8, r * 0.4)); c.save(); c.clip();
           if (t) { const s2 = (r * 2) / Math.min(t.bmp.width, t.bmp.height); c.drawImage(t.bmp, x - (t.bmp.width * s2) / 2, y - (t.bmp.height * s2) / 2, t.bmp.width * s2, t.bmp.height * s2); } else { c.fillStyle = "rgba(128,128,128,.4)"; c.fill(); }
           c.restore(); c.lineWidth = hot ? 2.5 : 1.5; c.strokeStyle = hot ? acc : "rgba(255,255,255,.35)"; c.beginPath(); cut(c, x - r, y - r, r * 2, r * 2, Math.min(8, r * 0.4)); c.stroke();
         } else {
-          const ratio = t ? t.bmp.width / t.bmp.height : 1.4, hh = 34 * sc, ww = hh * Math.min(2, Math.max(0.7, ratio)), r = 5;
+          const ratio = t ? t.bmp.width / t.bmp.height : 1.4, hh = 28 * sc, ww = hh * Math.min(2, Math.max(0.7, ratio)), r = 5;
           c.beginPath(); cut(c, x - ww / 2, y - hh / 2, ww, hh, Math.min(8, hh * 0.28)); c.fillStyle = "rgba(20,20,24,.85)"; c.fill(); c.save(); c.clip();
           if (t) c.drawImage(t.bmp, x - ww / 2 + 1, y - hh / 2 + 1, ww - 2, hh - 2); c.restore();
           c.lineWidth = hot ? 2.5 : 1.5; c.strokeStyle = acc; c.beginPath(); cut(c, x - ww / 2, y - hh / 2, ww, hh, Math.min(8, hh * 0.28)); c.stroke();
@@ -568,9 +573,10 @@
         c.restore();
       }
     }
-    pickAt(x, y, w, h) { for (const [i, x0, y0, x1, y1] of this.thumbRects || []) if (x >= x0 && x <= x1 && y >= y0 && y <= y1) return i; return this.ex.ge_pick(x, y, w, h); }
+    pickAt(x, y, w, h) { for (const [i, x0, y0, x1, y1] of this.thumbRects || []) if (x >= x0 && x <= x1 && y >= y0 && y <= y1) return i; if (this.c.view === "2d" && this.P2) return this.pick2d(x, y); return this.ex.ge_pick(x, y, w, h); }
     // how bright a node drawn over the engine's picture is: the same fade as the engine's own highlight (between the old and the new state)
     alphaOf(i) {
+      if (this.P2 && this.al) return this.al[i];
       const lit = (id) => (id === undefined || id < 0 || i === id || this.adjOf(id).has(i) ? 1 : 0);
       const a = lit(this.hlFrom), b = lit(this.hlTo), k = this.hlK === undefined ? 1 : this.hlK;
       return 0.17 + 0.83 * (a + (b - a) * k);
@@ -742,6 +748,141 @@
       if (this.match) for (const i of this.match.slice(0, 40)) ring(i, 0.8);
       if (this.sel >= 0) { ring(this.sel, 0.9); if (this.nodesTotal < 1500) this.dirty = true; }
       if (this.hover >= 0 && this.hover !== this.sel) ring(this.hover, 0.6);
+    }
+    // ================================================================ the 2D picture, drawn here from the positions the engine keeps
+    // (the engine still runs the layout, the camera and the 3D picture; in 2D every node, link and label is drawn below so each kind has its own look)
+    palette(dark) {
+      const acc = this.accRgb || [201, 141, 91], mixc = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k)), bg = this.bgRgb || (dark ? [23, 19, 15] : [250, 247, 242]);
+      return dark
+        ? { dark, note: [208, 190, 164], board: acc, canvas: [126, 158, 192], img: [134, 176, 138], tag: [166, 146, 196], unres: [138, 126, 114], edge: [178, 158, 136], label: [200, 190, 176], labelHi: [244, 236, 224], bg, acc, dim: 0.13 }
+        : { dark, note: [124, 102, 76], board: mixc(acc, [0, 0, 0], 0.2), canvas: [72, 108, 150], img: [78, 130, 88], tag: [120, 98, 164], unres: [166, 154, 142], edge: [112, 94, 74], label: [88, 76, 64], labelHi: [30, 24, 18], bg, acc: mixc(acc, [0, 0, 0], 0.2), dim: 0.13 };
+    }
+    folderRgb(folder, pal) {
+      const FP = [[201, 141, 91], [196, 180, 150], [116, 148, 184], [128, 170, 132], [160, 140, 190], [200, 128, 128], [200, 170, 100], [100, 170, 170]], m = this.fIdx || (this.fIdx = new Map());
+      if (!m.has(folder)) m.set(folder, m.size); const c = FP[m.get(folder) % FP.length];
+      return pal.dark ? c : c.map((v) => Math.round(v * 0.72));
+    }
+    nodeRgb(n, pal, gcol) {
+      if (n.unresolved) return pal.unres; if (n.kind === "tag") return pal.tag;
+      const gid = STORE.assign[n.key]; if (gid && gcol[gid]) return gcol[gid];
+      if (n.kind === "board") return pal.board; if (n.kind === "canvas") return pal.canvas; if (n.kind === "img") return pal.img;
+      if (this.c.colorBy === "folder") return n.folder ? this.folderRgb(n.folder, pal) : pal.note;
+      if (this.c.colorBy === "tag") { const t = n.tags && n.tags[0]; if (t) return this.folderRgb("#" + t, pal); }
+      return pal.note;
+    }
+    baseLit() {
+      if (this.path) return this.path.set;
+      if (this.match && this.match.length && this.searchEl && this.searchEl.value.trim()) { if (this._msFor !== this.match || this._msN !== this.match.length) { this._msFor = this.match; this._msN = this.match.length; this._ms = new Set(this.match); } return this._ms; }
+      return this.recentSet || null;
+    }
+    timeHid() { return this.tl && this.tl.on ? this.tl.hid : null; }
+    pick2d(x, y) {
+      const P = this.P, R = this.rad, N = this.g ? this.g.nodes.length : 0; if (!P || !R || P.length < N * 2) return -1;
+      const hid = this.timeHid(); let best = -1, bd = 1e12;
+      for (let i = N - 1; i >= 0; i--) { if (hid && hid[i]) continue; const dx = P[2 * i] - x, dy = P[2 * i + 1] - y, rr = R[i] + 3, d = dx * dx + dy * dy; if (d <= rr * rr && d < bd) { bd = d; best = i; } }
+      return best;
+    }
+    paint2d(ex, w, h, dpr, o) {
+      o = o || {};
+      const c = this.ctx, g = this.g, N = g.nodes.length, pal = o.pal || this.palette(this.isDark), sc = this.c.nodeScale, cfg = this.c;
+      c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+      if (o.bg) { c.fillStyle = "rgb(" + o.bg + ")"; c.fillRect(0, 0, w, h); }
+      if (!N) { this.P2 = null; return; }
+      const grow = (name, T, len) => { let a = this[name]; if (!a || a.length < len) a = this[name] = new T(len); return a; };
+      const P = grow("P", Float32Array, N * 2), R = grow("rad", Float32Array, N), AL = grow("al", Float32Array, N);
+      const f = new Float32Array(ex.memory.buffer, ex.ge_input(2), 2);
+      for (let i = 0; i < N; i++) { if (ex.ge_screen_of(i)) { P[2 * i] = f[0]; P[2 * i + 1] = f[1]; } else P[2 * i] = P[2 * i + 1] = -1e5; }
+      this.P2 = P;
+      const hid = this.timeHid(), dim = pal.dim, rgbS = (a) => "rgb(" + a[0] + "," + a[1] + "," + a[2] + ")", rgbA = (a, al) => "rgba(" + a[0] + "," + a[1] + "," + a[2] + "," + al + ")";
+      // what is lit: the neighbourhood of the node under the pointer (or the selected one), else the path / search hits / recent changes
+      let tTo = this.hlTo === undefined ? -1 : this.hlTo, tFrom = this.hlFrom === undefined ? -1 : this.hlFrom, kk = this.hlK === undefined ? 1 : this.hlK;
+      if (o.exp) { tTo = tFrom = this.sel; kk = 1; }
+      if (this.path) { tTo = tFrom = -1; }
+      const base = this.baseLit(), aTo = tTo >= 0 ? this.adjOf(tTo) : null, aFrom = tFrom >= 0 ? this.adjOf(tFrom) : null;
+      const lit = (id, adj, i) => (id < 0 ? (base ? (base.has(i) ? 1 : 0) : 1) : i === id || adj.has(i) ? 1 : 0);
+      const gcol = {}; for (const gr of STORE.groups) { const m = /^#([0-9a-f]{6})$/i.exec(gr.color || ""); if (m) { const v = parseInt(m[1], 16), q = [(v >> 16) & 255, (v >> 8) & 255, v & 255]; gcol[gr.id] = pal.dark ? q : q.map((z) => Math.round(z * 0.78)); } }
+      for (let i = 0; i < N; i++) {
+        const n = g.nodes[i], deg = this.adjOf(i).size; let r = Math.min(15 * Math.max(sc, 0.7), (2.7 + 1.65 * Math.sqrt(deg)) * sc);
+        if (n.kind === "board" || n.kind === "canvas") r *= 1.15; else if (n.unresolved) r *= 0.8; else if (n.kind === "tag") r = Math.max(r, 4 * sc);
+        R[i] = r; const a = lit(tFrom, aFrom, i), b = lit(tTo, aTo, i); AL[i] = hid && hid[i] ? 0 : dim + (1 - dim) * (a + (b - a) * kk);
+      }
+      // ---- links
+      const edges = g.edges, curved = cfg.edgeStyle !== "straight" && edges.length < 3500, arrows = !!cfg.arrows && edges.length < 8000;
+      const ea = 0.1 + 0.42 * cfg.edgeAlpha, pathE = this.path ? this.path.edges : null;
+      const lines = [new Path2D(), new Path2D(), new Path2D()], heads = [new Path2D(), new Path2D(), new Path2D()];
+      for (let k = 0; k < edges.length; k++) {
+        const a = edges[k][0], b = edges[k][1]; if (AL[a] <= 0 || AL[b] <= 0) continue;
+        const ax = P[2 * a], ay = P[2 * a + 1], bx = P[2 * b], by = P[2 * b + 1];
+        if ((ax < -20 && bx < -20) || (ax > w + 20 && bx > w + 20) || (ay < -20 && by < -20) || (ay > h + 20 && by > h + 20)) continue;
+        let cls = Math.min(AL[a], AL[b]) < 0.5 ? 0 : 1;
+        if (pathE ? pathE.has(a < b ? a + "-" + b : b + "-" + a) : tTo >= 0 && (a === tTo || b === tTo) && AL[a] > 0.5 && AL[b] > 0.5) cls = 2;
+        const L = lines[cls], dx = bx - ax, dy = by - ay; let cx = (ax + bx) / 2, cy = (ay + by) / 2;
+        L.moveTo(ax, ay);
+        if (curved) { cx -= dy * 0.12; cy += dx * 0.12; L.quadraticCurveTo(cx, cy, bx, by); } else L.lineTo(bx, by);
+        if (arrows && cls) { const ux0 = bx - cx, uy0 = by - cy, ul = Math.hypot(ux0, uy0) || 1, ux = ux0 / ul, uy = uy0 / ul, s = cls === 2 ? 6.5 : 5, tx = bx - ux * (R[b] + 1.5), ty = by - uy * (R[b] + 1.5), H = heads[cls]; H.moveTo(tx, ty); H.lineTo(tx - ux * s - uy * s * 0.5, ty - uy * s + ux * s * 0.5); H.lineTo(tx - ux * s + uy * s * 0.5, ty - uy * s - ux * s * 0.5); H.closePath(); }
+      }
+      c.lineCap = "round"; c.lineJoin = "round";
+      c.strokeStyle = rgbA(pal.edge, dim * 0.35); c.lineWidth = 0.8; c.stroke(lines[0]);
+      c.strokeStyle = rgbA(pal.edge, ea); c.lineWidth = 0.9; c.stroke(lines[1]); if (arrows) { c.fillStyle = rgbA(pal.edge, Math.min(1, ea * 1.6)); c.fill(heads[1]); }
+      c.strokeStyle = rgbA(pal.acc, 0.85); c.lineWidth = 1.6; c.stroke(lines[2]); if (arrows) { c.fillStyle = rgbA(pal.acc, 0.95); c.fill(heads[2]); }
+      // ---- nodes: the round ones of one colour and brightness go in one path
+      const bgS = rgbS(pal.bg), batches = new Map(), odd = []; let cull = 0;
+      for (let i = 0; i < N; i++) {
+        if (AL[i] <= 0.01) continue; const x = P[2 * i], y = P[2 * i + 1]; if (x < -20 || y < -20 || x > w + 20 || y > h + 20) continue; cull++;
+        const n = g.nodes[i]; if (n.unresolved || n.kind !== "note") { odd.push(i); continue; }
+        const rgb = this.nodeRgb(n, pal, gcol), key = Math.round(AL[i] * 8) + "|" + rgb[0] + "," + rgb[1] + "," + rgb[2]; let bt = batches.get(key); if (!bt) { bt = { al: Math.round(AL[i] * 8) / 8, rgb, ids: [] }; batches.set(key, bt); } bt.ids.push(i);
+      }
+      for (const bt of Array.from(batches.values()).sort((p, q) => p.al - q.al)) {
+        c.globalAlpha = Math.max(0.1, bt.al); c.beginPath(); for (const i of bt.ids) { c.moveTo(P[2 * i] + R[i], P[2 * i + 1]); c.arc(P[2 * i], P[2 * i + 1], R[i], 0, 6.2832); }
+        c.fillStyle = rgbS(bt.rgb); c.fill(); if (cull < 6000) { c.lineWidth = 1.2; c.strokeStyle = bgS; c.stroke(); }
+      }
+      for (const i of odd) {
+        const n = g.nodes[i], x = P[2 * i], y = P[2 * i + 1], r = R[i], rgb = this.nodeRgb(n, pal, gcol); c.globalAlpha = AL[i]; c.beginPath();
+        if (n.unresolved) { c.arc(x, y, r, 0, 6.2832); c.fillStyle = bgS; c.fill(); c.setLineDash([2.2, 2]); c.lineWidth = 1.3; c.strokeStyle = rgbS(rgb); c.stroke(); c.setLineDash([]); continue; }
+        if (n.kind === "board" || n.kind === "img") c.roundRect(x - r, y - r, r * 2, r * 2, Math.min(3, r * 0.4));
+        else if (n.kind === "canvas") { c.moveTo(x, y - r * 1.25); c.lineTo(x + r * 1.25, y); c.lineTo(x, y + r * 1.25); c.lineTo(x - r * 1.25, y); c.closePath(); }
+        else { for (let q = 0; q < 6; q++) { const an = q * 1.0472 + 0.5236; q ? c.lineTo(x + Math.cos(an) * r * 1.1, y + Math.sin(an) * r * 1.1) : c.moveTo(x + Math.cos(an) * r * 1.1, y + Math.sin(an) * r * 1.1); } c.closePath(); }
+        c.fillStyle = rgbS(rgb); c.fill(); c.lineWidth = 1.2; c.strokeStyle = bgS; c.stroke();
+      }
+      c.globalAlpha = 1;
+      this.drawThumbs(ex, pal);
+      // ---- soft glow and rings: only for the hovered / selected node, search hits, marked nodes, recent changes
+      const accS = rgbS(pal.acc), at = (i) => (i >= 0 && i < N && P[2 * i] > -1e4 ? [P[2 * i], P[2 * i + 1], R[i]] : null);
+      const ring = (i, pad, al, glow, wd) => { const p = at(i); if (!p) return; c.save(); c.globalAlpha = al; c.strokeStyle = accS; c.lineWidth = wd || 1.6; if (glow) { c.shadowColor = accS; c.shadowBlur = glow; } c.beginPath(); c.arc(p[0], p[1], p[2] + pad, 0, 6.2832); c.stroke(); c.restore(); };
+      if (this.recentSet && !o.exp) { let q = 0; for (const i of this.recentSet) { if (q++ > 400) break; ring(i, 2.5, 0.55 * AL[i], 0, 1.2); } }
+      if (this.match && this.match.length && this.searchEl && this.searchEl.value.trim()) for (const i of this.match.slice(0, 300)) ring(i, 3, 0.85, 0, 1.4);
+      if (this.path) for (const i of this.path.nodes) ring(i, 3.5, 0.95, 8, 1.8);
+      if (this.pathPick >= 0) ring(this.pathPick, 5, 0.95, 10, 2);
+      if (this.sel >= 0) ring(this.sel, 4.5, 0.95, 14, 1.8);
+      if (this.hover >= 0 && this.hover !== this.sel && !o.exp) ring(this.hover, 4, 0.8, 16, 1.6);
+      if (this.multi && this.multi.size) for (const i of this.multi) { const p = at(i); if (!p) continue; c.save(); c.strokeStyle = rgbS(pal.labelHi); c.lineWidth = 1.2; c.setLineDash([3, 3]); c.beginPath(); c.arc(p[0], p[1], p[2] + 6, 0, 6.2832); c.stroke(); c.restore(); }
+      if (this.pinned && this.pinned.size && !o.exp) for (const i of this.pinned) { const p = at(i); if (!p) continue; c.beginPath(); c.arc(p[0] + p[2] * 0.75, p[1] - p[2] * 0.75, 2.4, 0, 6.2832); c.fillStyle = accS; c.fill(); c.lineWidth = 1; c.strokeStyle = bgS; c.stroke(); }
+      this.drawLabels(w, h, pal, AL, tTo, aTo, o);
+    }
+    // labels: the highlighted neighbourhood first, then by number of links; a label that would lie over another one is left out
+    drawLabels(w, h, pal, AL, tTo, aTo, o) {
+      const c = this.ctx, g = this.g, N = g.nodes.length, P = this.P, R = this.rad, mode = this.c.labelMode, ff = this.font || (this.font = (getComputedStyle(document.body).getPropertyValue("--font-interface") || "").trim() || "system-ui, sans-serif");
+      const placed = [], bgA = "rgba(" + pal.bg[0] + "," + pal.bg[1] + "," + pal.bg[2] + ",.88)", col = "rgb(" + pal.label + ")", colHi = "rgb(" + pal.labelHi + ")", fade = o.exp ? 1 : this.labelA === undefined ? 1 : this.labelA;
+      c.textAlign = "center"; c.textBaseline = "top"; c.lineJoin = "round";
+      const short = (s) => (s.length > 30 ? s.slice(0, 29) + "…" : s);
+      const put = (i, strong) => {
+        const x = P[2 * i], y = P[2 * i + 1]; if (x < 4 || y < 4 || x > w - 4 || y > h - 4) return false;
+        const size = strong ? 12.5 : 11.5, t = short(g.nodes[i].name.replace(/\n/g, " ")); c.font = (strong ? "600 " : "500 ") + size + "px " + ff;
+        const tw = c.measureText(t).width, ty = y + R[i] + 3.5, bx = x - tw / 2; for (const r of placed) if (bx < r[2] + 3 && bx + tw + 3 > r[0] && ty < r[3] + 1 && ty + size + 2 > r[1]) return false;
+        placed.push([bx, ty, bx + tw, ty + size + 2]); c.globalAlpha = Math.min(1, (strong ? 1 : 0.5 + AL[i] * 0.5)) * fade; c.lineWidth = 3.6; c.strokeStyle = bgA; c.strokeText(t, x, ty); c.fillStyle = strong ? colHi : col; c.fillText(t, x, ty); return true;
+      };
+      const done = new Set(), strongList = [];
+      if (tTo >= 0) { strongList.push(tTo); for (const j of aTo) strongList.push(j); }
+      if (this.sel >= 0 && this.sel !== tTo) strongList.push(this.sel);
+      if (this.path) for (const i of this.path.nodes) strongList.push(i);
+      if (this.pathPick >= 0) strongList.push(this.pathPick);
+      if (this.match && this.searchEl && this.searchEl.value.trim()) for (const i of this.match.slice(0, 40)) strongList.push(i);
+      for (const i of strongList) { if (done.has(i) || AL[i] <= 0.01) continue; done.add(i); put(i, i === tTo || i === this.sel); }
+      if (mode !== "none" && !this.growLabels) {
+        const ord = this.order || [], P2 = this.P; let vis = 0; for (let i = 0; i < N; i++) { const x = P2[2 * i], y = P2[2 * i + 1]; if (x > 0 && y > 0 && x < w && y < h) vis++; } const dens = this.c.labelDensity || 1, cap = mode === "all" ? 700 : vis <= 40 ? 60 : Math.max(10, Math.floor(dens * 900 / Math.sqrt(vis))); let shown = 0, tried = 0;
+        for (const i of ord) { if (shown >= cap || tried > cap * 5) break; if (done.has(i) || AL[i] < 0.5) continue; const x = P[2 * i], y = P[2 * i + 1]; if (x < 4 || y < 4 || x > w - 4 || y > h - 4) continue; tried++; if (put(i, false)) shown++; }
+      }
+      c.globalAlpha = 1;
     }
     paint(d, w, h, dpr) {
       const c = this.ctx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
