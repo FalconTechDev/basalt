@@ -21738,6 +21738,10 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     color:var(--text-normal);
     background:var(--background-modifier-hover)
 }
+.osb-inkcv{
+    position:absolute;
+    pointer-events:none
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;

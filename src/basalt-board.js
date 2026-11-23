@@ -4,7 +4,7 @@
   "use strict";
   const VIEW = "basalt-board", EXT = "board";
   // big boards: below CULL_MIN cards everything is drawn in full as before; above it only cards near the view get a DOM node, and below zoom LOD_K they are plain rectangles
-  const CULL_MIN = 120, LOD_K = 0.32, MD_CAP = 4000, LITE_CAP = 12000, EDGE_CAP = 9000;
+  const CULL_MIN = 120, LOD_K = 0.32, MD_CAP = 4000, LITE_CAP = 12000, EDGE_CAP = 9000, INK_SVG_MAX = 1500;
   const COLORS = ["", "#e5484d", "#f59f3b", "#d6b43c", "#46a758", "#3fa7d6", "#8e6bd8"];
   const PEER = ["#e5484d", "#f59f3b", "#3fa7d6", "#46a758", "#8e6bd8", "#c0699f", "#d6b43c"];
   const b64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
@@ -237,15 +237,35 @@
       cullInk() {
         if (!this.inkSvg || !this._ink || !this.root) return; const mir = this.inkMirror || (this.inkMirror = this._ink.toArray()); if (!this.inkIds) this.inkIds = new Set(mir.map((s) => s.id)); const have = this.inkEls || (this.inkEls = new Map());
         const c = this.cam, k = c.k, W = this.root.clientWidth, H = this.root.clientHeight; if (!(W > 0 && H > 0 && k > 0)) return;
-        const big = mir.length > 300, vw = W / k, vh = H / k, X1 = c.x - vw, X2 = c.x + vw, Y1 = c.y - vh, Y2 = c.y + vh, step = !big ? 1 : k >= 0.3 ? 1 : k >= 0.12 ? 3 : k >= 0.05 ? 8 : 20, seen = new Set();
+        const big = mir.length > 300, vw = W / k, vh = H / k, X1 = c.x - vw, X2 = c.x + vw, Y1 = c.y - vh, Y2 = c.y + vh, step = !big ? 1 : k >= 0.3 ? 1 : k >= 0.12 ? 3 : k >= 0.05 ? 8 : 20, vis = [];
         for (const s of mir) {
           let b = this.inkBoxC.get(s); if (!b) { b = this.inkBox(s); this.inkBoxC.set(s, b); }
-          if (big && (b.x2 < X1 || b.x1 > X2 || b.y2 < Y1 || b.y1 > Y2)) continue;
+          if (big && (b.x2 < X1 || b.x1 > X2 || b.y2 < Y1 || b.y1 > Y2)) continue; vis.push(s);
+        }
+        // far more strokes in view than SVG handles well: one canvas picture, moved and scaled with the camera until it needs redrawing
+        if (vis.length > INK_SVG_MAX) { this.inkToCanvas(vis, step, W, H); return; } if (this._inkCvOn) { this._inkCvOn = false; if (this.inkCv) this.inkCv.style.display = "none"; this.inkSvg.style.display = ""; }
+        const seen = new Set();
+        for (const s of vis) {
           seen.add(s.id); let e = have.get(s.id);
           if (e && e.__step !== step && (s.k === "pen" || s.k === "hl")) { e.remove(); have.delete(s.id); e = null; }
           if (!e) { e = this.inkEl(s, step); e.__step = step; e.dataset.id = s.id; this.inkSvg.appendChild(e); have.set(s.id, e); if (this.inkSet && this.inkSet.has(s.id)) e.classList.add("is-sel"); }
         }
         for (const [id, e] of have) if (!seen.has(id)) { e.remove(); have.delete(id); if (this.inkSel === id && !this.inkIds.has(id)) this.inkSel = null; }
+      }
+      inkToCanvas(vis, step, W, H) {
+        const have = this.inkEls; if (have) { for (const e of have.values()) e.remove(); have.clear(); }
+        let cv = this.inkCv; if (!cv) { cv = this.inkCv = document.createElement("canvas"); cv.className = "osb-inkcv"; this.root.insertBefore(cv, this.layer); }
+        const cw = Math.min(4096, Math.round(W * 2)), ch = Math.min(4096, Math.round(H * 2)); if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; } cv.style.cssText = "display:block;width:" + cw + "px;height:" + ch + "px;left:" + (W - cw) / 2 + "px;top:" + (H - ch) / 2 + "px";
+        const ctx = cv.getContext("2d"), c = this.cam, k = c.k, col0 = (getComputedStyle(this.root).getPropertyValue("--text-normal") || "#ddd").trim(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cw, ch); ctx.setTransform(k, 0, 0, k, cw / 2 - c.x * k, ch / 2 - c.y * k); ctx.lineCap = "round"; ctx.lineJoin = "round";
+        for (const s of vis) {
+          ctx.lineWidth = Math.max((s.k === "hl" ? 3 : 1) * (s.w || 4), 1 / k); ctx.strokeStyle = ctx.fillStyle = s.c || col0; ctx.globalAlpha = s.k === "hl" ? 0.38 : 1; ctx.beginPath();
+          if (s.k === "pen" || s.k === "hl") { const p = s.pts, n = p.length; ctx.moveTo(p[0][0], p[0][1]); if (n === 1) ctx.lineTo(p[0][0] + 0.01, p[0][1]); for (let i = step; i < n - 1; i += step) ctx.lineTo(p[i][0], p[i][1]); if (n > 1) ctx.lineTo(p[n - 1][0], p[n - 1][1]); ctx.stroke(); }
+          else if (s.k === "line" || s.k === "arrow") { ctx.moveTo(s.a[0], s.a[1]); ctx.lineTo(s.b[0], s.b[1]); ctx.stroke(); }
+          else if (s.k === "rect") ctx.strokeRect(Math.min(s.a[0], s.b[0]), Math.min(s.a[1], s.b[1]), Math.abs(s.b[0] - s.a[0]), Math.abs(s.b[1] - s.a[1]));
+          else if (s.k === "t") { const sz = this.textSize(s); ctx.font = sz + "px sans-serif"; ctx.textBaseline = "top"; String(s.txt || "").split("\n").forEach((ln, i) => ctx.fillText(ln, s.a[0], s.a[1] + i * sz * 1.25)); }
+          else { ctx.ellipse((s.a[0] + s.b[0]) / 2, (s.a[1] + s.b[1]) / 2, Math.abs(s.b[0] - s.a[0]) / 2, Math.abs(s.b[1] - s.a[1]) / 2, 0, 0, Math.PI * 2); ctx.stroke(); }
+        }
+        ctx.globalAlpha = 1; this._inkCvOn = true; this._inkCv0 = { x: c.x, y: c.y, k }; this.inkSvg.style.display = "none";
       }
       toggleDraw(on) {
         this.renderMini();
@@ -1062,7 +1082,7 @@
       }
       applyCam() {
         if (!this.world) return; const c = this.cam; if (!isFinite(c.x) || !isFinite(c.y) || !(c.k > 0) || !isFinite(c.k)) { c.x = 0; c.y = 0; c.k = 1; }
-        this.renderMini(); if (this.draw && this._ck !== c.k) { this._ck = c.k; this.drawCursor(); } if (this.resetBtn) this.resetBtn.title = "Масштаб " + Math.round(c.k * 100) + "% (клик — 100%)"; this.renderSelBar(); this.world.style.transform = "translate(" + (this.root.clientWidth / 2 - c.x * c.k) + "px," + (this.root.clientHeight / 2 - c.y * c.k) + "px) scale(" + c.k + ")"; this.paintCursors(); this.scheduleCull();
+        this.renderMini(); if (this.draw && this._ck !== c.k) { this._ck = c.k; this.drawCursor(); } if (this.resetBtn) this.resetBtn.title = "Масштаб " + Math.round(c.k * 100) + "% (клик — 100%)"; this.renderSelBar(); this.world.style.transform = "translate(" + (this.root.clientWidth / 2 - c.x * c.k) + "px," + (this.root.clientHeight / 2 - c.y * c.k) + "px) scale(" + c.k + ")"; this.paintCursors(); if (this._inkCvOn) { const o = this._inkCv0; this.inkCv.style.transform = "translate(" + ((o.x - c.x) * c.k) + "px," + ((o.y - c.y) * c.k) + "px) scale(" + (c.k / o.k) + ")"; } this.scheduleCull();
       }
       fit() { const ms = Array.from(this.yn ? this.yn.values() : []); if (!ms.length) { this.cam = { x: 0, y: 0, k: 1 }; return this.applyCam(); } let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const m of ms) { a = Math.min(a, m.get("x")); b = Math.min(b, m.get("y")); c = Math.max(c, m.get("x") + m.get("w")); d = Math.max(d, m.get("y") + m.get("h")); } const w = this.root.clientWidth || 800, h = this.root.clientHeight || 600; this.cam = { x: (a + c) / 2, y: (b + d) / 2, k: Math.min(1.2, Math.max(.03, Math.min((w - 120) / Math.max(1, c - a), (h - 140) / Math.max(1, d - b)))) }; this.applyCam(); }
       // ---------- input ----------

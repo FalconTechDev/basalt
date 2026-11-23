@@ -343,3 +343,4 @@
 .osb-card.is-lite.is-sel { box-shadow: none; outline: 3px solid var(--interactive-accent); outline-offset: 0; }
 .osb-card.is-lite.is-hit { box-shadow: none; outline: 3px solid var(--bs-warn); }
 .osb-md-more { margin: 8px 0 2px; padding: 4px 8px; border-radius: 4px; border: 1px dashed var(--background-modifier-border-hover); color: var(--text-muted); font-size: 12px; text-align: center; cursor: var(--bs-cursor-hand, pointer); user-select: none; } .osb-md-more:hover { color: var(--text-normal); background: var(--background-modifier-hover); }
+.osb-inkcv { position: absolute; pointer-events: none; }
