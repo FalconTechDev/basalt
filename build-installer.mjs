@@ -30,10 +30,13 @@ fs.mkdirSync(stage, { recursive: true });
 
 // the runtime, without the two junctions that point at the working copies
 const skip = new Set([path.join(runtime, "resources", "app"), path.join(runtime, "resources", "app-src")].map((p) => p.toLowerCase()));
-fs.cpSync(runtime, stage, { recursive: true, filter: (from) => !skip.has(from.toLowerCase()) });
+// btime and get-fonts are native modules written by the Obsidian authors (package.json says UNLICENSED), left in the runtime by
+// run.ps1 and in stub/node_modules; they must not be shipped. Both are optional: the app falls back (no birth-time write, system font list).
+const NOT_SHIPPED = /[\\/](btime|get-fonts)([\\/]|$)/i;
+fs.cpSync(runtime, stage, { recursive: true, filter: (from) => !skip.has(from.toLowerCase()) && !NOT_SHIPPED.test(from) });
 
 // the real folders instead
-fs.cpSync(path.join(root, "stub"), path.join(stage, "resources", "app"), { recursive: true });
+fs.cpSync(path.join(root, "stub"), path.join(stage, "resources", "app"), { recursive: true, filter: (from) => !NOT_SHIPPED.test(from) });
 fs.cpSync(path.join(root, "src"), path.join(stage, "resources", "app-src"), {
   recursive: true,
   filter: (from) => !/app\.js\.orig$/.test(from),

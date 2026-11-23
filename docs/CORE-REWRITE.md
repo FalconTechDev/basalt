@@ -1,7 +1,7 @@
 # Replacing the inherited core
 
-Basalt started as a patched copy of Obsidian 1.12.7 (Electron). About 92% of the JavaScript that ships (`src/app.js`, ~7.5 MB)
-is still that code; everything in `basalt-*.js`, `fp-canvas.js`, `fp-graph.js`, `vault-sync.js` and the Rust/WASM engines is ours.
+Basalt started as a patched copy of Obsidian 1.12.7 (Electron). As of 2026-11-24 about 60 % of the original bundle by size is replaced (`node tools/own-stats.mjs`); the rest of `src/app.js`
+(~5.8 MB with the own modules spliced in) is still original code, a large part of it bundled open-source libraries. Everything in `basalt-*.js`, `fp-canvas.js`, `fp-graph.js`, `vault-sync.js` and the Rust/WASM engines is ours.
 `node tools/obsidian-audit.mjs --files` lists what still carries the old name (626 mentions today, by kind).
 
 Removing the name from strings is cheap, but the code itself stays Obsidian's until it is replaced. Obsidian's licence does not allow
@@ -16,6 +16,6 @@ redistributing or modifying the app, so a public release is only clean once the 
 4. **Canvas model** (cards, edges, undo): the drawing is ours, the data model and interaction layer are still inherited.
 5. **Plugin host**: our own API. Community plugins are written for the old API, so a thin compatibility layer
    (one file, clearly named) stays as long as those plugins are wanted; Wasm plugins use the new API only.
-6. **Main process** (`main.js`): windows, vault registry, CLI pipe, protocol handler.
+6. **Main process** (`main.js`): windows, vault registry, CLI pipe, protocol handler. Done (rewritten 2026-11-11).
 
 Each step ships on its own: the old and new pieces run side by side until the new one covers the old behaviour.

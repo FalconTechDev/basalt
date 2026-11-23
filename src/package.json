@@ -1,13 +1,9 @@
 {
-	"name": "obsidian-dev",
+	"name": "basalt",
 	"description": "Basalt",
 	"version": "1.12.7",
 	"license": "UNLICENSED",
 	"author": "Basalt",
 	"private": true,
-	"main": "index.js",
-	"dependencies": {
-		"btime": "../electron/btime",
-		"get-fonts": "../electron/get-fonts"
-	}
+	"main": "index.js"
 }

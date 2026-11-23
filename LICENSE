@@ -17,10 +17,20 @@ OTHER DEALINGS IN THE FILES.
 
 WHAT THIS LICENSE COVERS
 
-Covered (written for Basalt): the Rust engines and tools (canvas-engine, search-engine, pty-helper, cli), plugins-sdk, installer scripts,
-build scripts, and the files src/basalt-*.js, src/fp-canvas.js (source in canvas-engine/), src/fp-graph.js (source in graph-engine/),
-src/vault-sync.js, stub/.
+Covered (written for Basalt): the Rust engines and tools (app-core, canvas-engine, graph-engine, markdown-engine, search-engine,
+pty-helper, cli), plugins-sdk, installer scripts, build scripts, tools/, stub/, the readable own modules in src-app/ (they are
+built into src/app.js), the files src/basalt-*.js, src/main.js, src/starter.*, src/help.*, src/enhance.js, src/i18n-ru.js,
+src/vault-sync.js, src/fp-canvas.js (source in canvas-engine/), src/fp-graph.js (source in graph-engine/), src/worker.js (source in
+markdown-engine/) and the documentation in docs/ and README.md.
 
-NOT covered: src/app.js, src/app.css, src/main.js, src/starter.*, src/help.*, src/i18n*, src/lib, src/sandbox, src/public and other files that
-come from a third-party application. They remain under their original terms, are not licensed by this file, and are being replaced
-(see docs/CORE-REWRITE.md). Do not redistribute builds that contain them unless those terms allow it.
+NOT covered:
+ - src/app.js as a whole: it still contains code of the third-party application Basalt was forked from (Obsidian 1.12.7, proprietary)
+   and bundled open-source libraries. Only the parts that come from src-app/ are covered.
+ - src/app.css and src-css/, src/i18n.js: derived from that application.
+ - src/lib, src/vendor, src/public, src/sim.js and the other third-party libraries and fonts: they keep their own licences,
+   listed in THIRD_PARTY.md.
+ - the logo and icons in branding/ and src/*.png: origin not established, see THIRD_PARTY.md.
+These files remain under their original terms and are not licensed by this file. See THIRD_PARTY.md and docs/CORE-REWRITE.md.
+Do not redistribute builds that contain them unless those terms allow it.
+
+Basalt is not affiliated with, endorsed by or sponsored by Obsidian / Dynalist Inc.
