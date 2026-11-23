@@ -2146,5 +2146,7 @@
 "Не удалось удалить «": "Could not delete «",
 "В папке «": "The folder «",
 "» уже есть «": "» already has a file called «",
-"Каталог по адресу ": "The catalog at "
+"Каталог по адресу ": "The catalog at ",
+"Двойной щелчок — писать": "Double click to write",
+"доска · ": "board · "
 }

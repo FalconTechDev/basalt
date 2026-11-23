@@ -240,7 +240,7 @@ export function s17CreateApp(host) {
       this.cli = new host.s17Cli(this);
       window.__bsApi = {
         ItemView: host.ItemView, Modal: host.Modal, Notice: host.Notice,
-        Menu: host.Menu, setIcon: host.setIcon, Setting: host.Setting,
+        Menu: host.Menu, setIcon: host.setIcon, Setting: host.Setting, MarkdownRenderer: host.MarkdownRenderer,
       };
       document.body.classList.add("basalt-app");
 

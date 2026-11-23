@@ -21593,6 +21593,65 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .osb-card.is-group .osb-h{
     opacity:0!important
 }
+.osb-md{
+    flex:1;
+    min-height:0;
+    overflow:auto;
+    padding:8px 12px;
+    font-size:14px;
+    line-height:1.5;
+    user-select:none;
+    cursor:var(--bs-cursor-arrow,default);
+    word-break:break-word
+}
+.osb-md > :first-child{
+    margin-top:0!important
+}
+.osb-md > :last-child{
+    margin-bottom:0!important
+}
+.osb-md p{
+    margin:0 0 .5em
+}
+.osb-md img{
+    max-width:100%;
+    height:auto
+}
+.osb-md-empty{
+    color:var(--text-faint);
+    font-style:italic
+}
+.osb-card:not(.is-editing) .osb-ta{
+    display:none
+}
+.osb-card.is-editing .osb-md{
+    display:none
+}
+.osb-card.is-group .osb-md{
+    display:none
+}
+.osb-card.is-group .osb-ta{
+    display:block!important
+}
+.osb-card.has-img .osb-md{
+    flex:none;
+    max-height:70px;
+    padding:4px 10px;
+    font-size:12.5px
+}
+.osb-card.is-fold .osb-md{
+    flex:none;
+    height:28px;
+    overflow:hidden;
+    padding:4px 10px
+}
+.osb-card.is-group .osb-grip{
+    height:14px;
+    background:transparent
+}
+.osb-card.is-group .osb-by,.osb-card.is-group .osb-tag,.osb-card.is-group .osb-kind{
+    display:none!important
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
@@ -23752,5 +23811,50 @@ button.mod-cta:disabled,button:disabled,.bsm-btn:disabled{
 }
 .bsm .bsm-dot,.bsm .bsm-avatar-sq{
     border-radius:50%
+}
+.bsg-controls{
+    top:50%!important;
+    right:12px!important;
+    translate:0 -50%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    padding:6px;
+    border-radius:6px;
+    background:color-mix(in srgb,var(--background-secondary) 92%,transparent);
+    border:1px solid var(--background-modifier-border);
+    box-shadow:0 6px 22px rgba(0,0,0,.35)
+}
+.bsg-controls .canvas-control-group{
+    background:transparent!important;
+    box-shadow:none!important;
+    border:0!important;
+    border-radius:0!important;
+    clip-path:none!important;
+    margin:0!important;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    padding:0
+}
+.bsg-controls .canvas-control-group + .canvas-control-group{
+    margin-top:5px!important;
+    padding-top:5px;
+    border-top:1px solid var(--background-modifier-border)!important
+}
+.bsg-controls .canvas-control-item{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border-radius:6px!important;
+    background:transparent!important;
+    border:0!important;
+    color:var(--text-muted)
+}
+.bsg-controls .canvas-control-item:hover{
+    background:var(--background-modifier-hover)!important;
+    color:var(--text-normal)
 }
 

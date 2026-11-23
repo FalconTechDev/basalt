@@ -68,11 +68,11 @@
   function vaultGraph(app, c, anchor, local) {
     const IMGX = /^(png|jpe?g|gif|webp|bmp|avif|svg)$/i;
     const linkedTo = new Set(); if (c.images) for (const dests of Object.values(app.metadataCache.resolvedLinks || {})) for (const d of Object.keys(dests)) linkedTo.add(d);
-    const files = app.vault.getFiles().filter((f) => (f.extension === "md" || (c.canvases && f.extension === "canvas") || (c.images && IMGX.test(f.extension) && linkedTo.has(f.path))));
+    const files = app.vault.getFiles().filter((f) => (f.extension === "md" || f.extension === "board" || (c.canvases && f.extension === "canvas") || (c.images && IMGX.test(f.extension) && linkedTo.has(f.path))));
     const resolved = app.metadataCache.resolvedLinks || {}, unres = app.metadataCache.unresolvedLinks || {};
     const idx = new Map(), nodes = [];
     const add = (key, name, extra) => { if (idx.has(key)) return idx.get(key); const i = nodes.length; idx.set(key, i); nodes.push(Object.assign({ key, name, file: null, unresolved: false, folder: "" }, extra)); return i; };
-    for (const f of files) add(f.path, f.basename, { kind: f.extension === "canvas" ? "canvas" : f.extension === "md" ? "note" : "img", file: f, folder: f.parent && f.parent.path !== "/" ? f.parent.path.split("/")[0] : "" });
+    for (const f of files) add(f.path, f.basename, { kind: f.extension === "canvas" ? "canvas" : f.extension === "md" || f.extension === "board" ? "note" : "img", file: f, folder: f.parent && f.parent.path !== "/" ? f.parent.path.split("/")[0] : "" });
     const have = new Set(files.map((f) => f.path)), seen = new Set(), edges = [];
     const link = (a, b) => { if (a === b) return; const k = a < b ? a * 1048576 + b : b * 1048576 + a; if (seen.has(k)) return; seen.add(k); edges.push([a, b]); };
     for (const [src, dests] of Object.entries(resolved)) if (have.has(src)) for (const dest of Object.keys(dests)) if (have.has(dest)) link(idx.get(src), idx.get(dest));
@@ -678,7 +678,7 @@
       el.textContent = "";
       const mk = (cls, text) => { const d = document.createElement("div"); d.className = cls; d.textContent = text; el.appendChild(d); return d; };
       this.cardPreview(n, el);
-      mk("t", n.name); mk("m", (n.kind === "img" ? "картинка · " : n.kind === "canvas" ? "холст · " : "") + (n.folder || "корень") + " · связей: " + nb.length);
+      mk("t", n.name); mk("m", (n.kind === "img" ? "картинка · " : n.kind === "canvas" ? "холст · " : n.file && n.file.extension === "board" ? "доска · " : "") + (n.folder || "корень") + " · связей: " + nb.length);
       const list = document.createElement("div"); list.className = "nb"; el.appendChild(list);
       for (const j of nb.slice(0, 14)) { const b = document.createElement("button"); b.textContent = this.g.nodes[j].name; b.addEventListener("click", () => this.setSel(j, true)); list.appendChild(b); }
       if (nb.length > 14) mk("m", "и ещё " + (nb.length - 14));
