@@ -20,7 +20,7 @@ report that came with this audit).
 | English interface strings | `src/i18n.js` | Derived from the original string table (reworded in part). The Russian table `src/i18n-ru.js` is Basalt's own translation. |
 | Plugin API compatibility layer | names such as `registerObsidianProtocolHandler`, `getObsidianUrl`, class `obsidian-app`, `.obsidian` config folder, `obsidian://` links, community plugin lists from `github.com/obsidianmd/obsidian-releases` | Names and compatibility shims only (see section 4). |
 | Obsidian-built runtime | `runtime/` (not tracked) is created by `run.ps1` from an installed Obsidian: its Electron build renamed to `Basalt.exe`, plus its native modules `btime` and `get-fonts` (package.json: `UNLICENSED`) | The installer builder no longer copies `btime` and `get-fonts` (both are optional). The renamed `Obsidian.exe` is Obsidian's repackaging of Electron; for a release use a stock Electron build of the same version instead. |
-| Logo | `branding/*`, `src/icon.png`, `src/basalt-logo.png`, `icon.ico`, `cli/src/logo.rs` | A faceted gem in bronze. Its design origin was not determined by this audit; check that it is not a recoloured copy of the Obsidian gem. |
+| Logo | `branding/*`, `src/icon.png`, `src/basalt-logo.png`, `cli/src/logo.rs` | A faceted gem in bronze. Its design origin was not determined by this audit; check that it is not a recoloured copy of the Obsidian gem. |
 
 Files that were derived from or contained verbatim Obsidian text and were removed from the working tree in this cleanup (still in the git
 history): `i18n-fix/` (the original English strings next to the rewrites), `docs/APP-MAP.md` (structure map of the original bundle),

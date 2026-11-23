@@ -1,1 +1,0 @@
-Gd=Object.create(null)

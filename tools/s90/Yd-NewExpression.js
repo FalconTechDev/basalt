@@ -1,1 +1,0 @@
-Yd=new Iu(Kd)

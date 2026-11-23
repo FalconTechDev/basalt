@@ -1,1 +1,0 @@
-cf={rtl:Vn.mark({class:"cm-iso",inclusive:!0,attributes:{dir:"rtl"},bidiIsolate:Xn.RTL}),ltr:Vn.mark({class:"cm-iso",inclusive:!0,attributes:{dir:"ltr"},bidiIsolate:Xn.LTR}),auto:Vn.mark({class:"cm-iso",inclusive:!0,attributes:{dir:"auto"},bidiIsolate:null})}

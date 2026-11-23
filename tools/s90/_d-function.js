@@ -1,1 +1,0 @@
-function _d(e,t,n){t.start=t.pos;for(var i=0;i<10;i++){var r=e(t,n);if(t.pos>t.start)return r}throw new Error("Stream parser failed to advance stream.")}

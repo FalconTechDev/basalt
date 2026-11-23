@@ -1,5 +1,5 @@
 // How much of the inherited bundle has been replaced by own code.
-//   node tools/own-stats.mjs            prints the numbers used in docs/REWRITE-PROGRESS.md
+//   node tools/own-stats.mjs            prints the numbers used in the repository history
 // "replaced" = bytes of the ORIGINAL text (base revision named in src-app/manifest.json) of every function / class that now only
 // forwards to src-app/. Own code size = the readable source in src-app/*.js (what the owner reviews), not the spliced copy.
 import fs from "node:fs";

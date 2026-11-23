@@ -1,1 +1,0 @@
-function rf(e){for(var t=e.iter();!t.next().done;)if(nf(t.value))return!0;return!1}
