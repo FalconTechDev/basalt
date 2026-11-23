@@ -2259,5 +2259,8 @@
 "За три месяца": "Last three months",
 "Открепить все узлы": "Unpin all nodes",
 "Отпустить узлы, которые вы перетащили": "Release the nodes you dragged",
-"несозданные": "uncreated"
+"несозданные": "uncreated",
+"Откройте заметку или доску": "Open a note or a board",
+"Локальный граф показывает связи открытого файла и всё, что с ним соединено.": "The local graph shows the links of the open file and everything connected to it.",
+"Открыть общий граф": "Open the whole graph"
 }
