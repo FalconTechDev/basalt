@@ -1885,5 +1885,8 @@
 "Связать две выбранные карточки": "Link the two selected cards",
 "Как связаны две карточки": "How two cards are connected",
 "Показать только связи выбранной": "Show only the links of the selected card",
-"+ стрелки": "+ arrows"
+"+ стрелки": "+ arrows",
+"Тип карточки или свой подзаголовок": "Card type or your own subtitle",
+"Свой подзаголовок…": "Your own subtitle…",
+"Подзаголовок карточки": "Card subtitle"
 }
