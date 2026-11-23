@@ -75,6 +75,15 @@
       head(h, "Окна и меню");
       if (window.__bsGlass) row(h, "Вид прозрачности", "Стекло — с размытием того, что под окном. Матовое — сильное размытие. Чистая — без размытия.", select([["glass", "Стекло"], ["frost", "Матовое стекло"], ["clear", "Чистая прозрачность"]], () => window.__bsGlass.type(), (v) => window.__bsGlass.setType(v)));
       if (window.__bsGlass) row(h, "Прозрачность окон и меню", "0 % — обычные сплошные окна. Чем больше, тем лучше видно то, что под ними.", slider(0, 100, 5, () => Math.round(window.__bsGlass.level() * 100), (v) => window.__bsGlass.set(v / 100), (v) => (v ? v + " %" : "выключена")));
+      if (window.__bsSfx) {
+        head(h, "Звук");
+        row(h, "Звуки интерфейса", "Короткие звуки на кнопках, при открытии окон и меню, при уведомлениях и действиях на доске.", toggle(() => window.__bsSfx.enabled(), (v) => { window.__bsSfx.set("on", v ? "1" : "0"); if (v) window.__bsSfx.play("done", true); }));
+        row(h, "Громкость звуков", null, slider(0, 100, 5, () => Math.round(window.__bsSfx.level() * 100), (v) => { window.__bsSfx.set("vol", v / 100); window.__bsSfx.play("click", true); }, (v) => v + " %"));
+        row(h, "Звуки кнопок и окон", null, toggle(() => window.__bsSfx.group("ui"), (v) => window.__bsSfx.set("ui", v ? "1" : "0")));
+        row(h, "Звуки на доске", "Новая карточка, связь, удаление, раскладка.", toggle(() => window.__bsSfx.group("board"), (v) => window.__bsSfx.set("board", v ? "1" : "0")));
+        row(h, "Звуки уведомлений", null, toggle(() => window.__bsSfx.group("notice"), (v) => window.__bsSfx.set("notice", v ? "1" : "0")));
+        { const b = document.createElement("button"); b.textContent = "Проверить звуки"; b.onclick = () => { const seq = ["click", "open", "add", "link", "cut", "delete", "notice", "done"]; seq.forEach((n, k) => setTimeout(() => window.__bsSfx.play(n, true), k * 330)); }; row(h, "Проверить звуки", "Проиграет все звуки по очереди.", b); }
+      }
       head(h, "Шрифты");
       for (const [k, t] of [["interfaceFontFamily", "Шрифт интерфейса"], ["textFontFamily", "Шрифт текста"], ["monospaceFontFamily", "Моноширинный шрифт"]]) row(h, t, "Название шрифта, установленного в системе. Пусто: по умолчанию.", text(() => cfg(k), (v) => { setCfg(k, v); app.updateFontFamily(); }, "по умолчанию"));
       head(h, "CSS-сниппеты");

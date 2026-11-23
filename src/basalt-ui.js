@@ -282,3 +282,18 @@
     }
   };
 })();
+
+// Closing: a screen over everything while the app saves, then the main process destroys the window (see src/main.js)
+(() => {
+  if (!/index\.html/.test(location.pathname)) return;
+  window.__bsFlushAndClose = async () => {
+    const ov = document.createElement("div"); ov.className = "bs-closing"; const box = document.createElement("div"); box.className = "bs-closing-box"; const sp = document.createElement("div"); sp.className = "bs-closing-spin"; const tt = document.createElement("div"); tt.className = "bs-closing-t"; tt.textContent = "Закрываем Basalt"; const st = document.createElement("div"); st.className = "bs-closing-s"; st.textContent = "Сохраняем изменения…"; box.append(sp, tt, st); ov.appendChild(box); document.body.appendChild(ov);
+    await new Promise((r) => setTimeout(r, 40));
+    const app = window.app, lim = (p, ms) => Promise.race([Promise.resolve(p).catch(() => {}), new Promise((r) => setTimeout(r, ms))]);
+    try { app.workspace.saveLayout && app.workspace.saveLayout(); } catch (e) { /* ignore */ }
+    const leaves = []; try { app.workspace.iterateAllLeaves((l) => leaves.push(l)); } catch (e) { /* ignore */ }
+    st.textContent = "Сохраняем открытые файлы…"; await lim(Promise.all(leaves.map((l) => (l.view && typeof l.view.save === "function" ? l.view.save() : null))), 1600);
+    if (window.__bsShare && window.__bsShare.flush) { st.textContent = "Сохраняем совместную работу…"; await lim(window.__bsShare.flush(), 1600); }
+    st.textContent = "Готово"; return true;
+  };
+})();

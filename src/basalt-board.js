@@ -18,6 +18,7 @@
     i.onkeydown = (e) => { if (e.key === "Enter") ok.click(); }; M.onClose = () => fin(null); M.open(); setTimeout(() => { i.focus(); i.select(); }, 50);
   });
 
+  const sfx = (n) => { try { window.dispatchEvent(new CustomEvent("bs-sfx", { detail: n })); } catch (e) { /* no sound */ } };
   let BOARD_CLIP = null;
   function makeView(api) {
     return class BoardView extends api.ItemView {
@@ -451,7 +452,7 @@
           return layered(comp, kind === "lr");
         };
         const res = comps.map((comp) => place(comp, mode)); let area = 0, maxW = 0; for (const r of res) { area += (r.w + 80) * (r.h + 80); maxW = Math.max(maxW, r.w); } const rowW = Math.max(maxW, Math.sqrt(area) * 1.5); this.doc.transact(() => { let x = 0, y = 0, rh = 0; for (const r of res) { if (x > 0 && x + r.w > rowW) { x = 0; y += rh + 80; rh = 0; } for (const [v, c] of r.pos) { g(v).set("x", Math.round(bb.x + x + c[0])); g(v).set("y", Math.round(bb.y + y + c[1])); } x += r.w + 80; rh = Math.max(rh, r.h); } });
-        this.resetSides(ids); this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка применена.");
+        this.resetSides(ids); this.um && this.um.stopCapturing(); this.fit(); sfx("done"); this.toastUndo("Раскладка применена.");
       }
       // ----- export to a picture (white background for documents)
       exportMenu(e, ids) {
@@ -714,16 +715,16 @@
         if (this.ro) return;
         const Y = window.__bsY.Y, c = this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2), id = uid(), m = new Y.Map(), t = new Y.Text();
         this.doc.transact(() => { m.set("x", x == null ? c.x - 130 + (Math.random() - .5) * 80 : x); m.set("y", y == null ? c.y - 50 + (Math.random() - .5) * 80 : y); m.set("w", 260); m.set("h", 110); m.set("color", ""); m.set("by", me.name); this.stampM(m); t.insert(0, text || ""); m.set("text", t); this.yn.set(id, m); });
-        this.feed("add", id, this.label(id));
+        this.feed("add", id, this.label(id)); sfx("add");
         this.select(new Set([id])); setTimeout(() => { const e = this.els.get(id); if (e) e.ta.focus(); }, 30); return id;
       }
       addEdge(a, b, sa, sb) {
         if (this.ro) return;
         if (a === b) return; for (const e of this.ye.values()) if ((e.get("a") === a && e.get("b") === b) || (e.get("a") === b && e.get("b") === a)) return;
         const Y = window.__bsY.Y, m = new Y.Map(); this.doc.transact(() => { m.set("a", a); m.set("b", b); m.set("label", ""); if (sa) m.set("sa", sa); if (sb) m.set("sb", sb); this.ye.set(uid(), m); });
-        this.feed("link", null, "«" + this.label(a) + "» → «" + this.label(b) + "»");
+        this.feed("link", null, "«" + this.label(a) + "» → «" + this.label(b) + "»"); sfx("link");
       }
-      removeSel() { if (this.ro) return; for (const id of Array.from(this.sel)) { const m0 = this.yn.get(id); if (m0 && m0.get("locked")) this.sel.delete(id); } for (const id of this.sel) this.feed("del", id, this.label(id)); if (this.selEdge) this.feed("unlink", null, ""); this.doc.transact(() => { for (const id of this.sel) { this.yn.delete(id); for (const [k, e] of Array.from(this.ye.entries())) if (e.get("a") === id || e.get("b") === id) this.ye.delete(k); } if (this.selEdge) this.ye.delete(this.selEdge); }); this.sel = new Set(); this.selEdge = null; this.mark(); }
+      removeSel() { if (this.ro) return; if (this.sel.size) sfx("delete"); for (const id of Array.from(this.sel)) { const m0 = this.yn.get(id); if (m0 && m0.get("locked")) this.sel.delete(id); } for (const id of this.sel) this.feed("del", id, this.label(id)); if (this.selEdge) this.feed("unlink", null, ""); this.doc.transact(() => { for (const id of this.sel) { this.yn.delete(id); for (const [k, e] of Array.from(this.ye.entries())) if (e.get("a") === id || e.get("b") === id) this.ye.delete(k); } if (this.selEdge) this.ye.delete(this.selEdge); }); this.sel = new Set(); this.selEdge = null; this.mark(); }
       setColor(col) { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) { m.set("color", col); this.stampM(m); } } }); for (const id of this.sel) this.feed("color", id, this.label(id)); }
       // ---------- DOM sync ----------
       sync() {
@@ -733,7 +734,7 @@
           const s = e.el.style; s.left = m.get("x") + "px"; s.top = m.get("y") + "px"; s.width = m.get("w") + "px"; s.height = m.get("h") + "px";
           const col = m.get("color") || ""; s.setProperty("--card", col || "var(--background-modifier-border)"); e.el.classList.toggle("has-color", !!col);
           const lb = m.get("lastBy") || m.get("by"), la = m.get("lastAt"); const shortN = (n) => (n.length > 14 ? n.slice(0, 13) + "…" : n); const bt = lb ? shortN(lb) + (la ? " · " + new Date(la).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) : "") : ""; if (e.by.textContent !== bt) e.by.textContent = bt; e.by.style.setProperty("--c", m.get("lastColor") || "var(--text-faint)"); e.by.title = (m.get("by") ? "Создал: " + m.get("by") + "\n" : "") + (lb ? "Последним менял: " + lb : "");
-          { const nt = m.get("note") || ""; if (e.nta.value !== nt) e.nta.value = nt; e.noteEl.classList.toggle("has-note", !!nt); if (nt) e.noteEl.fit(); }
+          { const nt = m.get("note") || ""; if (e.nta.value !== nt) e.nta.value = nt; e.noteEl.classList.toggle("has-note", !!nt); for (const sd of ["b", "r", "t", "l"]) e.noteEl.classList.toggle("is-side-" + sd, (m.get("noteSide") || "b") === sd); if (nt) e.noteEl.fit(); }
           { const kd = m.get("kind") || "", kc = (this.typesList().find((q) => q.n === kd) || {}).c || ""; if (e.kindEl.textContent !== kd) e.kindEl.textContent = kd; e.kindEl.classList.toggle("is-empty", !kd); e.kindEl.title = kd || "Тип карточки или свой подзаголовок"; e.kindEl.style.background = kd ? (kc || "var(--background-modifier-border-hover)") : ""; }
           { const im = m.get("img") || ""; if (im && !e.img) { e.img = document.createElement("img"); e.img.className = "osb-img"; e.img.draggable = false; e.el.insertBefore(e.img, e.ta); } if (e.img) { if (!im) { e.img.remove(); e.img = null; } else if (e.img.dataset.s !== String(im.length)) { e.img.src = im; e.img.dataset.s = String(im.length); } } e.el.classList.toggle("has-img", !!im); e.el.classList.toggle("is-fold", !!m.get("fold")); }
           const txt = m.get("text").toString(); if (e.ta.value !== txt) { const f = document.activeElement === e.ta, p = e.ta.selectionStart; e.ta.value = txt; if (f) { try { e.ta.setSelectionRange(Math.min(p, txt.length), Math.min(p, txt.length)); } catch (er) { /* ok */ } } }
@@ -753,6 +754,10 @@
         nta.addEventListener("blur", () => { if (!nta.value) noteEl.classList.remove("is-open"); });
         nta.addEventListener("keydown", (ev) => { ev.stopPropagation(); if (ev.key === "Escape") { nta.blur(); this.contentEl.focus(); } });
         nta.addEventListener("pointerdown", (ev) => ev.stopPropagation()); noteEl.fit = fitNote;
+        const nbar = noteEl.createDiv({ cls: "osb-note-bar" }); const SIDES = ["b", "r", "t", "l"], SIC = { b: "lucide-arrow-down-to-line", r: "lucide-arrow-right-to-line", t: "lucide-arrow-up-to-line", l: "lucide-arrow-left-to-line" };
+        const pbtn = nbar.createDiv({ cls: "osb-nbb", attr: { title: "Переставить комментарий: снизу, справа, сверху, слева" } }); api.setIcon(pbtn, "lucide-move"); pbtn.onclick = (ev) => { ev.stopPropagation(); if (this.ro) return; const cur = m.get("noteSide") || "b"; this.doc.transact(() => { m.set("noteSide", SIDES[(SIDES.indexOf(cur) + 1) % 4]); }); };
+        const dbtn = nbar.createDiv({ cls: "osb-nbb is-danger", attr: { title: "Удалить комментарий (Ctrl+Z вернёт)" } }); api.setIcon(dbtn, "lucide-trash-2"); dbtn.onclick = (ev) => { ev.stopPropagation(); if (this.ro) return; this.um && this.um.stopCapturing(); this.doc.transact(() => { m.delete("note"); m.delete("noteSide"); }); this.um && this.um.stopCapturing(); noteEl.classList.remove("is-open"); nta.value = ""; };
+        for (const b of [pbtn, dbtn]) b.addEventListener("pointerdown", (ev) => ev.stopPropagation()); void SIC;
         for (const side of ["t", "r", "b", "l"]) { const h = el.createDiv({ cls: "osb-h osb-h-" + side }); h.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); if (this.ro) return; this.drag = { kind: "link", from: id, side }; this.root.classList.add("is-linking"); this.root.setPointerCapture(ev.pointerId); }); }
         for (const dir of ["n", "s", "e", "w", "nw", "ne", "sw", "se"]) { const z = el.createDiv({ cls: "osb-rz osb-rz-" + dir }); z.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); if (this.ro || m.get("locked")) return; const mm = this.yn.get(id), q = this.pt(ev); this.drag = { kind: "size", id, dir, x: mm.get("x"), y: mm.get("y"), w: mm.get("w"), h: mm.get("h"), p: this.worldPt(q.sx, q.sy) }; this.root.setPointerCapture(ev.pointerId); }); }
         grip.addEventListener("pointerdown", (ev) => { if (ev.target.closest(".osb-x, .osb-nb, .osb-kind") || ev.button !== 0 || this.ro) return; if (ev.shiftKey || ev.ctrlKey) { const n2 = new Set(this.sel); n2.has(id) ? n2.delete(id) : n2.add(id); this.select(n2); if (!n2.has(id)) return; } else if (!this.sel.has(id)) this.select(new Set([id])); const o = new Map(); for (const s of this.sel) { const n = this.yn.get(s); if (n && !n.get("locked")) o.set(s, [n.get("x"), n.get("y")]); } if (!o.size) return; const p = this.pt(ev); this.drag = { kind: "move", o, p: this.worldPt(p.sx, p.sy) }; this.root.setPointerCapture(ev.pointerId); });
@@ -775,7 +780,7 @@
         const x1 = +r.ln.getAttribute("x1"), y1 = +r.ln.getAttribute("y1"), x2 = +r.ln.getAttribute("x2"), y2 = +r.ln.getAttribute("y2"); this.cutEl.setAttribute("d", "M" + x1 + " " + y1 + " Q" + w.x + " " + w.y + " " + x2 + " " + y2); this.cutEl.classList.toggle("is-far", d.far);
       }
       cutEnd(d) { if (this.cutEl) { this.cutEl.remove(); this.cutEl = null; } const r = this.edgeEls.get(d.id); if (r) r.g.style.opacity = ""; if (d.far) this.removeEdge(d.id); }
-      removeEdge(id) { const m = this.ye.get(id); if (!m) return; this.feed("unlink", null, ""); this.doc.transact(() => { this.ye.delete(id); }); this.selEdge = null; this.syncEdges(); }
+      removeEdge(id) { const m = this.ye.get(id); if (!m) return; sfx("cut"); this.feed("unlink", null, ""); this.doc.transact(() => { this.ye.delete(id); }); this.selEdge = null; this.syncEdges(); }
       splitEdge(id) {
         const m = this.ye.get(id); if (!m) return; const a = m.get("a"), b = m.get("b"), sa = m.get("sa") || "", sb = m.get("sb") || "", A = this.center(a), B = this.center(b); if (!A || !B) return; this.um && this.um.stopCapturing();
         const nid = this.addCard((A.x + B.x) / 2 - 130, (A.y + B.y) / 2 - 30); this.doc.transact(() => { this.ye.delete(id); }); this.addEdge(a, nid, sa, ""); this.addEdge(nid, b, "", sb); this.um && this.um.stopCapturing(); this.selEdge = null;

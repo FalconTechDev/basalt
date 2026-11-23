@@ -204,3 +204,9 @@
 .bs-confirm-note { margin: 12px 22px 0; font-size: 12px; color: var(--text-muted); }
 .bs-confirm .modal-button-container { margin-top: 18px; padding: 12px 22px; gap: 8px; justify-content: flex-end; border-top: 1px solid var(--background-modifier-border); background: color-mix(in srgb, var(--background-secondary) 70%, transparent); } .bs-confirm .modal-button-container button { height: 32px; padding: 0 18px; border-radius: 4px; }
 .bs-confirm .modal-button-container button.mod-warning { background: var(--bs-danger); color: #fff; }
+
+/* ---- closing screen ---- */
+.bs-closing { position: fixed; inset: 0; z-index: 100000; display: grid; place-items: center; background: color-mix(in srgb, var(--background-primary) 90%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: bs-closing-in .12s ease; }
+.bs-closing-box { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; } .bs-closing-t { font-size: 17px; font-weight: 600; } .bs-closing-s { font-size: 13px; color: var(--text-muted); }
+.bs-closing-spin { width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--background-modifier-border-hover); border-top-color: var(--interactive-accent); animation: bs-closing-spin .8s linear infinite; }
+@keyframes bs-closing-spin { to { transform: rotate(360deg); } } @keyframes bs-closing-in { from { opacity: 0; } }

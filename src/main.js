@@ -382,9 +382,17 @@ module.exports = function start(resources, events) {
 			contextMenu(win, target, p);
 		});
 		spell(wc);
-		// the renderer's beforeunload handler is async, so it always looks like it cancels the close; nothing registers a real quit blocker, so let the window close at once
+		// closing: show the "saving" screen, let the renderer flush what it must, then destroy the window at once (waiting for the page to unload takes seconds)
 		win.webContents.on('will-prevent-unload', (e) => e.preventDefault());
-		win.on('close', (e) => { remember(); writeJson(id, state); if (!e.defaultPrevented) attempt(() => win.hide()); setTimeout(() => { if (!e.defaultPrevented && !win.isDestroyed()) win.destroy(); }, 3000); });
+		win.on('close', (e) => {
+			remember(); writeJson(id, state);
+			if (win.__closing) return;
+			if (!win.loaded) return;
+			e.preventDefault(); win.__closing = true;
+			const finish = () => attempt(() => { if (!win.isDestroyed()) win.destroy(); });
+			const guard = setTimeout(finish, 4000);
+			attempt(() => wc.executeJavaScript('window.__bsFlushAndClose ? window.__bsFlushAndClose() : null').then(() => { clearTimeout(guard); finish(); }, () => { clearTimeout(guard); finish(); }));
+		});
 		win.on('closed', () => { delete windows[id]; if (!quitting && (starterWindow || Object.keys(windows).length > 0)) markOpen(id, false); });
 		let timer;
 		const later = () => { clearTimeout(timer); timer = setTimeout(remember, 100); };

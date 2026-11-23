@@ -731,7 +731,7 @@
     };
     app.workspace.on("file-open", pubFile); app.workspace.on("active-leaf-change", pubFile);
     startPresence();
-    window.__bsShare = { startSaved: () => (savedStart ? savedStart() : null), hasSaved: () => store().length > 0, forPath, host, stop, dialog, join: joinDialog, begin, shares };
+    window.__bsShare = { flush: async () => { for (const sh of shares.values()) { try { clearTimeout(sh.saveT); if (sh.readOnly) sh.wipeSync(); else await sh.save(); } catch (e) { /* closing anyway */ } } }, startSaved: () => (savedStart ? savedStart() : null), hasSaved: () => store().length > 0, forPath, host, stop, dialog, join: joinDialog, begin, shares };
     (async () => {
       let has = store().length > 0; try { has = has || (await app.vault.adapter.exists(STATE)); } catch (e) { /* ignore */ } if (!has) { resolveReady(); return; }
       try { if (await app.vault.adapter.exists(".basalt-ephemeral")) { const fs = window.require("fs"), pa = window.require("path"), base = app.vault.adapter.getBasePath(); const prune = (d) => { for (const n of fs.readdirSync(d)) { if (n.startsWith(".")) continue; const q = pa.join(d, n); try { if (fs.statSync(q).isDirectory()) { prune(q); try { fs.rmdirSync(q); } catch (e) { /* not empty */ } } else fs.unlinkSync(q); } catch (e) { /* locked */ } } }; prune(base); try { fs.unlinkSync(pa.join(base, ".basalt-share.bin")); } catch (e) { /* none */ } } } catch (e) { /* ignore */ }

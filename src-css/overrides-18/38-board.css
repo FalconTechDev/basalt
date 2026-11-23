@@ -305,3 +305,11 @@
 .osb-empty.is-hidden { display: none !important; }
 .osb-by { max-width: 120px; } .osb-kind { max-width: 96px; }
 .modal.bs-ask { width: 420px; max-width: 92vw; padding: 20px 22px 16px; } .bs-ask .modal-title { font-size: 16px; font-weight: 600; margin: 0 0 12px; } .bs-ask-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; } .bs-ask-in { width: 100%; height: 34px; } .bs-ask .modal-button-container { margin-top: 16px; gap: 8px; justify-content: flex-end; }
+
+/* ---- note: any side, buttons ---- */
+.osb-note.is-side-t { top: auto; bottom: 100%; margin-top: 0; margin-bottom: 5px; }
+.osb-note.is-side-r { left: 100%; right: auto; top: 0; width: 200px; margin: 0 0 0 9px; }
+.osb-note.is-side-l { left: auto; right: 100%; top: 0; width: 200px; margin: 0 9px 0 0; }
+.osb-note-bar { position: absolute; right: 3px; top: -11px; display: flex; gap: 2px; opacity: 0; transition: opacity .12s; } .osb-note:hover .osb-note-bar, .osb-note:focus-within .osb-note-bar { opacity: 1; }
+.osb-note.is-side-t .osb-note-bar { top: auto; bottom: -11px; }
+.osb-nbb { width: 20px; height: 20px; display: grid; place-items: center; cursor: pointer; border-radius: 3px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border-hover); color: var(--text-muted); } .osb-nbb svg { width: 12px; height: 12px; } .osb-nbb:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .osb-nbb.is-danger:hover { color: #fff; background: #e5484d; border-color: #e5484d; }
