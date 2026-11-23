@@ -288,6 +288,8 @@
         const un = bar.createDiv({ cls: "osb-dt", attr: { title: "Отменить (Ctrl+Z)" } }); api.setIcon(un, "lucide-undo-2"); un.onclick = () => this.undo(); const re = bar.createDiv({ cls: "osb-dt", attr: { title: "Повторить (Ctrl+Y)" } }); api.setIcon(re, "lucide-redo-2"); re.onclick = () => this.redo();
         const clr = bar.createDiv({ cls: "osb-dt is-danger", attr: { title: "Стереть весь рисунок" } }); api.setIcon(clr, "lucide-trash-2"); clr.onclick = () => { const a = this.inkArr(); if (a && a.length) a.delete(0, a.length); };
         const done = bar.createDiv({ cls: "osb-dt osb-ddone", attr: { title: "Готово" } }); api.setIcon(done, "lucide-check"); done.onclick = () => this.toggleDraw(false);
+        this.wandBtn = wand; const ORDER = ["select", "pen", "hl", "line", "arrow", "rect", "ellipse", "text", "eraser"];
+        for (const b of bar.querySelectorAll(".osb-dt[data-t]")) { const n = ORDER.indexOf(b.dataset.t) + 1; if (n > 0) { b.dataset.n = String(n); b.title = (b.title || "") + " [" + n + "]"; } } wand.dataset.n = "0"; wand.title = (wand.title || "") + " [0]";
         this.setTool(this.tool || "pen");
       }
       startInk(e) {
@@ -1328,6 +1330,7 @@
           const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), mod = e.ctrlKey || e.metaKey, k = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3).toLowerCase() : e.key.toLowerCase();
           if (mod && k === "f") { e.preventDefault(); this.toggleSearch(true); return; } if (inField) return;
           if (e.code === "Space" && !inField) { this.space = true; this.root.classList.add("is-hand"); e.preventDefault(); return; }
+          if (this.draw && !mod && !e.altKey && !e.shiftKey) { const dm = /^(?:Digit|Numpad)(\d)$/.exec(e.code || ""); if (dm) { e.preventDefault(); const n = +dm[1]; if (n === 0) { if (this.wandBtn) this.wandBtn.click(); } else { const t = ["select", "pen", "hl", "line", "arrow", "rect", "ellipse", "text", "eraser"][n - 1]; if (t) this.setTool(t); } return; } }
           if (this.draw) { if (e.key === "Escape") this.toggleDraw(false); else if ((e.key === "Delete" || e.key === "Backspace") && this.inkSet && this.inkSet.size) { this.inkDeleteSel(); } else if (mod && k === "a" && this.tool === "select") { e.preventDefault(); this.inkSelect(new Set((this._ink ? this._ink.toArray() : []).map((q) => q.id))); return; } else if (k === "v" && !mod) this.setTool("select"); else if (k === "h" && !mod) this.setTool("hl"); else if (k === "t" && !mod) this.setTool("text"); else if (k === "p") this.setTool("pen"); else if (k === "e") this.setTool("eraser"); else if (k === "l") this.setTool("line"); else if (k === "r") this.setTool("rect"); else if (k === "o") this.setTool("ellipse"); else if (k === "a" && !mod) this.setTool("arrow"); if (!(mod && (k === "z" || k === "y"))) return; }
           if (this.ro) { if (k === "f") this.fit(); return; }
           if (e.key === "Escape") this.clearFocus();
