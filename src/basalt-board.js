@@ -22,6 +22,15 @@
     return class BoardView extends api.ItemView {
       constructor(leaf) { super(leaf); this.path = null; this.sel = new Set(); this.cam = { x: 0, y: 0, k: 1 }; this.peers = []; this.saveT = 0; this.drag = null; this.els = new Map(); this.edgeEls = new Map(); this.cursors = new Map(); }
       getViewType() { return VIEW; }
+      onPaneMenu(menu, source) {
+        try { if (super.onPaneMenu) super.onPaneMenu(menu, source); } catch (e) { /* base menu failed */ }
+        const it = (t, ic, fn) => menu.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)), ids = this.sel.size ? Array.from(this.sel) : null, part = ids ? " (выделенное)" : "";
+        menu.addSeparator(); it("Копировать картинкой, белый фон" + part, "lucide-clipboard-copy", () => this.exportPng(ids, "white", "clip")); it("Сохранить PNG, белый фон" + part, "lucide-image-down", () => this.exportPng(ids, "white", "file")); it("Сохранить PNG, прозрачный фон" + part, "lucide-image", () => this.exportPng(ids, "none", "file")); it("Сохранить PNG, тёмный фон" + part, "lucide-moon", () => this.exportPng(ids, "dark", "file"));
+        if (ids) it("Сохранить выделенное как новую доску", "lucide-file-plus", () => this.saveSelAsBoard(ids));
+        menu.addSeparator(); it("Импортировать доску…", "lucide-file-input", () => this.importDialog()); it("Добавить изображение…", "lucide-image-plus", () => this.pickImage());
+        menu.addSeparator(); it("Раскладка: дерево слева направо", "lucide-git-fork", () => this.layout("lr", ids && ids.length > 1 ? ids : null)); it("Раскладка: дерево сверху вниз", "lucide-git-branch", () => this.layout("td", ids && ids.length > 1 ? ids : null)); it("Раскладка: радиально", "lucide-orbit", () => this.layout("radial", ids && ids.length > 1 ? ids : null)); it("Раскладка: силовая", "lucide-network", () => this.layout("force", ids && ids.length > 1 ? ids : null));
+        menu.addSeparator(); it("Показать или скрыть правую панель", "lucide-panel-right", () => { try { const sp = app.workspace.rightSplit; sp.collapsed ? sp.expand() : sp.collapse(); } catch (e) { /* no side panel */ } });
+      }
       getDisplayText() { return this.path ? this.path.replace(/^.*\//, "").replace(/\.board$/, "") : "Доска"; }
       getIcon() { return "lucide-layout-dashboard"; }
       getState() { return { path: this.path, file: this.path }; }
@@ -41,7 +50,6 @@
         this.snapBtn = btn("lucide-magnet", "Прилипание к сетке", () => { this.snap = !this.snap; this.snapBtn.classList.toggle("is-on", this.snap); try { localStorage.setItem("board-snap", this.snap ? "1" : "0"); } catch (e) { /* private */ } });
         try { this.snap = localStorage.getItem("board-snap") === "1"; } catch (e) { this.snap = false; } this.snapBtn.classList.toggle("is-on", !!this.snap);
         this.searchBtn = btn("lucide-search", "Поиск", () => this.toggleSearch());
-        btn("lucide-network", "Раскладка графа", (e) => this.layoutMenu(e)); btn("lucide-plus-square", "Добавить: изображение, другая доска", (e) => this.addMenu(e)); btn("lucide-image-down", "Экспорт доски в картинку", (e) => this.exportMenu(e, null));
         this.share = document.createElement("div"); this.zoomPct = document.createElement("span");
         const rail = this.rail = c.createDiv({ cls: "osb-rail" });
         const rb = (icon, tip, fn, cls) => { const x = rail.createDiv({ cls: "osb-rb" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; }; const rs = () => rail.createDiv({ cls: "osb-rsep" });
@@ -263,16 +271,11 @@
       }
       // ----- the pointer shows the tool: a ring of the real brush size, a dashed ring for the eraser, a fine cross for shapes
       drawCursor() {
-        if (!this.root) return; const t = this.tool || "pen", k = this.cam.k, svg = (n, body, hx) => "url(\"data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + n + '" height="' + n + '">' + body + "</svg>") + "\") " + hx + " " + hx;
-        let v;
-        const ring = (d, dash) => { const n = Math.max(16, Math.ceil(d) + 6), c = n / 2, r = Math.max(2, d / 2); return svg(n, '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="#fff" stroke-width="3"' + (dash ? ' stroke-dasharray="4 3"' : "") + ' opacity=".9"/><circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="#000" stroke-width="1.2"' + (dash ? ' stroke-dasharray="4 3"' : "") + '/><circle cx="' + c + '" cy="' + c + '" r="1" fill="#000"/>', c); };
-        if (t === "pen") v = ring(Math.min(120, Math.max(6, (this.inkW || 4) * k)));
-        else if (t === "hl") v = ring(Math.min(160, Math.max(10, (this.inkW || 4) * 3 * k)));
-        else if (t === "eraser") v = ring(Math.min(140, Math.max(14, Math.max(7, (this.inkW || 4) * 1.2) * 2 * k)), true);
-        else if (t === "select") v = "default";
-        else if (t === "text") v = "text";
-        else v = svg(28, '<path d="M14 2v9M14 17v9M2 14h9M17 14h9" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M14 2v9M14 17v9M2 14h9M17 14h9" stroke="#000" stroke-width="1.4" stroke-linecap="round"/>', 14);
-        this.root.style.setProperty("--osb-cur", v === "default" || v === "text" ? v : v + ", crosshair");
+        if (!this.root) return; const t = this.tool || "pen", k = this.cam.k; let d = 0, kind = "";
+        if (t === "pen") { d = Math.min(120, Math.max(6, (this.inkW || 4) * k)); kind = "ring"; } else if (t === "hl") { d = Math.min(160, Math.max(10, (this.inkW || 4) * 3 * k)); kind = "ring"; } else if (t === "eraser") { d = Math.min(140, Math.max(14, Math.max(7, (this.inkW || 4) * 1.2) * 2 * k)); kind = "dash"; } else if (t === "line" || t === "arrow" || t === "rect" || t === "ellipse") { d = 22; kind = "cross"; }
+        if (!this.ringEl) { this.ringEl = this.root.createDiv({ cls: "osb-ring" }); }
+        const r = this.ringEl; r.className = "osb-ring is-" + (kind || "none"); r.style.width = r.style.height = d + "px"; r.style.marginLeft = r.style.marginTop = -d / 2 + "px";
+        this.root.classList.toggle("is-ringed", !!kind); this.root.style.setProperty("--osb-cur", kind ? "none" : t === "text" ? "text" : "default");
       }
       // a stroke that was drawn and then held still becomes a clean line, rectangle or ellipse
       recognize(pts) {
@@ -465,7 +468,7 @@
           const locked = ids.every((i) => this.yn.get(i).get("locked")); mk(locked ? "lucide-unlock" : "lucide-lock", locked ? "Разблокировать" : "Закрепить на месте", () => this.setLock(!locked));
           if (ids.length > 1) mk("lucide-align-horizontal-distribute-center", "Выровнять", (e) => this.alignMenu(e));
           if (ids.length > 1) mk("lucide-layout-grid", "Упорядочить", (e) => this.tidyMenu(e, ids));
-          const folded = ids.every((i) => this.yn.get(i).get("fold")); mk(folded ? "lucide-chevrons-up-down" : "lucide-chevrons-down-up", folded ? "Развернуть" : "Свернуть (Z)", () => this.setFold(!folded)); mk("lucide-image-down", "Экспорт выделенного", (e) => this.exportMenu(e, ids));
+          const folded = ids.every((i) => this.yn.get(i).get("fold")); mk(folded ? "lucide-chevrons-up-down" : "lucide-chevrons-down-up", folded ? "Развернуть" : "Свернуть (Z)", () => this.setFold(!folded));
           mk("lucide-languages", "Перевести", () => this.translate(bar)); if (hasOrig) mk("lucide-undo-2", "Вернуть оригинал", () => this.restoreOrig());
           bar.createDiv({ cls: "osb-bsep" }); mk("lucide-trash-2", "Удалить (Del)", () => this.removeSel()).classList.add("is-danger");
         }
@@ -606,7 +609,7 @@
           r.setPointerCapture(e.pointerId);
         });
         r.addEventListener("pointermove", (e) => {
-          const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.myCur = w; const d = this.drag;
+          const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.myCur = w; const d = this.drag; if (this.ringEl) { if (this.draw && !e.target.closest(".osb-dtb, .osb-rail, .osb-sel")) { this.ringEl.style.transform = "translate(" + p.sx + "px," + p.sy + "px)"; this.ringEl.style.opacity = "1"; } else this.ringEl.style.opacity = "0"; }
           if (d && d.kind === "pan") { if (Math.abs(p.sx - d.sx) + Math.abs(p.sy - d.sy) > 3) d.moved = true; this.cam.x = d.cx - (p.sx - d.sx) / this.cam.k; this.cam.y = d.cy - (p.sy - d.sy) / this.cam.k; this.applyCam(); }
           else if (d && d.kind === "move") { d.moved = true; let dx = w.x - d.p.x, dy = w.y - d.p.y; const g = this.guide(d, dx, dy); dx = g.dx; dy = g.dy; this.doc.transact(() => { for (const [s0, [x, y]] of d.o) { const n = this.yn.get(s0); if (n) { n.set("x", g.sx ? Math.round(x + dx) : this.sn(x + dx)); n.set("y", g.sy ? Math.round(y + dy) : this.sn(y + dy)); } } }); }
           else if (d && d.kind === "size") {
@@ -620,7 +623,7 @@
           this.publish();
         });
         const up = (e) => { const d = this.drag; this.drag = null; if (d && d.kind === "ink") this.endInk(d); r.classList.remove("is-panning"); this.clearGuides(); if (d && d.kind === "pan" && !d.moved && !this.ro) { this.select(new Set()); this.selEdge = null; this.mark(); } if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } if (this.lt) { const o = this.els.get(this.lt); if (o) o.el.classList.remove("is-linktgt"); this.lt = null; } if (d && d.kind === "link") { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), t = this.linkTarget(w, d.from); if (t) this.addEdge(d.from, t); else { const near = Array.from(this.yn.entries()).some(([i, m]) => i !== d.from && w.x >= m.get("x") && w.x <= m.get("x") + m.get("w") && w.y >= m.get("y") && w.y <= m.get("y") + m.get("h")); if (!near && Math.hypot(w.x - this.center(d.from).x, w.y - this.center(d.from).y) > 40) { const id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } } };
-        r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
+        r.addEventListener("pointerleave", () => { if (this.ringEl) this.ringEl.style.opacity = "0"; }); r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
         r.addEventListener("wheel", (e) => {
           const ta = e.target.closest && e.target.closest(".osb-ta"); if (ta && !e.ctrlKey && ta.scrollHeight > ta.clientHeight) return; e.preventDefault();
           const mouse = e.deltaMode === 1 || (e.deltaX === 0 && Number.isInteger(e.deltaY) && Math.abs(e.deltaY) >= 100 && (Math.abs(e.deltaY) % 100 === 0 || Math.abs(e.deltaY) % 120 === 0));
@@ -637,14 +640,14 @@
           if (card) {
             const id = card.dataset.id; if (!this.sel.has(id)) this.select(new Set([id]));
             it("Дублировать", "lucide-copy", () => { for (const s of Array.from(this.sel)) { const n = this.yn.get(s); if (n) this.addCard(n.get("x") + 30, n.get("y") + 30, n.get("text").toString()); } });
-            it("Копировать текст", "lucide-clipboard", () => { const n = this.yn.get(id); if (n) navigator.clipboard.writeText(n.get("text").toString()).catch(() => {}); });
+            it("Экспорт выделенного…", "lucide-image-down", () => this.exportMenu(e, Array.from(this.sel))); it("Копировать текст", "lucide-clipboard", () => { const n = this.yn.get(id); if (n) navigator.clipboard.writeText(n.get("text").toString()).catch(() => {}); });
             it("На передний план", "lucide-bring-to-front", () => { const n = this.yn.get(id), e2 = this.els.get(id); if (e2) this.cards.appendChild(e2.el); });
             m.addSeparator(); it("Удалить", "lucide-trash-2", () => this.removeSel());
           } else if (eg) {
             const id = Array.from(this.edgeEls).find(([, r2]) => r2.g === eg || eg.contains(r2.g))?.[0]; const ed = id && this.ye.get(id);
             if (ed) { it("Подписать связь", "lucide-type", () => this.editLabel(id)); m.addSeparator(); it("Удалить связь", "lucide-trash-2", () => { this.feed("unlink", null, ""); this.ye.delete(id); }); }
           } else {
-            it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30)); it("Вставить изображение…", "lucide-image-plus", () => this.pickImage(w)); it("Импортировать доску…", "lucide-file-input", () => this.importDialog(w));
+            it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30)); it("Вставить изображение…", "lucide-image-plus", () => this.pickImage(w)); it("Импортировать доску…", "lucide-file-input", () => this.importDialog(w)); it("Раскладка графа…", "lucide-network", () => this.layoutMenu(e)); it("Экспорт в картинку…", "lucide-image-down", () => this.exportMenu(e, null)); it("Показать или скрыть правую панель", "lucide-panel-right", () => { try { const sp = app.workspace.rightSplit; sp.collapsed ? sp.expand() : sp.collapse(); } catch (er) { /* no side panel */ } });
             it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
             m.addSeparator(); if (this.yn.size > 1) { it("Упорядочить всё по сетке", "lucide-grid-3x3", () => this.tidy("grid", null)); it("Расставить сеткой", "lucide-layout-grid", () => this.tidy("cells", null)); m.addSeparator(); } it("Показать всё", "lucide-maximize", () => this.fit());
           }
@@ -653,7 +656,7 @@
         this.contentEl.tabIndex = 0;
         this.contentEl.addEventListener("keyup", (e) => { if (e.code === "Space") { this.space = false; this.root.classList.remove("is-hand"); } });
         this.contentEl.addEventListener("keydown", (e) => {
-          const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
+          const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), mod = e.ctrlKey || e.metaKey, k = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3).toLowerCase() : e.key.toLowerCase();
           if (mod && k === "f") { e.preventDefault(); this.toggleSearch(true); return; } if (inField) return;
           if (e.code === "Space" && !inField) { this.space = true; this.root.classList.add("is-hand"); e.preventDefault(); return; }
           if (this.draw) { if (e.key === "Escape") this.toggleDraw(false); else if ((e.key === "Delete" || e.key === "Backspace") && this.inkSet && this.inkSet.size) { this.inkDeleteSel(); } else if (mod && k === "a" && this.tool === "select") { e.preventDefault(); this.inkSelect(new Set((this._ink ? this._ink.toArray() : []).map((q) => q.id))); return; } else if (k === "v" && !mod) this.setTool("select"); else if (k === "h" && !mod) this.setTool("hl"); else if (k === "t" && !mod) this.setTool("text"); else if (k === "p") this.setTool("pen"); else if (k === "e") this.setTool("eraser"); else if (k === "l") this.setTool("line"); else if (k === "r") this.setTool("rect"); else if (k === "o") this.setTool("ellipse"); else if (k === "a" && !mod) this.setTool("arrow"); if (!mod) return; }

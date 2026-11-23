@@ -251,3 +251,12 @@
 .bs-imp-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bs-imp-p, .bs-imp-empty { color: var(--text-faint); font-size: 12px; } .bs-imp-empty { padding: 18px; text-align: center; } .bs-imp-ic svg { width: 16px; height: 16px; color: var(--text-muted); }
 .bs-imp-box { width: 16px; height: 16px; display: grid; place-items: center; border: 1.5px solid var(--background-modifier-border-hover); border-radius: 3px; color: transparent; } .bs-imp-box svg { width: 12px; height: 12px; } .bs-imp-row.is-on .bs-imp-box { background: var(--interactive-accent); border-color: var(--interactive-accent); color: #fff; } .bs-imp-sw { width: 4px; align-self: stretch; border-radius: 1px; }
 .bs-imp .modal-button-container { margin-top: 14px; gap: 8px; align-items: center; } .bs-imp-ink { margin-right: auto; font-size: 12.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+
+/* ---- one-row draw bar, ring cursor, card corners ---- */
+.osb-dtb { flex-wrap: nowrap !important; gap: 2px !important; padding: 4px !important; max-width: calc(100% - 16px) !important; overflow-x: auto; }
+.osb-dtb .osb-dt { width: 30px; height: 30px; flex: none; } .osb-dtb .osb-dw { width: 22px; height: 30px; } .osb-dtb .osb-bsep { margin: 0 4px; }
+.osb-ring { position: absolute; left: 0; top: 0; z-index: 30; pointer-events: none; opacity: 0; box-sizing: border-box; will-change: transform; }
+.osb-ring.is-ring, .osb-ring.is-dash { border-radius: 50%; border: 1px solid #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, .85), inset 0 0 0 1px rgba(255, 255, 255, .55); } .osb-ring.is-dash { border-style: dashed; }
+.osb-ring.is-cross::before, .osb-ring.is-cross::after { content: ""; position: absolute; background: #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, .85); } .osb-ring.is-cross::before { left: 50%; top: 0; bottom: 0; width: 1px; } .osb-ring.is-cross::after { top: 50%; left: 0; right: 0; height: 1px; } .osb-ring.is-none { display: none; }
+.osb-root.is-draw.is-ringed, .osb-root.is-draw.is-ringed .osb-world, .osb-root.is-draw.is-ringed .osb-ink, .osb-root.is-draw.is-ringed .osb-ink * { cursor: none !important; }
+.osb-grip { border-radius: 2px 2px 0 0 !important; } .osb-card { border-radius: 4px; }

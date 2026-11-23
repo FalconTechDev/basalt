@@ -1745,5 +1745,17 @@
 "Один объект": "One item",
 "Удалённое попадёт в корзину, откуда его можно вернуть.": "Deleted items go to the trash, where you can restore them from.",
 "Выбрать все": "Select all",
-"Ещё: ": "More: "
+"Ещё: ": "More: ",
+"Копировать картинкой, белый фон": "Copy as a picture, white background",
+"Раскладка: дерево слева направо": "Layout: tree, left to right",
+"Раскладка: дерево сверху вниз": "Layout: tree, top down",
+"Раскладка: радиально": "Layout: radial",
+"Раскладка: силовая": "Layout: force",
+"Показать или скрыть правую панель": "Show or hide the right panel",
+"Раскладка графа…": "Graph layout…",
+"Экспорт в картинку…": "Export as a picture…",
+"Экспорт выделенного…": "Export selection…",
+"Добавить изображение…": "Add an image…",
+"Полупрозрачные окна и меню": "Semi-transparent windows and menus",
+"Выключено: окна, меню и панели сплошные.": "Off: windows, menus and panels are solid."
 }

@@ -21005,6 +21005,73 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     align-items:center;
     gap:6px
 }
+.osb-dtb{
+    flex-wrap:nowrap!important;
+    gap:2px!important;
+    padding:4px!important;
+    max-width:calc(100% - 16px)!important;
+    overflow-x:auto
+}
+.osb-dtb .osb-dt{
+    width:30px;
+    height:30px;
+    flex:none
+}
+.osb-dtb .osb-dw{
+    width:22px;
+    height:30px
+}
+.osb-dtb .osb-bsep{
+    margin:0 4px
+}
+.osb-ring{
+    position:absolute;
+    left:0;
+    top:0;
+    z-index:30;
+    pointer-events:none;
+    opacity:0;
+    box-sizing:border-box;
+    will-change:transform
+}
+.osb-ring.is-ring,.osb-ring.is-dash{
+    border-radius:50%;
+    border:1px solid #000;
+    box-shadow:0 0 0 1px rgba(255,255,255,.85),inset 0 0 0 1px rgba(255,255,255,.55)
+}
+.osb-ring.is-dash{
+    border-style:dashed
+}
+.osb-ring.is-cross::before,.osb-ring.is-cross::after{
+    content:"";
+    position:absolute;
+    background:#000;
+    box-shadow:0 0 0 1px rgba(255,255,255,.85)
+}
+.osb-ring.is-cross::before{
+    left:50%;
+    top:0;
+    bottom:0;
+    width:1px
+}
+.osb-ring.is-cross::after{
+    top:50%;
+    left:0;
+    right:0;
+    height:1px
+}
+.osb-ring.is-none{
+    display:none
+}
+.osb-root.is-draw.is-ringed,.osb-root.is-draw.is-ringed .osb-world,.osb-root.is-draw.is-ringed .osb-ink,.osb-root.is-draw.is-ringed .osb-ink *{
+    cursor:none!important
+}
+.osb-grip{
+    border-radius:2px 2px 0 0!important
+}
+.osb-card{
+    border-radius:4px
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
@@ -22650,8 +22717,16 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .modal.bset .bset-nav{
     background-color:color-mix(in srgb,var(--background-secondary) calc(var(--bs-win-a,.75) * 70%),transparent)!important
 }
-.modal.bset .bset-main,.modal.bset .bset-head{
+.modal.bset .bset-main{
     background-color:transparent!important
+}
+.modal.bset .bset-head{
+    background-color:color-mix(in srgb,var(--background-primary) 88%,transparent)!important;
+    border-bottom:1px solid var(--background-modifier-border);
+    backdrop-filter:blur(var(--bs-blur,16px))
+}
+html[data-glass="off"] .modal-bg{
+    backdrop-filter:none
 }
 .modal.bset .bset-row{
     background-color:transparent
@@ -22667,5 +22742,31 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     background-color:rgba(0,0,0,.38);
     -webkit-backdrop-filter:blur(3px);
     backdrop-filter:blur(3px)
+}
+.modal.bset .bset-main h2{
+    position:sticky;
+    top:-24px;
+    z-index:2;
+    margin:-24px -36px 14px;
+    padding:18px 36px 12px;
+    font-size:18px;
+    font-weight:600;
+    letter-spacing:0;
+    border-bottom:1px solid var(--background-modifier-border);
+    background-color:color-mix(in srgb,var(--background-primary) 90%,transparent);
+    backdrop-filter:blur(var(--bs-blur,16px))
+}
+.modal.bset .bset-main h3{
+    color:var(--text-normal);
+    opacity:.72;
+    font-weight:600;
+    padding-top:14px;
+    margin-top:22px;
+    border-top:1px solid var(--background-modifier-border)
+}
+.modal.bset .bset-main h2 + h3,.modal.bset .bset-main h2 + .bset-row{
+    border-top:0;
+    margin-top:8px;
+    padding-top:0
 }
 
