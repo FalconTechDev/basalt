@@ -7,8 +7,9 @@
   const CULL_MIN = 120, LOD_K = 0.32, MD_CAP = 4000, LITE_CAP = 12000, EDGE_CAP = 9000, INK_SVG_MAX = 1500;
   const COLORS = ["", "#e5484d", "#f59f3b", "#d6b43c", "#46a758", "#3fa7d6", "#8e6bd8"];
   const PEER = ["#e5484d", "#f59f3b", "#3fa7d6", "#46a758", "#8e6bd8", "#c0699f", "#d6b43c"];
-  const b64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
-  const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  // Buffer (when the renderer has it) is about ten times faster than building a binary string, and big boards are mostly this
+  const b64 = (u8) => { if (typeof Buffer !== "undefined") return Buffer.from(u8.buffer, u8.byteOffset, u8.length).toString("base64"); let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+  const unb64 = (s) => { if (typeof Buffer !== "undefined") { const b = Buffer.from(s, "base64"); return new Uint8Array(b.buffer, b.byteOffset, b.length); } return Uint8Array.from(atob(s), (c) => c.charCodeAt(0)); };
   const uid = () => Math.random().toString(36).slice(2, 10);
   const signalingList = () => { try { const j = JSON.parse(localStorage.getItem("board-signaling") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return []; };
   const me = (() => { try { const j = JSON.parse(localStorage.getItem("board-me") || "null"); if (j) return j; } catch (e) { /* none */ } const j = { name: "Участник " + uid().slice(0, 3), color: PEER[Math.floor(Math.random() * PEER.length)] }; try { localStorage.setItem("board-me", JSON.stringify(j)); } catch (e) { /* private */ } return j; })();
@@ -110,12 +111,14 @@
         this.fit(); this.sync(); this.feedArr(); this.renderFeed(); this.startHistory();
         if (this.ym.get("room")) this.connect(this.ym.get("room"), this.ym.get("pass") || "");
       }
-      queueSave() { if (this.sh) return; clearTimeout(this.saveT); const n = this.yn ? this.yn.size : 0; this.saveT = setTimeout(() => this.save(), n > 3000 ? 4000 : n > 800 ? 1500 : 400); }
+      queueSave() { if (this.sh) return; clearTimeout(this.saveT); const n = this.yn ? this.yn.size : 0; this.saveT = setTimeout(() => this.save(), Math.max(n > 3000 ? 4000 : n > 800 ? 1500 : 400, Math.min(60000, (this._saveMs || 0) * 8))); }
       async save() {
         if (this.sh || !this.doc || !this.path) return; const Y = window.__bsY.Y;
         const nodes = {}; this.yn.forEach((m, id) => { nodes[id] = { x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "" }; });
-        const out = { v: 2, id: this.ym.get("id"), room: this.ym.get("room") || null, nodes, edges: this.ye.toJSON(), ydoc: b64(Y.encodeStateAsUpdate(this.doc)) };
-        try { await app.vault.adapter.write(this.path, this.yn.size > 600 ? JSON.stringify(out) : JSON.stringify(out, null, 1)); } catch (e) { console.error(e); }
+        const out = { v: 2, id: this.ym.get("id"), room: this.ym.get("room") || null, nodes, edges: this.ye.toJSON(), ydoc: "@@YDOC@@" }; const t0 = performance.now(), y64 = b64(Y.encodeStateAsUpdate(this.doc));
+        // the big base64 string goes in by splicing, not through JSON.stringify (no escaping pass, one copy less)
+        try { await app.vault.adapter.write(this.path, (this.yn.size > 600 ? JSON.stringify(out) : JSON.stringify(out, null, 1)).replace('"@@YDOC@@"', () => '"' + y64 + '"')); } catch (e) { console.error(e); }
+        this._saveMs = performance.now() - t0;
       }
       get ro() { return !!(this.sh && this.sh.readOnly) || !!this.locked; }
       toggleLock() { this.locked = !this.locked; this.lockBtn.classList.toggle("is-on", this.locked); this.lockBtn.empty(); api.setIcon(this.lockBtn, this.locked ? "lucide-lock" : "lucide-unlock"); this.lockBtn.title = this.locked ? "Разблокировать доску" : "Заблокировать доску"; if (this.locked) { this.sel = new Set(); this.mark(); } this.sync(); this.renderSelBar(); }
