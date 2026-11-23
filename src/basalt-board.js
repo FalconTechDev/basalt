@@ -113,13 +113,23 @@
           if (vo > 0) { const gr = o.x - (bx + W), gl = bx - (o.x + o.w); for (const g of d.gx) { if (gr > 0) cx.push({ d: gr - g, at: bx + (gr - g) + W, ai: 2, o, kind: "gap", g, side: "r" }); if (gl > 0) cx.push({ d: g - gl, at: bx + (g - gl), ai: 0, o, kind: "gap", g, side: "l" }); } }
           if (ho > 0) { const gb = o.y - (by + H), gt = by - (o.y + o.h); for (const g of d.gy) { if (gb > 0) cy.push({ d: gb - g, at: by + (gb - g) + H, ai: 2, o, kind: "gap", g, side: "b" }); if (gt > 0) cy.push({ d: g - gt, at: by + (g - gt), ai: 0, o, kind: "gap", g, side: "t" }); } }
         }
-        const sx = bestOf(cx, d.stX, xs), sy = bestOf(cy, d.stY, ys); d.stX = sx; d.stY = sy; const out = { dx: dx + (sx ? sx.d : 0), dy: dy + (sy ? sy.d : 0), sx: !!sx, sy: !!sy }; this.drawGuides(sx, sy, { x: d.box.x + out.dx, y: d.box.y + out.dy, w: W, h: H }); return out;
+        const sx = bestOf(cx, d.stX, xs), sy = bestOf(cy, d.stY, ys); d.stX = sx; d.stY = sy; const out = { dx: dx + (sx ? sx.d : 0), dy: dy + (sy ? sy.d : 0), sx: !!sx, sy: !!sy }; this.drawGuides(sx, sy, { x: d.box.x + out.dx, y: d.box.y + out.dy, w: W, h: H }, d.others); return out;
       }
-      drawGuides(sx, sy, box) {
-        let gl = this.guides; if (!gl) gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); gl.empty(); const line = (o, at, a, b) => { const l = gl.createDiv({ cls: "osb-gl is-" + o }); if (o === "v") l.style.cssText = "left:" + at + "px;top:" + a + "px;height:" + (b - a) + "px"; else l.style.cssText = "top:" + at + "px;left:" + a + "px;width:" + (b - a) + "px"; };
+      // every edge / centre line of `box` that coincides with one of the other cards gets a guide that reaches all of them
+      edgeLines(gl, box, others) {
+        const tol = 1.2 / this.cam.k + 0.01, xs = [box.x, box.x + box.w / 2, box.x + box.w], ys = [box.y, box.y + box.h / 2, box.y + box.h], vx = new Map(), hy = new Map();
+        const add = (m, at, a, b) => { const key = Math.round(at * 2); const cur = m.get(key); if (cur) { cur.a = Math.min(cur.a, a); cur.b = Math.max(cur.b, b); } else m.set(key, { at, a, b }); };
+        for (const o of others) { const ox = [o.x, o.x + o.w / 2, o.x + o.w], oy = [o.y, o.y + o.h / 2, o.y + o.h];
+          for (const a of xs) for (const b of ox) if (Math.abs(a - b) < tol) add(vx, b, Math.min(box.y, o.y), Math.max(box.y + box.h, o.y + o.h));
+          for (const a of ys) for (const b of oy) if (Math.abs(a - b) < tol) add(hy, b, Math.min(box.x, o.x), Math.max(box.x + box.w, o.x + o.w)); }
+        for (const g of vx.values()) { const l = gl.createDiv({ cls: "osb-gl is-v" }); l.style.cssText = "left:" + g.at + "px;top:" + g.a + "px;height:" + (g.b - g.a) + "px"; }
+        for (const g of hy.values()) { const l = gl.createDiv({ cls: "osb-gl is-h" }); l.style.cssText = "top:" + g.at + "px;left:" + g.a + "px;width:" + (g.b - g.a) + "px"; }
+      }
+      drawGuides(sx, sy, box, others) {
+        let gl = this.guides; if (!gl) gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); gl.empty(); if (others) this.edgeLines(gl, box, others); const line = (o, at, a, b) => { const l = gl.createDiv({ cls: "osb-gl is-" + o }); if (o === "v") l.style.cssText = "left:" + at + "px;top:" + a + "px;height:" + (b - a) + "px"; else l.style.cssText = "top:" + at + "px;left:" + a + "px;width:" + (b - a) + "px"; };
         const gapLbl = (x, y, g) => { const t = gl.createDiv({ cls: "osb-gap", text: String(Math.round(g)) }); t.style.cssText = "left:" + x + "px;top:" + y + "px"; };
-        if (sx) { if (sx.kind === "edge") line("v", sx.at, Math.min(box.y, sx.o.y), Math.max(box.y + box.h, sx.o.y + sx.o.h)); else { const y = Math.max(box.y, sx.o.y) + Math.min(box.h, sx.o.h) / 2; if (sx.side === "r") { line("h", y, box.x + box.w, sx.o.x); gapLbl((box.x + box.w + sx.o.x) / 2, y, sx.g); } else { line("h", y, sx.o.x + sx.o.w, box.x); gapLbl((sx.o.x + sx.o.w + box.x) / 2, y, sx.g); } } }
-        if (sy) { if (sy.kind === "edge") line("h", sy.at, Math.min(box.x, sy.o.x), Math.max(box.x + box.w, sy.o.x + sy.o.w)); else { const x = Math.max(box.x, sy.o.x) + Math.min(box.w, sy.o.w) / 2; if (sy.side === "b") { line("v", x, box.y + box.h, sy.o.y); gapLbl(x, (box.y + box.h + sy.o.y) / 2, sy.g); } else { line("v", x, sy.o.y + sy.o.h, box.y); gapLbl(x, (sy.o.y + sy.o.h + box.y) / 2, sy.g); } } }
+        if (sx) { if (sx.kind === "edge") { if (!others) line("v", sx.at, Math.min(box.y, sx.o.y), Math.max(box.y + box.h, sx.o.y + sx.o.h)); } else { const y = Math.max(box.y, sx.o.y) + Math.min(box.h, sx.o.h) / 2; if (sx.side === "r") { line("h", y, box.x + box.w, sx.o.x); gapLbl((box.x + box.w + sx.o.x) / 2, y, sx.g); } else { line("h", y, sx.o.x + sx.o.w, box.x); gapLbl((sx.o.x + sx.o.w + box.x) / 2, y, sx.g); } } }
+        if (sy) { if (sy.kind === "edge") { if (!others) line("h", sy.at, Math.min(box.x, sy.o.x), Math.max(box.x + box.w, sy.o.x + sy.o.w)); } else { const x = Math.max(box.x, sy.o.x) + Math.min(box.w, sy.o.w) / 2; if (sy.side === "b") { line("v", x, box.y + box.h, sy.o.y); gapLbl(x, (box.y + box.h + sy.o.y) / 2, sy.g); } else { line("v", x, sy.o.y + sy.o.h, box.y); gapLbl(x, (sy.o.y + sy.o.h + box.y) / 2, sy.g); } } }
       }
       // resizing sticks to the edges and the sizes of other cards
       sizeSnap(d, x, y, w, h) {
@@ -128,8 +138,7 @@
         const xsT = [], ysT = []; for (const o of d.others) { xsT.push(o.x, o.x + o.w / 2, o.x + o.w); ysT.push(o.y, o.y + o.h / 2, o.y + o.h); }
         if (d.dir.includes("e")) { const b = best(x + w, xsT); if (b) { w += b.d; gx = b.at; } } if (d.dir.includes("w")) { const b = best(x, xsT); if (b) { x += b.d; w -= b.d; gx = b.at; } }
         if (d.dir.includes("s")) { const b = best(y + h, ysT); if (b) { h += b.d; gy = b.at; } } if (d.dir.includes("n")) { const b = best(y, ysT); if (b) { y += b.d; h -= b.d; gy = b.at; } }
-        let gl = this.guides; if (!gl) gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); gl.empty();
-        if (gx != null) { const l = gl.createDiv({ cls: "osb-gl is-v" }); l.style.cssText = "left:" + gx + "px;top:" + (y - 30) + "px;height:" + (h + 60) + "px"; } if (gy != null) { const l = gl.createDiv({ cls: "osb-gl is-h" }); l.style.cssText = "top:" + gy + "px;left:" + (x - 30) + "px;width:" + (w + 60) + "px"; }
+        let gl = this.guides; if (!gl) gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); gl.empty(); this.edgeLines(gl, { x, y, w, h }, d.others);
         return { x, y, w, h };
       }
       clearGuides() { if (this.guides) this.guides.empty(); }
@@ -170,63 +179,115 @@
       }
       inkEl(st) {
         const NS = "http://www.w3.org/2000/svg", mk = (n) => document.createElementNS(NS, n); let e;
-        if (st.k === "pen") { e = mk("path"); const p = st.pts; let d = "M" + p[0][0] + " " + p[0][1]; if (p.length === 1) d += " l0.01 0"; for (let i = 1; i < p.length - 1; i++) { const mx = (p[i][0] + p[i + 1][0]) / 2, my = (p[i][1] + p[i + 1][1]) / 2; d += " Q" + p[i][0] + " " + p[i][1] + " " + mx + " " + my; } if (p.length > 1) d += " L" + p[p.length - 1][0] + " " + p[p.length - 1][1]; e.setAttribute("d", d); }
+        if (st.k === "t") { e = mk("text"); const sz = this.textSize(st); e.setAttribute("x", st.a[0]); e.setAttribute("y", st.a[1]); e.setAttribute("font-size", sz); e.setAttribute("dominant-baseline", "hanging"); e.style.fill = st.c || "var(--text-normal)"; e.style.stroke = "none"; e.style.fontFamily = "var(--font-interface)"; String(st.txt || "").split("\n").forEach((ln, i) => { const t = mk("tspan"); t.setAttribute("x", st.a[0]); t.setAttribute("dy", i ? sz * 1.25 : 0); t.textContent = ln || " "; e.appendChild(t); }); return e; }
+        if (st.k === "pen" || st.k === "hl") { e = mk("path"); const p = st.pts; let d = "M" + p[0][0] + " " + p[0][1]; if (p.length === 1) d += " l0.01 0"; for (let i = 1; i < p.length - 1; i++) { const mx = (p[i][0] + p[i + 1][0]) / 2, my = (p[i][1] + p[i + 1][1]) / 2; d += " Q" + p[i][0] + " " + p[i][1] + " " + mx + " " + my; } if (p.length > 1) d += " L" + p[p.length - 1][0] + " " + p[p.length - 1][1]; e.setAttribute("d", d); }
         else if (st.k === "line" || st.k === "arrow") { e = mk("line"); e.setAttribute("x1", st.a[0]); e.setAttribute("y1", st.a[1]); e.setAttribute("x2", st.b[0]); e.setAttribute("y2", st.b[1]); if (st.k === "arrow") e.setAttribute("marker-end", "url(#osb-inkarrow)"); }
         else if (st.k === "rect") { e = mk("rect"); e.setAttribute("x", Math.min(st.a[0], st.b[0])); e.setAttribute("y", Math.min(st.a[1], st.b[1])); e.setAttribute("width", Math.abs(st.b[0] - st.a[0])); e.setAttribute("height", Math.abs(st.b[1] - st.a[1])); e.setAttribute("rx", 6); }
         else { e = mk("ellipse"); e.setAttribute("cx", (st.a[0] + st.b[0]) / 2); e.setAttribute("cy", (st.a[1] + st.b[1]) / 2); e.setAttribute("rx", Math.abs(st.b[0] - st.a[0]) / 2); e.setAttribute("ry", Math.abs(st.b[1] - st.a[1]) / 2); }
-        e.setAttribute("fill", "none"); e.style.stroke = st.c || "var(--text-normal)"; e.style.strokeWidth = String(st.w || 4); e.setAttribute("stroke-linecap", "round"); e.setAttribute("stroke-linejoin", "round"); e.style.color = st.c || "var(--text-normal)"; return e;
+        e.setAttribute("fill", "none"); e.style.stroke = st.c || "var(--text-normal)"; e.style.strokeWidth = String(st.k === "hl" ? (st.w || 4) * 3 : (st.w || 4)); if (st.k === "hl") { e.style.opacity = ".38"; e.style.mixBlendMode = "multiply"; } e.setAttribute("stroke-linecap", "round"); e.setAttribute("stroke-linejoin", "round"); e.style.color = st.c || "var(--text-normal)"; return e;
       }
       renderInk() {
         if (!this.inkSvg || !this._ink) return; const have = this.inkEls || (this.inkEls = new Map()), seen = new Set();
         for (const st of this._ink.toArray()) { seen.add(st.id); if (!have.has(st.id)) { const e = this.inkEl(st); e.dataset.id = st.id; this.inkSvg.appendChild(e); have.set(st.id, e); } }
-        for (const [id, e] of have) if (!seen.has(id)) { e.remove(); have.delete(id); }
+        for (const [id, e] of have) if (!seen.has(id)) { e.remove(); have.delete(id); if (this.inkSel === id) this.inkSel = null; }
+        if (this.inkSel) { const e = have.get(this.inkSel); if (e) e.classList.add("is-sel"); }
       }
       toggleDraw(on) {
+        if (!on && on != null && this.inkEd) this.inkEd.blur();
         if (this.ro && on) return; this.draw = on == null ? !this.draw : !!on; this.root.classList.toggle("is-draw", this.draw); if (this.drawBtn) this.drawBtn.classList.toggle("is-on", this.draw);
         if (this.draw) { this.inkArr(); this.select(new Set()); this.tool = this.tool || "pen"; try { this.inkColor = localStorage.getItem("board-ink-color") || ""; this.inkW = +localStorage.getItem("board-ink-w") || 4; } catch (e) { this.inkW = 4; } this.buildDrawBar(); }
         else if (this.dtb) { this.dtb.remove(); this.dtb = null; }
       }
-      setTool(t) { this.tool = t; if (this.dtb) for (const b of this.dtb.querySelectorAll(".osb-dt")) b.classList.toggle("is-on", b.dataset.t === t); this.root.classList.toggle("is-erase", t === "eraser"); }
+      setTool(t) { this.tool = t; if (this.dtb) for (const b of this.dtb.querySelectorAll(".osb-dt")) b.classList.toggle("is-on", b.dataset.t === t); this.root.classList.toggle("is-erase", t === "eraser"); if (t !== "select") this.inkSelect(null); this.drawCursor(); }
       buildDrawBar() {
         if (this.dtb) this.dtb.remove(); const bar = this.dtb = this.contentEl.createDiv({ cls: "osb-dtb" });
         const tb = (t, ic, tip) => { const b = bar.createDiv({ cls: "osb-dt", attr: { title: tip } }); b.dataset.t = t; api.setIcon(b, ic); b.onclick = () => this.setTool(t); return b; };
-        tb("pen", "lucide-pencil", "Кисть (P)"); tb("line", "lucide-minus", "Линия (L)"); tb("arrow", "lucide-move-up-right", "Стрелка (A)"); tb("rect", "lucide-square", "Прямоугольник (R)"); tb("ellipse", "lucide-circle", "Овал (O)"); tb("eraser", "lucide-eraser", "Ластик (E)");
+        tb("select", "lucide-mouse-pointer-2", "Выделение: двигать, перекрашивать, Delete (V)"); tb("pen", "lucide-pencil", "Кисть (P). Shift — прямая линия, задержка в конце — ровная фигура"); tb("hl", "lucide-highlighter", "Маркер (H)"); tb("line", "lucide-minus", "Линия (L)"); tb("arrow", "lucide-move-up-right", "Стрелка (A)"); tb("rect", "lucide-square", "Прямоугольник (R)"); tb("ellipse", "lucide-circle", "Овал (O)"); tb("text", "lucide-type", "Текст (T): клик и печатай, Enter — готово, Shift+Enter — новая строка"); tb("eraser", "lucide-eraser", "Ластик (E)");
+        const wand = bar.createDiv({ cls: "osb-dt", attr: { title: "Выравнивать фигуры после кисти (задержка в конце штриха)" } }); api.setIcon(wand, "lucide-wand-2"); try { this.inkSnap = localStorage.getItem("board-ink-snap") !== "0"; } catch (e) { this.inkSnap = true; } wand.classList.toggle("is-on", this.inkSnap); wand.onclick = () => { this.inkSnap = !this.inkSnap; try { localStorage.setItem("board-ink-snap", this.inkSnap ? "1" : "0"); } catch (e) { /* private */ } wand.classList.toggle("is-on", this.inkSnap); };
         bar.createDiv({ cls: "osb-bsep" });
-        const cb = bar.createDiv({ cls: "osb-dt osb-dcol", attr: { title: "Цвет" } }); const dot = cb.createDiv({ cls: "osb-ddot" }); const paintDot = () => { dot.style.background = this.inkColor || "var(--text-normal)"; }; paintDot(); cb.onclick = () => window.__bsColors.pick(cb, this.inkColor, (c) => { this.inkColor = c; try { localStorage.setItem("board-ink-color", c); } catch (e) { /* private */ } paintDot(); }, { none: false });
-        const sizes = bar.createDiv({ cls: "osb-dsz" }); for (const w of [2, 4, 8, 14]) { const b = sizes.createDiv({ cls: "osb-dw" + (w === this.inkW ? " is-on" : ""), attr: { title: w + " px" } }); const i = b.createDiv(); i.style.width = i.style.height = Math.min(16, w + 3) + "px"; b.onclick = () => { this.inkW = w; try { localStorage.setItem("board-ink-w", String(w)); } catch (e) { /* private */ } for (const x of sizes.children) x.classList.toggle("is-on", x === b); }; }
+        const cb = bar.createDiv({ cls: "osb-dt osb-dcol", attr: { title: "Цвет" } }); const dot = cb.createDiv({ cls: "osb-ddot" }); const paintDot = () => { dot.style.background = this.inkColor || "var(--text-normal)"; }; paintDot(); cb.onclick = () => window.__bsColors.pick(cb, this.inkColor, (c) => { this.inkColor = c; if (this.inkSel) { const n = this.inkReplace(this.inkSel, (st) => { st.c = c; }); if (n) this.inkSelect(n); } this.drawCursor(); try { localStorage.setItem("board-ink-color", c); } catch (e) { /* private */ } paintDot(); }, { none: false });
+        const sizes = bar.createDiv({ cls: "osb-dsz" }); for (const w of [2, 4, 8, 14]) { const b = sizes.createDiv({ cls: "osb-dw" + (w === this.inkW ? " is-on" : ""), attr: { title: w + " px" } }); const i = b.createDiv(); i.style.width = i.style.height = Math.min(16, w + 3) + "px"; b.onclick = () => { this.inkW = w; this.drawCursor(); if (this.inkSel) { const n = this.inkReplace(this.inkSel, (st) => { st.w = w; }); if (n) this.inkSelect(n); } try { localStorage.setItem("board-ink-w", String(w)); } catch (e) { /* private */ } for (const x of sizes.children) x.classList.toggle("is-on", x === b); }; }
         bar.createDiv({ cls: "osb-bsep" });
+        const un = bar.createDiv({ cls: "osb-dt", attr: { title: "Отменить (Ctrl+Z)" } }); api.setIcon(un, "lucide-undo-2"); un.onclick = () => this.undo(); const re = bar.createDiv({ cls: "osb-dt", attr: { title: "Повторить (Ctrl+Y)" } }); api.setIcon(re, "lucide-redo-2"); re.onclick = () => this.redo();
         const clr = bar.createDiv({ cls: "osb-dt is-danger", attr: { title: "Стереть весь рисунок" } }); api.setIcon(clr, "lucide-trash-2"); clr.onclick = () => { const a = this.inkArr(); if (a && a.length) a.delete(0, a.length); };
         const done = bar.createDiv({ cls: "osb-dt osb-ddone", attr: { title: "Готово" } }); api.setIcon(done, "lucide-check"); done.onclick = () => this.toggleDraw(false);
         this.setTool(this.tool || "pen");
       }
       startInk(e) {
-        const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.drag = { kind: "ink", tool: this.tool, pts: [[Math.round(w.x * 10) / 10, Math.round(w.y * 10) / 10]], a: [w.x, w.y], b: [w.x, w.y], erased: false };
-        if (this.tool === "eraser") this.eraseAt(w); else this.drawTmp();
+        const p = this.pt(e), w = this.worldPt(p.sx, p.sy), t = this.tool;
+        if (t === "text") { this.inkText(w); return; }
+        if (t === "select") { const arr = this._ink ? this._ink.toArray() : [], r = 8 / this.cam.k; let hit = null; for (let i = arr.length - 1; i >= 0; i--) if (this.hitStroke(arr[i], w, r)) { hit = arr[i]; break; } if (!hit) { this.inkSelect(null); return; } this.inkSelect(hit.id); this.drag = { kind: "ink", tool: "select", id: hit.id, p: w, dx: 0, dy: 0 }; return; }
+        this.drag = { kind: "ink", tool: t, pts: [[Math.round(w.x * 10) / 10, Math.round(w.y * 10) / 10]], a: [w.x, w.y], b: [w.x, w.y], erased: false };
+        if (t === "eraser") this.eraseAt(w); else this.drawTmp();
       }
       moveInk(w, e) {
         const d = this.drag; if (!d) return; if (d.tool === "eraser") { this.eraseAt(w); return; }
-        if (d.tool === "pen") { const l = d.pts[d.pts.length - 1]; if (Math.hypot(w.x - l[0], w.y - l[1]) * this.cam.k > 2.5) d.pts.push([Math.round(w.x * 10) / 10, Math.round(w.y * 10) / 10]); }
-        else { let bx = w.x, by = w.y; if (e && e.shiftKey) { const dx = bx - d.a[0], dy = by - d.a[1]; if (d.tool === "line" || d.tool === "arrow") { if (Math.abs(dx) > Math.abs(dy) * 2) by = d.a[1]; else if (Math.abs(dy) > Math.abs(dx) * 2) bx = d.a[0]; } else { const m = Math.max(Math.abs(dx), Math.abs(dy)); bx = d.a[0] + Math.sign(dx || 1) * m; by = d.a[1] + Math.sign(dy || 1) * m; } } d.b = [bx, by]; }
+        if (d.tool === "select") { d.dx = w.x - d.p.x; d.dy = w.y - d.p.y; const el = this.inkEls && this.inkEls.get(d.id); if (el) el.style.transform = "translate(" + d.dx + "px," + d.dy + "px)"; return; }
+        if (d.snapped) return;
+        const dot = Math.round(w.x * 10) / 10, doy = Math.round(w.y * 10) / 10;
+        if (d.tool === "pen" || d.tool === "hl") {
+          const l = d.pts[d.pts.length - 1]; if (Math.hypot(w.x - l[0], w.y - l[1]) * this.cam.k > 2.5) { d.pts.push([dot, doy]); clearTimeout(d.ht); if (d.tool === "pen" && this.inkSnap !== false) d.ht = setTimeout(() => { if (this.drag !== d || d.snapped) return; const sh = this.recognize(d.pts); if (sh) { d.tool = sh.k; d.a = sh.a; d.b = sh.b; d.snapped = true; this.drawTmp(); } }, 520); }
+          d.straight = !!(e && e.shiftKey); if (d.straight) { const a = d.pts[0], dx = w.x - a[0], dy = w.y - a[1], len = Math.hypot(dx, dy), st = Math.PI / 12, ang = Math.round(Math.atan2(dy, dx) / st) * st; d.sb = [a[0] + Math.cos(ang) * len, a[1] + Math.sin(ang) * len]; }
+        } else { let bx = w.x, by = w.y; if (e && e.shiftKey) { const dx = bx - d.a[0], dy = by - d.a[1]; if (d.tool === "line" || d.tool === "arrow") { const len = Math.hypot(dx, dy), st = Math.PI / 12, ang = Math.round(Math.atan2(dy, dx) / st) * st; bx = d.a[0] + Math.cos(ang) * len; by = d.a[1] + Math.sin(ang) * len; } else { const m = Math.max(Math.abs(dx), Math.abs(dy)); bx = d.a[0] + Math.sign(dx || 1) * m; by = d.a[1] + Math.sign(dy || 1) * m; } } d.b = [bx, by]; }
         this.drawTmp();
       }
       drawTmp() {
         const d = this.drag; if (!d || d.tool === "eraser" || !this.inkSvg) return; if (this.inkTmp) this.inkTmp.remove(); const st = this.inkStroke(d); this.inkTmp = this.inkEl(st); this.inkTmp.setAttribute("opacity", ".85"); this.inkSvg.appendChild(this.inkTmp);
       }
-      inkStroke(d) { const st = { id: "", k: d.tool, c: this.inkColor || "", w: this.inkW || 4, by: me.name }; if (d.tool === "pen") st.pts = d.pts; else { st.a = d.a.map((n) => Math.round(n * 10) / 10); st.b = d.b.map((n) => Math.round(n * 10) / 10); } return st; }
+      inkStroke(d) { const st = { id: "", k: d.tool, c: this.inkColor || "", w: this.inkW || 4, by: me.name }; if ((d.tool === "pen" || d.tool === "hl") && d.straight && d.sb) { st.k = "line"; if (d.tool === "hl") st.k = "hl"; if (st.k === "hl") st.pts = [d.pts[0], d.sb]; else { st.a = d.pts[0].slice(); st.b = d.sb.map((n) => Math.round(n * 10) / 10); } } else if (d.tool === "pen" || d.tool === "hl") st.pts = d.pts; else { st.a = d.a.map((n) => Math.round(n * 10) / 10); st.b = d.b.map((n) => Math.round(n * 10) / 10); } return st; }
       endInk(d) {
-        if (this.inkTmp) { this.inkTmp.remove(); this.inkTmp = null; } if (!d || d.tool === "eraser") return;
-        if ((d.tool !== "pen") && Math.hypot(d.b[0] - d.a[0], d.b[1] - d.a[1]) < 3) return; const st = this.inkStroke(d); st.id = uid(); const a = this.inkArr(); if (a) a.push([st]);
+        if (d && d.ht) clearTimeout(d.ht); if (this.inkTmp) { this.inkTmp.remove(); this.inkTmp = null; } if (!d || d.tool === "eraser") return;
+        if (d.tool === "select") { const el = this.inkEls && this.inkEls.get(d.id); if (el) el.style.transform = ""; if (Math.abs(d.dx) + Math.abs(d.dy) < 0.5) return; const n = this.inkReplace(d.id, (st) => { const mv = (q) => [Math.round((q[0] + d.dx) * 10) / 10, Math.round((q[1] + d.dy) * 10) / 10]; if (st.pts) st.pts = st.pts.map(mv); if (st.a) st.a = mv(st.a); if (st.b) st.b = mv(st.b); }); if (n) this.inkSelect(n); return; }
+        if ((d.tool !== "pen" && d.tool !== "hl") && Math.hypot(d.b[0] - d.a[0], d.b[1] - d.a[1]) < 3) return; const st = this.inkStroke(d); st.id = uid(); const a = this.inkArr(); if (a) a.push([st]);
       }
+      hitStroke(st, w, r) {
+        const dist = (px, py, x1, y1, x2, y2) => { const dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy; let t = l2 ? ((px - x1) * dx + (py - y1) * dy) / l2 : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy)); };
+        const sw = st.k === "hl" ? (st.w || 4) * 3 : (st.w || 4), tol = r + sw / 2;
+        if (st.k === "t") { const sz = this.textSize(st), lines = String(st.txt || "").split("\n"), wd = Math.max.apply(null, lines.map((l) => l.length)) * sz * 0.6; return w.x >= st.a[0] - r && w.x <= st.a[0] + wd + r && w.y >= st.a[1] - r && w.y <= st.a[1] + lines.length * sz * 1.25 + r; }
+        if (st.k === "pen" || st.k === "hl") { const p = st.pts; if (p.length === 1) return Math.hypot(w.x - p[0][0], w.y - p[0][1]) < tol; for (let i = 0; i < p.length - 1; i++) if (dist(w.x, w.y, p[i][0], p[i][1], p[i + 1][0], p[i + 1][1]) < tol) return true; return false; }
+        if (st.k === "line" || st.k === "arrow") return dist(w.x, w.y, st.a[0], st.a[1], st.b[0], st.b[1]) < tol;
+        const x1 = Math.min(st.a[0], st.b[0]), x2 = Math.max(st.a[0], st.b[0]), y1 = Math.min(st.a[1], st.b[1]), y2 = Math.max(st.a[1], st.b[1]);
+        if (st.k === "rect") return dist(w.x, w.y, x1, y1, x2, y1) < tol || dist(w.x, w.y, x2, y1, x2, y2) < tol || dist(w.x, w.y, x2, y2, x1, y2) < tol || dist(w.x, w.y, x1, y2, x1, y1) < tol;
+        const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2, rx = Math.max(1, (x2 - x1) / 2), ry = Math.max(1, (y2 - y1) / 2), k = Math.hypot((w.x - cx) / rx, (w.y - cy) / ry); return Math.abs(k - 1) * Math.min(rx, ry) < tol;
+      }
+      textSize(st) { return 12 + (st.w || 4) * 2; }
       eraseAt(w) {
-        const a = this.inkArr(); if (!a) return; const r = Math.max(7, (this.inkW || 4) * 1.2) / this.cam.k, dist = (px, py, x1, y1, x2, y2) => { const dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy; let t = l2 ? ((px - x1) * dx + (py - y1) * dy) / l2 : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy)); };
-        const hit = (st) => {
-          const tol = r + (st.w || 4) / 2; if (st.k === "pen") { const p = st.pts; if (p.length === 1) return Math.hypot(w.x - p[0][0], w.y - p[0][1]) < tol; for (let i = 0; i < p.length - 1; i++) if (dist(w.x, w.y, p[i][0], p[i][1], p[i + 1][0], p[i + 1][1]) < tol) return true; return false; }
-          if (st.k === "line" || st.k === "arrow") return dist(w.x, w.y, st.a[0], st.a[1], st.b[0], st.b[1]) < tol;
-          const x1 = Math.min(st.a[0], st.b[0]), x2 = Math.max(st.a[0], st.b[0]), y1 = Math.min(st.a[1], st.b[1]), y2 = Math.max(st.a[1], st.b[1]);
-          if (st.k === "rect") return dist(w.x, w.y, x1, y1, x2, y1) < tol || dist(w.x, w.y, x2, y1, x2, y2) < tol || dist(w.x, w.y, x2, y2, x1, y2) < tol || dist(w.x, w.y, x1, y2, x1, y1) < tol;
-          const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2, rx = Math.max(1, (x2 - x1) / 2), ry = Math.max(1, (y2 - y1) / 2), k = Math.hypot((w.x - cx) / rx, (w.y - cy) / ry); return Math.abs(k - 1) * Math.min(rx, ry) < tol;
-        };
-        const arr = a.toArray(), del = []; arr.forEach((st, i) => { if (hit(st)) del.push(i); }); if (del.length) this.doc.transact(() => { for (const i of del.reverse()) a.delete(i, 1); });
+        const a = this.inkArr(); if (!a) return; const r = Math.max(7, (this.inkW || 4) * 1.2) / this.cam.k;
+        const arr = a.toArray(), del = []; arr.forEach((st, i) => { if (this.hitStroke(st, w, r)) del.push(i); }); if (del.length) this.doc.transact(() => { for (const i of del.reverse()) a.delete(i, 1); });
+      }
+      // ----- the pointer shows the tool: a ring of the real brush size, a dashed ring for the eraser, a fine cross for shapes
+      drawCursor() {
+        if (!this.root) return; const t = this.tool || "pen", k = this.cam.k, svg = (n, body, hx) => "url(\"data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + n + '" height="' + n + '">' + body + "</svg>") + "\") " + hx + " " + hx;
+        let v;
+        const ring = (d, dash) => { const n = Math.max(16, Math.ceil(d) + 6), c = n / 2, r = Math.max(2, d / 2); return svg(n, '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="#fff" stroke-width="3"' + (dash ? ' stroke-dasharray="4 3"' : "") + ' opacity=".9"/><circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="#000" stroke-width="1.2"' + (dash ? ' stroke-dasharray="4 3"' : "") + '/><circle cx="' + c + '" cy="' + c + '" r="1" fill="#000"/>', c); };
+        if (t === "pen") v = ring(Math.min(120, Math.max(6, (this.inkW || 4) * k)));
+        else if (t === "hl") v = ring(Math.min(160, Math.max(10, (this.inkW || 4) * 3 * k)));
+        else if (t === "eraser") v = ring(Math.min(140, Math.max(14, Math.max(7, (this.inkW || 4) * 1.2) * 2 * k)), true);
+        else if (t === "select") v = "default";
+        else if (t === "text") v = "text";
+        else v = svg(28, '<path d="M14 2v9M14 17v9M2 14h9M17 14h9" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M14 2v9M14 17v9M2 14h9M17 14h9" stroke="#000" stroke-width="1.4" stroke-linecap="round"/>', 14);
+        this.root.style.setProperty("--osb-cur", v === "default" || v === "text" ? v : v + ", crosshair");
+      }
+      // a stroke that was drawn and then held still becomes a clean line, rectangle or ellipse
+      recognize(pts) {
+        if (pts.length < 6) return null; let len = 0; for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+        const p0 = pts[0], pn = pts[pts.length - 1], chord = Math.hypot(pn[0] - p0[0], pn[1] - p0[1]), min = 24 / this.cam.k; if (len < min) return null;
+        let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; for (const q of pts) { x1 = Math.min(x1, q[0]); y1 = Math.min(y1, q[1]); x2 = Math.max(x2, q[0]); y2 = Math.max(y2, q[1]); }
+        const bw = x2 - x1, bh = y2 - y1;
+        if (chord > len * 0.82) { let dev = 0; for (const q of pts) { const t = Math.abs((pn[0] - p0[0]) * (p0[1] - q[1]) - (p0[0] - q[0]) * (pn[1] - p0[1])) / (chord || 1); dev = Math.max(dev, t); } if (dev < chord * 0.07) { let b = pn.slice(); const ang = Math.atan2(pn[1] - p0[1], pn[0] - p0[0]), st = Math.PI / 12, sn = Math.round(ang / st) * st; if (Math.abs(ang - sn) < 0.07) b = [p0[0] + Math.cos(sn) * chord, p0[1] + Math.sin(sn) * chord]; return { k: "line", a: p0.slice(), b }; } return null; }
+        if (chord < Math.max(bw, bh) * 0.35 && bw > min && bh > min) { const e = Math.min(bw, bh) * 0.16; let on = 0; for (const q of pts) if (Math.min(q[0] - x1, x2 - q[0], q[1] - y1, y2 - q[1]) < e) on++; const rect = on / pts.length > 0.8; let a = [x1, y1], b = [x2, y2]; if (!rect && Math.abs(bw - bh) < Math.max(bw, bh) * 0.15) { const m = (bw + bh) / 2; b = [x1 + m, y1 + m]; } return { k: rect ? "rect" : "ellipse", a, b }; }
+        return null;
+      }
+      inkSelect(id) { this.inkSel = id; if (this.inkEls) for (const [i, e] of this.inkEls) e.classList.toggle("is-sel", i === id); }
+      inkReplace(id, fn) { const a = this.inkArr(); if (!a) return null; const arr = a.toArray(), i = arr.findIndex((x) => x.id === id); if (i < 0) return null; const st = JSON.parse(JSON.stringify(arr[i])); fn(st); st.id = uid(); this.doc.transact(() => { a.delete(i, 1); a.insert(i, [st]); }); return st.id; }
+      inkRemove(id) { const a = this.inkArr(); if (!a) return; const i = a.toArray().findIndex((x) => x.id === id); if (i >= 0) a.delete(i, 1); }
+      inkText(w) {
+        if (this.inkEd) { this.inkEd.blur(); }
+        const p = this.world.getBoundingClientRect(), k = this.cam.k, ta = document.createElement("textarea"); const sz = 12 + (this.inkW || 4) * 2; this.inkEd = ta;
+        ta.className = "osb-inktext"; ta.rows = 1; ta.placeholder = "Текст"; ta.style.cssText = "left:" + w.x + "px;top:" + w.y + "px;font-size:" + sz + "px;color:" + (this.inkColor || "var(--text-normal)"); this.world.appendChild(ta); setTimeout(() => ta.focus(), 0);
+        let fin = false; const done = (ok) => { if (fin) return; fin = true; this.inkEd = null; const t = ta.value.replace(/\s+$/, ""); ta.remove(); if (ok && t) { const a = this.inkArr(); if (a) a.push([{ id: uid(), k: "t", a: [Math.round(w.x * 10) / 10, Math.round(w.y * 10) / 10], txt: t, c: this.inkColor || "", w: this.inkW || 4, by: me.name }]); } };
+        const fit = () => { ta.style.height = "0"; ta.style.height = ta.scrollHeight + "px"; ta.style.width = Math.max(90, Math.min(600, ta.value.split("\n").reduce((m, l) => Math.max(m, l.length), 0) * sz * 0.62 + 24)) + "px"; };
+        ta.oninput = fit; fit(); ta.onkeydown = (e) => { e.stopPropagation(); if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); done(true); } else if (e.key === "Escape") { e.preventDefault(); done(false); } }; ta.onblur = () => done(true); ta.onpointerdown = (e) => e.stopPropagation();
       }
       initHistory() {
         const Y = window.__bsY.Y; if (this.um) { try { this.um.destroy(); } catch (e) { /* ignore */ } } this.inkArr(); this.renderInk(); this.um = new Y.UndoManager(this._ink ? [this.yn, this.ye, this._ink] : [this.yn, this.ye], { captureTimeout: 500 });
@@ -370,7 +431,7 @@
       // ---------- camera ----------
       pt(e) { const r = this.root.getBoundingClientRect(); return { sx: e.clientX - r.left, sy: e.clientY - r.top }; }
       worldPt(sx, sy) { return { x: (sx - this.root.clientWidth / 2) / this.cam.k + this.cam.x, y: (sy - this.root.clientHeight / 2) / this.cam.k + this.cam.y }; }
-      applyCam() { if (!this.world) return; if (this.resetBtn) this.resetBtn.title = "Масштаб " + Math.round(this.cam.k * 100) + "% (клик — 100%)"; this.renderSelBar(); const c = this.cam; this.world.style.transform = "translate(" + (this.root.clientWidth / 2 - c.x * c.k) + "px," + (this.root.clientHeight / 2 - c.y * c.k) + "px) scale(" + c.k + ")"; this.paintPeers(); }
+      applyCam() { if (!this.world) return; if (this.draw && this._ck !== this.cam.k) { this._ck = this.cam.k; this.drawCursor(); } if (this.resetBtn) this.resetBtn.title = "Масштаб " + Math.round(this.cam.k * 100) + "% (клик — 100%)"; this.renderSelBar(); const c = this.cam; this.world.style.transform = "translate(" + (this.root.clientWidth / 2 - c.x * c.k) + "px," + (this.root.clientHeight / 2 - c.y * c.k) + "px) scale(" + c.k + ")"; this.paintPeers(); }
       fit() { const ms = Array.from(this.yn ? this.yn.values() : []); if (!ms.length) { this.cam = { x: 0, y: 0, k: 1 }; return this.applyCam(); } let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const m of ms) { a = Math.min(a, m.get("x")); b = Math.min(b, m.get("y")); c = Math.max(c, m.get("x") + m.get("w")); d = Math.max(d, m.get("y") + m.get("h")); } const w = this.root.clientWidth || 800, h = this.root.clientHeight || 600; this.cam = { x: (a + c) / 2, y: (b + d) / 2, k: Math.min(1.2, Math.max(.15, Math.min((w - 120) / Math.max(1, c - a), (h - 140) / Math.max(1, d - b)))) }; this.applyCam(); }
       // ---------- input ----------
       bindInput() {
@@ -399,7 +460,7 @@
           else if (d && d.kind === "box") { const x = Math.min(d.x0, p.sx), y = Math.min(d.y0, p.sy), bw = Math.abs(p.sx - d.x0), bh = Math.abs(p.sy - d.y0); if (bw + bh > 6) { d.live = true; this.box.style.cssText = "display:block;left:" + x + "px;top:" + y + "px;width:" + bw + "px;height:" + bh + "px"; const a = this.worldPt(x, y), b2 = this.worldPt(x + bw, y + bh), hit = new Set(d.base); for (const [id, m] of this.yn.entries()) { const cx = m.get("x"), cy = m.get("y"); if (cx < b2.x && cx + m.get("w") > a.x && cy < b2.y && cy + m.get("h") > a.y) hit.add(id); } this.sel = hit; this.mark(); } }
           this.publish();
         });
-        const up = (e) => { const d = this.drag; this.drag = null; if (d && d.kind === "ink") this.endInk(d); r.classList.remove("is-panning"); this.clearGuides(); if (d && d.kind === "pan" && !d.moved && !this.ro) { this.select(new Set()); this.selEdge = null; this.mark(); } if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } if (d && d.kind === "link") { const t = document.elementFromPoint(e.clientX, e.clientY), c = t && t.closest && t.closest(".osb-card"); if (c && c.dataset.id !== d.from) this.addEdge(d.from, c.dataset.id); else if (!c) { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } };
+        const up = (e) => { const d = this.drag; this.drag = null; if (d && d.kind === "ink") this.endInk(d); r.classList.remove("is-panning"); this.clearGuides(); if (d && d.kind === "pan" && !d.moved && !this.ro) { this.select(new Set()); this.selEdge = null; this.mark(); } if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } if (this.lt) { const o = this.els.get(this.lt); if (o) o.el.classList.remove("is-linktgt"); this.lt = null; } if (d && d.kind === "link") { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), t = this.linkTarget(w, d.from); if (t) this.addEdge(d.from, t); else { const near = Array.from(this.yn.entries()).some(([i, m]) => i !== d.from && w.x >= m.get("x") && w.x <= m.get("x") + m.get("w") && w.y >= m.get("y") && w.y <= m.get("y") + m.get("h")); if (!near && Math.hypot(w.x - this.center(d.from).x, w.y - this.center(d.from).y) > 40) { const id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } } };
         r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
         r.addEventListener("wheel", (e) => {
           const ta = e.target.closest && e.target.closest(".osb-ta"); if (ta && !e.ctrlKey && ta.scrollHeight > ta.clientHeight) return; e.preventDefault();
@@ -434,7 +495,7 @@
           const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
           if (mod && k === "f") { e.preventDefault(); this.toggleSearch(true); return; } if (inField) return;
           if (e.code === "Space" && !inField) { this.space = true; this.root.classList.add("is-hand"); e.preventDefault(); return; }
-          if (this.draw) { if (e.key === "Escape") this.toggleDraw(false); else if (k === "p") this.setTool("pen"); else if (k === "e") this.setTool("eraser"); else if (k === "l") this.setTool("line"); else if (k === "r") this.setTool("rect"); else if (k === "o") this.setTool("ellipse"); else if (k === "a" && !mod) this.setTool("arrow"); if (!mod) return; }
+          if (this.draw) { if (e.key === "Escape") this.toggleDraw(false); else if ((e.key === "Delete" || e.key === "Backspace") && this.inkSel) { this.inkRemove(this.inkSel); this.inkSel = null; } else if (k === "v" && !mod) this.setTool("select"); else if (k === "h" && !mod) this.setTool("hl"); else if (k === "t" && !mod) this.setTool("text"); else if (k === "p") this.setTool("pen"); else if (k === "e") this.setTool("eraser"); else if (k === "l") this.setTool("line"); else if (k === "r") this.setTool("rect"); else if (k === "o") this.setTool("ellipse"); else if (k === "a" && !mod) this.setTool("arrow"); if (!mod) return; }
           if (this.ro) { if (k === "f") this.fit(); return; }
           if (mod && k === "a") { e.preventDefault(); this.select(new Set(this.yn.keys())); }
           else if (mod && k === "z") { e.preventDefault(); e.shiftKey ? this.redo() : this.undo(); } else if (mod && k === "y") { e.preventDefault(); this.redo(); }
@@ -447,7 +508,18 @@
           else if (e.key.startsWith("Arrow") && this.sel.size) { e.preventDefault(); const st = e.shiftKey ? 10 : 1, dx = e.key === "ArrowLeft" ? -st : e.key === "ArrowRight" ? st : 0, dy = e.key === "ArrowUp" ? -st : e.key === "ArrowDown" ? st : 0; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m && !m.get("locked")) { m.set("x", m.get("x") + dx); m.set("y", m.get("y") + dy); } } }); }
         });
       }
-      drawTemp(w) { const NS = "http://www.w3.org/2000/svg"; if (!this.temp) { this.temp = document.createElementNS(NS, "line"); this.temp.setAttribute("class", "osb-el osb-temp"); this.svg.appendChild(this.temp); } if (!this.center(this.drag.from)) return; const p = this.anchor(this.drag.from, w); this.temp.setAttribute("x1", p.x); this.temp.setAttribute("y1", p.y); this.temp.setAttribute("x2", w.x); this.temp.setAttribute("y2", w.y); }
+      // the card the arrow is aimed at: the one under the pointer, or the nearest one within a few pixels
+      linkTarget(w, from) {
+        const tol = 30 / this.cam.k; let best = null, bd = 1e9;
+        for (const [id, m] of this.yn.entries()) { if (id === from) continue; const x = m.get("x"), y = m.get("y"), cw = m.get("w"), ch = m.get("h"), dx = Math.max(x - w.x, 0, w.x - (x + cw)), dy = Math.max(y - w.y, 0, w.y - (y + ch)), d = Math.hypot(dx, dy); if (d < bd) { bd = d; best = id; } }
+        return bd <= tol ? best : null;
+      }
+      drawTemp(w) {
+        const NS = "http://www.w3.org/2000/svg"; if (!this.temp) { this.temp = document.createElementNS(NS, "line"); this.temp.setAttribute("class", "osb-el osb-temp"); this.temp.style.transition = "none"; this.svg.appendChild(this.temp); } const from = this.drag.from; if (!this.center(from)) return;
+        const t = this.linkTarget(w, from); if (t !== this.lt) { if (this.lt) { const o = this.els.get(this.lt); if (o) o.el.classList.remove("is-linktgt"); } this.lt = t; if (t) { const o = this.els.get(t); if (o) o.el.classList.add("is-linktgt"); } }
+        let end = w; if (t) { const c = this.center(t), q = this.anchor(t, this.center(from)); end = q || c; } const a = this.anchor(from, t ? this.center(t) : w);
+        this.temp.setAttribute("x1", a.x); this.temp.setAttribute("y1", a.y); this.temp.setAttribute("x2", end.x); this.temp.setAttribute("y2", end.y);
+      }
       // ---------- people ----------
       publish(extra) { if (this.sh) { this.sh.publish(Object.assign({ board: this.relPath, cur: this.myCur || null, sel: Array.from(this.sel) }, extra || {})); return; } if (!this.aw) return; if (extra) this.extra = Object.assign(this.extra || {}, extra); this.aw.setLocalStateField("user", Object.assign({ name: me.name, color: me.color, cur: this.myCur || null, sel: Array.from(this.sel) }, this.extra || {})); }
       connect(room, pass) {

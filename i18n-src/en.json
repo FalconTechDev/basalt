@@ -1696,5 +1696,7 @@
 "Файл будет перемещён в корзину:": "The file will be moved to the trash:",
 "В корзину": "To the trash",
 "Удалить ": "Delete ",
-" элементов?": " items?"
+" элементов?": " items?",
+"Кисть (P). Shift — прямая линия, задержка в конце — ровная фигура": "Brush (P). Shift for a straight line, hold at the end for a clean shape",
+"Выравнивать фигуры после кисти (задержка в конце штриха)": "Clean up shapes after the brush (hold at the end of a stroke)"
 }

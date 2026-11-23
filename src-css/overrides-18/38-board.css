@@ -233,3 +233,11 @@
 .osb-bottom .osb-feed.is-closed { width: auto; } .osb-bottom .osb-feed.is-closed .osb-feed-h { height: 28px; box-sizing: border-box; padding: 0 12px; gap: 14px; }
 .osb-root.is-draw ~ .osb-bottom { display: none; } .osb-dtb { bottom: 10px; }
 
+
+/* ---- link target highlight, drawing cursor and text, selected stroke ---- */
+.osb-card.is-linktgt { outline: 2px solid var(--interactive-accent); outline-offset: 3px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--interactive-accent) 22%, transparent); }
+.osb-root.is-draw, .osb-root.is-draw .osb-world, .osb-root.is-draw .osb-ink, .osb-root.is-draw .osb-ink * { cursor: var(--osb-cur, crosshair) !important; }
+.osb-root.is-draw .osb-dtb, .osb-root.is-draw .osb-dtb *, .osb-root.is-draw .osb-rail, .osb-root.is-draw .osb-rail * { cursor: default !important; }
+.osb-root.is-draw .osb-dtb .osb-dt, .osb-root.is-draw .osb-rail .osb-rb { cursor: pointer !important; }
+.osb-ink .is-sel { filter: drop-shadow(0 0 3px var(--interactive-accent)) drop-shadow(0 0 1px var(--interactive-accent)); }
+.osb-inktext { position: absolute; z-index: 12; min-width: 90px; padding: 2px 6px; margin: 0; border: 1px dashed var(--interactive-accent); border-radius: 4px; background: color-mix(in srgb, var(--background-primary) 70%, transparent); font-family: var(--font-interface); line-height: 1.25; resize: none; overflow: hidden; outline: none; box-shadow: none; cursor: text !important; }
