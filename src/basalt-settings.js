@@ -73,6 +73,7 @@
       row(h, "Акцентный цвет", "Цвет выделения, кнопок и активных элементов.", [(() => { const i = document.createElement("input"); i.type = "color"; i.value = (cfg("accentColor") || "#b07a52"); i.addEventListener("input", () => app.setAccentColor(i.value)); return i; })(), button("Сбросить", () => { app.setAccentColor(""); S.render(); })]);
       row(h, "Размер текста в заметках", null, slider(12, 26, 1, () => cfg("baseFontSize") || 16, (v) => { setCfg("baseFontSize", v); app.updateFontSize(); }, (v) => v + " px"));
       head(h, "Окна и меню");
+      if (window.__bsGlass) row(h, "Прозрачные окна и меню", "Выключите, если прозрачность не нужна: окна, меню и панели станут сплошными.", toggle(() => window.__bsGlass.on(), (v) => window.__bsGlass.setOn(v)));
       if (window.__bsGlass) row(h, "Вид прозрачности", "Стекло — с размытием того, что под окном. Матовое — сильное размытие. Чистая — без размытия.", select([["glass", "Стекло"], ["frost", "Матовое стекло"], ["clear", "Чистая прозрачность"]], () => window.__bsGlass.type(), (v) => window.__bsGlass.setType(v)));
       if (window.__bsGlass) row(h, "Прозрачность окон и меню", "0 % — обычные сплошные окна. Чем больше, тем лучше видно то, что под ними.", slider(0, 100, 5, () => Math.round(window.__bsGlass.level() * 100), (v) => window.__bsGlass.set(v / 100), (v) => (v ? v + " %" : "выключена")));
       head(h, "Шрифты");

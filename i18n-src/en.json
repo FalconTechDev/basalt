@@ -1911,5 +1911,7 @@
 "Новая карточка, связь, удаление, раскладка.": "New card, link, delete, layout.",
 "Звуки уведомлений": "Notice sounds",
 "Проверить звуки": "Test the sounds",
-"Проиграет все звуки по очереди.": "Plays every sound in turn."
+"Проиграет все звуки по очереди.": "Plays every sound in turn.",
+"Прозрачные окна и меню": "Transparent windows and menus",
+"Выключите, если прозрачность не нужна: окна, меню и панели станут сплошными.": "Turn this off if you do not want transparency: windows, menus and panels become solid."
 }
