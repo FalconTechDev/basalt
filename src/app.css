@@ -21705,6 +21705,39 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .osb-edges g:hover .osb-ep,.osb-edges g.is-sel .osb-ep{
     opacity:1
 }
+.osb-card.no-pop{
+    animation:none
+}
+.osb-card.is-lite{
+    transition:none;
+    animation:none;
+    box-shadow:none;
+    contain:strict
+}
+.osb-card.is-lite.is-sel{
+    box-shadow:none;
+    outline:3px solid var(--interactive-accent);
+    outline-offset:0
+}
+.osb-card.is-lite.is-hit{
+    box-shadow:none;
+    outline:3px solid var(--bs-warn)
+}
+.osb-md-more{
+    margin:8px 0 2px;
+    padding:4px 8px;
+    border-radius:4px;
+    border:1px dashed var(--background-modifier-border-hover);
+    color:var(--text-muted);
+    font-size:12px;
+    text-align:center;
+    cursor:var(--bs-cursor-hand,pointer);
+    user-select:none
+}
+.osb-md-more:hover{
+    color:var(--text-normal);
+    background:var(--background-modifier-hover)
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
