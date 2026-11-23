@@ -130,3 +130,36 @@
 .bsm-chip.is-ex { background: color-mix(in srgb, #e5484d 14%, transparent); } .bsm-chx { display: grid; place-items: center; margin-left: 2px; cursor: pointer; color: var(--text-faint); border-radius: 50%; } .bsm-chx:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsm-chx svg { width: 12px; height: 12px; }
 .bsm-banned { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; font-size: 12.5px; color: var(--text-muted); }
 .bsm-sec2:empty { display: none; }
+
+/* ===== control panel layout: header with you, left menu, pages ===== */
+.modal.bsm { width: 900px; }
+.bsm .modal-content.bsm-root { max-height: min(84vh, 780px); min-height: 520px; }
+.bsm-head3 { display: flex; align-items: center; gap: 12px; padding: 16px 56px 14px 22px; border-bottom: 1px solid var(--background-modifier-border); flex: none; }
+.bsm-head3 .bsm-title { flex: none; } .bsm-sp { flex: 1; }
+.bsm-you2 { display: flex; align-items: center; gap: 8px; padding: 3px 10px 3px 6px; border-radius: 10px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); }
+.bsm-mdot3 { width: 22px; height: 22px; border-radius: 7px; cursor: pointer; border: 2px solid var(--background-modifier-border-hover); box-sizing: border-box; transition: scale .12s ease; } .bsm-mdot3:hover { scale: 1.12; }
+.bsm-name3 { width: 150px; height: 26px; font-size: 13px; font-weight: 600; background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+.bsm-shell { display: flex; flex: 1; min-height: 0; }
+.bsm-nav { width: 216px; flex: none; padding: 14px 10px; border-right: 1px solid var(--background-modifier-border); background: var(--background-secondary); overflow-y: auto; }
+.bsm-shell.no-nav .bsm-nav { display: none; }
+.bsm-navback { display: flex; align-items: center; gap: 8px; padding: 7px 10px; margin-bottom: 8px; border-radius: 9px; cursor: pointer; font-size: 13px; color: var(--text-muted); transition: background-color .15s ease, color .15s ease; } .bsm-navback:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
+.bsm-navproj { padding: 4px 10px 12px; } .bsm-navname { font-size: 15px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bsm-navit { display: flex; align-items: center; gap: 10px; padding: 9px 10px; margin-bottom: 2px; border-radius: 10px; cursor: pointer; font-size: 13.5px; font-weight: 550; color: var(--text-muted); position: relative; transition: background-color .15s ease, color .15s ease; }
+.bsm-navit:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .bsm-navit.is-on { background: color-mix(in srgb, var(--interactive-accent) 16%, transparent); color: var(--text-normal); }
+.bsm-navit.is-on::before { content: ""; position: absolute; left: -10px; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; background: var(--interactive-accent); }
+.bsm-ni { display: grid; place-items: center; } .bsm-ni svg { width: 17px; height: 17px; } .bsm-navit .bsm-badge { margin-left: auto; }
+.bsm-content { flex: 1; min-width: 0; overflow-y: auto; padding: 22px 26px 26px; }
+.bsm-card2 { padding: 16px; margin-bottom: 14px; border-radius: 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); }
+.bsm-ch { font-size: 13px; font-weight: 650; margin-bottom: 12px; color: var(--text-normal); }
+.bsm-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.bsm-stat { padding: 14px; border-radius: 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); } .bsm-sn { font-size: 22px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; } .bsm-sl { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.bsm-recent { display: flex; flex-direction: column; } .bsm-rrow { display: flex; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--background-modifier-border); font-size: 13px; } .bsm-rrow:last-child { border-bottom: 0; } .bsm-rtx { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bsm-hero { margin-bottom: 14px; }
+.bsm-grp { overflow: hidden; border-radius: 12px; border: 1px solid var(--background-modifier-border); }
+.bsm-card2 .bsm-grp .bsm-trow2 { margin: 0; border: 0; border-bottom: 1px solid var(--background-modifier-border); border-radius: 0; background: transparent; } .bsm-card2 .bsm-grp .bsm-trow2:last-child { border-bottom: 0; }
+.bsm-peoplebox { padding: 14px 16px 6px; } .bsm-peoplebox .bsm-ch { margin-bottom: 4px; }
+.bsm-cards { padding-top: 24px; max-width: 640px; margin: 0 auto; }
+.bsm-shell.no-nav .bsm-content { display: flex; flex-direction: column; justify-content: center; }
+.bsm-bigcard { min-height: 150px; display: flex; flex-direction: column; justify-content: flex-end; }
+.bsm-bigic { margin-bottom: auto; }
+.bsm-empty3 { padding: 40px 10px; }

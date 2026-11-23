@@ -38,14 +38,11 @@
         const bar = this.bar = c.createDiv({ cls: "osb-bar" });
         const btn = (icon, tip, fn, cls) => { const x = bar.createDiv({ cls: "osb-btn" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; };
         const sep = () => bar.createDiv({ cls: "osb-bsep" });
-        btn("lucide-square-plus", "Новая карточка (N)", () => this.addCard());
-        this.handBtn = btn("lucide-hand", "Рука: двигать холст (удерживайте Пробел)", () => { this.hand = !this.hand; this.handBtn.classList.toggle("is-on", this.hand); this.root.classList.toggle("is-hand", this.hand); });
+        this.undoBtn = btn("lucide-undo-2", "Отменить", () => this.undo()); this.redoBtn = btn("lucide-redo-2", "Вернуть", () => this.redo());
         sep();
-        this.undoBtn = btn("lucide-undo-2", "Отменить (Ctrl+Z)", () => this.undo()); this.redoBtn = btn("lucide-redo-2", "Вернуть (Ctrl+Shift+Z)", () => this.redo());
-        sep();
-        this.snapBtn = btn("lucide-magnet", "Прилипание к сетке", () => { this.snap = !this.snap; this.snapBtn.classList.toggle("is-on", this.snap); try { localStorage.setItem("board-snap", this.snap ? "1" : "0"); } catch (e) { /* private */ } });
+        this.snapBtn = btn("lucide-magnet", "Сетка", () => { this.snap = !this.snap; this.snapBtn.classList.toggle("is-on", this.snap); try { localStorage.setItem("board-snap", this.snap ? "1" : "0"); } catch (e) { /* private */ } });
         try { this.snap = localStorage.getItem("board-snap") === "1"; } catch (e) { this.snap = false; } this.snapBtn.classList.toggle("is-on", !!this.snap);
-        this.searchBtn = btn("lucide-search", "Найти карточку (Ctrl+F)", () => this.toggleSearch());
+        this.searchBtn = btn("lucide-search", "Поиск", () => this.toggleSearch());
         this.share = document.createElement("div");
         const zoom = this.zoomEl = c.createDiv({ cls: "osb-zoom" });
         const zb = (ic, tip, fn) => { const x = zoom.createDiv({ cls: "osb-zb", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = fn; return x; };
@@ -88,6 +85,19 @@
         try { await app.vault.adapter.write(this.path, JSON.stringify(out, null, 1)); } catch (e) { console.error(e); }
       }
       get ro() { return !!(this.sh && this.sh.readOnly); }
+      // smart guides: while moving, edges and centres line up with other cards, and the guide lines show what is aligned with what
+      guide(d, dx, dy) {
+        if (!d.box) { let a = 1e9, b = 1e9, c = -1e9, e = -1e9; for (const [id, [x, y]] of d.o) { const m = this.yn.get(id); if (!m) continue; a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x + m.get("w")); e = Math.max(e, y + m.get("h")); } d.box = { x: a, y: b, w: c - a, h: e - b }; d.others = []; for (const [id, m] of this.yn.entries()) if (!d.o.has(id)) d.others.push({ x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h") }); }
+        const T = 7 / this.cam.k, bx = d.box.x + dx, by = d.box.y + dy, xs = [bx, bx + d.box.w / 2, bx + d.box.w], ys = [by, by + d.box.h / 2, by + d.box.h]; let bestX = null, bestY = null;
+        for (const o of d.others) { const ox = [o.x, o.x + o.w / 2, o.x + o.w], oy = [o.y, o.y + o.h / 2, o.y + o.h]; for (const a of xs) for (const b of ox) { const dd = b - a; if (Math.abs(dd) < T && (!bestX || Math.abs(dd) < Math.abs(bestX.d))) bestX = { d: dd, at: b, o }; } for (const a of ys) for (const b of oy) { const dd = b - a; if (Math.abs(dd) < T && (!bestY || Math.abs(dd) < Math.abs(bestY.d))) bestY = { d: dd, at: b, o }; } }
+        const out = { dx: dx + (bestX ? bestX.d : 0), dy: dy + (bestY ? bestY.d : 0), sx: !!bestX, sy: !!bestY }; this.drawGuides(bestX, bestY, d, out); return out;
+      }
+      drawGuides(bx, by, d, out) {
+        let gl = this.guides; if (!gl) { gl = this.guides = this.world.createDiv({ cls: "osb-guides" }); } gl.empty(); const box = { x: d.box.x + out.dx, y: d.box.y + out.dy, w: d.box.w, h: d.box.h };
+        if (bx) { const y1 = Math.min(box.y, bx.o.y), y2 = Math.max(box.y + box.h, bx.o.y + bx.o.h), l = gl.createDiv({ cls: "osb-gl is-v" }); l.style.cssText = "left:" + bx.at + "px;top:" + y1 + "px;height:" + (y2 - y1) + "px"; }
+        if (by) { const x1 = Math.min(box.x, by.o.x), x2 = Math.max(box.x + box.w, by.o.x + by.o.w), l = gl.createDiv({ cls: "osb-gl is-h" }); l.style.cssText = "top:" + by.at + "px;left:" + x1 + "px;width:" + (x2 - x1) + "px"; }
+      }
+      clearGuides() { if (this.guides) this.guides.empty(); }
       initHistory() {
         const Y = window.__bsY.Y; if (this.um) { try { this.um.destroy(); } catch (e) { /* ignore */ } } this.um = new Y.UndoManager([this.yn, this.ye], { captureTimeout: 500 });
         const upd = () => { if (this.undoBtn) { this.undoBtn.classList.toggle("is-off", !this.um.undoStack.length); this.redoBtn.classList.toggle("is-off", !this.um.redoStack.length); } };
@@ -103,7 +113,7 @@
         const bar = this.selBar; if (!bar) return; const ids = Array.from(this.sel).filter((i) => this.yn.get(i)); if (!ids.length || this.ro || (this.drag && this.drag.kind === "move")) { bar.classList.remove("is-on"); return; }
         const sig = ids.length + "|" + ids.map((i) => this.yn.get(i).get("locked") ? 1 : 0).join(""); if (bar.dataset.sig !== sig) {
           bar.dataset.sig = sig; bar.empty(); const mk = (ic, tip, fn) => { const x = bar.createDiv({ cls: "osb-sb", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = (e) => fn(e); return x; };
-          const sw = bar.createDiv({ cls: "osb-sbc" }); COLORS.forEach((col) => { const d = sw.createDiv({ cls: "osb-sw" }); d.style.background = col || "var(--background-modifier-border)"; d.onclick = () => this.setColor(col); });
+          const cols = new Set(ids.map((i) => this.yn.get(i).get("color") || "")), cur = cols.size === 1 ? Array.from(cols)[0] : ""; const cb = bar.createDiv({ cls: "osb-sb osb-colorbtn", attr: { title: "Цвет" } }); const dot = cb.createDiv({ cls: "osb-cdot" }); dot.style.background = cur || "transparent"; if (!cur) dot.classList.add("is-none"); cb.onclick = () => window.__bsColors.pick(cb, cur, (c) => this.setColor(c));
           bar.createDiv({ cls: "osb-bsep" }); mk("lucide-copy", "Дублировать (Ctrl+D)", () => this.duplicate());
           const locked = ids.every((i) => this.yn.get(i).get("locked")); mk(locked ? "lucide-unlock" : "lucide-lock", locked ? "Разблокировать" : "Закрепить на месте", () => this.setLock(!locked));
           if (ids.length > 1) mk("lucide-align-horizontal-distribute-center", "Выровнять", (e) => this.alignMenu(e));
@@ -201,9 +211,9 @@
         const grip = el.createDiv({ cls: "osb-grip" }); const tag = grip.createSpan({ cls: "osb-tag" }); const by = grip.createSpan({ cls: "osb-by" }); const x = grip.createDiv({ cls: "osb-x", attr: { title: "Удалить" } }); api.setIcon(x, "lucide-x");
         x.onclick = (ev) => { ev.stopPropagation(); this.select(new Set([id])); this.removeSel(); };
         const ta = el.createEl("textarea", { cls: "osb-ta", attr: { placeholder: "Текст…", spellcheck: "false" } });
-        for (const side of ["t", "r", "b", "l"]) { const h = el.createDiv({ cls: "osb-h osb-h-" + side }); h.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); ev.preventDefault(); if (this.ro) return; this.drag = { kind: "link", from: id }; this.root.setPointerCapture(ev.pointerId); }); }
-        const rs = el.createDiv({ cls: "osb-rs" }); rs.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); ev.preventDefault(); if (this.ro || m.get("locked")) return; const mm = this.yn.get(id), q = this.pt(ev); this.drag = { kind: "size", id, w: mm.get("w"), h: mm.get("h"), p: this.worldPt(q.sx, q.sy) }; this.root.setPointerCapture(ev.pointerId); });
-        grip.addEventListener("pointerdown", (ev) => { if (ev.target.closest(".osb-x") || ev.button !== 0 || this.ro) return; ev.preventDefault(); if (ev.shiftKey || ev.ctrlKey) { const n2 = new Set(this.sel); n2.has(id) ? n2.delete(id) : n2.add(id); this.select(n2); if (!n2.has(id)) return; } else if (!this.sel.has(id)) this.select(new Set([id])); const o = new Map(); for (const s of this.sel) { const n = this.yn.get(s); if (n && !n.get("locked")) o.set(s, [n.get("x"), n.get("y")]); } if (!o.size) return; const p = this.pt(ev); this.drag = { kind: "move", o, p: this.worldPt(p.sx, p.sy) }; this.root.setPointerCapture(ev.pointerId); });
+        for (const side of ["t", "r", "b", "l"]) { const h = el.createDiv({ cls: "osb-h osb-h-" + side }); h.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); if (this.ro) return; this.drag = { kind: "link", from: id }; this.root.setPointerCapture(ev.pointerId); }); }
+        for (const dir of ["n", "s", "e", "w", "nw", "ne", "sw", "se"]) { const z = el.createDiv({ cls: "osb-rz osb-rz-" + dir }); z.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); if (this.ro || m.get("locked")) return; const mm = this.yn.get(id), q = this.pt(ev); this.drag = { kind: "size", id, dir, x: mm.get("x"), y: mm.get("y"), w: mm.get("w"), h: mm.get("h"), p: this.worldPt(q.sx, q.sy) }; this.root.setPointerCapture(ev.pointerId); }); }
+        grip.addEventListener("pointerdown", (ev) => { if (ev.target.closest(".osb-x") || ev.button !== 0 || this.ro) return; if (ev.shiftKey || ev.ctrlKey) { const n2 = new Set(this.sel); n2.has(id) ? n2.delete(id) : n2.add(id); this.select(n2); if (!n2.has(id)) return; } else if (!this.sel.has(id)) this.select(new Set([id])); const o = new Map(); for (const s of this.sel) { const n = this.yn.get(s); if (n && !n.get("locked")) o.set(s, [n.get("x"), n.get("y")]); } if (!o.size) return; const p = this.pt(ev); this.drag = { kind: "move", o, p: this.worldPt(p.sx, p.sy) }; this.root.setPointerCapture(ev.pointerId); });
         ta.addEventListener("focus", () => { this.select(new Set([id])); this.publish({ typing: id }); });
         ta.addEventListener("blur", () => this.publish({ typing: null }));
         ta.addEventListener("input", () => { if (m.get("locked")) { ta.value = m.get("text").toString(); return; } const t = m.get("text"), old = t.toString(), now = ta.value; let a = 0; while (a < old.length && a < now.length && old[a] === now[a]) a++; let b = 0; while (b < old.length - a && b < now.length - a && old[old.length - 1 - b] === now[now.length - 1 - b]) b++; this.doc.transact(() => { if (old.length - a - b) t.delete(a, old.length - a - b); if (now.length - a - b) t.insert(a, now.slice(a, now.length - b)); this.stampM(m); }); this.feed("edit", id, this.label(id)); });
@@ -232,24 +242,34 @@
       bindInput() {
         const r = this.root;
         r.addEventListener("pointerdown", (e) => {
-          if (e.target.closest(".osb-card, .osb-sel, .osb-search, .osb-zoom, g")) return; const pan = e.button === 1 || (e.button === 0 && (this.hand || this.space)); if (e.button !== 0 && e.button !== 1) return; e.preventDefault(); const p = this.pt(e);
+          if (e.target.closest(".osb-card, .osb-sel, .osb-search, .osb-zoom, g")) return; if (e.button !== 0 && e.button !== 1) return; const p = this.pt(e);
           if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); this.contentEl.focus();
-          if (pan || this.ro) { this.drag = { kind: "pan", sx: p.sx, sy: p.sy, cx: this.cam.x, cy: this.cam.y }; r.classList.add("is-panning"); }
-          else { if (!(e.shiftKey || e.ctrlKey)) { this.select(new Set()); this.selEdge = null; this.mark(); } this.drag = { kind: "box", x0: p.sx, y0: p.sy, base: new Set(this.sel), add: e.shiftKey || e.ctrlKey }; }
+          if (e.button === 0 && e.shiftKey && !this.ro) { this.drag = { kind: "box", x0: p.sx, y0: p.sy, base: new Set(e.ctrlKey ? this.sel : []), add: e.ctrlKey }; if (!e.ctrlKey) { this.sel = new Set(); this.mark(); } }
+          else { this.drag = { kind: "pan", sx: p.sx, sy: p.sy, cx: this.cam.x, cy: this.cam.y }; r.classList.add("is-panning"); }
           r.setPointerCapture(e.pointerId);
         });
         r.addEventListener("pointermove", (e) => {
           const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.myCur = w; const d = this.drag;
-          if (d && d.kind === "pan") { this.cam.x = d.cx - (p.sx - d.sx) / this.cam.k; this.cam.y = d.cy - (p.sy - d.sy) / this.cam.k; this.applyCam(); }
-          else if (d && d.kind === "move") { d.moved = true; this.doc.transact(() => { for (const [s, [x, y]] of d.o) { const n = this.yn.get(s); if (n) { n.set("x", this.sn(x + w.x - d.p.x)); n.set("y", this.sn(y + w.y - d.p.y)); } } }); }
-          else if (d && d.kind === "size") { d.moved = true; const n = this.yn.get(d.id); if (n) this.doc.transact(() => { n.set("w", Math.max(120, this.sn(d.w + w.x - d.p.x))); n.set("h", Math.max(60, this.sn(d.h + w.y - d.p.y))); }); }
+          if (d && d.kind === "pan") { if (Math.abs(p.sx - d.sx) + Math.abs(p.sy - d.sy) > 3) d.moved = true; this.cam.x = d.cx - (p.sx - d.sx) / this.cam.k; this.cam.y = d.cy - (p.sy - d.sy) / this.cam.k; this.applyCam(); }
+          else if (d && d.kind === "move") { d.moved = true; let dx = w.x - d.p.x, dy = w.y - d.p.y; const g = this.guide(d, dx, dy); dx = g.dx; dy = g.dy; this.doc.transact(() => { for (const [s0, [x, y]] of d.o) { const n = this.yn.get(s0); if (n) { n.set("x", g.sx ? Math.round(x + dx) : this.sn(x + dx)); n.set("y", g.sy ? Math.round(y + dy) : this.sn(y + dy)); } } }); }
+          else if (d && d.kind === "size") {
+            d.moved = true; const n = this.yn.get(d.id); if (n) { const dx = w.x - d.p.x, dy = w.y - d.p.y, MW = 120, MH = 60; let x = d.x, y = d.y, ww = d.w, hh = d.h;
+              if (d.dir.includes("e")) ww = Math.max(MW, this.sn(d.w + dx)); if (d.dir.includes("s")) hh = Math.max(MH, this.sn(d.h + dy));
+              if (d.dir.includes("w")) { ww = Math.max(MW, this.sn(d.w - dx)); x = d.x + d.w - ww; } if (d.dir.includes("n")) { hh = Math.max(MH, this.sn(d.h - dy)); y = d.y + d.h - hh; }
+              this.doc.transact(() => { n.set("x", Math.round(x)); n.set("y", Math.round(y)); n.set("w", Math.round(ww)); n.set("h", Math.round(hh)); }); } }
           else if (d && d.kind === "link") this.drawTemp(w);
           else if (d && d.kind === "box") { const x = Math.min(d.x0, p.sx), y = Math.min(d.y0, p.sy), bw = Math.abs(p.sx - d.x0), bh = Math.abs(p.sy - d.y0); if (bw + bh > 6) { d.live = true; this.box.style.cssText = "display:block;left:" + x + "px;top:" + y + "px;width:" + bw + "px;height:" + bh + "px"; const a = this.worldPt(x, y), b2 = this.worldPt(x + bw, y + bh), hit = new Set(d.base); for (const [id, m] of this.yn.entries()) { const cx = m.get("x"), cy = m.get("y"); if (cx < b2.x && cx + m.get("w") > a.x && cy < b2.y && cy + m.get("h") > a.y) hit.add(id); } this.sel = hit; this.mark(); } }
           this.publish();
         });
-        const up = (e) => { const d = this.drag; this.drag = null; r.classList.remove("is-panning"); if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } if (d && d.kind === "link") { const t = document.elementFromPoint(e.clientX, e.clientY), c = t && t.closest && t.closest(".osb-card"); if (c && c.dataset.id !== d.from) this.addEdge(d.from, c.dataset.id); else if (!c) { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } };
+        const up = (e) => { const d = this.drag; this.drag = null; r.classList.remove("is-panning"); this.clearGuides(); if (d && d.kind === "pan" && !d.moved && !this.ro) { this.select(new Set()); this.selEdge = null; this.mark(); } if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } if (d && d.kind === "link") { const t = document.elementFromPoint(e.clientX, e.clientY), c = t && t.closest && t.closest(".osb-card"); if (c && c.dataset.id !== d.from) this.addEdge(d.from, c.dataset.id); else if (!c) { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } };
         r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
-        r.addEventListener("wheel", (e) => { const ta = e.target.closest && e.target.closest(".osb-ta"); if (ta && !e.ctrlKey && ta.scrollHeight > ta.clientHeight) return; e.preventDefault(); const p = this.pt(e), b = this.worldPt(p.sx, p.sy); this.cam.k = Math.max(.1, Math.min(3, this.cam.k * Math.exp(-e.deltaY * .0015))); const a = this.worldPt(p.sx, p.sy); this.cam.x += b.x - a.x; this.cam.y += b.y - a.y; this.applyCam(); }, { passive: false });
+        r.addEventListener("wheel", (e) => {
+          const ta = e.target.closest && e.target.closest(".osb-ta"); if (ta && !e.ctrlKey && ta.scrollHeight > ta.clientHeight) return; e.preventDefault();
+          const mouse = e.deltaMode === 1 || (Number.isInteger(e.deltaY) && e.deltaX === 0 && Math.abs(e.deltaY) >= 40);
+          if (e.ctrlKey || mouse) { const p = this.pt(e), b = this.worldPt(p.sx, p.sy); this.cam.k = Math.max(.1, Math.min(3, this.cam.k * Math.exp(-(e.deltaMode === 1 ? e.deltaY * 30 : e.deltaY) * (e.ctrlKey ? .01 : .0015)))); const a = this.worldPt(p.sx, p.sy); this.cam.x += b.x - a.x; this.cam.y += b.y - a.y; }
+          else { this.cam.x += e.deltaX / this.cam.k; this.cam.y += e.deltaY / this.cam.k; }
+          this.applyCam();
+        }, { passive: false });
         r.addEventListener("dblclick", (e) => { if (e.target.closest(".osb-card, g")) return; const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.addCard(w.x - 130, w.y - 30); });
         r.addEventListener("contextmenu", (e) => {
           e.preventDefault(); if (!this.doc) return; const M = api.Menu; const m = new M(), p = this.pt(e), w = this.worldPt(p.sx, p.sy), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));
@@ -258,7 +278,7 @@
             const id = card.dataset.id; if (!this.sel.has(id)) this.select(new Set([id]));
             it("Дублировать", "lucide-copy", () => { for (const s of Array.from(this.sel)) { const n = this.yn.get(s); if (n) this.addCard(n.get("x") + 30, n.get("y") + 30, n.get("text").toString()); } });
             it("Копировать текст", "lucide-clipboard", () => { const n = this.yn.get(id); if (n) navigator.clipboard.writeText(n.get("text").toString()).catch(() => {}); });
-            m.addItem((i) => { i.setTitle("Цвет").setIcon("lucide-palette"); const sub = i.setSubmenu(); [["Без цвета", ""], ["Красный", COLORS[1]], ["Оранжевый", COLORS[2]], ["Жёлтый", COLORS[3]], ["Зелёный", COLORS[4]], ["Голубой", COLORS[5]], ["Фиолетовый", COLORS[6]]].forEach(([t, c]) => sub.addItem((x) => x.setTitle(t).setIcon("lucide-circle").onClick(() => this.setColor(c)))); });
+            it("Цвет…", "lucide-palette", () => { const m0 = this.yn.get(id); window.__bsColors.pick({ x: e.clientX, y: e.clientY }, (m0 && m0.get("color")) || "", (c) => this.setColor(c)); });
             it("На передний план", "lucide-bring-to-front", () => { const n = this.yn.get(id), e2 = this.els.get(id); if (e2) this.cards.appendChild(e2.el); });
             m.addSeparator(); it("Удалить", "lucide-trash-2", () => this.removeSel());
           } else if (eg) {
@@ -275,7 +295,6 @@
         this.contentEl.addEventListener("keydown", (e) => {
           const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
           if (mod && k === "f") { e.preventDefault(); this.toggleSearch(true); return; } if (inField) return;
-          if (e.code === "Space") { this.space = true; this.root.classList.add("is-hand"); e.preventDefault(); return; }
           if (this.ro) { if (k === "f") this.fit(); return; }
           if (mod && k === "a") { e.preventDefault(); this.select(new Set(this.yn.keys())); }
           else if (mod && k === "z") { e.preventDefault(); e.shiftKey ? this.redo() : this.undo(); } else if (mod && k === "y") { e.preventDefault(); this.redo(); }
@@ -287,7 +306,6 @@
           else if (e.key === "+" || e.key === "=") this.zoomBy(1.25); else if (e.key === "-") this.zoomBy(1 / 1.25);
           else if (e.key.startsWith("Arrow") && this.sel.size) { e.preventDefault(); const st = e.shiftKey ? 10 : 1, dx = e.key === "ArrowLeft" ? -st : e.key === "ArrowRight" ? st : 0, dy = e.key === "ArrowUp" ? -st : e.key === "ArrowDown" ? st : 0; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m && !m.get("locked")) { m.set("x", m.get("x") + dx); m.set("y", m.get("y") + dy); } } }); }
         });
-        this.contentEl.addEventListener("keyup", (e) => { if (e.code === "Space") { this.space = false; if (!this.hand) this.root.classList.remove("is-hand"); } });
       }
       drawTemp(w) { const NS = "http://www.w3.org/2000/svg"; if (!this.temp) { this.temp = document.createElementNS(NS, "line"); this.temp.setAttribute("class", "osb-el osb-temp"); this.svg.appendChild(this.temp); } if (!this.center(this.drag.from)) return; const p = this.anchor(this.drag.from, w); this.temp.setAttribute("x1", p.x); this.temp.setAttribute("y1", p.y); this.temp.setAttribute("x2", w.x); this.temp.setAttribute("y2", w.y); }
       // ---------- people ----------
