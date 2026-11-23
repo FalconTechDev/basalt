@@ -20776,6 +20776,23 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     right:-13px;
     top:calc(50% - 9px)
 }
+.osb-feed{
+    bottom:46px
+}
+.osb-people{
+    bottom:46px
+}
+.osb-dtb{
+    bottom:46px
+}
+.osb-root.is-draw ~ .osb-feed,.osb-root.is-draw ~ .osb-people{
+    display:none
+}
+.osb-dtb{
+    max-width:calc(100% - 24px);
+    flex-wrap:wrap;
+    justify-content:center
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
@@ -22294,6 +22311,81 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .bsh-ci svg{
     width:13px;
     height:13px
+}
+.modal.bs-confirm{
+    width:440px;
+    max-width:92vw;
+    padding:22px 24px 18px;
+    border-radius:16px
+}
+.bs-confirm .modal-title{
+    display:none
+}
+.bs-confirm-head{
+    display:flex;
+    gap:16px;
+    align-items:flex-start
+}
+.bs-confirm-ic{
+    width:44px;
+    height:44px;
+    flex:none;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    background:color-mix(in srgb,var(--interactive-accent) 18%,transparent);
+    color:var(--interactive-accent)
+}
+.bs-confirm-ic svg{
+    width:22px;
+    height:22px
+}
+.bs-confirm-ic.is-danger{
+    background:color-mix(in srgb,#e5484d 18%,transparent);
+    color:#ff6b6f
+}
+.bs-confirm-main{
+    flex:1;
+    min-width:0
+}
+.bs-confirm-text{
+    font-size:15px;
+    font-weight:600;
+    line-height:1.4;
+    margin-top:2px
+}
+.bs-confirm-items{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:12px
+}
+.bs-confirm-chip{
+    max-width:100%;
+    padding:3px 10px;
+    border-radius:999px;
+    font-size:12.5px;
+    background:color-mix(in srgb,var(--text-normal) 9%,transparent);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis
+}
+.bs-confirm-chip.is-more{
+    color:var(--text-muted)
+}
+.bs-confirm .modal-button-container{
+    margin-top:20px;
+    gap:8px;
+    justify-content:flex-end
+}
+.bs-confirm .modal-button-container button{
+    height:34px;
+    padding:0 16px;
+    border-radius:10px
+}
+.bs-confirm .modal-button-container button.mod-warning{
+    background:#e5484d;
+    color:#fff
 }
 .modal,.modal.bset,.menu,.bm-pop,.bm-drop,.popover,.suggestion-container,.prompt,.tooltip,.notice,.bpal-pop,.fp-tr-pop,.fp-end-picker,.osb-bar,.osb-rail,.osb-search,.osb-sel,.osb-help,.osb-dtb,.osb-feed,.osb-lbl,.bsh-load{
     background-color:color-mix(in srgb,var(--background-primary) calc(var(--bs-win-a,.75) * 100%),transparent)!important;

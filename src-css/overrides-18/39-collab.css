@@ -191,3 +191,12 @@
 .bsh-chip .bsh-dot { width: 7px; height: 7px; background: var(--text-faint); animation: none; }
 .bsh-chip.is-live .bsh-dot, .bsh-chip.is-idle .bsh-dot { background: #46a758; animation: none; } .bsh-chip.is-wait .bsh-dot, .bsh-chip.is-load .bsh-dot { background: #d6b43c; animation: osb-blink 1.2s ease-in-out infinite; }
 .bsh-ci { display: grid; place-items: center; opacity: .75; } .bsh-ci svg { width: 13px; height: 13px; }
+/* ---- confirm dialog ---- */
+.modal.bs-confirm { width: 440px; max-width: 92vw; padding: 22px 24px 18px; border-radius: 16px; }
+.bs-confirm .modal-title { display: none; }
+.bs-confirm-head { display: flex; gap: 16px; align-items: flex-start; }
+.bs-confirm-ic { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 14px; background: color-mix(in srgb, var(--interactive-accent) 18%, transparent); color: var(--interactive-accent); } .bs-confirm-ic svg { width: 22px; height: 22px; } .bs-confirm-ic.is-danger { background: color-mix(in srgb, #e5484d 18%, transparent); color: #ff6b6f; }
+.bs-confirm-main { flex: 1; min-width: 0; } .bs-confirm-text { font-size: 15px; font-weight: 600; line-height: 1.4; margin-top: 2px; }
+.bs-confirm-items { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; } .bs-confirm-chip { max-width: 100%; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; background: color-mix(in srgb, var(--text-normal) 9%, transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .bs-confirm-chip.is-more { color: var(--text-muted); }
+.bs-confirm .modal-button-container { margin-top: 20px; gap: 8px; justify-content: flex-end; } .bs-confirm .modal-button-container button { height: 34px; padding: 0 16px; border-radius: 10px; }
+.bs-confirm .modal-button-container button.mod-warning { background: #e5484d; color: #fff; }

@@ -213,7 +213,9 @@
     const Modal = window.__bsApi && window.__bsApi.Modal; if (!Modal) { resolve(window.confirm(text)); return; }
     const m = new Modal(window.app); m.modalEl.addClass("bs-confirm"); m.setTitle(opts.title || (opts.danger ? "Подтвердите удаление" : "Подтверждение"));
     let answer = false;
-    m.contentEl.createDiv({ cls: "bs-confirm-text", text });
+    const head = m.contentEl.createDiv({ cls: "bs-confirm-head" }); const ic = head.createDiv({ cls: "bs-confirm-ic" + (opts.danger ? " is-danger" : "") }); try { window.__bsApi.setIcon(ic, opts.danger ? "lucide-trash-2" : "lucide-circle-help"); } catch (e) { /* no icon */ }
+    const tx = head.createDiv({ cls: "bs-confirm-main" }); tx.createDiv({ cls: "bs-confirm-text", text: opts.items ? (opts.lead || text) : text });
+    if (opts.items && opts.items.length) { const list = tx.createDiv({ cls: "bs-confirm-items" }); for (const n of opts.items.slice(0, 8)) list.createSpan({ cls: "bs-confirm-chip", text: n }); if (opts.items.length > 8) list.createSpan({ cls: "bs-confirm-chip is-more", text: "+" + (opts.items.length - 8) }); }
     const bar = m.contentEl.createDiv("modal-button-container");
     const no = bar.createEl("button", { text: opts.cancel || "Отмена" }), yes = bar.createEl("button", { text: opts.ok || "OK", cls: opts.danger ? "mod-warning" : "mod-cta" });
     const done = (v) => { answer = v; m.close(); };

@@ -352,7 +352,7 @@
       async remove(files) {
         if (this.ws()) return;
         const names = files.map((f) => f.name).slice(0, 4).join(", ") + (files.length > 4 ? "…" : "");
-        if (!(await window.__bsConfirm(`Удалить в корзину: ${names}?`, { title: "Удаление", ok: "Удалить", danger: true }))) return;
+        if (!(await window.__bsConfirm(`Удалить в корзину: ${names}?`, { title: files.length > 1 ? "Удалить " + files.length + " элементов?" : "Удалить файл?", lead: files.length > 1 ? "Эти элементы будут перемещены в корзину:" : "Файл будет перемещён в корзину:", items: files.map((f) => f.name), ok: "В корзину", danger: true }))) return;
         const snaps = []; for (const f of files) { try { let snap = null; try { snap = await this.snapshotOf(f); } catch (e) { /* too big or unreadable: no undo for this one */ } await app.fileManager.trashFile(f); if (snap) snaps.push(snap); } catch (err) { new api.Notice("Не удалось удалить: " + err.message); } } if (snaps.length) this.pushOp({ t: "delete", snaps });
         this.sel.clear(); this.render();
       }

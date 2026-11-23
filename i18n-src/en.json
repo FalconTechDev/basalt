@@ -1690,5 +1690,11 @@
 "Перевод недоступен": "Translation is not available",
 "Прозрачность": "Transparency",
 "Прозрачность окон и меню": "Transparency of windows and menus",
-"Насколько сквозь настройки, диалоги, меню и панели видно то, что под ними.": "How much of what is underneath shows through the settings, dialogs, menus and panels."
+"Насколько сквозь настройки, диалоги, меню и панели видно то, что под ними.": "How much of what is underneath shows through the settings, dialogs, menus and panels.",
+"Удалить файл?": "Delete the file?",
+"Эти элементы будут перемещены в корзину:": "These items will be moved to the trash:",
+"Файл будет перемещён в корзину:": "The file will be moved to the trash:",
+"В корзину": "To the trash",
+"Удалить ": "Delete ",
+" элементов?": " items?"
 }

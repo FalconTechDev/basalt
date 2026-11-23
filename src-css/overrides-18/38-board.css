@@ -222,3 +222,6 @@
 .osb-h::before { content: ""; position: absolute; inset: -12px; border-radius: 50%; }
 .osb-card:hover .osb-h, .osb-card.is-sel .osb-h { opacity: .9; } .osb-h:hover { opacity: 1; scale: 1.25; }
 .osb-h-t { top: -13px; left: calc(50% - 9px); } .osb-h-b { bottom: -13px; left: calc(50% - 9px); } .osb-h-l { left: -13px; top: calc(50% - 9px); } .osb-h-r { right: -13px; top: calc(50% - 9px); }
+/* ---- keep the floating bottom items clear of the status bar ---- */
+.osb-feed { bottom: 46px; } .osb-people { bottom: 46px; } .osb-dtb { bottom: 46px; }
+.osb-root.is-draw ~ .osb-feed, .osb-root.is-draw ~ .osb-people { display: none; } .osb-dtb { max-width: calc(100% - 24px); flex-wrap: wrap; justify-content: center; }
