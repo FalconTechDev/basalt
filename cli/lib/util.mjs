@@ -11,7 +11,7 @@ export const usage = (m) => new CliError(m, EXIT.USAGE);
 export const notFound = (m) => new CliError(m, EXIT.NOT_FOUND);
 
 /** Parse argv by a spec {name: "bool"|"str"|"num"|"list"}; short aliases come from `alias`. Returns {pos, flags}. */
-export function parseArgs(argv, spec = {}, alias = {}) {
+export function parseArgs(argv, spec = {}, alias = {}, lenient = false) {
   const pos = [], flags = {};
   const set = (name, val) => {
     const t = spec[name];
@@ -24,11 +24,11 @@ export function parseArgs(argv, spec = {}, alias = {}) {
     const a = argv[i];
     if (a === "--") { pos.push(...argv.slice(i + 1)); break; }
     let m;
-    if ((m = /^--([^=]+)=(.*)$/s.exec(a))) { const n = m[1]; if (!(n in spec)) throw usage(`unknown option --${n}`); set(n, m[2]); continue; }
+    if ((m = /^--([^=]+)=(.*)$/s.exec(a))) { const n = m[1]; if (!(n in spec)) { if (lenient) { pos.push(a); continue; } throw usage(`unknown option --${n}`); } set(n, m[2]); continue; }
     if (a.startsWith("--") && a.length > 2) {
       let n = a.slice(2);
       if (n.startsWith("no-") && spec[n.slice(3)] === "bool") { flags[n.slice(3)] = false; continue; }
-      if (!(n in spec)) throw usage(`unknown option --${n}`);
+      if (!(n in spec)) { if (lenient) { pos.push(a); continue; } throw usage(`unknown option --${n}`); }
       if (spec[n] === "bool") { flags[n] = true; continue; }
       if (i + 1 >= argv.length) throw usage(`--${n} needs a value`);
       set(n, argv[++i]); continue;

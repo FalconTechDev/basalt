@@ -68,7 +68,7 @@ export async function main(argv, io = {}) {
       throw usage(`unknown command "${found.words.join(" ")}"` + (near.length ? `. Did you mean: ${near.join(", ")}?` : ". Run: basalt --help"));
     }
     const { cmd, rest } = found;
-    const { pos, flags } = parseArgs(rest, { ...GLOBAL_SPEC, ...cmd.spec }, { ...GLOBAL_ALIAS, ...cmd.alias });
+    const { pos, flags } = parseArgs(rest, { ...GLOBAL_SPEC, ...cmd.spec }, { ...GLOBAL_ALIAS, ...cmd.alias }, !!cmd.passthrough);
     if (flags.help) { out(helpCommand(cmd, lang) + "\n"); return EXIT.OK; }
     const json = !!flags.json, quiet = !!flags.quiet;
     let vault = null;
