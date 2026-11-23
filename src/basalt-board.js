@@ -34,6 +34,7 @@
         this.world = this.root.createDiv({ cls: "osb-world" });
         this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); this.svg.setAttribute("class", "osb-edges"); this.svg.innerHTML = '<defs><marker id="osb-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="context-stroke"/></marker></defs>'; this.world.appendChild(this.svg);
         this.cards = this.world.createDiv({ cls: "osb-cards" });
+        this.inkSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); this.inkSvg.setAttribute("class", "osb-ink"); this.inkSvg.innerHTML = '<defs><marker id="osb-inkarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="context-stroke"/></marker></defs>'; this.world.appendChild(this.inkSvg);
         this.layer = this.root.createDiv({ cls: "osb-cursors" });
         const bar = this.bar = c.createDiv({ cls: "osb-bar" });
         const btn = (icon, tip, fn, cls) => { const x = bar.createDiv({ cls: "osb-btn" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; };
@@ -46,6 +47,7 @@
         this.lockBtn = rb("lucide-unlock", "Заблокировать доску", () => this.toggleLock()); rs();
         rb("lucide-zoom-in", "Увеличить", () => this.zoomBy(1.25)); rb("lucide-zoom-out", "Уменьшить", () => this.zoomBy(1 / 1.25)); this.resetBtn = rb("lucide-rotate-cw", "Масштаб 100%", () => { this.cam.k = 1; this.applyCam(); }); rb("lucide-maximize", "Показать всё", () => this.fit()); rs();
         this.undoBtn = rb("lucide-undo-2", "Отменить", () => this.undo()); this.redoBtn = rb("lucide-redo-2", "Вернуть", () => this.redo()); rs();
+        this.drawBtn = rb("lucide-pencil", "Рисование", () => this.toggleDraw()); this.transBtn = rb("lucide-languages", "Перевести карточки", () => this.translate(this.transBtn)); rs();
         this.helpBtn = rb("lucide-circle-help", "Управление", () => this.toggleHelp());
         this.searchBox = c.createDiv({ cls: "osb-search" }); const sb = this.searchBox; const sIc = sb.createSpan({ cls: "osb-si" }); api.setIcon(sIc, "lucide-search");
         const si = this.searchInput = sb.createEl("input", { attr: { placeholder: "Поиск по карточкам", spellcheck: "false" } }); this.searchCount = sb.createSpan({ cls: "osb-sc" });
@@ -141,8 +143,93 @@
           else if (mode === "cells") { const o = ids.slice().sort((a, b) => (Math.abs(g(a).get("y") - g(b).get("y")) > 60 ? g(a).get("y") - g(b).get("y") : g(a).get("x") - g(b).get("x"))), cols = Math.max(1, Math.round(Math.sqrt(o.length))); const cw = Math.max(...o.map((i) => g(i).get("w"))), ch = Math.max(...o.map((i) => g(i).get("h"))); o.forEach((i, n) => { g(i).set("x", Math.round(bb.x + (n % cols) * (cw + gap))); g(i).set("y", Math.round(bb.y + Math.floor(n / cols) * (ch + gap))); }); }
         });
       }
+      editLabel(id) {
+        const m = this.ye.get(id); if (!m || this.ro) return; const A = this.center(m.get("a")), B = this.center(m.get("b")); if (!A || !B) return; if (this.lbl) this.lbl.remove();
+        const pt = this.screenPt((A.x + B.x) / 2, (A.y + B.y) / 2), i = this.lbl = this.root.createEl("input", { cls: "osb-lbl", attr: { placeholder: "Подпись", spellcheck: "false" } }); i.value = m.get("label") || ""; i.style.left = pt.x + "px"; i.style.top = pt.y + "px";
+        const fin = (save) => { if (!this.lbl) return; const v = i.value.trim(); this.lbl = null; i.remove(); if (save) m.set("label", v); }; i.onkeydown = (e) => { e.stopPropagation(); if (e.key === "Enter") fin(true); else if (e.key === "Escape") fin(false); }; i.onblur = () => fin(true); i.onpointerdown = (e) => e.stopPropagation(); setTimeout(() => { i.focus(); i.select(); }, 20);
+      }
+      // ---------- translator (the one of the canvas) ----------
+      setText(m, now) { const t = m.get("text"), old = t.toString(); if (old === now) return; let a = 0; while (a < old.length && a < now.length && old[a] === now[a]) a++; let b = 0; while (b < old.length - a && b < now.length - a && old[old.length - 1 - b] === now[now.length - 1 - b]) b++; if (old.length - a - b) t.delete(a, old.length - a - b); if (now.length - a - b) t.insert(a, now.slice(a, now.length - b)); }
+      translate(anchor) {
+        if (this.ro) return; const T = window.__bsTr; if (!T) { new api.Notice("Перевод недоступен"); return; }
+        const ids = (this.sel.size ? Array.from(this.sel) : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && this.yn.get(i).get("text").toString().trim());
+        if (!ids.length) { new api.Notice("Нет текста для перевода"); return; }
+        T.pick(anchor, async (tl, sl, hooks) => {
+          const texts = ids.map((i) => this.yn.get(i).get("text").toString()), trs = await T.resolve(texts, tl, sl, hooks && hooks.onProgress); let ok = 0, fail = 0;
+          this.doc.transact(() => { ids.forEach((id, k) => { const m = this.yn.get(id), t = trs[k]; if (!m) return; if (t == null) { fail++; return; } if (t === texts[k]) return; if (m.get("trOrig") == null) m.set("trOrig", texts[k]); this.setText(m, t); this.stampM(m); ok++; }); });
+          if (ok) this.feed("edit", ids[0], "перевод: " + ok); this.selBar && (this.selBar.dataset.sig = ""); this.renderSelBar();
+          return { ok, fail, msg: "Переведено карточек: " + ok + (fail ? ", ошибок: " + fail : "") };
+        }, T.defaultLang());
+      }
+      restoreOrig() { if (this.ro) return; const ids = (this.sel.size ? Array.from(this.sel) : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && this.yn.get(i).get("trOrig") != null); if (!ids.length) return; this.doc.transact(() => { for (const id of ids) { const m = this.yn.get(id); this.setText(m, m.get("trOrig")); m.delete("trOrig"); this.stampM(m); } }); this.selBar.dataset.sig = ""; this.renderSelBar(); }
+      // ---------- drawing: strokes live in the board document, so everybody sees them ----------
+      inkArr() {
+        if (this._ink) return this._ink; const Y = window.__bsY.Y;
+        if (this.sh) { const e = this.sh.files.get(this.relPath); if (!e) return null; let a = e.get("ink"); if (!a) { a = new Y.Array(); e.set("ink", a); } this._ink = a; } else this._ink = this.doc.getArray("ink");
+        this._ink.observe(() => this.renderInk()); return this._ink;
+      }
+      inkEl(st) {
+        const NS = "http://www.w3.org/2000/svg", mk = (n) => document.createElementNS(NS, n); let e;
+        if (st.k === "pen") { e = mk("path"); const p = st.pts; let d = "M" + p[0][0] + " " + p[0][1]; if (p.length === 1) d += " l0.01 0"; for (let i = 1; i < p.length - 1; i++) { const mx = (p[i][0] + p[i + 1][0]) / 2, my = (p[i][1] + p[i + 1][1]) / 2; d += " Q" + p[i][0] + " " + p[i][1] + " " + mx + " " + my; } if (p.length > 1) d += " L" + p[p.length - 1][0] + " " + p[p.length - 1][1]; e.setAttribute("d", d); }
+        else if (st.k === "line" || st.k === "arrow") { e = mk("line"); e.setAttribute("x1", st.a[0]); e.setAttribute("y1", st.a[1]); e.setAttribute("x2", st.b[0]); e.setAttribute("y2", st.b[1]); if (st.k === "arrow") e.setAttribute("marker-end", "url(#osb-inkarrow)"); }
+        else if (st.k === "rect") { e = mk("rect"); e.setAttribute("x", Math.min(st.a[0], st.b[0])); e.setAttribute("y", Math.min(st.a[1], st.b[1])); e.setAttribute("width", Math.abs(st.b[0] - st.a[0])); e.setAttribute("height", Math.abs(st.b[1] - st.a[1])); e.setAttribute("rx", 6); }
+        else { e = mk("ellipse"); e.setAttribute("cx", (st.a[0] + st.b[0]) / 2); e.setAttribute("cy", (st.a[1] + st.b[1]) / 2); e.setAttribute("rx", Math.abs(st.b[0] - st.a[0]) / 2); e.setAttribute("ry", Math.abs(st.b[1] - st.a[1]) / 2); }
+        e.setAttribute("fill", "none"); e.setAttribute("stroke", st.c || "var(--text-normal)"); e.setAttribute("stroke-width", st.w || 4); e.setAttribute("stroke-linecap", "round"); e.setAttribute("stroke-linejoin", "round"); e.style.color = st.c || "var(--text-normal)"; return e;
+      }
+      renderInk() {
+        if (!this.inkSvg || !this._ink) return; const have = this.inkEls || (this.inkEls = new Map()), seen = new Set();
+        for (const st of this._ink.toArray()) { seen.add(st.id); if (!have.has(st.id)) { const e = this.inkEl(st); e.dataset.id = st.id; this.inkSvg.appendChild(e); have.set(st.id, e); } }
+        for (const [id, e] of have) if (!seen.has(id)) { e.remove(); have.delete(id); }
+      }
+      toggleDraw(on) {
+        if (this.ro && on) return; this.draw = on == null ? !this.draw : !!on; this.root.classList.toggle("is-draw", this.draw); if (this.drawBtn) this.drawBtn.classList.toggle("is-on", this.draw);
+        if (this.draw) { this.inkArr(); this.select(new Set()); this.tool = this.tool || "pen"; try { this.inkColor = localStorage.getItem("board-ink-color") || ""; this.inkW = +localStorage.getItem("board-ink-w") || 4; } catch (e) { this.inkW = 4; } this.buildDrawBar(); }
+        else if (this.dtb) { this.dtb.remove(); this.dtb = null; }
+      }
+      setTool(t) { this.tool = t; if (this.dtb) for (const b of this.dtb.querySelectorAll(".osb-dt")) b.classList.toggle("is-on", b.dataset.t === t); this.root.classList.toggle("is-erase", t === "eraser"); }
+      buildDrawBar() {
+        if (this.dtb) this.dtb.remove(); const bar = this.dtb = this.contentEl.createDiv({ cls: "osb-dtb" });
+        const tb = (t, ic, tip) => { const b = bar.createDiv({ cls: "osb-dt", attr: { title: tip } }); b.dataset.t = t; api.setIcon(b, ic); b.onclick = () => this.setTool(t); return b; };
+        tb("pen", "lucide-pencil", "Кисть (P)"); tb("line", "lucide-minus", "Линия (L)"); tb("arrow", "lucide-move-up-right", "Стрелка (A)"); tb("rect", "lucide-square", "Прямоугольник (R)"); tb("ellipse", "lucide-circle", "Овал (O)"); tb("eraser", "lucide-eraser", "Ластик (E)");
+        bar.createDiv({ cls: "osb-bsep" });
+        const cb = bar.createDiv({ cls: "osb-dt osb-dcol", attr: { title: "Цвет" } }); const dot = cb.createDiv({ cls: "osb-ddot" }); const paintDot = () => { dot.style.background = this.inkColor || "var(--text-normal)"; }; paintDot(); cb.onclick = () => window.__bsColors.pick(cb, this.inkColor, (c) => { this.inkColor = c; try { localStorage.setItem("board-ink-color", c); } catch (e) { /* private */ } paintDot(); }, { none: false });
+        const sizes = bar.createDiv({ cls: "osb-dsz" }); for (const w of [2, 4, 8, 14]) { const b = sizes.createDiv({ cls: "osb-dw" + (w === this.inkW ? " is-on" : ""), attr: { title: w + " px" } }); const i = b.createDiv(); i.style.width = i.style.height = Math.min(16, w + 3) + "px"; b.onclick = () => { this.inkW = w; try { localStorage.setItem("board-ink-w", String(w)); } catch (e) { /* private */ } for (const x of sizes.children) x.classList.toggle("is-on", x === b); }; }
+        bar.createDiv({ cls: "osb-bsep" });
+        const clr = bar.createDiv({ cls: "osb-dt is-danger", attr: { title: "Стереть весь рисунок" } }); api.setIcon(clr, "lucide-trash-2"); clr.onclick = () => { const a = this.inkArr(); if (a && a.length) a.delete(0, a.length); };
+        const done = bar.createDiv({ cls: "osb-dt osb-ddone", attr: { title: "Готово" } }); api.setIcon(done, "lucide-check"); done.onclick = () => this.toggleDraw(false);
+        this.setTool(this.tool || "pen");
+      }
+      startInk(e) {
+        const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.drag = { kind: "ink", tool: this.tool, pts: [[Math.round(w.x * 10) / 10, Math.round(w.y * 10) / 10]], a: [w.x, w.y], b: [w.x, w.y], erased: false };
+        if (this.tool === "eraser") this.eraseAt(w); else this.drawTmp();
+      }
+      moveInk(w, e) {
+        const d = this.drag; if (!d) return; if (d.tool === "eraser") { this.eraseAt(w); return; }
+        if (d.tool === "pen") { const l = d.pts[d.pts.length - 1]; if (Math.hypot(w.x - l[0], w.y - l[1]) * this.cam.k > 2.5) d.pts.push([Math.round(w.x * 10) / 10, Math.round(w.y * 10) / 10]); }
+        else { let bx = w.x, by = w.y; if (e && e.shiftKey) { const dx = bx - d.a[0], dy = by - d.a[1]; if (d.tool === "line" || d.tool === "arrow") { if (Math.abs(dx) > Math.abs(dy) * 2) by = d.a[1]; else if (Math.abs(dy) > Math.abs(dx) * 2) bx = d.a[0]; } else { const m = Math.max(Math.abs(dx), Math.abs(dy)); bx = d.a[0] + Math.sign(dx || 1) * m; by = d.a[1] + Math.sign(dy || 1) * m; } } d.b = [bx, by]; }
+        this.drawTmp();
+      }
+      drawTmp() {
+        const d = this.drag; if (!d || d.tool === "eraser" || !this.inkSvg) return; if (this.inkTmp) this.inkTmp.remove(); const st = this.inkStroke(d); this.inkTmp = this.inkEl(st); this.inkTmp.setAttribute("opacity", ".85"); this.inkSvg.appendChild(this.inkTmp);
+      }
+      inkStroke(d) { const st = { id: "", k: d.tool, c: this.inkColor || "", w: this.inkW || 4, by: me.name }; if (d.tool === "pen") st.pts = d.pts; else { st.a = d.a.map((n) => Math.round(n * 10) / 10); st.b = d.b.map((n) => Math.round(n * 10) / 10); } return st; }
+      endInk(d) {
+        if (this.inkTmp) { this.inkTmp.remove(); this.inkTmp = null; } if (!d || d.tool === "eraser") return;
+        if ((d.tool !== "pen") && Math.hypot(d.b[0] - d.a[0], d.b[1] - d.a[1]) < 3) return; const st = this.inkStroke(d); st.id = uid(); const a = this.inkArr(); if (a) a.push([st]);
+      }
+      eraseAt(w) {
+        const a = this.inkArr(); if (!a) return; const r = Math.max(7, (this.inkW || 4) * 1.2) / this.cam.k, dist = (px, py, x1, y1, x2, y2) => { const dx = x2 - x1, dy = y2 - y1, l2 = dx * dx + dy * dy; let t = l2 ? ((px - x1) * dx + (py - y1) * dy) / l2 : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy)); };
+        const hit = (st) => {
+          const tol = r + (st.w || 4) / 2; if (st.k === "pen") { const p = st.pts; if (p.length === 1) return Math.hypot(w.x - p[0][0], w.y - p[0][1]) < tol; for (let i = 0; i < p.length - 1; i++) if (dist(w.x, w.y, p[i][0], p[i][1], p[i + 1][0], p[i + 1][1]) < tol) return true; return false; }
+          if (st.k === "line" || st.k === "arrow") return dist(w.x, w.y, st.a[0], st.a[1], st.b[0], st.b[1]) < tol;
+          const x1 = Math.min(st.a[0], st.b[0]), x2 = Math.max(st.a[0], st.b[0]), y1 = Math.min(st.a[1], st.b[1]), y2 = Math.max(st.a[1], st.b[1]);
+          if (st.k === "rect") return dist(w.x, w.y, x1, y1, x2, y1) < tol || dist(w.x, w.y, x2, y1, x2, y2) < tol || dist(w.x, w.y, x2, y2, x1, y2) < tol || dist(w.x, w.y, x1, y2, x1, y1) < tol;
+          const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2, rx = Math.max(1, (x2 - x1) / 2), ry = Math.max(1, (y2 - y1) / 2), k = Math.hypot((w.x - cx) / rx, (w.y - cy) / ry); return Math.abs(k - 1) * Math.min(rx, ry) < tol;
+        };
+        const arr = a.toArray(), del = []; arr.forEach((st, i) => { if (hit(st)) del.push(i); }); if (del.length) this.doc.transact(() => { for (const i of del.reverse()) a.delete(i, 1); });
+      }
       initHistory() {
-        const Y = window.__bsY.Y; if (this.um) { try { this.um.destroy(); } catch (e) { /* ignore */ } } this.um = new Y.UndoManager([this.yn, this.ye], { captureTimeout: 500 });
+        const Y = window.__bsY.Y; if (this.um) { try { this.um.destroy(); } catch (e) { /* ignore */ } } this.inkArr(); this.renderInk(); this.um = new Y.UndoManager(this._ink ? [this.yn, this.ye, this._ink] : [this.yn, this.ye], { captureTimeout: 500 });
         const upd = () => { if (this.undoBtn) { this.undoBtn.classList.toggle("is-off", !this.um.undoStack.length); this.redoBtn.classList.toggle("is-off", !this.um.redoStack.length); } };
         this.um.on("stack-item-added", upd); this.um.on("stack-item-popped", upd); upd();
       }
@@ -154,13 +241,14 @@
       bounds(ids) { let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const id of ids) { const m = this.yn.get(id); if (!m) continue; a = Math.min(a, m.get("x")); b = Math.min(b, m.get("y")); c = Math.max(c, m.get("x") + m.get("w")); d = Math.max(d, m.get("y") + m.get("h")); } return a === 1e9 ? null : { x: a, y: b, w: c - a, h: d - b }; }
       renderSelBar() {
         const bar = this.selBar; if (!bar) return; const ids = Array.from(this.sel).filter((i) => this.yn.get(i)); if (!ids.length || this.ro || (this.drag && this.drag.kind === "move")) { bar.classList.remove("is-on"); return; }
-        const sig = ids.length + "|" + ids.map((i) => this.yn.get(i).get("locked") ? 1 : 0).join(""); if (bar.dataset.sig !== sig) {
+        const sig = ids.length + "|" + ids.map((i) => (this.yn.get(i).get("locked") ? 1 : 0) + (this.yn.get(i).get("trOrig") != null ? "t" : "")).join(""); if (bar.dataset.sig !== sig) {
           bar.dataset.sig = sig; bar.empty(); const mk = (ic, tip, fn) => { const x = bar.createDiv({ cls: "osb-sb", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = (e) => fn(e); return x; };
-          const cols = new Set(ids.map((i) => this.yn.get(i).get("color") || "")), cur = cols.size === 1 ? Array.from(cols)[0] : ""; const cb = bar.createDiv({ cls: "osb-sb osb-colorbtn", attr: { title: "Цвет" } }); const ci = cb.createSpan({ cls: "osb-cico" }); api.setIcon(ci, "lucide-palette"); const cbar = cb.createDiv({ cls: "osb-cbar" }); if (cur) cbar.style.background = cur; else cbar.classList.add("is-none"); cb.onclick = () => window.__bsColors.pick(cb, cur, (c) => this.setColor(c));
+          const hasOrig = ids.some((i) => this.yn.get(i).get("trOrig") != null); const cols = new Set(ids.map((i) => this.yn.get(i).get("color") || "")), cur = cols.size === 1 ? Array.from(cols)[0] : ""; const cb = bar.createDiv({ cls: "osb-sb osb-colorbtn", attr: { title: "Цвет" } }); const ci = cb.createSpan({ cls: "osb-cico" }); api.setIcon(ci, "lucide-palette"); const cbar = cb.createDiv({ cls: "osb-cbar" }); if (cur) cbar.style.background = cur; else cbar.classList.add("is-none"); cb.onclick = () => window.__bsColors.pick(cb, cur, (c) => this.setColor(c));
           bar.createDiv({ cls: "osb-bsep" }); mk("lucide-copy", "Дублировать (Ctrl+D)", () => this.duplicate());
           const locked = ids.every((i) => this.yn.get(i).get("locked")); mk(locked ? "lucide-unlock" : "lucide-lock", locked ? "Разблокировать" : "Закрепить на месте", () => this.setLock(!locked));
           if (ids.length > 1) mk("lucide-align-horizontal-distribute-center", "Выровнять", (e) => this.alignMenu(e));
           if (ids.length > 1) mk("lucide-layout-grid", "Упорядочить", (e) => this.tidyMenu(e, ids));
+          mk("lucide-languages", "Перевести", () => this.translate(bar)); if (hasOrig) mk("lucide-undo-2", "Вернуть оригинал", () => this.restoreOrig());
           bar.createDiv({ cls: "osb-bsep" }); mk("lucide-trash-2", "Удалить (Del)", () => this.removeSel()).classList.add("is-danger");
         }
         const bb = this.bounds(ids); if (!bb) { bar.classList.remove("is-on"); return; } const tl = this.screenPt(bb.x + bb.w / 2, bb.y); bar.classList.add("is-on"); const w = bar.offsetWidth || 260, rw = this.root.clientWidth;
@@ -271,7 +359,7 @@
         if (!this.ye || !this.svg) return; const seen = new Set(); const NS = "http://www.w3.org/2000/svg";
         this.ye.forEach((m, id) => {
           const A = this.center(m.get("a")), B = this.center(m.get("b")); if (!A || !B) return; seen.add(id);
-          let r = this.edgeEls.get(id); if (!r) { const g = document.createElementNS(NS, "g"), hit = document.createElementNS(NS, "line"), ln = document.createElementNS(NS, "line"), tx = document.createElementNS(NS, "text"); hit.setAttribute("class", "osb-eh"); ln.setAttribute("class", "osb-el"); ln.setAttribute("marker-end", "url(#osb-arrow)"); tx.setAttribute("class", "osb-et"); tx.setAttribute("text-anchor", "middle"); g.append(hit, ln, tx); this.svg.appendChild(g); g.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); this.selEdge = id; this.select(new Set()); this.selEdge = id; this.mark(); }); g.addEventListener("dblclick", async (ev) => { ev.stopPropagation(); const v = await ask("Подпись связи", m.get("label")); if (v != null) m.set("label", v); }); r = { g, hit, ln, tx }; this.edgeEls.set(id, r); }
+          let r = this.edgeEls.get(id); if (!r) { const g = document.createElementNS(NS, "g"), hit = document.createElementNS(NS, "line"), ln = document.createElementNS(NS, "line"), tx = document.createElementNS(NS, "text"); hit.setAttribute("class", "osb-eh"); ln.setAttribute("class", "osb-el"); ln.setAttribute("marker-end", "url(#osb-arrow)"); tx.setAttribute("class", "osb-et"); tx.setAttribute("text-anchor", "middle"); g.append(hit, ln, tx); this.svg.appendChild(g); g.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); this.selEdge = id; this.select(new Set()); this.selEdge = id; this.mark(); }); g.addEventListener("dblclick", (ev) => { ev.stopPropagation(); this.editLabel(id); }); r = { g, hit, ln, tx }; this.edgeEls.set(id, r); }
           const p = this.anchor(m.get("a"), B), q = this.anchor(m.get("b"), A); for (const l of [r.hit, r.ln]) { l.setAttribute("x1", p.x); l.setAttribute("y1", p.y); l.setAttribute("x2", q.x); l.setAttribute("y2", q.y); }
           r.tx.setAttribute("x", (p.x + q.x) / 2); r.tx.setAttribute("y", (p.y + q.y) / 2 - 5); r.tx.textContent = m.get("label") || "";
         });
@@ -288,10 +376,13 @@
       bindInput() {
         const r = this.root;
         r.addEventListener("pointerdown", (e) => {
-          if (e.target.closest(".osb-card, .osb-sel, .osb-search, .osb-zoom, g")) return; if (e.button !== 0 && e.button !== 1) return; const p = this.pt(e);
+          if (e.target.closest(".osb-card:not(.osb-ghost), .osb-sel, .osb-search, .osb-rail, .osb-help, .osb-dtb, .osb-lbl, g")) { if (!(this.draw && e.target.closest(".osb-card"))) return; }
+          if (e.button !== 0 && e.button !== 1) return; const p = this.pt(e);
           if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); this.contentEl.focus();
-          if (e.button === 0 && e.shiftKey && !this.ro) { this.drag = { kind: "box", x0: p.sx, y0: p.sy, base: new Set(e.ctrlKey ? this.sel : []), add: e.ctrlKey }; if (!e.ctrlKey) { this.sel = new Set(); this.mark(); } }
-          else { this.drag = { kind: "pan", sx: p.sx, sy: p.sy, cx: this.cam.x, cy: this.cam.y }; r.classList.add("is-panning"); }
+          if (this.draw && e.button === 0 && !this.ro) { e.preventDefault(); this.startInk(e); r.setPointerCapture(e.pointerId); return; }
+          const pan = e.button === 1 || this.space || this.ro;
+          if (pan) { this.drag = { kind: "pan", sx: p.sx, sy: p.sy, cx: this.cam.x, cy: this.cam.y }; r.classList.add("is-panning"); }
+          else { const add = e.shiftKey || e.ctrlKey; if (!add) { this.select(new Set()); this.selEdge = null; this.mark(); } this.drag = { kind: "box", x0: p.sx, y0: p.sy, base: new Set(add ? this.sel : []), add }; }
           r.setPointerCapture(e.pointerId);
         });
         r.addEventListener("pointermove", (e) => {
@@ -304,10 +395,11 @@
               if (d.dir.includes("w")) { ww = Math.max(MW, this.sn(d.w - dx)); x = d.x + d.w - ww; } if (d.dir.includes("n")) { hh = Math.max(MH, this.sn(d.h - dy)); y = d.y + d.h - hh; }
               const sn2 = this.sizeSnap(d, x, y, ww, hh); x = sn2.x; y = sn2.y; ww = Math.max(MW, sn2.w); hh = Math.max(MH, sn2.h); this.doc.transact(() => { n.set("x", Math.round(x)); n.set("y", Math.round(y)); n.set("w", Math.round(ww)); n.set("h", Math.round(hh)); }); } }
           else if (d && d.kind === "link") this.drawTemp(w);
+          else if (d && d.kind === "ink") this.moveInk(w, e);
           else if (d && d.kind === "box") { const x = Math.min(d.x0, p.sx), y = Math.min(d.y0, p.sy), bw = Math.abs(p.sx - d.x0), bh = Math.abs(p.sy - d.y0); if (bw + bh > 6) { d.live = true; this.box.style.cssText = "display:block;left:" + x + "px;top:" + y + "px;width:" + bw + "px;height:" + bh + "px"; const a = this.worldPt(x, y), b2 = this.worldPt(x + bw, y + bh), hit = new Set(d.base); for (const [id, m] of this.yn.entries()) { const cx = m.get("x"), cy = m.get("y"); if (cx < b2.x && cx + m.get("w") > a.x && cy < b2.y && cy + m.get("h") > a.y) hit.add(id); } this.sel = hit; this.mark(); } }
           this.publish();
         });
-        const up = (e) => { const d = this.drag; this.drag = null; r.classList.remove("is-panning"); this.clearGuides(); if (d && d.kind === "pan" && !d.moved && !this.ro) { this.select(new Set()); this.selEdge = null; this.mark(); } if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } if (d && d.kind === "link") { const t = document.elementFromPoint(e.clientX, e.clientY), c = t && t.closest && t.closest(".osb-card"); if (c && c.dataset.id !== d.from) this.addEdge(d.from, c.dataset.id); else if (!c) { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } };
+        const up = (e) => { const d = this.drag; this.drag = null; if (d && d.kind === "ink") this.endInk(d); r.classList.remove("is-panning"); this.clearGuides(); if (d && d.kind === "pan" && !d.moved && !this.ro) { this.select(new Set()); this.selEdge = null; this.mark(); } if (d && d.kind === "box") { this.box.style.display = "none"; if (d.live) this.publish(); } this.renderSelBar(); if (d && (d.kind === "move" || d.kind === "size") && !this.ro && d.moved) { const ids = d.kind === "move" ? Array.from(d.o.keys()) : [d.id]; this.doc.transact(() => { for (const i of ids) { const m = this.yn.get(i); if (m) this.stampM(m); } }); for (const i of ids) this.feed("move", i, this.label(i)); } if (this.temp) { this.temp.remove(); this.temp = null; } if (d && d.kind === "link") { const t = document.elementFromPoint(e.clientX, e.clientY), c = t && t.closest && t.closest(".osb-card"); if (c && c.dataset.id !== d.from) this.addEdge(d.from, c.dataset.id); else if (!c) { const p = this.pt(e), w = this.worldPt(p.sx, p.sy), id = this.addCard(w.x - 130, w.y - 30); this.addEdge(d.from, id); } } };
         r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
         r.addEventListener("wheel", (e) => {
           const ta = e.target.closest && e.target.closest(".osb-ta"); if (ta && !e.ctrlKey && ta.scrollHeight > ta.clientHeight) return; e.preventDefault();
@@ -328,7 +420,7 @@
             m.addSeparator(); it("Удалить", "lucide-trash-2", () => this.removeSel());
           } else if (eg) {
             const id = Array.from(this.edgeEls).find(([, r2]) => r2.g === eg || eg.contains(r2.g))?.[0]; const ed = id && this.ye.get(id);
-            if (ed) { it("Подписать связь", "lucide-type", async () => { const v = await ask("Подпись связи", ed.get("label")); if (v != null) ed.set("label", v); }); m.addSeparator(); it("Удалить связь", "lucide-trash-2", () => { this.feed("unlink", null, ""); this.ye.delete(id); }); }
+            if (ed) { it("Подписать связь", "lucide-type", () => this.editLabel(id)); m.addSeparator(); it("Удалить связь", "lucide-trash-2", () => { this.feed("unlink", null, ""); this.ye.delete(id); }); }
           } else {
             it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30));
             it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
@@ -337,9 +429,12 @@
           m.showAtMouseEvent(e);
         });
         this.contentEl.tabIndex = 0;
+        this.contentEl.addEventListener("keyup", (e) => { if (e.code === "Space") { this.space = false; this.root.classList.remove("is-hand"); } });
         this.contentEl.addEventListener("keydown", (e) => {
           const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
           if (mod && k === "f") { e.preventDefault(); this.toggleSearch(true); return; } if (inField) return;
+          if (e.code === "Space" && !inField) { this.space = true; this.root.classList.add("is-hand"); e.preventDefault(); return; }
+          if (this.draw) { if (e.key === "Escape") this.toggleDraw(false); else if (k === "p") this.setTool("pen"); else if (k === "e") this.setTool("eraser"); else if (k === "l") this.setTool("line"); else if (k === "r") this.setTool("rect"); else if (k === "o") this.setTool("ellipse"); else if (k === "a" && !mod) this.setTool("arrow"); if (!mod) return; }
           if (this.ro) { if (k === "f") this.fit(); return; }
           if (mod && k === "a") { e.preventDefault(); this.select(new Set(this.yn.keys())); }
           else if (mod && k === "z") { e.preventDefault(); e.shiftKey ? this.redo() : this.undo(); } else if (mod && k === "y") { e.preventDefault(); this.redo(); }
@@ -363,9 +458,8 @@
         this.share.classList.add("is-on");
       }
       paintPeers() {
-        if (!this.people) return; this.people.empty();
-        const chip = (u, self) => { const c = this.people.createDiv({ cls: "osb-chip" }); const d = c.createSpan({ cls: "osb-dot" }); d.style.background = u.color; c.createSpan({ text: u.name + (self ? " (вы)" : "") }); };
-        chip(me, true); for (const u of this.peers) chip(u);
+        if (!this.people) return; const psig = me.name + "|" + me.color + "#" + this.peers.map((u) => u.name + "|" + u.color).join(";");
+        if (psig !== this._psig) { this._psig = psig; this.people.empty(); const chip = (u, self) => { const c = this.people.createDiv({ cls: "osb-chip" }); const d = c.createSpan({ cls: "osb-dot" }); d.style.background = u.color; c.createSpan({ text: u.name + (self ? " (вы)" : "") }); }; chip(me, true); for (const u of this.peers) chip(u); }
         for (const [, e] of this.els) { e.el.style.removeProperty("--peer"); e.el.classList.remove("has-peer"); e.tag.textContent = ""; }
         for (const u of this.peers) { for (const id of u.sel || []) { const e = this.els.get(id); if (e) { e.el.style.setProperty("--peer", u.color); e.el.classList.add("has-peer"); e.tag.textContent = u.name + (u.typing === id ? " печатает…" : ""); e.tag.style.background = u.color; } } }
         const live = new Set(); this.peers.forEach((u, i) => { if (!u.cur) return; live.add(i); let c = this.cursors.get(i); if (!c) { c = this.layer.createDiv({ cls: "osb-cur" }); c.innerHTML = '<svg width="14" height="16" viewBox="0 0 14 16"><path d="M1 1l11 5-5 2-2 6z" fill="currentColor"/></svg><span></span>'; this.cursors.set(i, c); }

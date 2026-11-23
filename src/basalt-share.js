@@ -712,10 +712,18 @@
     try { app.workspace.leftRibbon.addRibbonItemButton("basalt:share", "lucide-users", "Совместная работа", () => togglePanel()); } catch (e) { /* no ribbon */ }
     if (app.statusBar && app.statusBar.registerStatusBarItem) {
       const chip = app.statusBar.registerStatusBarItem(); chip.classList.add("bsh-chip"); chip.style.display = "none";
-      const upd = () => { const all = Array.from(shares.values()); if (!all.length) { chip.style.display = "none"; return; } const n = all.reduce((a, s) => a + s.peers.length, 0), st = all.some((s) => s.prov && s.prov.status === "connecting"); chip.style.display = ""; chip.classList.toggle("is-searching", st && !n); chip.classList.toggle("is-live", n > 0); chip.textContent = ""; const d = document.createElement("span"); d.className = "bsh-dot"; const pend = all.reduce((x, s2) => x + s2.pendingCount(), 0); chip.append(d, pend ? "Загрузка файлов: осталось " + pend : n ? "Онлайн: " + (n + 1) : st ? "Поиск участников…" : "Один в сети"); chip.classList.toggle("is-searching", pend > 0 || (st && !n)); for (const sh of all) for (const u of sh.peers) { const pd = document.createElement("span"); pd.className = "bsh-wd"; pd.style.background = u.color; chip.appendChild(pd); }
-      chip.title = all.map((s) => (s.folder || "весь vault") + ": " + (s.peers.length ? s.peers.map((p) => p.name).join(", ") : "никого рядом")).join(String.fromCharCode(10)); };
+      // a small chip: state dot, a people icon and the number; redrawn only when something really changed (never on a timer)
+      let lastSig = "";
+      const upd = () => {
+        const all = Array.from(shares.values()); if (!all.length) { if (chip.style.display !== "none") chip.style.display = "none"; lastSig = ""; return; }
+        const n = all.reduce((a, s) => a + s.peers.length, 0), pend = all.reduce((a, s) => a + s.pendingCount(), 0), srch = all.some((s) => s.prov && s.prov.status === "connecting");
+        const state = pend ? "load" : n ? "live" : srch ? "wait" : "idle", label = pend ? "↓" + pend : String(n + 1), sig = state + "|" + label + "|" + all.map((s) => s.peers.map((p) => p.name).join(",")).join(";");
+        if (sig === lastSig) return; lastSig = sig; chip.style.display = ""; chip.className = chip.className.replace(/is-\w+/g, "").trim() + " is-" + state; chip.textContent = "";
+        const d = document.createElement("span"); d.className = "bsh-dot"; const ic = document.createElement("span"); ic.className = "bsh-ci"; try { window.__bsApi.setIcon(ic, "lucide-users"); } catch (e) { /* no icon */ } const t = document.createElement("span"); t.textContent = label; chip.append(d, ic, t);
+        chip.title = all.map((s) => (s.folder || "весь vault") + ": " + (s.peers.length ? s.peers.map((p) => p.name).join(", ") : "никого рядом")).join(String.fromCharCode(10));
+      };
       chip.style.cursor = "pointer"; chip.onclick = () => panel();
-      document.addEventListener("basalt-share-peers", upd); setInterval(upd, 2000); upd();
+      document.addEventListener("basalt-share-peers", upd); setInterval(upd, 3000); upd();
     }
     const pubFile = () => {
       const lf = app.workspace.activeLeaf, v = lf && lf.view, isBoard = v && v.getViewType && v.getViewType() === "basalt-board", path = v ? (isBoard ? v.path : (v.file && v.file.path) || v.path || null) : null;

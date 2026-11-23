@@ -185,3 +185,9 @@
 .bsm-card2.is-danger { border-color: color-mix(in srgb, #e5484d 38%, transparent); background: color-mix(in srgb, #e5484d 5%, transparent) !important; } .bsm-card2.is-danger .bsm-ch { color: #ff7b7f; }
 .bsm-dz { display: flex; align-items: center; justify-content: space-between; gap: 16px; } .bsm-dzt { font-size: 13px; color: var(--text-muted); }
 .bsm-content { scrollbar-width: thin; }
+
+/* ---- status bar chip: dot + people icon + number, no animation loops except while searching ---- */
+.bsh-chip { display: flex; align-items: center; gap: 5px; padding: 0 8px; border-radius: 8px; }
+.bsh-chip .bsh-dot { width: 7px; height: 7px; background: var(--text-faint); animation: none; }
+.bsh-chip.is-live .bsh-dot, .bsh-chip.is-idle .bsh-dot { background: #46a758; animation: none; } .bsh-chip.is-wait .bsh-dot, .bsh-chip.is-load .bsh-dot { background: #d6b43c; animation: osb-blink 1.2s ease-in-out infinite; }
+.bsh-ci { display: grid; place-items: center; opacity: .75; } .bsh-ci svg { width: 13px; height: 13px; }

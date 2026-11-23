@@ -20627,6 +20627,155 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     color:var(--text-normal);
     border-color:var(--interactive-accent)
 }
+.osb-chip{
+    animation:none;
+    border:0;
+    background:color-mix(in srgb,var(--background-secondary) 80%,transparent);
+    padding:3px 10px 3px 8px
+}
+.osb-dot{
+    animation:none!important;
+    box-shadow:none;
+    width:8px;
+    height:8px
+}
+.osb-lbl{
+    position:absolute;
+    z-index:12;
+    translate:-50% -50%;
+    width:170px;
+    height:28px;
+    text-align:center;
+    border-radius:9px;
+    box-shadow:0 6px 20px rgba(0,0,0,.45)
+}
+.osb-ink{
+    position:absolute;
+    left:0;
+    top:0;
+    width:1px;
+    height:1px;
+    overflow:visible;
+    pointer-events:none;
+    z-index:20
+}
+.osb-root.is-draw{
+    cursor:crosshair
+}
+.osb-root.is-draw .osb-card{
+    pointer-events:none
+}
+.osb-root.is-draw.is-erase{
+    cursor:cell
+}
+.osb-dtb{
+    position:absolute;
+    left:50%;
+    bottom:20px;
+    translate:-50% 0;
+    z-index:9;
+    display:flex;
+    align-items:center;
+    gap:3px;
+    padding:6px;
+    border-radius:16px;
+    background:color-mix(in srgb,var(--background-secondary) 86%,transparent);
+    backdrop-filter:blur(14px);
+    border:1px solid var(--background-modifier-border);
+    box-shadow:0 10px 34px rgba(0,0,0,.5);
+    animation:osb-fade .18s ease backwards
+}
+.osb-dt{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+    cursor:pointer;
+    color:var(--text-muted);
+    transition:background-color .12s ease,color .12s ease
+}
+.osb-dt:hover{
+    background:var(--background-modifier-hover);
+    color:var(--text-normal)
+}
+.osb-dt.is-on{
+    background:var(--interactive-accent);
+    color:var(--text-on-accent)
+}
+.osb-dt.is-danger:hover{
+    background:color-mix(in srgb,#e5484d 18%,transparent);
+    color:#e5484d
+}
+.osb-ddone{
+    background:color-mix(in srgb,#46a758 22%,transparent);
+    color:#46a758
+}
+.osb-ddot{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    border:2px solid var(--background-modifier-border-hover);
+    box-sizing:border-box
+}
+.osb-dsz{
+    display:flex;
+    gap:2px
+}
+.osb-dw{
+    width:28px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    border-radius:8px
+}
+.osb-dw div{
+    border-radius:50%;
+    background:var(--text-muted)
+}
+.osb-dw:hover{
+    background:var(--background-modifier-hover)
+}
+.osb-dw.is-on div{
+    background:var(--interactive-accent)
+}
+.osb-h{
+    width:18px;
+    height:18px;
+    z-index:6;
+    opacity:0;
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--interactive-accent) 28%,transparent)
+}
+.osb-h::before{
+    content:"";
+    position:absolute;
+    inset:-12px;
+    border-radius:50%
+}
+.osb-card:hover .osb-h,.osb-card.is-sel .osb-h{
+    opacity:.9
+}
+.osb-h:hover{
+    opacity:1;
+    scale:1.25
+}
+.osb-h-t{
+    top:-13px;
+    left:calc(50% - 9px)
+}
+.osb-h-b{
+    bottom:-13px;
+    left:calc(50% - 9px)
+}
+.osb-h-l{
+    left:-13px;
+    top:calc(50% - 9px)
+}
+.osb-h-r{
+    right:-13px;
+    top:calc(50% - 9px)
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
@@ -22116,33 +22265,60 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .bsm-content{
     scrollbar-width:thin
 }
-html[data-glass="mica"] body,html[data-glass="acrylic"] body{
+.bsh-chip{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding:0 8px;
+    border-radius:8px
+}
+.bsh-chip .bsh-dot{
+    width:7px;
+    height:7px;
+    background:var(--text-faint);
+    animation:none
+}
+.bsh-chip.is-live .bsh-dot,.bsh-chip.is-idle .bsh-dot{
+    background:#46a758;
+    animation:none
+}
+.bsh-chip.is-wait .bsh-dot,.bsh-chip.is-load .bsh-dot{
+    background:#d6b43c;
+    animation:osb-blink 1.2s ease-in-out infinite
+}
+.bsh-ci{
+    display:grid;
+    place-items:center;
+    opacity:.75
+}
+.bsh-ci svg{
+    width:13px;
+    height:13px
+}
+.modal,.modal.bset,.menu,.bm-pop,.bm-drop,.popover,.suggestion-container,.prompt,.tooltip,.notice,.bpal-pop,.fp-tr-pop,.fp-end-picker,.osb-bar,.osb-rail,.osb-search,.osb-sel,.osb-help,.osb-dtb,.osb-feed,.osb-lbl,.bsh-load{
+    background-color:color-mix(in srgb,var(--background-primary) calc(var(--bs-win-a,.75) * 100%),transparent)!important;
+    -webkit-backdrop-filter:blur(var(--bs-blur,16px)) saturate(1.3);
+    backdrop-filter:blur(var(--bs-blur,16px)) saturate(1.3)
+}
+.modal.bset .bset-nav{
+    background-color:color-mix(in srgb,var(--background-secondary) calc(var(--bs-win-a,.75) * 70%),transparent)!important
+}
+.modal.bset .bset-main,.modal.bset .bset-head{
+    background-color:transparent!important
+}
+.modal.bset .bset-row{
     background-color:transparent
 }
-html[data-glass="mica"] .workspace-split.mod-root,html[data-glass="acrylic"] .workspace-split.mod-root,html[data-glass="mica"] .view-header,html[data-glass="acrylic"] .view-header{
-    background-color:color-mix(in srgb,var(--background-primary) calc(var(--bs-a-main,.8) * 100%),transparent)
-}
-html[data-glass="mica"] .mod-left-split,html[data-glass="acrylic"] .mod-left-split,html[data-glass="mica"] .mod-right-split,html[data-glass="acrylic"] .mod-right-split{
-    background-color:color-mix(in srgb,var(--background-secondary) calc(var(--bs-a-side,.6) * 100%),transparent)
-}
-html[data-glass="mica"] .workspace-ribbon,html[data-glass="acrylic"] .workspace-ribbon,html[data-glass="mica"] .side-dock-ribbon,html[data-glass="acrylic"] .side-dock-ribbon,html[data-glass="mica"] .workspace-tab-header-container,html[data-glass="acrylic"] .workspace-tab-header-container,html[data-glass="mica"] .status-bar,html[data-glass="acrylic"] .status-bar,html[data-glass="mica"] .workspace-sidedock-vault-profile,html[data-glass="acrylic"] .workspace-sidedock-vault-profile{
-    background-color:color-mix(in srgb,var(--background-secondary) calc(var(--bs-a-chrome,.5) * 100%),transparent)
-}
-.menu,.bm-pop,.bm-drop,.popover,.suggestion-container,.prompt,.tooltip,.notice,.modal,.bpal-pop,.osb-bar,.osb-rail,.osb-search,.osb-sel,.osb-help,.osb-feed,.osb-people .osb-chip,.bsh-load,.bsh-badge .bsh-bc{
-    background-color:color-mix(in srgb,var(--background-secondary) 82%,transparent)!important;
-    -webkit-backdrop-filter:blur(18px) saturate(1.25);
-    backdrop-filter:blur(18px) saturate(1.25)
-}
-.modal-bg{
-    background-color:rgba(0,0,0,.35);
-    -webkit-backdrop-filter:blur(3px);
-    backdrop-filter:blur(3px)
-}
 .modal.bsm{
-    background-color:color-mix(in srgb,var(--background-primary) 68%,transparent)!important
+    background-color:color-mix(in srgb,var(--background-primary) calc(var(--bs-win-a,.75) * 90%),transparent)!important
 }
 .modal.bsm.no-glass{
     background-color:var(--background-primary)!important;
     backdrop-filter:none
+}
+.modal-bg{
+    background-color:rgba(0,0,0,.38);
+    -webkit-backdrop-filter:blur(3px);
+    backdrop-filter:blur(3px)
 }
 

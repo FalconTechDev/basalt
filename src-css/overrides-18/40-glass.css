@@ -1,16 +1,13 @@
-/* ===== transparency ===== */
-/* big surfaces: they let the window material show through (strength comes from --bs-a-* set by basalt-glass.js) */
-html[data-glass="mica"] body, html[data-glass="acrylic"] body { background-color: transparent; }
-html[data-glass="mica"] .workspace-split.mod-root, html[data-glass="acrylic"] .workspace-split.mod-root,
-html[data-glass="mica"] .view-header, html[data-glass="acrylic"] .view-header { background-color: color-mix(in srgb, var(--background-primary) calc(var(--bs-a-main, .8) * 100%), transparent); }
-html[data-glass="mica"] .mod-left-split, html[data-glass="acrylic"] .mod-left-split, html[data-glass="mica"] .mod-right-split, html[data-glass="acrylic"] .mod-right-split { background-color: color-mix(in srgb, var(--background-secondary) calc(var(--bs-a-side, .6) * 100%), transparent); }
-html[data-glass="mica"] .workspace-ribbon, html[data-glass="acrylic"] .workspace-ribbon, html[data-glass="mica"] .side-dock-ribbon, html[data-glass="acrylic"] .side-dock-ribbon,
-html[data-glass="mica"] .workspace-tab-header-container, html[data-glass="acrylic"] .workspace-tab-header-container, html[data-glass="mica"] .status-bar, html[data-glass="acrylic"] .status-bar,
-html[data-glass="mica"] .workspace-sidedock-vault-profile, html[data-glass="acrylic"] .workspace-sidedock-vault-profile { background-color: color-mix(in srgb, var(--background-secondary) calc(var(--bs-a-chrome, .5) * 100%), transparent); }
-/* floating things: always a little see-through with a blur behind (works without any system material) */
-.menu, .bm-pop, .bm-drop, .popover, .suggestion-container, .prompt, .tooltip, .notice, .modal, .bpal-pop, .osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-help, .osb-feed, .osb-people .osb-chip, .bsh-load, .bsh-badge .bsh-bc {
-  background-color: color-mix(in srgb, var(--background-secondary) 82%, transparent) !important; -webkit-backdrop-filter: blur(18px) saturate(1.25); backdrop-filter: blur(18px) saturate(1.25);
+/* ===== semi-transparent windows: settings, dialogs, menus, popovers, floating panels =====
+   --bs-win-a (opacity) and --bs-blur are set by basalt-glass.js from the "Прозрачность" slider in the settings. */
+.modal, .modal.bset, .menu, .bm-pop, .bm-drop, .popover, .suggestion-container, .prompt, .tooltip, .notice, .bpal-pop, .fp-tr-pop, .fp-end-picker,
+.osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-help, .osb-dtb, .osb-feed, .osb-lbl, .bsh-load {
+  background-color: color-mix(in srgb, var(--background-primary) calc(var(--bs-win-a, .75) * 100%), transparent) !important;
+  -webkit-backdrop-filter: blur(var(--bs-blur, 16px)) saturate(1.3); backdrop-filter: blur(var(--bs-blur, 16px)) saturate(1.3);
 }
-.modal-bg { background-color: rgba(0, 0, 0, .35); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
-.modal.bsm { background-color: color-mix(in srgb, var(--background-primary) 68%, transparent) !important; }
+.modal.bset .bset-nav { background-color: color-mix(in srgb, var(--background-secondary) calc(var(--bs-win-a, .75) * 70%), transparent) !important; }
+.modal.bset .bset-main, .modal.bset .bset-head { background-color: transparent !important; }
+.modal.bset .bset-row { background-color: transparent; }
+.modal.bsm { background-color: color-mix(in srgb, var(--background-primary) calc(var(--bs-win-a, .75) * 90%), transparent) !important; }
 .modal.bsm.no-glass { background-color: var(--background-primary) !important; backdrop-filter: none; }
+.modal-bg { background-color: rgba(0, 0, 0, .38); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }

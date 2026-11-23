@@ -1678,5 +1678,17 @@
 "Стрелки (Shift — крупно)": "Arrows (Shift — big steps)",
 "сдвинуть выбранное": "nudge the selection",
 "поиск": "search",
-"показать всё": "show all"
+"показать всё": "show all",
+"Кисть (P)": "Brush (P)",
+"Линия (L)": "Line (L)",
+"Стрелка (A)": "Arrow (A)",
+"Прямоугольник (R)": "Rectangle (R)",
+"Овал (O)": "Oval (O)",
+"Стереть весь рисунок": "Erase the whole drawing",
+"Подпись": "Label",
+"Нет текста для перевода": "No text to translate",
+"Перевод недоступен": "Translation is not available",
+"Прозрачность": "Transparency",
+"Прозрачность окон и меню": "Transparency of windows and menus",
+"Насколько сквозь настройки, диалоги, меню и панели видно то, что под ними.": "How much of what is underneath shows through the settings, dialogs, menus and panels."
 }

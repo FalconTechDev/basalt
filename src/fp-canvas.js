@@ -2290,6 +2290,7 @@
     return { ok, fail, skipped, msg };
   }
   window.__fpTranslate = (canvas, tl, scope, sl, hooks) => translateCanvas(canvas, tl, scope || "all", sl, hooks);
+  window.__bsTr = { pick: trPickLang, resolve: trResolve, defaultLang: trDefaultLang };
 
   // the first original of a translated md file is kept in .basalt/tr-backup/<path> so "Вернуть оригинал" can put it back
   const trBackupPath = (p) => ".basalt/tr-backup/" + p;
