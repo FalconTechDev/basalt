@@ -7,7 +7,7 @@
     .bmd-has { position: relative; }
     .bmd-has > .markdown-source-view, .bmd-has > .markdown-reading-view { box-sizing: border-box; }
     .bmd-has.bmd-on > .markdown-source-view { padding-right: 92px; padding-bottom: 24px; }
-    .bmd-mini { position: absolute; top: 0; right: 0; bottom: 24px; width: 92px; background: var(--background-primary); border-left: 1px solid var(--background-modifier-border); cursor: pointer; overflow: hidden; z-index: 3; }
+    .bmd-mini { position: absolute; top: 0; right: 0; bottom: 24px; width: 92px; background: var(--background-primary); border-left: 1px solid var(--background-modifier-border); cursor: var(--bs-cursor-hand, pointer); overflow: hidden; z-index: 3; }
     .bmd-mini canvas { display: block; width: 100%; height: 100%; }
     .bmd-slider { position: absolute; left: 0; right: 0; background: rgba(128,128,128,.22); pointer-events: none; }
     .bmd-mini:hover .bmd-slider { background: rgba(128,128,128,.34); }

@@ -15,7 +15,7 @@
 }
 
 .canvas-node-content.markdown-embed .inline-title {
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 .canvas-node.is-themed .canvas-node-content {

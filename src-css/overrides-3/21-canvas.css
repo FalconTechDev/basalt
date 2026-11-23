@@ -50,7 +50,7 @@
   width: calc(var(--resizer-size) * var(--zoom-multiplier));
   height: calc(var(--resizer-size) * var(--zoom-multiplier));
   pointer-events: all;
-  cursor: pointer;
+  cursor: var(--bs-cursor-hand, pointer);
 }
 
 /* snap guide overlay: full-size, click-through, slightly faded */

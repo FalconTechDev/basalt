@@ -17,9 +17,9 @@
     .bsx-hop .bsx-title { font-weight: 600; font-size: var(--font-ui-medium); margin-bottom: 2px; }
     .bsx-hop .bsx-sub { color: var(--text-muted); font-size: var(--font-ui-smaller); }
     .bsx-hop .bsx-group { margin: 6px 0; border-left: 2px solid var(--background-modifier-border); padding-left: 8px; }
-    .bsx-hop .bsx-via { display: flex; gap: 6px; align-items: baseline; cursor: pointer; color: var(--text-accent); }
+    .bsx-hop .bsx-via { display: flex; gap: 6px; align-items: baseline; cursor: var(--bs-cursor-hand, pointer); color: var(--text-accent); }
     .bsx-hop .bsx-via span { color: var(--text-faint); font-size: var(--font-ui-smaller); }
-    .bsx-hop .bsx-item { display: block; padding: 1px 0 1px 10px; color: var(--text-normal); cursor: pointer; }
+    .bsx-hop .bsx-item { display: block; padding: 1px 0 1px 10px; color: var(--text-normal); cursor: var(--bs-cursor-hand, pointer); }
     .bsx-hop .bsx-item:hover, .bsx-hop .bsx-via:hover { background: var(--background-modifier-hover); }
     .bsx-hop .bsx-empty { color: var(--text-muted); padding: 14px 0; }
     /* ---- table editor */

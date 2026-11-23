@@ -7,7 +7,7 @@
     .workspace-tab-header-container-inner.bt-hidden { display: none !important; }
     .btab { display: flex; flex-direction: row !important; flex-wrap: nowrap; align-items: stretch; flex: 0 1 auto; min-width: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-app-region: no-drag; align-self: stretch; }
     .btab::-webkit-scrollbar { display: none; }
-    .bt-t { position: relative; display: flex; align-items: center; gap: 7px; flex: 0 1 190px; min-width: 96px; max-width: 220px; padding: 0 8px 0 12px; cursor: pointer; color: var(--text-muted); border-right: 1px solid color-mix(in srgb, var(--background-modifier-border) 60%, transparent); transition: background .1s, color .1s; user-select: none; }
+    .bt-t { position: relative; display: flex; align-items: center; gap: 7px; flex: 0 1 190px; min-width: 96px; max-width: 220px; padding: 0 8px 0 12px; cursor: var(--bs-cursor-hand, pointer); color: var(--text-muted); border-right: 1px solid color-mix(in srgb, var(--background-modifier-border) 60%, transparent); transition: background .1s, color .1s; user-select: none; }
     .bt-t:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bt-t.is-cur { background: var(--background-primary); color: var(--text-normal); }
     .bt-t.is-cur::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--text-faint); }

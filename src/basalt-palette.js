@@ -13,7 +13,7 @@
     .bpal-in input:focus, .bpal-in input:focus-visible { box-shadow: none !important; border: 0 !important; outline: none !important; border-radius: 0 !important; }
     .bpal-in input { flex: 1; border: 0; background: transparent; box-shadow: none; font-size: 16px; color: var(--text-normal); height: auto; padding: 4px 0; outline: none; }
     .bpal-list { overflow: auto; padding: 4px; }
-    .bpal-i { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: var(--bs-r); cursor: pointer; }
+    .bpal-i { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: var(--bs-r); cursor: var(--bs-cursor-hand, pointer); }
     .bpal-i.is-sel { background: color-mix(in srgb, var(--interactive-accent) 18%, transparent); }
     .bpal-i .bpal-ic { color: var(--interactive-accent); display: inline-flex; flex: none; } .bpal-i .bpal-ic svg { width: 16px; height: 16px; }
     .bpal-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bpal-t small { color: var(--text-faint); margin-left: 8px; }

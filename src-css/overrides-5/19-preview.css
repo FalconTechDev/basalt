@@ -127,5 +127,5 @@ input.metadata-property-key-input:focus {
 
 .footnotes-view .footnote-content {
   width: 100%;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }

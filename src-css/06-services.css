@@ -294,7 +294,7 @@ body.is-frameless.is-hidden-frameless.starter .titlebar {
   text-align: center;
   color: var(--text-muted);
   font-size: var(--font-ui-small);
-  cursor: pointer;
+  cursor: var(--bs-cursor-hand, pointer);
 }
 
 /* ---------- file recovery ---------- */

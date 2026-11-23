@@ -12,7 +12,7 @@
     .bsq-in { margin: 8px; height: 30px; padding: 0 10px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); color: var(--vs-fg); font-size: 13px; outline-offset: -1px; }
     .bsq-in:focus { outline: 1px solid var(--interactive-accent); }
     .bsq-list { overflow: auto; padding-bottom: 4px; }
-    .bsq-row { display: flex; align-items: center; gap: 8px; padding: 3px 12px; height: 24px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+    .bsq-row { display: flex; align-items: center; gap: 8px; padding: 3px 12px; height: 24px; cursor: var(--bs-cursor-hand, pointer); font-size: 13px; white-space: nowrap; }
     .bsq-row.sel { background: var(--vs-selrow); color: var(--text-normal); }
     .bsq-row:hover:not(.sel) { background: rgba(128,128,128,.18); }
     .bsq-badge { flex: none; width: 16px; height: 16px; border-radius: var(--bs-r, 4px); display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #fff; }

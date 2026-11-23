@@ -13,16 +13,16 @@ body { overflow: auto; }
 .brand small { display: block; color: var(--faint); font-size: 12px; }
 h2 { margin: 26px 0 10px; font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--faint); }
 .list { display: flex; flex-direction: column; gap: 6px; }
-.row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--side); border: 1px solid var(--border); cursor: pointer; transition: border-color .12s, background .12s;  }
+.row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--side); border: 1px solid var(--border); cursor: var(--bs-cursor-hand, pointer); transition: border-color .12s, background .12s;  }
 .row:hover { background: var(--hover); border-color: var(--accent); }
 .row .main { flex: 1; min-width: 0; }
 .row .name { font-weight: 600; }
 .row .path { color: var(--faint); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.row .x { width: 26px; height: 26px; border: 0; background: transparent; color: var(--faint); font-size: 16px; line-height: 1; cursor: pointer; border-radius: 5px; }
+.row .x { width: 26px; height: 26px; border: 0; background: transparent; color: var(--faint); font-size: 16px; line-height: 1; cursor: var(--bs-cursor-hand, pointer); border-radius: 5px; }
 .row .x:hover { background: var(--bg-alt); color: var(--danger); }
 .empty { color: var(--faint); padding: 10px 2px; }
 .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-button.big { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--side); color: var(--text); border: 1px solid var(--border); font: inherit; font-weight: 600; text-align: left; cursor: pointer;  }
+button.big { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--side); color: var(--text); border: 1px solid var(--border); font: inherit; font-weight: 600; text-align: left; cursor: var(--bs-cursor-hand, pointer);  }
 button.big:hover { background: var(--hover); border-color: var(--accent); }
 button.big .ico { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; background: var(--hover); color: var(--accent); border-radius: 5px; font-size: 15px; }
 form.create { display: none; margin-top: 10px; padding: 14px; background: var(--side); border: 1px solid var(--border); gap: 10px; flex-direction: column; }
@@ -32,7 +32,7 @@ input[type=text] { height: 30px; padding: 0 10px; background: var(--bg); color: 
 input[type=text]:focus { border-color: var(--accent); }
 .pathrow { display: flex; gap: 8px; }
 .pathrow input { flex: 1; min-width: 0; }
-button.btn { height: 30px; padding: 0 16px; background: var(--hover); color: var(--text); border: 1px solid var(--border); border-radius: 5px; font: inherit; cursor: pointer; }
+button.btn { height: 30px; padding: 0 16px; background: var(--hover); color: var(--text); border: 1px solid var(--border); border-radius: 5px; font: inherit; cursor: var(--bs-cursor-hand, pointer); }
 button.btn:hover { border-color: var(--accent); }
 button.btn.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 600; }
 .err { color: var(--danger); font-size: 12px; min-height: 16px; }

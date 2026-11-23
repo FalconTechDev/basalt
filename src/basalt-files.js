@@ -14,7 +14,7 @@
     .bsf-bar svg, .bsf-i svg { width: 16px; height: 16px; flex: none; } .bsf-bar button .svg-icon { width: 16px; height: 16px; }
     .bsf-find { padding: 0 8px 6px; } .bsf-find input { width: 100%; height: 28px; font-size: var(--font-ui-small); }
     .bsf-tree { flex: 1; overflow: auto; padding: 2px 4px 24px; }
-    .bsf-r { display: flex; align-items: center; gap: 6px; height: 28px; padding-right: 8px; margin: 1px 0; border-radius: var(--bs-r, 5px); cursor: pointer; border-left: 2px solid transparent; user-select: none; color: var(--text-muted); }
+    .bsf-r { display: flex; align-items: center; gap: 6px; height: 28px; padding-right: 8px; margin: 1px 0; border-radius: var(--bs-r, 5px); cursor: var(--bs-cursor-hand, pointer); border-left: 2px solid transparent; user-select: none; color: var(--text-muted); }
     .bsf-r:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bsf-r.is-sel { background: color-mix(in srgb, var(--interactive-accent) 12%, transparent); color: var(--text-normal); }
     .bsf-r.is-active { background: color-mix(in srgb, var(--interactive-accent) 20%, transparent); border-left-color: var(--interactive-accent); color: var(--text-normal); }

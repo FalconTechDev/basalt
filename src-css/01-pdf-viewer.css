@@ -187,7 +187,7 @@
 }
 
 .dialog .mainContainer button:not(.toggle-button):not(.closeButton):not(.clearInputButton):hover {
-  cursor: pointer;
+  cursor: var(--bs-cursor-hand, pointer);
   filter: var(--hover-filter);
 }
 
@@ -264,7 +264,7 @@
   position: absolute;
   color: transparent;
   white-space: pre;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
   transform-origin: 0% 0%;
 }
 
@@ -281,7 +281,7 @@
 .textLayer span[role="img"] {
   -webkit-user-select: none;
   user-select: none;
-  cursor: default;
+  cursor: var(--bs-cursor-arrow, default);
 }
 
 .textLayer .highlight {
@@ -346,7 +346,7 @@
   z-index: 0;
   -webkit-user-select: none;
   user-select: none;
-  cursor: default;
+  cursor: var(--bs-cursor-arrow, default);
 }
 
 .textLayer.selecting .endOfContent {
@@ -528,7 +528,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  cursor: pointer;
+  cursor: var(--bs-cursor-hand, pointer);
 }
 
 /* form fields share one box model and scale with the page */
@@ -689,7 +689,7 @@
 }
 
 .annotationLayer .popupTriggerArea {
-  cursor: pointer;
+  cursor: var(--bs-cursor-hand, pointer);
 }
 
 .annotationLayer section svg {
@@ -941,7 +941,7 @@
   height: 100%;
   border: none;
   text-align: center;
-  cursor: pointer;
+  cursor: var(--bs-cursor-hand, pointer);
 }
 
 .xfaLink {

@@ -222,7 +222,7 @@
   height: inherit;
   min-width: var(--table-column-min-width);
   padding: 0;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 .markdown-source-view.mod-cm6 .cm-table-widget th.is-selected .table-cell-wrapper,
@@ -790,7 +790,7 @@
     overflow: hidden;
     box-shadow: var(--embed-block-shadow-hover);
     border-radius: var(--radius-s);
-    cursor: text;
+    cursor: var(--bs-cursor-text, text);
   }
 
   .markdown-source-view.mod-cm6 .cm-embed-block:not(.cm-table-widget, .cm-lang-base):hover .edit-block-button {
@@ -832,7 +832,7 @@
   top: -0.3em;
   font-size: var(--font-smallest);
   color: var(--text-muted);
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 .cm-s-basalt .cm-line.HyperMD-footnote span.cm-hmd-footnote.cm-formatting {
@@ -852,7 +852,7 @@
   .cm-s-basalt .cm-line.HyperMD-footnote span.cm-hmd-footnote .cm-underline:hover {
     color: var(--text-muted);
     text-decoration: none;
-    cursor: text;
+    cursor: var(--bs-cursor-text, text);
   }
 }
 

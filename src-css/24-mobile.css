@@ -97,7 +97,7 @@
   --background-modifier-form-field-hover: var(--interactive-hover);
   --keyboard-background: var(--background-primary);
   --checkbox-size: 17px;
-  --cursor: pointer;
+  --cursor: var(--bs-cursor-hand, pointer);
   --bases-cards-scale: 0.85;
 }
 

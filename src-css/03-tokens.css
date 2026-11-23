@@ -304,7 +304,7 @@ body {
 
   --corner-shape: round;
 
-  --cursor: default;
+  --cursor: var(--bs-cursor-arrow, default);
   --cursor-link: pointer;
 
   --dialog-max-height: 85vh;

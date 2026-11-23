@@ -32,7 +32,7 @@
     .bstf-bar { display: flex; align-items: center; gap: 8px; padding: 4px 12px; font-size: var(--font-ui-smaller); color: var(--text-faint); border-bottom: 1px solid var(--background-modifier-border); }
     .bstf-bar .bstf-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bstf-bar .bstf-state { margin-left: auto; white-space: nowrap; }
-    .bstf-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 22px; padding: 0 6px; border-radius: var(--bs-r, 4px); color: var(--text-muted); cursor: pointer; border: 1px solid transparent; background: transparent; font: inherit; font-size: var(--font-ui-smaller); }
+    .bstf-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 22px; padding: 0 6px; border-radius: var(--bs-r, 4px); color: var(--text-muted); cursor: var(--bs-cursor-hand, pointer); border: 1px solid transparent; background: transparent; font: inherit; font-size: var(--font-ui-smaller); }
     .bstf-btn:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bstf-btn.on { background: var(--background-modifier-hover); border-color: var(--background-modifier-border); color: var(--text-normal); }
     .bstf-find { display: none; flex-direction: column; gap: 4px; padding: 6px 12px; border-bottom: 1px solid var(--background-modifier-border); background: var(--background-secondary); }
@@ -45,14 +45,14 @@
     .bstf-count { min-width: 64px; color: var(--text-faint); font-size: var(--font-ui-smaller); text-align: center; white-space: nowrap; }
     .bstf-status { display: flex; align-items: center; gap: 14px; padding: 2px 12px; font-size: var(--font-ui-smaller); color: var(--text-faint); border-top: 1px solid var(--background-modifier-border); user-select: none; }
     .bstf-status .sp { margin-left: auto; }
-    .bstf-status span[data-act] { cursor: pointer; } .bstf-status span[data-act]:hover { color: var(--text-normal); }
+    .bstf-status span[data-act] { cursor: var(--bs-cursor-hand, pointer); } .bstf-status span[data-act]:hover { color: var(--text-normal); }
     .bstf .CodeMirror { min-width: 0; }
     .bstf-selmatch { background: rgba(128,160,200,.25); border-radius: var(--bs-r, 4px); }
     .bstf .CodeMirror-scroll::-webkit-scrollbar { width: 14px; height: 14px; }
     .bstf .CodeMirror-scroll::-webkit-scrollbar-track, .bstf .CodeMirror-scroll::-webkit-scrollbar-corner { background: transparent; }
     .bstf .CodeMirror-scroll::-webkit-scrollbar-thumb { background: rgba(121,121,121,.4); border: 0; }
     .bstf .CodeMirror-scroll::-webkit-scrollbar-thumb:hover { background: rgba(121,121,121,.65); }
-    .bstf-mini { position: relative; flex: none; border-left: 1px solid rgba(128,128,128,.15); background: var(--vs-bg); cursor: pointer; overflow: hidden; }
+    .bstf-mini { position: relative; flex: none; border-left: 1px solid rgba(128,128,128,.15); background: var(--vs-bg); cursor: var(--bs-cursor-hand, pointer); overflow: hidden; }
     .bstf-mini canvas { display: block; }
     .bstf-mini-slider { position: absolute; left: 0; right: 0; background: rgba(128,128,128,.22); pointer-events: none; }
     .bstf-mini:hover .bstf-mini-slider { background: rgba(128,128,128,.34); }
@@ -70,10 +70,10 @@
     .bstf-cur { background: rgba(255,150,0,.55); border-radius: var(--bs-r, 4px); outline: 1px solid rgba(255,150,0,.9); }
     .bstf .CodeMirror-matchingbracket { color: var(--text-normal) !important; background: rgba(120,200,255,.28); border-radius: var(--bs-r, 4px); }
     .bstf .CodeMirror-nonmatchingbracket { color: var(--text-error) !important; }
-    .bstf .CodeMirror-foldgutter { width: 14px; } .bstf .CodeMirror-foldgutter-open, .bstf .CodeMirror-foldgutter-folded { cursor: pointer; color: var(--text-faint); text-align: center; }
+    .bstf .CodeMirror-foldgutter { width: 14px; } .bstf .CodeMirror-foldgutter-open, .bstf .CodeMirror-foldgutter-folded { cursor: var(--bs-cursor-hand, pointer); color: var(--text-faint); text-align: center; }
     .bstf .CodeMirror-foldgutter-open:after { content: "\\25BE"; } .bstf .CodeMirror-foldgutter-folded:after { content: "\\25B8"; color: var(--text-accent); }
     .bstf .CodeMirror-foldgutter-open { opacity: 0; transition: opacity .12s; } .bstf .CodeMirror-gutters:hover .CodeMirror-foldgutter-open { opacity: 1; }
-    .bstf .CodeMirror-foldmarker { color: var(--text-accent); background: var(--background-modifier-hover); border-radius: var(--bs-r, 4px); padding: 0 4px; cursor: pointer; font-family: inherit; text-shadow: none; }
+    .bstf .CodeMirror-foldmarker { color: var(--text-accent); background: var(--background-modifier-hover); border-radius: var(--bs-r, 4px); padding: 0 4px; cursor: var(--bs-cursor-hand, pointer); font-family: inherit; text-shadow: none; }
     .bstf .CodeMirror { position: relative; overflow: hidden; direction: ltr; }
     .bstf .CodeMirror-scroll { overflow: scroll !important; margin-bottom: -50px; margin-right: -50px; padding-bottom: 50px; height: 100%; outline: none; position: relative; }
     .bstf .CodeMirror-sizer { position: relative; border-right: 50px solid transparent; }
@@ -85,8 +85,8 @@
     .bstf .CodeMirror-gutter { white-space: normal; height: 100%; display: inline-block; vertical-align: top; margin-bottom: -50px; }
     .bstf .CodeMirror-gutter-wrapper { position: absolute; z-index: 4; background: none !important; border: none !important; }
     .bstf .CodeMirror-gutter-background { position: absolute; top: 0; bottom: 0; z-index: 4; }
-    .bstf .CodeMirror-gutter-elt { position: absolute; cursor: default; z-index: 4; }
-    .bstf .CodeMirror-lines { cursor: text; min-height: 1px; padding: 4px 0; }
+    .bstf .CodeMirror-gutter-elt { position: absolute; cursor: var(--bs-cursor-arrow, default); z-index: 4; }
+    .bstf .CodeMirror-lines { cursor: var(--bs-cursor-text, text); min-height: 1px; padding: 4px 0; }
     .bstf .CodeMirror pre.CodeMirror-line, .bstf .CodeMirror pre.CodeMirror-line-like { border-radius: 0; border-width: 0; background: transparent; font-family: inherit; font-size: inherit; margin: 0; white-space: pre; word-wrap: normal; line-height: inherit; color: inherit; z-index: 2; position: relative; overflow: visible; padding: 0 6px; }
     .bstf .CodeMirror-wrap pre.CodeMirror-line, .bstf .CodeMirror-wrap pre.CodeMirror-line-like { word-wrap: break-word; white-space: pre-wrap; word-break: normal; }
     .bstf .CodeMirror-code { outline: none; }

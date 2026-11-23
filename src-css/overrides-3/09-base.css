@@ -64,7 +64,7 @@
   gap: var(--size-2-3);
   min-height: var(--input-height);
   vertical-align: top;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 .multi-select-pill {
@@ -94,7 +94,7 @@
   font-family: var(--font-interface);
   word-break: break-word;
   background-color: inherit;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 /* ---------- follow-link popover ---------- */

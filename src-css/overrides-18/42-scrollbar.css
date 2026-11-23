@@ -6,3 +6,6 @@
 ::-webkit-scrollbar-thumb:hover { border-width: 3px; background-color: color-mix(in srgb, var(--interactive-accent) 70%, var(--text-muted)); }
 ::-webkit-scrollbar-thumb:active { border-width: 3px; background-color: var(--interactive-accent); }
 ::-webkit-scrollbar:horizontal { height: 12px; }
+
+/* live blur over content that scrolls or moves makes scrolling jerky: bars and sticky headers stay solid-ish without it */
+.osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-dtb, .osb-feed, .osb-lbl, .osb-help, .osb-people .osb-chip, .modal.bset .bset-main h2, .modal.bset .bset-head, .bsh-load { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }

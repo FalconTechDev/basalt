@@ -76,7 +76,7 @@
   // ---- Basalt look for the whole app: warm basalt palette + cut corners (same language as the card shapes).
   // Everything is a variable override or a small shape rule; a user theme / CSS snippet still wins over it.
   const APP_CSS = `
-    .modal-close-button:empty { position: absolute; top: var(--size-4-3); right: var(--size-4-3); width: var(--size-4-8); height: var(--size-4-8); cursor: pointer; z-index: 3; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); clip-path: none; transition: background var(--bs-dur-fast) var(--bs-ease-standard), border-color var(--bs-dur-fast) var(--bs-ease-standard); }
+    .modal-close-button:empty { position: absolute; top: var(--size-4-3); right: var(--size-4-3); width: var(--size-4-8); height: var(--size-4-8); cursor: var(--bs-cursor-hand, pointer); z-index: 3; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); clip-path: none; transition: background var(--bs-dur-fast) var(--bs-ease-standard), border-color var(--bs-dur-fast) var(--bs-ease-standard); }
     .modal-close-button:empty::before { content: ""; position: absolute; inset: 0; background: var(--text-muted); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M11 11l10 10M21 11L11 21' stroke='black' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% no-repeat; transition: background var(--bs-dur-fast) var(--bs-ease-standard); }
     .modal-close-button:empty::after { content: none; }
     .modal-close-button:empty:hover { background: var(--interactive-accent); border-color: var(--interactive-accent); } .modal-close-button:empty:hover::before { background: var(--text-on-accent, #fff); }

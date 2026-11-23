@@ -9,7 +9,7 @@
     .bso-in { margin: 0 8px 6px; height: 24px; padding: 0 8px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); color: var(--vs-fg); font-size: 12px; outline-offset: -1px; }
     .bso-in:focus { outline: 1px solid var(--interactive-accent); }
     .bso-list { flex: 1; overflow: auto; padding-bottom: 8px; }
-    .bso-row { display: flex; align-items: center; gap: 7px; height: 22px; padding: 0 12px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+    .bso-row { display: flex; align-items: center; gap: 7px; height: 22px; padding: 0 12px; cursor: var(--bs-cursor-hand, pointer); font-size: 13px; white-space: nowrap; }
     .bso-row:hover { background: rgba(128,128,128,.18); } .bso-row.cur { background: rgba(128,128,128,.3); }
     .bso-row.m { padding-left: 28px; }
     .bso-k { flex: none; width: 16px; height: 16px; border-radius: var(--bs-r, 4px); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }

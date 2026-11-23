@@ -19,7 +19,7 @@
     .bsink-on .bsd-tb, .bsink-on .bsd-tb *, .bsink-on .bsd-pop, .bsink-on .bsd-pop *, .bsink-on .canvas-controls, .bsink-on .canvas-controls *, .bsink-on .canvas-menu-container, .bsink-on .canvas-menu-container *, .bsink-on .fp-minimap, .bsink-on .fp-minimap *, .bsink-on .canvas-selection-menu, .bsink-on .canvas-selection-menu * { cursor: var(--bs-cursor-arrow, default) !important; }
     .bsink-on .bsd-tb button, .bsink-on .bsd-tb button *, .bsink-on .bsd-pop button, .bsink-on .bsd-pop .bsd-c, .bsink-on .bsd-pop label, .bsink-on .canvas-controls .canvas-control-item, .bsink-on .canvas-controls .canvas-control-item *, .bsink-on .canvas-menu-container .clickable-icon, .bsink-on .canvas-menu-container .clickable-icon * { cursor: var(--bs-cursor-hand, pointer) !important; }
     .bsink-on .bsd-pop input[type=range] { cursor: ew-resize !important; }
-    .bsink-on textarea, .bsink-on .bsd-text { cursor: text !important; }
+    .bsink-on textarea, .bsink-on .bsd-text { cursor: var(--bs-cursor-text, text) !important; }
     .bsink-on .canvas-card-menu { display: none !important; }
     .bsd { position: relative; margin: 4px 0; line-height: 0; } .bsd svg { width: 100%; height: auto; display: block; }
     .bsd-edit { position: absolute; top: 4px; right: 4px; line-height: 1; padding: 3px 8px; font-size: 12px; opacity: 0; transition: opacity .12s; z-index: 2; }
@@ -33,10 +33,10 @@
     .canvas-wrapper:has(.bsd-tb) .canvas-menu-container, .canvas-wrapper:has(.bsd-tb) .canvas-selection { display: none !important; }
     .bsd-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--background-modifier-border-hover); display: inline-block; }
     .bsd-pop { position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%); padding: 8px 12px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);   display: flex; gap: 12px; align-items: center; z-index: 31; }
-    .bsd-pop .bsd-c { width: 30px; height: 30px; border-radius: 50%; border: 0; cursor: pointer; padding: 0; position: relative; transition: transform .08s; clip-path: none; box-shadow: none; } .bsd-pop .bsd-c:hover { transform: scale(1.08); }
+    .bsd-pop .bsd-c { width: 30px; height: 30px; border-radius: 50%; border: 0; cursor: var(--bs-cursor-hand, pointer); padding: 0; position: relative; transition: transform .08s; clip-path: none; box-shadow: none; } .bsd-pop .bsd-c:hover { transform: scale(1.08); }
     .bsd-pop .bsd-c.is-on { box-shadow: 0 0 0 3px var(--background-secondary), 0 0 0 5px var(--text-normal); }
-    .bsd-pop .bsd-c.rainbow { background: conic-gradient(#fb464c, #e9973f, #e0de71, #44cf6e, #53dfdd, #a882ff, #fb464c); overflow: hidden; } .bsd-pop .bsd-c.rainbow input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
-    .bsd-pop .bsd-w { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--bs-r); cursor: pointer; } .bsd-pop .bsd-w:hover { background: var(--background-modifier-hover); } .bsd-pop .bsd-w.is-on { background: color-mix(in srgb, var(--interactive-accent) 24%, transparent); }
+    .bsd-pop .bsd-c.rainbow { background: conic-gradient(#fb464c, #e9973f, #e0de71, #44cf6e, #53dfdd, #a882ff, #fb464c); overflow: hidden; } .bsd-pop .bsd-c.rainbow input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: var(--bs-cursor-hand, pointer); }
+    .bsd-pop .bsd-w { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--bs-r); cursor: var(--bs-cursor-hand, pointer); } .bsd-pop .bsd-w:hover { background: var(--background-modifier-hover); } .bsd-pop .bsd-w.is-on { background: color-mix(in srgb, var(--interactive-accent) 24%, transparent); }
     .bsd-pop .bsd-w i { display: block; border-radius: 50%; background: var(--text-normal); }
     .bsd-modal { width: min(980px, 94vw); max-width: none; height: min(720px, 90vh); display: flex; flex-direction: column; padding: 0; position: relative; }
     .bsd-surface { flex: 1; min-height: 0; position: relative; background: var(--background-primary-alt, var(--background-secondary)); touch-action: none; }

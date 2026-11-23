@@ -12,13 +12,13 @@
     .bsh-brand img { height: 64px; width: auto; flex: none; }
     .bsh-brand h1 { margin: 0; font-size: 34px; letter-spacing: .04em; font-weight: 700; line-height: 1; }
     .bsh-brand p { margin: 6px 0 0; color: var(--text-muted); font-size: var(--font-ui-small); }
-    .bsh-search { display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: text; color: var(--text-muted); background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);  transition: border-color .12s, background .12s; }
+    .bsh-search { display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: var(--bs-cursor-text, text); color: var(--text-muted); background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);  transition: border-color .12s, background .12s; }
     .bsh-search:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); }
     .bsh-search svg { width: 18px; height: 18px; flex: none; }
     .bsh-search span { flex: 1; font-size: 15px; }
     .bsh kbd { font-family: var(--font-monospace); font-size: 11px; padding: 2px 7px; background: var(--background-primary); border: 1px solid var(--background-modifier-border); color: var(--text-faint); }
     .bsh-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .bsh-tile { position: relative; display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 12px 14px; min-height: 60px; cursor: pointer; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  transition: transform .12s, border-color .12s, background .12s; }
+    .bsh-tile { position: relative; display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 12px 14px; min-height: 60px; cursor: var(--bs-cursor-hand, pointer); background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  transition: transform .12s, border-color .12s, background .12s; }
     .bsh-tile:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); }
     .bsh-keys { display: flex; gap: 4px; }
     .bsh-tile > div { display: flex; flex-direction: row; align-items: center; gap: 10px; flex: 1; min-width: 0; }
@@ -34,7 +34,7 @@
     .bsh-recent { display: grid; grid-template-columns: 1fr; column-gap: 14px; }
     @media (max-width: 720px) { .bsh-cols { grid-template-columns: 1fr; } }
     .bsh h3 { margin: 0 0 8px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-faint); font-weight: 600; }
-    .bsh-rec { display: flex; align-items: center; gap: 12px; padding: 8px 10px; cursor: pointer; border-left: 2px solid transparent; }
+    .bsh-rec { display: flex; align-items: center; gap: 12px; padding: 8px 10px; cursor: var(--bs-cursor-hand, pointer); border-left: 2px solid transparent; }
     .bsh-rec:hover { background: var(--background-modifier-hover); border-left-color: var(--interactive-accent); }
     .bsh-rec svg { width: 18px; height: 18px; color: var(--text-muted); flex: none; }
     .bsh-rec div { flex: 1; min-width: 0; } .bsh-rec b { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -42,7 +42,7 @@
     .bsh-stat { display: flex; flex-direction: column; gap: 6px; }
     .bsh-stat div { border-radius: 0; display: flex; justify-content: space-between; padding: 11px 12px; background: var(--background-secondary); border-left: 2px solid var(--background-modifier-border); }
     .bsh-stat b { color: var(--text-normal); } .bsh-stat span { color: var(--text-muted); }
-    .bsh-close { color: var(--text-faint); font-size: var(--font-ui-smaller); cursor: pointer; align-self: flex-start; } .bsh-close:hover { color: var(--text-normal); }
+    .bsh-close { color: var(--text-faint); font-size: var(--font-ui-smaller); cursor: var(--bs-cursor-hand, pointer); align-self: flex-start; } .bsh-close:hover { color: var(--text-normal); }
     .bsh-search, .bsh-tile { border: 0; clip-path: none; background: var(--interactive-normal); }
     .bsh-search:hover, .bsh-tile:hover { background: var(--interactive-hover); box-shadow: inset 2px 0 0 var(--interactive-accent); border: 0; }
     .bsh-tile .bsh-ti, .bsh-tile svg { border-radius: 0; }
@@ -96,7 +96,7 @@
     const LI = { folder: "folder-open", note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", file: "file-search", history: "history", plug: "plug", gear: "settings" };
     for (const [ic, t, sub, fn] of tiles) { const [desc, keys] = sub.split("|"); const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `<span class="bsh-ti"></span><div><b>${esc(t)}</b>${desc ? `<br><small>${esc(desc)}</small>` : ""}${keys ? `<span class="bsh-keys">${keys.split("+").map((k) => `<kbd>${esc(k)}</kbd>`).join("")}</span>` : ""}</div>`; try { window.__bsApi.setIcon(d.firstChild, "lucide-" + LI[ic]); } catch (e) { d.firstChild.innerHTML = svg(ic); } d.addEventListener("click", fn); tl.appendChild(d); }
     const rl = el.querySelector(".bsh-recent");
-    if (!recent.length) rl.innerHTML = '<div class="bsh-rec" style="cursor:default"><div><small>Пока ничего не открывали</small></div></div>';
+    if (!recent.length) rl.innerHTML = '<div class="bsh-rec" style="cursor: var(--bs-cursor-arrow, default)"><div><small>Пока ничего не открывали</small></div></div>';
     for (const f of recent) {
       const d = document.createElement("div"); d.className = "bsh-rec";
       d.innerHTML = `${svg(f.extension === "canvas" ? "canvas" : "note")}<div><b>${esc(f.basename || f.name)}</b><small>${esc(f.parent && f.parent.path && f.parent.path !== "/" ? f.parent.path : "корень")}</small></div><time>${f.stat ? ago(f.stat.mtime) : ""}</time>`;

@@ -17,7 +17,7 @@
 /* one danger button, one primary button, in every window */
 button.mod-warning, .modal-button-container button.mod-warning, .bs-confirm .modal-button-container button.mod-warning { background: var(--bs-danger); color: #fff; border-color: transparent; }
 button.mod-warning:hover { background: color-mix(in srgb, var(--bs-danger) 88%, #fff); }
-button.mod-cta:disabled, button:disabled, .bsm-btn:disabled { opacity: .5; cursor: default; box-shadow: none; }
+button.mod-cta:disabled, button:disabled, .bsm-btn:disabled { opacity: .5; cursor: var(--bs-cursor-arrow, default); box-shadow: none; }
 /* custom buttons of the collaboration window follow the same sizes */
 .bsm-btn { height: var(--bs-h); font-size: 13px; font-weight: 500; }
 .bsm-btn.sm { height: var(--bs-h-sm); } .bsm-btn.big { height: var(--bs-h-lg); font-size: 14px; }

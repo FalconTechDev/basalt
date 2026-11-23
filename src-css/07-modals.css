@@ -259,7 +259,7 @@ body.is-frameless .modal {
 
 .setting-item-control.mod-hotkey {
   padding-top: 0;
-  cursor: default;
+  cursor: var(--bs-cursor-arrow, default);
 }
 
 .setting-item-control.mod-hotkey input {

@@ -43,7 +43,7 @@
   box-shadow: 0 0 0 var(--bs-focus-width) rgb(var(--canvas-color));
   color: var(--text-normal);
   text-overflow: initial;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
   background-color: var(--background-primary);
 }
 

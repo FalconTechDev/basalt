@@ -26,7 +26,7 @@
   padding-right: var(--size-4-2);
   font: menu;
   font-size: var(--font-ui-medium);
-  cursor: default;
+  cursor: var(--bs-cursor-arrow, default);
   transform: translateX(-50%);
 }
 

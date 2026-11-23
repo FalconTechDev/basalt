@@ -25,11 +25,11 @@
     .bsg { --background-primary: var(--vs-bg); --background-secondary: var(--vs-widget); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); --background-modifier-border: var(--vs-border); --background-modifier-hover: rgba(128,128,128,.18); --font-monospace: Consolas, 'Cascadia Code', monospace; font-family: var(--font-interface); position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--vs-bg); color: var(--vs-fg); }
     .bsg-bar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 1px solid var(--background-modifier-border); flex-wrap: wrap; }
     .bsg-seg { display: inline-flex; border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 4px); overflow: hidden; }
-    .bsg-seg button { border: 0; border-radius: 0; background: transparent; padding: 3px 12px; height: 26px; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
+    .bsg-seg button { border: 0; border-radius: 0; background: transparent; padding: 3px 12px; height: 26px; color: var(--text-muted); cursor: var(--bs-cursor-hand, pointer); box-shadow: none; font-size: var(--font-ui-small); }
     .bsg-seg button.bsg-si { padding: 0 10px; height: 26px; display: inline-flex; align-items: center; gap: 6px; }
     .bsg-sic { display: inline-flex; } .bsg-sic svg { width: 14px; height: 14px; stroke-width: 1.75; }
     .bsg-seg button.on { background: var(--interactive-accent); color: var(--text-on-accent); }
-    .bsg-btn { border: 0; border-radius: var(--bs-r, 4px); background: transparent; height: 24px; padding: 0 10px; color: var(--vs-ln); cursor: pointer; box-shadow: none; font-size: 12px; }
+    .bsg-btn { border: 0; border-radius: var(--bs-r, 4px); background: transparent; height: 24px; padding: 0 10px; color: var(--vs-ln); cursor: var(--bs-cursor-hand, pointer); box-shadow: none; font-size: 12px; }
     .bsg-ib { width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center; justify-content: center; flex: none; } .bsg-ib svg { width: 16px; height: 16px; }
     .bsg-btn:hover { color: var(--vs-fg); background: rgba(128,128,128,.2); } .bsg-btn.on { color: var(--vs-fg); background: rgba(128,128,128,.28); }
     .bsg-search:focus { outline: 1px solid var(--interactive-accent); }
@@ -47,10 +47,10 @@
     .bsg-panel .grp { gap: 6px; } .bsg-panel .grp input[type=color] { width: 22px; height: 22px; padding: 0; border: 0; background: none; flex: none; }
     .bsg-panel .grp .nm { flex: 1; min-width: 0; height: 24px; padding: 0 6px; font-size: 12px; } .bsg-panel .grp .n { color: var(--text-faint); font-size: 11px; min-width: 16px; text-align: right; }
     .bsg-panel .grp.is-off .nm, .bsg-panel .grp.is-off .n { opacity: .45; } .bsg-panel .grp.is-solo { background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); }
-    .bsg-panel .grp .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-faint); cursor: pointer; border-radius: var(--bs-r); flex: none; }
+    .bsg-panel .grp .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-faint); cursor: var(--bs-cursor-hand, pointer); border-radius: var(--bs-r); flex: none; }
     .bsg-panel .grp .ic svg { width: 15px; height: 15px; } .bsg-panel .grp .ic:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-panel .grp .ic.on { color: var(--interactive-accent); }
     .bsg-panel .focusbox { margin: 8px 0; padding: 8px 10px; border: 1px solid var(--background-modifier-border); } .bsg-panel .focusbox .row b { min-width: 28px; text-align: right; color: var(--text-muted); font-weight: 500; }
-    .bsg-panel .grp .x, .bsg-panel .wide { background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); }
+    .bsg-panel .grp .x, .bsg-panel .wide { background: transparent; box-shadow: none; clip-path: none; border: 1px solid var(--background-modifier-border); color: var(--text-muted); cursor: var(--bs-cursor-hand, pointer); border-radius: var(--bs-r); }
     .bsg-panel .grp .x { width: 22px; height: 22px; padding: 0; } .bsg-panel .wide { width: 100%; height: 28px; margin: 4px 0; font-size: 12px; } .bsg-panel .wide:hover, .bsg-panel .grp .x:hover { color: var(--text-normal); border-color: var(--interactive-accent); }
     .bsg-panel .mute { font-size: 11.5px; color: var(--text-faint); }
     .bsg-panel { max-height: calc(100% - 66px); overflow-y: auto; }
@@ -61,14 +61,14 @@
     .bscg-controls .canvas-control-item { background: transparent; } .bscg-controls .canvas-control-item:hover { background: var(--background-modifier-hover); }
     .bsg-body > .bsg-panel { z-index: 7; }
     .bsg-panel .hd.first { margin-top: 2px; padding-top: 0; border-top: 0; }
-    .bsg-panel .btns { display: flex; gap: 6px; margin: 6px 0 2px; } .bsg-panel .btns button { flex: 1; height: 26px; font-size: 12px; color: var(--text-muted); cursor: pointer; } .bsg-panel .btns button:hover { color: var(--text-normal); }
+    .bsg-panel .btns { display: flex; gap: 6px; margin: 6px 0 2px; } .bsg-panel .btns button { flex: 1; height: 26px; font-size: 12px; color: var(--text-muted); cursor: var(--bs-cursor-hand, pointer); } .bsg-panel .btns button:hover { color: var(--text-normal); }
     .bsg-panel .li { display: inline-flex; width: 15px; height: 15px; margin-right: 7px; color: var(--text-faint); vertical-align: -3px; flex: none; } .bsg-panel .li svg { width: 15px; height: 15px; }
     .bsg-panel .hd { display: flex; align-items: center; } .bsg-panel .hd .li { color: var(--interactive-accent); }
     .bsg-panel .row .lb { display: flex; align-items: center; flex: 1; min-width: 0; }
     .bsg-panel .cbs { display: flex; gap: 10px; } .bsg-panel .cb2:checked { background-color: #6e96be !important; border-color: #6e96be !important; --interactive-accent: #6e96be; }
     .bsg-panel .cap { display: flex; justify-content: flex-end; gap: 4px; margin: -2px 0 2px; font-size: 11px; color: var(--text-faint); } .bsg-panel .cap span { width: 40px; text-align: center; }
     .bsg-panel .row.focus .nm { color: var(--text-normal); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsg-panel .row.focus .n { color: var(--text-muted); min-width: 36px; text-align: center; font-size: 12px; }
-    .bsg-panel .row.focus .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: pointer; border-radius: var(--bs-r); flex: none; } .bsg-panel .row.focus .ic:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-panel .row.focus .ic svg { width: 15px; height: 15px; }
+    .bsg-panel .row.focus .ic { width: 24px; height: 24px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; box-shadow: none; clip-path: none; border: 0; color: var(--text-muted); cursor: var(--bs-cursor-hand, pointer); border-radius: var(--bs-r); flex: none; } .bsg-panel .row.focus .ic:hover { color: var(--text-normal); background: var(--background-modifier-hover); } .bsg-panel .row.focus .ic svg { width: 15px; height: 15px; }
     .bsg-panel .wide .li, .bsg-panel .btns button .li { margin-right: 6px; } .bsg-panel .wide, .bsg-panel .btns button { display: inline-flex; align-items: center; justify-content: center; }
     .bsg-panel .setting-item { padding: 8px 0; } .bsg-panel .setting-item-heading { padding-top: 14px; } .bsg-panel .setting-item-name { display: flex; align-items: center; }
     .bsg-panel .bsg-si { display: inline-flex; width: 16px; height: 16px; margin-right: 8px; color: var(--interactive-accent); flex: none; } .bsg-panel .bsg-si svg { width: 16px; height: 16px; }

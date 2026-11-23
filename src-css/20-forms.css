@@ -5,7 +5,7 @@
 /* ---------- misc ---------- */
 
 #editorUndoBar button {
-  cursor: pointer;
+  cursor: var(--bs-cursor-hand, pointer);
 }
 
 .extra-setting-button {
@@ -274,7 +274,7 @@ input[type='date']::-webkit-datetime-edit-year-field:focus,
 input[type='datetime-local']::-webkit-datetime-edit-year-field:focus {
   color: var(--text-normal);
   background-color: var(--text-selection);
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 /* ---------- range sliders ---------- */
@@ -296,7 +296,7 @@ input[type='range']::-webkit-slider-thumb {
   box-shadow: var(--shadow-xs);
   background: var(--interactive-accent);
   -webkit-appearance: none;
-  cursor: default;
+  cursor: var(--bs-cursor-arrow, default);
   transition:
     background-color var(--bs-dur-fast) var(--bs-ease-standard),
     border-color var(--bs-dur-fast) var(--bs-ease-standard),

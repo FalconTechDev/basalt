@@ -23,7 +23,7 @@
     .bss-in input { flex: 1; border: 0; background: transparent; box-shadow: none; font-size: 17px; color: var(--text-normal); padding: 4px 0; height: auto; }
     .bss-hint { padding: 6px 18px; font-size: var(--font-ui-smaller); color: var(--text-faint); border-bottom: 1px solid var(--background-modifier-border); }
     .bss-list { overflow: auto; flex: 1; padding: 4px 0; min-height: 60px; }
-    .bss-item { padding: 8px 18px; cursor: pointer; border-left: 3px solid transparent; }
+    .bss-item { padding: 8px 18px; cursor: var(--bs-cursor-hand, pointer); border-left: 3px solid transparent; }
     .bss-item.is-sel { background: var(--background-modifier-hover); border-left-color: var(--interactive-accent); }
     .bss-t { font-weight: 600; } .bss-t small { color: var(--text-faint); font-weight: 400; margin-left: 8px; }
     .bss-s { color: var(--text-muted); font-size: var(--font-ui-small); margin-top: 2px; line-height: 1.45; word-break: break-word; }

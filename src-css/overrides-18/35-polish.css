@@ -61,7 +61,7 @@ select:hover, .dropdown:hover { border-color: var(--interactive-accent); }
 .menu-item-icon svg { transition: color .12s ease; }
 .suggestion-item.is-selected { border-radius: 5px; box-shadow: inset 3px 0 0 var(--interactive-accent); }
 .suggestion-item { transition: background-color .1s ease; }
-.notice { border-left: 3px solid var(--interactive-accent); cursor: pointer; overflow: hidden; position: relative; }
+.notice { border-left: 3px solid var(--interactive-accent); cursor: var(--bs-cursor-hand, pointer); overflow: hidden; position: relative; }
 .notice::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--interactive-accent); transform-origin: left; animation: bs-notice-timer 4s linear forwards; opacity: .55; }
 @keyframes bs-notice-timer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 .popover.hover-popover { border-radius: 6px; box-shadow: 0 14px 40px rgba(0, 0, 0, .5); }
@@ -76,11 +76,11 @@ select:hover, .dropdown:hover { border-color: var(--interactive-accent); }
 .bsh-greeting { font-size: 15px; color: var(--text-muted); margin: 2px 0 14px; letter-spacing: .01em; }
 /* ---- helpers added by basalt-polish.js ---- */
 .bp-progress { position: fixed; top: 0; left: 0; height: 2px; width: 0; background: var(--interactive-accent); z-index: var(--layer-notice); transition: width .1s linear; pointer-events: none; opacity: .9; }
-.bp-top { position: fixed; right: 22px; bottom: 44px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--background-secondary); color: var(--text-muted); box-shadow: 0 6px 18px rgba(0, 0, 0, .4); cursor: pointer; z-index: var(--layer-popover); opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity .2s ease, transform .2s cubic-bezier(.3, 1.4, .5, 1), background-color .15s ease, color .15s ease; }
+.bp-top { position: fixed; right: 22px; bottom: 44px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--background-secondary); color: var(--text-muted); box-shadow: 0 6px 18px rgba(0, 0, 0, .4); cursor: var(--bs-cursor-hand, pointer); z-index: var(--layer-popover); opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity .2s ease, transform .2s cubic-bezier(.3, 1.4, .5, 1), background-color .15s ease, color .15s ease; }
 .bp-top.is-on { opacity: 1; transform: none; pointer-events: auto; }
 .bp-top:hover { background: var(--interactive-accent); color: var(--text-on-accent); }
 .bp-clock { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
-.bp-clear { position: absolute; right: 8px; top: 50%; width: 18px; height: 18px; margin-top: -9px; display: grid; place-items: center; border-radius: 50%; color: var(--text-faint); cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .15s ease, background-color .15s ease; font-size: 13px; line-height: 1; }
+.bp-clear { position: absolute; right: 8px; top: 50%; width: 18px; height: 18px; margin-top: -9px; display: grid; place-items: center; border-radius: 50%; color: var(--text-faint); cursor: var(--bs-cursor-hand, pointer); opacity: 0; pointer-events: none; transition: opacity .15s ease, background-color .15s ease; font-size: 13px; line-height: 1; }
 .bp-clear.is-on { opacity: 1; pointer-events: auto; }
 .bp-clear:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
 .bset-main mark { background: color-mix(in srgb, var(--interactive-accent) 40%, transparent); color: inherit; border-radius: 3px; padding: 0 1px; }

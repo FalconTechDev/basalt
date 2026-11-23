@@ -33,7 +33,7 @@
 .tree-item-self.is-being-renamed [contenteditable="true"],
 .tree-item-self.is-being-renamed .tree-item-inner {
   flex-grow: 1;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 .tree-item-self.is-being-renamed:focus-within {

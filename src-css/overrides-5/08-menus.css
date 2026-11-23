@@ -7,12 +7,12 @@
   color: var(--text-muted);
   white-space: pre-wrap;
   word-break: break-word;
-  cursor: default;
+  cursor: var(--bs-cursor-arrow, default);
 }
 
 .menu-item.is-disabled {
   color: var(--text-faint);
-  cursor: default;
+  cursor: var(--bs-cursor-arrow, default);
 }
 
 .menu-item-icon .mod-submenu {

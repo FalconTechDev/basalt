@@ -73,7 +73,7 @@
 
 .bases-list-item .bases-list-property {
   padding: 0;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 .bases-table .bases-group-heading {

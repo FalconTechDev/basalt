@@ -14,14 +14,14 @@
     .bsf-in { flex: 1; min-width: 200px; height: 30px; padding: 0 10px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; outline-offset: -1px; background: var(--vs-input); color: var(--text-normal); font-size: var(--font-ui-medium); }
     .bsf-in.mask { flex: none; width: 170px; min-width: 120px; font-size: var(--font-ui-small); }
     .bsf-in.bad { border-color: var(--text-error); }
-    .bsf-tog { height: 28px; min-width: 30px; padding: 0 8px; border-radius: var(--bs-r, 4px); border: 1px solid var(--background-modifier-border); background: transparent; color: var(--text-muted); cursor: pointer; box-shadow: none; font-size: var(--font-ui-small); }
+    .bsf-tog { height: 28px; min-width: 30px; padding: 0 8px; border-radius: var(--bs-r, 4px); border: 1px solid var(--background-modifier-border); background: transparent; color: var(--text-muted); cursor: var(--bs-cursor-hand, pointer); box-shadow: none; font-size: var(--font-ui-small); }
     .bsf-tog:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .bsf-tog.on { background: var(--interactive-accent); color: var(--text-on-accent); border-color: transparent; }
     .bsf-info { padding: 0 14px 8px; font-size: var(--font-ui-smaller); color: var(--text-faint); }
     .bsf-list { overflow: auto; padding: 0 6px 8px; border-top: 1px solid var(--background-modifier-border); }
     .bsf-in:focus { outline: 1px solid var(--interactive-accent); }
     .bsf-file { display: flex; align-items: baseline; gap: 8px; padding: 6px 8px 2px; font-size: var(--font-ui-small); color: var(--text-normal); font-weight: 600; position: sticky; top: 0; background: var(--background-primary); }
     .bsf-file small { color: var(--text-faint); font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsf-file i { margin-left: auto; font-style: normal; color: var(--text-faint); font-weight: normal; }
-    .bsf-hit { display: flex; gap: 10px; padding: 2px 8px 2px 14px; border-radius: var(--bs-r, 4px); cursor: pointer; font-family: var(--font-monospace); font-size: 12px; color: var(--text-muted); white-space: pre; overflow: hidden; }
+    .bsf-hit { display: flex; gap: 10px; padding: 2px 8px 2px 14px; border-radius: var(--bs-r, 4px); cursor: var(--bs-cursor-hand, pointer); font-family: var(--font-monospace); font-size: 12px; color: var(--text-muted); white-space: pre; overflow: hidden; }
     .bsf-hit:hover, .bsf-hit.sel { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bsf-hit b { color: var(--text-faint); font-weight: normal; min-width: 38px; text-align: right; flex: none; }
     .bsf-hit mark { background: rgba(255,170,0,.35); color: inherit; border-radius: var(--bs-r, 4px); padding: 0; }

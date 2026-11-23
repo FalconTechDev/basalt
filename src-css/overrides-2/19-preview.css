@@ -272,7 +272,7 @@
   font-size: var(--metadata-input-font-size);
   color: var(--metadata-input-text-color);
   white-space: pre-wrap;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 /* link values: an ellipsized inner label inside a padded row */
@@ -282,7 +282,7 @@
   gap: var(--size-4-2);
   align-items: center;
   padding: var(--input-padding);
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
 }
 
 .metadata-link-inner {
@@ -307,7 +307,7 @@
   border-radius: var(--clickable-icon-radius);
   color: var(--icon-color);
   background-color: transparent;
-  cursor: text;
+  cursor: var(--bs-cursor-text, text);
   opacity: 0;
   transition: opacity var(--bs-dur-fast) var(--bs-ease-standard);
 }

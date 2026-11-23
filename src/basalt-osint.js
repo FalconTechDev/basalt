@@ -261,15 +261,15 @@
 .bso-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--background-modifier-border)}
 .bso-head b{font-size:var(--font-ui-medium)}
 .bso-tabs{display:flex;gap:4px;margin-left:10px}
-.bso-tab{padding:4px 12px;cursor:pointer;color:var(--text-muted);border:1px solid transparent}
+.bso-tab{padding:4px 12px;cursor: var(--bs-cursor-hand, pointer);color:var(--text-muted);border:1px solid transparent}
 .bso-tab.is-on{color:var(--interactive-accent);border-color:var(--interactive-accent);background:var(--background-modifier-hover)}
-.bso-x{margin-left:auto;cursor:pointer;color:var(--text-faint);padding:4px}.bso-x:hover{color:var(--text-normal)}
+.bso-x{margin-left:auto;cursor: var(--bs-cursor-hand, pointer);color:var(--text-faint);padding:4px}.bso-x:hover{color:var(--text-normal)}
 .bso-body{padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
 .bso-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .bso input[type=text],.bso textarea{flex:1;min-width:200px;padding:7px 10px;font:inherit;font-size:var(--font-ui-small);color:var(--text-normal);background:var(--background-secondary);border:1px solid var(--background-modifier-border);outline:none}
 .bso input[type=text]:focus,.bso textarea:focus{border-color:var(--interactive-accent)}
 .bso textarea{min-height:110px;resize:vertical;font-family:var(--font-monospace)}
-.bso button{padding:6px 14px;font:inherit;font-size:var(--font-ui-small);cursor:pointer;color:var(--text-normal);background:var(--background-secondary);border:1px solid var(--background-modifier-border-hover)}
+.bso button{padding:6px 14px;font:inherit;font-size:var(--font-ui-small);cursor: var(--bs-cursor-hand, pointer);color:var(--text-normal);background:var(--background-secondary);border:1px solid var(--background-modifier-border-hover)}
 .bso button:hover{border-color:var(--interactive-accent);color:var(--interactive-accent)}
 .bso button.pri{background:var(--interactive-accent);color:var(--text-on-accent,#fff);border-color:var(--interactive-accent)}
 .bso .hint{color:var(--text-faint);font-size:var(--font-ui-smaller)}
@@ -334,7 +334,7 @@
       const cnt = document.createElement("div"); cnt.className = "hint";
       const fRow = document.createElement("div"); fRow.className = "bso-row";
       const fOnly = document.createElement("input"); fOnly.type = "checkbox"; fOnly.checked = true;
-      const fLab = document.createElement("label"); fLab.className = "hint"; fLab.style.cssText = "display:flex;gap:6px;align-items:center;cursor:pointer";
+      const fLab = document.createElement("label"); fLab.className = "hint"; fLab.style.cssText = "display:flex;gap:6px;align-items:center;cursor: var(--bs-cursor-hand, pointer)";
       fLab.append(fOnly, document.createTextNode("Показывать только найденные"));
       fRow.appendChild(fLab);
       const list = document.createElement("div"); list.className = "bso-list";
@@ -417,7 +417,7 @@
       body.appendChild(hint);
       const inp = document.createElement("input"); inp.type = "text"; inp.placeholder = "email, ник, домен или фраза";
       const opts = document.createElement("div"); opts.className = "bso-row";
-      const mk = (label, checked, fn) => { const l = document.createElement("label"); l.className = "hint"; l.style.cssText = "display:flex;gap:5px;align-items:center;cursor:pointer"; const c = document.createElement("input"); c.type = "checkbox"; c.checked = checked; c.addEventListener("change", fn); l.append(c, document.createTextNode(label)); opts.appendChild(l); return c; };
+      const mk = (label, checked, fn) => { const l = document.createElement("label"); l.className = "hint"; l.style.cssText = "display:flex;gap:5px;align-items:center;cursor: var(--bs-cursor-hand, pointer)"; const c = document.createElement("input"); c.type = "checkbox"; c.checked = checked; c.addEventListener("change", fn); l.append(c, document.createTextNode(label)); opts.appendChild(l); return c; };
       const oAcc = mk("Аккаунты", true, build), oFiles = mk("Файлы и документы", true, build), oMail = mk("Почта", false, build), oImg = mk("Картинки/видео", false, build), oExact = mk("Точная фраза", true, build);
       const out = document.createElement("div"); out.style.cssText = "display:flex;flex-direction:column;gap:0;max-height:300px;overflow-y:auto";
       const engines = document.createElement("div"); engines.className = "bso-engines";
