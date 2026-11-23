@@ -10,7 +10,7 @@
 .modal.bset .bset-head { background-color: color-mix(in srgb, var(--background-primary) 88%, transparent) !important; border-bottom: 1px solid var(--background-modifier-border); backdrop-filter: blur(var(--bs-blur, 16px)); }
 html[data-glass="off"] .modal-bg { backdrop-filter: none; }
 .modal.bset .bset-row { background-color: transparent; }
-.modal.bsm { background-color: color-mix(in srgb, var(--background-primary) calc(var(--bs-win-a, .75) * 90%), transparent) !important; }
+
 .modal.bsm.no-glass { background-color: var(--background-primary) !important; backdrop-filter: none; }
 .modal-bg { background-color: rgba(0, 0, 0, .38); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
 .modal.bset .bset-main h2 { position: sticky; top: -24px; z-index: 2; margin: -24px -36px 14px; padding: 18px 36px 12px; font-size: 18px; font-weight: 600; letter-spacing: 0; border-bottom: 1px solid var(--background-modifier-border); background-color: color-mix(in srgb, var(--background-primary) 90%, transparent); backdrop-filter: blur(var(--bs-blur, 16px)); }
@@ -20,3 +20,23 @@ html[data-glass="off"] .modal-bg { backdrop-filter: none; }
 .menu, .bm-pop, .bm-drop, .popover, .suggestion-container, .prompt, .tooltip, .notice, .bpal-pop, .fp-tr-pop, .fp-end-picker, .osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-dtb, .osb-lbl {
   background-color: color-mix(in srgb, var(--background-primary) calc(max(var(--bs-win-a, .78), .88) * 100%), transparent) !important;
 }
+
+/* ---- every remaining surface follows the same variables (level, type, on/off) ----
+   large windows: the setting fully; things floating over text: never below 88% */
+.bpal, .bss, .bsq-box, .bsf-box, .bso {
+  background-color: color-mix(in srgb, var(--background-primary) calc(var(--bs-win-a, .75) * 100%), transparent) !important; background-image: none !important;
+}
+.bpal-in, .bss-in, .bsq-in, .bsf-head, .bso-head { background-color: transparent; }
+.bsf-file { background-color: color-mix(in srgb, var(--background-primary) 88%, transparent); }
+.bsd-tb, .bsd-pop, .bsg-panel, .bscg-panel, .bsg-tip, .bsg-legend, .bmd-mini, .bmd-status, .bp-top, .bstf-find, .bsv-title, .bsv-x, .bsv-tb, .bsv-nav, .bsv-info, .bpal-pop, .bs-closing {
+  background-color: color-mix(in srgb, var(--background-primary) calc(max(var(--bs-win-a, .78), .88) * 100%), transparent) !important;
+}
+.bpal, .bss, .bsq-box, .bsf-box, .bso, .bsd-tb, .bsd-pop, .bsg-panel, .bscg-panel, .bsg-tip, .bsg-legend, .bmd-mini, .bmd-status, .bp-top, .bstf-find, .bsv-title, .bsv-x, .bsv-tb, .bsv-nav, .bsv-info, .bs-closing {
+  -webkit-backdrop-filter: blur(var(--bs-blur, 16px)) saturate(var(--bs-sat, 1.3)); backdrop-filter: blur(var(--bs-blur, 16px)) saturate(var(--bs-sat, 1.3));
+}
+/* switch off or level 0: everything solid, no blur anywhere */
+html[data-glass="off"] :is(.modal, .menu, .bm-pop, .bm-drop, .popover, .suggestion-container, .prompt, .tooltip, .notice, .bpal, .bss, .bsq-box, .bsf-box, .bso, .bsd-tb, .bsd-pop, .bsg-panel, .bscg-panel, .bsg-tip, .bsg-legend, .bmd-mini, .bmd-status, .bp-top, .bstf-find, .bsv-title, .bsv-x, .bsv-tb, .bsv-nav, .bsv-info, .bpal-pop, .fp-tr-pop, .fp-end-picker, .osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-help, .osb-dtb, .osb-feed, .osb-lbl, .bsh-load, .bs-closing) {
+  -webkit-backdrop-filter: none !important; backdrop-filter: none !important; background-color: var(--background-primary) !important; background-image: none !important;
+}
+/* collaboration window: about 90% opaque whatever the level (solid when the setting is off) */
+.modal.bsm { background-color: color-mix(in srgb, var(--background-primary) calc(max(var(--bs-win-a, .75), .9) * 100%), transparent) !important; }

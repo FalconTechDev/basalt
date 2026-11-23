@@ -23241,9 +23241,6 @@ html[data-glass="off"] .modal-bg{
 .modal.bset .bset-row{
     background-color:transparent
 }
-.modal.bsm{
-    background-color:color-mix(in srgb,var(--background-primary) calc(var(--bs-win-a,.75) * 90%),transparent)!important
-}
 .modal.bsm.no-glass{
     background-color:var(--background-primary)!important;
     backdrop-filter:none
@@ -23281,6 +23278,32 @@ html[data-glass="off"] .modal-bg{
 }
 .menu,.bm-pop,.bm-drop,.popover,.suggestion-container,.prompt,.tooltip,.notice,.bpal-pop,.fp-tr-pop,.fp-end-picker,.osb-bar,.osb-rail,.osb-search,.osb-sel,.osb-dtb,.osb-lbl{
     background-color:color-mix(in srgb,var(--background-primary) calc(max(var(--bs-win-a,.78),.88) * 100%),transparent)!important
+}
+.bpal,.bss,.bsq-box,.bsf-box,.bso{
+    background-color:color-mix(in srgb,var(--background-primary) calc(var(--bs-win-a,.75) * 100%),transparent)!important;
+    background-image:none!important
+}
+.bpal-in,.bss-in,.bsq-in,.bsf-head,.bso-head{
+    background-color:transparent
+}
+.bsf-file{
+    background-color:color-mix(in srgb,var(--background-primary) 88%,transparent)
+}
+.bsd-tb,.bsd-pop,.bsg-panel,.bscg-panel,.bsg-tip,.bsg-legend,.bmd-mini,.bmd-status,.bp-top,.bstf-find,.bsv-title,.bsv-x,.bsv-tb,.bsv-nav,.bsv-info,.bpal-pop,.bs-closing{
+    background-color:color-mix(in srgb,var(--background-primary) calc(max(var(--bs-win-a,.78),.88) * 100%),transparent)!important
+}
+.bpal,.bss,.bsq-box,.bsf-box,.bso,.bsd-tb,.bsd-pop,.bsg-panel,.bscg-panel,.bsg-tip,.bsg-legend,.bmd-mini,.bmd-status,.bp-top,.bstf-find,.bsv-title,.bsv-x,.bsv-tb,.bsv-nav,.bsv-info,.bs-closing{
+    -webkit-backdrop-filter:blur(var(--bs-blur,16px)) saturate(var(--bs-sat,1.3));
+    backdrop-filter:blur(var(--bs-blur,16px)) saturate(var(--bs-sat,1.3))
+}
+html[data-glass="off"] :is(.modal, .menu, .bm-pop, .bm-drop, .popover, .suggestion-container, .prompt, .tooltip, .notice, .bpal, .bss, .bsq-box, .bsf-box, .bso, .bsd-tb, .bsd-pop, .bsg-panel, .bscg-panel, .bsg-tip, .bsg-legend, .bmd-mini, .bmd-status, .bp-top, .bstf-find, .bsv-title, .bsv-x, .bsv-tb, .bsv-nav, .bsv-info, .bpal-pop, .fp-tr-pop, .fp-end-picker, .osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-help, .osb-dtb, .osb-feed, .osb-lbl, .bsh-load, .bs-closing){
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    background-color:var(--background-primary)!important;
+    background-image:none!important
+}
+.modal.bsm{
+    background-color:color-mix(in srgb,var(--background-primary) calc(max(var(--bs-win-a,.75),.9) * 100%),transparent)!important
 }
 :root{
     --bs-danger:#e5484d;
