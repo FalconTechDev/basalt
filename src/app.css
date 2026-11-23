@@ -21767,6 +21767,83 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .osb-root.is-exp-white .osb-ink{
     --text-normal:#111827
 }
+.modal.bs-exp{
+    width:min(600px,94vw)!important;
+    max-height:92vh;
+    overflow-y:auto
+}
+.bs-exp .bs-exp-body{
+    display:flex;
+    flex-direction:column;
+    gap:14px
+}
+.bs-exp .bs-exp-pv{
+    width:100%;
+    height:210px;
+    min-height:0;
+    max-height:none;
+    padding:12px;
+    box-sizing:border-box;
+    flex:none;
+    border-radius:4px
+}
+.bs-exp .bs-exp-pv[data-bg="white"]{
+    background:#ffffff
+}
+.bs-exp .bs-exp-pv[data-bg="black"]{
+    background:#000000
+}
+.bs-exp .bs-exp-pv[data-bg="orig"]{
+    background:var(--background-primary)
+}
+.bs-exp .bs-exp-cv{
+    max-height:186px;
+    max-width:100%
+}
+.bs-exp .bs-exp-opts{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px 18px
+}
+.bs-exp .bs-exp-g{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:5px
+}
+.bs-exp .bs-exp-g.is-wide{
+    grid-column:1 / -1
+}
+.bs-exp .bs-exp-l{
+    margin:0
+}
+.bs-exp .bs-exp-seg{
+    display:flex;
+    width:100%
+}
+.bs-exp .bs-exp-b{
+    padding:7px 4px;
+    font-size:12.5px
+}
+.bs-exp .bs-exp-ck{
+    margin:0;
+    height:32px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    cursor:var(--bs-cursor-hand,pointer)
+}
+.bs-exp .bs-exp-name{
+    width:100%;
+    height:32px;
+    box-sizing:border-box
+}
+.bs-exp .modal-button-container{
+    margin-top:14px;
+    gap:8px;
+    justify-content:flex-end
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
