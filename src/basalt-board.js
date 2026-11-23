@@ -18,6 +18,20 @@
     i.onkeydown = (e) => { if (e.key === "Enter") ok.click(); }; M.onClose = () => fin(null); M.open(); setTimeout(() => { i.focus(); i.select(); }, 50);
   });
 
+  // a small picture of a board (cards and links) for the graph view
+  async function boardThumb(file, size) {
+    let j; try { j = JSON.parse(await app.vault.cachedRead(file)); } catch (e) { return null; }
+    const ns = Object.entries(j.nodes || {}).map(([id, n]) => ({ id, x: n.x || 0, y: n.y || 0, w: n.w || 260, h: n.h || 110, c: n.color || "" })); if (!ns.length) return null;
+    let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; for (const n of ns) { x1 = Math.min(x1, n.x); y1 = Math.min(y1, n.y); x2 = Math.max(x2, n.x + n.w); y2 = Math.max(y2, n.y + n.h); }
+    const W = size, H = Math.round(size / 2), pad = 10, sc = Math.min((W - pad * 2) / (x2 - x1 || 1), (H - pad * 2) / (y2 - y1 || 1)), ox = (W - (x2 - x1) * sc) / 2, oy = (H - (y2 - y1) * sc) / 2;
+    const cv = document.createElement("canvas"); cv.width = W; cv.height = H; const ctx = cv.getContext("2d"); ctx.fillStyle = "#1b1713"; ctx.fillRect(0, 0, W, H);
+    const by = new Map(ns.map((n) => [n.id, n])), P = (n) => [ox + (n.x + n.w / 2 - x1) * sc, oy + (n.y + n.h / 2 - y1) * sc];
+    ctx.strokeStyle = "rgba(200,200,200,.45)"; ctx.lineWidth = Math.max(1, size / 160); ctx.beginPath(); for (const e of Object.values(j.edges || {})) { const a = by.get(e.a), b = by.get(e.b); if (!a || !b) continue; const pa = P(a), pb = P(b); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); } ctx.stroke();
+    for (const n of ns) { ctx.fillStyle = n.c ? n.c : "rgba(235,225,210,.78)"; ctx.fillRect(ox + (n.x - x1) * sc, oy + (n.y - y1) * sc, Math.max(3, n.w * sc), Math.max(2, n.h * sc)); }
+    return { bmp: cv };
+  }
+  window.__bsBoardThumb = boardThumb;
+
   let BOARD_CLIP = null;
   function makeView(api) {
     return class BoardView extends api.ItemView {
@@ -752,8 +766,8 @@
         for (const side of ["t", "r", "b", "l"]) { const h = el.createDiv({ cls: "osb-h osb-h-" + side }); h.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); if (this.ro) return; this.drag = { kind: "link", from: id, side }; this.root.classList.add("is-linking"); this.root.setPointerCapture(ev.pointerId); }); }
         for (const dir of ["n", "s", "e", "w", "nw", "ne", "sw", "se"]) { const z = el.createDiv({ cls: "osb-rz osb-rz-" + dir }); z.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); if (this.ro || m.get("locked")) return; const mm = this.yn.get(id), q = this.pt(ev); this.drag = { kind: "size", id, dir, x: mm.get("x"), y: mm.get("y"), w: mm.get("w"), h: mm.get("h"), p: this.worldPt(q.sx, q.sy) }; this.root.setPointerCapture(ev.pointerId); }); }
         const startMove = (ev) => { if (ev.target.closest(".osb-x, .osb-kind") || ev.button !== 0 || this.ro) return; if (ev.shiftKey || ev.ctrlKey) { const n2 = new Set(this.sel); n2.has(id) ? n2.delete(id) : n2.add(id); this.select(n2); if (!n2.has(id)) return; } else if (!this.sel.has(id)) this.select(new Set([id])); const o = new Map(); for (const s of this.sel) { const n = this.yn.get(s); if (n && !n.get("locked")) o.set(s, [n.get("x"), n.get("y")]); } for (const s of Array.from(o.keys())) { const gm = this.yn.get(s); if (gm && gm.get("group")) { const gx = gm.get("x"), gy = gm.get("y"), gw = gm.get("w"), gh = gm.get("h"); for (const [id2, m2] of this.yn.entries()) { if (o.has(id2) || m2.get("group") || m2.get("locked")) continue; const cx = m2.get("x") + m2.get("w") / 2, cy = m2.get("y") + m2.get("h") / 2; if (cx >= gx && cx <= gx + gw && cy >= gy && cy <= gy + gh) o.set(id2, [m2.get("x"), m2.get("y")]); } } } if (!o.size) return; const p = this.pt(ev); this.drag = { kind: "move", o, p: this.worldPt(p.sx, p.sy) }; this.root.setPointerCapture(ev.pointerId); };
-        grip.addEventListener("pointerdown", startMove);
-        mdEl.addEventListener("pointerdown", (ev) => { if (ev.target.closest("a, input")) return; startMove(ev); });
+        grip.addEventListener("pointerdown", (ev) => { if (m.get("group")) { const now = performance.now(); if (this._lastMd && this._lastMd.id === id && now - this._lastMd.t < 380 && !this.ro) { this._lastMd = null; ev.preventDefault(); ev.stopPropagation(); setTimeout(() => this.edit(id), 0); return; } this._lastMd = { id, t: now }; } startMove(ev); });
+        mdEl.addEventListener("pointerdown", (ev) => { if (ev.target.closest("a, input")) return; const now = performance.now(); if (this._lastMd && this._lastMd.id === id && now - this._lastMd.t < 380 && !this.ro && !m.get("locked")) { this._lastMd = null; ev.preventDefault(); ev.stopPropagation(); setTimeout(() => this.edit(id), 0); return; } this._lastMd = { id, t: now }; startMove(ev); });
         mdEl.addEventListener("dblclick", (ev) => { if (this.ro || m.get("locked") || ev.target.closest("a, input")) return; ev.stopPropagation(); this.edit(id); });
         mdEl.addEventListener("click", (ev) => {
           const a = ev.target.closest("a.internal-link"); if (a) { ev.preventDefault(); ev.stopPropagation(); try { app.workspace.openLinkText(a.getAttribute("data-href") || a.getAttribute("href") || "", this.path || "", ev.ctrlKey || ev.metaKey); } catch (er) { /* missing */ } return; }

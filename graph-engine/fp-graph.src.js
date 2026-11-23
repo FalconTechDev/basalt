@@ -72,7 +72,7 @@
     const resolved = app.metadataCache.resolvedLinks || {}, unres = app.metadataCache.unresolvedLinks || {};
     const idx = new Map(), nodes = [];
     const add = (key, name, extra) => { if (idx.has(key)) return idx.get(key); const i = nodes.length; idx.set(key, i); nodes.push(Object.assign({ key, name, file: null, unresolved: false, folder: "" }, extra)); return i; };
-    for (const f of files) add(f.path, f.basename, { kind: f.extension === "canvas" ? "canvas" : f.extension === "md" || f.extension === "board" ? "note" : "img", file: f, folder: f.parent && f.parent.path !== "/" ? f.parent.path.split("/")[0] : "" });
+    for (const f of files) add(f.path, f.basename, { kind: f.extension === "canvas" ? "canvas" : f.extension === "board" ? "board" : f.extension === "md" ? "note" : "img", file: f, folder: f.parent && f.parent.path !== "/" ? f.parent.path.split("/")[0] : "" });
     const have = new Set(files.map((f) => f.path)), seen = new Set(), edges = [];
     const link = (a, b) => { if (a === b) return; const k = a < b ? a * 1048576 + b : b * 1048576 + a; if (seen.has(k)) return; seen.add(k); edges.push([a, b]); };
     for (const [src, dests] of Object.entries(resolved)) if (have.has(src)) for (const dest of Object.keys(dests)) if (have.has(dest)) link(idx.get(src), idx.get(dest));
@@ -506,7 +506,7 @@
       const m = this.thumbs || (this.thumbs = new Map()); let t = m.get(n.key); const f = n.file; if (!f) return null;
       if (t) return t.bmp ? t : null;
       t = { bmp: null }; m.set(n.key, t);
-      const load = n.kind === "canvas" ? Promise.resolve(window.__fpRenderNested ? window.__fpRenderNested(f, 256) : null).then((r) => (r && r.bmp ? createImageBitmap(r.bmp) : null)) /* our own copy: the canvas module may close its bitmaps */
+      const load = n.kind === "board" ? Promise.resolve(window.__bsBoardThumb ? window.__bsBoardThumb(f, 256) : null).then((r) => (r && r.bmp ? createImageBitmap(r.bmp) : null)) : n.kind === "canvas" ? Promise.resolve(window.__fpRenderNested ? window.__fpRenderNested(f, 256) : null).then((r) => (r && r.bmp ? createImageBitmap(r.bmp) : null)) /* our own copy: the canvas module may close its bitmaps */
         : fetch(this.app.vault.getResourcePath(f)).then((r) => r.blob()).then((b) => createImageBitmap(b, { resizeWidth: 160, resizeQuality: "medium" }));
       load.then((b) => { if (b) { t.bmp = b; this.dirty = true; } }).catch(() => {});
       return null;
@@ -573,6 +573,7 @@
       if (n.kind === "img") src = this.app.vault.getResourcePath(f);
       else if (n.kind === "note") { const cache = this.app.metadataCache.getFileCache(f), em = ((cache && cache.embeds) || []).find((e) => IM.test(e.link)); const t = em && this.app.metadataCache.getFirstLinkpathDest(em.link.split("#")[0], f.path); if (t) src = this.app.vault.getResourcePath(t); }
       if (src) { const im = document.createElement("img"); im.src = src; box.appendChild(im); el.appendChild(box); }
+      else if (n.kind === "board" && window.__bsBoardThumb) { el.appendChild(box); window.__bsBoardThumb(f, 520).then((r) => { if (r && r.bmp && box.isConnected) { r.bmp.style.cssText = "width:100%;height:auto;display:block"; box.appendChild(r.bmp); } }); }
       else if (n.kind === "canvas" && window.__fpMountPreview) { el.appendChild(box); const my = this.pvToken = (this.pvToken || 0) + 1; window.__fpMountPreview(f, box).then((P) => { if (!P) return; if (my !== this.pvToken || !box.isConnected) { P.destroy(); return; } this.pvLive = P; }); }
     }
     // groups you make yourself and the notes you hid: both live in the panel and in the right-click menu

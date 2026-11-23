@@ -21652,6 +21652,35 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .osb-card.is-group .osb-by,.osb-card.is-group .osb-tag,.osb-card.is-group .osb-kind{
     display:none!important
 }
+.osb-by{
+    display:none!important
+}
+.osb-card.is-group .osb-grip{
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    height:36px;
+    z-index:2;
+    background:transparent;
+    border-radius:4px 4px 0 0
+}
+.osb-card.is-group .osb-ta{
+    pointer-events:none;
+    height:36px;
+    padding:7px 12px;
+    background:transparent!important
+}
+.osb-card.is-group.is-editing .osb-ta{
+    pointer-events:auto;
+    z-index:3
+}
+.osb-card.is-group .osb-ta::placeholder{
+    opacity:0
+}
+.osb-card.is-group.is-editing .osb-ta::placeholder{
+    opacity:.5
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;

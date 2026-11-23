@@ -326,3 +326,9 @@
 .osb-card.has-img .osb-md { flex: none; max-height: 70px; padding: 4px 10px; font-size: 12.5px; } .osb-card.is-fold .osb-md { flex: none; height: 28px; overflow: hidden; padding: 4px 10px; }
 /* a frame is only a title: no author line */
 .osb-card.is-group .osb-grip { height: 14px; background: transparent; } .osb-card.is-group .osb-by, .osb-card.is-group .osb-tag, .osb-card.is-group .osb-kind { display: none !important; }
+
+/* ---- no author line on cards; a frame is one piece with a quiet title ---- */
+.osb-by { display: none !important; }
+.osb-card.is-group .osb-grip { position: absolute; left: 0; right: 0; top: 0; height: 36px; z-index: 2; background: transparent; border-radius: 4px 4px 0 0; }
+.osb-card.is-group .osb-ta { pointer-events: none; height: 36px; padding: 7px 12px; background: transparent !important; } .osb-card.is-group.is-editing .osb-ta { pointer-events: auto; z-index: 3; }
+.osb-card.is-group .osb-ta::placeholder { opacity: 0; } .osb-card.is-group.is-editing .osb-ta::placeholder { opacity: .5; }
