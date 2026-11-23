@@ -276,3 +276,8 @@
 
 .osb-mc { opacity: 0; pointer-events: none; transition: opacity .12s; } .osb-edges g:hover .osb-mc, .osb-edges g.is-sel .osb-mc { opacity: 1; pointer-events: all; }
 .osb-mb { cursor: pointer; } .osb-mb circle { fill: var(--background-secondary); stroke: var(--interactive-accent); stroke-width: 1.5; } .osb-mb path { stroke: var(--text-normal); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; } .osb-mb:hover circle { fill: var(--interactive-accent); } .osb-mb:hover path { stroke: var(--text-on-accent); }
+
+.bs-help.modal { width: min(700px, 94vw); padding: 22px 26px 18px; } .bs-help .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 10px; }
+.bs-help-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 8px 0; border-bottom: 1px solid var(--background-modifier-border); } .bs-help-row:last-child { border-bottom: 0; } .bs-help-t { font-size: 14px; } .bs-help-k { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.bs-kbd { font-family: var(--font-monospace); font-size: 12px; padding: 2px 8px; background: color-mix(in srgb, var(--text-normal) 10%, transparent); color: var(--text-normal); border-radius: 3px; white-space: nowrap; }
+.osb-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; pointer-events: none; color: var(--text-faint); text-align: center; padding: 0 24px; } .osb-empty-t { font-size: 18px; font-weight: 600; color: var(--text-muted); } .osb-empty-s { font-size: 13px; max-width: 360px; }

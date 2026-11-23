@@ -58,7 +58,7 @@
         const si = this.searchInput = sb.createEl("input", { attr: { placeholder: "Поиск по карточкам", spellcheck: "false" } }); this.searchCount = sb.createSpan({ cls: "osb-sc" });
         const sbtn = (ic, tip, fn) => { const x = sb.createDiv({ cls: "osb-sb2", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = fn; return x; }; sbtn("lucide-chevron-up", "Предыдущая", () => this.runSearch(-1, true)); sbtn("lucide-chevron-down", "Следующая", () => this.runSearch(1, true)); sbtn("lucide-x", "Закрыть", () => this.toggleSearch(false));
         si.oninput = () => this.runSearch(0, true); si.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); this.runSearch(e.shiftKey ? -1 : 1, true); } else if (e.key === "Escape") this.toggleSearch(false); };
-        this.selBar = c.createDiv({ cls: "osb-sel" }); this.box = this.root.createDiv({ cls: "osb-box" });
+        this.emptyEl = this.root.createDiv({ cls: "osb-empty" }); this.emptyEl.createDiv({ cls: "osb-empty-t", text: "Доска пуста" }); this.emptyEl.createDiv({ cls: "osb-empty-s", text: "Двойной клик — новая карточка. Можно перетащить сюда файл, картинку или другую доску." }); this.selBar = c.createDiv({ cls: "osb-sel" }); this.box = this.root.createDiv({ cls: "osb-box" });
         const bot = c.createDiv({ cls: "osb-bottom" }); this.people = bot.createDiv({ cls: "osb-people" });
         const fe = this.feedEl = bot.createDiv({ cls: "osb-feed" }); const fh = fe.createDiv({ cls: "osb-feed-h" }); fh.createSpan({ text: "Активность" }); this.feedCount = fh.createSpan({ cls: "osb-feed-c" }); this.feedList = fe.createDiv({ cls: "osb-feed-l" });
         let open = true; try { open = localStorage.getItem("board-feed-open") !== "0"; } catch (e) { /* private */ } fe.classList.toggle("is-closed", !open); fh.onclick = () => { fe.classList.toggle("is-closed"); try { localStorage.setItem("board-feed-open", fe.classList.contains("is-closed") ? "0" : "1"); } catch (e) { /* private */ } };
@@ -96,10 +96,17 @@
       get ro() { return !!(this.sh && this.sh.readOnly) || !!this.locked; }
       toggleLock() { this.locked = !this.locked; this.lockBtn.classList.toggle("is-on", this.locked); this.lockBtn.empty(); api.setIcon(this.lockBtn, this.locked ? "lucide-lock" : "lucide-unlock"); this.lockBtn.title = this.locked ? "Разблокировать доску" : "Заблокировать доску"; if (this.locked) { this.sel = new Set(); this.mark(); } this.sync(); this.renderSelBar(); }
       toggleHelp() {
-        let h = this.helpEl; if (h) { h.remove(); this.helpEl = null; this.helpBtn.classList.remove("is-on"); return; }
-        h = this.helpEl = this.contentEl.createDiv({ cls: "osb-help" }); this.helpBtn.classList.add("is-on");
-        const rows = [["Перетащить пустое место", "двигать доску"], ["Колесо мыши, щипок", "масштаб"], ["Тачпад двумя пальцами", "двигать в любую сторону"], ["Shift + перетащить", "выделить рамкой"], ["Shift или Ctrl + клик", "добавить к выделению"], ["Двойной клик", "новая карточка"], ["Ctrl+A", "выделить всё"], ["Ctrl+C / Ctrl+V / Ctrl+D", "копировать, вставить, дублировать"], ["Ctrl+Z / Ctrl+Shift+Z", "отменить, вернуть"], ["Стрелки (Shift — крупно)", "сдвинуть выбранное"], ["Ctrl+F", "поиск"], ["F", "показать всё"]];
-        for (const [k, v] of rows) { const r = h.createDiv({ cls: "osb-hrow" }); r.createSpan({ cls: "osb-hk", text: k }); r.createSpan({ cls: "osb-hv", text: v }); }
+        const M = new api.Modal(app); M.modalEl.addClass("bs-help"); M.titleEl.setText("Справка по доске"); const c = M.contentEl;
+        const K = (...k) => k, rows = [
+          ["Перемещение", [K("Space", "+ перетаскивание"), K("Колесо мыши"), K("Тачпад двумя пальцами")]], ["Масштаб", [K("Ctrl", "+ колесо"), K("Щипок")]], ["Показать всё", [K("F")]],
+          ["Выделить рамкой", [K("Перетащить по пустому месту")]], ["Добавить к выделению", [K("Shift", "+ клик"), K("Ctrl", "+ клик")]], ["Выделить всё", [K("Ctrl", "+ A")]],
+          ["Новая карточка", [K("Двойной клик"), K("N")]], ["Свернуть или развернуть карточку", [K("Z")]], ["Двигать выбранное", [K("Стрелки"), K("Shift", "+ стрелки: крупно")]],
+          ["Копировать, вставить, дублировать", [K("Ctrl", "+ C"), K("Ctrl", "+ V"), K("Ctrl", "+ D")]], ["Удалить", [K("Delete"), K("Backspace")]], ["Отменить и повторить", [K("Ctrl", "+ Z"), K("Ctrl", "+ Y")]],
+          ["Связь между карточками", [K("Потянуть за точку на краю карточки")]], ["Убрать связь", [K("Потянуть конец связи в пустое место")]], ["Поиск", [K("Ctrl", "+ F")]],
+          ["Рисование", [K("P кисть"), K("H маркер"), K("L линия"), K("A стрелка"), K("R рамка"), K("O овал"), K("T текст"), K("V выделение"), K("E ластик")]], ["Прямая линия кистью", [K("Shift")]],
+        ];
+        for (const [t, keys] of rows) { const r = c.createDiv({ cls: "bs-help-row" }); r.createSpan({ cls: "bs-help-t", text: t }); const kk = r.createDiv({ cls: "bs-help-k" }); for (const g of keys) { const k = kk.createSpan({ cls: "bs-kbd" }); k.setText(g.join(" ")); } }
+        M.open();
       }
       // smart guides: while moving, edges and centres line up with other cards, and the guide lines show what is aligned with what
       guide(d, dx, dy) {
@@ -691,7 +698,7 @@
           const txt = m.get("text").toString(); if (e.ta.value !== txt) { const f = document.activeElement === e.ta, p = e.ta.selectionStart; e.ta.value = txt; if (f) { try { e.ta.setSelectionRange(Math.min(p, txt.length), Math.min(p, txt.length)); } catch (er) { /* ok */ } } }
         });
         for (const [id, e] of this.els) if (!seen.has(id)) { e.el.remove(); this.els.delete(id); this.sel.delete(id); }
-        this.syncEdges(); this.mark();
+        this.syncEdges(); this.mark(); if (this.emptyEl) this.emptyEl.style.display = this.yn.size ? "none" : "";
       }
       mkCard(id, m) {
         const el = this.cards.createDiv({ cls: "osb-card" }); el.dataset.id = id;
