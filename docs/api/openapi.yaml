@@ -1,0 +1,109 @@
+openapi: 3.0.3
+info:
+  title: Basalt local API
+  version: "2"
+  description: |
+    HTTP API inside the running Basalt app (src/basalt-api.js). Localhost only. Every request needs
+    `Authorization: Bearer <token>`; the address and token are in `<userData>/basalt-api.json`
+    (Windows: %APPDATA%\Basalt). Requests with an `Origin` header (browsers) or a non-loopback `Host` are refused.
+    Paths are vault-relative with forward slashes; `..` and absolute paths are rejected.
+servers:
+  - url: http://127.0.0.1:27124
+    description: default port; the real one is in basalt-api.json
+security:
+  - bearer: []
+components:
+  securitySchemes:
+    bearer: { type: http, scheme: bearer }
+  parameters:
+    path: { name: path, in: query, required: true, schema: { type: string }, description: vault-relative path }
+    open: { name: open, in: query, schema: { type: string, enum: ["1"] }, description: "open the board in a tab first if it is not open" }
+    boardPath: { name: path, in: query, required: true, schema: { type: string }, description: path of a .board file }
+  schemas:
+    Error: { type: object, properties: { error: { type: string } , hint: { type: string } } }
+    Ok: { type: object, properties: { ok: { type: boolean } } }
+    Card:
+      type: object
+      properties: { id: { type: string }, text: { type: string }, x: { type: number }, y: { type: number }, w: { type: number }, h: { type: number }, color: { type: string }, kind: { type: string }, fold: { type: boolean }, locked: { type: boolean }, hasImage: { type: boolean } }
+    CardInput:
+      type: object
+      properties: { id: { type: string }, text: { type: string }, x: { type: number }, y: { type: number }, w: { type: number }, h: { type: number }, color: { type: string, description: "red orange yellow green blue purple none or #rrggbb" }, kind: { type: string }, fold: { type: boolean }, locked: { type: boolean } }
+    Link:
+      type: object
+      properties: { id: { type: string }, a: { type: string }, b: { type: string }, label: { type: string }, sa: { type: string }, sb: { type: string } }
+    BoardState:
+      type: object
+      properties: { path: { type: string }, cards: { type: array, items: { $ref: "#/components/schemas/Card" } }, links: { type: array, items: { $ref: "#/components/schemas/Link" } } }
+  responses:
+    E400: { description: bad request, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    E401: { description: bad or missing token, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    E403: { description: refused (origin, host, read-only board, eval disabled), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    E404: { description: not found, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+    E409: { description: conflict (destination exists, board not open), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+paths:
+  /v1/status:
+    get: { summary: App and vault state, responses: { "200": { description: ok, content: { application/json: { schema: { type: object, properties: { app: { type: string }, api: { type: integer }, vault: { type: string }, vaultPath: { type: string }, notes: { type: integer }, canvases: { type: integer }, boards: { type: integer }, files: { type: integer }, activeFile: { type: string, nullable: true }, openBoards: { type: array, items: { type: string } }, eval: { type: boolean } } } } } } } }
+  /v1/files:
+    get:
+      summary: List files
+      parameters:
+        - { name: folder, in: query, schema: { type: string } }
+        - { name: ext, in: query, schema: { type: string }, description: "comma separated, e.g. md,board" }
+        - { name: limit, in: query, schema: { type: integer, default: 5000 } }
+      responses: { "200": { description: "[{path,size,mtime}]" } }
+  /v1/file:
+    get: { summary: Read a file (text, or base64 with encoding=base64), parameters: [{ $ref: "#/components/parameters/path" }, { name: encoding, in: query, schema: { type: string, enum: [base64] } }], responses: { "200": { description: file content as text }, "404": { $ref: "#/components/responses/E404" } } }
+    put: { summary: Create or overwrite a file (body is the text, or base64 with encoding=base64), parameters: [{ $ref: "#/components/parameters/path" }, { name: encoding, in: query, schema: { type: string, enum: [base64] } }], requestBody: { content: { text/plain: { schema: { type: string } } } }, responses: { "200": { description: "{ok,path,created,bytes}" } } }
+    delete: { summary: Delete to the vault trash (force=1 deletes for good), parameters: [{ $ref: "#/components/parameters/path" }, { name: force, in: query, schema: { type: string, enum: ["1"] } }], responses: { "200": { description: "{ok,force}" }, "404": { $ref: "#/components/responses/E404" } } }
+  /v1/note:
+    get: { summary: Read a note (API v1, same as /v1/file), parameters: [{ $ref: "#/components/parameters/path" }], responses: { "200": { description: text }, "404": { $ref: "#/components/responses/E404" } } }
+    put: { summary: Create or overwrite a note, parameters: [{ $ref: "#/components/parameters/path" }], requestBody: { content: { text/plain: { schema: { type: string } } } }, responses: { "200": { description: "{ok,path,created}" } } }
+    delete: { summary: Move a note to the trash, parameters: [{ $ref: "#/components/parameters/path" }], responses: { "200": { description: "{ok}" } } }
+  /v1/note/append:
+    post: { summary: Append text to a note (created when missing), parameters: [{ $ref: "#/components/parameters/path" }], requestBody: { content: { text/plain: { schema: { type: string } } } }, responses: { "200": { description: "{ok,path,created}" } } }
+  /v1/note/meta:
+    get: { summary: "Frontmatter, tags, headings, links, resolved links, backlinks from the app's metadata cache", parameters: [{ $ref: "#/components/parameters/path" }], responses: { "200": { description: ok } } }
+  /v1/move:
+    post: { summary: "Move or rename through the app (links are updated by the app's own rules)", parameters: [{ $ref: "#/components/parameters/path" }, { name: to, in: query, required: true, schema: { type: string } }], responses: { "200": { description: "{ok,path}" }, "409": { $ref: "#/components/responses/E409" } } }
+  /v1/backlinks:
+    get: { summary: Notes linking to a file, parameters: [{ $ref: "#/components/parameters/path" }], responses: { "200": { description: "[{path,count}]" } } }
+  /v1/graph:
+    get: { summary: Link graph from the metadata cache, parameters: [{ name: unresolved, in: query, schema: { type: string, enum: ["1"] } }], responses: { "200": { description: "{nodes:[{id}], edges:[{source,target,count,unresolved?}]}" } } }
+  /v1/tags:
+    get: { summary: "Tags with counts ({\"#tag\": n})", responses: { "200": { description: ok } } }
+  /v1/search:
+    get: { summary: Search notes, parameters: [{ name: q, in: query, required: true, schema: { type: string } }, { name: limit, in: query, schema: { type: integer, default: 20 } }], responses: { "200": { description: "[{path,title,snippet}]" }, "400": { $ref: "#/components/responses/E400" } } }
+  /v1/search/run:
+    post: { summary: Show a query in the app's search pane, parameters: [{ name: q, in: query, required: true, schema: { type: string } }], responses: { "200": { description: "{ok,query}" }, "501": { description: search pane unavailable } } }
+  /v1/workspace:
+    get: { summary: Active file and open leaves, responses: { "200": { description: "{activeFile,leaves:[{type,path}]}" } } }
+  /v1/open:
+    post: { summary: Open a file in a tab, parameters: [{ $ref: "#/components/parameters/path" }, { name: line, in: query, schema: { type: integer } }, { name: new, in: query, schema: { type: string, enum: ["0"] }, description: "0 reuses the current tab" }], responses: { "200": { description: "{ok}" }, "404": { $ref: "#/components/responses/E404" } } }
+  /v1/commands:
+    get: { summary: App commands, parameters: [{ name: q, in: query, schema: { type: string } }], responses: { "200": { description: "[{id,name}]" } } }
+  /v1/command:
+    post: { summary: Run an app command, parameters: [{ name: id, in: query, required: true, schema: { type: string } }], responses: { "200": { description: "{ok,id}" }, "404": { $ref: "#/components/responses/E404" } } }
+  /v1/boards/open:
+    get: { summary: Boards open in the app, responses: { "200": { description: "[{path,cards,links,active}]" } } }
+  /v1/board:
+    get: { summary: Cards and links of an open board, parameters: [{ $ref: "#/components/parameters/boardPath" }, { $ref: "#/components/parameters/open" }], responses: { "200": { description: ok, content: { application/json: { schema: { $ref: "#/components/schemas/BoardState" } } } }, "409": { $ref: "#/components/responses/E409" } } }
+  /v1/board/card:
+    post: { summary: Add a card, parameters: [{ $ref: "#/components/parameters/boardPath" }, { $ref: "#/components/parameters/open" }], requestBody: { content: { application/json: { schema: { $ref: "#/components/schemas/CardInput" } } } }, responses: { "200": { description: "{ok,id}" }, "400": { $ref: "#/components/responses/E400" }, "403": { $ref: "#/components/responses/E403" } } }
+    patch: { summary: "Edit a card (id may be a unique prefix)", parameters: [{ $ref: "#/components/parameters/boardPath" }, { name: id, in: query, required: true, schema: { type: string } }, { $ref: "#/components/parameters/open" }], requestBody: { content: { application/json: { schema: { $ref: "#/components/schemas/CardInput" } } } }, responses: { "200": { description: "{ok,id}" }, "404": { $ref: "#/components/responses/E404" } } }
+    delete: { summary: Delete a card and its links, parameters: [{ $ref: "#/components/parameters/boardPath" }, { name: id, in: query, required: true, schema: { type: string } }, { $ref: "#/components/parameters/open" }], responses: { "200": { description: "{ok,id,linksRemoved}" } } }
+  /v1/board/link:
+    post: { summary: Add a link between two cards, parameters: [{ $ref: "#/components/parameters/boardPath" }, { $ref: "#/components/parameters/open" }], requestBody: { content: { application/json: { schema: { type: object, required: [a, b], properties: { a: { type: string }, b: { type: string }, label: { type: string }, sa: { type: string }, sb: { type: string } } } } } }, responses: { "200": { description: "{ok,id}" } } }
+    delete: { summary: Delete a link, parameters: [{ $ref: "#/components/parameters/boardPath" }, { name: id, in: query, required: true, schema: { type: string } }, { $ref: "#/components/parameters/open" }], responses: { "200": { description: "{ok,id}" }, "404": { $ref: "#/components/responses/E404" } } }
+  /v1/board/layout:
+    post: { summary: Arrange cards with the app's own layouts, parameters: [{ $ref: "#/components/parameters/boardPath" }, { name: mode, in: query, schema: { type: string, enum: [auto, lr, td, radial, force], default: auto } }, { $ref: "#/components/parameters/open" }], responses: { "200": { description: "{ok,mode}" }, "400": { $ref: "#/components/responses/E400" } } }
+  /v1/events:
+    get:
+      summary: "Server-Sent Events stream"
+      description: "Events: file-create, file-modify, file-delete, file-rename (oldPath), file-open, active-leaf-change, layout-change, board-change (path, cards, links). Each message is `event: <type>` + `data: {json}`; a `: ping` comment arrives every 20 s."
+      responses: { "200": { description: event stream, content: { text/event-stream: { schema: { type: string } } } } }
+  /v1/settings:
+    get: { summary: API settings (read only; change them with `basalt app settings`), responses: { "200": { description: "{eval,settingsFile}" } } }
+  /v1/eval:
+    post: { summary: "Run JavaScript inside the app. OFF unless basalt-api-settings.json contains {\"eval\": true}. Body is the code; the value of an expression (or `return`) comes back.", requestBody: { content: { text/plain: { schema: { type: string } } } }, responses: { "200": { description: "{ok,result}" }, "403": { $ref: "#/components/responses/E403" } } }
+  /v1/quit:
+    post: { summary: Quit the app, responses: { "200": { description: "{ok}" } } }
