@@ -110,12 +110,12 @@
         this.fit(); this.sync(); this.feedArr(); this.renderFeed(); this.startHistory();
         if (this.ym.get("room")) this.connect(this.ym.get("room"), this.ym.get("pass") || "");
       }
-      queueSave() { if (this.sh) return; clearTimeout(this.saveT); this.saveT = setTimeout(() => this.save(), 400); }
+      queueSave() { if (this.sh) return; clearTimeout(this.saveT); const n = this.yn ? this.yn.size : 0; this.saveT = setTimeout(() => this.save(), n > 3000 ? 4000 : n > 800 ? 1500 : 400); }
       async save() {
         if (this.sh || !this.doc || !this.path) return; const Y = window.__bsY.Y;
         const nodes = {}; this.yn.forEach((m, id) => { nodes[id] = { x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "" }; });
         const out = { v: 2, id: this.ym.get("id"), room: this.ym.get("room") || null, nodes, edges: this.ye.toJSON(), ydoc: b64(Y.encodeStateAsUpdate(this.doc)) };
-        try { await app.vault.adapter.write(this.path, JSON.stringify(out, null, 1)); } catch (e) { console.error(e); }
+        try { await app.vault.adapter.write(this.path, this.yn.size > 600 ? JSON.stringify(out) : JSON.stringify(out, null, 1)); } catch (e) { console.error(e); }
       }
       get ro() { return !!(this.sh && this.sh.readOnly) || !!this.locked; }
       toggleLock() { this.locked = !this.locked; this.lockBtn.classList.toggle("is-on", this.locked); this.lockBtn.empty(); api.setIcon(this.lockBtn, this.locked ? "lucide-lock" : "lucide-unlock"); this.lockBtn.title = this.locked ? "Разблокировать доску" : "Заблокировать доску"; if (this.locked) { this.sel = new Set(); this.mark(); } this.sync(); this.renderSelBar(); }
@@ -375,11 +375,14 @@
         const url = URL.createObjectURL(blob); try {
           const im = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; }); const M = 1400, k = Math.min(1, M / Math.max(im.naturalWidth, im.naturalHeight)), w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
           if (k === 1 && blob.size < 600000) { return { data: await new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); }), w, h }; }
-          const c = document.createElement("canvas"); c.width = w; c.height = h; c.getContext("2d").drawImage(im, 0, 0, w, h); return { data: c.toDataURL(blob.type === "image/png" && blob.size < 1500000 ? "image/png" : "image/jpeg", 0.86), w, h };
+          const c = document.createElement("canvas"); c.width = w; c.height = h; c.getContext("2d").drawImage(im, 0, 0, w, h); let data = c.toDataURL(blob.type === "image/png" && blob.size < 1500000 ? "image/png" : "image/jpeg", 0.86), s = 1, q = 0.8;
+          // a picture lives inside the board file and every copy of it: keep it under about 1.2 MB
+          for (let t = 0; t < 4 && data.length > 1200000; t++) { s *= 0.75; q = Math.max(0.5, q - 0.08); const c2 = document.createElement("canvas"); c2.width = Math.max(1, Math.round(w * s)); c2.height = Math.max(1, Math.round(h * s)); c2.getContext("2d").drawImage(im, 0, 0, c2.width, c2.height); data = c2.toDataURL("image/jpeg", q); }
+          if (data.length > 1600000) throw new Error("big"); return { data, w, h };
         } finally { URL.revokeObjectURL(url); }
       }
       async addImageFile(blob, x, y) {
-        if (this.ro) return; try { const r = await this.imgData(blob), cw = Math.min(360, Math.max(160, r.w)), ch = Math.round(cw * r.h / r.w) + 22 + 36, id = this.addCard(x - cw / 2, y - ch / 2, ""), m = this.yn.get(id); this.doc.transact(() => { m.set("img", r.data); m.set("w", cw); m.set("h", ch); }); } catch (e) { new api.Notice("Не удалось вставить изображение"); }
+        if (this.ro) return; try { const r = await this.imgData(blob), cw = Math.min(360, Math.max(160, r.w)), ch = Math.round(cw * r.h / r.w) + 22 + 36, id = this.addCard(x - cw / 2, y - ch / 2, ""), m = this.yn.get(id); this.doc.transact(() => { m.set("img", r.data); m.set("w", cw); m.set("h", ch); }); } catch (e) { new api.Notice(e && e.message === "big" ? "Изображение слишком большое для доски: уменьшите его и вставьте снова" : "Не удалось вставить изображение"); }
       }
       pickImage(at) { const i = document.createElement("input"); i.type = "file"; i.accept = "image/*"; i.multiple = true; i.onchange = () => { const c = at || this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2); let n = 0; for (const f of i.files) this.addImageFile(f, c.x + n++ * 30, c.y + n * 30); }; i.click(); }
       async pasteAny() {
@@ -470,10 +473,12 @@
           const nbr = new Map(comp.map((v) => [v, []])); for (const v of comp) for (const n of out.get(v)) { nbr.get(v).push(n); nbr.get(n).push(v); }
           const ord = new Map(); const setOrd = () => L.forEach((X) => X.forEach((v, k) => ord.set(v, k))); setOrd();
           const crossings = () => { let c = 0; for (const v of comp) for (const n of out.get(v)) { if (layer.get(n) - layer.get(v) !== 1) continue; for (const u of comp) { if (layer.get(u) !== layer.get(v)) continue; for (const w2 of out.get(u)) { if (layer.get(w2) - layer.get(u) !== 1) continue; if (ord.get(u) < ord.get(v) && ord.get(w2) > ord.get(n)) c++; } } } return c; };
-          let best = L.map((X) => X.slice()), bc = crossings();
+          const crossingsFast = () => { let c = 0; for (let d = 0; d < nl - 1; d++) { const pairs = []; for (const v of L[d]) for (const n of out.get(v)) if (layer.get(n) === d + 1) pairs.push([ord.get(v), ord.get(n)]); pairs.sort((a, b) => a[0] - b[0] || a[1] - b[1]); const m = L[d + 1].length, bit = new Int32Array(m + 2); let seen = 0; for (const q of pairs) { const t = q[1]; let s = 0; for (let i = t + 1; i > 0; i -= i & -i) s += bit[i]; c += seen - s; for (let i = t + 1; i <= m; i += i & -i) bit[i]++; seen++; } } return c; };
+          const crossingsExact = crossings, crossingsAny = comp.length > 60 ? crossingsFast : crossingsExact;
+          let best = L.map((X) => X.slice()), bc = crossingsAny();
           for (let it = 0; it < 12 && bc > 0; it++) { const down = it % 2 === 0, ds = L.map((_, k) => k); if (!down) ds.reverse(); for (const d of ds) { const X = L[d], ref = down ? d - 1 : d + 1; if (ref < 0 || ref >= nl) continue; const med = (v) => { const ns = nbr.get(v).filter((n) => layer.get(n) === ref).map((n) => ord.get(n)).sort((a, b) => a - b); if (!ns.length) return ord.get(v); const m = ns.length >> 1; return ns.length % 2 ? ns[m] : (ns[m - 1] + ns[m]) / 2; }; X.sort((a, b) => med(a) - med(b)); X.forEach((v, k) => ord.set(v, k)); }
-            let imp = true; for (let pass = 0; imp && pass < 3; pass++) { imp = false; for (const X of L) for (let k = 0; k < X.length - 1; k++) { const before = crossings(); [X[k], X[k + 1]] = [X[k + 1], X[k]]; ord.set(X[k], k); ord.set(X[k + 1], k + 1); if (crossings() < before) imp = true; else { [X[k], X[k + 1]] = [X[k + 1], X[k]]; ord.set(X[k], k); ord.set(X[k + 1], k + 1); } } }
-            const c = crossings(); if (c < bc) { bc = c; best = L.map((X) => X.slice()); } }
+            let imp = comp.length <= 60; for (let pass = 0; imp && pass < 3; pass++) { imp = false; for (const X of L) for (let k = 0; k < X.length - 1; k++) { const before = crossings(); [X[k], X[k + 1]] = [X[k + 1], X[k]]; ord.set(X[k], k); ord.set(X[k + 1], k + 1); if (crossings() < before) imp = true; else { [X[k], X[k + 1]] = [X[k + 1], X[k]]; ord.set(X[k], k); ord.set(X[k + 1], k + 1); } } }
+            const c = crossingsAny(); if (c < bc) { bc = c; best = L.map((X) => X.slice()); } }
           for (let d = 0; d < nl; d++) { L[d] = best[d]; } setOrd();
           const W = (v) => g(v).get("w"), Hh = (v) => this.effH(g(v)), sz = (v) => (lr ? Hh(v) : W(v)), fl = (v) => (lr ? W(v) : Hh(v)), gap = lr ? 36 : 56, t = new Map();
           for (const X of L) { let y = 0; for (const v of X) { t.set(v, y); y += sz(v) + gap; } }
@@ -499,6 +504,7 @@
           if (kind === "force") {
             const P = new Map(comp.map((v, k) => [v, [g(v).get("x") + W(v) / 2 + (Math.random() - .5) * 40, g(v).get("y") + H(v) / 2 + (Math.random() - .5) * 40 + k * 0.01]])); const area = comp.length * 340 * 220, kk = Math.sqrt(area / comp.length) * 0.9; let temp = kk;
             const es = []; for (const v of comp) for (const n of dir.get(v)) es.push([v, n]);
+            if (comp.length > 250) this.forceGrid(comp, P, es, kk, W); else
             for (let it2 = 0; it2 < 320; it2++) { const D = new Map(comp.map((v) => [v, [0, 0]]));
               for (let a = 0; a < comp.length; a++) for (let b = a + 1; b < comp.length; b++) { const u = comp[a], v = comp[b], pu = P.get(u), pv = P.get(v); let dx = pu[0] - pv[0], dy = pu[1] - pv[1], d = Math.hypot(dx, dy) || 0.01; const ext = (W(u) + W(v)) / 2 + 40, f = (kk * kk) / d * (d < ext + 60 ? 3 : 1); dx /= d; dy /= d; D.get(u)[0] += dx * f; D.get(u)[1] += dy * f; D.get(v)[0] -= dx * f; D.get(v)[1] -= dy * f; }
               for (const [u, v] of es) { const pu = P.get(u), pv = P.get(v); let dx = pu[0] - pv[0], dy = pu[1] - pv[1], d = Math.hypot(dx, dy) || 0.01; const f = (d * d) / kk; dx /= d; dy /= d; D.get(u)[0] -= dx * f; D.get(u)[1] -= dy * f; D.get(v)[0] += dx * f; D.get(v)[1] += dy * f; }
@@ -518,6 +524,20 @@
         const res = comps.map((comp) => place(comp, mode)); let area = 0, maxW = 0; for (const r of res) { area += (r.w + 80) * (r.h + 80); maxW = Math.max(maxW, r.w); } const rowW = Math.max(maxW, Math.sqrt(area) * 1.5); this.doc.transact(() => { let x = 0, y = 0, rh = 0; for (const r of res) { if (x > 0 && x + r.w > rowW) { x = 0; y += rh + 80; rh = 0; } for (const [v, c] of r.pos) { g(v).set("x", Math.round(bb.x + x + c[0])); g(v).set("y", Math.round(bb.y + y + c[1])); } x += r.w + 80; rh = Math.max(rh, r.h); } });
         this.assignSides(ids); this.refitFrames(ids); this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка применена.");
       }
+      // force layout for big sets: repulsion only between cards in neighbouring grid cells, fewer rounds
+      forceGrid(comp, P, es, kk, W) {
+        const n = comp.length, idx = new Map(comp.map((v, i) => [v, i])), X = new Float64Array(n), Y = new Float64Array(n), DX = new Float64Array(n), DY = new Float64Array(n), EX = new Float64Array(n); comp.forEach((v, i) => { const p = P.get(v); X[i] = p[0]; Y[i] = p[1]; EX[i] = W(v); });
+        const E = []; for (const [a, b] of es) { const i = idx.get(a), j = idx.get(b); if (i != null && j != null) E.push(i, j); }
+        const iters = n > 3000 ? 40 : n > 1200 ? 60 : 90, cell = kk * 3, decay = Math.pow(0.985, 320 / iters), K2 = kk * kk; let temp = kk;
+        for (let it = 0; it < iters; it++) {
+          DX.fill(0); DY.fill(0); const grid = new Map(), cx = new Int32Array(n), cy = new Int32Array(n);
+          for (let i = 0; i < n; i++) { cx[i] = Math.floor(X[i] / cell); cy[i] = Math.floor(Y[i] / cell); const key = (cx[i] + 32768) * 65536 + (cy[i] + 32768); const l = grid.get(key); if (l) l.push(i); else grid.set(key, [i]); }
+          for (let i = 0; i < n; i++) for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) { const l = grid.get((cx[i] + a + 32768) * 65536 + (cy[i] + b + 32768)); if (!l) continue; for (let q = 0; q < l.length; q++) { const j = l[q]; if (j === i) continue; let dx = X[i] - X[j], dy = Y[i] - Y[j], d = Math.hypot(dx, dy) || 0.01; const ext = (EX[i] + EX[j]) / 2 + 40, f = K2 / d * (d < ext + 60 ? 3 : 1); dx /= d; dy /= d; DX[i] += dx * f; DY[i] += dy * f; } }
+          for (let e = 0; e < E.length; e += 2) { const u = E[e], v = E[e + 1]; let dx = X[u] - X[v], dy = Y[u] - Y[v], d = Math.hypot(dx, dy) || 0.01; const f = (d * d) / kk; dx /= d; dy /= d; DX[u] -= dx * f; DY[u] -= dy * f; DX[v] += dx * f; DY[v] += dy * f; }
+          for (let i = 0; i < n; i++) { const l = Math.hypot(DX[i], DY[i]) || 1, m = Math.min(l, temp); X[i] += DX[i] / l * m; Y[i] += DY[i] / l * m; } temp *= decay;
+        }
+        comp.forEach((v, i) => { const p = P.get(v); p[0] = X[i]; p[1] = Y[i]; });
+      }
       // ----- export to a picture (white background for documents)
       exportMenu(e, ids) {
         const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)); const what = ids && ids.length ? "выделенное" : "вся доска";
@@ -530,7 +550,7 @@
         const dark = bg === "dark", ink1 = dark ? "#e5e7eb" : "#111827", card0 = dark ? "#1f2330" : "#ffffff", line0 = dark ? "#8b93a7" : "#6b7280", bord = dark ? "#3a4052" : "#d1d5db";
         let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; const grow = (a, b, c, d) => { x1 = Math.min(x1, a); y1 = Math.min(y1, b); x2 = Math.max(x2, c); y2 = Math.max(y2, d); };
         for (const id of all) { const m = this.yn.get(id); grow(m.get("x"), m.get("y"), m.get("x") + m.get("w"), m.get("y") + this.effH(m)); } if (ids && ids.length && all.length) { const nb = { x1, y1, x2, y2 }; ink = ink.filter((st) => { const b = this.inkBox(st); return b.x1 < nb.x2 && b.x2 > nb.x1 && b.y1 < nb.y2 && b.y2 > nb.y1; }); } for (const st of ink) { const b = this.inkBox(st); grow(b.x1, b.y1, b.x2, b.y2); }
-        const pad = o.pad == null ? 40 : o.pad, sc = o.scale || 2, cw = Math.min(8000, Math.ceil((x2 - x1 + pad * 2) * sc)), chh = Math.min(8000, Math.ceil((y2 - y1 + pad * 2) * sc)), cv = document.createElement("canvas"); cv.width = cw; cv.height = chh; const ctx = cv.getContext("2d"); ctx.scale(cw / ((x2 - x1 + pad * 2)), chh / ((y2 - y1 + pad * 2))); ctx.translate(pad - x1, pad - y1);
+        const pad = o.pad == null ? 40 : o.pad, sc = o.scale || 2, cw0 = Math.min(8000, Math.ceil((x2 - x1 + pad * 2) * sc)), chh0 = Math.min(8000, Math.ceil((y2 - y1 + pad * 2) * sc)), ar = Math.min(1, Math.sqrt(3.6e7 / (cw0 * chh0))), cw = Math.max(1, Math.floor(cw0 * ar)), chh = Math.max(1, Math.floor(chh0 * ar)), cv = document.createElement("canvas"); cv.width = cw; cv.height = chh; const ctx = cv.getContext("2d"); ctx.scale(cw / ((x2 - x1 + pad * 2)), chh / ((y2 - y1 + pad * 2))); ctx.translate(pad - x1, pad - y1);
         if (bg !== "none") { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = dark ? "#14161d" : "#ffffff"; ctx.fillRect(0, 0, cw, chh); ctx.restore(); }
         const FONT = '"Segoe UI", system-ui, sans-serif', rrect = (x, y, w, h, r) => { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); };
         const wrap = (text, mw, font) => { ctx.font = font; const out = []; for (const para of String(text).split("\n")) { let line = ""; for (const word of para.split(/(\s+)/)) { const t = line + word; if (ctx.measureText(t).width > mw && line) { out.push(line.trimEnd()); line = word.trimStart(); } else line = t; } out.push(line); } return out; };
@@ -539,12 +559,13 @@
         ctx.lineWidth = 2; ctx.strokeStyle = line0; ctx.fillStyle = line0; ctx.lineCap = "round";
         for (const e of this.ye.values()) { const a = e.get("a"), b = e.get("b"); if (!idSet.has(a) || !idSet.has(b)) continue; const A = this.center(a), B = this.center(b), p = this.anchor(a, B), q = this.anchor(b, A); if (!p || !q) continue; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke(); const an = Math.atan2(q.y - p.y, q.x - p.x); ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(q.x - 11 * Math.cos(an - 0.4), q.y - 11 * Math.sin(an - 0.4)); ctx.lineTo(q.x - 11 * Math.cos(an + 0.4), q.y - 11 * Math.sin(an + 0.4)); ctx.closePath(); ctx.fill(); const lb = e.get("label"); if (lb) { ctx.font = "12px " + FONT; ctx.textAlign = "center"; const mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2, tw = ctx.measureText(lb).width + 10; ctx.fillStyle = dark ? "#14161d" : "#fff"; ctx.fillRect(mx - tw / 2, my - 10, tw, 20); ctx.fillStyle = ink1; ctx.textBaseline = "middle"; ctx.fillText(lb, mx, my); ctx.fillStyle = line0; ctx.textAlign = "left"; } }
         // cards
-        for (const id of all) { const m = this.yn.get(id), x = m.get("x"), y = m.get("y"), w = m.get("w"), h = this.effH(m), col = m.get("color") || "", im = m.get("img");
+        let yc = 0; const yieldNow = () => (++yc % 250 === 0 ? new Promise((r) => setTimeout(r, 0)) : null);
+        for (const id of all) { await yieldNow(); const m = this.yn.get(id), x = m.get("x"), y = m.get("y"), w = m.get("w"), h = this.effH(m), col = m.get("color") || "", im = m.get("img");
           ctx.save(); rrect(x, y, w, h, 4); ctx.fillStyle = card0; if (m.get("group")) ctx.globalAlpha = dark ? 0.35 : 0.5; ctx.fill(); ctx.globalAlpha = 1; if (col) { ctx.globalAlpha = dark ? 0.14 : 0.1; ctx.fillStyle = col; ctx.fill(); ctx.globalAlpha = 1; } ctx.lineWidth = col ? 2 : 1.2; ctx.strokeStyle = col || bord; ctx.stroke(); ctx.clip(); let ty = y + 10;
           if (im) { try { const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = im; }); const ah = Math.max(20, h - 22 - (m.get("text").length ? 40 : 6)), r = Math.min((w - 8) / img.naturalWidth, ah / img.naturalHeight), iw = img.naturalWidth * r, ih = img.naturalHeight * r; ctx.drawImage(img, x + (w - iw) / 2, y + 4, iw, ih); ty = y + 4 + ih + 6; } catch (e2) { /* skip */ } }
           ctx.fillStyle = ink1; ctx.textBaseline = "top"; const lines = wrap(m.get("text").toString(), w - 22, "14px " + FONT); ctx.font = "14px " + FONT; for (const ln of lines) { if (ty > y + h - 12) break; ctx.fillText(ln, x + 11, ty); ty += 19.6; } ctx.restore(); }
         // drawing
-        for (const st of ink) { ctx.save(); ctx.strokeStyle = st.c || ink1; ctx.fillStyle = st.c || ink1; ctx.lineCap = "round"; ctx.lineJoin = "round"; const sw = st.k === "hl" ? (st.w || 4) * 3 : (st.w || 4); ctx.lineWidth = sw; if (st.k === "hl") ctx.globalAlpha = 0.38;
+        for (const st of ink) { await yieldNow(); ctx.save(); ctx.strokeStyle = st.c || ink1; ctx.fillStyle = st.c || ink1; ctx.lineCap = "round"; ctx.lineJoin = "round"; const sw = st.k === "hl" ? (st.w || 4) * 3 : (st.w || 4); ctx.lineWidth = sw; if (st.k === "hl") ctx.globalAlpha = 0.38;
           if (st.k === "t") { const sz = this.textSize(st); ctx.font = sz + "px " + FONT; ctx.textBaseline = "top"; String(st.txt || "").split("\n").forEach((ln, i) => ctx.fillText(ln, st.a[0], st.a[1] + i * sz * 1.25)); }
           else if (st.k === "pen" || st.k === "hl") { const q = st.pts; ctx.beginPath(); ctx.moveTo(q[0][0], q[0][1]); if (q.length === 1) ctx.lineTo(q[0][0] + 0.01, q[0][1]); for (let i = 1; i < q.length - 1; i++) ctx.quadraticCurveTo(q[i][0], q[i][1], (q[i][0] + q[i + 1][0]) / 2, (q[i][1] + q[i + 1][1]) / 2); if (q.length > 1) ctx.lineTo(q[q.length - 1][0], q[q.length - 1][1]); ctx.stroke(); }
           else if (st.k === "line" || st.k === "arrow") { ctx.beginPath(); ctx.moveTo(st.a[0], st.a[1]); ctx.lineTo(st.b[0], st.b[1]); ctx.stroke(); if (st.k === "arrow") { const an = Math.atan2(st.b[1] - st.a[1], st.b[0] - st.a[0]), L = 8 + sw * 1.5; ctx.beginPath(); ctx.moveTo(st.b[0], st.b[1]); ctx.lineTo(st.b[0] - L * Math.cos(an - 0.45), st.b[1] - L * Math.sin(an - 0.45)); ctx.lineTo(st.b[0] - L * Math.cos(an + 0.45), st.b[1] - L * Math.sin(an + 0.45)); ctx.closePath(); ctx.fill(); } }
@@ -578,8 +599,10 @@
       histDir() { return ".basalt-history/" + this.path.replace(/[\\/]/g, "__") + "/"; }
       snapData() { const nodes = []; this.yn.forEach((m, id) => nodes.push({ id, x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "", img: m.get("img") || "", fold: !!m.get("fold"), locked: !!m.get("locked") })); const edges = []; this.ye.forEach((m) => edges.push({ a: m.get("a"), b: m.get("b"), label: m.get("label") || "" })); return { v: 1, t: Date.now(), nodes, edges, ink: this._ink ? this._ink.toArray() : [] }; }
       async snapshot(force) {
-        if (!this.doc || !this.path || this.ro && !force) return false; const d = this.snapData(); if (!d.nodes.length && !d.ink.length) return false; const body = JSON.stringify({ nodes: d.nodes, edges: d.edges, ink: d.ink }); if (!force && body === this._lastSnap) return false; this._lastSnap = body; this._lastSnapT = Date.now();
-        try { const dir = this.histDir(), ad = app.vault.adapter; if (!(await ad.exists(".basalt-history"))) await ad.mkdir(".basalt-history"); if (!(await ad.exists(dir))) await ad.mkdir(dir); await ad.write(dir + d.t + ".json", JSON.stringify(d)); const ls = (await ad.list(dir)).files.sort(); for (const f of ls.slice(0, Math.max(0, ls.length - 40))) await ad.remove(f); return true; } catch (e) { console.error(e); return false; }
+        if (!this.doc || !this.path || this.ro && !force) return false; const d = this.snapData(); if (!d.nodes.length && !d.ink.length) return false; const body = JSON.stringify({ nodes: d.nodes, edges: d.edges, ink: d.ink }); if (!force && body === this._lastSnap) return false; this._lastSnap = body.length > 4e6 ? body.length + ":" + d.nodes.length : body; this._lastSnapT = Date.now();
+        try { const dir = this.histDir(), ad = app.vault.adapter; if (!(await ad.exists(".basalt-history"))) await ad.mkdir(".basalt-history"); if (!(await ad.exists(dir))) await ad.mkdir(dir); await ad.write(dir + d.t + ".json", '{"v":1,"t":' + d.t + "," + body.slice(1)); const ls = (await ad.list(dir)).files.sort(); for (const f of ls.slice(0, Math.max(0, ls.length - 40))) await ad.remove(f);
+          { let keep = ls.slice(-40), tot = 0; const sizes = []; for (const f of keep) { let s = 0; try { s = (await ad.stat(f)).size || 0; } catch (e) { /* gone */ } sizes.push(s); tot += s; } let i = 0; while (tot > 150e6 && i < keep.length - 3) { try { await ad.remove(keep[i]); } catch (e) { /* gone */ } tot -= sizes[i]; i++; } }
+          return true; } catch (e) { console.error(e); return false; }
       }
       startHistory() { clearInterval(this._hT); this._hT = setInterval(() => { if (Date.now() - (this._lastSnapT || 0) > 180000) this.snapshot(); }, 60000); }
       restoreSnap(d) {
