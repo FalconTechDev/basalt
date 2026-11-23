@@ -878,7 +878,11 @@
           const hop = (cid) => { const s = this.adj.get(cid); if (s && s.size < 800) for (const eid of s) this.edirty.add(eid); };
           for (const id of moved) { const s = this.adj.get(id); if (!s) continue; for (const eid of s) { this.edirty.add(eid); if (s.size < 400) { const r = this.eg.get(eid); if (r) hop(r.a === id ? r.b : r.a); } } }
         }
-        if (this.edirty.size) { this._slotC = null; for (const id of this.edirty) this.updEdge(id); this.edirty.clear(); }
+        if (this.edirty.size) {
+          this._slotC = null; this._sc = new Set(); for (const id of this.edirty) this.updEdge(id); this.edirty.clear();
+          // links that share a side of a card are spread by count and order: when one comes, goes or changes, its neighbours on those cards are drawn again
+          for (const card of this._sc) { const s = this.adj.get(card); if (s && s.size < 3000) for (const eid of s) { const r = this.eg.get(eid); if (r) r.dirty = true; } } this._sc = null;
+        }
         this.cull(); this.cullInk && this.cullInk();
         if (this._flashQ.size) { const q = this._flashQ; this._flashQ = new Set(); this.flashMany(q); }
         this.mark(); this.renderMini(); if (this.emptyEl) this.emptyEl.classList.toggle("is-hidden", this.yn.size > 0);
@@ -1044,11 +1048,11 @@
       adjDel(c, eid) { const s = this.adj.get(c); if (s) { s.delete(eid); if (!s.size) this.adj.delete(c); } }
       updEdge(id) {
         const m = this.ye.get(id), r0 = this.eg.get(id);
-        if (!m) { if (r0) { this.adjDel(r0.a, id); this.adjDel(r0.b, id); this.eg.delete(id); } this.dropEdgeEl(id); return; }
+        if (!m) { if (r0) { if (this._sc) { this._sc.add(r0.a); this._sc.add(r0.b); } this.adjDel(r0.a, id); this.adjDel(r0.b, id); this.eg.delete(id); } this.dropEdgeEl(id); return; }
         this.emid.set(m, id); const a = m.get("a"), b = m.get("b"); let r = r0;
         if (!r) { r = { m, a, b, bb: null, dirty: true }; this.eg.set(id, r); this.adjAdd(a, id); this.adjAdd(b, id); }
-        else { if (r.a !== a || r.b !== b) { this.adjDel(r.a, id); this.adjDel(r.b, id); r.a = a; r.b = b; this.adjAdd(a, id); this.adjAdd(b, id); } r.m = m; }
-        r.dirty = true; r.bb = null;
+        else { if (r.a !== a || r.b !== b) { if (this._sc) { this._sc.add(r.a); this._sc.add(r.b); } this.adjDel(r.a, id); this.adjDel(r.b, id); r.a = a; r.b = b; this.adjAdd(a, id); this.adjAdd(b, id); } r.m = m; }
+        r.dirty = true; r.bb = null; if (this._sc) { this._sc.add(a); this._sc.add(b); }
       }
       dropEdgeEl(id) { const r = this.edgeEls.get(id); if (r) { r.g.remove(); this.edgeEls.delete(id); } }
       // the rough area a link can touch (both cards plus room for a curve); false when an end card is missing
