@@ -161,6 +161,8 @@
     [/folder-open/, "Открыть папку"], [/play/, "Запустить"], [/square$|stop/, "Остановить"], [/pin/, "Закрепить"], [/help|info/, "Подсказка"], [/undo/, "Отменить действие"],
     [/redo/, "Повторить действие"], [/zoom-in/, "Приблизить"], [/zoom-out/, "Отдалить"], [/maximize|expand/, "На весь экран"], [/minus/, "Убрать"], [/link/, "Ссылка"],
   ];
+  const EN = { "Скрыть": "Hide", "Показать": "Show", "Закрыть": "Close", "Добавить": "Add", "Удалить": "Delete", "Изменить": "Edit", "Копировать": "Copy", "Найти": "Find", "Настройки": "Settings", "Обновить": "Refresh", "Развернуть": "Expand", "Свернуть": "Collapse", "Назад": "Back", "Вперёд": "Forward", "Вверх": "Up", "Вниз": "Down", "Ещё действия": "More actions", "Готово": "Done", "Скачать": "Download", "Загрузить": "Upload", "Открыть папку": "Open folder", "Запустить": "Run", "Остановить": "Stop", "Закрепить": "Pin", "Подсказка": "Help", "Отменить действие": "Undo", "Повторить действие": "Redo", "Приблизить": "Zoom in", "Отдалить": "Zoom out", "На весь экран": "Full screen", "Убрать": "Remove", "Ссылка": "Link", "Закрыть окно": "Close the window", "Закрыть окно (Esc)": "Close the window (Esc)" };
+  const L = (ru) => (window.__bsLang === "ru" || !EN[ru] ? ru : EN[ru]);
   const SELECTOR = "button, [role=button], .clickable-icon, .view-action, .side-dock-ribbon-action";
   const nameIcons = () => {
     for (const el of document.querySelectorAll(SELECTOR)) {
@@ -171,9 +173,9 @@
       if (tip) { el.setAttribute("aria-label", tip); el.__bsNamed = 1; continue; }
       const cls = Array.from(svg.classList).find((c) => c.startsWith("lucide-")) || "", name = cls.replace("lucide-", ""); if (!name) continue;
       const hit = ICON_LABELS.find(([rx]) => rx.test(name)); if (!hit) continue;
-      el.setAttribute("aria-label", hit[1]); el.setAttribute("title", hit[1]); el.__bsNamed = 1;
+      el.setAttribute("aria-label", L(hit[1])); el.setAttribute("title", L(hit[1])); el.__bsNamed = 1;
     }
-    for (const el of document.querySelectorAll(".modal-close-button:not([aria-label])")) { el.setAttribute("aria-label", "Закрыть окно"); el.setAttribute("title", "Закрыть окно (Esc)"); }
+    for (const el of document.querySelectorAll(".modal-close-button:not([aria-label])")) { el.setAttribute("aria-label", L("Закрыть окно")); el.setAttribute("title", L("Закрыть окно (Esc)")); }
   };
   // notices: the same text is shown once, and no more than three are on screen
   const calmNotices = () => {

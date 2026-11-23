@@ -140,7 +140,7 @@
           try {
             const j = await getJson(url), items = Array.isArray(j) ? j : j.plugins || [];
             for (const it of items) { const repo = parseRepo(it.repo || ""); if (repo) frag.appendChild(row(it.name || repo, it.description || repo, "", [["Установить", () => doInstall(repo), "mod-cta"]])); }
-          } catch (e) { frag.appendChild(Object.assign(document.createElement("div"), { className: "bsc-err", textContent: `Источник ${url} не открылся: ${((e && /[А-Яа-я]/.test(e.message || "")) ? e.message : "нет связи с GitHub или он не ответил. Проверьте интернет и повторите")}. Проверьте адрес.` })); }
+          } catch (e) { frag.appendChild(Object.assign(document.createElement("div"), { className: "bsc-err", textContent: `Каталог по адресу ${url} не открылся: ${((e && /[А-Яа-я]/.test(e.message || "")) ? e.message : "нет связи с GitHub или он не ответил. Проверьте интернет и повторите")}. Проверьте адрес.` })); }
         }
       } else {
         for (const url of cat.sources) { const d = document.createElement("div"); d.className = "bsc-src"; d.innerHTML = "<span></span>"; d.firstChild.textContent = url; const b = document.createElement("button"); b.textContent = "Убрать"; b.addEventListener("click", async () => { cat.sources = cat.sources.filter((x) => x !== url); await saveCat(); render(); }); d.appendChild(b); frag.appendChild(d); }

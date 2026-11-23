@@ -44,7 +44,7 @@
       t.title = title;
       t.innerHTML = '<span class="bt-i"></span><span class="bt-n"></span>' + (leaf.pinned ? '<svg class="bt-p" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/></svg>' : '') + '<span class="bt-x" title="Закрыть"></span>';
       t.querySelector(".bt-n").textContent = title || "Без названия";
-      { const xb = t.querySelector(".bt-x"); xb.title = "Закрыть вкладку"; xb.setAttribute("aria-label", "Закрыть вкладку"); } try { api.setIcon(t.querySelector(".bt-x"), "lucide-x"); } catch (e) { t.querySelector(".bt-x").textContent = "×"; }
+      { const xb = t.querySelector(".bt-x"); xb.title = "Закрыть эту вкладку"; xb.setAttribute("aria-label", "Закрыть эту вкладку"); } try { api.setIcon(t.querySelector(".bt-x"), "lucide-x"); } catch (e) { t.querySelector(".bt-x").textContent = "×"; }
       try { api.setIcon(t.querySelector(".bt-i"), leaf.getIcon()); } catch (e) { /* no icon */ }
       t.addEventListener("click", (e) => { if (e.target.closest(".bt-x")) { leaf.detach(); return; } g.selectTab(leaf); app.workspace.setActiveLeaf(leaf, { focus: true }); });
       t.addEventListener("auxclick", (e) => { if (e.button === 1) { e.preventDefault(); if (!leaf.pinned) leaf.detach(); } });

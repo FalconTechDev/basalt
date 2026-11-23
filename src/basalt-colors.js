@@ -47,7 +47,7 @@
       sec("Сохранённые", saved, true, true); if (recent.length) sec("Недавние", recent, false, false);
     };
     // ---- footer
-    const foot = document.createElement("div"); foot.className = "bpal-foot"; const prev = document.createElement("div"); prev.className = "bpal-prev"; const hexIn = document.createElement("input"); hexIn.type = "text"; hexIn.className = "bpal-hex"; hexIn.placeholder = "#RRGGBB"; hexIn.title = "Код цвета: введите или вставьте, например #b07a52"; hexIn.setAttribute("aria-label", "Код цвета"); hexIn.spellcheck = false; foot.append(prev, hexIn);
+    const foot = document.createElement("div"); foot.className = "bpal-foot"; const prev = document.createElement("div"); prev.className = "bpal-prev"; const hexIn = document.createElement("input"); hexIn.type = "text"; hexIn.className = "bpal-hex"; hexIn.placeholder = "#RRGGBB"; hexIn.title = "Код цвета: введите или вставьте, например #b07a52"; hexIn.setAttribute("aria-label", "Введите код цвета"); hexIn.spellcheck = false; foot.append(prev, hexIn);
     if (opts.none !== false) { const n = document.createElement("button"); n.className = "bpal-none"; n.textContent = "Без цвета"; n.onclick = () => done(""); foot.appendChild(n); }
     p.appendChild(foot);
     // ---- drawing / syncing

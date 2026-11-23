@@ -253,9 +253,9 @@
       emptyState(ws) {
         const box = document.createElement("div"); box.className = "bsf-empty"; const t = document.createElement("div"); t.className = "bsf-empty-t"; box.appendChild(t);
         const act = (label, fn) => { const b = document.createElement("button"); b.className = "mod-cta"; b.textContent = label; b.addEventListener("click", fn); box.appendChild(b); };
-        if (this.filter) { t.textContent = "Ничего не нашли по запросу «" + this.filter + "». Проверьте написание или сбросьте фильтр."; act("Сбросить фильтр", () => { this.find.value = ""; this.filter = ""; this.wsResults = []; this.render(); }); }
+        if (this.filter) { t.textContent = "Ничего не нашли по запросу «" + this.filter + "». Проверьте написание или сбросьте фильтр."; act("Сбросить фильтр списка файлов", () => { this.find.value = ""; this.filter = ""; this.wsResults = []; this.render(); }); }
         else if (ws) t.textContent = "Эта папка пуста. Файлы появятся здесь, как только вы их добавите.";
-        else { t.textContent = "В хранилище пока нет заметок. Создайте первую, чтобы начать."; act("Создать заметку", () => this.create("md")); }
+        else { t.textContent = "В хранилище пока нет заметок. Создайте первую, чтобы начать."; act("Создать первую заметку", () => this.create("md")); }
         this.treeEl.textContent = ""; this.treeEl.appendChild(box);
       }
       wire(r, f) {
@@ -293,7 +293,7 @@
           if (app.vault.getAbstractFileByPath(dest)) { new api.Notice(`В папке «${folder.name || "корень"}» уже есть «${f.name}». Переименуйте один из файлов и повторите.`, 6000); continue; }
           try { { const fromPath = f.path; await app.fileManager.renameFile(f, dest); const op = { t: "rename", from: fromPath, to: dest }; this.pushOp(op); moved.push(op); } } catch (err) { console.error("[files] move", err); this.fail("переместить «" + f.name + "»"); }
         }
-        if (moved.length) { const where = folder.name || "корень"; (window.__bsUndoNotice || ((m) => new api.Notice(m)))(moved.length > 1 ? `Перемещено: ${moved.length} в «${where}»` : `Перемещено в «${where}»`, async () => { for (const op of moved.slice().reverse()) await this.undoOp(op, true); this.render(); }); }
+        if (moved.length) { const where = folder.name || "корень"; (window.__bsUndoNotice || ((m) => new api.Notice(m)))(moved.length > 1 ? `Перемещено: ${moved.length} → «${where}»` : `Перемещено в «${where}»`, async () => { for (const op of moved.slice().reverse()) await this.undoOp(op, true); this.render(); }); }
         if (folder.path !== "/") { this.open.add(folder.path); this.save(); }
         this.render();
       }

@@ -91,7 +91,7 @@
     async function applyReplace() {
       const rep = repIn.value, sel = hitsList.filter((h) => h.cb.checked); if (!sel.length || !lastRe) return;
       const byFile = new Map(); for (const h of sel) { let a = byFile.get(h.p); if (!a) byFile.set(h.p, a = []); a.push(h.i); }
-      if (!(await window.__bsConfirm("Заменить на «" + rep + "» в строках: " + sel.length + ", файлов: " + byFile.size + ". Изменения сразу записываются в файлы, вернуть их кнопкой нельзя.", { title: "Заменить во всех отмеченных?", ok: "Заменить", cancel: "Не менять" }))) return;
+      if (!(await window.__bsConfirm("Заменить на «" + rep + "» в строках: " + sel.length + ", файлов: " + byFile.size + ". Изменения сразу записываются в файлы, вернуть их кнопкой нельзя.", { title: "Заменить во всех отмеченных?", ok: "Заменить", cancel: "Не заменять ничего" }))) return;
       let done = 0, failed = 0;
       for (const [p, idxs] of byFile) {
         try {
