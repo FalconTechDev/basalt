@@ -1,0 +1,16 @@
+/* ===== transparency ===== */
+/* big surfaces: they let the window material show through (strength comes from --bs-a-* set by basalt-glass.js) */
+html[data-glass="mica"] body, html[data-glass="acrylic"] body { background-color: transparent; }
+html[data-glass="mica"] .workspace-split.mod-root, html[data-glass="acrylic"] .workspace-split.mod-root,
+html[data-glass="mica"] .view-header, html[data-glass="acrylic"] .view-header { background-color: color-mix(in srgb, var(--background-primary) calc(var(--bs-a-main, .8) * 100%), transparent); }
+html[data-glass="mica"] .mod-left-split, html[data-glass="acrylic"] .mod-left-split, html[data-glass="mica"] .mod-right-split, html[data-glass="acrylic"] .mod-right-split { background-color: color-mix(in srgb, var(--background-secondary) calc(var(--bs-a-side, .6) * 100%), transparent); }
+html[data-glass="mica"] .workspace-ribbon, html[data-glass="acrylic"] .workspace-ribbon, html[data-glass="mica"] .side-dock-ribbon, html[data-glass="acrylic"] .side-dock-ribbon,
+html[data-glass="mica"] .workspace-tab-header-container, html[data-glass="acrylic"] .workspace-tab-header-container, html[data-glass="mica"] .status-bar, html[data-glass="acrylic"] .status-bar,
+html[data-glass="mica"] .workspace-sidedock-vault-profile, html[data-glass="acrylic"] .workspace-sidedock-vault-profile { background-color: color-mix(in srgb, var(--background-secondary) calc(var(--bs-a-chrome, .5) * 100%), transparent); }
+/* floating things: always a little see-through with a blur behind (works without any system material) */
+.menu, .bm-pop, .bm-drop, .popover, .suggestion-container, .prompt, .tooltip, .notice, .modal, .bpal-pop, .osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-help, .osb-feed, .osb-people .osb-chip, .bsh-load, .bsh-badge .bsh-bc {
+  background-color: color-mix(in srgb, var(--background-secondary) 82%, transparent) !important; -webkit-backdrop-filter: blur(18px) saturate(1.25); backdrop-filter: blur(18px) saturate(1.25);
+}
+.modal-bg { background-color: rgba(0, 0, 0, .35); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+.modal.bsm { background-color: color-mix(in srgb, var(--background-primary) 68%, transparent) !important; }
+.modal.bsm.no-glass { background-color: var(--background-primary) !important; backdrop-filter: none; }

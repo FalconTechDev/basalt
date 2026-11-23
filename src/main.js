@@ -349,6 +349,7 @@ module.exports = function start(resources, events) {
 		const state = readJson(id) || {};
 		const win = new BrowserWindow({
 			width: 800, height: 600, minWidth: 200, minHeight: 150, backgroundColor: '#00000000', trafficLightPosition: { x: 19, y: 12 }, show: false,
+			...(WIN ? { backgroundMaterial: ({ mica: 'mica', acrylic: 'acrylic', off: 'none' })[config.glass || 'mica'] || 'mica' } : {}),
 			frame: nativeFrame, titleBarStyle,
 			webPreferences: { contextIsolation: false, nodeIntegration: true, nodeIntegrationInWorker: true, spellcheck: true, webviewTag: true },
 			...windowBounds(state),
@@ -683,6 +684,7 @@ module.exports = function start(resources, events) {
 		ipcMain.on('set-menu', (e, { template }) => { const win = BrowserWindow.fromWebContents(e.sender); if (!win) return; win.appMenu = buildMenu(template); if (MAC) applyMenu(); else win.setMenu(win.appMenu); });
 		ipcMain.on('update-menu-items', (e, items, refresh) => { const win = BrowserWindow.fromWebContents(e.sender), menu = menuOf(win); if (menu !== fallbackMenu) { for (const { itemId, eState } of items) setMenuItem(menu, itemId, eState); if (refresh) applyMenu(); } });
 		ipcMain.on('render-menu', (e) => { const win = BrowserWindow.fromWebContents(e.sender); menuOf(win).popup({ window: win }); });
+		ipcMain.on('set-glass', (e, mode) => { if (!['mica', 'acrylic', 'off'].includes(mode)) return; config.glass = mode; save(); for (const w of BrowserWindow.getAllWindows()) attempt(() => w.setBackgroundMaterial(({ mica: 'mica', acrylic: 'acrylic' })[mode] || 'none')); });
 		sync('set-icon', (e, name, bytes) => {
 			if (config.icon) fs.rmSync(path.join(data, config.icon), { force: true });
 			if (name && bytes) fs.writeFileSync(path.join(data, name), bytes); else name = null;
