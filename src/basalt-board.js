@@ -561,8 +561,9 @@
       }
 
       // ---------- card types and layout presets ----------
-      typesList() { try { const j = JSON.parse(localStorage.getItem("board-types") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return [{ n: "Человек", c: "#3fa7d6" }, { n: "Организация", c: "#8e6bd8" }, { n: "Адрес", c: "#46a758" }, { n: "Телефон", c: "#f59f3b" }, { n: "Событие", c: "#e5484d" }, { n: "Документ", c: "#d6b43c" }]; }
-      saveTypes(l) { try { localStorage.setItem("board-types", JSON.stringify(l)); } catch (e) { /* private */ } }
+      typesList() { if (this._tl && Date.now() - this._tlT < 1500) return this._tl; const r = this.typesList0(); this._tl = r; this._tlT = Date.now(); return r; }
+      typesList0() { try { const j = JSON.parse(localStorage.getItem("board-types") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return [{ n: "Человек", c: "#3fa7d6" }, { n: "Организация", c: "#8e6bd8" }, { n: "Адрес", c: "#46a758" }, { n: "Телефон", c: "#f59f3b" }, { n: "Событие", c: "#e5484d" }, { n: "Документ", c: "#d6b43c" }]; }
+      saveTypes(l) { this._tl = null; try { localStorage.setItem("board-types", JSON.stringify(l)); } catch (e) { /* private */ } }
       presetsList() { try { const j = JSON.parse(localStorage.getItem("board-layout-presets") || "null"); if (Array.isArray(j)) return j; } catch (e) { /* none */ } return []; }
       savePresets(l) { try { localStorage.setItem("board-layout-presets", JSON.stringify(l)); } catch (e) { /* private */ } }
       kindMenu(e, id) {
