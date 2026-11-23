@@ -382,7 +382,8 @@ module.exports = function start(resources, events) {
 			contextMenu(win, target, p);
 		});
 		spell(wc);
-		win.webContents.on('will-prevent-unload', () => { attempt(() => { if (!win.isDestroyed()) win.show(); }); });
+		// the renderer's beforeunload handler is async, so it always looks like it cancels the close; nothing registers a real quit blocker, so let the window close at once
+		win.webContents.on('will-prevent-unload', (e) => e.preventDefault());
 		win.on('close', (e) => { remember(); writeJson(id, state); if (!e.defaultPrevented) attempt(() => win.hide()); setTimeout(() => { if (!e.defaultPrevented && !win.isDestroyed()) win.destroy(); }, 3000); });
 		win.on('closed', () => { delete windows[id]; if (!quitting && (starterWindow || Object.keys(windows).length > 0)) markOpen(id, false); });
 		let timer;
