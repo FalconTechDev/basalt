@@ -59,6 +59,9 @@
         const si = this.searchInput = sb.createEl("input", { attr: { placeholder: "Поиск по карточкам", spellcheck: "false" } }); this.searchCount = sb.createSpan({ cls: "osb-sc" });
         const sbtn = (ic, tip, fn) => { const x = sb.createDiv({ cls: "osb-sb2", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = fn; return x; }; sbtn("lucide-chevron-up", "Предыдущая", () => this.runSearch(-1, true)); sbtn("lucide-chevron-down", "Следующая", () => this.runSearch(1, true)); sbtn("lucide-x", "Закрыть", () => this.toggleSearch(false));
         si.oninput = () => this.runSearch(0, true); si.onkeydown = (e) => { if (e.key === "Enter") { e.preventDefault(); this.runSearch(e.shiftKey ? -1 : 1, true); } else if (e.key === "Escape") this.toggleSearch(false); };
+        this.mini = this.root.createDiv({ cls: "osb-mini", attr: { title: "Обзор доски: нажмите или потяните, чтобы перейти" } }); this.miniCv = this.mini.createEl("canvas"); this.miniCv.width = 320; this.miniCv.height = 220;
+        { const go = (ev) => { const m = this._mini; if (!m) return; const r = this.miniCv.getBoundingClientRect(), k = this.miniCv.width / r.width, px = (ev.clientX - r.left) * k, py = (ev.clientY - r.top) * k; this.cam.x = (px - m.ox) / m.sc + m.x1; this.cam.y = (py - m.oy) / m.sc + m.y1; this.applyCam(); };
+          this.mini.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); ev.preventDefault(); this.mini.setPointerCapture(ev.pointerId); this._miniDrag = true; go(ev); }); this.mini.addEventListener("pointermove", (ev) => { if (this._miniDrag) go(ev); }); this.mini.addEventListener("pointerup", () => { this._miniDrag = false; }); }
         this.emptyEl = this.root.createDiv({ cls: "osb-empty" }); { const bx = this.emptyEl.createDiv({ cls: "osb-empty-box" }); for (const ln of ["Перетащите сюда файл или дважды щёлкните — появится карточка", "Пробел + перетаскивание — перемещение по доске", "Ctrl + колесо — масштаб, / — все действия доски"]) bx.createDiv({ text: ln }); } this.selBar = c.createDiv({ cls: "osb-sel" }); this.box = this.root.createDiv({ cls: "osb-box" });
         const bot = c.createDiv({ cls: "osb-bottom" }); this.people = bot.createDiv({ cls: "osb-people" });
         const fe = this.feedEl = bot.createDiv({ cls: "osb-feed" }); const fh = fe.createDiv({ cls: "osb-feed-h" }); fh.createSpan({ text: "Активность" }); this.feedCount = fh.createSpan({ cls: "osb-feed-c" }); this.feedList = fe.createDiv({ cls: "osb-feed-l" });
@@ -206,6 +209,7 @@
         if (this.inkSet) for (const id of this.inkSet) { const e = have.get(id); if (e) e.classList.add("is-sel"); }
       }
       toggleDraw(on) {
+        this.renderMini();
         if (!on && on != null && this.inkEd) this.inkEd.blur();
         if (this.ro && on) return; this.draw = on == null ? !this.draw : !!on; this.root.classList.toggle("is-draw", this.draw); if (this.drawBtn) this.drawBtn.classList.toggle("is-on", this.draw);
         if (this.draw) { this.inkArr(); this.select(new Set()); this.tool = this.tool || "pen"; try { this.inkColor = localStorage.getItem("board-ink-color") || ""; this.inkW = +localStorage.getItem("board-ink-w") || 4; } catch (e) { this.inkW = 4; } this.buildDrawBar(); }
@@ -736,7 +740,7 @@
           const txt = m.get("text").toString(); if (e.ta.value !== txt) { const f = document.activeElement === e.ta, p = e.ta.selectionStart; e.ta.value = txt; if (f) { try { e.ta.setSelectionRange(Math.min(p, txt.length), Math.min(p, txt.length)); } catch (er) { /* ok */ } } }
         });
         for (const [id, e] of this.els) if (!seen.has(id)) { e.el.remove(); this.els.delete(id); this.sel.delete(id); }
-        this.syncEdges(); this.mark(); if (this.emptyEl) this.emptyEl.classList.toggle("is-hidden", this.yn.size > 0);
+        this.syncEdges(); this.mark(); this.renderMini(); if (this.emptyEl) this.emptyEl.classList.toggle("is-hidden", this.yn.size > 0);
       }
       mkCard(id, m) {
         const el = this.cards.createDiv({ cls: "osb-card" }); el.dataset.id = id;
@@ -794,7 +798,17 @@
       // ---------- camera ----------
       pt(e) { const r = this.root.getBoundingClientRect(); return { sx: e.clientX - r.left, sy: e.clientY - r.top }; }
       worldPt(sx, sy) { return { x: (sx - this.root.clientWidth / 2) / this.cam.k + this.cam.x, y: (sy - this.root.clientHeight / 2) / this.cam.k + this.cam.y }; }
-      applyCam() { if (!this.world) return; if (this.draw && this._ck !== this.cam.k) { this._ck = this.cam.k; this.drawCursor(); } if (this.resetBtn) this.resetBtn.title = "Масштаб " + Math.round(this.cam.k * 100) + "% (клик — 100%)"; this.renderSelBar(); const c = this.cam; this.world.style.transform = "translate(" + (this.root.clientWidth / 2 - c.x * c.k) + "px," + (this.root.clientHeight / 2 - c.y * c.k) + "px) scale(" + c.k + ")"; this.paintPeers(); }
+      renderMini() { if (!this.miniCv || this._miniRaf) return; this._miniRaf = requestAnimationFrame(() => { this._miniRaf = 0; this.paintMini(); }); }
+      paintMini() {
+        const cv = this.miniCv, el = this.mini; if (!cv || !el || !this.yn) return; const n = this.yn.size; el.style.display = n >= 3 && !this.draw ? "" : "none"; if (n < 3 || this.draw) return;
+        const W = cv.width, H = cv.height, ctx = cv.getContext("2d"); ctx.clearRect(0, 0, W, H); let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; for (const m of this.yn.values()) { x1 = Math.min(x1, m.get("x")); y1 = Math.min(y1, m.get("y")); x2 = Math.max(x2, m.get("x") + m.get("w")); y2 = Math.max(y2, m.get("y") + this.effH(m)); }
+        const vw = this.root.clientWidth / this.cam.k, vh = this.root.clientHeight / this.cam.k, vx = this.cam.x - vw / 2, vy = this.cam.y - vh / 2; x1 = Math.min(x1, vx); y1 = Math.min(y1, vy); x2 = Math.max(x2, vx + vw); y2 = Math.max(y2, vy + vh);
+        const pad = 30; x1 -= pad; y1 -= pad; x2 += pad; y2 += pad; const sc = Math.min(W / (x2 - x1), H / (y2 - y1)), ox = (W - (x2 - x1) * sc) / 2, oy = (H - (y2 - y1) * sc) / 2; this._mini = { sc, x1, y1, ox, oy };
+        const cs = getComputedStyle(this.root), faint = (cs.getPropertyValue("--text-faint") || "#888").trim(), acc = (cs.getPropertyValue("--interactive-accent") || "#c98d5b").trim();
+        for (const m of this.yn.values()) { const c = m.get("color"); ctx.fillStyle = c || faint; ctx.globalAlpha = c ? 0.9 : 0.55; ctx.fillRect(ox + (m.get("x") - x1) * sc, oy + (m.get("y") - y1) * sc, Math.max(3, m.get("w") * sc), Math.max(2, this.effH(m) * sc)); }
+        ctx.globalAlpha = 1; ctx.strokeStyle = acc; ctx.lineWidth = 2; ctx.fillStyle = acc; ctx.globalAlpha = 0.12; ctx.fillRect(ox + (vx - x1) * sc, oy + (vy - y1) * sc, vw * sc, vh * sc); ctx.globalAlpha = 1; ctx.strokeRect(ox + (vx - x1) * sc, oy + (vy - y1) * sc, vw * sc, vh * sc);
+      }
+      applyCam() { if (!this.world) return; this.renderMini(); if (this.draw && this._ck !== this.cam.k) { this._ck = this.cam.k; this.drawCursor(); } if (this.resetBtn) this.resetBtn.title = "Масштаб " + Math.round(this.cam.k * 100) + "% (клик — 100%)"; this.renderSelBar(); const c = this.cam; this.world.style.transform = "translate(" + (this.root.clientWidth / 2 - c.x * c.k) + "px," + (this.root.clientHeight / 2 - c.y * c.k) + "px) scale(" + c.k + ")"; this.paintPeers(); }
       fit() { const ms = Array.from(this.yn ? this.yn.values() : []); if (!ms.length) { this.cam = { x: 0, y: 0, k: 1 }; return this.applyCam(); } let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const m of ms) { a = Math.min(a, m.get("x")); b = Math.min(b, m.get("y")); c = Math.max(c, m.get("x") + m.get("w")); d = Math.max(d, m.get("y") + m.get("h")); } const w = this.root.clientWidth || 800, h = this.root.clientHeight || 600; this.cam = { x: (a + c) / 2, y: (b + d) / 2, k: Math.min(1.2, Math.max(.15, Math.min((w - 120) / Math.max(1, c - a), (h - 140) / Math.max(1, d - b)))) }; this.applyCam(); }
       // ---------- input ----------
       bindInput() {

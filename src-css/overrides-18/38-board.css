@@ -304,3 +304,7 @@
 .modal.bs-ask { width: 420px; max-width: 92vw; padding: 20px 22px 16px; } .bs-ask .modal-title { font-size: 16px; font-weight: 600; margin: 0 0 12px; } .bs-ask-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; } .bs-ask-in { width: 100%; height: 34px; } .bs-ask .modal-button-container { margin-top: 16px; gap: 8px; justify-content: flex-end; }
 
 /* ---- note: any side, buttons ---- */
+
+/* ---- overview map ---- */
+.osb-mini { position: absolute; right: 68px; top: 12px; z-index: 5; width: 160px; height: 110px; padding: 4px; box-sizing: border-box; border-radius: 6px; background: color-mix(in srgb, var(--background-secondary) 92%, transparent); border: 1px solid var(--background-modifier-border); box-shadow: 0 6px 20px rgba(0, 0, 0, .35); cursor: var(--bs-cursor-hand, pointer); opacity: .85; transition: opacity .12s ease; } .osb-mini:hover { opacity: 1; } .osb-mini canvas { width: 100%; height: 100%; display: block; }
+.osb-root.is-draw .osb-mini { display: none !important; }
