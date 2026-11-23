@@ -189,3 +189,20 @@
 .bpal-range { -webkit-appearance: none; appearance: none; flex: 1; height: 10px; border-radius: 6px; outline: 0; margin: 0; } .bpal-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid rgba(0, 0, 0, .35); box-shadow: 0 1px 4px rgba(0, 0, 0, .5); cursor: pointer; }
 .bpal-num { width: 46px; height: 24px; padding: 0 4px !important; font-size: 12px; text-align: center; border-radius: 6px; }
 .bpal-foot { gap: 8px; } .bpal-prev { width: 30px; height: 28px; border-radius: 7px; flex: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .15); } .bpal-hex { flex: 1; min-width: 0; width: auto; }
+
+/* ---- board v6: control rail on the right ---- */
+.osb-zoom { display: none; }
+.osb-rail { position: absolute; right: 12px; top: 50%; translate: 0 -50%; z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px; border-radius: 14px; background: color-mix(in srgb, var(--background-secondary) 82%, transparent); backdrop-filter: blur(10px); border: 1px solid var(--background-modifier-border); box-shadow: 0 6px 22px rgba(0, 0, 0, .35); }
+.osb-rb { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; cursor: pointer; color: var(--text-muted); transition: background-color .12s ease, color .12s ease, scale .1s ease; } .osb-rb:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .osb-rb:active { scale: .92; } .osb-rb.is-on { background: var(--interactive-accent); color: var(--text-on-accent); } .osb-rb.is-off { opacity: .35; pointer-events: none; }
+.osb-rsep { width: 20px; height: 1px; background: var(--background-modifier-border); margin: 3px 0; }
+.osb-help { position: absolute; right: 64px; top: 50%; translate: 0 -50%; z-index: 7; width: 340px; padding: 12px 14px; border-radius: 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); box-shadow: 0 14px 44px rgba(0, 0, 0, .5); animation: osb-fade .15s ease backwards; }
+.osb-hrow { display: flex; justify-content: space-between; gap: 14px; padding: 5px 0; font-size: 12.5px; border-bottom: 1px solid var(--background-modifier-border); } .osb-hrow:last-child { border-bottom: 0; } .osb-hk { font-weight: 600; } .osb-hv { color: var(--text-muted); text-align: right; }
+.osb-people { bottom: 12px; } .osb-feed { right: 64px; }
+.osb-root.is-ro-view { }
+
+/* ---- colour picker: saved / recent ---- */
+.bpal-lists { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--background-modifier-border); }
+.bpal-lh { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-faint); margin: 4px 0 6px; }
+.bpal-lg { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 8px; }
+.bpal-sv2 { position: relative; } .bpal-x { position: absolute; top: -5px; right: -5px; width: 14px; height: 14px; display: none; place-items: center; border-radius: 50%; background: var(--background-primary); border: 1px solid var(--background-modifier-border-hover); font-size: 11px; line-height: 1; cursor: pointer; } .bpal-sv2:hover .bpal-x { display: grid; }
+.bpal-add { display: grid; place-items: center; border: 1.5px dashed var(--background-modifier-border-hover); color: var(--text-muted); font-size: 16px; box-shadow: none !important; background: transparent !important; } .bpal-add:hover { color: var(--text-normal); border-color: var(--interactive-accent); }

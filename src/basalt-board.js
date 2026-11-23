@@ -37,16 +37,16 @@
         this.layer = this.root.createDiv({ cls: "osb-cursors" });
         const bar = this.bar = c.createDiv({ cls: "osb-bar" });
         const btn = (icon, tip, fn, cls) => { const x = bar.createDiv({ cls: "osb-btn" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; };
-        const sep = () => bar.createDiv({ cls: "osb-bsep" });
-        this.undoBtn = btn("lucide-undo-2", "Отменить", () => this.undo()); this.redoBtn = btn("lucide-redo-2", "Вернуть", () => this.redo());
-        sep();
-        this.snapBtn = btn("lucide-magnet", "Сетка", () => { this.snap = !this.snap; this.snapBtn.classList.toggle("is-on", this.snap); try { localStorage.setItem("board-snap", this.snap ? "1" : "0"); } catch (e) { /* private */ } });
+        this.snapBtn = btn("lucide-magnet", "Прилипание к сетке", () => { this.snap = !this.snap; this.snapBtn.classList.toggle("is-on", this.snap); try { localStorage.setItem("board-snap", this.snap ? "1" : "0"); } catch (e) { /* private */ } });
         try { this.snap = localStorage.getItem("board-snap") === "1"; } catch (e) { this.snap = false; } this.snapBtn.classList.toggle("is-on", !!this.snap);
         this.searchBtn = btn("lucide-search", "Поиск", () => this.toggleSearch());
-        this.share = document.createElement("div");
-        const zoom = this.zoomEl = c.createDiv({ cls: "osb-zoom" });
-        const zb = (ic, tip, fn) => { const x = zoom.createDiv({ cls: "osb-zb", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = fn; return x; };
-        zb("lucide-minus", "Уменьшить", () => this.zoomBy(1 / 1.25)); this.zoomPct = zoom.createDiv({ cls: "osb-zp", attr: { title: "Вернуть 100%" } }); this.zoomPct.onclick = () => { this.cam.k = 1; this.applyCam(); }; zb("lucide-plus", "Увеличить", () => this.zoomBy(1.25)); zb("lucide-maximize", "Показать всё (F)", () => this.fit());
+        this.share = document.createElement("div"); this.zoomPct = document.createElement("span");
+        const rail = this.rail = c.createDiv({ cls: "osb-rail" });
+        const rb = (icon, tip, fn, cls) => { const x = rail.createDiv({ cls: "osb-rb" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; }; const rs = () => rail.createDiv({ cls: "osb-rsep" });
+        this.lockBtn = rb("lucide-unlock", "Заблокировать доску", () => this.toggleLock()); rs();
+        rb("lucide-zoom-in", "Увеличить", () => this.zoomBy(1.25)); rb("lucide-zoom-out", "Уменьшить", () => this.zoomBy(1 / 1.25)); this.resetBtn = rb("lucide-rotate-cw", "Масштаб 100%", () => { this.cam.k = 1; this.applyCam(); }); rb("lucide-maximize", "Показать всё", () => this.fit()); rs();
+        this.undoBtn = rb("lucide-undo-2", "Отменить", () => this.undo()); this.redoBtn = rb("lucide-redo-2", "Вернуть", () => this.redo()); rs();
+        this.helpBtn = rb("lucide-circle-help", "Управление", () => this.toggleHelp());
         this.searchBox = c.createDiv({ cls: "osb-search" }); const sb = this.searchBox; const sIc = sb.createSpan({ cls: "osb-si" }); api.setIcon(sIc, "lucide-search");
         const si = this.searchInput = sb.createEl("input", { attr: { placeholder: "Поиск по карточкам", spellcheck: "false" } }); this.searchCount = sb.createSpan({ cls: "osb-sc" });
         const sbtn = (ic, tip, fn) => { const x = sb.createDiv({ cls: "osb-sb2", attr: { title: tip } }); api.setIcon(x, ic); x.onclick = fn; return x; }; sbtn("lucide-chevron-up", "Предыдущая", () => this.runSearch(-1, true)); sbtn("lucide-chevron-down", "Следующая", () => this.runSearch(1, true)); sbtn("lucide-x", "Закрыть", () => this.toggleSearch(false));
@@ -86,7 +86,14 @@
         const out = { v: 2, id: this.ym.get("id"), room: this.ym.get("room") || null, nodes, edges: this.ye.toJSON(), ydoc: b64(Y.encodeStateAsUpdate(this.doc)) };
         try { await app.vault.adapter.write(this.path, JSON.stringify(out, null, 1)); } catch (e) { console.error(e); }
       }
-      get ro() { return !!(this.sh && this.sh.readOnly); }
+      get ro() { return !!(this.sh && this.sh.readOnly) || !!this.locked; }
+      toggleLock() { this.locked = !this.locked; this.lockBtn.classList.toggle("is-on", this.locked); this.lockBtn.empty(); api.setIcon(this.lockBtn, this.locked ? "lucide-lock" : "lucide-unlock"); this.lockBtn.title = this.locked ? "Разблокировать доску" : "Заблокировать доску"; if (this.locked) { this.sel = new Set(); this.mark(); } this.sync(); this.renderSelBar(); }
+      toggleHelp() {
+        let h = this.helpEl; if (h) { h.remove(); this.helpEl = null; this.helpBtn.classList.remove("is-on"); return; }
+        h = this.helpEl = this.contentEl.createDiv({ cls: "osb-help" }); this.helpBtn.classList.add("is-on");
+        const rows = [["Перетащить пустое место", "двигать доску"], ["Колесо мыши, щипок", "масштаб"], ["Тачпад двумя пальцами", "двигать в любую сторону"], ["Shift + перетащить", "выделить рамкой"], ["Shift или Ctrl + клик", "добавить к выделению"], ["Двойной клик", "новая карточка"], ["Ctrl+A", "выделить всё"], ["Ctrl+C / Ctrl+V / Ctrl+D", "копировать, вставить, дублировать"], ["Ctrl+Z / Ctrl+Shift+Z", "отменить, вернуть"], ["Стрелки (Shift — крупно)", "сдвинуть выбранное"], ["Ctrl+F", "поиск"], ["F", "показать всё"]];
+        for (const [k, v] of rows) { const r = h.createDiv({ cls: "osb-hrow" }); r.createSpan({ cls: "osb-hk", text: k }); r.createSpan({ cls: "osb-hv", text: v }); }
+      }
       // smart guides: while moving, edges and centres line up with other cards, and the guide lines show what is aligned with what
       guide(d, dx, dy) {
         if (!d.box) {
@@ -275,7 +282,7 @@
       // ---------- camera ----------
       pt(e) { const r = this.root.getBoundingClientRect(); return { sx: e.clientX - r.left, sy: e.clientY - r.top }; }
       worldPt(sx, sy) { return { x: (sx - this.root.clientWidth / 2) / this.cam.k + this.cam.x, y: (sy - this.root.clientHeight / 2) / this.cam.k + this.cam.y }; }
-      applyCam() { if (!this.world) return; if (this.zoomPct) this.zoomPct.textContent = Math.round(this.cam.k * 100) + "%"; this.renderSelBar(); const c = this.cam; this.world.style.transform = "translate(" + (this.root.clientWidth / 2 - c.x * c.k) + "px," + (this.root.clientHeight / 2 - c.y * c.k) + "px) scale(" + c.k + ")"; this.paintPeers(); }
+      applyCam() { if (!this.world) return; if (this.resetBtn) this.resetBtn.title = "Масштаб " + Math.round(this.cam.k * 100) + "% (клик — 100%)"; this.renderSelBar(); const c = this.cam; this.world.style.transform = "translate(" + (this.root.clientWidth / 2 - c.x * c.k) + "px," + (this.root.clientHeight / 2 - c.y * c.k) + "px) scale(" + c.k + ")"; this.paintPeers(); }
       fit() { const ms = Array.from(this.yn ? this.yn.values() : []); if (!ms.length) { this.cam = { x: 0, y: 0, k: 1 }; return this.applyCam(); } let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const m of ms) { a = Math.min(a, m.get("x")); b = Math.min(b, m.get("y")); c = Math.max(c, m.get("x") + m.get("w")); d = Math.max(d, m.get("y") + m.get("h")); } const w = this.root.clientWidth || 800, h = this.root.clientHeight || 600; this.cam = { x: (a + c) / 2, y: (b + d) / 2, k: Math.min(1.2, Math.max(.15, Math.min((w - 120) / Math.max(1, c - a), (h - 140) / Math.max(1, d - b)))) }; this.applyCam(); }
       // ---------- input ----------
       bindInput() {
@@ -304,9 +311,9 @@
         r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
         r.addEventListener("wheel", (e) => {
           const ta = e.target.closest && e.target.closest(".osb-ta"); if (ta && !e.ctrlKey && ta.scrollHeight > ta.clientHeight) return; e.preventDefault();
-          const mouse = e.deltaMode === 1 || (Number.isInteger(e.deltaY) && e.deltaX === 0 && Math.abs(e.deltaY) >= 40);
+          const mouse = e.deltaMode === 1 || (e.deltaX === 0 && Number.isInteger(e.deltaY) && Math.abs(e.deltaY) >= 100 && (Math.abs(e.deltaY) % 100 === 0 || Math.abs(e.deltaY) % 120 === 0));
           if (e.ctrlKey || mouse) { const p = this.pt(e), b = this.worldPt(p.sx, p.sy); this.cam.k = Math.max(.1, Math.min(3, this.cam.k * Math.exp(-(e.deltaMode === 1 ? e.deltaY * 30 : e.deltaY) * (e.ctrlKey ? .01 : .0015)))); const a = this.worldPt(p.sx, p.sy); this.cam.x += b.x - a.x; this.cam.y += b.y - a.y; }
-          else { this.cam.x += e.deltaX / this.cam.k; this.cam.y += e.deltaY / this.cam.k; }
+          else { this.cam.x += (e.shiftKey && !e.deltaX ? e.deltaY : e.deltaX) / this.cam.k; this.cam.y += (e.shiftKey && !e.deltaX ? 0 : e.deltaY) / this.cam.k; }
           this.applyCam();
         }, { passive: false });
         r.addEventListener("dblclick", (e) => { if (e.target.closest(".osb-card, g")) return; const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.addCard(w.x - 130, w.y - 30); });
