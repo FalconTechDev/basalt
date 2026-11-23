@@ -45,14 +45,14 @@
         const btn = (icon, tip, fn, cls) => { const x = bar.createDiv({ cls: "osb-btn" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; };
         this.snapBtn = btn("lucide-magnet", "Прилипание к сетке", () => { this.snap = !this.snap; this.snapBtn.classList.toggle("is-on", this.snap); try { localStorage.setItem("board-snap", this.snap ? "1" : "0"); } catch (e) { /* private */ } });
         try { this.snap = localStorage.getItem("board-snap") === "1"; } catch (e) { this.snap = false; } this.snapBtn.classList.toggle("is-on", !!this.snap);
-        this.searchBtn = btn("lucide-search", "Поиск", () => this.toggleSearch()); btn("lucide-network", "Раскладка карточек", (e) => this.layoutMenu(e));
+        this.searchBtn = btn("lucide-search", "Поиск", () => this.toggleSearch());
         this.share = document.createElement("div"); this.zoomPct = document.createElement("span");
         const rail = this.rail = c.createDiv({ cls: "osb-rail" });
         const rb = (icon, tip, fn, cls) => { const x = rail.createDiv({ cls: "osb-rb" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; }; const rs = () => rail.createDiv({ cls: "osb-rsep" });
         this.lockBtn = rb("lucide-unlock", "Заблокировать доску", () => this.toggleLock()); rs();
         rb("lucide-zoom-in", "Увеличить", () => this.zoomBy(1.25)); rb("lucide-zoom-out", "Уменьшить", () => this.zoomBy(1 / 1.25)); this.resetBtn = rb("lucide-rotate-cw", "Масштаб 100%", () => { this.cam.k = 1; this.applyCam(); }); rb("lucide-maximize", "Показать всё", () => this.fit()); rs();
         this.undoBtn = rb("lucide-undo-2", "Отменить", () => this.undo()); this.redoBtn = rb("lucide-redo-2", "Вернуть", () => this.redo()); rs();
-        this.drawBtn = rb("lucide-pencil", "Рисование", () => this.toggleDraw()); this.transBtn = rb("lucide-languages", "Перевести карточки", () => this.translate(this.transBtn)); rs();
+        this.drawBtn = rb("lucide-pencil", "Рисование", () => this.toggleDraw()); this.transBtn = rb("lucide-languages", "Перевести карточки", () => this.translate(this.transBtn)); this.layBtn = rb("lucide-network", "Раскладка карточек", (e) => this.layoutMenu(e)); rs();
         this.helpBtn = rb("lucide-circle-help", "Управление", () => this.toggleHelp());
         this.searchBox = c.createDiv({ cls: "osb-search" }); const sb = this.searchBox; const sIc = sb.createSpan({ cls: "osb-si" }); api.setIcon(sIc, "lucide-search");
         const si = this.searchInput = sb.createEl("input", { attr: { placeholder: "Поиск по карточкам", spellcheck: "false" } }); this.searchCount = sb.createSpan({ cls: "osb-sc" });
@@ -149,7 +149,7 @@
       clearGuides() { if (this.guides) this.guides.empty(); }
       // tidy up: put the selected (or all) cards in order in one go
       tidy(mode, ids) {
-        ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 1 || this.ro) return; this.keepPos(ids); this.um && this.um.stopCapturing(); setTimeout(() => { this.um && this.um.stopCapturing(); this.toastUndo("Карточки упорядочены."); }, 0); const g = (i) => this.yn.get(i), G = 20, snap = (v) => Math.round(v / G) * G, bb = this.bounds(ids), gap = 40;
+        ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 1 || this.ro) return; this.keepPos(ids); this.um && this.um.stopCapturing(); setTimeout(() => { this.um && this.um.stopCapturing(); this.resetSides(ids); this.toastUndo("Карточки упорядочены."); }, 0); const g = (i) => this.yn.get(i), G = 20, snap = (v) => Math.round(v / G) * G, bb = this.bounds(ids), gap = 40;
         this.doc.transact(() => {
           if (mode === "grid") for (const i of ids) { const m = g(i); m.set("x", snap(m.get("x"))); m.set("y", snap(m.get("y"))); m.set("w", Math.max(120, snap(m.get("w")))); m.set("h", Math.max(60, snap(m.get("h")))); }
           else if (mode === "row") { const o = ids.slice().sort((a, b) => g(a).get("x") - g(b).get("x")); let x = bb.x; for (const i of o) { g(i).set("x", Math.round(x)); g(i).set("y", bb.y); x += g(i).get("w") + gap; } }
@@ -316,6 +316,7 @@
         if (BOARD_CLIP) { this.paste(40, 40); return; }
         try { const t = await navigator.clipboard.readText(); if (t) this.addCard(c.x - 130, c.y - 30, t); } catch (e) { /* empty */ }
       }
+      resetSides(ids) { const set = new Set(ids); this.doc.transact(() => { for (const e of this.ye.values()) if (set.has(e.get("a")) || set.has(e.get("b"))) { if (e.get("sa")) e.delete("sa"); if (e.get("sb")) e.delete("sb"); } }); this.syncEdges(); }
       keepPos(ids) { this._prevPos = new Map(); for (const id of ids) { const m = this.yn.get(id); if (m) this._prevPos.set(id, [m.get("x"), m.get("y"), m.get("w"), m.get("h"), !!m.get("fold")]); } }
       restorePos() { if (!this._prevPos || this.ro) return; const cur = new Map(); for (const id of this._prevPos.keys()) { const m = this.yn.get(id); if (m) cur.set(id, [m.get("x"), m.get("y"), m.get("w"), m.get("h"), !!m.get("fold")]); } this.um && this.um.stopCapturing(); this.doc.transact(() => { for (const [id, v] of this._prevPos) { const m = this.yn.get(id); if (m) { m.set("x", v[0]); m.set("y", v[1]); m.set("w", v[2]); m.set("h", v[3]); m.set("fold", v[4]); } } }); this.um && this.um.stopCapturing(); this._prevPos = cur; this.syncEdges(); this.selBar.dataset.sig = ""; new api.Notice("Расположение возвращено"); }
       toastUndo(text) { const f = document.createDocumentFragment(); f.append(text + " "); const b = document.createElement("button"); b.textContent = "Вернуть назад"; b.style.marginLeft = "8px"; const n = new api.Notice(f, 7000); b.onclick = () => { this.restorePos(); n.hide(); }; f.append(b); }
@@ -407,7 +408,15 @@
           for (let it = 0; it < 8; it++) { const ds = L.map((_, k) => k); if (it % 2) ds.reverse(); for (const d of ds) { const X = L[d], ref = it % 2 ? d + 1 : d - 1; for (const v of X) { const ns = nbr.get(v).filter((n) => layer.get(n) === ref || (it > 5 && layer.get(n) !== d)); if (ns.length) t.set(v, ns.reduce((s2, n) => s2 + t.get(n) + sz(n) / 2, 0) / ns.length - sz(v) / 2); } sepFix(X); let sh = 0; for (const v of X) sh += 0; void sh; } }
           let lo = 1e9, hi = -1e9; for (const v of comp) { lo = Math.min(lo, t.get(v)); hi = Math.max(hi, t.get(v) + sz(v)); }
           const lw = L.map((X) => Math.max.apply(null, X.map(fl))), pos = new Map(); let off = 0; L.forEach((X, d) => { for (const v of X) pos.set(v, lr ? [off + (lw[d] - fl(v)) / 2, t.get(v) - lo] : [t.get(v) - lo, off + (lw[d] - fl(v)) / 2]); off += lw[d] + (lr ? 110 : 90); });
-          return { pos, w: lr ? off - 110 : hi - lo, h: lr ? hi - lo : off - 90 };
+          let W0 = lr ? off - 110 : hi - lo, H0 = lr ? hi - lo : off - 90;
+          const fi = lr ? 0 : 1, ci = 1 - fi, flowLen = fi === 0 ? W0 : H0, crossLen = fi === 0 ? H0 : W0;
+          if (flowLen > crossLen * 2.4 && nl > 3) {
+            const target = Math.sqrt(flowLen * crossLen * 2.8), chunks = []; let cur = [], start = 0, offs = []; let o2 = 0; L.forEach((X, d) => { offs.push(o2); o2 += lw[d] + (lr ? 110 : 90); });
+            L.forEach((X, d) => { if (cur.length && offs[d] + lw[d] - start > target) { chunks.push(cur); cur = []; start = offs[d]; } cur.push(d); }); if (cur.length) chunks.push(cur);
+            let shift = 0, maxFlow = 0; chunks.forEach((ch) => { const base0 = offs[ch[0]]; let c0 = 1e9, c1 = -1e9; for (const d of ch) for (const v of L[d]) { const q = pos.get(v); c0 = Math.min(c0, q[ci]); c1 = Math.max(c1, q[ci] + sz(v)); } for (const d of ch) for (const v of L[d]) { const q = pos.get(v); q[fi] -= base0; q[ci] += shift - c0; } maxFlow = Math.max(maxFlow, offs[ch[ch.length - 1]] + lw[ch[ch.length - 1]] - base0); shift += c1 - c0 + 90; });
+            return fi === 0 ? { pos, w: maxFlow, h: shift - 90 } : { pos, w: shift - 90, h: maxFlow };
+          }
+          return { pos, w: W0, h: H0 };
         };
         const place = (comp, kind) => {
           if (comp.length === 1) { const i = comp[0]; return { pos: new Map([[i, [0, 0]]]), w: W(i), h: H(i) }; }
@@ -434,7 +443,7 @@
           return layered(comp, kind === "lr");
         };
         const res = comps.map((comp) => place(comp, mode)); let area = 0, maxW = 0; for (const r of res) { area += (r.w + 80) * (r.h + 80); maxW = Math.max(maxW, r.w); } const rowW = Math.max(maxW, Math.sqrt(area) * 1.5); this.doc.transact(() => { let x = 0, y = 0, rh = 0; for (const r of res) { if (x > 0 && x + r.w > rowW) { x = 0; y += rh + 80; rh = 0; } for (const [v, c] of r.pos) { g(v).set("x", Math.round(bb.x + x + c[0])); g(v).set("y", Math.round(bb.y + y + c[1])); } x += r.w + 80; rh = Math.max(rh, r.h); } });
-        this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка применена.");
+        this.resetSides(ids); this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка применена.");
       }
       // ----- export to a picture (white background for documents)
       exportMenu(e, ids) {
@@ -543,7 +552,7 @@
         it("Свои пресеты раскладки…", "lucide-sliders-horizontal", () => this.presetsDialog()); mn.addSeparator(); if (this._prevPos) it("Вернуть прежнее расположение", "lucide-undo-2", () => this.restorePos()); it("По сетке" + sc, "lucide-grid-3x3", () => this.tidy("grid", ids)); it("Расставить блоками" + sc, "lucide-layout-grid", () => this.tidy("cells", ids)); mn.showAtMouseEvent(e);
       }
       layoutTyped(pr, ids) {
-        if (this.ro) return; ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 2) return; this.keepPos(ids); this.um && this.um.stopCapturing();
+        if (this.ro) return; ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 2) return; if (!ids.some((i) => this.yn.get(i).get("kind"))) { new api.Notice("У карточек нет типов. Выделите карточки и поставьте тип кнопкой с ярлыком."); return; } this.keepPos(ids); this.um && this.um.stopCapturing();
         const g = (i) => this.yn.get(i), lr = pr.dir !== "td", gp = ({ compact: [60, 16], normal: [100, 32], wide: [170, 56] })[pr.gap] || [100, 32], idx = new Map(); pr.levels.forEach((L, k) => L.forEach((n) => idx.set(n, k)));
         const layers = pr.levels.map(() => []), rest = []; for (const i of ids) { const k = g(i).get("kind") || ""; if (idx.has(k)) layers[idx.get(k)].push(i); else rest.push(i); } if (rest.length) layers.push(rest); const L = layers.filter((x) => x.length);
         const W = (i) => g(i).get("w"), H = (i) => this.effH(g(i)), nb = new Map(ids.map((i) => [i, []])), set = new Set(ids); for (const e of this.ye.values()) { const a = e.get("a"), b = e.get("b"); if (set.has(a) && set.has(b)) { nb.get(a).push(b); nb.get(b).push(a); } }
@@ -552,7 +561,7 @@
         if (pr.order !== "name" && pr.order !== "pos") for (let sw = 0; sw < 4; sw++) { const seq = sw % 2 ? L.map((_, k) => L.length - 1 - k) : L.map((_, k) => k); for (const d of seq) { const X = L[d]; const bc = (i) => { const ns = nb.get(i).filter((n) => level.get(n) !== d); return ns.length ? ns.reduce((s2, n) => s2 + order.get(n) / Math.max(1, L[level.get(n)].length) , 0) / ns.length : order.get(i) / Math.max(1, X.length); }; X.sort((a, b) => bc(a) - bc(b)); X.forEach((i, k) => order.set(i, k)); } }
         const bb = this.bounds(ids), lw = L.map((X) => Math.max.apply(null, X.map(lr ? W : H))), ext = L.map((X) => X.reduce((s2, i) => s2 + (lr ? H(i) : W(i)) + gp[1], -gp[1])), total = Math.max.apply(null, ext), cc = lr ? bb.y + bb.h / 2 : bb.x + bb.w / 2; let off = lr ? bb.x : bb.y;
         this.doc.transact(() => { L.forEach((X, d) => { let t = cc - ext[d] / 2; for (const i of X) { if (lr) { g(i).set("x", Math.round(off + (lw[d] - W(i)) / 2)); g(i).set("y", Math.round(t)); t += H(i) + gp[1]; } else { g(i).set("y", Math.round(off + (lw[d] - H(i)) / 2)); g(i).set("x", Math.round(t)); t += W(i) + gp[1]; } } off += lw[d] + gp[0]; }); });
-        this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка «" + (pr.name || "по типам") + "» применена.");
+        this.resetSides(ids); this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка «" + (pr.name || "по типам") + "» применена.");
       }
       presetsDialog() {
         const M = new api.Modal(app); M.modalEl.addClass("bs-imp"); M.titleEl.setText("Свои пресеты раскладки"); const c = M.contentEl; c.createDiv({ cls: "bs-imp-top" }).createSpan({ text: "Пресет задаёт, в каком порядке по уровням стоят карточки разных типов. Тип карточки ставится кнопкой с ярлыком на панели выделения." }); const list = c.createDiv({ cls: "bs-imp-list" });
