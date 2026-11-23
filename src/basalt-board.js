@@ -126,8 +126,8 @@
           ["Выделить рамкой", [K("Перетащить по пустому месту")]], ["Добавить к выделению", [K("Shift", "+ клик"), K("Ctrl", "+ клик")]], ["Выделить всё", [K("Ctrl", "+ A")]],
           ["Новая карточка", [K("Двойной клик"), K("N")]], ["Свернуть или развернуть карточку", [K("Z")]], ["Двигать выбранное", [K("Стрелки"), K("Shift", "+ стрелки: крупно")]],
           ["Копировать, вставить, дублировать", [K("Ctrl", "+ C"), K("Ctrl", "+ V"), K("Ctrl", "+ D")]], ["Удалить", [K("Delete"), K("Backspace")]], ["Отменить и повторить", [K("Ctrl", "+ Z"), K("Ctrl", "+ Y")]],
-          ["Связь между карточками", [K("Потянуть за точку на краю карточки")]], ["Убрать связь", [K("Потянуть конец связи в пустое место")]], ["Поиск", [K("Ctrl", "+ F")]], ["Все действия доски", [K("/"), K("Ctrl", "+ K")]], ["Изменить текст выбранной карточки", [K("Enter")]], ["Новая карточка справа, связанная", [K("Tab")]], ["Новая карточка ниже, у того же родителя", [K("Shift", "+ Tab"), K("Ctrl", "+ Enter")]], ["Перейти к соседней карточке", [K("Ctrl", "+ стрелки")]], ["Связать две выбранные карточки", [K("L")]], ["Как связаны две карточки", [K("P")]], ["Показать только связи выбранной", [K("W")]],
-          ["Рисование", [K("P кисть"), K("H маркер"), K("L линия"), K("A стрелка"), K("R рамка"), K("O овал"), K("T текст"), K("V выделение"), K("E ластик")]], ["Прямая линия кистью", [K("Shift")]],
+          ["Связь между карточками", [K("Потянуть за точку на краю карточки")]], ["Убрать связь", [K("Потянуть конец связи в пустое место")]], ["Поиск", [K("Ctrl", "+ F")]], 
+          ["Жирный, курсив, ссылка в тексте карточки", [K("Ctrl", "+ B"), K("Ctrl", "+ I"), K("Ctrl", "+ K")]], ["Отступ в списке", [K("Tab"), K("Shift", "+ Tab")]], ["Рисование", [K("P кисть"), K("H маркер"), K("L линия"), K("A стрелка"), K("R рамка"), K("O овал"), K("T текст"), K("V выделение"), K("E ластик")]], ["Прямая линия кистью", [K("Shift")]],
         ];
         for (const [t, keys] of rows) { const r = c.createDiv({ cls: "bs-help-row" }); r.createSpan({ cls: "bs-help-t", text: t }); const kk = r.createDiv({ cls: "bs-help-k" }); for (const g of keys) { const k = kk.createSpan({ cls: "bs-kbd" }); k.setText(g.join(" ")); } }
         M.open();
@@ -1078,13 +1078,9 @@
           const a = ev.target.closest("a.internal-link"); if (a) { ev.preventDefault(); ev.stopPropagation(); try { app.workspace.openLinkText(a.getAttribute("data-href") || a.getAttribute("href") || "", this.path || "", ev.ctrlKey || ev.metaKey); } catch (er) { /* missing */ } return; }
           const cb = ev.target.closest("input[type=checkbox]"); if (cb) { if (this.ro || M().get("locked")) { ev.preventDefault(); return; } const boxes = Array.from(mdEl.querySelectorAll("input[type=checkbox]")), k = boxes.indexOf(cb); let n = -1; const txt = M().get("text").toString().replace(/^(\s*[-*+]\s+)\[( |x|X)\]/gm, (all, pre, st) => { n++; return n === k ? pre + "[" + (st === " " ? "x" : " ") + "]" : all; }); this.doc.transact(() => { const yt = M().get("text"); yt.delete(0, yt.length); yt.insert(0, txt); this.stampM(M()); }); }
         });
-        ta.addEventListener("focus", () => { el.classList.add("is-editing"); this.select(new Set([id])); this.publish({ typing: id }); });
-        ta.addEventListener("blur", () => { el.classList.remove("is-editing"); this.renderMd(id); this.publish({ typing: null }); });
-        ta.addEventListener("keydown", (ev) => {
-          if (ev.key === "Escape") { ev.preventDefault(); ta.blur(); this.contentEl.focus(); this.select(new Set([id])); }
-          else if (ev.key === "Tab" && !ev.ctrlKey && !ev.altKey) { ev.preventDefault(); ev.shiftKey ? this.addSibling(id) : this.addChild(id); }
-          else if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); this.addSibling(id); }
-        });
+        ta.addEventListener("focus", () => { el.classList.add("is-editing"); this.contentEl.classList.add("is-writing"); this.mkFmt(id); this.select(new Set([id])); this.publish({ typing: id }); });
+        ta.addEventListener("blur", () => { el.classList.remove("is-editing"); this.contentEl.classList.remove("is-writing"); this.renderMd(id); this.publish({ typing: null }); });
+        ta.addEventListener("keydown", (ev) => this.fmtKey(ev, ta, id));
         ta.addEventListener("input", () => { if (M().get("locked")) { ta.value = M().get("text").toString(); return; } const t = M().get("text"), old = t.toString(), now = ta.value; let a = 0; while (a < old.length && a < now.length && old[a] === now[a]) a++; let b = 0; while (b < old.length - a && b < now.length - a && old[old.length - 1 - b] === now[now.length - 1 - b]) b++; this.doc.transact(() => { if (old.length - a - b) t.delete(a, old.length - a - b); if (now.length - a - b) t.insert(a, now.slice(a, now.length - b)); this.stampM(M()); }); this.feed("edit", id, this.label(id)); });
         el.addEventListener("pointerdown", (ev) => { if ((!ev.ctrlKey && !ev.shiftKey && !ev.metaKey) || ev.button !== 0 || this.draw || this.ro || ev.target.closest(".osb-h, .osb-rz, .osb-x, .osb-nb, .osb-kind, .osb-note")) return; if (ev.target.closest(".osb-grip")) return; ev.preventDefault(); ev.stopPropagation(); const n2 = new Set(this.sel); n2.has(id) ? n2.delete(id) : n2.add(id); this.select(n2); this.contentEl.focus(); }, true);
         Object.assign(rec, { ta, tag, by, kindEl, mdEl, lite: false }); el.classList.remove("is-lite"); return rec;
@@ -1121,6 +1117,41 @@
         const groups = []; for (const [id, m] of this.yn.entries()) if (m.get("group")) groups.push([id, m]); if (!groups.length) return; const joined = [];
         this.doc.transact(() => { for (const id of ids) { const m = this.yn.get(id); if (!m || m.get("group") || m.get("frame")) continue; const cx = m.get("x") + m.get("w") / 2, cy = m.get("y") + this.effH(m) / 2; for (let k = groups.length - 1; k >= 0; k--) { const [gid, g] = groups[k], gx = g.get("x"), gy = g.get("y"); if (cx >= gx && cx <= gx + g.get("w") && cy >= gy && cy <= gy + g.get("h")) { m.set("frame", gid); joined.push(id); break; } } } });
         if (joined.length) this.refitFrames(joined);
+      }
+      // ---------- writing in a card: formatting like in a notes editor ----------
+      fmtPut(ta, a, b, text, selA, selB) { ta.focus(); ta.setSelectionRange(a, b); document.execCommand("insertText", false, text); if (selA != null) ta.setSelectionRange(selA, selB == null ? selA : selB); }
+      fmtWrap(ta, L, R, ph) {
+        const v = ta.value, s0 = ta.selectionStart, e0 = ta.selectionEnd, sel = v.slice(s0, e0);
+        if (sel && v.slice(s0 - L.length, s0) === L && v.slice(e0, e0 + R.length) === R) { this.fmtPut(ta, s0 - L.length, e0 + R.length, sel, s0 - L.length, s0 - L.length + sel.length); return; }
+        const t = sel || ph; this.fmtPut(ta, s0, e0, L + t + R, s0 + L.length, s0 + L.length + t.length);
+      }
+      fmtLines(ta, fn) { const v = ta.value, s0 = ta.selectionStart, e0 = ta.selectionEnd, a = v.lastIndexOf("\n", s0 - 1) + 1; let b = v.indexOf("\n", e0); if (b < 0) b = v.length; const out = fn(v.slice(a, b).split("\n")).join("\n"); this.fmtPut(ta, a, b, out, a, a + out.length); }
+      fmtKind(ta, k) {
+        const strip = (l) => l.replace(/^(\s*)(#{1,6}\s+|>\s?|[-*+]\s+\[[ xX]\]\s+|[-*+]\s+|\d+[.)]\s+)/, "$1");
+        if (k === "bold") return this.fmtWrap(ta, "**", "**", "жирный"); if (k === "italic") return this.fmtWrap(ta, "*", "*", "курсив"); if (k === "strike") return this.fmtWrap(ta, "~~", "~~", "зачёркнуто"); if (k === "code") return this.fmtWrap(ta, "`", "`", "код"); if (k === "link") return this.fmtWrap(ta, "[[", "]]", "заметка");
+        if (k === "hr") { const s0 = ta.selectionStart; return this.fmtPut(ta, s0, ta.selectionEnd, "\n\n---\n\n", s0 + 7); }
+        if (k === "table") { const s0 = ta.selectionStart, t = "\n| Колонка 1 | Колонка 2 |\n| --- | --- |\n| ячейка | ячейка |\n"; return this.fmtPut(ta, s0, ta.selectionEnd, t, s0 + 3, s0 + 12); }
+        if (k === "heading") return this.fmtLines(ta, (ls) => ls.map((l) => { const m = /^(#{1,6})\s/.exec(l), n = m ? m[1].length : 0; return n >= 3 ? l.replace(/^#{1,6}\s+/, "") : (n ? "#".repeat(n + 1) + l.slice(n) : "# " + l); }));
+        const pre = { quote: "> ", ul: "- ", task: "- [ ] " }[k];
+        if (k === "ol") return this.fmtLines(ta, (ls) => { const on = ls.every((l) => /^\s*\d+[.)]\s/.test(l)); return ls.map((l, i) => (on ? strip(l) : (i + 1) + ". " + strip(l))); });
+        if (pre) return this.fmtLines(ta, (ls) => { const on = ls.every((l) => l.startsWith(pre)); return ls.map((l) => (on ? l.slice(pre.length) : pre + strip(l))); });
+      }
+      fmtKey(ev, ta, id) {
+        const mod = ev.ctrlKey || ev.metaKey, k = /^Key[A-Z]$/.test(ev.code) ? ev.code.slice(3).toLowerCase() : ev.key.toLowerCase();
+        if (ev.key === "Escape") { ev.preventDefault(); ta.blur(); this.contentEl.focus(); this.select(new Set([id])); return; }
+        const kind = mod && !ev.altKey ? (k === "b" ? "bold" : k === "i" ? "italic" : k === "e" ? "code" : k === "k" ? "link" : ev.shiftKey && k === "x" ? "strike" : "") : ""; if (kind) { ev.preventDefault(); this.fmtKind(ta, kind); return; }
+        if (ev.key === "Tab" && !mod && !ev.altKey) { ev.preventDefault(); const v = ta.value, s0 = ta.selectionStart, e0 = ta.selectionEnd, multi = v.slice(s0, e0).includes("\n"), ln = v.slice(v.lastIndexOf("\n", s0 - 1) + 1, s0), inList = /^\s*([-*+]|\d+[.)])\s/.test(v.slice(v.lastIndexOf("\n", s0 - 1) + 1, (v.indexOf("\n", s0) < 0 ? v.length : v.indexOf("\n", s0))));
+          const len0 = v.length; if (ev.shiftKey) this.fmtLines(ta, (ls) => ls.map((l) => l.replace(/^( {1,2}|\t)/, ""))); else if (multi || inList) this.fmtLines(ta, (ls) => ls.map((l) => "  " + l)); else this.fmtPut(ta, s0, e0, "  "); if (!multi) { const d = ta.value.length - len0; ta.setSelectionRange(Math.max(0, s0 + d), Math.max(0, e0 + d)); } void ln; return; }
+        if (ev.key === "Enter" && !mod && !ev.shiftKey && !ev.altKey) {
+          const v = ta.value, s0 = ta.selectionStart; if (s0 !== ta.selectionEnd) return; const a = v.lastIndexOf("\n", s0 - 1) + 1, line = v.slice(a, s0), m = /^(\s*)([-*+]|(\d+)[.)])\s+(\[[ xX]\]\s+)?(.*)$/.exec(line); if (!m) return; ev.preventDefault();
+          if (!m[5].trim()) { this.fmtPut(ta, a, s0, "", a); return; }
+          const mk = m[3] ? (parseInt(m[3], 10) + 1) + ". " : m[2] + " "; this.fmtPut(ta, s0, s0, "\n" + m[1] + mk + (m[4] ? "[ ] " : "")); return;
+        }
+      }
+      mkFmt(id) {
+        const e = this.els.get(id); if (!e || e.fmt) return; const bar = e.fmt = e.el.createDiv({ cls: "osb-fmt" }); bar.addEventListener("mousedown", (ev) => ev.preventDefault()); bar.addEventListener("pointerdown", (ev) => ev.stopPropagation());
+        const B = [["heading", "lucide-heading", "Заголовок (повторный клик: уровень ниже)"], ["bold", "lucide-bold", "Жирный (Ctrl+B)"], ["italic", "lucide-italic", "Курсив (Ctrl+I)"], ["strike", "lucide-strikethrough", "Зачёркнутый"], ["code", "lucide-code", "Код (Ctrl+E)"], ["|"], ["quote", "lucide-quote", "Цитата"], ["ul", "lucide-list", "Список"], ["ol", "lucide-list-ordered", "Нумерованный список"], ["task", "lucide-list-checks", "Список задач"], ["|"], ["link", "lucide-link", "Ссылка на заметку (Ctrl+K)"], ["table", "lucide-table", "Таблица"], ["hr", "lucide-separator-horizontal", "Разделитель"]];
+        for (const b of B) { if (b[0] === "|") { bar.createDiv({ cls: "osb-fsep" }); continue; } const x = bar.createDiv({ cls: "osb-fb", attr: { title: b[2], "aria-label": b[2] } }); api.setIcon(x, b[1]); x.onclick = (ev) => { ev.stopPropagation(); this.fmtKind(e.ta, b[0]); }; }
       }
       groupSel() {
         const ids = Array.from(this.sel).filter((i) => this.yn.get(i) && !this.yn.get(i).get("group")); if (!ids.length || this.ro) return; const bb = this.bounds(ids); if (!bb) return; this.um && this.um.stopCapturing();
@@ -1285,16 +1316,7 @@
           if (e.code === "Space" && !inField) { this.space = true; this.root.classList.add("is-hand"); e.preventDefault(); return; }
           if (this.draw) { if (e.key === "Escape") this.toggleDraw(false); else if ((e.key === "Delete" || e.key === "Backspace") && this.inkSet && this.inkSet.size) { this.inkDeleteSel(); } else if (mod && k === "a" && this.tool === "select") { e.preventDefault(); this.inkSelect(new Set((this._ink ? this._ink.toArray() : []).map((q) => q.id))); return; } else if (k === "v" && !mod) this.setTool("select"); else if (k === "h" && !mod) this.setTool("hl"); else if (k === "t" && !mod) this.setTool("text"); else if (k === "p") this.setTool("pen"); else if (k === "e") this.setTool("eraser"); else if (k === "l") this.setTool("line"); else if (k === "r") this.setTool("rect"); else if (k === "o") this.setTool("ellipse"); else if (k === "a" && !mod) this.setTool("arrow"); if (!mod) return; }
           if (this.ro) { if (k === "f") this.fit(); return; }
-          { const one = this.sel.size === 1 ? Array.from(this.sel)[0] : null;
-            if (mod && k === "k") { e.preventDefault(); this.boardPalette(); return; }
-            if (e.key === "/" && !mod) { e.preventDefault(); this.boardPalette(); return; }
-            if (e.key === "Escape") { this.clearFocus(); }
-            if (e.key === "Enter" && one && !mod) { e.preventDefault(); this.edit(one); return; }
-            if (e.key === "Tab" && one) { e.preventDefault(); e.shiftKey ? this.addSibling(one) : this.addChild(one); return; }
-            if (mod && e.key.startsWith("Arrow") && one) { e.preventDefault(); this.jump(one, e.key.slice(5).toLowerCase()); return; }
-            if (!mod && !e.altKey && k === "l" && this.sel.size === 2) { e.preventDefault(); const s2 = Array.from(this.sel); this.addEdge(s2[0], s2[1], this.nearSide(s2[0], this.center(s2[1])), this.nearSide(s2[1], this.center(s2[0]))); return; }
-            if (!mod && !e.altKey && k === "w") { e.preventDefault(); this.toggleFocus(); return; }
-            if (!mod && !e.altKey && k === "p" && this.sel.size === 2) { e.preventDefault(); this.showPath(); return; } }
+          if (e.key === "Escape") this.clearFocus();
           if (mod && k === "a") { e.preventDefault(); this.select(new Set(this.yn.keys())); }
           else if (mod && k === "z") { e.preventDefault(); e.shiftKey ? this.redo() : this.undo(); } else if (mod && k === "y") { e.preventDefault(); this.redo(); }
           else if (mod && k === "c") { this.copy(); } else if (mod && k === "x") { this.copy(); this.removeSel(); } else if (mod && k === "v") { e.preventDefault(); this.pasteAny(); }

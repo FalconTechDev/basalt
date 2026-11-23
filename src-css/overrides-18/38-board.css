@@ -375,3 +375,11 @@
 /* ---- draw the area to export ---- */
 .osb-region { position: absolute; inset: 0; z-index: 60; cursor: crosshair; background: rgba(0, 0, 0, .18); } .osb-region-h { position: absolute; left: 50%; top: 16px; translate: -50% 0; padding: 8px 14px; border-radius: 6px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border-hover); box-shadow: 0 6px 20px rgba(0, 0, 0, .4); font-size: 13px; pointer-events: none; }
 .osb-region-r { display: none; position: absolute; border: 2px dashed var(--interactive-accent); background: color-mix(in srgb, var(--interactive-accent) 14%, transparent); pointer-events: none; }
+
+/* ---- formatting bar over a card that is being written ---- */
+.osb-fmt { position: absolute; left: 0; bottom: 100%; margin-bottom: 6px; z-index: 30; display: none; align-items: center; gap: 1px; padding: 3px; width: max-content; border-radius: 6px; background: color-mix(in srgb, var(--background-secondary) 96%, transparent); border: 1px solid var(--background-modifier-border-hover); box-shadow: 0 8px 24px rgba(0, 0, 0, .45); }
+.osb-card.is-editing .osb-fmt { display: flex; } .osb-card.is-group .osb-fmt { display: none !important; }
+.osb-fb { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 4px; cursor: var(--bs-cursor-hand, pointer); color: var(--text-muted); } .osb-fb svg { width: 16px; height: 16px; } .osb-fb:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .osb-fb:active { background: var(--interactive-accent); color: var(--text-on-accent); }
+.osb-fsep { width: 1px; height: 18px; margin: 0 4px; background: var(--background-modifier-border); }
+
+.is-writing .osb-sel { display: none !important; }

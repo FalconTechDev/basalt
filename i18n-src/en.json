@@ -2179,5 +2179,14 @@
 "Обведите область для экспорта. Esc — отмена.": "Draw the area to export. Esc cancels.",
 "Куда сохранить": "Where to save",
 "В хранилище, рядом с доской": "In the vault, next to the board",
-"На диск, выбрать папку…": "To disk, choose a folder…"
+"На диск, выбрать папку…": "To disk, choose a folder…",
+"Заголовок (повторный клик: уровень ниже)": "Heading (click again: next level)",
+"Жирный (Ctrl+B)": "Bold (Ctrl+B)",
+"Курсив (Ctrl+I)": "Italic (Ctrl+I)",
+"Код (Ctrl+E)": "Code (Ctrl+E)",
+"Нумерованный список": "Numbered list",
+"Список задач": "Task list",
+"Ссылка на заметку (Ctrl+K)": "Link to a note (Ctrl+K)",
+"Жирный, курсив, ссылка в тексте карточки": "Bold, italic, link in the card text",
+"Отступ в списке": "Indent in a list"
 }
