@@ -27,7 +27,7 @@
     const tabs = document.createElement("div"); tabs.className = "bpal-tabs"; const tp = document.createElement("div"), ts = document.createElement("div"); tp.textContent = "Палитра"; ts.textContent = "Спектр"; tabs.append(tp, ts); p.appendChild(tabs);
     // ---- ready palette
     const pal = document.createElement("div"); pal.className = "bpal-pal";
-    for (const row of ROWS) { const r = document.createElement("div"); r.className = "bpal-row"; for (const c of row) { const s = document.createElement("div"); s.className = "bpal-sw"; s.style.background = c; s.dataset.c = c; s.onclick = () => done(c); r.appendChild(s); } pal.appendChild(r); }
+    for (const row of ROWS) { const r = document.createElement("div"); r.className = "bpal-row"; for (const c of row) { const s = document.createElement("div"); s.className = "bpal-sw"; s.style.background = c; s.dataset.c = c; s.title = c; s.onclick = () => done(c); r.appendChild(s); } pal.appendChild(r); }
     p.appendChild(pal);
     // ---- spectrum
     const spec = document.createElement("div"); spec.className = "bpal-spec";
@@ -41,13 +41,13 @@
       lists.textContent = ""; const saved = load("bs-saved-colors"), recent = load("bs-recent-colors");
       const sec = (title, arr, canDel, canAdd) => {
         const h = document.createElement("div"); h.className = "bpal-lh"; h.textContent = title; lists.appendChild(h); const g = document.createElement("div"); g.className = "bpal-lg"; lists.appendChild(g);
-        for (const c of arr) { const w = document.createElement("div"); w.className = "bpal-sw bpal-sv2"; w.style.background = c; w.title = c; w.onclick = () => useColor(c); if (canDel) { const x = document.createElement("span"); x.className = "bpal-x"; x.textContent = "×"; x.onclick = (e) => { e.stopPropagation(); store("bs-saved-colors", load("bs-saved-colors").filter((y) => y !== c)); drawLists(); place(); }; w.appendChild(x); } g.appendChild(w); }
-        if (canAdd) { const a = document.createElement("div"); a.className = "bpal-sw bpal-add"; a.title = "Сохранить текущий цвет"; a.textContent = "+"; a.onclick = () => { const c = mode === "spec" ? value : (value || cur || hex(hexIn.value)); if (c && !load("bs-saved-colors").includes(c)) { store("bs-saved-colors", load("bs-saved-colors").concat([c]).slice(-24)); drawLists(); place(); } }; g.appendChild(a); }
+        for (const c of arr) { const w = document.createElement("div"); w.className = "bpal-sw bpal-sv2"; w.style.background = c; w.title = c; w.onclick = () => useColor(c); if (canDel) { const x = document.createElement("span"); x.className = "bpal-x"; x.textContent = "×"; x.title = "Убрать цвет из сохранённых"; x.setAttribute("aria-label", "Убрать цвет из сохранённых"); x.onclick = (e) => { e.stopPropagation(); store("bs-saved-colors", load("bs-saved-colors").filter((y) => y !== c)); drawLists(); place(); }; w.appendChild(x); } g.appendChild(w); }
+        if (canAdd) { const a = document.createElement("div"); a.className = "bpal-sw bpal-add"; a.title = "Сохранить текущий цвет в этот список"; a.setAttribute("aria-label", "Сохранить текущий цвет"); a.textContent = "+"; a.onclick = () => { const c = mode === "spec" ? value : (value || cur || hex(hexIn.value)); if (c && !load("bs-saved-colors").includes(c)) { store("bs-saved-colors", load("bs-saved-colors").concat([c]).slice(-24)); drawLists(); place(); } }; g.appendChild(a); }
       };
       sec("Сохранённые", saved, true, true); if (recent.length) sec("Недавние", recent, false, false);
     };
     // ---- footer
-    const foot = document.createElement("div"); foot.className = "bpal-foot"; const prev = document.createElement("div"); prev.className = "bpal-prev"; const hexIn = document.createElement("input"); hexIn.type = "text"; hexIn.className = "bpal-hex"; hexIn.placeholder = "#RRGGBB"; hexIn.spellcheck = false; foot.append(prev, hexIn);
+    const foot = document.createElement("div"); foot.className = "bpal-foot"; const prev = document.createElement("div"); prev.className = "bpal-prev"; const hexIn = document.createElement("input"); hexIn.type = "text"; hexIn.className = "bpal-hex"; hexIn.placeholder = "#RRGGBB"; hexIn.title = "Код цвета: введите или вставьте, например #b07a52"; hexIn.setAttribute("aria-label", "Код цвета"); hexIn.spellcheck = false; foot.append(prev, hexIn);
     if (opts.none !== false) { const n = document.createElement("button"); n.className = "bpal-none"; n.textContent = "Без цвета"; n.onclick = () => done(""); foot.appendChild(n); }
     p.appendChild(foot);
     // ---- drawing / syncing

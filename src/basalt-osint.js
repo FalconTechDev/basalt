@@ -493,7 +493,7 @@
       const f = app.vault.getAbstractFileByPath(p + "/" + name);
       if (f) await app.vault.modify(f, text); else await app.vault.create(p + "/" + name, text);
       notice("Сохранено: " + p + "/" + name);
-    } catch (e) { notice("Не удалось сохранить: " + e.message); }
+    } catch (e) { { console.error("[osint] save", e); notice("Не удалось сохранить заметку. Проверьте, что в хранилище можно писать."); } }
   }
 
   // ---------- boot ----------

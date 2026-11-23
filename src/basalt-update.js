@@ -40,7 +40,7 @@
       if (!ok) return;
       if (asset) await install(asset); else window.require("electron").shell.openExternal(rel.html_url);
     } catch (e) {
-      if (manual) notice(e.code === 404 || /404/.test(String(e.message)) ? "Релизов на GitHub пока нет" : "Не удалось проверить обновления: " + e.message);
+      if (manual) notice(e.code === 404 || /404/.test(String(e.message)) ? "Релизов на GitHub пока нет" : "Не удалось проверить обновления. Проверьте интернет и попробуйте позже.");
     }
   }
   window.__bsUpdate = { check, auto, setAuto, VERSION, newer };

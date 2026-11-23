@@ -32,6 +32,19 @@
   const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
   const rootDir = () => { const W = window.__bsWorkspace; return W && W.active && W.active() && W.root() ? W.root() : app.vault.adapter.basePath; };
   const git = (cwd, args) => new Promise((res, rej) => cp.execFile("git", args, { cwd, maxBuffer: 40 * 1024 * 1024, windowsHide: true, encoding: "utf8" }, (e, out, err) => (e ? rej(new Error((err || e.message).trim())) : res(out))));
+  // plain Russian for what git said; the raw text goes to the console only
+  const why = (e) => {
+    const s = String((e && e.message) || e || ""); console.error("[git]", s);
+    if (/not a git repository/i.test(s)) return "Эта папка не под git. Нажмите «Инициализировать репозиторий».";
+    if (/authentication|could not read (username|password)|permission denied|403|denied to/i.test(s)) return "Сервер не пустил вас. Проверьте вход в GitHub: токен или ключ.";
+    if (/could not resolve host|unable to access|network|timed out|connection/i.test(s)) return "Нет связи с сервером. Проверьте интернет и повторите.";
+    if (/no upstream|has no upstream|no configured push destination/i.test(s)) return "У этой ветки нет адреса на сервере. Задайте его в терминале: git push -u origin имя-ветки.";
+    if (/conflict|fast-forward|diverg|rejected/i.test(s)) return "Ваши изменения и изменения на сервере разошлись. Объедините их в терминале командой git pull.";
+    if (/tell me who you are|user\.(name|email)/i.test(s)) return "Git не знает, кто вы. В терминале задайте имя и почту: git config --global user.name \"Имя\".";
+    if (/nothing to commit/i.test(s)) return "Нечего коммитить: изменений нет.";
+    return "Git не смог выполнить действие. Подробности есть в консоли (Ctrl+Shift+I).";
+  };
+  const ask = (text, o) => (window.__bsConfirm ? window.__bsConfirm(text, o) : Promise.resolve(window.confirm(text)));
   const notice = (m) => { try { new window.__bsApi.Notice(m, 6000); } catch (e) { console.warn(m); } };
   const COL = { M: "#e2c08d", A: "#73c991", D: "#c74e39", R: "#73c991", "?": "#73c991", U: "#e2c08d", C: "#73c991" };
 
@@ -56,18 +69,18 @@
         this.timer = setInterval(() => { if (this.contentEl.isConnected && this.contentEl.offsetParent) this.refresh(true); }, 4000); await this.refresh();
       }
       async onClose() { clearInterval(this.timer); }
-      ib(parent, txt, title, fn) { const b = el("button", "bsg2-ib", txt); b.title = title; b.addEventListener("click", (e) => { e.stopPropagation(); fn(e); }); parent.appendChild(b); return b; }
-      async run(args, okMsg) { try { await git(this.cwd, args); if (okMsg) notice(okMsg); } catch (e) { notice("git: " + e.message); } await this.refresh(); }
+      ib(parent, txt, title, fn) { const b = el("button", "bsg2-ib", txt); b.title = title; b.setAttribute("aria-label", title); b.addEventListener("click", (e) => { e.stopPropagation(); fn(e); }); parent.appendChild(b); return b; }
+      async run(args, okMsg) { try { await git(this.cwd, args); if (okMsg) notice(okMsg); } catch (e) { notice(why(e)); } await this.refresh(); }
       async refresh(quiet) {
         this.cwd = rootDir(); const root = this.root; let st;
         try { st = await status(this.cwd); } catch (e) {
-          if (quiet && this.st === null) return; this.st = null; root.textContent = ""; const m = el("div", "bsg2-empty"); m.textContent = /not a git repository/i.test(e.message) ? "Это не git-репозиторий: " + path.basename(this.cwd) : "git: " + e.message; root.appendChild(m);
+          if (quiet && this.st === null) return; this.st = null; root.textContent = ""; const m = el("div", "bsg2-empty"); m.textContent = /not a git repository/i.test(e.message) ? "Это не git-репозиторий: " + path.basename(this.cwd) : why(e); root.appendChild(m);
           if (/not a git repository/i.test(e.message)) { const b = el("button", "bsg2-commit", "Инициализировать репозиторий"); b.style.margin = "0 12px"; b.addEventListener("click", () => this.run(["init"], "Репозиторий создан")); root.appendChild(b); } return;
         }
         const sig = JSON.stringify(st); if (quiet && sig === this.sig) return; this.sig = sig; this.st = st; const keep = this.msg ? this.msg.value : "";
-        root.textContent = ""; const h = el("div", "bsg2-head"); h.appendChild(el("b", null, "Система контроля версий")); this.ib(h, "↻", "Обновить", () => this.refresh()); root.appendChild(h);
+        root.textContent = ""; const h = el("div", "bsg2-head"); h.appendChild(el("b", null, "Система контроля версий")); this.ib(h, "↻", "Обновить список изменений", () => this.refresh()); root.appendChild(h);
         const br = el("div", "bsg2-branch"); br.appendChild(el("span", null, "⎇ " + (st.branch || "—"))); const sm = el("small", null, (st.ahead ? "↑" + st.ahead + " " : "") + (st.behind ? "↓" + st.behind : "")); br.appendChild(sm); br.title = "Сменить ветку"; br.addEventListener("click", (e) => this.branchMenu(e)); root.appendChild(br);
-        const sync = el("div", "bsg2-head"); sync.style.paddingTop = "0"; this.ib(sync, "↓", "Получить изменения (pull --ff-only)", () => this.run(["pull", "--ff-only"], "Получено")); this.ib(sync, "↑", "Отправить (push)", () => this.run(["push"], "Отправлено")); this.ib(sync, "⟳", "Fetch", () => this.run(["fetch", "--all"], "Fetch выполнен")); root.appendChild(sync);
+        const sync = el("div", "bsg2-head"); sync.style.paddingTop = "0"; this.ib(sync, "↓", "Получить чужие изменения с сервера", () => this.run(["pull", "--ff-only"], "Изменения получены")); this.ib(sync, "↑", "Отправить ваши коммиты на сервер", () => this.run(["push"], "Коммиты отправлены")); this.ib(sync, "⟳", "Узнать, что нового на сервере, ничего не меняя у вас", () => this.run(["fetch", "--all"], "Список обновлён")); root.appendChild(sync);
         this.msg = el("textarea", "bsg2-msg"); this.msg.placeholder = "Сообщение коммита (Ctrl+Enter)"; this.msg.value = keep; root.appendChild(this.msg);
         const cb = el("button", "bsg2-commit", "✓ Закоммитить" + (st.staged.length ? " (" + st.staged.length + ")" : "")); cb.addEventListener("click", () => this.commit()); root.appendChild(cb); this.msg.addEventListener("keydown", (e) => { if (e.ctrlKey && e.key === "Enter") this.commit(); });
         const list = el("div", "bsg2-list"); root.appendChild(list);
@@ -76,9 +89,9 @@
           for (const it of items) {
             const r = el("div", "bsg2-row"), name = path.posix.basename(it.file), dir = path.posix.dirname(it.file); r.title = it.file; const n = el("span", "bsg2-n", name); r.appendChild(n); if (dir !== ".") r.appendChild(el("span", "bsg2-d", dir));
             const acts = el("span", "acts"); r.appendChild(acts);
-            this.ib(acts, "↗", "Открыть файл", () => this.openFile(it.file));
-            if (staged) this.ib(acts, "−", "Убрать из коммита", () => this.run(["restore", "--staged", "--", it.file]));
-            else { this.ib(acts, "↶", "Отменить изменения", () => this.discard(it)); this.ib(acts, "+", "Добавить в коммит", () => this.run(["add", "--", it.file])); }
+            this.ib(acts, "↗", "Открыть этот файл", () => this.openFile(it.file));
+            if (staged) this.ib(acts, "−", "Убрать файл из будущего коммита", () => this.run(["restore", "--staged", "--", it.file]));
+            else { this.ib(acts, "↶", "Отменить правки в этом файле", () => this.discard(it)); this.ib(acts, "+", "Добавить файл в будущий коммит", () => this.run(["add", "--", it.file])); }
             const stl = el("span", "bsg2-st", it.st === "?" ? "U" : it.st); stl.style.color = COL[it.st] || "#e2c08d"; r.appendChild(stl);
             r.addEventListener("click", () => this.showDiff(it, staged)); list.appendChild(r);
           }
@@ -88,16 +101,16 @@
       }
       async commit() {
         const m = this.msg.value.trim(); if (!m) { notice("Напишите сообщение коммита"); this.msg.focus(); return; }
-        if (!this.st.staged.length) { if (!this.st.changed.length) { notice("Нечего коммитить"); return; } if (!confirm("В коммит ничего не добавлено. Добавить все изменения (" + this.st.changed.length + " файлов) и закоммитить?")) return; try { await git(this.cwd, ["add", "-A"]); } catch (e) { notice("git: " + e.message); return; } }
-        try { await git(this.cwd, ["commit", "-m", m]); this.msg.value = ""; notice("Коммит создан"); } catch (e) { notice("git: " + e.message); } await this.refresh();
+        if (!this.st.staged.length) { if (!this.st.changed.length) { notice("Нечего коммитить"); return; } if (!(await ask("В коммит пока ничего не добавлено. Добавить все изменения (" + this.st.changed.length + " файлов) и сразу закоммитить?", { title: "Закоммитить всё?", ok: "Добавить и закоммитить", cancel: "Отмена" }))) return; try { await git(this.cwd, ["add", "-A"]); } catch (e) { notice(why(e)); return; } }
+        try { await git(this.cwd, ["commit", "-m", m]); this.msg.value = ""; notice("Коммит создан"); } catch (e) { notice(why(e)); } await this.refresh();
       }
       async discard(it) {
         const abs = path.join(this.cwd, it.file);
-        if (it.st === "?") { if (!confirm("Удалить неотслеживаемый файл навсегда?\n\n" + it.file)) return; try { fs.unlinkSync(abs); } catch (e) { notice(e.message); } await this.refresh(); return; }
-        if (!confirm("Отменить изменения в файле и вернуть его к последнему коммиту? Правки будут потеряны.\n\n" + it.file)) return; await this.run(["restore", "--", it.file]);
+        if (it.st === "?") { if (!(await ask("Файл ещё не в git, поэтому его не вернуть: он будет удалён насовсем.\n\n" + it.file, { title: "Удалить файл насовсем?", ok: "Удалить насовсем", cancel: "Не удалять", danger: true }))) return; try { fs.unlinkSync(abs); } catch (e) { console.error("[git] unlink", e); notice("Не удалось удалить файл. Возможно, он открыт в другой программе."); } await this.refresh(); return; }
+        if (!(await ask("Файл вернётся к последнему коммиту, а ваши правки в нём пропадут.\n\n" + it.file, { title: "Отменить правки в файле?", ok: "Отменить правки", cancel: "Оставить как есть", danger: true }))) return; await this.run(["restore", "--", it.file]);
       }
       async branchMenu(e) {
-        const M = api.Menu; if (!M) return; let out = ""; try { out = await git(this.cwd, ["branch", "--format=%(refname:short)"]); } catch (er) { notice("git: " + er.message); return; }
+        const M = api.Menu; if (!M) return; let out = ""; try { out = await git(this.cwd, ["branch", "--format=%(refname:short)"]); } catch (er) { notice(why(er)); return; }
         const m = new M(); for (const b of out.split("\n").filter(Boolean)) m.addItem((i) => { i.setTitle(b).setIcon("lucide-git-branch").onClick(() => this.run(["checkout", b], "Ветка: " + b)); if (b === this.st.branch) i.setChecked(true); });
         m.addSeparator(); m.addItem((i) => i.setTitle("Создать ветку…").setIcon("lucide-plus").onClick(() => { const n = prompt("Имя новой ветки:"); if (n && n.trim()) this.run(["checkout", "-b", n.trim()], "Создана ветка " + n.trim()); })); m.showAtMouseEvent(e);
       }

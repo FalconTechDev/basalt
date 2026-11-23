@@ -84,7 +84,7 @@
 
   async function boot() {
     await loadState();
-    for (const m of await list()) if (state.enabled.includes(m.id)) start(m).catch((e) => { console.error(`[basalt-wasm] ${m.id}`, e); notice(`Wasm-плагин «${m.name || m.id}» не запустился: ${e.message}`, 8000); });
+    for (const m of await list()) if (state.enabled.includes(m.id)) start(m).catch((e) => { console.error(`[basalt-wasm] ${m.id}`, e); notice(`Wasm-плагин «${m.name || m.id}» не запустился. Отключите его в «Настройки → Плагины» или переустановите.`, 8000); });
   }
   window.__bsWasm = { list, enable, disable, remove, root, PERMS, running: () => Array.from(live.keys()), start: async (m) => { await loadState(); return start(m); } };
   const t = setInterval(() => { if (window.app && app.vault && app.vault.adapter && app.workspace && app.workspace.layoutReady && app.commands && window.__bsApi) { clearInterval(t); boot().catch((e) => console.error("[basalt-wasm]", e)); } }, 700);
