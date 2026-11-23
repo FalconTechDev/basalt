@@ -1267,7 +1267,12 @@
         c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me.name; n.maxLength = 32; n.onchange = () => { me.name = (n.value || me.name).slice(0, 32); try { localStorage.setItem("board-me", JSON.stringify(me)); } catch (e) { /* private */ } this.publish(); };
         M.open();
       }
-      async onClose() { for (const k of ["flushRaf", "cullRaf", "fillRaf"]) if (this[k]) { cancelAnimationFrame(this[k]); this[k] = 0; } clearTimeout(this._pubTm); clearTimeout(this._sT); clearTimeout(this.saveT); clearInterval(this._hT); await this.save(); this.snapshot().catch(() => {}); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.rso) this.rso.disconnect(); }
+      async onClose() { for (const k of ["flushRaf", "cullRaf", "fillRaf"]) if (this[k]) { cancelAnimationFrame(this[k]); this[k] = 0; } clearTimeout(this._pubTm); clearTimeout(this._sT); clearTimeout(this.saveT); clearInterval(this._hT); await this.save(); this.snapshot().catch(() => {}); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.rso) this.rso.disconnect(); this.teardown(); }
+      // let go of the data and the nodes: the workspace may keep this view object around after the tab is closed
+      teardown() {
+        try { if (this.um) this.um.destroy(); } catch (e) { /* ignore */ } this.um = null; this.sel = new Set(); this.drag = null; if (this.els) this.resetIdx(); this._ink = null; this.inkMirror = null; this.inkIds = null; this.inkEls = null; this._feed = null; this.yn = null; this.ye = null; this.ym = null; this.doc = null; this.sh = null; this.peers = [];
+        if (this.cards) this.cards.replaceChildren(); if (this.svg) this.svg.querySelectorAll("g").forEach((g) => g.remove()); if (this.inkSvg) this.inkSvg.querySelectorAll("*:not(defs)").forEach((n) => { if (n.tagName !== "defs" && n.tagName !== "marker" && n.parentNode === this.inkSvg) n.remove(); });
+      }
     };
   }
 

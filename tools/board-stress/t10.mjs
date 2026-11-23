@@ -1,0 +1,12 @@
+import fs from 'fs'; import { connect } from './cdp.mjs';
+const c = await connect(9333, /index\.html/);
+await c.send('HeapProfiler.enable');
+await c.eval(fs.readFileSync('harness.js','utf8'));
+const E=(x)=>c.eval(x,500000), gc=()=>c.send('HeapProfiler.collectGarbage');
+await E(`S.fresh('s_heap')`); await gc(); const h0=await E('S.heap()');
+await E(`(()=>{window.__imgs=[]; for(let i=0;i<100;i++) window.__imgs.push(S.noiseImg(i+1,610)); return 1})()`);
+await gc(); const hImgs=await E('S.heap()');
+await E(`S.addCards(100,{prefix:'im',h:220,w:260,dx:300,dy:260,cols:10,text:(i)=>'img '+i,img:(i)=>window.__imgs[i]}); window.__imgs=null; S.view().um.clear(); 1`);
+await gc(); const hAfterAdd=await E('S.heap()');
+await E(`S.sleep(15000)`); await gc(); const hLater=await E('S.heap()');
+console.log(JSON.stringify({h0,hImgs,hAfterAdd,hLater})); c.close(); process.exit(0);
