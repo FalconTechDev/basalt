@@ -382,7 +382,8 @@ module.exports = function start(resources, events) {
 			contextMenu(win, target, p);
 		});
 		spell(wc);
-		win.on('close', (e) => { remember(); writeJson(id, state); setTimeout(() => { if (!e.defaultPrevented && !win.isDestroyed()) win.destroy(); }, 3000); });
+		win.webContents.on('will-prevent-unload', () => { attempt(() => { if (!win.isDestroyed()) win.show(); }); });
+		win.on('close', (e) => { remember(); writeJson(id, state); if (!e.defaultPrevented) attempt(() => win.hide()); setTimeout(() => { if (!e.defaultPrevented && !win.isDestroyed()) win.destroy(); }, 3000); });
 		win.on('closed', () => { delete windows[id]; if (!quitting && (starterWindow || Object.keys(windows).length > 0)) markOpen(id, false); });
 		let timer;
 		const later = () => { clearTimeout(timer); timer = setTimeout(remember, 100); };
