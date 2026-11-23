@@ -1,0 +1,4 @@
+#!/bin/sh
+# shim: basalt <args>  (needs Node 20+)
+dir=$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")
+exec node "$dir/basalt.mjs" "$@"
