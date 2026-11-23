@@ -18,5 +18,5 @@ html[data-glass="off"] .modal-bg { backdrop-filter: none; }
 
 /* things that float over other text stay almost solid, so nothing shows through them */
 .menu, .bm-pop, .bm-drop, .popover, .suggestion-container, .prompt, .tooltip, .notice, .bpal-pop, .fp-tr-pop, .fp-end-picker, .osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-dtb, .osb-lbl {
-  background-color: color-mix(in srgb, var(--background-primary) calc(max(var(--bs-win-a, .78), .94) * 100%), transparent) !important;
+  background-color: color-mix(in srgb, var(--background-primary) calc(max(var(--bs-win-a, .78), .88) * 100%), transparent) !important;
 }
