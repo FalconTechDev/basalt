@@ -112,7 +112,7 @@
       async branchMenu(e) {
         const M = api.Menu; if (!M) return; let out = ""; try { out = await git(this.cwd, ["branch", "--format=%(refname:short)"]); } catch (er) { notice(why(er)); return; }
         const m = new M(); for (const b of out.split("\n").filter(Boolean)) m.addItem((i) => { i.setTitle(b).setIcon("lucide-git-branch").onClick(() => this.run(["checkout", b], "Ветка: " + b)); if (b === this.st.branch) i.setChecked(true); });
-        m.addSeparator(); m.addItem((i) => i.setTitle("Создать ветку…").setIcon("lucide-plus").onClick(() => { const n = prompt("Имя новой ветки:"); if (n && n.trim()) this.run(["checkout", "-b", n.trim()], "Создана ветка " + n.trim()); })); m.showAtMouseEvent(e);
+        m.addSeparator(); m.addItem((i) => i.setTitle("Создать ветку…").setIcon("lucide-plus").onClick(() => { const Modal = api.Modal; if (!Modal) return; const md = new Modal(app); md.setTitle("Новая ветка"); const inp = md.contentEl.createEl("input", { type: "text" }); inp.placeholder = "Например: правки-главы-2"; inp.style.width = "100%"; const bar = md.contentEl.createDiv("modal-button-container"); bar.createEl("button", { text: "Отмена" }).onclick = () => md.close(); const go = bar.createEl("button", { text: "Создать ветку", cls: "mod-cta" }); const submit = () => { const n = inp.value.trim().replace(/\s+/g, "-"); if (!n) { inp.focus(); return; } md.close(); this.run(["checkout", "-b", n], "Создана ветка " + n); }; go.onclick = submit; inp.addEventListener("keydown", (ev) => { if (ev.key === "Enter") submit(); }); md.open(); setTimeout(() => inp.focus(), 30); })); m.showAtMouseEvent(e);
       }
       openFile(rel) { const F = window.__bsFind; if (F && F.openAt) F.openAt(path.join(this.cwd, rel), 0); }
       async showDiff(it, staged) {

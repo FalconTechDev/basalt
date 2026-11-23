@@ -91,17 +91,17 @@
     async function applyReplace() {
       const rep = repIn.value, sel = hitsList.filter((h) => h.cb.checked); if (!sel.length || !lastRe) return;
       const byFile = new Map(); for (const h of sel) { let a = byFile.get(h.p); if (!a) byFile.set(h.p, a = []); a.push(h.i); }
-      if (!confirm("Заменить на «" + rep + "» в " + sel.length + " строках, файлов: " + byFile.size + "?\n\nИзменения сразу записываются в файлы.")) return;
-      let done = 0;
+      if (!(await window.__bsConfirm("Заменить на «" + rep + "» в строках: " + sel.length + ", файлов: " + byFile.size + ". Изменения сразу записываются в файлы, вернуть их кнопкой нельзя.", { title: "Заменить во всех отмеченных?", ok: "Заменить", cancel: "Не менять" }))) return;
+      let done = 0, failed = 0;
       for (const [p, idxs] of byFile) {
         try {
           const lines = (await fs.promises.readFile(p, "utf8")).split("\n"), rx = new RegExp(lastRe.source, lastRe.flags);
           for (const i of idxs) { const cr = lines[i].endsWith("\r"), ln = cr ? lines[i].slice(0, -1) : lines[i]; lines[i] = (opt.r ? ln.replace(rx, rep) : ln.replace(rx, () => rep)) + (cr ? "\r" : ""); done++; }
           await fs.promises.writeFile(p, lines.join("\n"), "utf8");
           for (const l of app.workspace.getLeavesOfType("basalt-textfile")) { const v = l.view; if (!v || !v.reload) continue; const abs = /^[A-Za-z]:[\\/]|^\//.test(v.path) ? v.path : path.join(app.vault.adapter.basePath, v.path); if (path.resolve(abs).toLowerCase() === path.resolve(p).toLowerCase()) v.reload(); }
-        } catch (e) { console.error("[basalt-find]", e); }
+        } catch (e) { console.error("[basalt-find]", e); failed++; }
       }
-      info.textContent = "Заменено строк: " + done; search();
+      info.textContent = "Заменено строк: " + done + (failed ? ". Не удалось изменить файлов: " + failed + " (возможно, они открыты в другой программе)" : ""); search();
     }
     repBtn.addEventListener("click", applyReplace);
     q.addEventListener("input", start); mask.addEventListener("input", start);
