@@ -5,7 +5,7 @@
   const MAX = 60000;
   const css = document.createElement("style");
   css.textContent = `
-    .bs-cprev { position: absolute; inset: 0; overflow: auto; margin: 0; padding: 10px 14px; box-sizing: border-box; font-family: var(--font-monospace); font-size: 12.5px; line-height: 1.5; color: var(--text-normal); white-space: pre; tab-size: 4; background: transparent; user-select: text; }
+    .bs-cprev { position: absolute; inset: 0; overflow: auto; margin: 0; padding: 10px 14px; box-sizing: border-box; font-family: var(--font-monospace); font-size: 12px; line-height: 1.5; color: var(--text-normal); white-space: pre; tab-size: 4; background: transparent; user-select: text; }
     .canvas-node-content.bs-cprev-host { position: relative; }
     .canvas-node-content.bs-cprev-host > :not(.bs-cprev) { display: none !important; }
   `;

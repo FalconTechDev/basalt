@@ -10,7 +10,7 @@
     .bm-cols { display: flex; gap: 6px; align-items: stretch; }
     .bm-col { display: flex; flex-direction: column; min-width: 168px; }
     .bm-col + .bm-col { border-left: 1px solid var(--background-modifier-border); padding-left: 6px; }
-    .bm-h { padding: 5px 8px 3px; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-faint); }
+    .bm-h { padding: 5px 8px 3px; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-faint); }
     .bm-i { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: var(--bs-r, 5px); cursor: pointer; white-space: nowrap; }
     .bm-i:hover, .bm-i.is-on { background: var(--background-modifier-hover); }
     .bm-i.is-off { opacity: .45; pointer-events: none; }

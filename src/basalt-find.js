@@ -21,7 +21,7 @@
     .bsf-in:focus { outline: 1px solid var(--interactive-accent); }
     .bsf-file { display: flex; align-items: baseline; gap: 8px; padding: 6px 8px 2px; font-size: var(--font-ui-small); color: var(--text-normal); font-weight: 600; position: sticky; top: 0; background: var(--background-primary); }
     .bsf-file small { color: var(--text-faint); font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsf-file i { margin-left: auto; font-style: normal; color: var(--text-faint); font-weight: normal; }
-    .bsf-hit { display: flex; gap: 10px; padding: 2px 8px 2px 14px; border-radius: var(--bs-r, 4px); cursor: pointer; font-family: var(--font-monospace); font-size: 12.5px; color: var(--text-muted); white-space: pre; overflow: hidden; }
+    .bsf-hit { display: flex; gap: 10px; padding: 2px 8px 2px 14px; border-radius: var(--bs-r, 4px); cursor: pointer; font-family: var(--font-monospace); font-size: 12px; color: var(--text-muted); white-space: pre; overflow: hidden; }
     .bsf-hit:hover, .bsf-hit.sel { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bsf-hit b { color: var(--text-faint); font-weight: normal; min-width: 38px; text-align: right; flex: none; }
     .bsf-hit mark { background: rgba(255,170,0,.35); color: inherit; border-radius: var(--bs-r, 4px); padding: 0; }

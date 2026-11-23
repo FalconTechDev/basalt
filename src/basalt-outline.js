@@ -14,7 +14,7 @@
     .bso-row.m { padding-left: 28px; }
     .bso-k { flex: none; width: 16px; height: 16px; border-radius: var(--bs-r, 4px); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
     .bso-n { overflow: hidden; text-overflow: ellipsis; } .bso-l { margin-left: auto; color: var(--vs-ln); font-size: 11px; }
-    .bso-empty { padding: 16px; color: var(--vs-ln); font-size: 12.5px; }
+    .bso-empty { padding: 16px; color: var(--vs-ln); font-size: 12px; }
   `;
   document.head.appendChild(css);
   const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };

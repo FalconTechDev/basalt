@@ -18,7 +18,7 @@
     .bsq-badge { flex: none; width: 16px; height: 16px; border-radius: var(--bs-r, 4px); display: inline-flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #fff; }
     .bsq-name { overflow: hidden; text-overflow: ellipsis; } .bsq-dir { color: var(--vs-ln); font-size: 12px; overflow: hidden; text-overflow: ellipsis; } .bsq-row.sel .bsq-dir { color: var(--text-muted); }
     .bsq-name mark, .bsq-dir mark { background: none; color: var(--text-accent); font-weight: 600; }
-    .bsq-hint { padding: 14px 16px; color: var(--vs-ln); font-size: 12.5px; }
+    .bsq-hint { padding: 14px 16px; color: var(--vs-ln); font-size: 12px; }
   `;
   document.head.appendChild(css);
   const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
