@@ -25,10 +25,10 @@
       onPaneMenu(menu, source) {
         try { if (super.onPaneMenu) super.onPaneMenu(menu, source); } catch (e) { /* base menu failed */ }
         const it = (t, ic, fn) => menu.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)), ids = this.sel.size ? Array.from(this.sel) : null, part = ids ? " (выделенное)" : "";
-        menu.addSeparator(); it("Копировать картинкой, белый фон" + part, "lucide-clipboard-copy", () => this.exportPng(ids, "white", "clip")); it("Сохранить PNG, белый фон" + part, "lucide-image-down", () => this.exportPng(ids, "white", "file")); it("Сохранить PNG, прозрачный фон" + part, "lucide-image", () => this.exportPng(ids, "none", "file")); it("Сохранить PNG, тёмный фон" + part, "lucide-moon", () => this.exportPng(ids, "dark", "file"));
+        menu.addSeparator(); it("Экспорт в картинку…", "lucide-image-down", () => this.exportDialog()); it("История версий…", "lucide-history", () => this.historyDialog());
         if (ids) it("Сохранить выделенное как новую доску", "lucide-file-plus", () => this.saveSelAsBoard(ids));
         menu.addSeparator(); it("Импортировать доску…", "lucide-file-input", () => this.importDialog()); it("Добавить изображение…", "lucide-image-plus", () => this.pickImage());
-        menu.addSeparator(); it("Раскладка: дерево слева направо", "lucide-git-fork", () => this.layout("lr", ids && ids.length > 1 ? ids : null)); it("Раскладка: дерево сверху вниз", "lucide-git-branch", () => this.layout("td", ids && ids.length > 1 ? ids : null)); it("Раскладка: радиально", "lucide-orbit", () => this.layout("radial", ids && ids.length > 1 ? ids : null)); it("Раскладка: силовая", "lucide-network", () => this.layout("force", ids && ids.length > 1 ? ids : null));
+        menu.addSeparator(); it("Раскладка: дерево слева направо", "lucide-git-fork", () => this.layout("lr", ids && ids.length > 1 ? ids : null)); it("Раскладка: дерево сверху вниз", "lucide-git-branch", () => this.layout("td", ids && ids.length > 1 ? ids : null)); it("Раскладка: радиально", "lucide-orbit", () => this.layout("radial", ids && ids.length > 1 ? ids : null)); it("Раскладка: силовая", "lucide-network", () => this.layout("force", ids && ids.length > 1 ? ids : null)); if (this._prevPos) it("Вернуть прежнее расположение", "lucide-undo-2", () => this.restorePos());
         menu.addSeparator(); it("Показать или скрыть правую панель", "lucide-panel-right", () => { try { const sp = app.workspace.rightSplit; sp.collapsed ? sp.expand() : sp.collapse(); } catch (e) { /* no side panel */ } });
       }
       getDisplayText() { return this.path ? this.path.replace(/^.*\//, "").replace(/\.board$/, "") : "Доска"; }
@@ -78,7 +78,7 @@
             this.sh = sh; this.relPath = rel; this.doc = sh.doc; this.yn = e.get("nodes"); this.ye = e.get("edges"); this.ym = sh.meta; this.initHistory();
             this.yn.observeDeep((evs) => { this.sync(); this.flash(evs); }); this.ye.observeDeep(() => this.syncEdges());
             this.aw = sh.aw; this.pc = () => { this.peers = sh.peers.filter((u) => u.board === rel); this.paintPeers(); }; if (sh.aw) sh.aw.on("change", this.pc); this.pc();
-            this.sync(); this.fit(); this.feedArr(); this.renderFeed(); this.share.classList.add("is-on"); return;
+            this.sync(); this.fit(); this.feedArr(); this.renderFeed(); this.startHistory(); this.share.classList.add("is-on"); return;
           } }
         let raw = null; try { raw = await app.vault.adapter.read(this.path); } catch (e) { /* new */ }
         this.doc = new Y.Doc(); this.yn = this.doc.getMap("nodes"); this.ye = this.doc.getMap("edges"); this.ym = this.doc.getMap("meta");
@@ -87,7 +87,7 @@
         if (!this.ym.get("id")) this.ym.set("id", uid() + uid());
         this.initHistory(); this.yn.observeDeep((evs) => { this.sync(); this.flash(evs); this.queueSave(); });
         this.ye.observeDeep(() => { this.syncEdges(); this.queueSave(); });
-        this.sync(); this.fit(); this.feedArr(); this.renderFeed();
+        this.sync(); this.fit(); this.feedArr(); this.renderFeed(); this.startHistory();
         if (this.ym.get("room")) this.connect(this.ym.get("room"), this.ym.get("pass") || "");
       }
       queueSave() { if (this.sh) return; clearTimeout(this.saveT); this.saveT = setTimeout(() => this.save(), 400); }
@@ -153,7 +153,7 @@
       clearGuides() { if (this.guides) this.guides.empty(); }
       // tidy up: put the selected (or all) cards in order in one go
       tidy(mode, ids) {
-        ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 1 || this.ro) return; const g = (i) => this.yn.get(i), G = 20, snap = (v) => Math.round(v / G) * G, bb = this.bounds(ids), gap = 40;
+        ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 1 || this.ro) return; this.keepPos(ids); this.um && this.um.stopCapturing(); setTimeout(() => { this.um && this.um.stopCapturing(); this.toastUndo("Карточки упорядочены."); }, 0); const g = (i) => this.yn.get(i), G = 20, snap = (v) => Math.round(v / G) * G, bb = this.bounds(ids), gap = 40;
         this.doc.transact(() => {
           if (mode === "grid") for (const i of ids) { const m = g(i); m.set("x", snap(m.get("x"))); m.set("y", snap(m.get("y"))); m.set("w", Math.max(120, snap(m.get("w")))); m.set("h", Math.max(60, snap(m.get("h")))); }
           else if (mode === "row") { const o = ids.slice().sort((a, b) => g(a).get("x") - g(b).get("x")); let x = bb.x; for (const i of o) { g(i).set("x", Math.round(x)); g(i).set("y", bb.y); x += g(i).get("w") + gap; } }
@@ -320,7 +320,10 @@
         if (BOARD_CLIP) { this.paste(40, 40); return; }
         try { const t = await navigator.clipboard.readText(); if (t) this.addCard(c.x - 130, c.y - 30, t); } catch (e) { /* empty */ }
       }
-      setFold(on) { if (this.ro) return; this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) m.set("fold", !!on); } }); this.selBar.dataset.sig = ""; this.syncEdges(); }
+      keepPos(ids) { this._prevPos = new Map(); for (const id of ids) { const m = this.yn.get(id); if (m) this._prevPos.set(id, [m.get("x"), m.get("y"), m.get("w"), m.get("h"), !!m.get("fold")]); } }
+      restorePos() { if (!this._prevPos || this.ro) return; const cur = new Map(); for (const id of this._prevPos.keys()) { const m = this.yn.get(id); if (m) cur.set(id, [m.get("x"), m.get("y"), m.get("w"), m.get("h"), !!m.get("fold")]); } this.um && this.um.stopCapturing(); this.doc.transact(() => { for (const [id, v] of this._prevPos) { const m = this.yn.get(id); if (m) { m.set("x", v[0]); m.set("y", v[1]); m.set("w", v[2]); m.set("h", v[3]); m.set("fold", v[4]); } } }); this.um && this.um.stopCapturing(); this._prevPos = cur; this.syncEdges(); this.selBar.dataset.sig = ""; new api.Notice("Расположение возвращено"); }
+      toastUndo(text) { const f = document.createDocumentFragment(); f.append(text + " "); const b = document.createElement("button"); b.textContent = "Вернуть"; b.style.marginLeft = "8px"; const n = new api.Notice(f, 7000); b.onclick = () => { this.restorePos(); n.hide(); }; f.append(b); }
+      setFold(on) { if (this.ro) return; this.keepPos(Array.from(this.sel)); this.um && this.um.stopCapturing(); this.doc.transact(() => { for (const id of this.sel) { const m = this.yn.get(id); if (m) m.set("fold", !!on); } }); this.um && this.um.stopCapturing(); this.selBar.dataset.sig = ""; this.syncEdges(); }
       addMenu(e) {
         const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)); const c = this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2);
         it("Новая карточка", "lucide-square-plus", () => this.addCard()); it("Изображение с компьютера…", "lucide-image-plus", () => this.pickImage(c)); it("Вставить из буфера (Ctrl+V)", "lucide-clipboard-paste", () => this.pasteAny()); mn.addSeparator(); it("Импортировать другую доску…", "lucide-file-input", () => this.importDialog(c));
@@ -364,11 +367,11 @@
       layoutMenu(e) {
         const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)), ids = this.sel.size > 1 ? Array.from(this.sel) : null; const sc = ids ? " (выделенные)" : "";
         it("Дерево слева направо" + sc, "lucide-git-fork", () => this.layout("lr", ids)); it("Дерево сверху вниз" + sc, "lucide-git-branch", () => this.layout("td", ids)); it("Радиально" + sc, "lucide-orbit", () => this.layout("radial", ids)); it("Силовая раскладка" + sc, "lucide-network", () => this.layout("force", ids));
-        mn.addSeparator(); it("По сетке" + sc, "lucide-grid-3x3", () => this.tidy("grid", ids)); it("Расставить блоками" + sc, "lucide-layout-grid", () => this.tidy("cells", ids)); mn.showAtMouseEvent(e);
+        if (this._prevPos) it("Вернуть прежнее расположение", "lucide-undo-2", () => this.restorePos()); mn.addSeparator(); it("По сетке" + sc, "lucide-grid-3x3", () => this.tidy("grid", ids)); it("Расставить блоками" + sc, "lucide-layout-grid", () => this.tidy("cells", ids)); mn.showAtMouseEvent(e);
       }
       layout(mode, ids) {
         if (this.ro) return; ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 2) return;
-        const set = new Set(ids), g = (i) => this.yn.get(i), W = (i) => g(i).get("w"), H = (i) => this.effH(g(i)), out = new Map(), und = new Map(), dir = new Map(); for (const i of ids) { und.set(i, new Set()); dir.set(i, new Set()); }
+        this.keepPos(ids); this.um && this.um.stopCapturing(); const set = new Set(ids), g = (i) => this.yn.get(i), W = (i) => g(i).get("w"), H = (i) => this.effH(g(i)), out = new Map(), und = new Map(), dir = new Map(); for (const i of ids) { und.set(i, new Set()); dir.set(i, new Set()); }
         for (const e of this.ye.values()) { const a = e.get("a"), b = e.get("b"); if (set.has(a) && set.has(b) && a !== b) { und.get(a).add(b); und.get(b).add(a); dir.get(a).add(b); } }
         const bb = this.bounds(ids), gapX = 90, gapY = 40; const seen = new Set(), comps = [];
         for (const i of ids) { if (seen.has(i)) continue; const comp = [], st = [i]; seen.add(i); while (st.length) { const v = st.pop(); comp.push(v); for (const n of und.get(v)) if (!seen.has(n)) { seen.add(n); st.push(n); } } comps.push(comp); }
@@ -403,7 +406,7 @@
           return { pos, w: lr ? off - gapX : total, h: lr ? total : off - 110 };
         };
         this.doc.transact(() => { let yy = bb.y; for (const comp of comps) { const r = place(comp, mode); for (const [v, c] of r.pos) { g(v).set("x", Math.round(bb.x + c[0])); g(v).set("y", Math.round(yy + c[1])); } yy += r.h + 90; } });
-        this.fit();
+        this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка применена.");
       }
       // ----- export to a picture (white background for documents)
       exportMenu(e, ids) {
@@ -411,12 +414,13 @@
         it("Копировать картинку, белый фон (" + what + ")", "lucide-clipboard-copy", () => this.exportPng(ids, "white", "clip")); it("Сохранить PNG, белый фон", "lucide-image-down", () => this.exportPng(ids, "white", "file")); it("Сохранить PNG, прозрачный фон", "lucide-image", () => this.exportPng(ids, "none", "file")); it("Сохранить PNG, тёмный фон", "lucide-moon", () => this.exportPng(ids, "dark", "file"));
         if (ids && ids.length) { mn.addSeparator(); it("Сохранить выделенное как новую доску", "lucide-file-plus", () => this.saveSelAsBoard(ids)); } mn.showAtMouseEvent(e);
       }
-      async exportPng(ids, bg, to) {
-        const all = ids && ids.length ? ids.filter((i) => this.yn.get(i)) : Array.from(this.yn.keys()); const ink = ids && ids.length ? [] : (this._ink ? this._ink.toArray() : []); if (!all.length && !ink.length) { new api.Notice("Доска пуста"); return; }
+      async renderExport(o) {
+        const ids = o.ids, bg = o.bg;
+        const all = ids && ids.length ? ids.filter((i) => this.yn.get(i)) : Array.from(this.yn.keys()); let ink = o.ink === false ? [] : (this._ink ? this._ink.toArray() : []); if (!all.length && !ink.length) return null;
         const dark = bg === "dark", ink1 = dark ? "#e5e7eb" : "#111827", card0 = dark ? "#1f2330" : "#ffffff", line0 = dark ? "#8b93a7" : "#6b7280", bord = dark ? "#3a4052" : "#d1d5db";
         let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; const grow = (a, b, c, d) => { x1 = Math.min(x1, a); y1 = Math.min(y1, b); x2 = Math.max(x2, c); y2 = Math.max(y2, d); };
-        for (const id of all) { const m = this.yn.get(id); grow(m.get("x"), m.get("y"), m.get("x") + m.get("w"), m.get("y") + this.effH(m)); } for (const st of ink) { const b = this.inkBox(st); grow(b.x1, b.y1, b.x2, b.y2); }
-        const pad = 40, sc = 2, cw = Math.min(8000, Math.ceil((x2 - x1 + pad * 2) * sc)), chh = Math.min(8000, Math.ceil((y2 - y1 + pad * 2) * sc)), cv = document.createElement("canvas"); cv.width = cw; cv.height = chh; const ctx = cv.getContext("2d"); ctx.scale(cw / ((x2 - x1 + pad * 2)), chh / ((y2 - y1 + pad * 2))); ctx.translate(pad - x1, pad - y1);
+        for (const id of all) { const m = this.yn.get(id); grow(m.get("x"), m.get("y"), m.get("x") + m.get("w"), m.get("y") + this.effH(m)); } if (ids && ids.length && all.length) { const nb = { x1, y1, x2, y2 }; ink = ink.filter((st) => { const b = this.inkBox(st); return b.x1 < nb.x2 && b.x2 > nb.x1 && b.y1 < nb.y2 && b.y2 > nb.y1; }); } for (const st of ink) { const b = this.inkBox(st); grow(b.x1, b.y1, b.x2, b.y2); }
+        const pad = o.pad == null ? 40 : o.pad, sc = o.scale || 2, cw = Math.min(8000, Math.ceil((x2 - x1 + pad * 2) * sc)), chh = Math.min(8000, Math.ceil((y2 - y1 + pad * 2) * sc)), cv = document.createElement("canvas"); cv.width = cw; cv.height = chh; const ctx = cv.getContext("2d"); ctx.scale(cw / ((x2 - x1 + pad * 2)), chh / ((y2 - y1 + pad * 2))); ctx.translate(pad - x1, pad - y1);
         if (bg !== "none") { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = dark ? "#14161d" : "#ffffff"; ctx.fillRect(0, 0, cw, chh); ctx.restore(); }
         const FONT = '"Segoe UI", system-ui, sans-serif', rrect = (x, y, w, h, r) => { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); };
         const wrap = (text, mw, font) => { ctx.font = font; const out = []; for (const para of String(text).split("\n")) { let line = ""; for (const word of para.split(/(\s+)/)) { const t = line + word; if (ctx.measureText(t).width > mw && line) { out.push(line.trimEnd()); line = word.trimStart(); } else line = t; } out.push(line); } return out; };
@@ -436,10 +440,54 @@
           else if (st.k === "line" || st.k === "arrow") { ctx.beginPath(); ctx.moveTo(st.a[0], st.a[1]); ctx.lineTo(st.b[0], st.b[1]); ctx.stroke(); if (st.k === "arrow") { const an = Math.atan2(st.b[1] - st.a[1], st.b[0] - st.a[0]), L = 8 + sw * 1.5; ctx.beginPath(); ctx.moveTo(st.b[0], st.b[1]); ctx.lineTo(st.b[0] - L * Math.cos(an - 0.45), st.b[1] - L * Math.sin(an - 0.45)); ctx.lineTo(st.b[0] - L * Math.cos(an + 0.45), st.b[1] - L * Math.sin(an + 0.45)); ctx.closePath(); ctx.fill(); } }
           else if (st.k === "rect") { rrect(Math.min(st.a[0], st.b[0]), Math.min(st.a[1], st.b[1]), Math.abs(st.b[0] - st.a[0]), Math.abs(st.b[1] - st.a[1]), 3); ctx.stroke(); }
           else { ctx.beginPath(); ctx.ellipse((st.a[0] + st.b[0]) / 2, (st.a[1] + st.b[1]) / 2, Math.abs(st.b[0] - st.a[0]) / 2, Math.abs(st.b[1] - st.a[1]) / 2, 0, 0, Math.PI * 2); ctx.stroke(); } ctx.restore(); }
-        const blob = await new Promise((r) => cv.toBlob(r, "image/png")); if (!blob) { new api.Notice("Не удалось собрать картинку"); return; }
-        if (to === "clip") { try { await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]); new api.Notice("Картинка скопирована, её можно вставить в документ"); } catch (e) { new api.Notice("Буфер обмена недоступен"); } return; }
-        const dir = this.path.replace(/[^/]*$/, ""), base = (this.getDisplayText() || "Доска") + (ids && ids.length ? " (часть)" : ""); let n = "", path; do { path = dir + base + n + ".png"; n = n ? n + 1 : 2; } while (app.vault.getAbstractFileByPath(path));
-        try { await app.vault.createBinary(path, await blob.arrayBuffer()); new api.Notice("Сохранено: " + path); } catch (e) { new api.Notice("Не удалось сохранить файл"); }
+        return cv;
+      }
+      async exportPng(ids, bg, to) {
+        const cv = await this.renderExport({ ids, bg, scale: 2, pad: 40 }); if (!cv) { new api.Notice("Доска пуста"); return; } return this.outputPng(cv, to, ids && ids.length ? " (часть)" : "");
+      }
+      async outputPng(cv, to, suffix, name) {
+        const blob = await new Promise((r) => cv.toBlob(r, "image/png")); if (!blob) { new api.Notice("Не удалось собрать картинку"); return false; }
+        if (to === "clip") { try { await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]); new api.Notice("Картинка скопирована, её можно вставить в документ"); return true; } catch (e) { new api.Notice("Буфер обмена недоступен"); return false; } }
+        const dir = this.path.replace(/[^/]*$/, ""), base = (name && name.trim()) || ((this.getDisplayText() || "Доска") + (suffix || "")); let n = "", path; do { path = dir + base + n + ".png"; n = n ? n + 1 : 2; } while (app.vault.getAbstractFileByPath(path));
+        try { await app.vault.createBinary(path, await blob.arrayBuffer()); new api.Notice("Сохранено: " + path); return true; } catch (e) { new api.Notice("Не удалось сохранить файл"); return false; }
+      }
+      exportDialog() {
+        const M = new api.Modal(app); M.modalEl.addClass("bs-exp"); M.titleEl.setText("Экспорт в картинку"); const c = M.contentEl, sel = Array.from(this.sel).filter((i) => this.yn.get(i));
+        const o = { scope: sel.length ? "sel" : "all", bg: "white", scale: 2, pad: 40, ink: true }; const body = c.createDiv({ cls: "bs-exp-body" }), pv = body.createDiv({ cls: "bs-exp-pv" }), opts = body.createDiv({ cls: "bs-exp-opts" }); const info = pv.createDiv({ cls: "bs-exp-info" }); let cvEl = null, tk = 0, tm = 0;
+        const seg = (title, list, key) => { opts.createDiv({ cls: "bs-exp-l", text: title }); const g = opts.createDiv({ cls: "bs-exp-seg" }); const bs = []; for (const [v, t, dis] of list) { const b = g.createDiv({ cls: "bs-exp-b" + (dis ? " is-dis" : ""), text: t }); b.onclick = () => { if (dis) return; o[key] = v; bs.forEach(([x, y]) => y.classList.toggle("is-on", x === v)); draw(); }; b.classList.toggle("is-on", o[key] === v); bs.push([v, b]); } };
+        seg("Область", [["all", "Вся доска"], ["sel", "Выделенное" + (sel.length ? " (" + sel.length + ")" : ""), !sel.length]], "scope"); seg("Фон", [["white", "Белый"], ["none", "Прозрачный"], ["dark", "Тёмный"]], "bg"); seg("Размер", [[1, "1×"], [2, "2×"], [3, "3×"]], "scale"); seg("Поля", [[0, "Нет"], [20, "Малые"], [40, "Средние"], [80, "Большие"]], "pad");
+        const lb = opts.createEl("label", { cls: "bs-exp-ck" }); const ck = lb.createEl("input", { attr: { type: "checkbox" } }); ck.checked = true; lb.createSpan({ text: " Включить рисунок" }); ck.onchange = () => { o.ink = ck.checked; draw(); };
+        opts.createDiv({ cls: "bs-exp-l", text: "Имя файла" }); const nm = opts.createEl("input", { attr: { placeholder: (this.getDisplayText() || "Доска"), spellcheck: "false" } }); nm.style.width = "100%";
+        const build = () => this.renderExport({ ids: o.scope === "sel" ? sel : null, bg: o.bg, scale: o.scale, pad: o.pad, ink: o.ink });
+        const draw = () => { clearTimeout(tm); tm = setTimeout(async () => { const my = ++tk; const cv = await build(); if (my !== tk) return; if (cvEl) cvEl.remove(); if (!cv) { info.setText("Нечего экспортировать"); return; } cvEl = pv.createEl("canvas", { cls: "bs-exp-cv" }); cvEl.width = cv.width; cvEl.height = cv.height; cvEl.getContext("2d").drawImage(cv, 0, 0); pv.dataset.bg = o.bg; info.setText(cv.width + " × " + cv.height + " px"); }, 120); };
+        const foot = c.createDiv({ cls: "modal-button-container" }); const cl = foot.createEl("button", { text: "Закрыть" }), cp = foot.createEl("button", { text: "Копировать" }), sv = foot.createEl("button", { text: "Сохранить PNG", cls: "mod-cta" });
+        cl.onclick = () => M.close(); cp.onclick = async () => { const cv = await build(); if (cv) this.outputPng(cv, "clip"); }; sv.onclick = async () => { const cv = await build(); if (cv && await this.outputPng(cv, "file", o.scope === "sel" ? " (часть)" : "", nm.value)) M.close(); };
+        M.open(); draw();
+      }
+      // ---------- version history ----------
+      histDir() { return ".basalt-history/" + this.path.replace(/[\\/]/g, "__") + "/"; }
+      snapData() { const nodes = []; this.yn.forEach((m, id) => nodes.push({ id, x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "", img: m.get("img") || "", fold: !!m.get("fold"), locked: !!m.get("locked") })); const edges = []; this.ye.forEach((m) => edges.push({ a: m.get("a"), b: m.get("b"), label: m.get("label") || "" })); return { v: 1, t: Date.now(), nodes, edges, ink: this._ink ? this._ink.toArray() : [] }; }
+      async snapshot(force) {
+        if (!this.doc || !this.path || this.ro && !force) return false; const d = this.snapData(); if (!d.nodes.length && !d.ink.length) return false; const body = JSON.stringify({ nodes: d.nodes, edges: d.edges, ink: d.ink }); if (!force && body === this._lastSnap) return false; this._lastSnap = body; this._lastSnapT = Date.now();
+        try { const dir = this.histDir(), ad = app.vault.adapter; if (!(await ad.exists(".basalt-history"))) await ad.mkdir(".basalt-history"); if (!(await ad.exists(dir))) await ad.mkdir(dir); await ad.write(dir + d.t + ".json", JSON.stringify(d)); const ls = (await ad.list(dir)).files.sort(); for (const f of ls.slice(0, Math.max(0, ls.length - 40))) await ad.remove(f); return true; } catch (e) { console.error(e); return false; }
+      }
+      startHistory() { clearInterval(this._hT); this._hT = setInterval(() => { if (Date.now() - (this._lastSnapT || 0) > 180000) this.snapshot(); }, 60000); }
+      restoreSnap(d) {
+        if (this.ro) return; const Y = window.__bsY.Y; this.um && this.um.stopCapturing(); this.doc.transact(() => {
+          for (const id of Array.from(this.yn.keys())) this.yn.delete(id); for (const id of Array.from(this.ye.keys())) this.ye.delete(id); const a = this.inkArr(); if (a && a.length) a.delete(0, a.length);
+          for (const n of d.nodes) { const m = new Y.Map(), t = new Y.Text(); t.insert(0, n.text || ""); m.set("x", n.x); m.set("y", n.y); m.set("w", n.w); m.set("h", n.h); m.set("color", n.color || ""); m.set("by", me.name); if (n.img) m.set("img", n.img); if (n.fold) m.set("fold", true); if (n.locked) m.set("locked", true); this.stampM(m); m.set("text", t); this.yn.set(n.id, m); }
+          for (const e of d.edges) { const m = new Y.Map(); m.set("a", e.a); m.set("b", e.b); m.set("label", e.label || ""); this.ye.set(uid(), m); } if (a && d.ink && d.ink.length) a.push(d.ink);
+        }); this.um && this.um.stopCapturing(); this.select(new Set()); this.fit(); new api.Notice("Версия восстановлена. Ctrl+Z вернёт текущее состояние.");
+      }
+      async historyDialog() {
+        const M = new api.Modal(app); M.modalEl.addClass("bs-imp"); M.titleEl.setText("История версий"); const c = M.contentEl, ad = app.vault.adapter, dir = this.histDir(); const note = c.createDiv({ cls: "bs-imp-top" }); note.createSpan({ text: "Версии сохраняются сами каждые несколько минут, пока вы работаете. Хранятся последние 40." }); const list = c.createDiv({ cls: "bs-imp-list" });
+        const draw = async () => { list.empty(); let files = []; try { if (await ad.exists(dir)) files = (await ad.list(dir)).files.sort().reverse(); } catch (e) { /* none */ } if (!files.length) list.createDiv({ cls: "bs-imp-empty", text: "Пока нет сохранённых версий" });
+          for (const f of files) { const ts = +f.replace(/^.*\//, "").replace(/\.json$/, ""), r = list.createDiv({ cls: "bs-imp-row" }); const ic = r.createSpan({ cls: "bs-imp-ic" }); api.setIcon(ic, "lucide-history"); r.createSpan({ cls: "bs-imp-t", text: new Date(ts).toLocaleString("ru-RU", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" }) }); const meta = r.createSpan({ cls: "bs-imp-p", text: "" });
+            ad.read(f).then((t) => { try { const d = JSON.parse(t); meta.setText(d.nodes.length + " карточек, " + d.edges.length + " связей"); } catch (e) { /* bad file */ } });
+            const rs = r.createEl("button", { text: "Восстановить" }), cp = r.createEl("button", { text: "Копией" }); rs.style.cssText = cp.style.cssText = "height:26px;padding:0 10px;font-size:12px";
+            rs.onclick = async (ev) => { ev.stopPropagation(); try { const d = JSON.parse(await ad.read(f)); await this.snapshot(true); this.restoreSnap(d); M.close(); } catch (e) { new api.Notice("Не удалось восстановить версию"); } };
+            cp.onclick = async (ev) => { ev.stopPropagation(); try { const d = JSON.parse(await ad.read(f)), Y = window.__bsY.Y, doc = new Y.Doc(), nn = doc.getMap("nodes"), ee = doc.getMap("edges"); doc.transact(() => { for (const n of d.nodes) { const m = new Y.Map(), t = new Y.Text(); t.insert(0, n.text || ""); for (const k of ["x", "y", "w", "h", "color", "img", "fold"]) if (n[k] != null && n[k] !== "") m.set(k, n[k]); m.set("text", t); nn.set(n.id, m); } for (const e of d.edges) { const m = new Y.Map(); m.set("a", e.a); m.set("b", e.b); m.set("label", e.label || ""); ee.set(uid(), m); } const a = doc.getArray("ink"); if (d.ink && d.ink.length) a.push(d.ink); doc.getMap("meta").set("id", uid() + uid()); }); const out = { v: 2, id: doc.getMap("meta").get("id"), room: null, nodes: {}, edges: ee.toJSON(), ydoc: b64(Y.encodeStateAsUpdate(doc)) }; const bdir = this.path.replace(/[^/]*$/, ""); let n = "", path; do { path = bdir + this.getDisplayText() + " (версия)" + n + "." + EXT; n = n ? n + 1 : 2; } while (app.vault.getAbstractFileByPath(path)); await app.vault.create(path, JSON.stringify(out)); new api.Notice("Создана доска: " + path); M.close(); } catch (e) { new api.Notice("Не удалось создать копию"); } }; } };
+        await draw(); const foot = c.createDiv({ cls: "modal-button-container" }); const now = foot.createEl("button", { text: "Сохранить версию сейчас", cls: "mod-cta" }); now.onclick = async () => { await this.snapshot(true); await draw(); }; foot.createEl("button", { text: "Закрыть" }).onclick = () => M.close(); M.open();
       }
       async saveSelAsBoard(ids) {
         const Y = window.__bsY.Y, d = new Y.Doc(), nn = d.getMap("nodes"), ee = d.getMap("edges"), set = new Set(ids), map = {}; d.transact(() => {
@@ -640,14 +688,14 @@
           if (card) {
             const id = card.dataset.id; if (!this.sel.has(id)) this.select(new Set([id]));
             it("Дублировать", "lucide-copy", () => { for (const s of Array.from(this.sel)) { const n = this.yn.get(s); if (n) this.addCard(n.get("x") + 30, n.get("y") + 30, n.get("text").toString()); } });
-            it("Экспорт выделенного…", "lucide-image-down", () => this.exportMenu(e, Array.from(this.sel))); it("Копировать текст", "lucide-clipboard", () => { const n = this.yn.get(id); if (n) navigator.clipboard.writeText(n.get("text").toString()).catch(() => {}); });
+            it("Экспорт выделенного…", "lucide-image-down", () => this.exportDialog()); it("Копировать текст", "lucide-clipboard", () => { const n = this.yn.get(id); if (n) navigator.clipboard.writeText(n.get("text").toString()).catch(() => {}); });
             it("На передний план", "lucide-bring-to-front", () => { const n = this.yn.get(id), e2 = this.els.get(id); if (e2) this.cards.appendChild(e2.el); });
             m.addSeparator(); it("Удалить", "lucide-trash-2", () => this.removeSel());
           } else if (eg) {
             const id = Array.from(this.edgeEls).find(([, r2]) => r2.g === eg || eg.contains(r2.g))?.[0]; const ed = id && this.ye.get(id);
             if (ed) { it("Подписать связь", "lucide-type", () => this.editLabel(id)); m.addSeparator(); it("Удалить связь", "lucide-trash-2", () => { this.feed("unlink", null, ""); this.ye.delete(id); }); }
           } else {
-            it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30)); it("Вставить изображение…", "lucide-image-plus", () => this.pickImage(w)); it("Импортировать доску…", "lucide-file-input", () => this.importDialog(w)); it("Раскладка графа…", "lucide-network", () => this.layoutMenu(e)); it("Экспорт в картинку…", "lucide-image-down", () => this.exportMenu(e, null)); it("Показать или скрыть правую панель", "lucide-panel-right", () => { try { const sp = app.workspace.rightSplit; sp.collapsed ? sp.expand() : sp.collapse(); } catch (er) { /* no side panel */ } });
+            it("Новая карточка здесь", "lucide-square-plus", () => this.addCard(w.x - 130, w.y - 30)); it("Вставить изображение…", "lucide-image-plus", () => this.pickImage(w)); it("Импортировать доску…", "lucide-file-input", () => this.importDialog(w)); it("Раскладка графа…", "lucide-network", () => this.layoutMenu(e)); it("Экспорт в картинку…", "lucide-image-down", () => this.exportDialog()); it("История версий…", "lucide-history", () => this.historyDialog()); if (this._prevPos) it("Вернуть прежнее расположение", "lucide-undo-2", () => this.restorePos()); it("Показать или скрыть правую панель", "lucide-panel-right", () => { try { const sp = app.workspace.rightSplit; sp.collapsed ? sp.expand() : sp.collapse(); } catch (er) { /* no side panel */ } });
             it("Вставить текст карточкой", "lucide-clipboard-paste", async () => { try { const t = await navigator.clipboard.readText(); if (t) this.addCard(w.x - 130, w.y - 30, t); } catch (er) { /* no access */ } });
             m.addSeparator(); if (this.yn.size > 1) { it("Упорядочить всё по сетке", "lucide-grid-3x3", () => this.tidy("grid", null)); it("Расставить сеткой", "lucide-layout-grid", () => this.tidy("cells", null)); m.addSeparator(); } it("Показать всё", "lucide-maximize", () => this.fit());
           }
@@ -712,7 +760,7 @@
         c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me.name; n.onchange = () => { me.name = n.value || me.name; try { localStorage.setItem("board-me", JSON.stringify(me)); } catch (e) { /* private */ } this.publish(); };
         M.open();
       }
-      async onClose() { clearTimeout(this.saveT); await this.save(); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.ro) this.ro.disconnect(); }
+      async onClose() { clearTimeout(this.saveT); clearInterval(this._hT); try { await this.snapshot(); } catch (e) { /* history is optional */ } await this.save(); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.ro) this.ro.disconnect(); }
     };
   }
 

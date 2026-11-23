@@ -72,6 +72,7 @@
       row(h, "Тема", "Тёмная, светлая или как в системе.", select([["system", "Как в системе"], ["basalt", "Тёмная"], ["moonstone", "Светлая"]], () => cfg("theme") || "system", (v) => app.changeTheme(v)));
       row(h, "Акцентный цвет", "Цвет выделения, кнопок и активных элементов.", [(() => { const i = document.createElement("input"); i.type = "color"; i.value = (cfg("accentColor") || "#b07a52"); i.addEventListener("input", () => app.setAccentColor(i.value)); return i; })(), button("Сбросить", () => { app.setAccentColor(""); S.render(); })]);
       row(h, "Размер текста в заметках", null, slider(12, 26, 1, () => cfg("baseFontSize") || 16, (v) => { setCfg("baseFontSize", v); app.updateFontSize(); }, (v) => v + " px"));
+      head(h, "Окна и меню");
       if (window.__bsGlass) row(h, "Полупрозрачные окна и меню", "Выключено: окна, меню и панели сплошные.", toggle(() => window.__bsGlass.on(), (v) => window.__bsGlass.setOn(v)));
       head(h, "Шрифты");
       for (const [k, t] of [["interfaceFontFamily", "Шрифт интерфейса"], ["textFontFamily", "Шрифт текста"], ["monospaceFontFamily", "Моноширинный шрифт"]]) row(h, t, "Название шрифта, установленного в системе. Пусто: по умолчанию.", text(() => cfg(k), (v) => { setCfg(k, v); app.updateFontFamily(); }, "по умолчанию"));

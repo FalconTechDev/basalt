@@ -12520,7 +12520,7 @@ function ng04WsOps(host) {
     if (target && target.tabHeaderContainerEl && button.parentNode !== target.tabHeaderContainerEl) {
       target.tabHeaderContainerEl.appendChild(button);
     }
-    const showRight = !host.Platform.isMobile && this.rightSplit && !this.rightSplit.collapsed && !this.rightSplit.isPinned;
+    const showRight = !host.Platform.isMobile && this.rightSplit && !this.rightSplit.isPinned;
     if (side === "right" && !showRight) button.hide();
     else button.show();
   };
