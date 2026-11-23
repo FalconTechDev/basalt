@@ -179,7 +179,7 @@
       } else if (se) { results = run(q); st.textContent = `${results.length} за ${(performance.now() - t0).toFixed(1)} мс` + (stat.building ? ` · индексация ${stat.done}/${stat.total}` : ""); }
       sel = Math.min(sel, Math.max(0, results.length - 1));
       list.textContent = "";
-      if (!results.length) { const e = document.createElement("div"); e.className = "bss-empty"; e.textContent = q.trim() ? (stat.building ? "Индекс ещё строится…" : "Ничего не найдено") : "Начните печатать. Находит с опечатками и по началу слова."; list.appendChild(e); return; }
+      if (!results.length) { const e = document.createElement("div"); e.className = "bss-empty"; e.textContent = q.trim() ? (stat.building ? "Индекс ещё строится…" : "Ничего не найдено. Попробуйте часть слова или другое написание.") : "Начните печатать. Находит с опечатками и по началу слова."; list.appendChild(e); return; }
       results.forEach((r, i) => {
         const el = document.createElement("div"); el.className = "bss-item" + (i === sel ? " is-sel" : "");
         el.innerHTML = `<div class="bss-t">${mark(r.d.title, words)}<small>${esc(r.d.path)}</small></div><div class="bss-s">${snippet(r.d, r.pos, words)}</div>`;

@@ -73,7 +73,7 @@
     }
     function draw() {
       compute(); list.textContent = "";
-      if (!items.length) { list.innerHTML = '<div class="bpal-empty">Ничего не найдено</div>'; return; }
+      if (!items.length) { list.innerHTML = '<div class="bpal-empty">' + (m === "files" ? "Такого файла нет. Проверьте написание или начните с «&gt;», чтобы искать команды." : "Такой команды нет. Попробуйте другое слово из названия.") + '</div>'; return; }
       items.forEach((it, i) => {
         const row = document.createElement("div"); row.className = "bpal-i" + (i === sel ? " is-sel" : "");
         if (m === "files") {

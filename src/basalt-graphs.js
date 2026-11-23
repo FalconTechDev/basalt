@@ -294,14 +294,14 @@
       async load(force) {
         const myRun = this.run = (this.run || 0) + 1; this.resize(); this.g = null; this.msg.textContent = "Читаю файлы…"; this.draw();
         const root = this.root();
-        if (!root) { this.msg.textContent = "Откройте папку или хранилище"; return; }
+        if (!root) { this.msg.textContent = "Графу нечего показывать: откройте папку или хранилище с файлами."; return; }
         // the scan is kept per folder: reopening the graph is instant, ↻ (or a file change in the vault) reads it again
         const GC = window.__bsgCache || (window.__bsgCache = new Map()), ck = root + "|" + this.mode;
-        let g; try { g = !force && GC.get(ck) ? GC.get(ck) : await buildGraph(root, this.mode, (n, k) => { if (myRun === this.run) this.msg.textContent = "Читаю файлы… " + (k || n) + (k ? " / " + n : ""); }); } catch (e) { console.error("[basalt-graphs]", e); this.msg.textContent = "Ошибка: " + e.message; return; }
+        let g; try { g = !force && GC.get(ck) ? GC.get(ck) : await buildGraph(root, this.mode, (n, k) => { if (myRun === this.run) this.msg.textContent = "Читаю файлы… " + (k || n) + (k ? " / " + n : ""); }); } catch (e) { console.error("[basalt-graphs]", e); this.msg.textContent = "Не удалось построить граф. Проверьте, что папка доступна, и нажмите «Обновить»."; return; }
         if (myRun !== this.run) return;
         this.g = g; this.rootPath = root; GC.set(ck, g); this.hidden.clear(); this.focusSet = null; this.loadTags();
         if (!window.__bsgCacheHook) { window.__bsgCacheHook = 1; const drop = () => GC.clear(); for (const ev of ["create", "delete", "rename"]) app.vault.on(ev, drop); }
-        if (!g.nodes.length) { this.msg.textContent = "В этой папке нет файлов с кодом"; return; }
+        if (!g.nodes.length) { this.msg.textContent = "В этой папке нет файлов с кодом. Выберите другую папку или режим графа."; return; }
         this.msg.textContent = "";
         this.syncSeg();
         const saved = (this.mode === "code" || this.layout === "force") ? await this.loadLayout() : null; let placed = 0;

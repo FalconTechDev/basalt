@@ -106,7 +106,7 @@
     for (const [k, label] of [["installed", "Установлено"], ["community", "Сообщество"], ["catalog", "Из источников"], ["sources", "Источники"]]) { const b = document.createElement("button"); b.textContent = label; b.dataset.k = k; b.addEventListener("click", () => { tab = k; shown = 60; render(); }); tabs.appendChild(b); }
     const row = (title, sub, tag, btns) => { const r = document.createElement("div"); r.className = "bsc-row"; r.innerHTML = '<div class="bsc-i"><b></b><small></small></div>'; r.querySelector("b").textContent = title; if (tag) { const t = document.createElement("span"); t.className = "bsc-tag"; t.textContent = tag; r.querySelector("b").appendChild(t); } r.querySelector("small").textContent = sub || ""; for (const [l, fn, cls] of btns) { const b = document.createElement("button"); b.textContent = l; if (cls) b.className = cls; b.addEventListener("click", async () => { b.disabled = true; try { await fn(); } catch (e) { notice(e.message); } render(); }); r.appendChild(b); } return r; };
     const notice = (m) => { try { new window.__bsApi.Notice(m, 6000); } catch (e) { alert(m); } };
-    const doInstall = async (repo) => { try { notice(`Скачиваю ${repo}…`); const r = await install(repo); if (r) notice(`«${r.manifest.name || r.manifest.id}» установлен${r.notEnabled ? ", но не включён" : " и включён"}`); } catch (e) { notice("Не удалось установить: " + e.message); } render(); };
+    const doInstall = async (repo) => { try { notice(`Скачиваю ${repo}…`); const r = await install(repo); if (r) notice(`«${r.manifest.name || r.manifest.id}» установлен${r.notEnabled ? ", но не включён" : " и включён"}`); } catch (e) { console.error("[catalog] install", e); notice("Не удалось установить плагин: " + ((e && /[А-Яа-я]/.test(e.message || "")) ? e.message : "нет связи с GitHub или он не ответил. Проверьте интернет и повторите") + "."); } render(); };
     async function render() {
       tabs.querySelectorAll("button").forEach((b) => b.classList.toggle("mod-cta", b.dataset.k === tab));
       body.textContent = "…";
@@ -123,7 +123,7 @@
         }
       } else if (tab === "community") {
         let list = [];
-        try { list = await community(); } catch (e) { frag.appendChild(Object.assign(document.createElement("div"), { className: "bsc-err", textContent: "Не удалось загрузить список: " + e.message })); }
+        try { list = await community(); } catch (e) { frag.appendChild(Object.assign(document.createElement("div"), { className: "bsc-err", textContent: "Не удалось загрузить список плагинов: " + ((e && /[А-Яа-я]/.test(e.message || "")) ? e.message : "нет связи с GitHub или он не ответил. Проверьте интернет и повторите") + "." })); }
         const have = new Set((await installed()).map((p) => p.id));
         const f = input.value.trim().toLowerCase();
         const hit = (f && !parseRepo(input.value) ? list.filter((p) => (p.name + " " + p.description + " " + p.author + " " + p.id).toLowerCase().includes(f)) : list);
@@ -140,7 +140,7 @@
           try {
             const j = await getJson(url), items = Array.isArray(j) ? j : j.plugins || [];
             for (const it of items) { const repo = parseRepo(it.repo || ""); if (repo) frag.appendChild(row(it.name || repo, it.description || repo, "", [["Установить", () => doInstall(repo), "mod-cta"]])); }
-          } catch (e) { frag.appendChild(Object.assign(document.createElement("div"), { className: "bsc-err", textContent: `${url}: ${e.message}` })); }
+          } catch (e) { frag.appendChild(Object.assign(document.createElement("div"), { className: "bsc-err", textContent: `Источник ${url} не открылся: ${((e && /[А-Яа-я]/.test(e.message || "")) ? e.message : "нет связи с GitHub или он не ответил. Проверьте интернет и повторите")}. Проверьте адрес.` })); }
         }
       } else {
         for (const url of cat.sources) { const d = document.createElement("div"); d.className = "bsc-src"; d.innerHTML = "<span></span>"; d.firstChild.textContent = url; const b = document.createElement("button"); b.textContent = "Убрать"; b.addEventListener("click", async () => { cat.sources = cat.sources.filter((x) => x !== url); await saveCat(); render(); }); d.appendChild(b); frag.appendChild(d); }

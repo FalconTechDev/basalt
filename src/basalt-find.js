@@ -86,7 +86,7 @@
       }
       if (my !== box.run) return;
       info.textContent = hits ? "Совпадений: " + hits + " в файлах: " + matched + " (просмотрено файлов: " + files + ")" : "Ничего не найдено (просмотрено файлов: " + files + ")";
-      if (!hits) list.appendChild(el("div", "bsf-empty", "Ничего не найдено"));
+      if (!hits) list.appendChild(el("div", "bsf-empty", "Ничего не нашли. Проверьте написание, уберите маску файлов или поиск по целому слову."));
     }
     async function applyReplace() {
       const rep = repIn.value, sel = hitsList.filter((h) => h.cb.checked); if (!sel.length || !lastRe) return;

@@ -31,6 +31,8 @@
     .bsh-rec svg { width: 16px; height: 16px; color: var(--text-faint); flex: none; }
     .bsh-rec > div { flex: 1; min-width: 0; } .bsh-rec b { display: block; font-weight: 500; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bsh-rec small { display: block; color: var(--text-faint); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsh-rec time { color: var(--text-faint); font-size: 12px; flex: none; }
+    .bsh-start { border: 1px solid var(--background-modifier-border); border-radius: 5px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; } .bsh-start p { margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; } .bsh-start button { align-self: flex-start; }
+    .bsh-tile:focus-visible, .bsh-rec:focus-visible, .bsh-search:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: 1px; }
     .bsh-foot { display: flex; gap: 18px; color: var(--text-faint); font-size: 12px; padding-top: 4px; }
     .bsh-tile:hover, .bsh-search:hover { transform: none !important; box-shadow: none !important; }
     @media (max-width: 640px) { .bsh-tiles { grid-template-columns: repeat(2, 1fr); } }
@@ -67,10 +69,12 @@
     el.innerHTML = `<div class="bsh-in">
       <div class="bsh-brand"><img src="basalt-logo.png" alt=""><div><h1>Basalt</h1><p></p></div></div>
       <div class="bsh-search">${svg("search")}<span>Искать по заметкам и доскам…</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></div>
+      <div class="bsh-start"></div>
       <div class="bsh-tiles"></div>
       <div class="bsh-cols"><div><h3>Недавние</h3><div class="bsh-recent"></div></div></div><div class="bsh-foot"></div></div>`;
     el.querySelector("p").textContent = app.vault.getName();
-    el.querySelector(".bsh-search").addEventListener("click", () => cmd("basalt:quick-search"));
+    { const s = el.querySelector(".bsh-search"); s.tabIndex = 0; s.setAttribute("role", "button"); s.title = "Найти заметку или доску по названию и тексту"; s.addEventListener("click", () => cmd("basalt:quick-search")); s.addEventListener("keydown", (e) => { if (e.key === "Enter") cmd("basalt:quick-search"); }); }
+    { const st = el.querySelector(".bsh-start"); if (!notes.length && !files.some((f) => f.extension === "board" || f.extension === "canvas")) { st.innerHTML = "<h3>С чего начать</h3><p>Здесь пока пусто. Создайте первую заметку, потом связывайте заметки ссылками: напишите [[название другой заметки]]. Искать можно по Ctrl+Shift+O, а любую команду найти по Ctrl+P.</p>"; const b = document.createElement("button"); b.className = "mod-cta"; b.textContent = "Создать первую заметку"; b.addEventListener("click", () => cmd("file-explorer:new-file")); st.appendChild(b); } else st.remove(); }
     const tiles = [
       ["folder", "Открыть папку", "", () => window.__bsWorkspace ? window.__bsWorkspace.pick() : cmd("basalt:open-folder")],
       ["note", "Новая заметка", "|Ctrl+N", () => cmd("file-explorer:new-file")],
@@ -79,15 +83,16 @@
       ["share", "Совместная работа", "", () => { if (window.__bsShare) window.__bsShare.dialog("/"); }],
       ["gear", "Настройки", "", () => cmd("app:open-settings")],
     ];
+    const TIPS = { folder: "Открыть любую папку с файлами как проект, не создавая хранилище", note: "Создать пустую заметку", canvas: "Создать доску с карточками и связями", graph: "Показать связи между заметками", share: "Пригласить людей в проект или подключиться по коду", gear: "Тема, редактор, горячие клавиши и другое" };
     const tl = el.querySelector(".bsh-tiles");
     const LI = { folder: "folder-open", note: "file-text", canvas: "layout-dashboard", term: "terminal", graph: "git-fork", share: "users", file: "file-search", history: "history", plug: "plug", gear: "settings" };
-    for (const [ic, t, sub, fn] of tiles) { const [desc, keys] = sub.split("|"); const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `<span class="bsh-ti"></span><div><b>${esc(t)}</b>${desc ? `<br><small>${esc(desc)}</small>` : ""}${keys ? `<span class="bsh-keys">${keys.split("+").map((k) => `<kbd>${esc(k)}</kbd>`).join("")}</span>` : ""}</div>`; try { window.__bsApi.setIcon(d.firstChild, "lucide-" + LI[ic]); } catch (e) { d.firstChild.innerHTML = svg(ic); } d.addEventListener("click", fn); tl.appendChild(d); }
+    for (const [ic, t, sub, fn] of tiles) { const [desc, keys] = sub.split("|"); const d = document.createElement("div"); d.className = "bsh-tile"; d.innerHTML = `<span class="bsh-ti"></span><div><b>${esc(t)}</b>${desc ? `<br><small>${esc(desc)}</small>` : ""}${keys ? `<span class="bsh-keys">${keys.split("+").map((k) => `<kbd>${esc(k)}</kbd>`).join("")}</span>` : ""}</div>`; try { window.__bsApi.setIcon(d.firstChild, "lucide-" + LI[ic]); } catch (e) { d.firstChild.innerHTML = svg(ic); } d.tabIndex = 0; d.setAttribute("role", "button"); d.title = TIPS[ic] || ""; d.addEventListener("click", fn); d.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(); } }); tl.appendChild(d); }
     const rl = el.querySelector(".bsh-recent");
-    if (!recent.length) rl.innerHTML = '<div class="bsh-rec" style="cursor: var(--bs-cursor-arrow, default)"><div><small>Пока ничего не открывали</small></div></div>';
+    if (!recent.length) rl.innerHTML = '<div class="bsh-rec" style="cursor: var(--bs-cursor-arrow, default)"><div><small>Пока ничего не открывали. Откройте файл слева или создайте заметку.</small></div></div>';
     for (const f of recent) {
       const d = document.createElement("div"); d.className = "bsh-rec";
       d.innerHTML = `${svg(f.extension === "canvas" || f.extension === "board" ? "canvas" : "note")}<div><b>${esc(f.basename || f.name)}</b><small>${esc(f.parent && f.parent.path && f.parent.path !== "/" ? f.parent.path : "корень")}</small></div><time>${f.stat ? ago(f.stat.mtime) : ""}</time>`;
-      d.addEventListener("click", () => { (leaf || mainLeaf(false)).openFile(f); });
+      d.tabIndex = 0; d.setAttribute("role", "button"); d.title = "Открыть " + (f.path || f.name); d.addEventListener("click", () => { (leaf || mainLeaf(false)).openFile(f); }); d.addEventListener("keydown", (e) => { if (e.key === "Enter") (leaf || mainLeaf(false)).openFile(f); });
       rl.appendChild(d);
     }
     { const ft = el.querySelector(".bsh-foot"), boards = files.filter((f) => f.extension === "board").length; for (const t of [notes.length + " заметок", boards + " досок", links + " связей"]) ft.createSpan({ text: t }); }
