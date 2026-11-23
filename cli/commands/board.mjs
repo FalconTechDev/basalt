@@ -72,17 +72,17 @@ register([
     },
   },
   {
-    name: "board import", usage: "board import <board> [--json file] [--cards file.csv] [--edges file.csv] [--create] [--replace]", spec: { json: "str", cards: "str", edges: "str", create: "bool", replace: "bool", ...SNAP },
-    ru: "Импорт в доску (файл «-» — стандартный ввод).\n  --json  файл в формате board export --format json\n  --cards CSV: заголовок id,text|title,body,x,y,w,h,color,kind (лишние столбцы попадут в текст); без x,y карточки встают сеткой справа\n  --edges CSV «from,to[,label]» — карточки по id или по тексту\n  --create создать доску, если её нет;  --replace сначала очистить доску",
-    en: "Import into a board (file \"-\" is stdin).\n  --json  a file in the board export --format json shape\n  --cards CSV with header id,text|title,body,x,y,w,h,color,kind (other columns go into the text); cards without x,y are laid out in a grid to the right\n  --edges CSV \"from,to[,label]\" — cards by id or by text\n  --create create the board if missing;  --replace clear the board first",
+    name: "board import", usage: "board import <board> [--from-json file] [--cards file.csv] [--edges file.csv] [--create] [--replace]", spec: { "from-json": "str", cards: "str", edges: "str", create: "bool", replace: "bool", ...SNAP },
+    ru: "Импорт в доску (файл «-» — стандартный ввод).\n  --from-json  файл в формате board export --format json\n  --cards CSV: заголовок id,text|title,body,x,y,w,h,color,kind (лишние столбцы попадут в текст); без x,y карточки встают сеткой справа\n  --edges CSV «from,to[,label]» — карточки по id или по тексту\n  --create создать доску, если её нет;  --replace сначала очистить доску",
+    en: "Import into a board (file \"-\" is stdin).\n  --from-json  a file in the board export --format json shape\n  --cards CSV with header id,text|title,body,x,y,w,h,color,kind (other columns go into the text); cards without x,y are laid out in a grid to the right\n  --edges CSV \"from,to[,label]\" — cards by id or by text\n  --create create the board if missing;  --replace clear the board first",
     async run(ctx) {
-      ctx.need(1, "board"); const f = ctx.flags; if (!f.json && !f.cards && !f.edges) throw usage("give --json, --cards or --edges");
+      ctx.need(1, "board"); const f = ctx.flags; if (!f["from-json"] && !f.cards && !f.edges) throw usage("give --from-json, --cards or --edges");
       const rd = async (p) => (p === "-" ? await ctx.stdin() : fs.readFileSync(p, "utf8"));
       if (!f.create && !fs.existsSync(locate(ctx, ctx.args[0], { create: true }).abs)) throw notFound(`board not found: ${ctx.args[0]} (use --create)`);
       const { res } = await mutate(ctx, ctx.args[0], async (board) => {
         let added = 0, linked = 0;
         if (f.replace) board.restore({ nodes: [], edges: [] });
-        if (f.json) { const d = JSON.parse(await rd(f.json)); added += B.importJson(board, d, { keepIds: true }).length; linked += (d.links || d.edges || []).length; }
+        if (f["from-json"]) { const d = JSON.parse(await rd(f["from-json"])); added += B.importJson(board, d, { keepIds: true }).length; linked += (d.links || d.edges || []).length; }
         if (f.cards) {
           const cs = B.cardsFromCsv(await rd(f.cards)), bb = board.bounds(), need = cs.filter((c) => c.x == null || c.y == null);
           if (need.length) { const g = B.layoutGrid(need.map((c, i) => ({ id: String(i), x: bb ? bb.right + 80 : 0, y: bb ? bb.y : 0, w: c.w || 260, h: c.h || 110 }))); need.forEach((c, i) => { c.x = g.get(String(i)).x; c.y = g.get(String(i)).y; }); }

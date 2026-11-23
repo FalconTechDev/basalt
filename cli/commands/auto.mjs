@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { pathToFileURL } from "node:url";
 import { register } from "../lib/cli.mjs";
 import { CliError, EXIT, usage, notFound, table, green, yellow, dim, sleep } from "../lib/util.mjs";
 import { scriptApi, runScript, runTask, tasksOf, parseCron, cronMatches, nextRun, CLI_ENTRY } from "../lib/auto.mjs";
@@ -22,7 +23,7 @@ register([
     name: "x list", usage: "x list", ru: "Скрипты-плагины из .basalt/scripts/*.mjs (запуск: basalt x <имя>).", en: "Plugin scripts from .basalt/scripts/*.mjs (run: basalt x <name>).",
     async run(ctx) {
       const d = scriptsDir(ctx.vault), l = fs.existsSync(d) ? fs.readdirSync(d).filter((f) => f.endsWith(".mjs")).map((f) => f.slice(0, -4)) : [], out = [];
-      for (const n of l) { let desc = ""; try { const m = await import(path.join(d, n + ".mjs").replace(/^/, "file:///").replace("file:////", "file:///").replace(/\\/g, "/") + "?l=" + Date.now()); desc = m.meta?.description || ""; } catch { /* broken script */ } out.push({ name: n, description: desc }); }
+      for (const n of l) { let desc = ""; try { const m = await import(pathToFileURL(path.join(d, n + ".mjs")).href + "?l=" + Date.now()); desc = m.meta?.description || ""; } catch { /* broken script */ } out.push({ name: n, description: desc }); }
       ctx.result(out, out.map((o) => `${o.name.padEnd(20)} ${o.description}`).join("\n"), true);
     },
   },

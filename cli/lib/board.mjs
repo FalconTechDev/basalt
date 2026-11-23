@@ -22,7 +22,7 @@ export function loadY() {
 }
 
 export const COLORS = { red: "#e5484d", orange: "#f59f3b", yellow: "#d6b43c", green: "#46a758", blue: "#3fa7d6", purple: "#8e6bd8", none: "" };
-export const colorOf = (c) => (c == null ? "" : COLORS[String(c).toLowerCase()] ?? (/^#[0-9a-f]{6}$/i.test(c) ? String(c).toLowerCase() : (() => { throw usage(`unknown colour "${c}" (red, orange, yellow, green, blue, purple, none or #rrggbb)`); })()));
+export const colorOf = (c) => (c == null || c === "" ? "" : COLORS[String(c).toLowerCase()] ?? (/^#[0-9a-f]{6}$/i.test(c) ? String(c).toLowerCase() : (() => { throw usage(`unknown colour "${c}" (red, orange, yellow, green, blue, purple, none or #rrggbb)`); })()));
 const uid = () => Math.random().toString(36).slice(2, 10).padEnd(8, "0");
 const b64 = (u8) => Buffer.from(u8.buffer, u8.byteOffset, u8.length).toString("base64");
 const unb64 = (s) => { const b = Buffer.from(s, "base64"); return new Uint8Array(b.buffer, b.byteOffset, b.length); };
