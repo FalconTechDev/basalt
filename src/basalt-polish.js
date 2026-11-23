@@ -63,7 +63,8 @@
       const h = document.querySelector(".bsh-hero, .bsh-title, .bsh"); if (!h || document.querySelector(".bsh-greeting")) return;
       const host = document.querySelector(".bsh-search"); if (!host) return;
       const hr = new Date().getHours(), w = hr < 5 ? "Доброй ночи" : hr < 12 ? "Доброе утро" : hr < 18 ? "Добрый день" : "Добрый вечер";
-      const g = document.createElement("div"); g.className = "bsh-greeting"; g.textContent = w + ". " + new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" });
+      const g = document.createElement("div"); g.className = "bsh-greeting"; const ic = document.createElement("span"); ic.className = "bsh-gr-i"; g.appendChild(ic); try { window.__bsApi.setIcon(ic, hr < 5 ? "lucide-moon-star" : hr < 12 ? "lucide-sunrise" : hr < 18 ? "lucide-sun" : "lucide-moon"); } catch (e) { /* no icon */ }
+      const tx = document.createElement("div"); tx.className = "bsh-gr-x"; const t1 = document.createElement("div"); t1.className = "bsh-gr-t"; t1.textContent = w; const t2 = document.createElement("div"); t2.className = "bsh-gr-d"; const ds = new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" }); t2.textContent = ds.charAt(0).toUpperCase() + ds.slice(1); tx.append(t1, t2); g.appendChild(tx);
       host.parentElement.insertBefore(g, host);
     };
     setInterval(greet, 1200);

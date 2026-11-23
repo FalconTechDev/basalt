@@ -24076,4 +24076,37 @@ button.mod-cta:disabled,button:disabled,.bsm-btn:disabled{
     background:var(--background-modifier-hover)!important;
     color:var(--text-normal)
 }
+.bsh-greeting{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:2px 0 6px;
+    font-size:inherit;
+    letter-spacing:0
+}
+.bsh-gr-i{
+    width:40px;
+    height:40px;
+    display:grid;
+    place-items:center;
+    flex:none;
+    border-radius:6px;
+    background:var(--background-modifier-hover);
+    color:var(--interactive-accent)
+}
+.bsh-gr-i svg{
+    width:22px;
+    height:22px
+}
+.bsh-gr-t{
+    font-size:20px;
+    font-weight:600;
+    line-height:1.2;
+    color:var(--text-normal)
+}
+.bsh-gr-d{
+    font-size:13px;
+    color:var(--text-faint);
+    margin-top:2px
+}
 

@@ -75,8 +75,10 @@
     const reveal = (full) => {
       const e = window.electron || window.require("electron"), p = window.require("path");
       full = p.normalize(full);
-      if (process.platform === "win32") window.require("child_process").spawn("explorer.exe", ["/select," + full], { detached: true, stdio: "ignore" }).unref();
-      else (e.remote && e.remote.shell || e.shell).showItemInFolder(full);
+      // Windows Explorer needs  /select,"path"  with the quotes around the path only; a plain argument list makes Node quote the whole thing and Explorer opens the folder instead
+      const sh = (e.remote && e.remote.shell) || e.shell;
+      try { if (sh && sh.showItemInFolder) { sh.showItemInFolder(full); return; } } catch (err) { /* fall back to Explorer */ }
+      if (process.platform === "win32") window.require("child_process").spawn("explorer.exe", ['/select,"' + full + '"'], { detached: true, stdio: "ignore", windowsVerbatimArguments: true }).unref();
     };
     window.__bsReveal = (full) => { try { reveal(full); } catch (err) { console.error("[show-in-folder]", err); } };
     const show = (rel) => window.__bsReveal(app.vault.adapter.getFullPath((rel && typeof rel === "object" ? rel.path : rel) || "")); /* a path or a file object */

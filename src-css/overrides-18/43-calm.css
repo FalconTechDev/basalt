@@ -18,3 +18,8 @@
 .bsg-controls .canvas-control-group { background: transparent !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; clip-path: none !important; margin: 0 !important; display: flex; flex-direction: column; gap: 2px; padding: 0; }
 .bsg-controls .canvas-control-group + .canvas-control-group { margin-top: 5px !important; padding-top: 5px; border-top: 1px solid var(--background-modifier-border) !important; }
 .bsg-controls .canvas-control-item { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 6px !important; background: transparent !important; border: 0 !important; color: var(--text-muted); } .bsg-controls .canvas-control-item:hover { background: var(--background-modifier-hover) !important; color: var(--text-normal); }
+
+/* start page greeting: a quiet icon, the greeting and the date under it */
+.bsh-greeting { display: flex; align-items: center; gap: 14px; margin: 2px 0 6px; font-size: inherit; letter-spacing: 0; }
+.bsh-gr-i { width: 40px; height: 40px; display: grid; place-items: center; flex: none; border-radius: 6px; background: var(--background-modifier-hover); color: var(--interactive-accent); } .bsh-gr-i svg { width: 22px; height: 22px; }
+.bsh-gr-t { font-size: 20px; font-weight: 600; line-height: 1.2; color: var(--text-normal); } .bsh-gr-d { font-size: 13px; color: var(--text-faint); margin-top: 2px; }
