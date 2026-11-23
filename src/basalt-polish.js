@@ -151,4 +151,43 @@
       const inp = e.target; if (inp.value) { inp.value = ""; inp.dispatchEvent(new Event("input", { bubbles: true })); } const tree = document.querySelector(".bsf-tree"); if (tree) tree.focus();
     }, true);
   });
+
+  // Names for icon-only buttons: whatever has no text gets an accessible name (and a tooltip when it has none at all), so no button is a mystery
+  const ICON_LABELS = [
+    [/eye-off|hide/, "Скрыть"], [/eye/, "Показать"], [/^x$|circle-x|close/, "Закрыть"], [/plus|circle-plus|square-plus/, "Добавить"], [/trash|delete/, "Удалить"],
+    [/pencil|edit|pen$/, "Изменить"], [/copy|clipboard/, "Копировать"], [/search|magnif/, "Найти"], [/settings|cog|sliders/, "Настройки"], [/refresh|rotate|sync/, "Обновить"],
+    [/chevron-down|chevrons-up-down/, "Развернуть"], [/chevron-up|chevrons-down-up/, "Свернуть"], [/chevron-left|arrow-left/, "Назад"], [/chevron-right|arrow-right/, "Вперёд"],
+    [/arrow-up/, "Вверх"], [/arrow-down/, "Вниз"], [/ellipsis|more-/, "Ещё действия"], [/check/, "Готово"], [/download/, "Скачать"], [/upload/, "Загрузить"],
+    [/folder-open/, "Открыть папку"], [/play/, "Запустить"], [/square$|stop/, "Остановить"], [/pin/, "Закрепить"], [/help|info/, "Подсказка"], [/undo/, "Отменить действие"],
+    [/redo/, "Повторить действие"], [/zoom-in/, "Приблизить"], [/zoom-out/, "Отдалить"], [/maximize|expand/, "На весь экран"], [/minus/, "Убрать"], [/link/, "Ссылка"],
+  ];
+  const SELECTOR = "button, [role=button], .clickable-icon, .view-action, .side-dock-ribbon-action";
+  const nameIcons = () => {
+    for (const el of document.querySelectorAll(SELECTOR)) {
+      if (el.__bsNamed || (el.textContent || "").trim()) continue;
+      const svg = el.querySelector("svg"); if (!svg) continue;
+      const have = el.getAttribute("aria-label"), tip = el.getAttribute("title") || el.getAttribute("data-tooltip");
+      if (have) { el.__bsNamed = 1; continue; }
+      if (tip) { el.setAttribute("aria-label", tip); el.__bsNamed = 1; continue; }
+      const cls = Array.from(svg.classList).find((c) => c.startsWith("lucide-")) || "", name = cls.replace("lucide-", ""); if (!name) continue;
+      const hit = ICON_LABELS.find(([rx]) => rx.test(name)); if (!hit) continue;
+      el.setAttribute("aria-label", hit[1]); el.setAttribute("title", hit[1]); el.__bsNamed = 1;
+    }
+  };
+  // notices: the same text is shown once, and no more than three are on screen
+  const calmNotices = () => {
+    const box = document.querySelector(".notice-container"); if (!box) return;
+    const list = Array.from(box.querySelectorAll(".notice")), seen = new Map();
+    for (const n of list) { const k = (n.textContent || "").trim(); if (seen.has(k)) seen.get(k).remove(); seen.set(k, n); }
+    const left = Array.from(box.querySelectorAll(".notice")); for (let i = 0; i < left.length - 3; i++) left[i].remove();
+  };
+  const startCalm = () => {
+    let t1 = 0, t2 = 0;
+    new MutationObserver((muts) => {
+      clearTimeout(t1); t1 = setTimeout(() => safe(nameIcons), 500);
+      if (muts.some((m) => Array.from(m.addedNodes).some((n) => n.nodeType === 1 && (n.matches(".notice") || n.querySelector(".notice"))))) { clearTimeout(t2); t2 = setTimeout(() => safe(calmNotices), 30); }
+    }).observe(document.body, { childList: true, subtree: true });
+    safe(nameIcons);
+  };
+  if (document.body) startCalm(); else document.addEventListener("DOMContentLoaded", startCalm);
 })();

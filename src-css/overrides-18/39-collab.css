@@ -210,3 +210,4 @@
 .bs-closing-box { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; } .bs-closing-t { font-size: 17px; font-weight: 600; } .bs-closing-s { font-size: 13px; color: var(--text-muted); }
 .bs-closing-spin { width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--background-modifier-border-hover); border-top-color: var(--interactive-accent); animation: bs-closing-spin .8s linear infinite; }
 @keyframes bs-closing-spin { to { transform: rotate(360deg); } } @keyframes bs-closing-in { from { opacity: 0; } }
+.bsm-trow2 .bsm-s2 { white-space: normal; } .bsm-hintline { white-space: normal; margin: 0 0 10px; line-height: 1.45; } .bsm-et { line-height: 1.45; max-width: 360px; margin-inline: auto; }

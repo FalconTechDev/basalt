@@ -21533,6 +21533,66 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     gap:8px;
     justify-content:flex-end
 }
+.osb-mini{
+    position:absolute;
+    right:68px;
+    top:12px;
+    z-index:5;
+    width:160px;
+    height:110px;
+    padding:4px;
+    box-sizing:border-box;
+    border-radius:6px;
+    background:color-mix(in srgb,var(--background-secondary) 92%,transparent);
+    border:1px solid var(--background-modifier-border);
+    box-shadow:0 6px 20px rgba(0,0,0,.35);
+    cursor:var(--bs-cursor-hand,pointer);
+    opacity:.85;
+    transition:opacity .12s ease
+}
+.osb-mini:hover{
+    opacity:1
+}
+.osb-mini canvas{
+    width:100%;
+    height:100%;
+    display:block
+}
+.osb-root.is-draw .osb-mini{
+    display:none!important
+}
+.osb-edges .osb-el{
+    stroke:var(--ec,var(--text-faint))
+}
+.osb-edges .osb-temp{
+    stroke:var(--interactive-accent)
+}
+.osb-card.is-group{
+    z-index:0;
+    pointer-events:none;
+    background:color-mix(in srgb,var(--card,var(--interactive-accent)) 7%,transparent);
+    border-style:dashed;
+    box-shadow:none
+}
+.osb-card:not(.is-group){
+    z-index:1
+}
+.osb-card.is-group .osb-grip,.osb-card.is-group .osb-ta,.osb-card.is-group .osb-h,.osb-card.is-group .osb-rz,.osb-card.is-group .osb-x{
+    pointer-events:auto
+}
+.osb-card.is-group .osb-ta{
+    flex:none;
+    height:34px;
+    min-height:0;
+    overflow:hidden;
+    resize:none;
+    font-size:15px;
+    font-weight:600;
+    padding:6px 10px
+}
+.osb-card.is-group .osb-h{
+    opacity:0!important
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
@@ -23210,6 +23270,19 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
     from{
         opacity:0
     }
+}
+.bsm-trow2 .bsm-s2{
+    white-space:normal
+}
+.bsm-hintline{
+    white-space:normal;
+    margin:0 0 10px;
+    line-height:1.45
+}
+.bsm-et{
+    line-height:1.45;
+    max-width:360px;
+    margin-inline:auto
 }
 .modal,.modal.bset,.menu,.bm-pop,.bm-drop,.popover,.suggestion-container,.prompt,.tooltip,.notice,.bpal-pop,.fp-tr-pop,.fp-end-picker,.osb-bar,.osb-rail,.osb-search,.osb-sel,.osb-help,.osb-dtb,.osb-feed,.osb-lbl,.bsh-load{
     background-color:color-mix(in srgb,var(--background-primary) calc(var(--bs-win-a,.75) * 100%),transparent)!important;
