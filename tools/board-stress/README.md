@@ -34,6 +34,9 @@ Kill only that process (the one whose command line contains `bsstress`) when don
 | `run.mjs <port> <scenario> [n] [tag]` | scenarios `cards` `bigmd` `images` `links` `ink` `frame` `remote` `all`; appends to `results.jsonl` |
 | `ops.mjs <port> <tag> [cards]` | timed operations on a 2 000-card board: layouts, undo, export, save, snapshot, paste, import, search, select all, delete |
 | `smoke.mjs <port>` | functional check through real mouse/keyboard events (drag, box select, edit, delete/undo, zoom levels, remote edit, search) |
+| `chain.mjs <port>` | layouts on a 12 000-card chain, a dense random graph and a star (stack depth, time) |
+| `consistency.mjs <port>` | randomised remote adds/deletes/moves/links, then checks cache, DOM and link paths against the Yjs data |
+| `report.mjs [tags]` | prints the camera/build numbers of `results.jsonl` as a table |
 | `prof.mjs <port> "<expr>"` | CPU profile of an expression, top self-time functions |
 | `baseline.mjs <port> <old basalt-board.js>` | serves an old copy of the board script to the running app (no file touched) to measure "before" |
 
