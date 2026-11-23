@@ -544,6 +544,35 @@
         it("Копировать картинку, белый фон (" + what + ")", "lucide-clipboard-copy", () => this.exportPng(ids, "white", "clip")); it("Сохранить PNG, белый фон", "lucide-image-down", () => this.exportPng(ids, "white", "file")); it("Сохранить PNG, прозрачный фон", "lucide-image", () => this.exportPng(ids, "none", "file")); it("Сохранить PNG, тёмный фон", "lucide-moon", () => this.exportPng(ids, "dark", "file"));
         if (ids && ids.length) { mn.addSeparator(); it("Сохранить выделенное как новую доску", "lucide-file-plus", () => this.saveSelAsBoard(ids)); } mn.showAtMouseEvent(e);
       }
+      // formatted text on a canvas: headings, bold, italic, code, lists, check boxes, quotes, links, rough tables
+      mdCanvas(ctx, txt, x, y, w, maxY, T, FONT, fs) {
+        let cy = y, inCode = false; const lines = String(txt).replace(/\r/g, "").split("\n");
+        const inline = (s0) => { const out = []; const re = /(\*\*[^*]+\*\*|__[^_]+__|\*[^*\s][^*]*\*|_[^_\s][^_]*_|`[^`]+`|\[\[[^\]]+\]\]|\[[^\]]+\]\([^)]+\)|~~[^~]+~~)/g; let last = 0, m; while ((m = re.exec(s0))) { if (m.index > last) out.push({ t: s0.slice(last, m.index) }); const g = m[0]; if (g.startsWith("**") || g.startsWith("__")) out.push({ t: g.slice(2, -2), b: true }); else if (g.startsWith("`")) out.push({ t: g.slice(1, -1), mono: true }); else if (g.startsWith("[[")) out.push({ t: g.slice(2, -2).split("|").pop(), link: true }); else if (g.startsWith("[")) out.push({ t: g.slice(1, g.indexOf("]")), link: true }); else if (g.startsWith("~~")) out.push({ t: g.slice(2, -2), strike: true }); else out.push({ t: g.slice(1, -1), i: true }); last = m.index + g.length; } if (last < s0.length) out.push({ t: s0.slice(last) }); return out; };
+        for (const raw of lines) {
+          if (cy > maxY - 8) break; let ln = raw, size = fs, bold = false, indent = 0, pre = null, muted = false, quote = false;
+          if (/^```/.test(ln)) { inCode = !inCode; continue; }
+          if (!inCode) { let m;
+            if ((m = ln.match(/^(#{1,6})\s+(.*)$/))) { size = fs * [1.55, 1.35, 1.2, 1.1, 1, 1][m[1].length - 1]; bold = true; ln = m[2]; cy += size * 0.12; }
+            else if ((m = ln.match(/^(\s*)[-*+]\s+\[( |x|X)\]\s+(.*)$/))) { indent = 20 + m[1].length * 6; pre = { t: "box", on: m[2] !== " " }; ln = m[3]; }
+            else if ((m = ln.match(/^(\s*)[-*+]\s+(.*)$/))) { indent = 16 + m[1].length * 6; pre = { t: "dot" }; ln = m[2]; }
+            else if ((m = ln.match(/^(\s*)(\d+)[.)]\s+(.*)$/))) { indent = 20 + m[1].length * 6; pre = { t: "num", n: m[2] }; ln = m[3]; }
+            else if ((m = ln.match(/^>\s?(.*)$/))) { quote = true; indent = 12; ln = m[1]; muted = true; }
+            else if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(ln)) { ctx.strokeStyle = T.border; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, cy + 6); ctx.lineTo(x + w, cy + 6); ctx.stroke(); cy += 14; continue; }
+            else if (/^\|.*\|\s*$/.test(ln)) { if (/^\|[\s:|-]+\|$/.test(ln)) continue; ln = ln.replace(/^\||\|\s*$/g, "").split("|").map((c2) => c2.trim()).join("   |   "); } }
+          const lh = size * 1.5; if (!ln.trim() && !pre) { cy += lh * 0.5; continue; }
+          const x0 = x + indent, limit = x + w; let cx = x0; ctx.textBaseline = "alphabetic"; const base = cy + size * 1.08;
+          if (pre) { ctx.fillStyle = T.muted; if (pre.t === "dot") { ctx.beginPath(); ctx.arc(x + 6, base - size * 0.32, 2.2, 0, 7); ctx.fill(); } else if (pre.t === "num") { ctx.font = size + "px " + FONT; ctx.fillText(pre.n + ".", x + 1, base); } else { const bs = size * 0.85; ctx.strokeStyle = T.muted; ctx.lineWidth = 1.3; ctx.strokeRect(x + 1, base - bs + 1, bs, bs); if (pre.on) { ctx.strokeStyle = T.accent; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(x + 3, base - bs * 0.45); ctx.lineTo(x + 1 + bs * 0.4, base - 2); ctx.lineTo(x + bs - 1, base - bs + 3); ctx.stroke(); } } }
+          if (quote) { ctx.fillStyle = T.border; ctx.fillRect(x + 1, cy, 3, lh); }
+          let line = cy;
+          for (const run of (inCode ? [{ t: ln, mono: true }] : inline(ln))) {
+            const font = run.mono ? (size * 0.92) + "px Consolas, monospace" : (run.i ? "italic " : "") + (bold || run.b ? "700 " : "400 ") + size + "px " + FONT; ctx.font = font;
+            for (const wd of run.t.split(/(\s+)/)) { if (!wd) continue; const ww = ctx.measureText(wd).width; if (cx + ww > limit && cx > x0 && wd.trim()) { cx = x0; line += lh; if (line > maxY - 8) return; } if (cx === x0 && !wd.trim()) continue; const by = line + size * 1.08;
+              if (run.mono) { ctx.fillStyle = T.code; ctx.fillRect(cx - 1, by - size, ww + 2, size * 1.25); }
+              ctx.fillStyle = run.link ? T.accent : muted ? T.muted : T.text; ctx.fillText(wd, cx, by); if (run.link) { ctx.fillRect(cx, by + 2, ww, 1); } if (run.strike) { ctx.fillRect(cx, by - size * 0.32, ww, 1); } cx += ww; }
+          }
+          cy = line + lh;
+        }
+      }
       async renderExport(o) {
         const ids = o.ids, bg = o.bg;
         const all = ids && ids.length ? ids.filter((i) => this.yn.get(i)) : Array.from(this.yn.keys()); let ink = o.ink === false ? [] : (this._ink ? this._ink.toArray() : []); if (!all.length && !ink.length) return null;
@@ -555,15 +584,31 @@
         const FONT = '"Segoe UI", system-ui, sans-serif', rrect = (x, y, w, h, r) => { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); };
         const wrap = (text, mw, font) => { ctx.font = font; const out = []; for (const para of String(text).split("\n")) { let line = ""; for (const word of para.split(/(\s+)/)) { const t = line + word; if (ctx.measureText(t).width > mw && line) { out.push(line.trimEnd()); line = word.trimStart(); } else line = t; } out.push(line); } return out; };
         all.sort((a, b) => (this.yn.get(b).get("group") ? 1 : 0) - (this.yn.get(a).get("group") ? 1 : 0)); const idSet = new Set(all);
-        // links
-        ctx.lineWidth = 2; ctx.strokeStyle = line0; ctx.fillStyle = line0; ctx.lineCap = "round";
-        for (const e of this.ye.values()) { const a = e.get("a"), b = e.get("b"); if (!idSet.has(a) || !idSet.has(b)) continue; const A = this.center(a), B = this.center(b), p = this.anchor(a, B), q = this.anchor(b, A); if (!p || !q) continue; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke(); const an = Math.atan2(q.y - p.y, q.x - p.x); ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(q.x - 11 * Math.cos(an - 0.4), q.y - 11 * Math.sin(an - 0.4)); ctx.lineTo(q.x - 11 * Math.cos(an + 0.4), q.y - 11 * Math.sin(an + 0.4)); ctx.closePath(); ctx.fill(); const lb = e.get("label"); if (lb) { ctx.font = "12px " + FONT; ctx.textAlign = "center"; const mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2, tw = ctx.measureText(lb).width + 10; ctx.fillStyle = dark ? "#14161d" : "#fff"; ctx.fillRect(mx - tw / 2, my - 10, tw, 20); ctx.fillStyle = ink1; ctx.textBaseline = "middle"; ctx.fillText(lb, mx, my); ctx.fillStyle = line0; ctx.textAlign = "left"; } }
+        // the same look as on the board: coloured header with the type, formatted text, curved links, frames
+        const cs = getComputedStyle(this.root), cv0 = (n, d) => (cs.getPropertyValue(n) || "").trim() || d;
+        const T = dark ? { card: cv0("--background-secondary", "#1f2330"), text: cv0("--text-normal", "#e5e7eb"), muted: cv0("--text-muted", "#9ca3af"), border: cv0("--background-modifier-border", "#3a4052"), line: cv0("--text-faint", "#8b93a7"), accent: cv0("--interactive-accent", "#c98d5b"), code: "rgba(255,255,255,.10)", halo: "#14161d" }
+          : { card: "#ffffff", text: "#111827", muted: "#6b7280", border: "#d1d5db", line: "#6b7280", accent: "#a05a2c", code: "rgba(0,0,0,.07)", halo: "#ffffff" };
+        const NV = { t: [0, -1], b: [0, 1], l: [-1, 0], r: [1, 0] }, head = (x, y, an, col) => { ctx.save(); ctx.fillStyle = col; ctx.translate(x, y); ctx.rotate(an); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-11, -5); ctx.lineTo(-11, 5); ctx.closePath(); ctx.fill(); ctx.restore(); };
+        ctx.lineCap = "round"; ctx.lineJoin = "round";
+        for (const e of this.ye.values()) {
+          const a = e.get("a"), b = e.get("b"); if (!idSet.has(a) || !idSet.has(b)) continue; const A = this.center(a), B = this.center(b); if (!A || !B) continue;
+          const sa0 = e.get("sa") || this.dirSide(A, B), sb0 = e.get("sb") || this.dirSide(B, A), p0 = this.anchorSide(a, sa0), q0 = this.anchorSide(b, sb0); if (!p0 || !q0) continue; const sh = e.get("sh") || "", ep = this.edgePath(p0, q0, sh, sa0, sb0), col = e.get("ec") || T.line, ls = e.get("ls") || "", ad = e.get("ad") || "end";
+          ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash(ls === "dash" ? [9, 6] : ls === "dot" ? [1, 7] : []); ctx.stroke(new Path2D(ep.d)); ctx.restore();
+          const dirEnd = sh === "straight" ? Math.atan2(q0.y - p0.y, q0.x - p0.x) : Math.atan2(-NV[sb0][1], -NV[sb0][0]), dirStart = sh === "straight" ? Math.atan2(p0.y - q0.y, p0.x - q0.x) : Math.atan2(-NV[sa0][1], -NV[sa0][0]);
+          if (ad !== "none") head(q0.x, q0.y, dirEnd, col); if (ad === "both") head(p0.x, p0.y, dirStart, col);
+          const lb = e.get("label"); if (lb) { ctx.save(); ctx.font = "12px " + FONT; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.lineWidth = 4; ctx.strokeStyle = T.halo; ctx.strokeText(lb, ep.mid.x, ep.mid.y - 8); ctx.fillStyle = T.text; ctx.fillText(lb, ep.mid.x, ep.mid.y - 8); ctx.restore(); }
+        }
         // cards
-        let yc = 0; const yieldNow = () => (++yc % 250 === 0 ? new Promise((r) => setTimeout(r, 0)) : null);
-        for (const id of all) { await yieldNow(); const m = this.yn.get(id), x = m.get("x"), y = m.get("y"), w = m.get("w"), h = this.effH(m), col = m.get("color") || "", im = m.get("img");
-          ctx.save(); rrect(x, y, w, h, 4); ctx.fillStyle = card0; if (m.get("group")) ctx.globalAlpha = dark ? 0.35 : 0.5; ctx.fill(); ctx.globalAlpha = 1; if (col) { ctx.globalAlpha = dark ? 0.14 : 0.1; ctx.fillStyle = col; ctx.fill(); ctx.globalAlpha = 1; } ctx.lineWidth = col ? 2 : 1.2; ctx.strokeStyle = col || bord; ctx.stroke(); ctx.clip(); let ty = y + 10;
-          if (im) { try { const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = im; }); const ah = Math.max(20, h - 22 - (m.get("text").length ? 40 : 6)), r = Math.min((w - 8) / img.naturalWidth, ah / img.naturalHeight), iw = img.naturalWidth * r, ih = img.naturalHeight * r; ctx.drawImage(img, x + (w - iw) / 2, y + 4, iw, ih); ty = y + 4 + ih + 6; } catch (e2) { /* skip */ } }
-          ctx.fillStyle = ink1; ctx.textBaseline = "top"; const lines = wrap(m.get("text").toString(), w - 22, "14px " + FONT); ctx.font = "14px " + FONT; for (const ln of lines) { if (ty > y + h - 12) break; ctx.fillText(ln, x + 11, ty); ty += 19.6; } ctx.restore(); }
+        let yc = 0; const yieldNow = () => (++yc % 150 === 0 ? new Promise((r) => setTimeout(r, 0)) : null), tint = (hex, al) => { const h = /^#([0-9a-f]{6})$/i.exec(hex || ""); if (!h) return "rgba(128,128,128," + al + ")"; const n = parseInt(h[1], 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + al + ")"; };
+        for (const id of all) { await yieldNow(); const m = this.yn.get(id), x = m.get("x"), y = m.get("y"), w = m.get("w"), h = this.effH(m), col = m.get("color") || "", im = m.get("img"), grp = !!m.get("group"), kind = m.get("kind") || "", txt = m.get("text").toString();
+          ctx.save(); rrect(x, y, w, h, 4);
+          if (grp) { ctx.fillStyle = tint(col || (dark ? T.accent : "#6b7280"), dark ? 0.07 : 0.06); ctx.fill(); ctx.setLineDash([7, 5]); ctx.lineWidth = 1.5; ctx.strokeStyle = col || T.border; ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = T.text; ctx.textBaseline = "top"; ctx.font = "600 15px " + FONT; ctx.fillText(txt.split("\n")[0], x + 12, y + 9); ctx.restore(); continue; }
+          ctx.fillStyle = T.card; ctx.fill(); ctx.lineWidth = col ? 2 : 1.2; ctx.strokeStyle = col || T.border; ctx.stroke(); ctx.clip();
+          ctx.fillStyle = tint(col || T.border, col ? 0.3 : 0.5); ctx.fillRect(x, y, w, 22);
+          if (kind) { ctx.font = "600 10.5px " + FONT; ctx.textBaseline = "middle"; const tw = ctx.measureText(kind).width + 10; ctx.fillStyle = col || T.muted; ctx.fillRect(x + 5, y + 3, Math.min(tw, w - 10), 16); ctx.fillStyle = "#fff"; ctx.fillText(kind, x + 10, y + 11.5); }
+          let ty = y + 30;
+          if (im) { try { const img = await new Promise((res, rej) => { const i2 = new Image(); i2.onload = () => res(i2); i2.onerror = rej; i2.src = im; }); const ah = Math.max(20, h - 22 - (txt.length ? 40 : 6)), r = Math.min((w - 8) / img.naturalWidth, ah / img.naturalHeight), iw = img.naturalWidth * r, ih = img.naturalHeight * r; ctx.drawImage(img, x + (w - iw) / 2, y + 26, iw, ih); ty = y + 26 + ih + 6; } catch (e2) { /* the picture is gone */ } }
+          this.mdCanvas(ctx, txt, x + 12, ty, w - 24, y + h - 6, T, FONT, 14); ctx.restore(); }
         // drawing
         for (const st of ink) { await yieldNow(); ctx.save(); ctx.strokeStyle = st.c || ink1; ctx.fillStyle = st.c || ink1; ctx.lineCap = "round"; ctx.lineJoin = "round"; const sw = st.k === "hl" ? (st.w || 4) * 3 : (st.w || 4); ctx.lineWidth = sw; if (st.k === "hl") ctx.globalAlpha = 0.38;
           if (st.k === "t") { const sz = this.textSize(st); ctx.font = sz + "px " + FONT; ctx.textBaseline = "top"; String(st.txt || "").split("\n").forEach((ln, i) => ctx.fillText(ln, st.a[0], st.a[1] + i * sz * 1.25)); }
