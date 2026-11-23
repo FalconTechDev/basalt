@@ -8,7 +8,7 @@
   const css = document.createElement("style");
   css.textContent = `
     .bsq-ov { position: fixed; inset: 0; z-index: 70; display: flex; justify-content: center; align-items: flex-start; padding-top: 10vh; background: rgba(0,0,0,.25); }
-    .bsq-box { --background-primary: var(--vs-bg); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); font-family: var(--font-interface); width: min(640px, 92vw); max-height: 60vh; display: flex; flex-direction: column; background: var(--vs-widget); color: var(--vs-fg); border: 1px solid var(--vs-border); border-radius: 0; clip-path: var(--bs-clip); box-shadow: none; overflow: hidden; }
+    .bsq-box { --background-primary: var(--vs-bg); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); font-family: var(--font-interface); width: min(640px, 92vw); max-height: 60vh; display: flex; flex-direction: column; background: var(--vs-widget); color: var(--vs-fg); border: 1px solid var(--vs-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip); box-shadow: none; overflow: hidden; }
     .bsq-in { margin: 8px; height: 30px; padding: 0 10px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; background: var(--vs-input); color: var(--vs-fg); font-size: 13px; outline-offset: -1px; }
     .bsq-in:focus { outline: 1px solid var(--interactive-accent); }
     .bsq-list { overflow: auto; padding-bottom: 4px; }

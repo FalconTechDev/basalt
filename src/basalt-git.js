@@ -19,7 +19,7 @@
     .bsg2-commit:hover { background: var(--interactive-accent-hover); } .bsg2-commit:disabled { opacity: .5; cursor: default; }
     .bsg2-list { flex: 1; overflow: auto; }
     .bsg2-sec { display: flex; align-items: center; padding: 3px 8px 3px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--vs-ln); font-weight: 600; background: rgba(128,128,128,.08); }
-    .bsg2-sec span { margin-left: auto; background: rgba(128,128,128,.3); border-radius: 0; padding: 0 6px; color: var(--vs-fg); }
+    .bsg2-sec span { margin-left: auto; background: rgba(128,128,128,.3); border-radius: var(--bs-r, 5px); padding: 0 6px; color: var(--vs-fg); }
     .bsg2-row { display: flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px 0 12px; cursor: pointer; white-space: nowrap; }
     .bsg2-row:hover { background: rgba(128,128,128,.18); } .bsg2-row .acts { display: none; margin-left: auto; } .bsg2-row:hover .acts { display: inline-flex; }
     .bsg2-n { overflow: hidden; text-overflow: ellipsis; } .bsg2-d { color: var(--vs-ln); font-size: 12px; overflow: hidden; text-overflow: ellipsis; }

@@ -39,7 +39,7 @@
     .bsg-sbox { position: relative; display: flex; align-items: center; } .bsg-sbox .bsg-search { width: 260px; padding-right: 64px; } .bsg-count { position: absolute; right: 10px; font-size: 11px; color: var(--text-faint); pointer-events: none; }
     .bsg-panel .setting-item-info { flex: 1 1 auto; min-width: 0; } .bsg-panel .setting-item-control { flex: 0 0 auto; } .bsg-panel .setting-item-control input[type=range] { width: 140px; }
     .bsg-panel .setting-item-heading { background: none; border: 0; border-top: 1px solid var(--background-modifier-border); border-radius: 0; margin-top: 12px; padding: 14px 4px 6px; } .bsg-panel .setting-item-heading:first-child { border-top: 0; margin-top: 0; }
-    .bsg-panel { overflow-x: hidden; box-sizing: border-box; position: absolute; right: 60px; top: 12px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
+    .bsg-panel { overflow-x: hidden; box-sizing: border-box; position: absolute; right: 60px; top: 12px; width: 380px; padding: 12px 14px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);   display: none; font-size: 12.5px; }
     .bsg-panel.is-open { display: block; }
     .bsg-panel .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 8px 0; color: var(--text-muted); }
     .bsg-panel input[type=range] { width: 120px; }
@@ -57,7 +57,7 @@
     .bscg-top { position: absolute; left: 14px; right: 60px; top: 12px; z-index: 6; padding: 0; border: 0; flex-wrap: nowrap; }
     .bsg-body { position: absolute !important; inset: 0; }
     .bscg-controls { position: absolute; right: 12px; top: 12px; z-index: 6; }
-    .bscg-controls .canvas-control-group { background: var(--background-secondary); border-radius: 0; box-shadow: none; clip-path: var(--bs-clip); }
+    .bscg-controls .canvas-control-group { background: var(--background-secondary); border-radius: var(--bs-r, 5px); box-shadow: none; clip-path: var(--bs-clip); }
     .bscg-controls .canvas-control-item { background: transparent; } .bscg-controls .canvas-control-item:hover { background: var(--background-modifier-hover); }
     .bsg-body > .bsg-panel { z-index: 7; }
     .bsg-panel .hd.first { margin-top: 2px; padding-top: 0; border-top: 0; }
@@ -82,9 +82,9 @@
     .bscg-row button { height: 26px; padding: 0 10px; font-size: 12px; }
     .bscg-info { position: absolute; left: 14px; bottom: 10px; z-index: 5; color: var(--text-faint); font-size: var(--font-ui-smaller); pointer-events: none; }
     .bsg canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
-    .bsg-tip { position: absolute; z-index: 5; pointer-events: none; display: none; max-width: 360px; padding: 6px 10px; border-radius: 0; background: var(--background-primary); border: 1px solid var(--background-modifier-border); box-shadow: 0 4px 16px rgba(0,0,0,.3); font-size: var(--font-ui-smaller); color: var(--text-normal); }
+    .bsg-tip { position: absolute; z-index: 5; pointer-events: none; display: none; max-width: 360px; padding: 6px 10px; border-radius: var(--bs-r, 5px); background: var(--background-primary); border: 1px solid var(--background-modifier-border); box-shadow: 0 4px 16px rgba(0,0,0,.3); font-size: var(--font-ui-smaller); color: var(--text-normal); }
     .bsg-tip b { display: block; margin-bottom: 2px; } .bsg-tip span { color: var(--text-muted); display: block; }
-    .bsg-legend { position: absolute; left: 10px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: 60%; padding: 6px 10px; border-radius: 0; background: var(--background-primary); border: 1px solid var(--background-modifier-border); font-size: var(--font-ui-smaller); color: var(--text-muted); }
+    .bsg-legend { position: absolute; left: 10px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; max-width: 60%; padding: 6px 10px; border-radius: var(--bs-r, 5px); background: var(--background-primary); border: 1px solid var(--background-modifier-border); font-size: var(--font-ui-smaller); color: var(--text-muted); }
     .bsg-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
     .bsg-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); pointer-events: none; text-align: center; padding: 24px; }
   `;

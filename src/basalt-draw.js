@@ -26,13 +26,13 @@
     .bsd:hover .bsd-edit { opacity: .9; }
     .canvas-node.bsd-card .canvas-node-container { background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
     .canvas-node.bsd-card .canvas-node-content { background: transparent !important; padding: 0 !important; overflow: visible; }
-    .bsd-tb { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 2px; padding: 4px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   }
+    .bsd-tb { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 2px; padding: 4px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);   }
     .bsd-tb button { background: transparent; box-shadow: none; clip-path: none; width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--bs-r); color: var(--text-muted); }
     .bsd-tb button:hover { background: var(--background-modifier-hover); color: var(--text-normal); } .bsd-tb button.is-on { background: color-mix(in srgb, var(--interactive-accent) 24%, transparent); color: var(--interactive-accent); }
     .bsd-tb button svg { width: 18px; height: 18px; } .bsd-sep { width: 1px; height: 22px; margin: 0 6px; background: var(--background-modifier-border); }
     .canvas-wrapper:has(.bsd-tb) .canvas-menu-container, .canvas-wrapper:has(.bsd-tb) .canvas-selection { display: none !important; }
     .bsd-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--background-modifier-border-hover); display: inline-block; }
-    .bsd-pop { position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%); padding: 8px 12px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   display: flex; gap: 12px; align-items: center; z-index: 31; }
+    .bsd-pop { position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%); padding: 8px 12px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);   display: flex; gap: 12px; align-items: center; z-index: 31; }
     .bsd-pop .bsd-c { width: 30px; height: 30px; border-radius: 50%; border: 0; cursor: pointer; padding: 0; position: relative; transition: transform .08s; clip-path: none; box-shadow: none; } .bsd-pop .bsd-c:hover { transform: scale(1.08); }
     .bsd-pop .bsd-c.is-on { box-shadow: 0 0 0 3px var(--background-secondary), 0 0 0 5px var(--text-normal); }
     .bsd-pop .bsd-c.rainbow { background: conic-gradient(#fb464c, #e9973f, #e0de71, #44cf6e, #53dfdd, #a882ff, #fb464c); overflow: hidden; } .bsd-pop .bsd-c.rainbow input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }

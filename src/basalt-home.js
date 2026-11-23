@@ -12,7 +12,7 @@
     .bsh-brand img { height: 64px; width: auto; flex: none; }
     .bsh-brand h1 { margin: 0; font-size: 34px; letter-spacing: .04em; font-weight: 700; line-height: 1; }
     .bsh-brand p { margin: 6px 0 0; color: var(--text-muted); font-size: var(--font-ui-small); }
-    .bsh-search { display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: text; color: var(--text-muted); background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);  transition: border-color .12s, background .12s; }
+    .bsh-search { display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: text; color: var(--text-muted); background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);  transition: border-color .12s, background .12s; }
     .bsh-search:hover { border-color: var(--interactive-accent); background: var(--background-modifier-hover); }
     .bsh-search svg { width: 18px; height: 18px; flex: none; }
     .bsh-search span { flex: 1; font-size: 15px; }
@@ -46,7 +46,7 @@
     .bsh-search, .bsh-tile { border: 0; clip-path: none; background: var(--interactive-normal); }
     .bsh-search:hover, .bsh-tile:hover { background: var(--interactive-hover); box-shadow: inset 2px 0 0 var(--interactive-accent); border: 0; }
     .bsh-tile .bsh-ti, .bsh-tile svg { border-radius: 0; }
-    .bsh kbd { border-radius: 0; }
+    .bsh kbd { border-radius: var(--bs-r, 5px); }
     .bsh h3 { color: var(--text-muted); border-bottom: 1px solid var(--background-modifier-border); padding-bottom: 8px; }
     .empty-state .empty-state-container { display: none; }
   `;

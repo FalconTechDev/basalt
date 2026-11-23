@@ -320,7 +320,7 @@
     .bswf-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--background-modifier-border); font-size: var(--font-ui-small); color: var(--text-muted); }
     .bswf-bar b { color: var(--text-normal); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .bswf-bar .bswf-path { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: rtl; text-align: left; }
-    .bswf-bar button { background: transparent; box-shadow: none; padding: 4px; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: 0; clip-path: none; flex: none; }
+    .bswf-bar button { background: transparent; box-shadow: none; padding: 4px; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); border-radius: var(--bs-r, 5px); clip-path: none; flex: none; }
     .bswf-bar button:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     .bswf-bar svg { width: 16px; height: 16px; }
     .bswf-body { flex: 1; overflow: auto; position: relative; }

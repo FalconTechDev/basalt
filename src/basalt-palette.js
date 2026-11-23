@@ -7,7 +7,7 @@
   const css = document.createElement("style");
   css.textContent = `
     .bpal-wrap { position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: center; align-items: flex-start; padding-top: 12vh; background: rgba(0,0,0,.35); }
-    .bpal { width: min(640px, 92vw); max-height: 70vh; display: flex; flex-direction: column; background: var(--modal-background, var(--background-primary)); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip);   overflow: hidden; }
+    .bpal { width: min(640px, 92vw); max-height: 70vh; display: flex; flex-direction: column; background: var(--modal-background, var(--background-primary)); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip);   overflow: hidden; }
     .bpal-in { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--background-modifier-border); }
     .bpal-mode { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 8px; background: color-mix(in srgb, var(--interactive-accent) 22%, transparent); color: var(--interactive-accent); flex: none; border-radius: 4px; }
     .bpal-in input:focus, .bpal-in input:focus-visible { box-shadow: none !important; border: 0 !important; outline: none !important; border-radius: 0 !important; }

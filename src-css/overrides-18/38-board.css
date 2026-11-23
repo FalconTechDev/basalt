@@ -14,14 +14,14 @@
 .osb-card.has-color { background: color-mix(in srgb, var(--card) 10%, var(--background-secondary)); }
 .osb-card.is-sel { box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 45%, transparent), 0 6px 20px rgba(0,0,0,.35); }
 .osb-card.has-peer { outline: 3px dashed var(--peer); outline-offset: 3px; }
-.osb-grip { height: 22px; flex: none; display: flex; align-items: center; padding: 0 6px; cursor: move; border-radius: 10px 10px 0 0; background: color-mix(in srgb, var(--card, var(--background-modifier-border)) 30%, transparent); }
+.osb-grip { height: 22px; flex: none; display: flex; align-items: center; padding: 0 6px; cursor: move; border-radius: 5px 5px 0 0; background: color-mix(in srgb, var(--card, var(--background-modifier-border)) 30%, transparent); }
 .osb-tag { font-size: 11px; color: #fff; border-radius: 6px; padding: 0 6px; }
 .osb-tag:empty { display: none; }
 .osb-x { margin-left: auto; width: 18px; height: 18px; display: grid; place-items: center; border-radius: 5px; color: var(--text-faint); opacity: 0; cursor: pointer; }
 .osb-x svg { width: 13px; height: 13px; }
 .osb-card:hover .osb-x { opacity: 1; }
 .osb-x:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
-.osb-ta { flex: 1; min-height: 0; width: 100%; resize: none; border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 8px 10px; font-size: 14px; line-height: 1.4; color: var(--text-normal); outline: 0; border-radius: 0 0 10px 10px; }
+.osb-ta { flex: 1; min-height: 0; width: 100%; resize: none; border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 8px 10px; font-size: 14px; line-height: 1.4; color: var(--text-normal); outline: 0; border-radius: 0 0 6px 6px; }
 .osb-h { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: var(--interactive-accent); border: 2px solid var(--background-primary); opacity: 0; cursor: crosshair; z-index: 2; transition: opacity .12s, transform .12s; }
 .osb-card:hover .osb-h { opacity: 1; }
 .osb-h:hover { transform: scale(1.3); }
@@ -37,7 +37,7 @@
 .osb-sw { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; border: 2px solid var(--background-primary); }
 .osb-sw:hover { transform: scale(1.2); }
 .osb-people { position: absolute; bottom: 12px; left: 12px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; z-index: 5; pointer-events: none; }
-.osb-chip { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 9px; border-radius: 999px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); }
+.osb-chip { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 9px; border-radius: 4px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); }
 .osb-dot { width: 9px; height: 9px; border-radius: 50%; }
 .osb-cursors { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; }
 .osb-cur { position: absolute; left: 0; top: 0; transition: transform .08s linear; }
@@ -94,7 +94,7 @@
 .bsh-caret { position: absolute; width: 2px; border-radius: 1px; transition: left .12s linear, top .12s linear; }
 .bsh-caret span { position: absolute; left: 0; bottom: 100%; margin-bottom: 1px; font-size: 11px; line-height: 1.5; color: #fff; padding: 0 6px; border-radius: 6px 6px 6px 0; white-space: nowrap; animation: osb-fade .2s ease backwards; }
 .bsh-badge { position: absolute; top: 8px; right: 14px; z-index: 6; display: flex; gap: 6px; pointer-events: none; }
-.bsh-bc { display: flex; align-items: center; gap: 5px; font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); animation: osb-slide .25s ease backwards; }
+.bsh-bc { display: flex; align-items: center; gap: 5px; font-size: 12px; padding: 2px 9px; border-radius: 4px; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); animation: osb-slide .25s ease backwards; }
 .bsh-ptrs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 40; }
 .bsh-ptr { position: absolute; left: 0; top: 0; will-change: transform; }
 .bsh-ptr svg { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .5)); display: block; }
@@ -259,7 +259,7 @@
 .osb-ring.is-ring, .osb-ring.is-dash { border-radius: 50%; border: 1px solid #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, .85), inset 0 0 0 1px rgba(255, 255, 255, .55); } .osb-ring.is-dash { border-style: dashed; }
 .osb-ring.is-cross::before, .osb-ring.is-cross::after { content: ""; position: absolute; background: #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, .85); } .osb-ring.is-cross::before { left: 50%; top: 0; bottom: 0; width: 1px; } .osb-ring.is-cross::after { top: 50%; left: 0; right: 0; height: 1px; } .osb-ring.is-none { display: none; }
 .osb-root.is-draw.is-ringed, .osb-root.is-draw.is-ringed .osb-world, .osb-root.is-draw.is-ringed .osb-ink, .osb-root.is-draw.is-ringed .osb-ink * { cursor: none !important; }
-.osb-grip { border-radius: 2px 2px 0 0 !important; } .osb-card { border-radius: 4px; }
+.osb-grip { border-radius: 5px 5px 0 0 !important; } .osb-card { border-radius: 6px; }
 
 .osb-dtb { left: 0 !important; right: 0 !important; margin-inline: auto !important; width: max-content; translate: none !important; }
 .bs-exp { width: min(760px, 94vw) !important; } .bs-exp-body { display: flex; gap: 18px; align-items: stretch; } .bs-exp-pv { flex: 1; min-width: 0; min-height: 280px; max-height: 420px; display: flex; align-items: center; justify-content: center; position: relative; padding: 14px; border: 1px solid var(--background-modifier-border); background: repeating-conic-gradient(color-mix(in srgb, var(--text-normal) 8%, transparent) 0 25%, transparent 0 50%) 0 0 / 16px 16px; overflow: hidden; }

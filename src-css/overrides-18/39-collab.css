@@ -7,7 +7,7 @@
 .bsm-back2 { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 4px; cursor: pointer; color: var(--text-muted); margin-left: -8px; transition: background-color .15s ease, translate .15s ease; }
 .bsm-back2:hover { background: var(--background-modifier-hover); color: var(--text-normal); translate: -2px 0; }
 .bsm-title { font-size: 18px; font-weight: 650; letter-spacing: -.01em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bsm-pill { display: flex; align-items: center; gap: 7px; padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 550; background: var(--background-secondary); color: var(--text-muted); flex: none; }
+.bsm-pill { display: flex; align-items: center; gap: 7px; padding: 4px 11px; border-radius: 4px; font-size: 12px; font-weight: 550; background: var(--background-secondary); color: var(--text-muted); flex: none; }
 .bsm-pd2 { width: 8px; height: 8px; border-radius: 50%; background: var(--text-faint); }
 .bsm-pill.is-live { color: var(--text-normal); } .bsm-pill.is-live .bsm-pd2 { background: #46a758; animation: osb-ping 2.2s ease-out infinite; }
 .bsm-pill.is-wait .bsm-pd2 { background: #d6b43c; animation: osb-blink 1s ease-in-out infinite; }
@@ -70,7 +70,7 @@
 .bsm-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--background-modifier-border-hover); box-sizing: border-box; flex: none; transition: border-color .15s ease, background-color .15s ease; }
 .bsm-choice.is-on .bsm-radio { border-color: var(--interactive-accent); background: radial-gradient(circle, var(--interactive-accent) 0 38%, transparent 42%); }
 .bsm-selrow { display: flex; align-items: center; gap: 10px; margin-top: 8px; } .bsm-seltxt { flex: 1; min-width: 0; font-size: 13px; color: var(--text-muted); }
-.bsm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; } .bsm-chip { display: inline-flex; align-items: center; gap: 5px; max-width: 200px; padding: 3px 9px; border-radius: 999px; font-size: 12px; background: var(--background-modifier-hover); } .bsm-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsm-chip.is-more { color: var(--text-muted); }
+.bsm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; } .bsm-chip { display: inline-flex; align-items: center; gap: 5px; max-width: 200px; padding: 3px 9px; border-radius: 4px; font-size: 12px; background: var(--background-modifier-hover); } .bsm-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .bsm-chip.is-more { color: var(--text-muted); }
 .bsm-chi svg { width: 12px; height: 12px; }
 .bsm-stoprow { margin-top: 10px; display: flex; justify-content: flex-end; }
 .bsm-seg2 { display: flex; padding: 3px; border-radius: 4px; background: var(--background-secondary); margin-bottom: 10px; } .bsm-sg { flex: 1; text-align: center; padding: 7px 10px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 550; color: var(--text-muted); transition: background-color .15s ease, color .15s ease; } .bsm-sg.is-on { background: var(--background-primary); color: var(--text-normal); box-shadow: 0 1px 4px rgba(0, 0, 0, .3); }
@@ -85,7 +85,7 @@
 .bsm-people2 { display: flex; flex-direction: column; }
 .bsm-person2 { display: flex; align-items: center; gap: 12px; padding: 11px 4px; border-bottom: 1px solid var(--background-modifier-border); } .bsm-person2:last-child { border-bottom: 0; }
 .bsm-pd3 { width: 10px; height: 10px; border-radius: 50%; flex: none; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 0%, transparent); }
-.bsm-role-pill { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 550; vertical-align: 1px; background: var(--background-modifier-hover); color: var(--text-muted); } .bsm-role-pill.is-owner { background: color-mix(in srgb, var(--interactive-accent) 20%, transparent); color: var(--interactive-accent); } .bsm-role-pill.is-view, .bsm-role-pill.is-banned { background: color-mix(in srgb, #d6b43c 18%, transparent); color: #d6b43c; }
+.bsm-role-pill { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 4px; font-size: 11px; font-weight: 550; vertical-align: 1px; background: var(--background-modifier-hover); color: var(--text-muted); } .bsm-role-pill.is-owner { background: color-mix(in srgb, var(--interactive-accent) 20%, transparent); color: var(--interactive-accent); } .bsm-role-pill.is-view, .bsm-role-pill.is-banned { background: color-mix(in srgb, #d6b43c 18%, transparent); color: #d6b43c; }
 .bsm-pa2 { display: flex; align-items: center; gap: 4px; flex: none; }
 .bsm-empty3 { text-align: center; padding: 34px 10px; } .bsm-ei { display: inline-grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: var(--background-secondary); color: var(--text-faint); margin-bottom: 12px; } .bsm-ei svg { width: 24px; height: 24px; } .bsm-et { font-weight: 600; } .bsm-ed { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
 

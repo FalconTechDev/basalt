@@ -16,11 +16,11 @@
     .bsc-tabs button.mod-cta { background: transparent; color: var(--text-normal); border-bottom-color: var(--interactive-accent); }
     .bsc-row button.mod-cta { background: var(--background-primary); color: var(--text-normal); }
     .bsc-body { flex: 1; overflow: auto; padding: 10px 24px 20px; }
-    .bsc-row { display: flex; gap: 12px; align-items: center; padding: 10px 12px; margin: 6px 0; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 0; }
+    .bsc-row { display: flex; gap: 12px; align-items: center; padding: 10px 12px; margin: 6px 0; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); }
     .bsc-row .bsc-i { flex: 1; min-width: 0; } .bsc-row b { font-weight: 600; } .bsc-row small { display: block; color: var(--text-muted); }
     .bsc-tag { display: inline-block; padding: 0 6px; margin-left: 6px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; background: color-mix(in srgb, var(--interactive-accent) 20%, transparent); color: var(--interactive-accent); }
     .bsc-msg { color: var(--text-muted); padding: 14px 4px; } .bsc-err { color: var(--text-error); padding: 6px 4px; white-space: pre-wrap; }
-    .bsc-src { display: flex; gap: 8px; align-items: center; padding: 6px 10px; margin: 4px 0; background: var(--background-secondary); border-radius: 0; } .bsc-src span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bsc-src { display: flex; gap: 8px; align-items: center; padding: 6px 10px; margin: 4px 0; background: var(--background-secondary); border-radius: var(--bs-r, 5px); } .bsc-src span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   `;
   document.head.appendChild(css);
 

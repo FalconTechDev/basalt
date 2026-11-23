@@ -93,33 +93,33 @@
       --titlebar-background: #0c0a09; --titlebar-background-focused: #14110f; --tab-container-background: #0c0a09; --ribbon-background: #0c0a09; --modal-background: #1b1612;
     }
     /* the shape language of Basalt, for every module: panels, cards and pop-ups are cut at two corners (--bs-clip), small controls and list rows have --bs-r */
-    body { --bs-clip: none; --bs-r: var(--radius-l); --bs-gap: var(--size-4-2); --bs-pad: var(--size-4-3); --bs-ease: var(--bs-dur-fast); }
-    body { --bs-c: var(--bs-cut-md); --radius-s: 6px; --radius-m: 8px; --radius-l: 12px; --button-radius: 8px; --input-radius: 8px; --checkbox-radius: 2px; }
+    body { --bs-clip: none; --bs-r: var(--radius-m); --bs-gap: var(--size-4-2); --bs-pad: var(--size-4-3); --bs-ease: var(--bs-dur-fast); }
+    body { --bs-c: var(--bs-cut-md); --radius-s: 4px; --radius-m: 5px; --radius-l: 6px; --radius-xl: 6px; --button-radius: 5px; --input-radius: 5px; --checkbox-radius: 3px; }
     .modal:not(.mod-settings), .prompt, .menu, .suggestion-container, .popover, .notice {
       clip-path: none;
     }
-    .modal:not(.mod-settings), .prompt, .menu, .suggestion-container, .popover, .notice { border-radius: 0; }
-    .menu-item, .suggestion-item { border-radius: 0; }
+    .modal:not(.mod-settings), .prompt, .menu, .suggestion-container, .popover, .notice { border-radius: 6px; }
+    .menu-item, .suggestion-item { border-radius: 5px; }
     .status-bar { border-radius: 0; }
-    .canvas-control-group, .canvas-card-menu, .canvas-menu-container .menu-container { border-radius: 0; box-shadow: none; clip-path: var(--bs-clip); }
+    .canvas-control-group, .canvas-card-menu, .canvas-menu-container .menu-container { border-radius: 6px; box-shadow: none; clip-path: var(--bs-clip); }
     .canvas-control-group { background: var(--background-secondary); }
     .canvas-card-menu { --icon-size: 18px; --icon-stroke: 1.75px; }
     .canvas-card-menu .canvas-card-menu-button svg { width: 18px; height: 18px; }
     /* one search field everywhere: explorer filter, graph search, settings search, plugin catalog, the two search overlays */
-    body .bsf-find input, body .bsg-search, body .bset-find input, body .bsc-add input { height: 30px; box-sizing: border-box; padding: 0 10px; font-size: 13px; border: 1px solid var(--background-modifier-border) !important; border-radius: 0 !important; background: var(--background-primary) !important; color: var(--text-normal); box-shadow: none !important; outline: none !important; }
+    body .bsf-find input, body .bsg-search, body .bset-find input, body .bsc-add input { height: 30px; box-sizing: border-box; padding: 0 10px; font-size: 13px; border: 1px solid var(--background-modifier-border) !important; border-radius: 5px !important; background: var(--background-primary) !important; color: var(--text-normal); box-shadow: none !important; outline: none !important; }
     body .bsf-find input:focus, body .bsg-search:focus, body .bset-find input:focus, body .bsc-add input:focus { border-color: var(--interactive-accent) !important; box-shadow: none !important; }
     .notice { background: var(--background-secondary); color: var(--text-normal); }
     kbd, .setting-hotkey { font-family: var(--font-interface); }
     /* one look for the two search overlays (quick switcher, note search): size, place, backdrop, panel, input, rows */
     body .bpal-wrap, body .bss-wrap { padding-top: 12vh; background: rgba(0,0,0,.4); }
-    body .bpal, body .bss { width: min(700px, 92vw); max-height: 70vh; background: var(--modal-background, var(--background-primary)); border: 1px solid var(--background-modifier-border); border-radius: 0; clip-path: var(--bs-clip); box-shadow: none; }
+    body .bpal, body .bss { width: min(700px, 92vw); max-height: 70vh; background: var(--modal-background, var(--background-primary)); border: 1px solid var(--background-modifier-border); border-radius: 6px; clip-path: var(--bs-clip); box-shadow: none; }
     body .bpal-in, body .bss-in { padding: 12px 16px; gap: 10px; }
     body .bpal-in input, body .bss-in input, body .bpal-in input:focus, body .bss-in input:focus { font-size: 16px; border: 0 !important; box-shadow: none !important; outline: none !important; border-radius: 0 !important; background: transparent !important; }
     body .bss-in svg { width: 16px; height: 16px; }
     body .bss-item { padding: 7px 16px; border-left-width: 0; border-radius: var(--bs-r); margin: 0 4px; }
 
     /* tabs: a flat strip, the open tab lifts to the page colour and carries an accent line on top */
-    .workspace-tab-header { position: relative; transition: background .12s, color .12s; border-radius: 0; }
+    .workspace-tab-header { position: relative; transition: background .12s, color .12s; border-radius: 5px 5px 0 0; }
     .workspace-tab-header-inner-title { font-weight: 500; letter-spacing: .01em; }
     .workspace-tab-header:not(.is-active):hover { background: var(--background-modifier-hover); }
     .workspace-tab-header.is-active { background: var(--background-primary) linear-gradient(var(--interactive-accent), var(--interactive-accent)) top / 100% 2px no-repeat; box-shadow: none; }
@@ -143,8 +143,8 @@
     .nav-buttons-container { gap: var(--size-2-1); padding: var(--size-2-3) var(--size-4-2); }
     .workspace-tab-header-container { padding-top: 2px; }
     .workspace-leaf-content .view-header { border-bottom: 1px solid var(--background-modifier-border); }
-    .checkbox-container { border-radius: 2px; }
-    .checkbox-container::after { border-radius: 1px; }
+    .checkbox-container { border-radius: 11px; }
+    .checkbox-container::after { border-radius: 50%; }
   `;
   const appEl = document.createElement("style");
   appEl.id = "basalt-app-theme";
@@ -160,7 +160,7 @@
       --background-primary: #e6dfd6; --background-secondary: #ddd3c7; --background-modifier-hover: #ebe3d8; --background-modifier-border: #cdbfae;
       --divider-color: #cdbfae; --text-normal: #2a211a; --text-muted: #5c4f42; --text-faint: #655847;
       --settings-background: #dcd2c3; --modal-sidebar-background: #d1c6b5; --setting-items-background: #eee7db; --setting-items-radius: 0; --setting-items-border-width: 0px;
-      --radius-s: 0; --radius-m: 0; --radius-l: 0;
+      --radius-s: 4px; --radius-m: 5px; --radius-l: 6px;
       --bs-cut: var(--bs-cut-lg);
     }
     .theme-dark .modal.mod-settings {
@@ -175,16 +175,16 @@
     .modal.mod-settings .setting-item { border-color: var(--divider-color); }
     .modal.mod-settings .vertical-tab-header { border-inline-end-color: var(--divider-color); }
     .modal.mod-settings .vertical-tab-header-group-title { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
-    .modal.mod-settings .vertical-tab-nav-item { border-radius: 0; position: relative; clip-path: none; }
+    .modal.mod-settings .vertical-tab-nav-item { border-radius: 5px; position: relative; clip-path: none; }
     .modal.mod-settings .vertical-tab-nav-item.is-active { background: var(--background-modifier-hover); color: var(--text-normal); box-shadow: inset 3px 0 0 var(--interactive-accent); }
     .modal.mod-settings .vertical-tab-nav-item.is-active .vertical-tab-nav-item-icon { color: var(--interactive-accent); }
     .modal.mod-settings .setting-item-heading .setting-item-name { font-weight: 600; letter-spacing: .01em; }
     .modal.mod-settings .setting-item-description { color: var(--text-muted); }
     .modal.mod-settings button.mod-cta { background: var(--interactive-accent); color: var(--text-on-accent); }
-    .modal.mod-settings .checkbox-container { border-radius: 2px; }
-    .modal.mod-settings .checkbox-container::after { border-radius: 1px; }
-    .modal.mod-settings input[type="text"], .modal.mod-settings input[type="number"], .modal.mod-settings input[type="search"], .modal.mod-settings select, .modal.mod-settings .dropdown { border-radius: 0; background: var(--background-primary); border-color: var(--background-modifier-border); box-shadow: none; }
-    .modal.mod-settings input[type="range"]::-webkit-slider-thumb { border-radius: 0; background: var(--interactive-accent); }
+    .modal.mod-settings .checkbox-container { border-radius: 11px; }
+    .modal.mod-settings .checkbox-container::after { border-radius: 50%; }
+    .modal.mod-settings input[type="text"], .modal.mod-settings input[type="number"], .modal.mod-settings input[type="search"], .modal.mod-settings select, .modal.mod-settings .dropdown { border-radius: 5px; background: var(--background-primary); border-color: var(--background-modifier-border); box-shadow: none; }
+    .modal.mod-settings input[type="range"]::-webkit-slider-thumb { border-radius: 50%; background: var(--interactive-accent); }
   `;
   const themeEl = document.createElement("style");
   themeEl.id = "basalt-settings-theme";
