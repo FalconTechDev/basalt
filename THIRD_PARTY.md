@@ -70,7 +70,7 @@ live in the history (commits `d89c49d` .. `ca5acac`).
 
 | Component | Version | Licence | Where | Notes |
 |---|---|---|---|---|
-| Electron | the version of the Obsidian runtime (see `run.ps1`; check `process.versions.electron`) | MIT | `runtime/` (not tracked, shipped by the installer) | `LICENSE.electron.txt` ships |
+| Electron | 39.8.3 (measured in the headless run; Chromium 142.0.7444.265) | MIT | `runtime/` (not tracked, shipped by the installer) | `LICENSE.electron.txt` ships |
 | Chromium and its dependencies | with Electron | BSD-3-Clause and others | `runtime/` | `LICENSES.chromium.html` ships |
 | @electron/remote | 2.1.3 | MIT | `stub/node_modules/` (not tracked) | shipped inside `resources/app` |
 | node-addon-api | not recorded | MIT | `stub/node_modules/` | only needed to build the removed native modules |
