@@ -868,6 +868,10 @@
           m.showAtMouseEvent(e);
         });
         this.contentEl.tabIndex = 0;
+        // toolbar buttons are plain divs: make them reachable with Tab and operable with Enter / Space like real buttons
+        { const BTN = ".osb-btn,.osb-sb,.osb-dt,.osb-zb,.osb-x,.osb-rb,.osb-nb"; const mk = (n) => { if (n.nodeType !== 1) return; const l = n.matches(BTN) ? [n] : []; for (const x of [...l, ...n.querySelectorAll(BTN)]) { if (!x.hasAttribute("tabindex")) x.tabIndex = 0; if (!x.hasAttribute("role")) x.setAttribute("role", "button"); } }; mk(this.contentEl);
+          new MutationObserver((ms) => { for (const m of ms) m.addedNodes.forEach(mk); }).observe(this.contentEl, { childList: true, subtree: true });
+          this.contentEl.addEventListener("keydown", (e) => { const t = e.target; if ((e.key === "Enter" || e.key === " ") && t.matches && t.matches(BTN) && !e.ctrlKey && !e.metaKey) { e.preventDefault(); e.stopPropagation(); t.click(); } }, true); }
         this.contentEl.addEventListener("keyup", (e) => { if (e.code === "Space") { this.space = false; this.root.classList.remove("is-hand"); } });
         this.contentEl.addEventListener("keydown", (e) => {
           const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), mod = e.ctrlKey || e.metaKey, k = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3).toLowerCase() : e.key.toLowerCase();
