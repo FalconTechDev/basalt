@@ -322,7 +322,8 @@
       async dropVaultFiles(list, w) {
         let n = 0; for (const f of list) { if (!f || f.children || f.path === this.path) continue; const ext = String(f.extension || "").toLowerCase(), at = { x: w.x + n * 40, y: w.y + n * 40 }; n++;
           try {
-            if (ext === EXT) { const data = this.readBoardDoc(await app.vault.adapter.read(f.path)); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, true); }
+            if (ext === "canvas") { const data = await canvasData(JSON.parse(await app.vault.adapter.read(f.path))); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, false); }
+            else if (ext === EXT) { const data = this.readBoardDoc(await app.vault.adapter.read(f.path)); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, true); }
             else if (/^(png|jpe?g|gif|webp|bmp|svg|avif)$/.test(ext)) { const buf = await app.vault.adapter.readBinary(f.path); this.addImageFile(new Blob([buf], { type: ext === "svg" ? "image/svg+xml" : "image/" + (ext === "jpg" ? "jpeg" : ext) }), at.x, at.y); }
             else this.addCard(at.x - 130, at.y - 30, f.basename || f.name || f.path);
           } catch (e) { new api.Notice("Не удалось добавить файл " + (f.name || "")); }
@@ -337,16 +338,16 @@
       // import cards (all or chosen ones) from another board file into this one
       readBoardDoc(text) {
         const Y = window.__bsY.Y, meta = JSON.parse(text), d = new Y.Doc(); if (meta.ydoc) Y.applyUpdate(d, unb64(meta.ydoc)); const nodes = d.getMap("nodes"), edges = d.getMap("edges"), list = [];
-        nodes.forEach((m, id) => list.push({ id, x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "", img: m.get("img") || "", fold: !!m.get("fold") }));
-        const es = []; edges.forEach((m) => es.push({ a: m.get("a"), b: m.get("b"), label: m.get("label") || "" })); const ink = d.getArray("ink").toArray(); return { nodes: list, edges: es, ink };
+        nodes.forEach((m, id) => list.push({ id, x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "", img: m.get("img") || "", fold: !!m.get("fold"), kind: m.get("kind") || "" }));
+        const es = []; edges.forEach((m) => es.push({ a: m.get("a"), b: m.get("b"), label: m.get("label") || "", sa: m.get("sa") || "", sb: m.get("sb") || "" })); const ink = d.getArray("ink").toArray(); return { nodes: list, edges: es, ink };
       }
       importBoardData(data, ids, at, withInk) {
         if (this.ro) return; const Y = window.__bsY.Y, pick = data.nodes.filter((n) => ids.has(n.id)); if (!pick.length) return;
         let x1 = 1e9, y1 = 1e9, x2 = -1e9; for (const n of pick) { x1 = Math.min(x1, n.x); y1 = Math.min(y1, n.y); x2 = Math.max(x2, n.x + n.w); }
         let ox, oy; if (at) { ox = at.x - x1; oy = at.y - y1; } else { const bb = this.bounds(Array.from(this.yn.keys())); ox = bb ? bb.x + bb.w + 120 - x1 : 0; oy = bb ? bb.y - y1 : 0; }
         const map = {}, added = []; this.doc.transact(() => {
-          for (const n of pick) { const id = uid(), m = new Y.Map(), t = new Y.Text(); map[n.id] = id; t.insert(0, n.text); m.set("x", Math.round(n.x + ox)); m.set("y", Math.round(n.y + oy)); m.set("w", n.w); m.set("h", n.h); m.set("color", n.color); m.set("by", me.name); if (n.img) m.set("img", n.img); if (n.fold) m.set("fold", true); this.stampM(m); m.set("text", t); this.yn.set(id, m); added.push(id); }
-          for (const e of data.edges) if (map[e.a] && map[e.b]) { const m = new Y.Map(); m.set("a", map[e.a]); m.set("b", map[e.b]); m.set("label", e.label); this.ye.set(uid(), m); }
+          for (const n of pick) { const id = uid(), m = new Y.Map(), t = new Y.Text(); map[n.id] = id; t.insert(0, n.text); m.set("x", Math.round(n.x + ox)); m.set("y", Math.round(n.y + oy)); m.set("w", n.w); m.set("h", n.h); m.set("color", n.color); m.set("by", me.name); if (n.img) m.set("img", n.img); if (n.fold) m.set("fold", true); if (n.kind) m.set("kind", n.kind); this.stampM(m); m.set("text", t); this.yn.set(id, m); added.push(id); }
+          for (const e of data.edges) if (map[e.a] && map[e.b]) { const m = new Y.Map(); m.set("a", map[e.a]); m.set("b", map[e.b]); m.set("label", e.label); if (e.sa) m.set("sa", e.sa); if (e.sb) m.set("sb", e.sb); this.ye.set(uid(), m); }
           if (withInk && data.ink.length) { const a = this.inkArr(); if (a) for (const st of data.ink) { const c = JSON.parse(JSON.stringify(st)); c.id = uid(); const mv = (q) => [q[0] + ox, q[1] + oy]; if (c.pts) c.pts = c.pts.map(mv); if (c.a) c.a = mv(c.a); if (c.b) c.b = mv(c.b); a.push([c]); } }
         });
         this.select(new Set(added)); this.feed("add", added[0], this.label(added[0])); new api.Notice("Добавлено карточек: " + added.length);
@@ -381,6 +382,33 @@
         const bb = this.bounds(ids), gapX = 90, gapY = 40; const seen = new Set(), comps = [];
         for (const i of ids) { if (seen.has(i)) continue; const comp = [], st = [i]; seen.add(i); while (st.length) { const v = st.pop(); comp.push(v); for (const n of und.get(v)) if (!seen.has(n)) { seen.add(n); st.push(n); } } comps.push(comp); }
         comps.sort((a, b) => b.length - a.length); let cursor = 0;
+        // layered drawing: cycles broken, longest-path levels, crossings reduced by sweeps, cards pulled toward their neighbours
+        const layered = (comp, lr) => {
+          const inC = new Set(comp), out = new Map(comp.map((v) => [v, []])), inn = new Map(comp.map((v) => [v, []])), state = new Map(), back = new Set();
+          const dfs = (v) => { state.set(v, 1); for (const n of dir.get(v)) { if (!inC.has(n)) continue; if (state.get(n) === 1) { back.add(v + ">" + n); continue; } if (!state.get(n)) dfs(n); } state.set(v, 2); };
+          const hasIn = new Set(); for (const v of comp) for (const n of dir.get(v)) if (inC.has(n)) hasIn.add(n); for (const r of comp.filter((v) => !hasIn.has(v)).concat(comp)) if (!state.get(r)) dfs(r);
+          for (const v of comp) for (const n of dir.get(v)) if (inC.has(n) && !back.has(v + ">" + n)) { out.get(v).push(n); inn.get(n).push(v); }
+          const layer = new Map(), indeg = new Map(comp.map((v) => [v, inn.get(v).length])), q = comp.filter((v) => !indeg.get(v)); q.forEach((v) => layer.set(v, 0));
+          for (let h = 0; h < q.length; h++) { const v = q[h]; for (const n of out.get(v)) { layer.set(n, Math.max(layer.get(n) || 0, layer.get(v) + 1)); indeg.set(n, indeg.get(n) - 1); if (!indeg.get(n)) q.push(n); } }
+          for (const v of comp) if (!inn.get(v).length && out.get(v).length) layer.set(v, Math.min.apply(null, out.get(v).map((n) => layer.get(n))) - 1);
+          const mn = Math.min.apply(null, comp.map((v) => layer.get(v) || 0)); for (const v of comp) layer.set(v, (layer.get(v) || 0) - mn);
+          const nl = Math.max.apply(null, comp.map((v) => layer.get(v))) + 1, L = Array.from({ length: nl }, () => []); const seen = new Set(), seq = []; const walk = (v) => { if (seen.has(v)) return; seen.add(v); seq.push(v); for (const n of out.get(v)) walk(n); }; for (const r of comp.filter((v) => !inn.get(v).length).concat(comp)) walk(r); for (const v of seq) L[layer.get(v)].push(v);
+          const nbr = new Map(comp.map((v) => [v, []])); for (const v of comp) for (const n of out.get(v)) { nbr.get(v).push(n); nbr.get(n).push(v); }
+          const ord = new Map(); const setOrd = () => L.forEach((X) => X.forEach((v, k) => ord.set(v, k))); setOrd();
+          const crossings = () => { let c = 0; for (const v of comp) for (const n of out.get(v)) { if (layer.get(n) - layer.get(v) !== 1) continue; for (const u of comp) { if (layer.get(u) !== layer.get(v)) continue; for (const w2 of out.get(u)) { if (layer.get(w2) - layer.get(u) !== 1) continue; if (ord.get(u) < ord.get(v) && ord.get(w2) > ord.get(n)) c++; } } } return c; };
+          let best = L.map((X) => X.slice()), bc = crossings();
+          for (let it = 0; it < 12 && bc > 0; it++) { const down = it % 2 === 0, ds = L.map((_, k) => k); if (!down) ds.reverse(); for (const d of ds) { const X = L[d], ref = down ? d - 1 : d + 1; if (ref < 0 || ref >= nl) continue; const med = (v) => { const ns = nbr.get(v).filter((n) => layer.get(n) === ref).map((n) => ord.get(n)).sort((a, b) => a - b); if (!ns.length) return ord.get(v); const m = ns.length >> 1; return ns.length % 2 ? ns[m] : (ns[m - 1] + ns[m]) / 2; }; X.sort((a, b) => med(a) - med(b)); X.forEach((v, k) => ord.set(v, k)); }
+            let imp = true; for (let pass = 0; imp && pass < 3; pass++) { imp = false; for (const X of L) for (let k = 0; k < X.length - 1; k++) { const before = crossings(); [X[k], X[k + 1]] = [X[k + 1], X[k]]; ord.set(X[k], k); ord.set(X[k + 1], k + 1); if (crossings() < before) imp = true; else { [X[k], X[k + 1]] = [X[k + 1], X[k]]; ord.set(X[k], k); ord.set(X[k + 1], k + 1); } } }
+            const c = crossings(); if (c < bc) { bc = c; best = L.map((X) => X.slice()); } }
+          for (let d = 0; d < nl; d++) { L[d] = best[d]; } setOrd();
+          const W = (v) => g(v).get("w"), Hh = (v) => this.effH(g(v)), sz = (v) => (lr ? Hh(v) : W(v)), fl = (v) => (lr ? W(v) : Hh(v)), gap = lr ? 36 : 56, t = new Map();
+          for (const X of L) { let y = 0; for (const v of X) { t.set(v, y); y += sz(v) + gap; } }
+          const sepFix = (X) => { for (let k = 1; k < X.length; k++) t.set(X[k], Math.max(t.get(X[k]), t.get(X[k - 1]) + sz(X[k - 1]) + gap)); };
+          for (let it = 0; it < 8; it++) { const ds = L.map((_, k) => k); if (it % 2) ds.reverse(); for (const d of ds) { const X = L[d], ref = it % 2 ? d + 1 : d - 1; for (const v of X) { const ns = nbr.get(v).filter((n) => layer.get(n) === ref || (it > 5 && layer.get(n) !== d)); if (ns.length) t.set(v, ns.reduce((s2, n) => s2 + t.get(n) + sz(n) / 2, 0) / ns.length - sz(v) / 2); } sepFix(X); let sh = 0; for (const v of X) sh += 0; void sh; } }
+          let lo = 1e9, hi = -1e9; for (const v of comp) { lo = Math.min(lo, t.get(v)); hi = Math.max(hi, t.get(v) + sz(v)); }
+          const lw = L.map((X) => Math.max.apply(null, X.map(fl))), pos = new Map(); let off = 0; L.forEach((X, d) => { for (const v of X) pos.set(v, lr ? [off + (lw[d] - fl(v)) / 2, t.get(v) - lo] : [t.get(v) - lo, off + (lw[d] - fl(v)) / 2]); off += lw[d] + (lr ? 110 : 90); });
+          return { pos, w: lr ? off - 110 : hi - lo, h: lr ? hi - lo : off - 90 };
+        };
         const place = (comp, kind) => {
           if (comp.length === 1) { const i = comp[0]; return { pos: new Map([[i, [0, 0]]]), w: W(i), h: H(i) }; }
           if (kind === "auto") { let ec = 0; for (const v of comp) ec += dir.get(v).size; kind = ec <= comp.length * 1.15 ? "lr" : "force"; } const indeg = new Map(comp.map((v) => [v, 0])); for (const v of comp) for (const n of dir.get(v)) indeg.set(n, (indeg.get(n) || 0) + 1);
@@ -403,12 +431,7 @@
             if (roots.length === 1) ang(root, 0, Math.PI * 2); else { let s0 = 0; const tot = roots.reduce((s2, r) => s2 + leaves.get(r), 0); for (const r of roots) { const sp = Math.PI * 2 * leaves.get(r) / tot; ang(r, s0, s0 + sp); s0 += sp; } }
             let x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9; for (const [v, c] of pos) { c[0] -= W(v) / 2; c[1] -= H(v) / 2; x1 = Math.min(x1, c[0]); y1 = Math.min(y1, c[1]); x2 = Math.max(x2, c[0] + W(v)); y2 = Math.max(y2, c[1] + H(v)); } for (const [, c] of pos) { c[0] -= x1; c[1] -= y1; } return { pos, w: x2 - x1, h: y2 - y1 };
           }
-          // layered tree: each level is a column (left to right) or a row (top down)
-          const lr = kind === "lr", layers = []; for (const v of comp) (layers[depth.get(v)] = layers[depth.get(v)] || []).push(v);
-          const order = new Map(); layers.forEach((L) => L.forEach((v, k) => order.set(v, k))); for (let sweep = 0; sweep < 3; sweep++) for (let d = 1; d < layers.length; d++) { const L = layers[d]; const bc = (v) => { const ps = Array.from(und.get(v)).filter((n) => depth.get(n) === d - 1); return ps.length ? ps.reduce((s2, n) => s2 + order.get(n), 0) / ps.length : order.get(v); }; L.sort((a, b) => bc(a) - bc(b)); L.forEach((v, k) => order.set(v, k)); }
-          const lw = layers.map((L) => Math.max.apply(null, L.map(lr ? W : H))), ext = layers.map((L) => L.reduce((s2, v) => s2 + (lr ? H(v) : W(v)) + (lr ? gapY : 60), -(lr ? gapY : 60))), total = Math.max.apply(null, ext); const pos = new Map(); let off = 0;
-          layers.forEach((L, d) => { let t = (total - ext[d]) / 2; for (const v of L) { pos.set(v, lr ? [off, t] : [t, off]); t += (lr ? H(v) : W(v)) + (lr ? gapY : 60); } off += lw[d] + (lr ? gapX : 110); });
-          return { pos, w: lr ? off - gapX : total, h: lr ? total : off - 110 };
+          return layered(comp, kind === "lr");
         };
         const res = comps.map((comp) => place(comp, mode)); let area = 0, maxW = 0; for (const r of res) { area += (r.w + 80) * (r.h + 80); maxW = Math.max(maxW, r.w); } const rowW = Math.max(maxW, Math.sqrt(area) * 1.5); this.doc.transact(() => { let x = 0, y = 0, rh = 0; for (const r of res) { if (x > 0 && x + r.w > rowW) { x = 0; y += rh + 80; rh = 0; } for (const [v, c] of r.pos) { g(v).set("x", Math.round(bb.x + x + c[0])); g(v).set("y", Math.round(bb.y + y + c[1])); } x += r.w + 80; rh = Math.max(rh, r.h); } });
         this.um && this.um.stopCapturing(); this.fit(); this.toastUndo("Раскладка применена.");
@@ -676,6 +699,15 @@
       }
       effH(m) { return m.get("fold") ? 52 : m.get("h"); }
       anchor(id, toward) { const m = this.yn.get(id); if (!m) return null; const x = m.get("x"), y = m.get("y"), w = m.get("w"), h = this.effH(m), cx = x + w / 2, cy = y + h / 2, dx = toward.x - cx, dy = toward.y - cy; if (!dx && !dy) return { x: cx, y: cy }; const k = Math.min(dx ? (w / 2) / Math.abs(dx) : 1e9, dy ? (h / 2) / Math.abs(dy) : 1e9); return { x: cx + dx * k, y: cy + dy * k }; }
+      removeEdge(id) { const m = this.ye.get(id); if (!m) return; this.feed("unlink", null, ""); this.doc.transact(() => { this.ye.delete(id); }); this.selEdge = null; this.syncEdges(); }
+      splitEdge(id) {
+        const m = this.ye.get(id); if (!m) return; const a = m.get("a"), b = m.get("b"), sa = m.get("sa") || "", sb = m.get("sb") || "", A = this.center(a), B = this.center(b); if (!A || !B) return; this.um && this.um.stopCapturing();
+        const nid = this.addCard((A.x + B.x) / 2 - 130, (A.y + B.y) / 2 - 30); this.doc.transact(() => { this.ye.delete(id); }); this.addEdge(a, nid, sa, ""); this.addEdge(nid, b, "", sb); this.um && this.um.stopCapturing(); this.selEdge = null;
+      }
+      branchEdge(id) {
+        const m = this.ye.get(id); if (!m) return; const a = m.get("a"), b = m.get("b"), A = this.center(a), B = this.center(b); if (!A || !B) return; const dx = B.x - A.x, dy = B.y - A.y, l = Math.hypot(dx, dy) || 1, mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2, nx = -dy / l, ny = dx / l, side = (nx * (this.myCur ? this.myCur.x - mx : 1) + ny * (this.myCur ? this.myCur.y - my : 1)) >= 0 ? 1 : -1; this.um && this.um.stopCapturing();
+        const nid = this.addCard(mx + nx * side * 220 - 130, my + ny * side * 220 - 30); this.addEdge(a, nid, m.get("sa") || "", ""); this.um && this.um.stopCapturing();
+      }
       anchorSide(id, side) { const m = this.yn.get(id); if (!m) return null; const x = m.get("x"), y = m.get("y"), w = m.get("w"), h = this.effH(m); return side === "t" ? { x: x + w / 2, y } : side === "b" ? { x: x + w / 2, y: y + h } : side === "l" ? { x, y: y + h / 2 } : { x: x + w, y: y + h / 2 }; }
       nearSide(id, pt) { const m = this.yn.get(id); if (!m) return "l"; const w = m.get("w"), h = this.effH(m), dx = (pt.x - (m.get("x") + w / 2)) / w, dy = (pt.y - (m.get("y") + h / 2)) / h; return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "r" : "l") : (dy > 0 ? "b" : "t"); }
       portDot(key, p) { const NS = "http://www.w3.org/2000/svg"; let c = this["_pd" + key]; if (!c) { c = this["_pd" + key] = document.createElementNS(NS, "circle"); c.setAttribute("class", "osb-port"); c.setAttribute("r", 6); this.svg.appendChild(c); } c.setAttribute("cx", p.x); c.setAttribute("cy", p.y); }
@@ -685,9 +717,11 @@
         if (!this.ye || !this.svg) return; const seen = new Set(); const NS = "http://www.w3.org/2000/svg";
         this.ye.forEach((m, id) => {
           const A = this.center(m.get("a")), B = this.center(m.get("b")); if (!A || !B) return; seen.add(id);
-          let r = this.edgeEls.get(id); if (!r) { const g = document.createElementNS(NS, "g"), hit = document.createElementNS(NS, "line"), ln = document.createElementNS(NS, "line"), tx = document.createElementNS(NS, "text"); hit.setAttribute("class", "osb-eh"); ln.setAttribute("class", "osb-el"); ln.setAttribute("marker-end", "url(#osb-arrow)"); tx.setAttribute("class", "osb-et"); tx.setAttribute("text-anchor", "middle"); const ea = document.createElementNS(NS, "circle"), eb = document.createElementNS(NS, "circle"); for (const [c, end] of [[ea, "a"], [eb, "b"]]) { c.setAttribute("class", "osb-ep"); c.setAttribute("r", 7); c.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); if (this.ro) return; const mm = this.ye.get(id); if (!mm) return; this.drag = { kind: "relink", id, end, fixed: mm.get(end === "a" ? "b" : "a"), fixedSide: mm.get(end === "a" ? "sb" : "sa") || "" }; this.root.classList.add("is-linking"); this.root.setPointerCapture(ev.pointerId); }); } g.append(hit, ln, tx, ea, eb); this.svg.appendChild(g); g.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); this.selEdge = id; this.select(new Set()); this.selEdge = id; this.mark(); }); g.addEventListener("dblclick", (ev) => { ev.stopPropagation(); this.editLabel(id); }); r = { g, hit, ln, tx, ea, eb }; this.edgeEls.set(id, r); }
+          let r = this.edgeEls.get(id); if (!r) { const g = document.createElementNS(NS, "g"), hit = document.createElementNS(NS, "line"), ln = document.createElementNS(NS, "line"), tx = document.createElementNS(NS, "text"); hit.setAttribute("class", "osb-eh"); ln.setAttribute("class", "osb-el"); ln.setAttribute("marker-end", "url(#osb-arrow)"); tx.setAttribute("class", "osb-et"); tx.setAttribute("text-anchor", "middle"); const ea = document.createElementNS(NS, "circle"), eb = document.createElementNS(NS, "circle"); for (const [c, end] of [[ea, "a"], [eb, "b"]]) { c.setAttribute("class", "osb-ep"); c.setAttribute("r", 7); c.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); if (this.ro) return; const mm = this.ye.get(id); if (!mm) return; this.drag = { kind: "relink", id, end, fixed: mm.get(end === "a" ? "b" : "a"), fixedSide: mm.get(end === "a" ? "sb" : "sa") || "" }; this.root.classList.add("is-linking"); this.root.setPointerCapture(ev.pointerId); }); } const mc = document.createElementNS(NS, "g"); mc.setAttribute("class", "osb-mc"); const mkb = (dx, d, tip, fn) => { const b = document.createElementNS(NS, "g"); b.setAttribute("class", "osb-mb"); b.setAttribute("transform", "translate(" + dx + " 0)"); const ci = document.createElementNS(NS, "circle"); ci.setAttribute("r", 10); const pa = document.createElementNS(NS, "path"); pa.setAttribute("d", d); const ti = document.createElementNS(NS, "title"); ti.textContent = tip; b.append(ci, pa, ti); b.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); ev.preventDefault(); if (!this.ro) fn(); }); mc.appendChild(b); };
+          mkb(-24, "M-4 0H4M0 -4V4", "Вставить карточку в середину связи", () => this.splitEdge(id)); mkb(0, "M0 4V0M0 0L-4 -4M0 0L4 -4", "Новая ветка от начала связи", () => this.branchEdge(id)); mkb(24, "M-3.5 -3.5L3.5 3.5M3.5 -3.5L-3.5 3.5", "Убрать связь", () => this.removeEdge(id));
+          g.append(hit, ln, tx, ea, eb, mc); this.svg.appendChild(g); g.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); this.selEdge = id; this.select(new Set()); this.selEdge = id; this.mark(); }); g.addEventListener("dblclick", (ev) => { ev.stopPropagation(); this.editLabel(id); }); r = { g, hit, ln, tx, ea, eb, mc }; this.edgeEls.set(id, r); }
           const p = (m.get("sa") && this.anchorSide(m.get("a"), m.get("sa"))) || this.anchor(m.get("a"), B), q = (m.get("sb") && this.anchorSide(m.get("b"), m.get("sb"))) || this.anchor(m.get("b"), A); for (const [k, pt] of [["ea", p], ["eb", q]]) { r[k].setAttribute("cx", pt.x); r[k].setAttribute("cy", pt.y); } for (const l of [r.hit, r.ln]) { l.setAttribute("x1", p.x); l.setAttribute("y1", p.y); l.setAttribute("x2", q.x); l.setAttribute("y2", q.y); }
-          r.tx.setAttribute("x", (p.x + q.x) / 2); r.tx.setAttribute("y", (p.y + q.y) / 2 - 5); r.tx.textContent = m.get("label") || "";
+          r.tx.setAttribute("x", (p.x + q.x) / 2); r.tx.setAttribute("y", (p.y + q.y) / 2 - 18); r.mc.setAttribute("transform", "translate(" + (p.x + q.x) / 2 + " " + (p.y + q.y) / 2 + ")"); r.tx.textContent = m.get("label") || "";
         });
         for (const [id, r] of this.edgeEls) if (!seen.has(id)) { r.g.remove(); this.edgeEls.delete(id); }
       }
@@ -823,16 +857,28 @@
 
   async function openBoard(path) { const leaf = app.workspace.getLeaf("tab"); await leaf.setViewState({ type: VIEW, active: true, state: { path } }); app.workspace.setActiveLeaf(leaf, { focus: true }); }
   async function newBoard() { let i = 0, p; do { p = "Доска" + (i ? " " + i : "") + "." + EXT; i++; } while (await app.vault.adapter.exists(p)); await app.vault.adapter.write(p, "{}"); await openBoard(p); return p; }
+  // JSON-canvas file -> board data (cards, links with their sides, images, groups as typed cards)
+  async function canvasData(j) {
+    const CM = { "1": "#e5484d", "2": "#f59f3b", "3": "#d6b43c", "4": "#46a758", "5": "#3fa7d6", "6": "#8e6bd8" }, SD = { top: "t", right: "r", bottom: "b", left: "l" }, nodes = [], edges = [];
+    for (const n of j.nodes || []) {
+      const ext = String(n.file || "").split(".").pop().toLowerCase(), card = { id: String(n.id), x: n.x || 0, y: n.y || 0, w: n.width || 260, h: n.height || 110, color: CM[n.color] || (/^#[0-9a-f]{6}$/i.test(n.color || "") ? n.color : ""), text: "", img: "", fold: false, kind: "" };
+      if (n.type === "file") { const nm = String(n.file || "").replace(/^.*\//, "").replace(/\.[^.]+$/, ""); card.text = /^(png|jpe?g|gif|webp|bmp|avif)$/.test(ext) ? nm : "[[" + nm + "]]"; if (/^(png|jpe?g|gif|webp|bmp|avif)$/.test(ext)) { try { const buf = await app.vault.adapter.readBinary(n.file); if (buf.byteLength < 3000000) { const u8 = new Uint8Array(buf); let b = ""; for (let k = 0; k < u8.length; k += 0x8000) b += String.fromCharCode.apply(null, u8.subarray(k, k + 0x8000)); card.img = "data:image/" + (ext === "jpg" ? "jpeg" : ext) + ";base64," + btoa(b); } } catch (e) { /* the picture is gone: keep the name */ } } }
+      else if (n.type === "link") card.text = n.url || ""; else if (n.type === "group") { card.text = n.label || ""; card.kind = "Группа"; } else card.text = n.text || "";
+      nodes.push(card);
+    }
+    for (const e of j.edges || []) if (e.fromNode && e.toNode) edges.push({ a: String(e.fromNode), b: String(e.toNode), label: e.label || "", sa: SD[e.fromSide] || "", sb: SD[e.toSide] || "" });
+    return { nodes, edges, ink: [] };
+  }
   async function convertCanvas(file) {
-    const Y = window.__bsY.Y; let j; try { j = JSON.parse(await app.vault.adapter.read(file.path)); } catch (e) { new window.__bsApi.Notice("Не удалось прочитать холст"); return; }
-    const CM = { "1": "#e5484d", "2": "#f59f3b", "3": "#d6b43c", "4": "#46a758", "5": "#3fa7d6", "6": "#8e6bd8" }, d = new Y.Doc(), yn = d.getMap("nodes"), ye = d.getMap("edges"), ym = d.getMap("meta");
+    const Y = window.__bsY.Y; let data; try { data = await canvasData(JSON.parse(await app.vault.adapter.read(file.path))); } catch (e) { new window.__bsApi.Notice("Не удалось прочитать холст"); return; }
+    const d = new Y.Doc(), yn = d.getMap("nodes"), ye = d.getMap("edges"), ym = d.getMap("meta"), ids = new Set(data.nodes.map((n) => n.id));
     d.transact(() => {
       ym.set("id", uid() + uid());
-      for (const n of j.nodes || []) { const m = new Y.Map(), t = new Y.Text(); const txt = n.type === "file" ? "[[" + String(n.file || "").replace(/\.md$/, "") + "]]" : n.type === "link" ? (n.url || "") : n.type === "group" ? (n.label || "") : (n.text || ""); t.insert(0, txt); m.set("x", n.x || 0); m.set("y", n.y || 0); m.set("w", n.width || 260); m.set("h", n.height || 110); m.set("color", CM[n.color] || (/^#/.test(n.color || "") ? n.color : "")); m.set("by", me.name); m.set("text", t); yn.set(n.id || uid(), m); }
-      for (const e of j.edges || []) { if (!e.fromNode || !e.toNode) continue; const m = new Y.Map(); m.set("a", e.fromNode); m.set("b", e.toNode); m.set("label", e.label || ""); ye.set(e.id || uid(), m); }
+      for (const n of data.nodes) { const m = new Y.Map(), t = new Y.Text(); t.insert(0, n.text); m.set("x", n.x); m.set("y", n.y); m.set("w", n.w); m.set("h", n.h); m.set("color", n.color); m.set("by", me.name); if (n.img) m.set("img", n.img); if (n.kind) m.set("kind", n.kind); m.set("text", t); yn.set(n.id, m); }
+      for (const e of data.edges) { if (!ids.has(e.a) || !ids.has(e.b)) continue; const m = new Y.Map(); m.set("a", e.a); m.set("b", e.b); m.set("label", e.label); if (e.sa) m.set("sa", e.sa); if (e.sb) m.set("sb", e.sb); ye.set(uid(), m); }
     });
     let i = 0, p; do { p = file.path.replace(/\.canvas$/, "") + (i ? " " + i : "") + "." + EXT; i++; } while (await app.vault.adapter.exists(p));
-    await app.vault.adapter.write(p, JSON.stringify({ v: 2, ydoc: b64(Y.encodeStateAsUpdate(d)) })); await openBoard(p);
+    await app.vault.adapter.write(p, JSON.stringify({ v: 2, ydoc: b64(Y.encodeStateAsUpdate(d)) })); new window.__bsApi.Notice("Холст преобразован в доску: " + p); await openBoard(p);
   }
   async function joinBoard() {
     const code = await ask("Код приглашения"); const m = code && /^basalt-board:([^:]+):(.+)$/.exec(code.trim()); if (!m) return;

@@ -21260,6 +21260,36 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .bs-pe-x:hover{
     color:var(--text-normal)
 }
+.osb-mc{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .12s
+}
+.osb-edges g:hover .osb-mc,.osb-edges g.is-sel .osb-mc{
+    opacity:1;
+    pointer-events:all
+}
+.osb-mb{
+    cursor:pointer
+}
+.osb-mb circle{
+    fill:var(--background-secondary);
+    stroke:var(--interactive-accent);
+    stroke-width:1.5
+}
+.osb-mb path{
+    stroke:var(--text-normal);
+    stroke-width:1.6;
+    fill:none;
+    stroke-linecap:round;
+    stroke-linejoin:round
+}
+.osb-mb:hover circle{
+    fill:var(--interactive-accent)
+}
+.osb-mb:hover path{
+    stroke:var(--text-on-accent)
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;
@@ -22899,8 +22929,9 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 }
 .modal,.modal.bset,.menu,.bm-pop,.bm-drop,.popover,.suggestion-container,.prompt,.tooltip,.notice,.bpal-pop,.fp-tr-pop,.fp-end-picker,.osb-bar,.osb-rail,.osb-search,.osb-sel,.osb-help,.osb-dtb,.osb-feed,.osb-lbl,.bsh-load{
     background-color:color-mix(in srgb,var(--background-primary) calc(var(--bs-win-a,.75) * 100%),transparent)!important;
-    -webkit-backdrop-filter:blur(var(--bs-blur,16px)) saturate(1.3);
-    backdrop-filter:blur(var(--bs-blur,16px)) saturate(1.3)
+    background-image:linear-gradient(color-mix(in srgb,var(--interactive-accent) calc(var(--bs-tint,0) * 100%),transparent),color-mix(in srgb,var(--interactive-accent) calc(var(--bs-tint,0) * 100%),transparent));
+    -webkit-backdrop-filter:blur(var(--bs-blur,16px)) saturate(var(--bs-sat,1.3));
+    backdrop-filter:blur(var(--bs-blur,16px)) saturate(var(--bs-sat,1.3))
 }
 .modal.bset .bset-nav{
     background-color:color-mix(in srgb,var(--background-secondary) calc(var(--bs-win-a,.75) * 70%),transparent)!important

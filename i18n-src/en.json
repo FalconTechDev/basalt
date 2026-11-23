@@ -1823,5 +1823,15 @@
 "Добавьте хотя бы один уровень с типом": "Add at least one level with a type",
 "Не удалось добавить файл ": "Could not add the file ",
 "0 % — обычные сплошные окна. Чем больше, тем лучше видно то, что под ними.": "0% means ordinary solid windows. The more, the more of what is underneath shows through.",
-"выключена": "off"
+"выключена": "off",
+"Вставить карточку в середину связи": "Insert a card in the middle of the link",
+"Новая ветка от начала связи": "New branch from the start of the link",
+"Убрать связь": "Remove the link",
+"Холст преобразован в доску: ": "Canvas converted to a board: ",
+"Вид прозрачности": "Transparency style",
+"Стекло — с размытием того, что под окном. Матовое — сильное размытие. Чистая — без размытия. С оттенком — стекло с цветом акцента.": "Glass blurs what is behind the window. Frosted blurs it strongly. Clear does not blur. Tinted is glass with the accent colour.",
+"Стекло": "Glass",
+"Матовое стекло": "Frosted glass",
+"Чистая прозрачность": "Clear transparency",
+"Стекло с оттенком": "Tinted glass"
 }

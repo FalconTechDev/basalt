@@ -2,8 +2,8 @@
    --bs-win-a (opacity) and --bs-blur are set by basalt-glass.js from the "Прозрачность" slider in the settings. */
 .modal, .modal.bset, .menu, .bm-pop, .bm-drop, .popover, .suggestion-container, .prompt, .tooltip, .notice, .bpal-pop, .fp-tr-pop, .fp-end-picker,
 .osb-bar, .osb-rail, .osb-search, .osb-sel, .osb-help, .osb-dtb, .osb-feed, .osb-lbl, .bsh-load {
-  background-color: color-mix(in srgb, var(--background-primary) calc(var(--bs-win-a, .75) * 100%), transparent) !important;
-  -webkit-backdrop-filter: blur(var(--bs-blur, 16px)) saturate(1.3); backdrop-filter: blur(var(--bs-blur, 16px)) saturate(1.3);
+  background-color: color-mix(in srgb, var(--background-primary) calc(var(--bs-win-a, .75) * 100%), transparent) !important; background-image: linear-gradient(color-mix(in srgb, var(--interactive-accent) calc(var(--bs-tint, 0) * 100%), transparent), color-mix(in srgb, var(--interactive-accent) calc(var(--bs-tint, 0) * 100%), transparent));
+  -webkit-backdrop-filter: blur(var(--bs-blur, 16px)) saturate(var(--bs-sat, 1.3)); backdrop-filter: blur(var(--bs-blur, 16px)) saturate(var(--bs-sat, 1.3));
 }
 .modal.bset .bset-nav { background-color: color-mix(in srgb, var(--background-secondary) calc(var(--bs-win-a, .75) * 70%), transparent) !important; }
 .modal.bset .bset-main { background-color: transparent !important; }
