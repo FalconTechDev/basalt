@@ -45,14 +45,14 @@
         const btn = (icon, tip, fn, cls) => { const x = bar.createDiv({ cls: "osb-btn" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; };
         this.snapBtn = btn("lucide-magnet", "Прилипание к сетке", () => { this.snap = !this.snap; this.snapBtn.classList.toggle("is-on", this.snap); try { localStorage.setItem("board-snap", this.snap ? "1" : "0"); } catch (e) { /* private */ } });
         try { this.snap = localStorage.getItem("board-snap") === "1"; } catch (e) { this.snap = false; } this.snapBtn.classList.toggle("is-on", !!this.snap);
-        this.searchBtn = btn("lucide-search", "Поиск", () => this.toggleSearch());
+        this.searchBtn = btn("lucide-search", "Поиск", () => this.toggleSearch()); btn("lucide-network", "Раскладка карточек", (e) => this.layoutMenu(e));
         this.share = document.createElement("div"); this.zoomPct = document.createElement("span");
         const rail = this.rail = c.createDiv({ cls: "osb-rail" });
         const rb = (icon, tip, fn, cls) => { const x = rail.createDiv({ cls: "osb-rb" + (cls ? " " + cls : ""), attr: { title: tip, "aria-label": tip } }); api.setIcon(x, icon); x.onclick = fn; return x; }; const rs = () => rail.createDiv({ cls: "osb-rsep" });
         this.lockBtn = rb("lucide-unlock", "Заблокировать доску", () => this.toggleLock()); rs();
         rb("lucide-zoom-in", "Увеличить", () => this.zoomBy(1.25)); rb("lucide-zoom-out", "Уменьшить", () => this.zoomBy(1 / 1.25)); this.resetBtn = rb("lucide-rotate-cw", "Масштаб 100%", () => { this.cam.k = 1; this.applyCam(); }); rb("lucide-maximize", "Показать всё", () => this.fit()); rs();
         this.undoBtn = rb("lucide-undo-2", "Отменить", () => this.undo()); this.redoBtn = rb("lucide-redo-2", "Вернуть", () => this.redo()); rs();
-        this.drawBtn = rb("lucide-pencil", "Рисование", () => this.toggleDraw()); this.transBtn = rb("lucide-languages", "Перевести карточки", () => this.translate(this.transBtn)); this.layBtn = rb("lucide-network", "Раскладка карточек", (e) => this.layoutMenu(e)); rs();
+        this.drawBtn = rb("lucide-pencil", "Рисование", () => this.toggleDraw()); this.transBtn = rb("lucide-languages", "Перевести карточки", () => this.translate(this.transBtn)); rs();
         this.helpBtn = rb("lucide-circle-help", "Управление", () => this.toggleHelp());
         this.searchBox = c.createDiv({ cls: "osb-search" }); const sb = this.searchBox; const sIc = sb.createSpan({ cls: "osb-si" }); api.setIcon(sIc, "lucide-search");
         const si = this.searchInput = sb.createEl("input", { attr: { placeholder: "Поиск по карточкам", spellcheck: "false" } }); this.searchCount = sb.createSpan({ cls: "osb-sc" });
@@ -374,7 +374,7 @@
       layoutMenu(e) {
         const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)), ids = this.sel.size > 1 ? Array.from(this.sel) : null; const sc = ids ? " (выделенные)" : "";
         it("Дерево слева направо" + sc, "lucide-git-fork", () => this.layout("lr", ids)); it("Дерево сверху вниз" + sc, "lucide-git-branch", () => this.layout("td", ids)); it("Радиально" + sc, "lucide-orbit", () => this.layout("radial", ids)); it("Силовая раскладка" + sc, "lucide-network", () => this.layout("force", ids));
-        if (this._prevPos) it("Вернуть прежнее расположение", "lucide-undo-2", () => this.restorePos()); mn.addSeparator(); it("По сетке" + sc, "lucide-grid-3x3", () => this.tidy("grid", ids)); it("Расставить блоками" + sc, "lucide-layout-grid", () => this.tidy("cells", ids)); mn.showAtMouseEvent(e);
+         mn.addSeparator(); it("По сетке" + sc, "lucide-grid-3x3", () => this.tidy("grid", ids)); it("Расставить блоками" + sc, "lucide-layout-grid", () => this.tidy("cells", ids)); mn.showAtMouseEvent(e);
       }
       layout(mode, ids) {
         if (this.ro) return; ids = (ids && ids.length ? ids : Array.from(this.yn.keys())).filter((i) => this.yn.get(i) && !this.yn.get(i).get("locked")); if (ids.length < 2) return;
