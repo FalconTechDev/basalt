@@ -62,16 +62,16 @@
     add("general", "Общие", "gen", (h) => {
       const sc = window.__bsUiScale;
       if (sc) row(h, "Масштаб интерфейса", "Размер всего текста и элементов. Уменьшите, если всё кажется крупным, или увеличьте для лучшей читаемости.", [slider(70, 150, 5, () => Math.round(sc.get() * 100), (v) => sc.set(v / 100), (v) => v + "%"), button("Сбросить", () => { sc.set(sc.DEF); S.render(); })]);
-      row(h, "Язык", "Применяется после перезагрузки окна.", select([["ru", "Русский"], ["en", "English"]], () => { const l = localStorage.getItem("language") || (navigator.language || "ru").split("-")[0]; return l === "ru" ? "ru" : "en"; }, (v) => { localStorage.setItem("language", v); sessionStorage.removeItem("bs-lang-retry"); try { new window.__bsApi.Notice(v === "ru" ? "Применяю язык…" : "Applying the language…", 1500); } catch (e) { /* no notice */ } setTimeout(() => { try { app.workspace.requestSaveLayout && app.workspace.requestSaveLayout.run && app.workspace.requestSaveLayout.run(); } catch (e) { /* nothing to save */ } window.onbeforeunload = null; /* the quit hook would swallow a reload while savers are pending */ location.reload(); }, 450); }));
+      row(h, "Язык", "Окно перезагрузится само, чтобы применить язык. Сохраните открытое перед сменой.", select([["ru", "Русский"], ["en", "English"]], () => { const l = localStorage.getItem("language") || (navigator.language || "ru").split("-")[0]; return l === "ru" ? "ru" : "en"; }, (v) => { localStorage.setItem("language", v); sessionStorage.removeItem("bs-lang-retry"); try { new window.__bsApi.Notice(v === "ru" ? "Применяю язык…" : "Applying the language…", 1500); } catch (e) { /* no notice */ } setTimeout(() => { try { app.workspace.requestSaveLayout && app.workspace.requestSaveLayout.run && app.workspace.requestSaveLayout.run(); } catch (e) { /* nothing to save */ } window.onbeforeunload = null; /* the quit hook would swallow a reload while savers are pending */ location.reload(); }, 450); }));
       row(h, "Папка хранилища", app.vault.adapter.basePath, button("Открыть в Проводнике", () => window.require("electron").shell.openPath(app.vault.adapter.basePath)));
       row(h, "Показывать ленту слева", "Узкая полоса значков слева.", toggle(() => cfg("showRibbon") !== false, (v) => { setCfg("showRibbon", v); }));
-      row(h, "Подтверждать удаление файлов", null, toggle(() => cfg("promptDelete") !== false, (v) => setCfg("promptDelete", v)));
+      row(h, "Спрашивать перед удалением файлов", "Выключено (по умолчанию): файл сразу уходит в корзину, а внизу появляется кнопка «Вернуть». Включите, если хотите видеть вопрос.", toggle(() => { try { return localStorage.getItem("bs-confirm-delete") === "1"; } catch (e) { return false; } }, (v) => { try { localStorage.setItem("bs-confirm-delete", v ? "1" : "0"); } catch (e) { /* private */ } }));
     });
 
     add("look", "Оформление", "look", (h) => {
       row(h, "Тема", "Тёмная, светлая или как в системе.", select([["system", "Как в системе"], ["basalt", "Тёмная"], ["moonstone", "Светлая"]], () => cfg("theme") || "system", (v) => app.changeTheme(v)));
       row(h, "Акцентный цвет", "Цвет выделения, кнопок и активных элементов.", [(() => { const i = document.createElement("input"); i.type = "color"; i.value = (cfg("accentColor") || "#b07a52"); i.addEventListener("input", () => app.setAccentColor(i.value)); return i; })(), button("Сбросить", () => { app.setAccentColor(""); S.render(); })]);
-      row(h, "Размер текста в заметках", null, slider(12, 26, 1, () => cfg("baseFontSize") || 16, (v) => { setCfg("baseFontSize", v); app.updateFontSize(); }, (v) => v + " px"));
+      row(h, "Размер текста в заметках", "Базовый размер шрифта в заметках. По умолчанию 16 px.", slider(12, 26, 1, () => cfg("baseFontSize") || 16, (v) => { setCfg("baseFontSize", v); app.updateFontSize(); }, (v) => v + " px"));
       head(h, "Окна и меню");
       if (window.__bsGlass) row(h, "Прозрачные окна и меню", "Выключите, если прозрачность не нужна: окна, меню и панели станут сплошными.", toggle(() => window.__bsGlass.on(), (v) => window.__bsGlass.setOn(v)));
       if (window.__bsGlass) row(h, "Вид прозрачности", "Стекло — с размытием того, что под окном. Матовое — сильное размытие. Чистая — без размытия.", select([["glass", "Стекло"], ["frost", "Матовое стекло"], ["clear", "Чистая прозрачность"]], () => window.__bsGlass.type(), (v) => window.__bsGlass.setType(v)));
@@ -86,28 +86,28 @@
 
     add("editor", "Редактор", "edit", (h) => {
       const t = (k, title, desc, def) => row(h, title, desc, toggle(() => (cfg(k) === undefined || cfg(k) === null ? !!def : !!cfg(k)), (v) => setCfg(k, v)));
-      row(h, "Режим по умолчанию", "Как открываются заметки.", select([["source", "Редактирование"], ["preview", "Чтение"]], () => cfg("defaultViewMode") || "source", (v) => setCfg("defaultViewMode", v)));
+      row(h, "Режим по умолчанию", "Как открываются заметки: для правки или только для чтения. По умолчанию правка.", select([["source", "Редактирование"], ["preview", "Чтение"]], () => cfg("defaultViewMode") || "source", (v) => setCfg("defaultViewMode", v)));
       t("readableLineLength", "Ограничивать ширину строки", "Текст не растягивается на весь экран.", true);
-      t("showInlineTitle", "Название заметки над текстом", null, true);
-      t("showLineNumber", "Номера строк", null, false);
-      t("spellcheck", "Проверка орфографии", null, true);
-      t("autoPairBrackets", "Автозакрытие скобок и кавычек", null, true);
-      t("foldHeading", "Сворачивание заголовков", null, true);
+      t("showInlineTitle", "Название заметки над текстом", "Крупный заголовок с именем файла над текстом. По умолчанию включено.", true);
+      t("showLineNumber", "Номера строк", "Цифры слева от строк при редактировании. По умолчанию выключено.", false);
+      t("spellcheck", "Проверка орфографии", "Подчёркивать слова с ошибками. По умолчанию включено.", true);
+      t("autoPairBrackets", "Автозакрытие скобок и кавычек", "Закрывающая скобка или кавычка ставится сама. По умолчанию включено.", true);
+      t("foldHeading", "Сворачивание заголовков", "Стрелка рядом с заголовком прячет его раздел. По умолчанию включено.", true);
       t("strictLineBreaks", "Строгие переносы строк", "Одиночный перенос строки в тексте показывается как перенос.", false);
-      t("vimMode", "Режим Vim", null, false);
-      row(h, "Размер табуляции", null, num(() => cfg("tabSize") || 4, (v) => setCfg("tabSize", v), 1, 12));
-      t("useTab", "Табуляция вместо пробелов", null, true);
+      t("vimMode", "Режим Vim", "Клавиши Vim для тех, кто к ним привык. По умолчанию выключено.", false);
+      row(h, "Размер табуляции", "Сколько пробелов занимает одно нажатие Tab. По умолчанию 4.", num(() => cfg("tabSize") || 4, (v) => setCfg("tabSize", v), 1, 12));
+      t("useTab", "Табуляция вместо пробелов", "Tab вставляет настоящий знак табуляции, а не пробелы. По умолчанию включено.", true);
     });
 
     add("files", "Файлы и ссылки", "files", (h) => {
-      row(h, "Где создавать новые заметки", null, select([["root", "В корне хранилища"], ["current", "В папке открытого файла"], ["folder", "В указанной папке"]], () => cfg("newFileLocation") || "root", (v) => setCfg("newFileLocation", v)));
+      row(h, "Где создавать новые заметки", "Куда попадает заметка по кнопке «Новая заметка». По умолчанию в корень.", select([["root", "В корне хранилища"], ["current", "В папке открытого файла"], ["folder", "В указанной папке"]], () => cfg("newFileLocation") || "root", (v) => setCfg("newFileLocation", v)));
       row(h, "Папка для новых заметок", "Для варианта «в указанной папке».", text(() => cfg("newFileFolderPath"), (v) => setCfg("newFileFolderPath", v), "Заметки"));
       row(h, "Папка для вложений", "Куда падают вставленные картинки и файлы. «/» — корень.", text(() => cfg("attachmentFolderPath"), (v) => setCfg("attachmentFolderPath", v || "/"), "/"));
-      row(h, "Обновлять ссылки при переименовании", null, toggle(() => !!cfg("alwaysUpdateLinks"), (v) => setCfg("alwaysUpdateLinks", v)));
+      row(h, "Обновлять ссылки при переименовании", "Если переименовать файл, ссылки на него в других заметках изменятся сами.", toggle(() => !!cfg("alwaysUpdateLinks"), (v) => setCfg("alwaysUpdateLinks", v)));
       row(h, "Ссылки в формате Markdown", "[текст](файл.md) вместо [[файл]].", toggle(() => !!cfg("useMarkdownLinks"), (v) => setCfg("useMarkdownLinks", v)));
-      row(h, "Путь в ссылках", null, select([["shortest", "Кратчайший"], ["relative", "Относительный"], ["absolute", "Полный"]], () => cfg("newLinkFormat") || "shortest", (v) => setCfg("newLinkFormat", v)));
-      row(h, "Удаляемые файлы", null, select([["system", "В корзину системы"], ["local", "В папку .trash"], ["none", "Удалять насовсем"]], () => cfg("trashOption") || "system", (v) => setCfg("trashOption", v)));
-      row(h, "Показывать файлы неподдерживаемых типов", null, toggle(() => !!cfg("showUnsupportedFiles"), (v) => setCfg("showUnsupportedFiles", v)));
+      row(h, "Путь в ссылках", "Как записывать путь к файлу внутри ссылки. «Кратчайший» достаточен почти всегда.", select([["shortest", "Кратчайший"], ["relative", "Относительный"], ["absolute", "Полный"]], () => cfg("newLinkFormat") || "shortest", (v) => setCfg("newLinkFormat", v)));
+      row(h, "Удаляемые файлы", "Куда деваются удалённые файлы. Лучше оставить корзину: оттуда их можно вернуть.", select([["system", "В корзину системы"], ["local", "В папку .trash"], ["none", "Удалять насовсем"]], () => cfg("trashOption") || "system", (v) => setCfg("trashOption", v)));
+      row(h, "Показывать файлы неподдерживаемых типов", "Показывать в списке и файлы, которые Basalt не умеет открывать сам.", toggle(() => !!cfg("showUnsupportedFiles"), (v) => setCfg("showUnsupportedFiles", v)));
     });
 
     add("keys", "Горячие клавиши", "keys", (h) => {
@@ -157,7 +157,7 @@
           const reset = icon(button("", () => { hm.removeHotkeys && hm.removeHotkeys(c.id); hm.bake && hm.bake(); hm.save && hm.save(); paint(); }), "lucide-rotate-ccw"); reset.title = "Вернуть по умолчанию"; reset.className = "clickable-icon";
           row(wrap, c.name, null, [holder, rec, off, reset]);
         }
-        if (!shown) wrap.innerHTML = '<div class="bset-empty">Команды не найдены</div>';
+        if (!shown) wrap.innerHTML = '<div class="bset-empty">Таких команд нет. Попробуйте другое слово из названия команды.</div>';
       };
       h.__redraw = draw; draw();
     });
@@ -173,7 +173,7 @@
       head(h, "Установленные");
       const man = (app.plugins && app.plugins.manifests) || {};
       const ids = Object.keys(man);
-      if (!ids.length) row(h, "Плагинов нет", "Установите их из каталога.", document.createElement("span"));
+      if (!ids.length) row(h, "Плагинов нет", "Установите нужные из каталога выше: это займёт пару нажатий.", button("Открыть каталог", () => window.__bsCatalog && window.__bsCatalog.open()));
       for (const id of ids) row(h, man[id].name || id, `${man[id].version || ""} ${man[id].description || ""}`, [toggle(() => app.plugins.enabledPlugins.has(id), (v) => (v ? app.plugins.enablePluginAndSave(id) : app.plugins.disablePluginAndSave(id)))]);
       head(h, "Встроенные модули");
       row(h, "Включение и выключение встроенных модулей", "Холст, ежедневные заметки, шаблоны и другие.", button("Открыть", () => S.legacy("plugins")));
@@ -190,7 +190,7 @@
         const title = document.createElement("h2"); title.textContent = t.name; view.append(back, title);
         const box = document.createElement("div"); box.className = "bset-legacy vertical-tab-content"; view.appendChild(box);
         // the module draws its own page into a container; it is placed here and restyled by .bset-legacy
-        try { const c = t.containerEl || document.createElement("div"); c.textContent = ""; box.appendChild(c); t.display(); } catch (e) { box.textContent = "Не удалось показать страницу: " + e.message; }
+        try { const c = t.containerEl || document.createElement("div"); c.textContent = ""; box.appendChild(c); t.display(); } catch (e) { console.error("[settings] module page", e); box.textContent = "Не удалось показать страницу этого модуля. Закройте настройки и откройте их заново."; }
       };
       // one card per module: icon, name, what it does, a button to its settings
       const META = {
@@ -233,7 +233,7 @@
       if (window.__bsUpdate) row(h, "Обновления", "Проверка новой версии на GitHub.", [button("Проверить сейчас", () => window.__bsUpdate.check(true)), toggle(() => window.__bsUpdate.auto(), (v) => window.__bsUpdate.setAuto(v))]);
       head(h, "Автоматизация");
       const info = window.__bsApiInfo;
-      row(h, "Локальный API", info ? `http://127.0.0.1:${info.port}` : "не запущен", info ? button("Скопировать токен", () => { navigator.clipboard.writeText(info.token); new window.__bsApi.Notice("Токен скопирован"); }) : document.createElement("span"));
+      row(h, "Локальный API", info ? `http://127.0.0.1:${info.port}` : "не запущен", info ? button("Скопировать токен", () => { navigator.clipboard.writeText(info.token); new window.__bsApi.Notice("Токен скопирован. Никому его не показывайте: с ним можно управлять вашим хранилищем.", 5000); }) : document.createElement("span"));
       row(h, "Командная строка", "Команда basalt-cli в терминале: оболочка со списком команд. basalt-cli daemon start запускает Basalt без окна.", document.createElement("span"));
       head(h, "Данные");
       row(h, "Журнал действий", "Что и где менялось в хранилище.", button("Открыть", () => window.__vaultSyncFeed && window.__vaultSyncFeed()));
@@ -262,7 +262,7 @@
         if (q) { let any = false; body.querySelectorAll(".bset-row, .bset-card").forEach((r) => { const hit = (r.dataset.q || "").includes(q); r.style.display = hit ? "" : "none"; any = any || hit; }); body.querySelectorAll("h3").forEach((h) => { h.style.display = "none"; }); if (!any) continue; }
         main.appendChild(box);
       }
-      if (!main.children.length) main.innerHTML = '<div class="bset-empty">Ничего не найдено</div>';
+      if (!main.children.length) { main.innerHTML = '<div class="bset-empty">Ничего не найдено по запросу «' + esc(input.value.trim()) + '». Попробуйте другое слово или посмотрите разделы слева.</div>'; const c = button("Очистить поиск", () => { input.value = ""; draw(); input.focus(); }); c.style.marginTop = "6px"; main.firstChild.appendChild(document.createElement("br")); main.firstChild.appendChild(c); }
     }
     input.addEventListener("input", draw);
     const close = () => { wrap.remove(); open = null; document.removeEventListener("keydown", key, true); try { prev && prev.focus && prev.focus(); } catch (e) { /* gone */ } };

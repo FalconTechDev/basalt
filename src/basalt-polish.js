@@ -97,7 +97,7 @@
         main.querySelectorAll("mark").forEach((m) => { m.replaceWith(document.createTextNode(m.textContent)); });
         main.normalize();
         if (!q) return;
-        main.querySelectorAll(".bset-t b").forEach((b) => { const t = b.textContent, i = t.toLowerCase().indexOf(q); if (i >= 0) { b.textContent = ""; b.append(t.slice(0, i)); const m = document.createElement("mark"); m.textContent = t.slice(i, i + q.length); b.append(m, t.slice(i + q.length)); } });
+        main.querySelectorAll(".bset-t b, .bset-t small").forEach((b) => { const t = b.textContent, i = t.toLowerCase().indexOf(q); if (i >= 0) { b.textContent = ""; b.append(t.slice(0, i)); const m = document.createElement("mark"); m.textContent = t.slice(i, i + q.length); b.append(m, t.slice(i + q.length)); } });
       });
     };
     setInterval(watchSettings, 800);
@@ -173,6 +173,7 @@
       const hit = ICON_LABELS.find(([rx]) => rx.test(name)); if (!hit) continue;
       el.setAttribute("aria-label", hit[1]); el.setAttribute("title", hit[1]); el.__bsNamed = 1;
     }
+    for (const el of document.querySelectorAll(".modal-close-button:not([aria-label])")) { el.setAttribute("aria-label", "Закрыть окно"); el.setAttribute("title", "Закрыть окно (Esc)"); }
   };
   // notices: the same text is shown once, and no more than three are on screen
   const calmNotices = () => {

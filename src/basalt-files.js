@@ -370,8 +370,9 @@
         // everything that can be brought back is deleted at once with an Undo notice; a question is asked only when it cannot
         const snaps = [], risky = [];
         for (const f of files) { let snap = null; try { snap = await this.snapshotOf(f); } catch (e) { /* too big or unreadable */ } if (snap && !snap.partial) snaps.push(snap); else risky.push(f.name); }
-        if (risky.length) {
-          const okAsk = await window.__bsConfirm("Эти файлы слишком велики, чтобы вернуть их кнопкой «Отменить»: " + risky.slice(0, 4).join(", ") + ". Они всё равно попадут в корзину, оттуда их можно достать вручную.", { title: "Удалить " + (files.length > 1 ? files.length + " элементов" : "«" + files[0].name + "»") + "?", ok: "В корзину", danger: true });
+        let ask = false; try { ask = localStorage.getItem("bs-confirm-delete") === "1"; } catch (e) { /* private */ }
+        if (ask || risky.length) {
+          const okAsk = await window.__bsConfirm(risky.length ? "Эти файлы слишком велики, чтобы вернуть их кнопкой «Вернуть»: " + risky.slice(0, 4).join(", ") + ". Они всё равно попадут в корзину, оттуда их можно достать вручную." : "Файлы уйдут в корзину, а внизу появится кнопка «Вернуть»: " + names, { title: "Удалить " + (files.length > 1 ? files.length + " элементов" : "«" + files[0].name + "»") + "?", ok: "В корзину", danger: true });
           if (!okAsk) return;
         }
         const done = [], keep = [];

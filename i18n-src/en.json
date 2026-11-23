@@ -1937,5 +1937,19 @@
 "Доброй ночи": "Good night",
 "Размер всего текста и элементов.": "The size of all text and elements.",
 "вышел(ла)": "left",
-"Искать по заметкам и доскам…": "Search notes and boards…"
+"Искать по заметкам и доскам…": "Search notes and boards…",
+"Обзор доски: нажмите или потяните, чтобы перейти": "Board overview: click or drag to go there",
+"Линия сплошная": "Solid line",
+"Линия пунктиром": "Dashed line",
+"Линия точками": "Dotted line",
+"Стрелка к концу": "Arrow to the end",
+"Стрелки с двух сторон": "Arrows on both sides",
+"Без стрелки": "No arrow",
+"Цвет связи…": "Link colour…",
+"Поменять направление": "Reverse direction",
+"Рамка вокруг выделенных": "Frame around the selection",
+"Рамка вокруг выделенных карточек": "Frame around the selected cards",
+"Подогнать высоту по тексту": "Fit height to the text",
+"Название рамки": "Frame title",
+"Вставить построчно: строка — карточка": "Paste line by line: one line, one card"
 }
