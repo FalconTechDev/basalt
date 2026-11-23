@@ -311,3 +311,9 @@
 
 /* ---- link colour and style ---- */
 .osb-edges .osb-el { stroke: var(--ec, var(--text-faint)); } .osb-edges .osb-temp { stroke: var(--interactive-accent); }
+
+/* ---- frames (groups) ---- */
+.osb-card.is-group { z-index: 0; pointer-events: none; background: color-mix(in srgb, var(--card, var(--interactive-accent)) 7%, transparent); border-style: dashed; box-shadow: none; }
+.osb-card:not(.is-group) { z-index: 1; }
+.osb-card.is-group .osb-grip, .osb-card.is-group .osb-ta, .osb-card.is-group .osb-h, .osb-card.is-group .osb-rz, .osb-card.is-group .osb-x { pointer-events: auto; }
+.osb-card.is-group .osb-ta { flex: none; height: 34px; min-height: 0; overflow: hidden; resize: none; font-size: 15px; font-weight: 600; padding: 6px 10px; } .osb-card.is-group .osb-h { opacity: 0 !important; }
