@@ -300,3 +300,8 @@
 .osb-root.is-linking .osb-h { opacity: 0; scale: .6; } .osb-root.is-linking .osb-card.is-near .osb-h { opacity: .6; scale: 1; } .osb-root.is-linking .osb-card.is-linktgt .osb-h { opacity: .9; }
 .osb-empty { inset: 0 !important; left: 0 !important; top: 0 !important; display: flex !important; flex-direction: column; align-items: center; justify-content: center; background: transparent !important; padding: 0 !important; }
 .osb-empty-box { padding: 14px 24px; border-radius: 6px; background: color-mix(in srgb, var(--interactive-accent) 12%, transparent); text-align: center; line-height: 1.7; font-size: 15px; color: var(--interactive-accent); }
+
+.osb-nb { margin-left: auto !important; margin-right: 2px; } .osb-x { margin-left: 0 !important; }
+.osb-empty.is-hidden { display: none !important; }
+.osb-by { max-width: 120px; } .osb-kind { max-width: 96px; }
+.modal.bs-ask { width: 420px; max-width: 92vw; padding: 20px 22px 16px; } .bs-ask .modal-title { font-size: 16px; font-weight: 600; margin: 0 0 12px; } .bs-ask-hint { font-size: 12.5px; color: var(--text-muted); margin-bottom: 8px; } .bs-ask-in { width: 100%; height: 34px; } .bs-ask .modal-button-container { margin-top: 16px; gap: 8px; justify-content: flex-end; }

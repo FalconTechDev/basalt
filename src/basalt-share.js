@@ -405,7 +405,7 @@
 
     // ---- header: title, status, and YOU (name + colour) at the top
     const head = el(root, "div", "bsm-head3"); const title = el(head, "div", "bsm-title"); const pill = el(head, "div", "bsm-pill"); pill.createSpan({ cls: "bsm-pd2" }); const pillT = pill.createSpan(); el(head, "div", "bsm-sp");
-    { const m = me(), you = el(head, "div", "bsm-you2"); const dot = el(you, "div", "bsm-mdot3"); dot.style.background = m.color; const inp = el(you, "input", "bsm-name3"); inp.value = m.name; inp.placeholder = "Ваше имя"; inp.spellcheck = false;
+    { const m = me(), you = el(head, "div", "bsm-you2"); const dot = el(you, "div", "bsm-mdot3"); dot.style.background = m.color; const inp = el(you, "input", "bsm-name3"); inp.value = m.name; inp.placeholder = "Ваше имя"; inp.spellcheck = false; inp.maxLength = 32;
       const save = (patch) => { const m2 = Object.assign(me(), patch); try { localStorage.setItem("board-me", JSON.stringify(m2)); localStorage.setItem("board-me-set", "1"); } catch (e) { /* private */ } for (const sh of shares.values()) sh.publish(); dot.style.background = m2.color; };
       inp.onchange = () => save({ name: inp.value.trim() || me().name }); dot.onclick = () => window.__bsColors.pick(dot, me().color, (c) => { if (c) save({ color: c }); }, { none: false });
       let hint = null; try { hint = localStorage.getItem("board-me-set"); } catch (e) { /* private */ } if (!hint) setTimeout(() => { inp.focus(); inp.select(); }, 150); }

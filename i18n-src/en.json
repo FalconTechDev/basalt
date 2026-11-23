@@ -1888,5 +1888,6 @@
 "+ стрелки": "+ arrows",
 "Тип карточки или свой подзаголовок": "Card type or your own subtitle",
 "Свой подзаголовок…": "Your own subtitle…",
-"Подзаголовок карточки": "Card subtitle"
+"Подзаголовок карточки": "Card subtitle",
+"Свой короткий подзаголовок или тип. До 40 символов.": "Your own short subtitle or type. Up to 40 characters."
 }

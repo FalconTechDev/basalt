@@ -10,11 +10,12 @@
   const uid = () => Math.random().toString(36).slice(2, 10);
   const signalingList = () => { try { const j = JSON.parse(localStorage.getItem("board-signaling") || "null"); if (Array.isArray(j) && j.length) return j; } catch (e) { /* default */ } return []; };
   const me = (() => { try { const j = JSON.parse(localStorage.getItem("board-me") || "null"); if (j) return j; } catch (e) { /* none */ } const j = { name: "Участник " + uid().slice(0, 3), color: PEER[Math.floor(Math.random() * PEER.length)] }; try { localStorage.setItem("board-me", JSON.stringify(j)); } catch (e) { /* private */ } return j; })();
-  const ask = (title, def) => new Promise((res) => {
-    const M = new window.__bsApi.Modal(app); M.titleEl.setText(title); let done = false; const fin = (v) => { if (!done) { done = true; res(v); } };
-    const i = M.contentEl.createEl("input", { attr: { style: "width:100%" } }); i.value = def || ""; const row = M.contentEl.createDiv({ attr: { style: "margin-top:12px;display:flex;justify-content:flex-end;gap:8px" } });
-    const ok = row.createEl("button", { text: "OK", cls: "mod-cta" }); ok.onclick = () => { fin(i.value.trim()); M.close(); }; i.onkeydown = (e) => { if (e.key === "Enter") ok.click(); };
-    M.onClose = () => fin(null); M.open(); setTimeout(() => i.focus(), 50);
+  const ask = (title, def, opts) => new Promise((res) => {
+    opts = opts || {}; const M = new window.__bsApi.Modal(app); M.modalEl.addClass("bs-ask"); M.titleEl.setText(title); let done = false; const fin = (v) => { if (!done) { done = true; res(v); } };
+    if (opts.hint) M.contentEl.createDiv({ cls: "bs-ask-hint", text: opts.hint });
+    const i = M.contentEl.createEl("input", { cls: "bs-ask-in", attr: { spellcheck: "false" } }); if (opts.max) i.maxLength = opts.max; i.value = def || ""; const row = M.contentEl.createDiv({ cls: "modal-button-container" });
+    const no = row.createEl("button", { text: "Отмена" }); no.onclick = () => { fin(null); M.close(); }; const ok = row.createEl("button", { text: "OK", cls: "mod-cta" }); ok.onclick = () => { fin(i.value.trim()); M.close(); };
+    i.onkeydown = (e) => { if (e.key === "Enter") ok.click(); }; M.onClose = () => fin(null); M.open(); setTimeout(() => { i.focus(); i.select(); }, 50);
   });
 
   let BOARD_CLIP = null;
@@ -549,7 +550,7 @@
       kindMenu(e, id) {
         const mn = new api.Menu(), it = (t, ic, fn) => mn.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn)), cur = this.yn.get(id) && this.yn.get(id).get("kind") || "", ids = this.sel.has(id) ? Array.from(this.sel) : [id];
         for (const t of this.typesList()) mn.addItem((i) => i.setTitle(t.n).setIcon("lucide-tag").setChecked(cur === t.n).onClick(() => this.setKind(t.n, ids)));
-        mn.addSeparator(); it("Свой подзаголовок…", "lucide-type", async () => { const n = await ask("Подзаголовок карточки", cur); if (n == null) return; if (n) { const l = this.typesList(); if (!l.find((q) => q.n === n)) { l.push({ n, c: "" }); this.saveTypes(l); } } this.setKind(n, ids); }); if (cur) it("Убрать", "lucide-x", () => this.setKind("", ids)); mn.showAtMouseEvent(e);
+        mn.addSeparator(); it("Свой подзаголовок…", "lucide-type", async () => { const n = await ask("Подзаголовок карточки", cur, { max: 40, hint: "Свой короткий подзаголовок или тип. До 40 символов." }); if (n == null) return; if (n) { const l = this.typesList(); if (!l.find((q) => q.n === n)) { l.push({ n, c: "" }); this.saveTypes(l); } } this.setKind(n, ids); }); if (cur) it("Убрать", "lucide-x", () => this.setKind("", ids)); mn.showAtMouseEvent(e);
       }
       setKind(name, only) { if (this.ro) return; const t = this.typesList().find((q) => q.n === name); this.doc.transact(() => { for (const id of (only || this.sel)) { const m = this.yn.get(id); if (!m) continue; if (name) { m.set("kind", name); if (t && t.c) m.set("color", t.c); } else m.delete("kind"); this.stampM(m); } }); this.selBar.dataset.sig = ""; }
       typeMenu(e) {
@@ -731,21 +732,21 @@
           seen.add(id); let e = this.els.get(id); if (!e) e = this.mkCard(id, m); e.ta.readOnly = ro || !!m.get("locked"); e.el.classList.toggle("is-locked", !!m.get("locked"));
           const s = e.el.style; s.left = m.get("x") + "px"; s.top = m.get("y") + "px"; s.width = m.get("w") + "px"; s.height = m.get("h") + "px";
           const col = m.get("color") || ""; s.setProperty("--card", col || "var(--background-modifier-border)"); e.el.classList.toggle("has-color", !!col);
-          const lb = m.get("lastBy") || m.get("by"), la = m.get("lastAt"); const bt = lb ? lb + (la ? " · " + new Date(la).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) : "") : ""; if (e.by.textContent !== bt) e.by.textContent = bt; e.by.style.setProperty("--c", m.get("lastColor") || "var(--text-faint)"); e.by.title = (m.get("by") ? "Создал: " + m.get("by") + "\n" : "") + (lb ? "Последним менял: " + lb : "");
+          const lb = m.get("lastBy") || m.get("by"), la = m.get("lastAt"); const shortN = (n) => (n.length > 14 ? n.slice(0, 13) + "…" : n); const bt = lb ? shortN(lb) + (la ? " · " + new Date(la).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) : "") : ""; if (e.by.textContent !== bt) e.by.textContent = bt; e.by.style.setProperty("--c", m.get("lastColor") || "var(--text-faint)"); e.by.title = (m.get("by") ? "Создал: " + m.get("by") + "\n" : "") + (lb ? "Последним менял: " + lb : "");
           { const nt = m.get("note") || ""; if (e.nta.value !== nt) e.nta.value = nt; e.noteEl.classList.toggle("has-note", !!nt); if (nt) e.noteEl.fit(); }
-          { const kd = m.get("kind") || "", kc = (this.typesList().find((q) => q.n === kd) || {}).c || ""; if (e.kindEl.textContent !== kd) e.kindEl.textContent = kd; e.kindEl.classList.toggle("is-empty", !kd); e.kindEl.style.background = kd ? (kc || "var(--background-modifier-border-hover)") : ""; }
+          { const kd = m.get("kind") || "", kc = (this.typesList().find((q) => q.n === kd) || {}).c || ""; if (e.kindEl.textContent !== kd) e.kindEl.textContent = kd; e.kindEl.classList.toggle("is-empty", !kd); e.kindEl.title = kd || "Тип карточки или свой подзаголовок"; e.kindEl.style.background = kd ? (kc || "var(--background-modifier-border-hover)") : ""; }
           { const im = m.get("img") || ""; if (im && !e.img) { e.img = document.createElement("img"); e.img.className = "osb-img"; e.img.draggable = false; e.el.insertBefore(e.img, e.ta); } if (e.img) { if (!im) { e.img.remove(); e.img = null; } else if (e.img.dataset.s !== String(im.length)) { e.img.src = im; e.img.dataset.s = String(im.length); } } e.el.classList.toggle("has-img", !!im); e.el.classList.toggle("is-fold", !!m.get("fold")); }
           const txt = m.get("text").toString(); if (e.ta.value !== txt) { const f = document.activeElement === e.ta, p = e.ta.selectionStart; e.ta.value = txt; if (f) { try { e.ta.setSelectionRange(Math.min(p, txt.length), Math.min(p, txt.length)); } catch (er) { /* ok */ } } }
         });
         for (const [id, e] of this.els) if (!seen.has(id)) { e.el.remove(); this.els.delete(id); this.sel.delete(id); }
-        this.syncEdges(); this.mark(); if (this.emptyEl) this.emptyEl.style.display = this.yn.size ? "none" : "";
+        this.syncEdges(); this.mark(); if (this.emptyEl) this.emptyEl.classList.toggle("is-hidden", this.yn.size > 0);
       }
       mkCard(id, m) {
         const el = this.cards.createDiv({ cls: "osb-card" }); el.dataset.id = id;
         const grip = el.createDiv({ cls: "osb-grip" }); const kindEl = grip.createSpan({ cls: "osb-kind", attr: { title: "Тип карточки или свой подзаголовок" } }); kindEl.addEventListener("pointerdown", (ev) => ev.stopPropagation()); kindEl.addEventListener("click", (ev) => { ev.stopPropagation(); if (!this.ro) this.kindMenu(ev, id); }); const tag = grip.createSpan({ cls: "osb-tag" }); const by = grip.createSpan({ cls: "osb-by" }); const x = grip.createDiv({ cls: "osb-x", attr: { title: "Удалить" } }); api.setIcon(x, "lucide-x");
         x.onclick = (ev) => { ev.stopPropagation(); this.select(new Set([id])); this.removeSel(); };
-        const nbtn = grip.createDiv({ cls: "osb-nb", attr: { title: "Комментарий (M)" } }); api.setIcon(nbtn, "lucide-message-square"); nbtn.onclick = (ev) => { ev.stopPropagation(); this.editNote(id); };
-        const ta = el.createEl("textarea", { cls: "osb-ta", attr: { placeholder: "Текст…", spellcheck: "false" } });
+        const nbtn = grip.createDiv({ cls: "osb-nb", attr: { title: "Комментарий (M)" } }); api.setIcon(nbtn, "lucide-message-square"); nbtn.onclick = (ev) => { ev.stopPropagation(); this.editNote(id); }; grip.insertBefore(nbtn, x);
+        const ta = el.createEl("textarea", { cls: "osb-ta", attr: { placeholder: "Текст…", spellcheck: "false", maxlength: "20000" } });
         const noteEl = el.createDiv({ cls: "osb-note" }), nta = noteEl.createEl("textarea", { cls: "osb-note-ta", attr: { placeholder: "Комментарий…", spellcheck: "false", rows: "1" } });
         const fitNote = () => { nta.style.height = "0"; nta.style.height = nta.scrollHeight + "px"; };
         nta.addEventListener("input", () => { if (this.ro || m.get("locked")) { nta.value = m.get("note") || ""; return; } this.doc.transact(() => { m.set("note", nta.value); this.stampM(m); }); fitNote(); });
@@ -934,7 +935,7 @@
         c.createEl("p", { text: "Код приглашения. Каждый, кто его введёт, получает полную копию доски и сам начинает её раздавать: если ваш компьютер выключится, остальные продолжат работать." });
         const i = c.createEl("input", { attr: { readonly: "true", style: "width:100%" } }); i.value = "basalt-board:" + room + ":" + pass; i.onfocus = () => i.select();
         c.createEl("p", { text: "Свои relay-серверы Nostr (необязательно):" }); const sg = c.createEl("input", { attr: { style: "width:100%" } }); sg.value = signalingList().join(", "); sg.onchange = () => { try { localStorage.setItem("board-signaling", JSON.stringify(sg.value.split(",").map((x) => x.trim()).filter(Boolean))); } catch (e) { /* private */ } };
-        c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me.name; n.onchange = () => { me.name = n.value || me.name; try { localStorage.setItem("board-me", JSON.stringify(me)); } catch (e) { /* private */ } this.publish(); };
+        c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me.name; n.maxLength = 32; n.onchange = () => { me.name = (n.value || me.name).slice(0, 32); try { localStorage.setItem("board-me", JSON.stringify(me)); } catch (e) { /* private */ } this.publish(); };
         M.open();
       }
       async onClose() { clearTimeout(this.saveT); clearInterval(this._hT); await this.save(); this.snapshot().catch(() => {}); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.rso) this.rso.disconnect(); }
