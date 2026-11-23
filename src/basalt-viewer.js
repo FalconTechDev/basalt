@@ -8,7 +8,7 @@
   const IMG = /^(png|jpe?g|gif|webp|bmp|avif|svg|ico)$/i;
   const css = document.createElement("style");
   css.textContent = `
-    .bsv { position: fixed; inset: 0; z-index: 1100; background: rgba(10,8,7,.97); display: flex; flex-direction: column; user-select: none; animation: bsv-in .16s ease-out; }
+    .bsv { position: fixed; inset: 0; z-index: var(--bs-z-overlay, 50); background: rgba(10,8,7,.97); display: flex; flex-direction: column; user-select: none; animation: bsv-in .16s ease-out; }
     @keyframes bsv-in { from { opacity: 0; } to { opacity: 1; } }
     .bsv-stage { flex: 1; position: relative; overflow: hidden; cursor: grab; touch-action: none; }
     .bsv-stage.is-drag { cursor: grabbing; }

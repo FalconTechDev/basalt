@@ -8,7 +8,7 @@
   const MAX_FILE = 1.5 * 1024 * 1024, MAX_HITS = 2000, PER_FILE = 60;
   const css = document.createElement("style");
   css.textContent = `
-    .bsf-ov { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.35); display: flex; justify-content: center; align-items: flex-start; padding-top: 8vh; }
+    .bsf-ov { position: fixed; inset: 0; z-index: var(--bs-z-overlay, 50); background: rgba(0,0,0,.35); display: flex; justify-content: center; align-items: flex-start; padding-top: 8vh; }
     .bsf-box { --background-primary: var(--vs-bg); --background-secondary: var(--vs-widget); --text-normal: var(--vs-fg); --text-muted: var(--vs-ln); --text-faint: var(--vs-ln); --background-modifier-border: var(--vs-border); --background-modifier-hover: rgba(128,128,128,.18); --font-monospace: Consolas, 'Cascadia Code', monospace; font-family: var(--font-interface); width: min(860px, 94vw); max-height: 80vh; display: flex; flex-direction: column; background: var(--background-primary); border: 1px solid var(--background-modifier-border); border-radius: var(--bs-r, 5px); clip-path: var(--bs-clip); box-shadow: none; overflow: hidden; background: var(--vs-widget); color: var(--vs-fg); }
     .bsf-head { display: flex; align-items: center; gap: 6px; padding: 10px 12px 6px; flex-wrap: wrap; }
     .bsf-in { flex: 1; min-width: 200px; height: 30px; padding: 0 10px; border-radius: var(--bs-r, 4px); border: 1px solid transparent; outline-offset: -1px; background: var(--vs-input); color: var(--text-normal); font-size: var(--font-ui-medium); }

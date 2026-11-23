@@ -256,7 +256,7 @@
   // ---------- UI ----------
   const css = document.createElement("style");
   css.textContent = `
-.bso-ov{position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+.bso-ov{position:fixed;inset:0;z-index:var(--bs-z-overlay,50);background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
 .bso{width:min(760px,92vw);max-height:86vh;background:var(--background-primary);color:var(--text-normal);border:1px solid var(--background-modifier-border-hover);box-shadow:0 12px 48px rgba(0,0,0,.45);display:flex;flex-direction:column;font-size:var(--font-ui-small)}
 .bso-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--background-modifier-border)}
 .bso-head b{font-size:var(--font-ui-medium)}

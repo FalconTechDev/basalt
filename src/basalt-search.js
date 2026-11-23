@@ -15,7 +15,7 @@
 
   const css = document.createElement("style");
   css.textContent = `
-    .bss-wrap { position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.45); display: flex; justify-content: center; align-items: flex-start; padding-top: 11vh; }
+    .bss-wrap { position: fixed; inset: 0; z-index: var(--bs-z-overlay, 50); background: rgba(0,0,0,.45); display: flex; justify-content: center; align-items: flex-start; padding-top: 11vh; }
     .bss { width: min(760px, 94vw); max-height: 74vh; display: flex; flex-direction: column; background: var(--background-secondary); color: var(--text-normal);
       clip-path: none; }
     .bss-in { display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--background-modifier-border); }

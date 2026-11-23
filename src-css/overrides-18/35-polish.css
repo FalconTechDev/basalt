@@ -76,8 +76,8 @@ select:hover, .dropdown:hover { border-color: var(--interactive-accent); }
 /* ---- start page ---- */
 .bsh-greeting { font-size: 15px; color: var(--text-muted); margin: 2px 0 14px; letter-spacing: .01em; }
 /* ---- helpers added by basalt-polish.js ---- */
-.bp-progress { position: fixed; top: 0; left: 0; height: 2px; width: 0; background: var(--interactive-accent); z-index: 60; transition: width .1s linear; pointer-events: none; opacity: .9; }
-.bp-top { position: fixed; right: 22px; bottom: 44px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--background-secondary); color: var(--text-muted); box-shadow: 0 6px 18px rgba(0, 0, 0, .4); cursor: pointer; z-index: 50; opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity .2s ease, transform .2s cubic-bezier(.3, 1.4, .5, 1), background-color .15s ease, color .15s ease; }
+.bp-progress { position: fixed; top: 0; left: 0; height: 2px; width: 0; background: var(--interactive-accent); z-index: var(--layer-notice); transition: width .1s linear; pointer-events: none; opacity: .9; }
+.bp-top { position: fixed; right: 22px; bottom: 44px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--background-secondary); color: var(--text-muted); box-shadow: 0 6px 18px rgba(0, 0, 0, .4); cursor: pointer; z-index: var(--layer-popover); opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; transition: opacity .2s ease, transform .2s cubic-bezier(.3, 1.4, .5, 1), background-color .15s ease, color .15s ease; }
 .bp-top.is-on { opacity: 1; transform: none; pointer-events: auto; }
 .bp-top:hover { background: var(--interactive-accent); color: var(--text-on-accent); }
 .bp-clock { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
