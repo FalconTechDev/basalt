@@ -383,3 +383,7 @@
 .osb-fsep { width: 1px; height: 18px; margin: 0 4px; background: var(--background-modifier-border); }
 
 .is-writing .osb-sel { display: none !important; }
+
+/* drawing mode: nothing on a card reacts to the pointer (frames included) */
+.osb-root.is-draw .osb-card, .osb-root.is-draw .osb-card * { pointer-events: none !important; }
+.is-draw .osb-fmt { display: none !important; }

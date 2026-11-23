@@ -21923,6 +21923,12 @@ button:disabled,.is-disabled,[aria-disabled="true"]{
 .is-writing .osb-sel{
     display:none!important
 }
+.osb-root.is-draw .osb-card,.osb-root.is-draw .osb-card *{
+    pointer-events:none!important
+}
+.is-draw .osb-fmt{
+    display:none!important
+}
 .modal.bsm{
     width:600px;
     max-width:94vw;

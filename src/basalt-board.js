@@ -268,6 +268,7 @@
         ctx.globalAlpha = 1; this._inkCvOn = true; this._inkCv0 = { x: c.x, y: c.y, k }; this.inkSvg.style.display = "none";
       }
       toggleDraw(on) {
+        if (on !== false && (on || !this.draw)) { const ae = document.activeElement; if (ae && ae.classList && ae.classList.contains("osb-ta")) ae.blur(); this.contentEl.classList.remove("is-writing"); }
         this.renderMini();
         if (!on && on != null && this.inkEd) this.inkEd.blur();
         if (this.ro && on) return; this.draw = on == null ? !this.draw : !!on; this.root.classList.toggle("is-draw", this.draw); if (this.drawBtn) this.drawBtn.classList.toggle("is-on", this.draw);
@@ -1100,7 +1101,7 @@
       setEdge(id, patch) { const m = this.ye.get(id); if (!m || this.ro) return; this.doc.transact(() => { for (const k of Object.keys(patch)) { if (patch[k]) m.set(k, patch[k]); else m.delete(k); } }); this.syncEdges(); }
       styleLinksOf(ids, patch) { const set = new Set(ids); this.doc.transact(() => { for (const e of this.ye.values()) if (set.has(e.get("a")) || set.has(e.get("b"))) for (const k of Object.keys(patch)) { if (patch[k]) e.set(k, patch[k]); else e.delete(k); } }); this.syncEdges(); }
       flipEdge(id) { const m = this.ye.get(id); if (!m || this.ro) return; this.doc.transact(() => { const a = m.get("a"), b = m.get("b"), sa = m.get("sa"), sb = m.get("sb"); m.set("a", b); m.set("b", a); if (sb) m.set("sa", sb); else m.delete("sa"); if (sa) m.set("sb", sa); else m.delete("sb"); }); this.syncEdges(); }
-      edit(id) { this.flush(); const m = this.yn.get(id); if (!m || this.ro || m.get("locked")) return; let e = this.ensureEl(id); if (!e) return; if (e.lite) e = this.upgrade(id, e); e.el.classList.add("is-editing"); e.ta.focus(); }
+      edit(id) { if (this.draw) return; this.flush(); const m = this.yn.get(id); if (!m || this.ro || m.get("locked")) return; let e = this.ensureEl(id); if (!e) return; if (e.lite) e = this.upgrade(id, e); e.el.classList.add("is-editing"); e.ta.focus(); }
       renderMd(id) {
         const e = this.els.get(id), m = this.yn.get(id); if (!e || e.lite || !m || e.el.classList.contains("is-editing")) return; const txt = m.get("text").toString(); if (e.mdOk && e.mdTxt === txt) return; e.mdTxt = txt; e.mdOk = true; e.mdEl.empty();
         if (!txt.trim()) { e.mdEl.createDiv({ cls: "osb-md-empty", text: "Двойной щелчок — писать" }); return; }
@@ -1292,9 +1293,9 @@
         }, { passive: false });
         r.addEventListener("dragover", (e) => { if ((e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files")) || (app.dragManager && app.dragManager.draggable)) { e.preventDefault(); try { e.dataTransfer.dropEffect = "copy"; } catch (er) { /* ok */ } } });
         r.addEventListener("drop", (e) => { const dr = app.dragManager && app.dragManager.draggable; if (dr && !this.ro) { const list = dr.type === "files" ? dr.files : dr.type === "file" ? [dr.file] : []; if (list.length) { e.preventDefault(); const p0 = this.pt(e), w0 = this.worldPt(p0.sx, p0.sy); this.dropVaultFiles(list, w0); return; } } const fs = e.dataTransfer && Array.from(e.dataTransfer.files || []); if (!fs || !fs.length || this.ro) return; e.preventDefault(); const p = this.pt(e), w = this.worldPt(p.sx, p.sy); let i = 0; for (const f of fs) { if (/^image\//.test(f.type)) this.addImageFile(f, w.x + i * 30, w.y + i * 30), i++; else if (/\.board$/i.test(f.name)) f.text().then((t) => this.importBoardText(t, f.name, w)); } });
-        r.addEventListener("dblclick", (e) => { if (e.target.closest(".osb-card, g")) return; if ((this._noNew && performance.now() - this._noNew < 450) || (this._lastMd && performance.now() - this._lastMd.t < 700)) return; { const hit = document.elementFromPoint(e.clientX, e.clientY); if (hit && hit.closest && hit.closest(".osb-card, .osb-fmt, .osb-sel")) return; } const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.addCard(w.x - 130, w.y - 30); });
+        r.addEventListener("dblclick", (e) => { if (this.draw || this.ro) return; if (e.target.closest(".osb-card, g")) return; if ((this._noNew && performance.now() - this._noNew < 450) || (this._lastMd && performance.now() - this._lastMd.t < 700)) return; { const hit = document.elementFromPoint(e.clientX, e.clientY); if (hit && hit.closest && hit.closest(".osb-card, .osb-fmt, .osb-sel")) return; } const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.addCard(w.x - 130, w.y - 30); });
         r.addEventListener("contextmenu", (e) => {
-          e.preventDefault(); if (!this.doc) return; const M = api.Menu; const m = new M(), p = this.pt(e), w = this.worldPt(p.sx, p.sy), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));
+          e.preventDefault(); if (!this.doc || this.draw) return; const M = api.Menu; const m = new M(), p = this.pt(e), w = this.worldPt(p.sx, p.sy), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));
           const card = e.target.closest && e.target.closest(".osb-card"), eg = e.target.closest && e.target.closest("g");
           if (card) {
             const id = card.dataset.id; if (!this.sel.has(id)) this.select(new Set([id]));
@@ -1327,7 +1328,7 @@
           const inField = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName), mod = e.ctrlKey || e.metaKey, k = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3).toLowerCase() : e.key.toLowerCase();
           if (mod && k === "f") { e.preventDefault(); this.toggleSearch(true); return; } if (inField) return;
           if (e.code === "Space" && !inField) { this.space = true; this.root.classList.add("is-hand"); e.preventDefault(); return; }
-          if (this.draw) { if (e.key === "Escape") this.toggleDraw(false); else if ((e.key === "Delete" || e.key === "Backspace") && this.inkSet && this.inkSet.size) { this.inkDeleteSel(); } else if (mod && k === "a" && this.tool === "select") { e.preventDefault(); this.inkSelect(new Set((this._ink ? this._ink.toArray() : []).map((q) => q.id))); return; } else if (k === "v" && !mod) this.setTool("select"); else if (k === "h" && !mod) this.setTool("hl"); else if (k === "t" && !mod) this.setTool("text"); else if (k === "p") this.setTool("pen"); else if (k === "e") this.setTool("eraser"); else if (k === "l") this.setTool("line"); else if (k === "r") this.setTool("rect"); else if (k === "o") this.setTool("ellipse"); else if (k === "a" && !mod) this.setTool("arrow"); if (!mod) return; }
+          if (this.draw) { if (e.key === "Escape") this.toggleDraw(false); else if ((e.key === "Delete" || e.key === "Backspace") && this.inkSet && this.inkSet.size) { this.inkDeleteSel(); } else if (mod && k === "a" && this.tool === "select") { e.preventDefault(); this.inkSelect(new Set((this._ink ? this._ink.toArray() : []).map((q) => q.id))); return; } else if (k === "v" && !mod) this.setTool("select"); else if (k === "h" && !mod) this.setTool("hl"); else if (k === "t" && !mod) this.setTool("text"); else if (k === "p") this.setTool("pen"); else if (k === "e") this.setTool("eraser"); else if (k === "l") this.setTool("line"); else if (k === "r") this.setTool("rect"); else if (k === "o") this.setTool("ellipse"); else if (k === "a" && !mod) this.setTool("arrow"); if (!(mod && (k === "z" || k === "y"))) return; }
           if (this.ro) { if (k === "f") this.fit(); return; }
           if (e.key === "Escape") this.clearFocus();
           if (mod && k === "a") { e.preventDefault(); this.select(new Set(this.yn.keys())); }
