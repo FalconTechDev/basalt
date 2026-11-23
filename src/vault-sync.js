@@ -1046,7 +1046,7 @@
     }
     return item;
   };
-  const btn = (label, onclick, cta) => { const b = h("button", { class: cta ? "mod-cta" : "", text: label }); b.addEventListener("click", async () => { b.disabled = true; try { await onclick(); } catch (e) { toast(e.message); } finally { b.disabled = false; ui.refresh(); } }); return b; };
+  const btn = (label, onclick, cta) => { const b = h("button", { class: cta ? "mod-cta" : "", text: label }); b.addEventListener("click", async () => { b.disabled = true; try { await onclick(); } catch (e) { toast(whyFail(e)); } finally { b.disabled = false; ui.refresh(); } }); return b; };
   const toggle = (value, onchange) => {
     const box = h("div", { class: "checkbox-container" + (value ? " is-enabled" : ""), tabindex: "0" }, h("input", { type: "checkbox", tabindex: "0" }));
     box.addEventListener("click", () => { const v = !box.classList.contains("is-enabled"); box.classList.toggle("is-enabled", v); onchange(v); });
@@ -1071,6 +1071,8 @@
     t.addEventListener("change", () => onchange(t.value));
     return t;
   };
+  // what went wrong, in plain words; the raw text only goes to the console
+  function whyFail(e) { const s = String((e && e.message) || e || ""); console.error("[vault-sync]", e); if (/[А-Яа-я]/.test(s)) return s; if (/auth|denied|403|401/i.test(s)) return "Нет доступа к серверу синхронизации. Проверьте вход и права."; if (/resolve|network|timed out|ECONN|ENOTFOUND|fetch/i.test(s)) return "Нет связи с сервером. Проверьте интернет и повторите."; if (/conflict|diverg|rejected/i.test(s)) return "Версии на устройствах разошлись. Откройте журнал синхронизации и выберите, какую оставить."; return "Синхронизация не удалась. Подробности есть в консоли (Ctrl+Shift+I)."; }
   function toast(msg) { try { new window.Notice(msg, 9000); } catch (e) { /* UI not ready */ } }
 
   const ui = {
@@ -1162,7 +1164,7 @@
     if (r) {
       g2.items.append(row("Ветка", "Пусто — синхронизировать ту, на которой вы сейчас. Если задать, синхронизация откажется работать на другой ветке.", input(r.branch, (v) => { r.branch = v.trim(); saveConfig(); }, { width: "140px" })));
       g2.items.append(row("Не синхронизировать состояние окон", "workspace.json и кэш постоянно меняются и вечно конфликтуют. Исключаются локально, через .git/info/exclude, репозиторий не меняется.",
-        toggle(cfg.skipWindowState, async (v) => { cfg.skipWindowState = v; saveConfig(); await applyExcludes(r).catch((e) => toast(e.message)); })));
+        toggle(cfg.skipWindowState, async (v) => { cfg.skipWindowState = v; saveConfig(); await applyExcludes(r).catch((e) => toast(whyFail(e))); })));
     }
     out.append(g2);
 
@@ -1243,7 +1245,7 @@
       const bs = (await backups(r)).slice(0, 8);
       g6.items.append(row("Отменить последний автокоммит", "Изменения остаются в файлах, откатывается только коммит синхронизации.", btn("Отменить", async () => { setBusy(true); try { const u = await undoLastCommit(r); toast(`Откатил «${u.subject}»${u.wasPushed ? " — он уже опубликован, исправление нужно отправить принудительно" : ""}`); } finally { setBusy(false); } })));
       g6.items.append(row(`Бэкап-ветки (${bs.length ? "последние " + bs.length : "нет"})`, bs.map((b) => `${b.name}  —  ${new Date(b.at).toLocaleString()}`).join("\n") || "Появятся перед первой перезаписью истории.",
-        bs.length ? select("", [["", "восстановить из…"], ...bs.map((b) => [b.name, b.name.split("/").slice(-1)[0]])], async (v) => { if (v && await window.__bsConfirm(`Восстановить ветку из ${v}? Текущее состояние сохранится в новой бэкап-ветке.`)) { try { await restoreBackup(r, v); toast("Восстановлено"); } catch (e) { toast(e.message); } ui.refresh(); } }) : null,
+        bs.length ? select("", [["", "восстановить из…"], ...bs.map((b) => [b.name, b.name.split("/").slice(-1)[0]])], async (v) => { if (v && await window.__bsConfirm(`Восстановить ветку из ${v}? Текущее состояние сохранится в новой бэкап-ветке.`)) { try { await restoreBackup(r, v); toast("Восстановлено"); } catch (e) { toast(whyFail(e)); } ui.refresh(); } }) : null,
         bs.length ? btn("Удалить старые", async () => { toast(`Удалено: ${await pruneBackups(r, cfg.keepBackupDays || 14)}`); }) : null));
       g6.items.lastChild.querySelector(".setting-item-description").style.whiteSpace = "pre-line";
       out.append(g6);
@@ -1288,14 +1290,14 @@
       const r = findRepo();
       if (!r) { app.setting.open(); app.setting.openTabById("sync"); return; }
       if (state.conflicts[key(r)]) { app.setting.open(); app.setting.openTabById("sync"); return; }
-      try { toast(summary(await runManual(sync))); } catch (e) { toast(e.message); }
+      try { toast(summary(await runManual(sync))); } catch (e) { toast(whyFail(e)); }
     });
     barEl.addEventListener("contextmenu", (e) => { e.preventDefault(); app.setting.open(); app.setting.openTabById("sync"); });
     const style = document.createElement("style");
     style.textContent = ".vault-sync-status.vs-conflict{color:var(--text-error)}.vault-sync-settings .vs-hint{padding:0 var(--size-4-4) var(--size-4-2)}.vault-sync-settings .vs-conflict-row{border:1px solid var(--text-error)}.vault-sync-settings textarea{font-size:var(--font-ui-small)}";
     document.head.appendChild(style);
 
-    const cmd = (id, name, fn) => app.commands.addCommand({ id: `vault-sync:${id}`, name: `Синхронизация: ${name}`, callback: async () => { try { toast(summary(await runManual(fn))); } catch (e) { toast(e.message); } } });
+    const cmd = (id, name, fn) => app.commands.addCommand({ id: `vault-sync:${id}`, name: `Синхронизация: ${name}`, callback: async () => { try { toast(summary(await runManual(fn))); } catch (e) { toast(whyFail(e)); } } });
     cmd("sync", "синхронизировать сейчас", sync);
     cmd("pull", "только скачать", pull);
     cmd("push", "только отправить", push);
@@ -1308,7 +1310,7 @@
       const last = log.split("\n").map((l) => l.split("\x1f")).find((x) => x[1] && !/^(Откат|Перед откатом|Снимок)/.test(x[1]));
       if (!last) return toast("Нечего отменять");
       if (!(await window.__bsConfirm(`Отменить последнее действие?\n${last[1]}`))) return;
-      try { toast(`Отменено: ${plural(await journalRevert(last[0]), "файл", "файла", "файлов")}`); } catch (e) { toast(e.message); }
+      try { toast(`Отменено: ${plural(await journalRevert(last[0]), "файл", "файла", "файлов")}`); } catch (e) { toast(whyFail(e)); }
     } });
     app.commands.addCommand({ id: "vault-sync:journal-snapshot", name: "Журнал действий: сделать снимок сейчас", callback: async () => { J.pending.add("."); await journalCommit("Снимок вручную"); toast("Снимок записан"); } });
     app.commands.addCommand({ id: "vault-sync:settings", name: "Синхронизация: открыть настройки", callback: () => { app.setting.open(); app.setting.openTabById("sync"); } });
@@ -1537,7 +1539,7 @@
     try {
       const out = await histGit(r, ["log", "--follow", "--max-count=300", "--no-renames", "--raw", "--numstat", "--pretty=format:@@%H%x1f%h%x1f%aI%x1f%an%x1f%s", "--", rel]);
       list = parseLog(out).map((v) => { const f = v.files.find((x) => x.path === rel) || v.files[0] || { st: "m", add: 0, del: 0 }; return { ...v, st: f.st, add: f.add, del: f.del }; });
-    } catch (e) { toast("Не удалось прочитать историю: " + e.message); return; }
+    } catch (e) { toast("Не удалось прочитать историю версий. " + whyFail(e)); return; }
     if (!list.length) { toast("У этого файла ещё нет сохранённых версий: он не попал ни в один коммит."); return; }
 
     const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -1758,7 +1760,7 @@
       gh.addEventListener("click", () => { grp.classList.toggle("is-open"); });
       grp.append(gh, gb); listEl.appendChild(grp);
     }
-    copyBtn.addEventListener("click", async () => { if (!cur) return; try { await navigator.clipboard.writeText((await blob(cur)).toString("utf8")); toast("Скопировано"); } catch (e) { toast(e.message); } });
+    copyBtn.addEventListener("click", async () => { if (!cur) return; try { await navigator.clipboard.writeText((await blob(cur)).toString("utf8")); toast("Скопировано"); } catch (e) { toast(whyFail(e)); } });
     restoreBtn.addEventListener("click", async () => {
       if (!cur) return;
       if (!(await window.__bsConfirm(`Заменить текущий файл версией от ${new Date(cur.date).toLocaleString()}? Текущее содержимое уйдёт в следующую синхронизацию как новая версия, так что к нему можно будет вернуться.`))) return;
@@ -1767,7 +1769,7 @@
         fs.mkdirSync(path.dirname(dest), { recursive: true });
         fs.writeFileSync(dest, await blob(cur));
         toast("Версия восстановлена"); close();
-      } catch (e) { toast("Не удалось восстановить: " + e.message); }
+      } catch (e) { toast("Не удалось восстановить файл. " + whyFail(e)); }
     });
     document.body.appendChild(wrap);
     listEl.querySelector(".vs-item").click();
@@ -1813,7 +1815,7 @@
         commits.push(...got);
         skip += PAGE;
         if (got.length < PAGE) done = true;
-      } catch (e) { toast("Не удалось прочитать ленту: " + e.message); done = true; }
+      } catch (e) { toast("Не удалось прочитать журнал действий. " + whyFail(e)); done = true; }
       loading = false;
     }
     const fmtDay = (d) => { const t = new Date(), dd = new Date(d); const days = Math.round((new Date(t.getFullYear(), t.getMonth(), t.getDate()) - new Date(dd.getFullYear(), dd.getMonth(), dd.getDate())) / 864e5); return days === 0 ? "Сегодня" : days === 1 ? "Вчера" : dd.toLocaleDateString(undefined, { day: "numeric", month: "long", year: dd.getFullYear() === t.getFullYear() ? undefined : "numeric" }); };
