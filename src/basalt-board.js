@@ -66,7 +66,7 @@
         const bot = c.createDiv({ cls: "osb-bottom" }); this.people = bot.createDiv({ cls: "osb-people" });
         const fe = this.feedEl = bot.createDiv({ cls: "osb-feed" }); const fh = fe.createDiv({ cls: "osb-feed-h" }); fh.createSpan({ text: "Активность" }); this.feedCount = fh.createSpan({ cls: "osb-feed-c" }); this.feedList = fe.createDiv({ cls: "osb-feed-l" });
         let open = true; try { open = localStorage.getItem("board-feed-open") !== "0"; } catch (e) { /* private */ } fe.classList.toggle("is-closed", !open); fh.onclick = () => { fe.classList.toggle("is-closed"); try { localStorage.setItem("board-feed-open", fe.classList.contains("is-closed") ? "0" : "1"); } catch (e) { /* private */ } };
-        this.bindInput(); this.ro = new ResizeObserver(() => { const r = this.root.getBoundingClientRect(), o = this._rc, n = { cx: r.left + r.width / 2, cy: r.top + r.height / 2 }; if (o && r.width > 0 && this.cam.k) { this.cam.x += (n.cx - o.cx) / this.cam.k; this.cam.y += (n.cy - o.cy) / this.cam.k; } if (r.width > 0) this._rc = n; this.applyCam(); }); this.ro.observe(c);
+        this.bindInput(); this.rso = new ResizeObserver(() => { const r = this.root.getBoundingClientRect(), o = this._rc, n = { cx: r.left + r.width / 2, cy: r.top + r.height / 2 }; if (o && r.width > 0 && this.cam.k) { this.cam.x += (n.cx - o.cx) / this.cam.k; this.cam.y += (n.cy - o.cy) / this.cam.k; } if (r.width > 0) this._rc = n; this.applyCam(); }); this.rso.observe(c);
       }
       // ---------- data ----------
       async openBoard() {
@@ -760,7 +760,7 @@
         c.createEl("p", { text: "Ваше имя:" }); const n = c.createEl("input", { attr: { style: "width:100%" } }); n.value = me.name; n.onchange = () => { me.name = n.value || me.name; try { localStorage.setItem("board-me", JSON.stringify(me)); } catch (e) { /* private */ } this.publish(); };
         M.open();
       }
-      async onClose() { clearTimeout(this.saveT); clearInterval(this._hT); try { await this.snapshot(); } catch (e) { /* history is optional */ } await this.save(); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.ro) this.ro.disconnect(); }
+      async onClose() { clearTimeout(this.saveT); clearInterval(this._hT); try { await this.snapshot(); } catch (e) { /* history is optional */ } await this.save(); if (this.sh) { if (this.sh.aw && this.pc) this.sh.aw.off("change", this.pc); this.sh.publish({ board: null, cur: null }); } else { if (this.prov) this.prov.destroy(); if (this.doc) this.doc.destroy(); } if (this.rso) this.rso.disconnect(); }
     };
   }
 
