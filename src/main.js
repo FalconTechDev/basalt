@@ -164,6 +164,7 @@ module.exports = function start(resources, events) {
 	const nativeFrame = config.frame === 'native';
 	const titleBarStyle = nativeFrame ? 'default' : 'hidden';
 	let iconPath = config.icon && fs.existsSync(path.join(data, config.icon)) ? path.join(data, config.icon) : undefined;
+	if (!iconPath && !WIN && !MAC) { const own = path.join(path.dirname(process.execPath), 'icon.png'); if (fs.existsSync(own)) iconPath = own; } // the Linux archive ships its icon beside the binary
 
 	// ---------- state ----------
 	const windows = {}; // vault id -> window

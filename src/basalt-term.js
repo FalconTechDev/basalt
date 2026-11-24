@@ -62,7 +62,7 @@
 
   // creates a terminal inside `container`; the shell starts at `cwd`
   async function create(container, opts = {}) {
-    if (!hasHelper()) throw new Error("не найден basalt-pty (" + HELPER + ")");
+    if (!hasHelper()) throw new Error(WIN ? "не найден basalt-pty (" + HELPER + ")" : "в этой сборке нет помощника basalt-pty для " + process.platform + " (" + HELPER + "), терминал выключен");
     await loadXterm();
     const sh = opts.shell || getShell(), cwd = opts.cwd || (window.app && app.vault && app.vault.adapter && app.vault.adapter.basePath) || os.homedir();
     const term = new window.Terminal({ fontFamily: mono(), fontSize: opts.fontSize || 13, cursorBlink: true, scrollback: 8000, allowProposedApi: true, theme: theme(), convertEol: false });

@@ -109,7 +109,8 @@ process.on('uncaughtException', (error) => {
 });
 
 // Hand over to the app
-const appPath = path.join(path.dirname(process.execPath), 'resources', 'app-src');
+// process.resourcesPath is <exe dir>/resources on Windows and Linux and Basalt.app/Contents/Resources on macOS
+const appPath = path.join(process.resourcesPath || path.join(path.dirname(process.execPath), 'resources'), 'app-src');
 let started = false;
 try {
 	const start = require(path.join(appPath, 'main.js'));

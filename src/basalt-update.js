@@ -35,7 +35,7 @@
       localStorage.setItem("basalt-update-last", String(Date.now()));
       const rel = JSON.parse(await get(`https://api.github.com/repos/${REPO}/releases/latest`));
       if (!rel.tag_name || !newer(rel.tag_name, VERSION)) { if (manual) notice(`У вас последняя версия (${VERSION})`); return; }
-      const asset = (rel.assets || []).find((a) => /Setup.*\.exe$/i.test(a.name));
+      const asset = process.platform !== "win32" ? null : (rel.assets || []).find((a) => /Setup.*\.exe$/i.test(a.name)); // the installer is Windows only: elsewhere the release page opens
       const ok = await window.__bsConfirm(`Доступна версия ${rel.tag_name.replace(/^v/, "")} (у вас ${VERSION}).\n\n${String(rel.body || "").slice(0, 700)}`, { title: "Обновление Basalt", ok: asset ? "Обновить сейчас" : "Открыть страницу", cancel: "Позже" });
       if (!ok) return;
       if (asset) await install(asset); else window.require("electron").shell.openExternal(rel.html_url);
