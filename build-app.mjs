@@ -97,7 +97,20 @@ export function bundleModules(wasm) {
 /** Applies the manifest to the application text; returns the new text and the replaced byte count. */
 export function applyOwn(srcText, wasm, tmpPath) {
   const manifest = readManifest();
-  const base = loadBase(manifest.base);
+  // The base revision is only needed the first time a function/class is replaced (to check that the text being replaced is the original
+  // one). Once src/app.js holds the wrapper, nothing is read from git, so a checkout without history builds and --check passes.
+  let baseCache = null;
+  const needBase = () => {
+    if (baseCache) return baseCache;
+    try {
+      baseCache = loadBase(manifest.base);
+    } catch (err) {
+      const why = String(err.message).split("\n")[0];
+      throw new Error(`build-app: src-app/manifest.json lists an entry that src/app.js does not replace yet; checking the original text needs git revision ${manifest.base} (${why}). Restore the history, or build from a checkout that has it.`);
+    }
+    return baseCache;
+  };
+  const base = { get src() { return needBase().src; }, fn: (name) => needBase().fn(name) };
   const { code, exported } = bundleModules(wasm);
   for (const e of manifest.entries) if (!exported.has(e.use)) throw new Error(`manifest: ${e.orig} -> ${e.use} is not exported by src-app`);
 
