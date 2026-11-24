@@ -14,6 +14,18 @@ All notable changes. The format follows [Keep a Changelog](https://keepachangelo
 - `docs/REPLACING_INHERITED_CODE.md`: measured share of inherited code (about 3 % of `src/app.js`) and the replacement plan.
 - `build-app.mjs` no longer needs git history once a function has been replaced.
 
+## [0.3.9]
+
+### Added
+- Dropping a board from the vault onto a board adds a board card: a picture drawn with the board's own link rules, refreshed when the file changes, opened with a double click, linked in the graph.
+- Notes and `.txt` files dropped on a board become live file cards (edits go both ways).
+- Dropping or pasting `.board`, `.canvas`, images and text files from the computer or from an opened folder's file manager works; Ctrl+V takes files from the clipboard.
+
+### Fixed
+- Idle CPU: a graph tab swap loop and a share animation loop kept the window repainting.
+- Boards written as plain JSON (no ydoc) open with their cards, and the board file now keeps link sides, shapes and card fields.
+- Round toggle thumbs and click-outside closing in the graph panels; English strings in the interface.
+
 ## [0.3.7]
 
 ### Added
