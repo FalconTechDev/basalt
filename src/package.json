@@ -2,7 +2,7 @@
 	"name": "basalt",
 	"description": "Basalt",
 	"version": "1.12.7",
-	"license": "UNLICENSED",
+	"license": "AGPL-3.0-only",
 	"author": "Basalt",
 	"private": true,
 	"main": "index.js"
