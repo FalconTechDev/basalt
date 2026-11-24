@@ -48201,7 +48201,7 @@ function defineAppearanceTab(host) {
         })
         .addExtraButton((button) => {
           button.setIcon("lucide-folder").setTooltip("Open theme folder").onClick(() => {
-            env().Platform && env().Platform.openPath ? env().Platform.openPath(css.getThemeFolder()) : null;
+            host.Platform && host.Platform.openPath ? host.Platform.openPath(css.getThemeFolder()) : null;
           });
         })
         .addExtraButton((button) => {
@@ -48238,7 +48238,7 @@ function defineAppearanceTab(host) {
   proto.renderInterface = function () {
     const self = this;
     const app = this.app;
-    const platform = env().Platform;
+    const platform = host.Platform;
     const group = new host.SettingGroup(this.containerEl)
       .addHeading(() => ng14T("setting.appearance.optionInterface", "Interface"));
 
@@ -48420,7 +48420,7 @@ function defineAppearanceTab(host) {
   proto.renderAdvanced = function () {
     const self = this;
     const app = this.app;
-    const platform = env().Platform;
+    const platform = host.Platform;
     if (!platform.isDesktopApp) return;
 
     const group = new host.SettingGroup(this.containerEl)
@@ -48486,7 +48486,7 @@ function defineAppearanceTab(host) {
           .setName(ng14T("setting.appearance.optionSnippetFolder", "Snippet folder"))
           .addButton((button) => {
             button.setButtonText("Open folder").onClick(() => {
-              env().Platform && env().Platform.openPath && env().Platform.openPath(css.getSnippetsFolder());
+              host.Platform && host.Platform.openPath && host.Platform.openPath(css.getSnippetsFolder());
             });
           });
       });
