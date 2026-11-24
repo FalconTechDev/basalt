@@ -131,7 +131,7 @@ There is a terminal inside the app, both under the editor and as a card on a boa
 
 ## Install
 
-Download `Basalt-Setup-<version>.exe` from [Releases](https://github.com/FalconTechDev/basalt/releases) and run it. Basalt is Windows-only for now. App data lives in `%APPDATA%\Basalt`; per-vault settings are in a `.basalt` folder inside the vault.
+Download `Basalt-Setup-<version>.exe` from the [latest release](https://github.com/FalconTechDev/basalt/releases/latest) and run it. Windows 10 or 11, 64-bit. App settings are in `%APPDATA%\Basalt`, per-vault settings in a `.basalt` folder inside the vault.
 
 ## Build from source
 
