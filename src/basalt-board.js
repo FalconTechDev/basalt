@@ -102,6 +102,7 @@
         this.doc = new Y.Doc(); this.yn = this.doc.getMap("nodes"); this.ye = this.doc.getMap("edges"); this.ym = this.doc.getMap("meta");
         let meta = {}; try { meta = raw ? JSON.parse(raw) : {}; } catch (e) { meta = {}; }
         if (meta.ydoc) Y.applyUpdate(this.doc, unb64(meta.ydoc));
+        else if (meta.nodes && typeof meta.nodes === "object") this.fillFromJson(meta);
         if (!this.ym.get("id")) this.ym.set("id", uid() + uid());
         this.initHistory(); this.yn.observeDeep((evs) => this.onNodes(evs));
         this.ye.observeDeep((evs) => this.onEdges(evs)); this.bindFiles();
@@ -465,13 +466,30 @@
         mn.showAtMouseEvent(e);
       }
       // import cards (all or chosen ones) from another board file into this one
+      // boards written as plain JSON (cards and links under "nodes" / "edges", no ydoc) open with their cards
+      fillFromJson(meta) {
+        const Y = window.__bsY.Y; let d; try { d = this.readBoardDoc(JSON.stringify(meta)); } catch (e) { return; }
+        this.doc.transact(() => {
+          const idOf = new Map();
+          for (const n of d.nodes) { const m = new Y.Map(), t = new Y.Text(); t.insert(0, n.text || ""); m.set("x", n.x); m.set("y", n.y); m.set("w", n.w); m.set("h", n.h); m.set("color", n.color || ""); m.set("text", t); if (n.img) m.set("img", n.img); if (n.fold) m.set("fold", true); if (n.kind) m.set("kind", n.kind); this.yn.set(String(n.id), m); idOf.set(n.id, String(n.id)); }
+          for (const e of d.edges) if (idOf.has(e.a) && idOf.has(e.b)) { const m = new Y.Map(); m.set("a", idOf.get(e.a)); m.set("b", idOf.get(e.b)); m.set("label", e.label || ""); if (e.sa) m.set("sa", e.sa); if (e.sb) m.set("sb", e.sb); this.ye.set(uid(), m); }
+        });
+      }
       readBoardDoc(text) {
         const Y = window.__bsY.Y, meta = JSON.parse(text), d = new Y.Doc(); if (meta.ydoc) Y.applyUpdate(d, unb64(meta.ydoc)); const nodes = d.getMap("nodes"), edges = d.getMap("edges"), list = [];
         nodes.forEach((m, id) => list.push({ id, x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "", img: m.get("img") || "", fold: !!m.get("fold"), kind: m.get("kind") || "" }));
-        const es = []; edges.forEach((m) => es.push({ a: m.get("a"), b: m.get("b"), label: m.get("label") || "", sa: m.get("sa") || "", sb: m.get("sb") || "" })); const ink = d.getArray("ink").toArray(); return { nodes: list, edges: es, ink };
+        const es = []; edges.forEach((m) => es.push({ a: m.get("a"), b: m.get("b"), label: m.get("label") || "", sa: m.get("sa") || "", sb: m.get("sb") || "" })); const ink = d.getArray("ink").toArray();
+        // newer files keep the cards as plain JSON and have no ydoc at all
+        if (!list.length && meta.nodes && typeof meta.nodes === "object") {
+          const ents = Array.isArray(meta.nodes) ? meta.nodes.map((n) => [n.id, n]) : Object.entries(meta.nodes);
+          for (const [id, n] of ents) if (n && id != null) list.push({ id, x: +n.x || 0, y: +n.y || 0, w: +n.w || 260, h: +n.h || 110, color: n.color || "", text: String(n.text == null ? "" : n.text), img: n.img || "", fold: !!n.fold, kind: n.kind || "" });
+          const ee = Array.isArray(meta.edges) ? meta.edges.map((e) => [e && e.id, e]) : Object.entries(meta.edges || {});
+          for (const [, e] of ee) if (e && e.a != null && e.b != null) es.push({ a: e.a, b: e.b, label: e.label || "", sa: e.sa || "", sb: e.sb || "" });
+        }
+        return { nodes: list, edges: es, ink };
       }
       importBoardData(data, ids, at, withInk) {
-        if (this.ro) return; const Y = window.__bsY.Y, pick = data.nodes.filter((n) => ids.has(n.id)); if (!pick.length) return;
+        if (this.ro) return; const Y = window.__bsY.Y, pick = data.nodes.filter((n) => ids.has(n.id)); if (!pick.length) { new api.Notice("В этой доске нет карточек: импортировать нечего."); return; }
         let x1 = 1e9, y1 = 1e9, x2 = -1e9; for (const n of pick) { x1 = Math.min(x1, n.x); y1 = Math.min(y1, n.y); x2 = Math.max(x2, n.x + n.w); }
         let ox, oy; if (at) { ox = at.x - x1; oy = at.y - y1; } else { const bb = this.bounds(Array.from(this.yn.keys())); ox = bb ? bb.x + bb.w + 120 - x1 : 0; oy = bb ? bb.y - y1 : 0; }
         const map = {}, added = []; this.doc.transact(() => {
