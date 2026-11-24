@@ -421,6 +421,7 @@
       // a card with a "file" field IS that note: typing in the card writes the file, changing the file changes the card
       bindFiles() {
         if (this._fb) return; this._fb = true; this._fw = new Map(); this._ft = new Map();
+        setTimeout(() => { const seen = new Set(); this.yn.forEach((m) => { const fp = m.get("file"); if (fp && /\.board$/i.test(fp) && !seen.has(fp)) { seen.add(fp); const tf = app.vault.getAbstractFileByPath(fp); if (tf) this.refreshBoardCards(tf); } }); }, 1500);
         const write = (path, text) => { const f = app.vault.getAbstractFileByPath(path); if (!f || f.children) return; this._fw.set(path, text); app.vault.modify(f, text).catch(() => { /* file gone */ }); };
         this.yn.observeDeep((evs, tr) => {
           if (tr && tr.origin === "file-sync") return;
@@ -476,7 +477,7 @@
         });
       }
       refreshBoardCards(f) {
-        clearTimeout(this._bt); this._bt = setTimeout(async () => { const ids = []; this.yn.forEach((m, id) => { if (m.get("file") === f.path) ids.push(id); }); if (!ids.length) return; const pic = await this.boardPicture(f); if (!pic) return; this.doc.transact(() => { for (const id of ids) { const m = this.yn.get(id); if (m && m.get("img") !== pic) m.set("img", pic); } }, "file-sync"); }, 600);
+        this._bts = this._bts || new Map(); clearTimeout(this._bts.get(f.path)); this._bts.set(f.path, setTimeout(async () => { const ids = []; this.yn.forEach((m, id) => { if (m.get("file") === f.path) ids.push(id); }); if (!ids.length) return; const pic = await this.boardPicture(f); if (!pic) return; this.doc.transact(() => { for (const id of ids) { const m = this.yn.get(id); if (m && m.get("img") !== pic) m.set("img", pic); } }, "file-sync"); }, 600));
       }
       addFileCard(x, y, f, body) {
         const id = this.addCard(x, y, String(body || "")); if (!id) return id; const m = this.yn.get(id);
