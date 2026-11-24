@@ -91307,13 +91307,13 @@ function ng30MarkdownEmbedView(host) {
 /** `NV` — base of editor-side embed sections; never recycled by the editor. */
 function ng30EmbedSectionBase(host) {
   function EmbedSectionBase(app, editor) {
-    const self = host.Component.call(this) || this;
+    const self = host.EmbedCursorBase.call(this) || this;
     self.children = [];
     self.app = app;
     self.editor = editor;
     return self;
   }
-  inherit(EmbedSectionBase, host.Component);
+  inherit(EmbedSectionBase, host.EmbedCursorBase);
   Object.defineProperty(EmbedSectionBase.prototype, "noReuse", { get: () => true });
   EmbedSectionBase.prototype.addChild = function (child) {
     this.editor.addChild(child);
