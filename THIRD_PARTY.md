@@ -15,7 +15,7 @@ report that came with this audit).
 
 | Item | Where | State |
 |---|---|---|
-| Remaining original application code | `src/app.js` (generated: own modules from `src-app/` are spliced into the inherited minified bundle by `build-app.mjs`) | About 60 % of the original bundle by size is replaced (`node tools/own-stats.mjs`); the rest is still the original minified code, a large part of it third-party libraries (section 2). `build-app.mjs` reads the original from git history (`src-app/manifest.json` -> `base`), so the history is part of the build. |
+| Remaining original application code | `src/app.js` (generated: own modules from `src-app/` are spliced into the inherited minified bundle by `build-app.mjs`) | Measured on the file as it is (`node tools/inherited-stats.mjs`, no git needed): 74.3 % own modules, 1.4 % glue, 21.1 % third-party libraries (section 2), **3.0 % (about 172 KB) still Obsidian's code**, 0.2 % separators. Of the ORIGINAL bundle, 60.4 % by size has been replaced (`node tools/own-stats.mjs`, needs git history). The list of what remains and the order to replace it: `docs/REPLACING_INHERITED_CODE.md`. `build-app.mjs` no longer reads git history unless a new entry is added to `src-app/manifest.json` (see that document); the history still holds the original bundle (`d89c49d` .. `ca5acac`). |
 | Stylesheet | `src/app.css` (generated), `src-css/*` | Derived from the original `app.css` (split into components, partly rewritten). Class names and many rules are the original's. |
 | English interface strings | `src/i18n.js` | Derived from the original string table (reworded in part). The Russian table `src/i18n-ru.js` is Basalt's own translation. |
 | Plugin API compatibility layer | names such as `registerObsidianProtocolHandler`, `getObsidianUrl`, class `obsidian-app`, `.obsidian` config folder, `obsidian://` links, community plugin lists from `github.com/obsidianmd/obsidian-releases` | Names and compatibility shims only (see section 4). |
@@ -30,25 +30,31 @@ live in the history (commits `d89c49d` .. `ca5acac`).
 
 ## 2. JavaScript and assets that ship in the app
 
+The libraries that sit inside `src/app.js` are located, sized and hashed in `vendor/MANIFEST.json`; their licence texts are in `vendor/licenses/` and verified copies of the
+webpack modules and the Lucide table are in `vendor/` (see `vendor/README.md`). Versions and copyright lines of those libraries were not read from the shipped bytes (the bundler
+stripped every banner); they must be confirmed against the pinned upstream release before a public build.
+
 | Component | Version | Licence | Where | Notice kept in file / next to it | Compatible |
 |---|---|---|---|---|---|
 | CodeMirror 5 (+ addons, modes, vim keymap) | 5.64.0 | MIT | `src/lib/codemirror/` | yes (headers) | yes |
-| CodeMirror 6 (`@codemirror/*`) and Lezer (`@lezer/*`) | not recorded | MIT | inside `src/app.js` | no (banners stripped by the bundler) | yes, add notice |
-| @replit/codemirror-vim, codemirror-search-panel | not recorded | MIT | inside `src/app.js` | no | yes, add notice |
-| moment.js with locales | 2.29.4 | MIT | `src/lib/moment.min.js`, also inside `src/app.js` | version comment only | yes, add notice |
-| yaml (eemeli) | not recorded | ISC | inside `src/app.js` | no | yes, add notice |
-| tslib | not recorded | 0BSD | inside `src/app.js` | no | yes |
-| DOMPurify | 3.0.1 | Apache-2.0 OR MPL-2.0 | inside `src/app.js` | no | yes; Apache NOTICE not shipped |
-| Turndown | 7.2.0 | MIT | `src/lib/turndown.js`, inside `src/app.js` | URL comment only | yes, add notice |
+| CodeMirror 6 (`@codemirror/state`, `view`, `language`, `commands`, `search`, `autocomplete`, `lint`, ...) and Lezer (`@lezer/common`, `highlight`, `lr`) | not recoverable from the minified code (6.x / 1.x) | MIT | inside `src/app.js` (about 530 KB: state/view 272 KB, commands/search 56 KB, language 115 KB in two copies, autocomplete 41 KB, lr 29 KB, lint 15 KB) | licences in `vendor/licenses/codemirror6.txt`, `lezer.txt` | yes |
+| @replit/codemirror-vim, codemirror-search-panel | not found in `src/app.js` any more (Vim mode uses the CodeMirror 5 vim keymap in `src/lib/codemirror/` through an inherited adapter) | MIT | - | - | - |
+| moment.js with locales | 2.29.4 | MIT | `src/lib/moment.min.js` (app.js only reads `window.moment`; it is not inside it) | version comment only | yes, add notice |
+| yaml (eemeli) | v2.x (not recoverable) | ISC | inside `src/app.js` (95 KB: lexer, parser, composer, schema, stringify) | `vendor/licenses/yaml.txt` | yes |
+| tslib (helpers `__extends`, `__awaiter`, `__generator`, ...) | not recoverable | 0BSD | inside `src/app.js` (4 KB) | `vendor/licenses/tslib.txt` | yes |
+| DOMPurify | 3.0.1 | Apache-2.0 OR MPL-2.0 (used under Apache-2.0) | inside `src/app.js` (19 KB) | `vendor/licenses/dompurify.txt`, `Apache-2.0.txt` | yes; the Apache NOTICE is not shipped separately (upstream has none) |
+| Turndown | 7.2.0 | MIT | `src/lib/turndown.js` (app.js only holds the rules added on top, about 6 KB, which are inherited) | URL comment only | yes, add notice |
 | Mozilla Readability | not recorded | Apache-2.0 | `src/lib/readability.js` | yes (header) | yes |
 | i18next | not recorded | MIT | `src/lib/i18next.min.js` | no | yes, add notice |
 | scrypt-js | commit 3f106c1 | MIT | `src/lib/scrypt.js` | source URL only | yes, add notice |
-| diff-match-patch | not recorded | Apache-2.0 | inside `src/app.js` | no | yes |
-| Fuse.js | not recorded | Apache-2.0 | inside `src/app.js` | no | yes |
-| CryptoJS (`enc.Hex`, `HmacSHA256`) | not recorded | MIT | inside `src/app.js` | no | yes |
-| d3 modules (force, quadtree, ...) | not recorded | ISC | `src/sim.js`, inside `src/app.js` | no | yes, add notice |
-| Lucide icons (and the Feather parts) | not recorded | ISC / MIT | table inside `src/app.js` | no | yes, add notice |
-| 195 webpack package modules (Markdown tooling and helpers) | not recorded | presumably MIT/ISC, not verified | first line of `src/app.js` | no | not verified |
+| diff-match-patch (Google) | not recoverable | Apache-2.0 | inside `src/app.js` (19 KB) | `vendor/licenses/diff-match-patch.txt`, `Apache-2.0.txt` | yes |
+| crypto-js (`enc.Hex`, `HmacSHA256`) | 3.x or 4.x | MIT | webpack modules in `src/app.js`, copy in `vendor/webpack-modules/crypto-js.js` | `vendor/licenses/crypto-js.txt` | yes |
+| d3 modules (force, quadtree, ...) | not recorded | ISC | `src/sim.js` only (no d3 code is left in `src/app.js`) | no | yes, add notice |
+| Lucide icons (and the Feather parts) | not recoverable (1874 entries) | ISC / MIT | table inside `src/app.js` (282 KB), copy in `vendor/lucide/icons.js` | `vendor/licenses/lucide.txt` | yes |
+| unified / remark family (remark-parse 8-style tokenizer, mdast-util-to-hast, hast-util-to-html, property-information, vfile, unist-util-*, parse-entities, ... 165 modules, 110 KB) | not recoverable | MIT | webpack modules, copy in `vendor/webpack-modules/unified-remark.js` | `vendor/licenses/unified-remark.txt` | yes |
+| idb | v7.1+ (not recoverable) | ISC | inside `src/app.js` (about 4 KB left; Obsidian's wrapper code around it was already replaced) | `vendor/licenses/idb.txt` | yes |
+| ts-ebml + ebml-block, buffer, events, ieee754, base64-js, int64-buffer, is-buffer (webm duration fix; 18 modules, 108 KB) | not recoverable | MIT / BSD-3-Clause (ieee754) | webpack modules, copies in `vendor/webpack-modules/ts-ebml.js`, `node-polyfills.js` | `vendor/licenses/ts-ebml.txt`, `node-polyfills.txt` | yes |
+| @capacitor/core, async-mutex and a secure-storage plugin (5 modules, 17 KB) | not recoverable; the secure-storage plugin is not identified | MIT (secure-storage: not verified) | webpack modules, copy in `vendor/webpack-modules/capacitor.js` | `vendor/licenses/capacitor.txt` | identify the plugin first |
 | PixiJS (`@pixi/core`, `@pixi/math`, `@pixi/unsafe-eval`, ...) | 7.x (exact build not recorded) | MIT | `src/lib/pixi.min.js` | partial (one MIT line) | yes |
 | Mermaid | 11.4.1 (one local patch, see the first line of the file) | MIT, bundles d3, dagre, DOMPurify (Apache-2.0/MPL-2.0), khroma, lodash, etc. | `src/lib/mermaid.min.js` | partial | yes, add notices |
 | MathJax (`tex-chtml-full`) + its web fonts | 3.2.2 | Apache-2.0 (fonts: see MathJax repo, not verified) | `src/lib/mathjax/` | header mention only | yes; Apache NOTICE not shipped |
@@ -123,6 +129,6 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 ## 6. Still to do before a release
 
-* Add the missing notices marked "add notice" / "add licence" above (a `licenses/` folder shipped with the installer is the usual place).
+* Ship `vendor/licenses/` with the installer and add the remaining notices marked "add notice" / "add licence" above. Confirm the copyright lines in `vendor/licenses/*.txt` against the pinned upstream releases.
 * Pin and record versions of the bundled libraries (`tools/yjs-bundle-entry.js` has no `package.json` for its npm dependencies).
 * Decide what to do with the inherited code of section 1 (replace it, get permission, or do not publish builds).
