@@ -6,6 +6,8 @@
 
 **Markdown notes, collaborative boards on an infinite canvas, and a link graph. All in plain files on your disk.**
 
+[![Download for Windows](https://img.shields.io/badge/Download%20for%20Windows-c8895a?style=for-the-badge)](https://github.com/FalconTechDev/basalt/releases/latest)
+
 ![License](https://img.shields.io/badge/license-AGPL--3.0-c8895a?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Windows-3b3128?style=flat-square)
 ![Electron](https://img.shields.io/badge/Electron-39-3b3128?style=flat-square)
