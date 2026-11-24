@@ -395,6 +395,16 @@
         if (this.ro) return; try { const r = await this.imgData(blob), cw = Math.min(360, Math.max(160, r.w)), ch = Math.round(cw * r.h / r.w) + 22 + 36, id = this.addCard(x - cw / 2, y - ch / 2, ""), m = this.yn.get(id); this.doc.transact(() => { m.set("img", r.data); m.set("w", cw); m.set("h", ch); }); } catch (e) { new api.Notice(e && e.message === "big" ? "Изображение слишком большое для доски: уменьшите его и вставьте снова" : "Не удалось вставить изображение"); }
       }
       pickImage(at) { const i = document.createElement("input"); i.type = "file"; i.accept = "image/*"; i.multiple = true; i.onchange = () => { const c = at || this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2); let n = 0; for (const f of i.files) this.addImageFile(f, c.x + n++ * 30, c.y + n * 30); }; i.click(); }
+      importDomFiles(fs, w) {
+        let i = 0; for (const f of fs) {
+          const at = { x: w.x + i * 30, y: w.y + i * 30 }, ext = (f.name.split(".").pop() || "").toLowerCase(); i++;
+          if (/^image\//.test(f.type)) this.addImageFile(f, at.x, at.y);
+          else if (ext === EXT) f.text().then((t) => { try { const d = this.readBoardDoc(t); this.importBoardData(d, new Set(d.nodes.map((q) => q.id)), at, true); } catch (e) { new api.Notice("Это не файл доски"); } });
+          else if (ext === "canvas") f.text().then((t) => canvasData(JSON.parse(t))).then((d) => this.importBoardData(d, new Set(d.nodes.map((q) => q.id)), at, false)).catch(() => new api.Notice("Не удалось прочитать холст"));
+          else if (TEXT_EXT.test(ext)) f.text().then((t) => this.addCard(at.x - 130, at.y - 30, this.fileCardText({ name: f.name.replace(/\.[^.]+$/, "") }, t, ext)));
+          else this.addCard(at.x - 130, at.y - 30, f.name);
+        }
+      }
       async pasteAny() {
         const c = this.myCur || this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2);
         try { const items = await navigator.clipboard.read(); for (const it of items) { const ty = it.types.find((t) => /^image\//.test(t)); if (ty) { this.addImageFile(await it.getType(ty), c.x, c.y); return; } } } catch (e) { /* no image or no access */ }
@@ -409,7 +419,7 @@
       // a card with a "file" field IS that note: typing in the card writes the file, changing the file changes the card
       bindFiles() {
         if (this._fb) return; this._fb = true; this._fw = new Map(); this._ft = new Map();
-        const write = (path, text) => { const f = app.vault.getAbstractFileByPath(path); if (!f || f.children) return; this._fw.set(path, text); app.vault.adapter.write(path, text).catch(() => { /* file gone */ }); };
+        const write = (path, text) => { const f = app.vault.getAbstractFileByPath(path); if (!f || f.children) return; this._fw.set(path, text); app.vault.modify(f, text).catch(() => { /* file gone */ }); };
         this.yn.observeDeep((evs, tr) => {
           if (tr && tr.origin === "file-sync") return;
           const hit = new Set(); for (const ev of evs) { const id = ev.path && ev.path[0]; if (id && ev.target instanceof window.__bsY.Y.Text) hit.add(id); }
@@ -418,7 +428,7 @@
         this.registerEvent(app.vault.on("modify", async (f) => {
           if (!f || f.children) return; let body = null;
           this.yn.forEach((m, id) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t) return; if (body === null) body = "pending"; });
-          if (body === null) return; body = await app.vault.adapter.read(f.path);
+          if (body === null) return; body = await app.vault.read(f);
           if (this._fw.get(f.path) === body) return;
           this.yn.forEach((m, id) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t || t.toString() === body) return; this.doc.transact(() => { t.delete(0, t.length); t.insert(0, body); }, "file-sync"); });
         }));
@@ -1333,7 +1343,12 @@
           this.applyCam();
         }, { passive: false });
         r.addEventListener("dragover", (e) => { if ((e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files")) || (app.dragManager && app.dragManager.draggable)) { e.preventDefault(); try { e.dataTransfer.dropEffect = "copy"; } catch (er) { /* ok */ } } });
-        r.addEventListener("drop", (e) => { const dr = app.dragManager && app.dragManager.draggable; if (dr && !this.ro) { const list = dr.type === "files" ? dr.files : dr.type === "file" ? [dr.file] : []; if (list.length) { e.preventDefault(); const p0 = this.pt(e), w0 = this.worldPt(p0.sx, p0.sy); this.dropVaultFiles(list, w0); return; } } const fs = e.dataTransfer && Array.from(e.dataTransfer.files || []); if (!fs || !fs.length || this.ro) return; e.preventDefault(); const p = this.pt(e), w = this.worldPt(p.sx, p.sy); let i = 0; for (const f of fs) { if (/^image\//.test(f.type)) this.addImageFile(f, w.x + i * 30, w.y + i * 30), i++; else if (/\.board$/i.test(f.name)) f.text().then((t) => this.importBoardText(t, f.name, w)); else if (TEXT_EXT.test(f.name.split(".").pop().toLowerCase())) { const at = { x: w.x + i * 30, y: w.y + i * 30 }; i++; f.text().then((t) => this.addCard(at.x - 130, at.y - 30, this.fileCardText({ name: f.name.replace(/\.[^.]+$/, "") }, t, f.name.split(".").pop().toLowerCase()))); } } });
+        r.addEventListener("paste", (e) => {
+          const t = e.target; if (this.ro || (t && (/INPUT|TEXTAREA/.test(t.tagName) || t.isContentEditable))) return; e.preventDefault();
+          const fs = Array.from((e.clipboardData && e.clipboardData.files) || []), cur = this.myCur || this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2);
+          if (fs.length) this.importDomFiles(fs, cur); else this.pasteAny();
+        });
+        r.addEventListener("drop", (e) => { const dr = app.dragManager && app.dragManager.draggable; if (dr && !this.ro) { const list = dr.type === "files" ? dr.files : dr.type === "file" ? [dr.file] : []; if (list.length) { e.preventDefault(); const p0 = this.pt(e), w0 = this.worldPt(p0.sx, p0.sy); this.dropVaultFiles(list, w0); return; } } const fs = e.dataTransfer && Array.from(e.dataTransfer.files || []); if (!fs || !fs.length || this.ro) return; e.preventDefault(); const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.importDomFiles(fs, w); });
         r.addEventListener("dblclick", (e) => { if (this.draw || this.ro) return; if (e.target.closest(".osb-card, g")) return; if ((this._noNew && performance.now() - this._noNew < 450) || (this._lastMd && performance.now() - this._lastMd.t < 700)) return; { const hit = document.elementFromPoint(e.clientX, e.clientY); if (hit && hit.closest && hit.closest(".osb-card, .osb-fmt, .osb-sel")) return; } const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.addCard(w.x - 130, w.y - 30); });
         r.addEventListener("contextmenu", (e) => {
           e.preventDefault(); if (!this.doc || this.draw) return; const M = api.Menu; const m = new M(), p = this.pt(e), w = this.worldPt(p.sx, p.sy), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));
@@ -1375,7 +1390,7 @@
           if (e.key === "Escape") this.clearFocus();
           if (mod && k === "a") { e.preventDefault(); this.select(new Set(this.yn.keys())); }
           else if (mod && k === "z") { e.preventDefault(); e.shiftKey ? this.redo() : this.undo(); } else if (mod && k === "y") { e.preventDefault(); this.redo(); }
-          else if (mod && k === "c") { this.copy(); } else if (mod && k === "x") { this.copy(); this.removeSel(); } else if (mod && k === "v") { e.preventDefault(); this.pasteAny(); }
+          else if (mod && k === "c") { this.copy(); } else if (mod && k === "x") { this.copy(); this.removeSel(); } else if (mod && k === "v") { /* the paste event below decides */ }
           else if (mod && k === "d") { e.preventDefault(); this.duplicate(); }
           else if ((e.key === "Delete" || e.key === "Backspace") && (this.sel.size || this.selEdge)) { e.preventDefault(); this.removeSel(); }
           else if (e.key === "Escape") { this.select(new Set()); this.selEdge = null; this.mark(); this.toggleSearch(false); }
