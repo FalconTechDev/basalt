@@ -13,6 +13,7 @@ if (args.includes("--make-vault")) {
   const dir = path.resolve(opt("--make-vault"));
   fs.mkdirSync(path.join(dir, "folder"), { recursive: true });
   fs.writeFileSync(path.join(dir, "Note.md"), "---\ntags: [demo]\naliases: [Sample]\n---\n# Heading\n\nSee [[Other note]] and [[folder/Deep note#Part]] #inline-tag\n\n- [ ] task\n");
+  fs.writeFileSync(path.join(dir, "Table.md"), "# Table\n\n| a | b |\n|---|---|\n| 1 | 2 |\n");
   fs.writeFileSync(path.join(dir, "Other note.md"), "# Other\n\nBack to [[Note]]. Fuzzy target: quick brown fox.\n");
   fs.writeFileSync(path.join(dir, "folder", "Deep note.md"), "# Deep\n\n## Part\n\ntext with [[Note|alias]]\n");
   fs.writeFileSync(path.join(dir, "Board.canvas"), JSON.stringify({ nodes: [{ id: "a", type: "text", text: "hello", x: 0, y: 0, width: 200, height: 80 }, { id: "b", type: "file", file: "Other note.md", x: 300, y: 0, width: 200, height: 120 }], edges: [{ id: "e", fromNode: "a", toNode: "b" }] }));
@@ -157,6 +158,42 @@ const st = await run(`(async () => {
   } catch (e) { return { error: String(e) }; }
 })()`);
 check("inherited settings dialog opens and closes", st.tabs >= 3 && st.rows >= 1 && st.closed, st);
+
+// a note with a markdown table: the table widget is built, and the leaf can be replaced by another note afterwards
+// (closing the editor destroys the widgets; used to throw "this.widget.destroy is not a function" and leave a blank tab)
+const tbl = await run(`(async () => {
+  try {
+    const leaf = app.workspace.getLeaf("tab");
+    await leaf.openFile(app.vault.getAbstractFileByPath("Table.md"));
+    await new Promise((r) => setTimeout(r, 2000));
+    const widgets = leaf.view.containerEl.querySelectorAll(".cm-table-widget table").length;
+    await leaf.openFile(app.vault.getAbstractFileByPath("Other note.md"));
+    await new Promise((r) => setTimeout(r, 1000));
+    const after = leaf.view.file && leaf.view.file.path;
+    leaf.detach();
+    return { widgets, after };
+  } catch (e) { return { error: String(e && e.stack || e) }; }
+})()`);
+check("note with a table opens and can be replaced by another note", !tbl.error && tbl.widgets >= 1 && tbl.after === "Other note.md", tbl);
+
+// Settings > Appearance renders (used to throw "Cannot read properties of undefined (reading 'isPhone')")
+const ap = await run(`(async () => {
+  try {
+    window.__bsStock = true;
+    app.setting.open();
+    window.__bsStock = false;
+    await new Promise((r) => setTimeout(r, 1500));
+    const tab = [...document.querySelectorAll(".modal-container .vertical-tab-nav-item")].find((i) => /appearance|оформлен|внешн/i.test(i.innerText));
+    if (!tab) return { error: "no appearance tab" };
+    tab.click();
+    await new Promise((r) => setTimeout(r, 1500));
+    const rows = document.querySelectorAll(".modal-container .setting-item").length;
+    app.setting.close();
+    await new Promise((r) => setTimeout(r, 500));
+    return { rows };
+  } catch (e) { return { error: String(e && e.stack || e) }; }
+})()`);
+check("settings Appearance tab renders", !ap.error && ap.rows >= 3, ap);
 
 // command palette (a suggest modal): opens, filters, closes with Escape
 const cp = await run(`(async () => {
