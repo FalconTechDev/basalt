@@ -20,7 +20,7 @@ report that came with this audit).
 | English interface strings | `src/i18n.js` | Derived from the original string table (reworded in part). The Russian table `src/i18n-ru.js` is Basalt's own translation. |
 | Plugin API compatibility layer | names such as `registerObsidianProtocolHandler`, `getObsidianUrl`, class `obsidian-app`, `.obsidian` config folder, `obsidian://` links, community plugin lists from `github.com/obsidianmd/obsidian-releases` | Names and compatibility shims only (see section 4). |
 | Obsidian-built runtime | `runtime/` (not tracked) is created by `run.ps1` from an installed Obsidian: its Electron build renamed to `Basalt.exe`, plus its native modules `btime` and `get-fonts` (package.json: `UNLICENSED`) | The installer builder no longer copies `btime` and `get-fonts` (both are optional). The renamed `Obsidian.exe` is Obsidian's repackaging of Electron; for a release use a stock Electron build of the same version instead. |
-| Logo | `branding/*`, `src/icon.png`, `src/basalt-logo.png`, `cli/src/logo.rs` | A faceted gem in bronze. Its design origin was not determined by this audit; check that it is not a recoloured copy of the Obsidian gem. |
+| Logo | `branding/*`, `src/icon.png`, `src/basalt-logo.png`, `cli/src/logo.rs` | Basalt's own logo (a faceted bronze gem), confirmed by the project owner as original work. |
 
 Files that were derived from or contained verbatim Obsidian text and were removed from the working tree in this cleanup (still in the git
 history): `i18n-fix/` (the original English strings next to the rewrites), `docs/APP-MAP.md` (structure map of the original bundle),
@@ -79,7 +79,7 @@ live in the history (commits `d89c49d` .. `ca5acac`).
 | `portable-pty` 0.8.1 + 30 crates | see `pty-helper/Cargo.lock` | MIT / Apache-2.0 / Unicode-3.0 | `pty-helper` (`src/bin/basalt-pty.exe`) | all permissive |
 | `crossterm` 0.27, `serde_json` 1 + 50 crates | see `cli/Cargo.lock` | MIT / Apache-2.0 / Unlicense / Unicode-3.0 | `cli` (`src/bin/basalt*.exe`) | all permissive |
 | `yaml-rust2` 0.10.4, `hashbrown`, `hashlink`, `arraydeque`, `foldhash` (Zlib) | see `markdown-engine/Cargo.lock` | MIT OR Apache-2.0 / Zlib | `markdown-engine` (compiled into `src/worker.js`) | all permissive |
-| `fp-core`, `fp-graph` | 0.1.0 | MIT OR Apache-2.0 | `../falconplot/crates/` (a **sibling repository**, path dependency) | `graph-engine` and `canvas-engine` do not build without it |
+| `fp-core`, `fp-graph` | 0.1.0 | MIT OR Apache-2.0 | `../falconplot/crates/` (the owner's own **sibling repository**, path dependency, kept on purpose) | `graph-engine` and `canvas-engine` do not build without it |
 | `app-core`, `search-engine`, `plugins-sdk/hello-wasm` | | no dependencies | own code | |
 | postcss, postcss-selector-parser, nanoid, picocolors, util-deprecate, pngjs | see `tools/package-lock.json` | MIT / ISC | `tools/` (dev only, not shipped) | |
 | lightningcss | ^1.33 | MPL-2.0 | `tools/` (dev only, not shipped) | |
