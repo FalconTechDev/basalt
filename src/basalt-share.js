@@ -214,7 +214,7 @@
       } catch (er) { console.error("share read", rel, er); }
     }
     diff(t, old, now) { let a = 0; while (a < old.length && a < now.length && old[a] === now[a]) a++; let b = 0; while (b < old.length - a && b < now.length - a && old[old.length - 1 - b] === now[now.length - 1 - b]) b++; this.doc.transact(() => { if (old.length - a - b) t.delete(a, old.length - a - b); if (now.length - a - b) t.insert(a, now.slice(a, now.length - b)); }); }
-    boardJson(e) { const nodes = {}, edges = {}; e.get("nodes").forEach((m, id) => { nodes[id] = { x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "" }; }); e.get("edges").forEach((m, id) => { edges[id] = { a: m.get("a"), b: m.get("b"), label: m.get("label") || "" }; }); return JSON.stringify({ v: 3, nodes, edges }, null, 1); }
+    boardJson(e) { const nodes = {}, edges = {}; e.get("nodes").forEach((m, id) => { const o = { x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "" }; for (const k of ["kind", "img", "fold", "frame", "group", "locked", "file"]) { const v = m.get(k); if (v) o[k] = v; } nodes[id] = o; }); e.get("edges").forEach((m, id) => { const o = { a: m.get("a"), b: m.get("b"), label: m.get("label") || "" }; for (const k of ["sa", "sb", "sh", "ls", "ad", "ec"]) { const v = m.get(k); if (v) o[k] = v; } edges[id] = o; }); return JSON.stringify({ v: 3, nodes, edges }, null, 1); }
     noteRemote(rel) {
       if (this.skip(rel)) return; this.lastRemote.set(rel, Date.now());
       const who = this.peers.filter((u) => u.file === rel || u.board === rel).map((u) => u.name); const e = this.activity[0];
@@ -652,9 +652,9 @@
       const wait = 28 - (Date.now() - lastSent); if (wait <= 0) flushPtr(); else if (!sendT) sendT = setTimeout(flushPtr, wait);
     }, true);
     document.addEventListener("mouseleave", () => { pending = null; for (const sh of shares.values()) if (sh.extra && sh.extra.ptr) sh.publish({ ptr: null }); }, true);
-    const ptrs = new Map(); let leaves = [], leavesAt = 0;
+    const ptrs = new Map(); let leaves = [], leavesAt = 0, frameOn = false;
     const frame = () => {
-      requestAnimationFrame(frame); if (!shares.size || !prefs().pointers) { if (ptrs.size) { for (const o of ptrs.values()) o.el.remove(); ptrs.clear(); } return; }
+      if (!shares.size || !prefs().pointers) { if (ptrs.size) { for (const o of ptrs.values()) o.el.remove(); ptrs.clear(); } frameOn = false; return; } requestAnimationFrame(frame);
       const now = performance.now();
       if (now - leavesAt > 400) { leavesAt = now; leaves = []; app.workspace.iterateAllLeaves((l) => { const v = l.view; if (v && v.containerEl && v.containerEl.isConnected && !(v.getViewType && v.getViewType() === "basalt-board")) { const p = pathOf(v), hit = p && relOf(p); if (hit) leaves.push({ pane: v.containerEl.closest(PANE) || v.containerEl, hit, v }); } }); }
       const live = new Set();
@@ -673,7 +673,8 @@
       }
       for (const [k, o] of ptrs) if (!live.has(k)) { o.el.remove(); ptrs.delete(k); }
     };
-    requestAnimationFrame(frame);
+    // the loop runs only while a room is shared: an idle animation-frame loop keeps the whole window repainting
+    setInterval(() => { if (!frameOn && shares.size && prefs().pointers) { frameOn = true; requestAnimationFrame(frame); } }, 400);
     // carets of other people inside the open note
     setInterval(() => {
       if (!shares.size) return; if (!prefs().carets) { document.querySelectorAll(".bsh-cursors, .bsh-badge").forEach((x) => x.remove()); return; }

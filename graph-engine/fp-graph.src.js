@@ -1104,7 +1104,7 @@
     for (const type of ["graph", "localgraph"]) {
       for (const leaf of app.workspace.getLeavesOfType(type)) {
         if (leaf.view && leaf.view.constructor && leaf.view.constructor.__bsCls) continue;
-        if (leaf.__bsFixing) continue; leaf.__bsFixing = true;
+        if (leaf.__bsFixing || leaf.__bsFixed) continue; leaf.__bsFixing = true; leaf.__bsFixed = true; /* once per leaf: another module may own this view type, and swapping again would loop forever */
         try { const st = leaf.getViewState(); await leaf.setViewState({ type: "empty" }); await leaf.setViewState(st); } catch (e) { console.error("[bs-graph] leaf swap failed", e); }
         leaf.__bsFixing = false;
       }

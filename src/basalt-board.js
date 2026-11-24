@@ -428,13 +428,20 @@
           const hit = new Set(); for (const ev of evs) { const id = ev.path && ev.path[0]; if (id && ev.target instanceof window.__bsY.Y.Text) hit.add(id); }
           for (const id of hit) { const m = this.yn.get(id); const path = m && m.get("file"); if (!path || this.ro || !/\.(md|markdown|txt)$/i.test(path)) continue; clearTimeout(this._ft.get(id)); this._ft.set(id, setTimeout(() => { const mm = this.yn.get(id); if (mm && mm.get("text")) write(mm.get("file"), mm.get("text").toString()); }, 700)); }
         });
-        this.registerEvent(app.vault.on("modify", async (f) => {
+        this._onFile = async (f) => {
           if (!f || f.children) return; if (f.extension === EXT) { this.refreshBoardCards(f); return; } if (!/^(md|markdown|txt)$/i.test(f.extension || "")) return; let body = null;
-          this.yn.forEach((m, id) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t) return; if (body === null) body = "pending"; });
-          if (body === null) return; body = await app.vault.read(f);
+          this.yn.forEach((m) => { if (m.get("file") !== f.path) return; if (!m.get("text")) return; if (body === null) body = "pending"; });
+          if (body === null) return; try { body = await app.vault.adapter.read(f.path); } catch (e) { return; }
           if (this._fw.get(f.path) === body) return;
-          this.yn.forEach((m, id) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t || t.toString() === body) return; this.doc.transact(() => { t.delete(0, t.length); t.insert(0, body); }, "file-sync"); });
-        }));
+          this.yn.forEach((m) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t || t.toString() === body) return; this.doc.transact(() => { t.delete(0, t.length); t.insert(0, body); }, "file-sync"); });
+        };
+        this.registerEvent(app.vault.on("modify", (f) => this._onFile(f)));
+        // writes that go straight to the disk (the share sync does that) do not always raise "modify": look at the file times too
+        this._fm = new Map();
+        this.registerInterval(window.setInterval(async () => {
+          if (document.hidden || !this.yn) return; const paths = new Set(); this.yn.forEach((m) => { const fp = m.get("file"); if (fp) paths.add(fp); });
+          for (const fp of paths) { let st = null; try { st = await app.vault.adapter.stat(fp); } catch (e) { /* gone */ } if (!st) continue; const prev = this._fm.get(fp); this._fm.set(fp, st.mtime); if (prev !== undefined && prev !== st.mtime) { const f = app.vault.getAbstractFileByPath(fp); if (f) this._onFile(f); } }
+        }, 2000));
       }
       // a board dropped on a board becomes a card that shows it, follows its changes and opens it on double click
       async boardPicture(f) {
