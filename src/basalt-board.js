@@ -94,7 +94,7 @@
         if (sh) { const rel = sh.rel(this.path); if (!sh.files.has(rel)) await sh.fromDisk(rel); const e = sh.files.get(rel);
           if (e && e.get("t") === "board") {
             this.sh = sh; this.relPath = rel; this.doc = sh.doc; this.yn = e.get("nodes"); this.ye = e.get("edges"); this.ym = sh.meta; this.initHistory();
-            this.yn.observeDeep((evs) => this.onNodes(evs)); this.ye.observeDeep((evs) => this.onEdges(evs));
+            this.yn.observeDeep((evs) => this.onNodes(evs)); this.ye.observeDeep((evs) => this.onEdges(evs)); this.bindFiles();
             this.aw = sh.aw; this.pc = () => { this.peers = sh.peers.filter((u) => u.board === rel); this.paintPeers(); }; if (sh.aw) sh.aw.on("change", this.pc); this.pc();
             this.fit(); this.sync(); this.feedArr(); this.renderFeed(); this.startHistory(); this.share.classList.add("is-on"); return;
           } }
@@ -104,14 +104,14 @@
         if (meta.ydoc) Y.applyUpdate(this.doc, unb64(meta.ydoc));
         if (!this.ym.get("id")) this.ym.set("id", uid() + uid());
         this.initHistory(); this.yn.observeDeep((evs) => this.onNodes(evs));
-        this.ye.observeDeep((evs) => this.onEdges(evs));
+        this.ye.observeDeep((evs) => this.onEdges(evs)); this.bindFiles();
         this.fit(); this.sync(); this.feedArr(); this.renderFeed(); this.startHistory();
         if (this.ym.get("room")) this.connect(this.ym.get("room"), this.ym.get("pass") || "");
       }
       queueSave() { if (this.sh) return; clearTimeout(this.saveT); const n = this.yn ? this.yn.size : 0; this.saveT = setTimeout(() => this.save(), Math.max(n > 3000 ? 4000 : n > 800 ? 1500 : 400, Math.min(60000, (this._saveMs || 0) * 8))); }
       async save() {
         if (this.sh || !this.doc || !this.path) return; const Y = window.__bsY.Y;
-        const nodes = {}; this.yn.forEach((m, id) => { nodes[id] = { x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "" }; });
+        const nodes = {}; this.yn.forEach((m, id) => { nodes[id] = { x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "", file: m.get("file") || "" }; });
         const out = { v: 2, id: this.ym.get("id"), room: this.ym.get("room") || null, nodes, edges: this.ye.toJSON(), ydoc: "@@YDOC@@" }; const t0 = performance.now(), y64 = b64(Y.encodeStateAsUpdate(this.doc));
         // the big base64 string goes in by splicing, not through JSON.stringify (no escaping pass, one copy less)
         try { await app.vault.adapter.write(this.path, (this.yn.size > 600 ? JSON.stringify(out) : JSON.stringify(out, null, 1)).replace('"@@YDOC@@"', () => '"' + y64 + '"')); } catch (e) { console.error(e); }
@@ -406,6 +406,28 @@
       keepPos(ids) { this._prevPos = new Map(); for (const id of ids) { const m = this.yn.get(id); if (m) this._prevPos.set(id, [m.get("x"), m.get("y"), m.get("w"), m.get("h"), !!m.get("fold")]); } }
       restorePos() { if (!this._prevPos || this.ro) return; const cur = new Map(); for (const id of this._prevPos.keys()) { const m = this.yn.get(id); if (m) cur.set(id, [m.get("x"), m.get("y"), m.get("w"), m.get("h"), !!m.get("fold")]); } this.um && this.um.stopCapturing(); this.doc.transact(() => { for (const [id, v] of this._prevPos) { const m = this.yn.get(id); if (m) { m.set("x", v[0]); m.set("y", v[1]); m.set("w", v[2]); m.set("h", v[3]); m.set("fold", v[4]); } } }); this.um && this.um.stopCapturing(); this._prevPos = cur; this.syncEdges(); this.selBar.dataset.sig = ""; new api.Notice("Расположение возвращено"); }
       toastUndo(text) { const f = document.createDocumentFragment(); f.append(text + " "); const b = document.createElement("button"); b.textContent = "Вернуть назад"; b.style.marginLeft = "8px"; const n = new api.Notice(f, 7000); b.onclick = () => { this.restorePos(); n.hide(); }; f.append(b); }
+      // a card with a "file" field IS that note: typing in the card writes the file, changing the file changes the card
+      bindFiles() {
+        if (this._fb) return; this._fb = true; this._fw = new Map(); this._ft = new Map();
+        const write = (path, text) => { const f = app.vault.getAbstractFileByPath(path); if (!f || f.children) return; this._fw.set(path, text); app.vault.adapter.write(path, text).catch(() => { /* file gone */ }); };
+        this.yn.observeDeep((evs, tr) => {
+          if (tr && tr.origin === "file-sync") return;
+          const hit = new Set(); for (const ev of evs) { const id = ev.path && ev.path[0]; if (id && ev.target instanceof window.__bsY.Y.Text) hit.add(id); }
+          for (const id of hit) { const m = this.yn.get(id); const path = m && m.get("file"); if (!path || this.ro) continue; clearTimeout(this._ft.get(id)); this._ft.set(id, setTimeout(() => { const mm = this.yn.get(id); if (mm && mm.get("text")) write(mm.get("file"), mm.get("text").toString()); }, 700)); }
+        });
+        this.registerEvent(app.vault.on("modify", async (f) => {
+          if (!f || f.children) return; let body = null;
+          this.yn.forEach((m, id) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t) return; if (body === null) body = "pending"; });
+          if (body === null) return; body = await app.vault.adapter.read(f.path);
+          if (this._fw.get(f.path) === body) return;
+          this.yn.forEach((m, id) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t || t.toString() === body) return; this.doc.transact(() => { t.delete(0, t.length); t.insert(0, body); }, "file-sync"); });
+        }));
+      }
+      addFileCard(x, y, f, body) {
+        const id = this.addCard(x, y, String(body || "")); if (!id) return id; const m = this.yn.get(id);
+        if (m) this.doc.transact(() => { m.set("file", f.path); m.set("kind", f.basename || f.name || ""); m.set("w", 320); m.set("h", 220); });
+        return id;
+      }
       // a dropped note or text file becomes a card with its content under a link to the file
       fileCardText(f, body, ext) {
         const name = f.basename || f.name || f.path, max = 4000; let t = String(body || "").replace(/\r\n/g, "\n");
@@ -420,6 +442,7 @@
             if (ext === "canvas") { const data = await canvasData(JSON.parse(await app.vault.adapter.read(f.path))); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, false); }
             else if (ext === EXT) { const data = this.readBoardDoc(await app.vault.adapter.read(f.path)); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, true); }
             else if (/^(png|jpe?g|gif|webp|bmp|svg|avif)$/.test(ext)) { const buf = await app.vault.adapter.readBinary(f.path); this.addImageFile(new Blob([buf], { type: ext === "svg" ? "image/svg+xml" : "image/" + (ext === "jpg" ? "jpeg" : ext) }), at.x, at.y); }
+            else if (ext === "md" || ext === "txt") { this.addFileCard(at.x - 130, at.y - 30, f, await app.vault.adapter.read(f.path)); }
             else if (TEXT_EXT.test(ext)) { const body = await app.vault.adapter.read(f.path); this.addCard(at.x - 130, at.y - 30, this.fileCardText(f, body, ext)); }
             else this.addCard(at.x - 130, at.y - 30, "[[" + (f.path || f.name) + "]]");
           } catch (e) { new api.Notice("Не удалось добавить файл " + (f.name || "")); }

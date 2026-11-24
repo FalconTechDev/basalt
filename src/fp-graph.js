@@ -74,7 +74,7 @@
     const one = async (f) => {
       try {
         const j = JSON.parse(await app.vault.cachedRead(f)), out = new Set();
-        if (f.extension === "board") { for (const n of Object.values(j.nodes || {})) if (n && n.text) for (const m of String(n.text).matchAll(/\[\[([^\]|#]+)/g)) { const d = app.metadataCache.getFirstLinkpathDest(m[1].trim(), f.path); if (d) out.add(d.path); } }
+        if (f.extension === "board") { for (const n of Object.values(j.nodes || {})) { if (n && n.file) { const d0 = app.vault.getAbstractFileByPath(n.file); if (d0) out.add(d0.path); } } for (const n of Object.values(j.nodes || {})) if (n && n.text) for (const m of String(n.text).matchAll(/\[\[([^\]|#]+)/g)) { const d = app.metadataCache.getFirstLinkpathDest(m[1].trim(), f.path); if (d) out.add(d.path); } }
         else for (const n of j.nodes || []) {
           if (n.type === "file" && n.file && app.vault.getAbstractFileByPath(n.file)) out.add(n.file);
           else if (n.type === "text" && n.text) for (const m of n.text.matchAll(/\[\[([^\]|#]+)/g)) { const d = app.metadataCache.getFirstLinkpathDest(m[1].trim(), f.path); if (d) out.add(d.path); }
