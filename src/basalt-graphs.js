@@ -267,6 +267,7 @@
         void 0;
         const zoom = (k) => { if (this.layout === "3d") { this.zoom3 = Math.max(.01, Math.min(8, (this.zoom3 || 1) * k)); } else { const cx = this.w / 2, cy = this.h / 2; this.ox = cx - (cx - this.ox) * k; this.oy = cy - (cy - this.oy) * k; this.scale *= k; } this.userView = true; this.draw(); };
         mk(grp(), "lucide-settings", "Настройки графа", () => panel.classList.toggle("is-open"));
+        { const away = (e) => { if (!panel.isConnected) { document.removeEventListener("pointerdown", away, true); return; } if (!panel.classList.contains("is-open")) return; const t = e.target; if (t && t.closest && (t.closest(".bscg-panel") || t.closest(".bsg-panel") || t.closest(".canvas-controls"))) return; panel.classList.remove("is-open"); }; document.addEventListener("pointerdown", away, true); }
         const zg = grp(); mk(zg, "lucide-plus", "Приблизить", () => zoom(1.25)); mk(zg, "lucide-maximize", "Вписать весь граф в окно", () => { if (this.layout === "3d") { this.compute3D(); this.draw(); return; } this.userView = true; this.fitAll = true; this.fit(); this.fitAll = false; }); mk(zg, "lucide-minus", "Отдалить", () => zoom(.8));
         mk(grp(), "lucide-folder-tree", "Свернуть / развернуть все папки", () => this.toggleAllDirs());
         mk(grp(), "lucide-circle-help", "Справка", () => { panel.classList.remove("is-open"); this.openHelp(); });

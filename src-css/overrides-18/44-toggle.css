@@ -1,0 +1,3 @@
+/* toggle thumbs are round everywhere (a square white thumb leaked from the settings overrides into the graph panels) */
+.checkbox-container { border-radius: 11px; }
+.checkbox-container::after { border-radius: 50%; }

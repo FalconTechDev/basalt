@@ -519,6 +519,7 @@
       cv.addEventListener("wheel", (e) => { e.preventDefault(); const [x, y] = at(e); this.zoomAt = [x, y]; this.zoomAcc = (this.zoomAcc || 0) + Math.max(-3, Math.min(3, e.deltaY / 100)); this.dirty = true; }, { passive: false });
       this.root.tabIndex = 0; this.root.style.outline = "none";
       cv.addEventListener("pointerdown", () => { this.closeMenu(); this.panel.classList.remove("is-open"); this.root.focus({ preventScroll: true }); }, true);
+      { const away = (e) => { if (!this.root.isConnected) { document.removeEventListener("pointerdown", away, true); return; } if (!this.panel.classList.contains("is-open")) return; const t = e.target; if (t && t.closest && (t.closest(".bsg-panel") || t.closest(".canvas-controls"))) return; this.panel.classList.remove("is-open"); }; document.addEventListener("pointerdown", away, true); }
       this.root.addEventListener("keydown", (e) => {
         const tag = (e.target && e.target.tagName) || ""; if (/INPUT|TEXTAREA/.test(tag)) return;
         if (e.key === "Escape") { if (this.path || this.pathPick >= 0 || this.pathMsg) { this.clearPath(); e.preventDefault(); return; } if (this.menuEl) this.closeMenu(); else if (this.panel.classList.contains("is-open") || this.helpEl.classList.contains("is-open")) { this.panel.classList.remove("is-open"); this.helpEl.classList.remove("is-open"); } else { this.multi = new Set(); this.setSel(-1); } e.preventDefault(); }

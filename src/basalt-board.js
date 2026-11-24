@@ -2,7 +2,7 @@
 // A board is a ".board" file in the vault. Every peer keeps a full copy; peers find each other over WebRTC (room + password = invite code).
 (() => {
   "use strict";
-  const VIEW = "basalt-board", EXT = "board";
+  const VIEW = "basalt-board", EXT = "board", TEXT_EXT = /^(md|markdown|txt|csv|tsv|json|ya?ml|toml|ini|log|xml|html?|css|js|mjs|ts|tsx|jsx|py|rs|go|java|c|cpp|h|cs|sh|ps1|sql)$/;
   // big boards: below CULL_MIN cards everything is drawn in full as before; above it only cards near the view get a DOM node, and below zoom LOD_K they are plain rectangles
   const CULL_MIN = 120, LOD_K = 0.32, MD_CAP = 4000, LITE_CAP = 12000, EDGE_CAP = 9000, INK_SVG_MAX = 1500;
   const COLORS = ["", "#e5484d", "#f59f3b", "#d6b43c", "#46a758", "#3fa7d6", "#8e6bd8"];
@@ -406,13 +406,22 @@
       keepPos(ids) { this._prevPos = new Map(); for (const id of ids) { const m = this.yn.get(id); if (m) this._prevPos.set(id, [m.get("x"), m.get("y"), m.get("w"), m.get("h"), !!m.get("fold")]); } }
       restorePos() { if (!this._prevPos || this.ro) return; const cur = new Map(); for (const id of this._prevPos.keys()) { const m = this.yn.get(id); if (m) cur.set(id, [m.get("x"), m.get("y"), m.get("w"), m.get("h"), !!m.get("fold")]); } this.um && this.um.stopCapturing(); this.doc.transact(() => { for (const [id, v] of this._prevPos) { const m = this.yn.get(id); if (m) { m.set("x", v[0]); m.set("y", v[1]); m.set("w", v[2]); m.set("h", v[3]); m.set("fold", v[4]); } } }); this.um && this.um.stopCapturing(); this._prevPos = cur; this.syncEdges(); this.selBar.dataset.sig = ""; new api.Notice("Расположение возвращено"); }
       toastUndo(text) { const f = document.createDocumentFragment(); f.append(text + " "); const b = document.createElement("button"); b.textContent = "Вернуть назад"; b.style.marginLeft = "8px"; const n = new api.Notice(f, 7000); b.onclick = () => { this.restorePos(); n.hide(); }; f.append(b); }
+      // a dropped note or text file becomes a card with its content under a link to the file
+      fileCardText(f, body, ext) {
+        const name = f.basename || f.name || f.path, max = 4000; let t = String(body || "").replace(/\r\n/g, "\n");
+        if (ext === "md") t = t.replace(/^---\n[\s\S]*?\n---\n?/, "");
+        if (t.length > max) t = t.slice(0, max).replace(/\s+\S*$/, "") + "\n\n…";
+        if (ext !== "md" && ext !== "txt") t = "```" + ext + "\n" + t + "\n```";
+        return "[[" + (f.path || name) + "|" + name + "]]\n\n" + t.trim();
+      }
       async dropVaultFiles(list, w) {
         let n = 0; for (const f of list) { if (!f || f.children || f.path === this.path) continue; const ext = String(f.extension || "").toLowerCase(), at = { x: w.x + n * 40, y: w.y + n * 40 }; n++;
           try {
             if (ext === "canvas") { const data = await canvasData(JSON.parse(await app.vault.adapter.read(f.path))); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, false); }
             else if (ext === EXT) { const data = this.readBoardDoc(await app.vault.adapter.read(f.path)); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, true); }
             else if (/^(png|jpe?g|gif|webp|bmp|svg|avif)$/.test(ext)) { const buf = await app.vault.adapter.readBinary(f.path); this.addImageFile(new Blob([buf], { type: ext === "svg" ? "image/svg+xml" : "image/" + (ext === "jpg" ? "jpeg" : ext) }), at.x, at.y); }
-            else this.addCard(at.x - 130, at.y - 30, f.basename || f.name || f.path);
+            else if (TEXT_EXT.test(ext)) { const body = await app.vault.adapter.read(f.path); this.addCard(at.x - 130, at.y - 30, this.fileCardText(f, body, ext)); }
+            else this.addCard(at.x - 130, at.y - 30, "[[" + (f.path || f.name) + "]]");
           } catch (e) { new api.Notice("Не удалось добавить файл " + (f.name || "")); }
         }
       }
@@ -1301,7 +1310,7 @@
           this.applyCam();
         }, { passive: false });
         r.addEventListener("dragover", (e) => { if ((e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files")) || (app.dragManager && app.dragManager.draggable)) { e.preventDefault(); try { e.dataTransfer.dropEffect = "copy"; } catch (er) { /* ok */ } } });
-        r.addEventListener("drop", (e) => { const dr = app.dragManager && app.dragManager.draggable; if (dr && !this.ro) { const list = dr.type === "files" ? dr.files : dr.type === "file" ? [dr.file] : []; if (list.length) { e.preventDefault(); const p0 = this.pt(e), w0 = this.worldPt(p0.sx, p0.sy); this.dropVaultFiles(list, w0); return; } } const fs = e.dataTransfer && Array.from(e.dataTransfer.files || []); if (!fs || !fs.length || this.ro) return; e.preventDefault(); const p = this.pt(e), w = this.worldPt(p.sx, p.sy); let i = 0; for (const f of fs) { if (/^image\//.test(f.type)) this.addImageFile(f, w.x + i * 30, w.y + i * 30), i++; else if (/\.board$/i.test(f.name)) f.text().then((t) => this.importBoardText(t, f.name, w)); } });
+        r.addEventListener("drop", (e) => { const dr = app.dragManager && app.dragManager.draggable; if (dr && !this.ro) { const list = dr.type === "files" ? dr.files : dr.type === "file" ? [dr.file] : []; if (list.length) { e.preventDefault(); const p0 = this.pt(e), w0 = this.worldPt(p0.sx, p0.sy); this.dropVaultFiles(list, w0); return; } } const fs = e.dataTransfer && Array.from(e.dataTransfer.files || []); if (!fs || !fs.length || this.ro) return; e.preventDefault(); const p = this.pt(e), w = this.worldPt(p.sx, p.sy); let i = 0; for (const f of fs) { if (/^image\//.test(f.type)) this.addImageFile(f, w.x + i * 30, w.y + i * 30), i++; else if (/\.board$/i.test(f.name)) f.text().then((t) => this.importBoardText(t, f.name, w)); else if (TEXT_EXT.test(f.name.split(".").pop().toLowerCase())) { const at = { x: w.x + i * 30, y: w.y + i * 30 }; i++; f.text().then((t) => this.addCard(at.x - 130, at.y - 30, this.fileCardText({ name: f.name.replace(/\.[^.]+$/, "") }, t, f.name.split(".").pop().toLowerCase()))); } } });
         r.addEventListener("dblclick", (e) => { if (this.draw || this.ro) return; if (e.target.closest(".osb-card, g")) return; if ((this._noNew && performance.now() - this._noNew < 450) || (this._lastMd && performance.now() - this._lastMd.t < 700)) return; { const hit = document.elementFromPoint(e.clientX, e.clientY); if (hit && hit.closest && hit.closest(".osb-card, .osb-fmt, .osb-sel")) return; } const p = this.pt(e), w = this.worldPt(p.sx, p.sy); this.addCard(w.x - 130, w.y - 30); });
         r.addEventListener("contextmenu", (e) => {
           e.preventDefault(); if (!this.doc || this.draw) return; const M = api.Menu; const m = new M(), p = this.pt(e), w = this.worldPt(p.sx, p.sy), it = (t, ic, fn) => m.addItem((i) => i.setTitle(t).setIcon(ic).onClick(fn));

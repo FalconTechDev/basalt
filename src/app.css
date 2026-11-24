@@ -24183,4 +24183,10 @@ button.mod-cta:disabled,button:disabled,.bsm-btn:disabled{
     color:var(--text-faint);
     margin-top:2px
 }
+.checkbox-container{
+    border-radius:11px
+}
+.checkbox-container::after{
+    border-radius:50%
+}
 
