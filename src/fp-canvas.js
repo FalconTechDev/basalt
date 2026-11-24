@@ -743,15 +743,18 @@
       if (n.label) { ctx.fillStyle = dark ? "#e8dccf" : "#2a211a"; ctx.font = `600 ${fs * 1.1}px ${font}`; ctx.textBaseline = "top"; ctx.fillText(n.label, X(n.x) + 6 * k, Y(n.y) + 4 * k, n.width * k - 12 * k); }
     }
     // links
-    const anchor = (n, side) => (side === "top" ? [n.x + n.width / 2, n.y] : side === "bottom" ? [n.x + n.width / 2, n.y + n.height] : side === "left" ? [n.x, n.y + n.height / 2] : [n.x + n.width, n.y + n.height / 2]);
+    const anchor = (n, side, f = 0.5) => (side === "top" ? [n.x + n.width * f, n.y] : side === "bottom" ? [n.x + n.width * f, n.y + n.height] : side === "left" ? [n.x, n.y + n.height * f] : [n.x + n.width, n.y + n.height * f]);
+    // several links on one side of a card fan out along it (boards ask for this with slots: true)
+    { const lists = new Map(); for (const e of edges) { if (!e.slots) continue; const a0 = byId.get(e.fromNode), b0 = byId.get(e.toNode); if (!a0 || !b0) continue; for (const [id, side, end, other] of [[e.fromNode, e.fromSide || "right", "f", b0], [e.toNode, e.toSide || "left", "t", a0]]) { const key = id + "|" + side; if (!lists.has(key)) lists.set(key, []); lists.get(key).push({ e, end, key: side === "top" || side === "bottom" ? other.x + other.width / 2 : other.y + other.height / 2 }); } }
+      for (const list of lists.values()) { list.sort((u, v) => u.key - v.key); list.forEach((it, i) => { it.e[it.end === "f" ? "_ff" : "_tf"] = (i + 1) / (list.length + 1); }); } }
     ctx.lineWidth = Math.max(1.2, 2.2 * k); ctx.lineCap = "round";
     for (const e of edges) {
       const a = byId.get(e.fromNode), b = byId.get(e.toNode); if (!a || !b) continue;
-      const p = anchor(a, e.fromSide || "right"), q = anchor(b, e.toSide || "left"), c = rgb(e.color);
+      const p = anchor(a, e.fromSide || "right", e._ff || 0.5), q = anchor(b, e.toSide || "left", e._tf || 0.5), c = rgb(e.color);
       ctx.strokeStyle = c ? `rgba(${c},.9)` : (dark ? "rgba(225,205,185,.7)" : "rgba(60,40,20,.7)");
       const dx = Math.max(40, Math.abs(q[0] - p[0]) / 2), dy = Math.max(40, Math.abs(q[1] - p[1]) / 2);
       const o = { right: [dx, 0], left: [-dx, 0], top: [0, -dy], bottom: [0, dy] }, s1 = o[e.fromSide || "right"], s2 = o[e.toSide || "left"];
-      ctx.beginPath(); ctx.moveTo(X(p[0]), Y(p[1])); ctx.bezierCurveTo(X(p[0] + s1[0]), Y(p[1] + s1[1]), X(q[0] + s2[0]), Y(q[1] + s2[1]), X(q[0]), Y(q[1])); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X(p[0]), Y(p[1])); if (e.shape === "straight") ctx.lineTo(X(q[0]), Y(q[1])); else ctx.bezierCurveTo(X(p[0] + s1[0]), Y(p[1] + s1[1]), X(q[0] + s2[0]), Y(q[1] + s2[1]), X(q[0]), Y(q[1])); if (e.dash === "dash") ctx.setLineDash([9 * k * 2, 6 * k * 2]); else if (e.dash === "dot") ctx.setLineDash([1, 7 * k * 2]); ctx.stroke(); ctx.setLineDash([]);
       // arrow heads: the end of a link points by default, the start only when asked
       const head = (tx, ty, fx, fy) => { const ang = Math.atan2(ty - fy, tx - fx), hl = Math.max(8, 14 * k); ctx.beginPath(); ctx.moveTo(X(tx), Y(ty)); ctx.lineTo(X(tx) - hl * Math.cos(ang - 0.45), Y(ty) - hl * Math.sin(ang - 0.45)); ctx.lineTo(X(tx) - hl * Math.cos(ang + 0.45), Y(ty) - hl * Math.sin(ang + 0.45)); ctx.closePath(); ctx.fillStyle = ctx.strokeStyle; ctx.fill(); };
       if (e.toEnd !== "none") head(q[0], q[1], q[0] + s2[0], q[1] + s2[1]);

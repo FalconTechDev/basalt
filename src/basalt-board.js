@@ -441,7 +441,7 @@
         let r = null;
         try {
           const d = this.readBoardDoc(raw);
-          if (d.nodes.length && window.__fpRenderNested) r = await window.__fpRenderNested(null, 1000, { nodes: d.nodes.map((n) => ({ id: n.id, type: "text", x: n.x, y: n.y, width: n.w, height: n.h, text: n.text, color: n.color && /^[1-6]$/.test(String(n.color)) ? String(n.color) : "" })), edges: d.edges.map((e, i) => ({ id: "e" + i, fromNode: e.a, toNode: e.b, label: e.label })) });
+          if (d.nodes.length && window.__fpRenderNested) r = await window.__fpRenderNested(null, 1000, { nodes: d.nodes.map((n) => ({ id: n.id, type: "text", x: n.x, y: n.y, width: n.w, height: n.h, text: n.text, color: n.color && /^[1-6]$/.test(String(n.color)) ? String(n.color) : "" })), edges: d.edges.map((e, i) => { const A = d.nodes.find((n) => n.id === e.a), B = d.nodes.find((n) => n.id === e.b); if (!A || !B) return { id: "e" + i, fromNode: e.a, toNode: e.b, label: e.label }; const dir = (p, q) => { const dx = q.x + q.w / 2 - (p.x + p.w / 2), dy = q.y + q.h / 2 - (p.y + p.h / 2); return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "bottom" : "top"); }, SD = { r: "right", l: "left", t: "top", b: "bottom" }; return { id: "e" + i, fromNode: e.a, toNode: e.b, label: e.label, fromSide: SD[e.sa] || dir(A, B), toSide: SD[e.sb] || dir(B, A), shape: e.sh, dash: e.ls, slots: true, toEnd: e.ad === "none" ? "none" : "arrow", fromEnd: e.ad === "both" ? "arrow" : "none" }; }) });
         } catch (e) { r = null; }
         if (!r || !r.bmp) { const t = await boardThumb(f, 640); return t && t.bmp ? t.bmp.toDataURL("image/png") : ""; }
         const cv = document.createElement("canvas"); cv.width = r.bmp.width; cv.height = r.bmp.height; cv.getContext("2d").drawImage(r.bmp, 0, 0); return cv.toDataURL("image/png");
@@ -498,13 +498,13 @@
       readBoardDoc(text) {
         const Y = window.__bsY.Y, meta = JSON.parse(text), d = new Y.Doc(); if (meta.ydoc) Y.applyUpdate(d, unb64(meta.ydoc)); const nodes = d.getMap("nodes"), edges = d.getMap("edges"), list = [];
         nodes.forEach((m, id) => list.push({ id, x: m.get("x"), y: m.get("y"), w: m.get("w"), h: m.get("h"), color: m.get("color") || "", text: m.get("text") ? m.get("text").toString() : "", img: m.get("img") || "", fold: !!m.get("fold"), kind: m.get("kind") || "" }));
-        const es = []; edges.forEach((m) => es.push({ a: m.get("a"), b: m.get("b"), label: m.get("label") || "", sa: m.get("sa") || "", sb: m.get("sb") || "" })); const ink = d.getArray("ink").toArray();
+        const es = []; edges.forEach((m) => es.push({ a: m.get("a"), b: m.get("b"), label: m.get("label") || "", sa: m.get("sa") || "", sb: m.get("sb") || "", sh: m.get("sh") || "", ls: m.get("ls") || "", ad: m.get("ad") || "" })); const ink = d.getArray("ink").toArray();
         // newer files keep the cards as plain JSON and have no ydoc at all
         if (!list.length && meta.nodes && typeof meta.nodes === "object") {
           const ents = Array.isArray(meta.nodes) ? meta.nodes.map((n) => [n.id, n]) : Object.entries(meta.nodes);
           for (const [id, n] of ents) if (n && id != null) list.push({ id, x: +n.x || 0, y: +n.y || 0, w: +n.w || 260, h: +n.h || 110, color: n.color || "", text: String(n.text == null ? "" : n.text), img: n.img || "", fold: !!n.fold, kind: n.kind || "" });
           const ee = Array.isArray(meta.edges) ? meta.edges.map((e) => [e && e.id, e]) : Object.entries(meta.edges || {});
-          for (const [, e] of ee) if (e && e.a != null && e.b != null) es.push({ a: e.a, b: e.b, label: e.label || "", sa: e.sa || "", sb: e.sb || "" });
+          for (const [, e] of ee) if (e && e.a != null && e.b != null) es.push({ a: e.a, b: e.b, label: e.label || "", sa: e.sa || "", sb: e.sb || "", sh: e.sh || "", ls: e.ls || "", ad: e.ad || "" });
         }
         return { nodes: list, edges: es, ink };
       }
