@@ -437,7 +437,14 @@
       }
       // a board dropped on a board becomes a card that shows it, follows its changes and opens it on double click
       async boardPicture(f) {
-        const r = await boardThumb(f, 640); if (!r || !r.bmp) return ""; return r.bmp.toDataURL("image/png");
+        let raw = ""; try { raw = await app.vault.adapter.read(f.path); } catch (e) { return ""; }
+        let r = null;
+        try {
+          const d = this.readBoardDoc(raw);
+          if (d.nodes.length && window.__fpRenderNested) r = await window.__fpRenderNested(null, 1000, { nodes: d.nodes.map((n) => ({ id: n.id, type: "text", x: n.x, y: n.y, width: n.w, height: n.h, text: n.text, color: n.color && /^[1-6]$/.test(String(n.color)) ? String(n.color) : "" })), edges: d.edges.map((e, i) => ({ id: "e" + i, fromNode: e.a, toNode: e.b, label: e.label })) });
+        } catch (e) { r = null; }
+        if (!r || !r.bmp) { const t = await boardThumb(f, 640); return t && t.bmp ? t.bmp.toDataURL("image/png") : ""; }
+        const cv = document.createElement("canvas"); cv.width = r.bmp.width; cv.height = r.bmp.height; cv.getContext("2d").drawImage(r.bmp, 0, 0); return cv.toDataURL("image/png");
       }
       async addBoardCard(f, x, y) {
         if (this.ro) return; const pic = await this.boardPicture(f), id = this.addCard(x - 160, y - 95, ""), m = this.yn.get(id); if (!m) return;

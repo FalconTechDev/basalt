@@ -717,8 +717,8 @@
     }
     return out;
   }
-  async function renderNested(f, tier) {
-    let d; try { d = JSON.parse(await app.vault.cachedRead(f)); } catch (e) { return null; }
+  async function renderNested(f, tier, data) {
+    let d = data; if (!d) { try { d = JSON.parse(await app.vault.cachedRead(f)); } catch (e) { return null; } }
     const nodes = (d.nodes || []).filter((n) => n && typeof n.x === "number"), edges = d.edges || [];
     // the drawing of the board (fpInk) is part of what the preview shows
     const ink = Array.isArray(d.fpInk) && window.__bsInk ? d.fpInk : [];
