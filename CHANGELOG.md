@@ -14,6 +14,12 @@ All notable changes. The format follows [Keep a Changelog](https://keepachangelo
 - `docs/REPLACING_INHERITED_CODE.md`: measured share of inherited code (about 3 % of `src/app.js`) and the replacement plan.
 - `build-app.mjs` no longer needs git history once a function has been replaced.
 
+## [0.3.10]
+
+### Fixed
+- Ctrl+V on a board works wherever the focus is: a picture from the clipboard, a file copied in the file manager (a `.board` becomes cards, images and text files become cards) or plain text.
+- The README no longer lists the integrated terminal, which is not part of the app at the moment.
+
 ## [0.3.9]
 
 ### Added

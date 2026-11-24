@@ -409,6 +409,16 @@
       }
       async pasteAny() {
         const c = this.myCur || this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2);
+        // the system clipboard first: a picture (screenshot, copied image) or a file copied in the file manager
+        try {
+          const cb = require("electron").clipboard, fb = cb.readBuffer("FileNameW");
+          if (fb && fb.length > 2) {
+            const pa = require("path"), fs = require("fs"), MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", bmp: "image/bmp", svg: "image/svg+xml", avif: "image/avif" };
+            const fp = fb.toString("ucs2").replace(/\0+$/, "");
+            if (fp && fs.existsSync(fp) && fs.statSync(fp).isFile() && fs.statSync(fp).size < 80 * 1048576) { this.importDomFiles([new File([fs.readFileSync(fp)], pa.basename(fp), { type: MIME[pa.extname(fp).slice(1).toLowerCase()] || "" })], c); return; }
+          }
+          const im = cb.readImage(); if (!im.isEmpty()) { await this.addImageFile(new Blob([im.toPNG()], { type: "image/png" }), c.x, c.y); return; }
+        } catch (e) { /* no electron clipboard: the web one below */ }
         try { const items = await navigator.clipboard.read(); for (const it of items) { const ty = it.types.find((t) => /^image\//.test(t)); if (ty) { this.addImageFile(await it.getType(ty), c.x, c.y); return; } } } catch (e) { /* no image or no access */ }
         if (BOARD_CLIP) { this.paste(40, 40); return; }
         try { const t = await navigator.clipboard.readText(); if (t) this.addCard(c.x - 130, c.y - 30, t); } catch (e) { /* empty */ }
@@ -421,6 +431,12 @@
       // a card with a "file" field IS that note: typing in the card writes the file, changing the file changes the card
       bindFiles() {
         if (this._fb) return; this._fb = true; this._fw = new Map(); this._ft = new Map();
+        // Ctrl+V works while this board is the open tab, wherever the focus sits (often the page body after a click on the canvas)
+        { const onPaste = (e) => {
+            if (!this.root || !this.root.isConnected || this.ro) return; const al = app.workspace.activeLeaf; if (!al || al.view !== this) return;
+            const t = e.target; if (t && t.closest && (t.closest("input, textarea, select, [contenteditable=true], .cm-editor, .osb-card.is-editing"))) return;
+            e.preventDefault(); e.stopPropagation(); this.pasteAny();
+          }; document.addEventListener("paste", onPaste, true); this.register(() => document.removeEventListener("paste", onPaste, true)); }
         setTimeout(() => { const seen = new Set(); this.yn.forEach((m) => { const fp = m.get("file"); if (fp && /\.board$/i.test(fp) && !seen.has(fp)) { seen.add(fp); const tf = app.vault.getAbstractFileByPath(fp); if (tf) this.refreshBoardCards(tf); } }); }, 1500);
         const write = (path, text) => { const f = app.vault.getAbstractFileByPath(path); if (!f || f.children) return; this._fw.set(path, text); app.vault.modify(f, text).catch(() => { /* file gone */ }); };
         this.yn.observeDeep((evs, tr) => {
@@ -1460,7 +1476,7 @@
           if (e.key === "Escape") this.clearFocus();
           if (mod && k === "a") { e.preventDefault(); this.select(new Set(this.yn.keys())); }
           else if (mod && k === "z") { e.preventDefault(); e.shiftKey ? this.redo() : this.undo(); } else if (mod && k === "y") { e.preventDefault(); this.redo(); }
-          else if (mod && k === "c") { this.copy(); } else if (mod && k === "x") { this.copy(); this.removeSel(); } else if (mod && k === "v") { /* the paste event below decides */ }
+          else if (mod && k === "c") { this.copy(); } else if (mod && k === "x") { this.copy(); this.removeSel(); } else if (mod && k === "v") { e.preventDefault(); this.pasteAny(); }
           else if (mod && k === "d") { e.preventDefault(); this.duplicate(); }
           else if ((e.key === "Delete" || e.key === "Backspace") && (this.sel.size || this.selEdge)) { e.preventDefault(); this.removeSel(); }
           else if (e.key === "Escape") { this.select(new Set()); this.selEdge = null; this.mark(); this.toggleSearch(false); }
