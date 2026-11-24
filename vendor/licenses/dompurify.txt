@@ -1,0 +1,8 @@
+DOMPurify 3.0.1 - Apache-2.0 OR MPL-2.0 (dual; this project uses it under Apache-2.0)
+https://github.com/cure53/DOMPurify
+
+NOTE: the copyright lines below describe the upstream projects as their maintainers publish them. The shipped code carries no banners, so they were not read from the exact release. Confirm them against the release that is pinned before a public build.
+
+DOMPurify (c) Cure53 and other contributors. Released under the Apache License 2.0 and the Mozilla Public License 2.0.
+
+Licensed under the Apache License, Version 2.0; the full text is in Apache-2.0.txt in this folder. (MPL-2.0: https://www.mozilla.org/MPL/2.0/ )
