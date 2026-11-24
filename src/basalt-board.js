@@ -441,7 +441,7 @@
         let r = null;
         try {
           const d = this.readBoardDoc(raw);
-          if (d.nodes.length && window.__fpRenderNested) r = await window.__fpRenderNested(null, 1000, { nodes: d.nodes.map((n) => ({ id: n.id, type: "text", x: n.x, y: n.y, width: n.w, height: n.h, text: n.text, color: n.color && /^[1-6]$/.test(String(n.color)) ? String(n.color) : "" })), edges: d.edges.map((e, i) => { const A = d.nodes.find((n) => n.id === e.a), B = d.nodes.find((n) => n.id === e.b); if (!A || !B) return { id: "e" + i, fromNode: e.a, toNode: e.b, label: e.label }; const dir = (p, q) => { const dx = q.x + q.w / 2 - (p.x + p.w / 2), dy = q.y + q.h / 2 - (p.y + p.h / 2); return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "bottom" : "top"); }, SD = { r: "right", l: "left", t: "top", b: "bottom" }; return { id: "e" + i, fromNode: e.a, toNode: e.b, label: e.label, fromSide: SD[e.sa] || dir(A, B), toSide: SD[e.sb] || dir(B, A), shape: e.sh, dash: e.ls, slots: true, toEnd: e.ad === "none" ? "none" : "arrow", fromEnd: e.ad === "both" ? "arrow" : "none" }; }) });
+          if (d.nodes.length && window.__fpRenderNested) r = await window.__fpRenderNested(null, 1000, { nodes: d.nodes.map((n) => ({ id: n.id, type: "text", x: n.x, y: n.y, width: n.w, height: n.h, text: n.text, color: n.color && /^[1-6]$/.test(String(n.color)) ? String(n.color) : "" })), edges: this.embedEdges(d) });
         } catch (e) { r = null; }
         if (!r || !r.bmp) { const t = await boardThumb(f, 640); return t && t.bmp ? t.bmp.toDataURL("image/png") : ""; }
         const cv = document.createElement("canvas"); cv.width = r.bmp.width; cv.height = r.bmp.height; cv.getContext("2d").drawImage(r.bmp, 0, 0); return cv.toDataURL("image/png");
@@ -450,6 +450,30 @@
         if (this.ro) return; const pic = await this.boardPicture(f), id = this.addCard(x - 160, y - 95, ""), m = this.yn.get(id); if (!m) return;
         this.doc.transact(() => { m.set("file", f.path); m.set("kind", f.basename || f.name || ""); m.set("w", 320); m.set("h", 210); if (pic) m.set("img", pic); });
         this.bindFiles();
+      }
+      // the links of a board as the board itself draws them (same sides, slots, anchors and curves), for the picture on a board card
+      embedEdges(d) {
+        const G = new Map(d.nodes.map((n) => [n.id, { x: n.x, y: n.y, w: n.w, h: n.h }])), C = (g) => ({ x: g.x + g.w / 2, y: g.y + g.h / 2 });
+        const dir = (p, q) => { const dx = q.x - p.x, dy = q.y - p.y; return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "r" : "l") : (dy > 0 ? "b" : "t"); };
+        const list = d.edges.map((e, i) => ({ e, id: "e" + i })).filter((x) => G.has(x.e.a) && G.has(x.e.b));
+        const slot = new Map();
+        const byCard = new Map(); for (const x of list) for (const c of [x.e.a, x.e.b]) { if (!byCard.has(c)) byCard.set(c, []); byCard.get(c).push(x); }
+        for (const [card, es] of byCard) {
+          if (es.length < 2) continue; const A = C(G.get(card)), groups = new Map();
+          for (const x of es) { const isA = x.e.a === card, O = C(G.get(isA ? x.e.b : x.e.a)), side = (isA ? x.e.sa : x.e.sb) || dir(A, O); if (!groups.has(side)) groups.set(side, []); groups.get(side).push([x.id, O, isA ? "a" : "b"]); }
+          for (const [side, l] of groups) { if (l.length < 2) continue; const hz = side === "t" || side === "b"; l.sort((u, v) => ((hz ? u[1].x - v[1].x : u[1].y - v[1].y) || (u[0] < v[0] ? -1 : 1))); l.forEach((q, i) => slot.set(q[0] + q[2], [i, l.length])); }
+        }
+        const anchorSide = (g, side, sl) => { const f = sl ? (sl[0] + 1) / (sl[1] + 1) : 0.5; return side === "t" ? { x: g.x + g.w * f, y: g.y } : side === "b" ? { x: g.x + g.w * f, y: g.y + g.h } : side === "l" ? { x: g.x, y: g.y + g.h * f } : { x: g.x + g.w, y: g.y + g.h * f }; };
+        const anchor = (g, t) => { const c = C(g), dx = t.x - c.x, dy = t.y - c.y; if (!dx && !dy) return c; const k = Math.min(dx ? (g.w / 2) / Math.abs(dx) : 1e9, dy ? (g.h / 2) / Math.abs(dy) : 1e9); return { x: c.x + dx * k, y: c.y + dy * k }; };
+        const NV = { t: [0, -1], b: [0, 1], l: [-1, 0], r: [1, 0] };
+        return list.map(({ e, id }) => {
+          const ga = G.get(e.a), gb = G.get(e.b), A = C(ga), B = C(gb), sla = slot.get(id + "a"), slb = slot.get(id + "b"), sa0 = e.sa || (sla ? dir(A, B) : ""), sb0 = e.sb || (slb ? dir(B, A) : "");
+          const p = (sa0 && anchorSide(ga, sa0, sla)) || anchor(ga, B), q = (sb0 && anchorSide(gb, sb0, slb)) || anchor(gb, A); let dd, st, et;
+          if (e.sh === "straight") { dd = "M" + p.x + " " + p.y + " L" + q.x + " " + q.y; st = [q.x, q.y]; et = [p.x, p.y]; }
+          else if (e.sh === "elbow") { const hz = Math.abs(q.x - p.x) >= Math.abs(q.y - p.y); if (hz) { const mx = (p.x + q.x) / 2; dd = "M" + p.x + " " + p.y + " L" + mx + " " + p.y + " L" + mx + " " + q.y + " L" + q.x + " " + q.y; st = [mx, p.y]; et = [mx, q.y]; } else { const my = (p.y + q.y) / 2; dd = "M" + p.x + " " + p.y + " L" + p.x + " " + my + " L" + q.x + " " + my + " L" + q.x + " " + q.y; st = [p.x, my]; et = [q.x, my]; } }
+          else { const k = Math.max(40, Math.hypot(q.x - p.x, q.y - p.y) * 0.42), a = NV[sa0 || dir(p, q)], b = NV[sb0 || dir(q, p)], c1 = [p.x + a[0] * k, p.y + a[1] * k], c2 = [q.x + b[0] * k, q.y + b[1] * k]; dd = "M" + p.x + " " + p.y + " C" + c1[0] + " " + c1[1] + " " + c2[0] + " " + c2[1] + " " + q.x + " " + q.y; st = c1; et = c2; }
+          return { id, fromNode: e.a, toNode: e.b, label: e.label, d: dd, pq: [p.x, p.y, q.x, q.y], st, et, dash: e.ls, toEnd: e.ad === "none" ? "none" : "arrow", fromEnd: e.ad === "both" ? "arrow" : "none" };
+        });
       }
       refreshBoardCards(f) {
         clearTimeout(this._bt); this._bt = setTimeout(async () => { const ids = []; this.yn.forEach((m, id) => { if (m.get("file") === f.path) ids.push(id); }); if (!ids.length) return; const pic = await this.boardPicture(f); if (!pic) return; this.doc.transact(() => { for (const id of ids) { const m = this.yn.get(id); if (m && m.get("img") !== pic) m.set("img", pic); } }, "file-sync"); }, 600);

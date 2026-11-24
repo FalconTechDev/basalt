@@ -749,11 +749,11 @@
     ctx.lineWidth = Math.max(1.2, 2.2 * k); ctx.lineCap = "round";
     for (const e of edges) {
       const a = byId.get(e.fromNode), b = byId.get(e.toNode); if (!a || !b) continue;
-      const p = anchor(a, e.fromSide || "right", e._ff || 0.5), q = anchor(b, e.toSide || "left", e._tf || 0.5), c = rgb(e.color);
-      ctx.strokeStyle = c ? `rgba(${c},.9)` : (dark ? "rgba(225,205,185,.7)" : "rgba(60,40,20,.7)");
+      const p = e.pq ? [e.pq[0], e.pq[1]] : anchor(a, e.fromSide || "right", e._ff || 0.5), q = e.pq ? [e.pq[2], e.pq[3]] : anchor(b, e.toSide || "left", e._tf || 0.5), c = rgb(e.color);
+      ctx.strokeStyle = c ? `rgba(${c},.9)` : e.d ? (dark ? "rgba(150,136,124,.95)" : "rgba(110,96,84,.9)") : (dark ? "rgba(225,205,185,.7)" : "rgba(60,40,20,.7)");
       const dx = Math.max(40, Math.abs(q[0] - p[0]) / 2), dy = Math.max(40, Math.abs(q[1] - p[1]) / 2);
-      const o = { right: [dx, 0], left: [-dx, 0], top: [0, -dy], bottom: [0, dy] }, s1 = o[e.fromSide || "right"], s2 = o[e.toSide || "left"];
-      ctx.beginPath(); ctx.moveTo(X(p[0]), Y(p[1])); if (e.shape === "straight") ctx.lineTo(X(q[0]), Y(q[1])); else ctx.bezierCurveTo(X(p[0] + s1[0]), Y(p[1] + s1[1]), X(q[0] + s2[0]), Y(q[1] + s2[1]), X(q[0]), Y(q[1])); if (e.dash === "dash") ctx.setLineDash([9 * k * 2, 6 * k * 2]); else if (e.dash === "dot") ctx.setLineDash([1, 7 * k * 2]); ctx.stroke(); ctx.setLineDash([]);
+      const o = { right: [dx, 0], left: [-dx, 0], top: [0, -dy], bottom: [0, dy] }, s1 = e.st ? [e.st[0] - p[0], e.st[1] - p[1]] : o[e.fromSide || "right"], s2 = e.et ? [e.et[0] - q[0], e.et[1] - q[1]] : o[e.toSide || "left"];
+      if (e.d) { ctx.save(); ctx.setTransform(k, 0, 0, k, (pad - x0) * k, (pad - y0) * k); ctx.lineWidth = Math.max(1.2, 2.2 * k) / k; if (e.dash === "dash") ctx.setLineDash([9, 6]); else if (e.dash === "dot") ctx.setLineDash([1, 7]); ctx.stroke(new Path2D(e.d)); ctx.restore(); } else { ctx.beginPath(); ctx.moveTo(X(p[0]), Y(p[1])); if (e.shape === "straight") ctx.lineTo(X(q[0]), Y(q[1])); else ctx.bezierCurveTo(X(p[0] + s1[0]), Y(p[1] + s1[1]), X(q[0] + s2[0]), Y(q[1] + s2[1]), X(q[0]), Y(q[1])); if (e.dash === "dash") ctx.setLineDash([9 * k * 2, 6 * k * 2]); else if (e.dash === "dot") ctx.setLineDash([1, 7 * k * 2]); ctx.stroke(); ctx.setLineDash([]); }
       // arrow heads: the end of a link points by default, the start only when asked
       const head = (tx, ty, fx, fy) => { const ang = Math.atan2(ty - fy, tx - fx), hl = Math.max(8, 14 * k); ctx.beginPath(); ctx.moveTo(X(tx), Y(ty)); ctx.lineTo(X(tx) - hl * Math.cos(ang - 0.45), Y(ty) - hl * Math.sin(ang - 0.45)); ctx.lineTo(X(tx) - hl * Math.cos(ang + 0.45), Y(ty) - hl * Math.sin(ang + 0.45)); ctx.closePath(); ctx.fillStyle = ctx.strokeStyle; ctx.fill(); };
       if (e.toEnd !== "none") head(q[0], q[1], q[0] + s2[0], q[1] + s2[1]);
