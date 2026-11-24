@@ -1,38 +1,70 @@
 <div align="center">
 
-<img src="docs/images/logo.png" alt="Basalt" width="110">
-
-# Basalt
-
-**Markdown notes, collaborative boards on an infinite canvas, and a link graph. All in plain files on your disk.**
-
-![License](https://img.shields.io/badge/license-AGPL--3.0-c8895a?style=flat-square)
-![Platform](https://img.shields.io/badge/platform-Windows-3b3128?style=flat-square)
-![Electron](https://img.shields.io/badge/Electron-39-3b3128?style=flat-square)
-![Engines](https://img.shields.io/badge/engines-Rust%20%2B%20WebAssembly-3b3128?style=flat-square)
+<img src="docs/images/banner.png" alt="Basalt: notes, boards and a link graph" width="100%">
 
 <br>
 
-<img src="docs/images/board.png" alt="A Basalt board: frames, cards, links, a markdown card and a hand-drawn circle" width="900">
+[![Download](https://img.shields.io/badge/%E2%AC%87%20Download%20for%20Windows-c8895a?style=for-the-badge&logoColor=white)](https://github.com/FalconTechDev/basalt/releases/latest)
+&nbsp;
+[![Docs](https://img.shields.io/badge/Documentation-3b3128?style=for-the-badge)](docs/README.md)
+&nbsp;
+[![CLI](https://img.shields.io/badge/CLI%20%2B%20API-3b3128?style=for-the-badge)](docs/CLI.md)
 
-<sub>An investigation board in Basalt. Every name and fact in the screenshots is fictional demo data.</sub>
+![License](https://img.shields.io/badge/license-AGPL--3.0-c8895a?style=flat-square)
+![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-3b3128?style=flat-square)
+![Electron](https://img.shields.io/badge/Electron-39-3b3128?style=flat-square)
+![Rust](https://img.shields.io/badge/engines-Rust%20%2B%20WebAssembly-3b3128?style=flat-square)
 
 </div>
 
-<br>
+Basalt is a desktop app for people who think in links. Write notes in Markdown, lay them out on a board next to images, pages and code, and watch the vault grow into a graph. Nothing is locked into a database: your vault is a folder of ordinary files, and everything the app does is also available from a command line and a local API.
 
-Basalt is a desktop app for people who think in links. Write notes in Markdown, lay them out on a board next to images, pages and code, and watch the vault grow into a graph. Nothing is locked into a database: your vault is a folder of ordinary files, and everything the app can do is also available from a command line and a local API.
+<table>
+<tr>
+<td width="50%"><img src="docs/images/tile-boards.png" alt="Boards"></td>
+<td width="50%"><img src="docs/images/tile-graph.png" alt="Graph"></td>
+</tr>
+<tr>
+<td colspan="2"><img src="docs/images/tile-cli.png" alt="CLI"></td>
+</tr>
+</table>
 
-- **Notes** in plain Markdown with `[[wiki links]]`, backlinks, properties, callouts, code blocks and fast full-text search.
-- **Boards** that several people can edit at once: cards, links with labels, frames, hand drawing, export to PNG.
-- **Graph** of the whole vault in 2D, 3D or by files, with filters and a legend.
-- **Action log**: almost every change is recorded and can be undone, and the vault can be rolled back to any moment.
-- **CLI and local API** for scripts, hooks and automation, with or without the window open.
-- **Plugins** as sandboxed WebAssembly modules, installed from GitHub releases.
+<sub>Every name and fact in the screenshots is fictional demo data.</sub>
+
+| | |
+| --- | --- |
+| **Notes** | Plain Markdown, `[[wiki links]]`, backlinks, properties, callouts, fast search |
+| **Boards** | Real-time collaboration, no server: cards, labelled links, frames, hand drawing, PNG export |
+| **Graph** | 2D, 3D and file layouts with filters, legend and path finding |
+| **Action log** | Every change recorded and undoable; roll the vault back to any moment |
+| **CLI and API** | Script the vault with or without the window open |
+| **Plugins** | Sandboxed WebAssembly modules, installed from GitHub releases |
+
+### How it fits together
+
+```mermaid
+flowchart LR
+  V[(Vault folder<br/>.md .board files)]
+  A[Basalt app<br/>notes, boards, graph]
+  C[basalt CLI]
+  H[Local HTTP API<br/>127.0.0.1 + token]
+  P[WASM plugins]
+  R[Peers<br/>WebRTC + CRDT]
+  A <--> V
+  C <--> V
+  C -. drives .-> H
+  H <--> A
+  P --> A
+  A <-. live boards .-> R
+```
+
+## Download
+
+Get **`Basalt-Setup-<version>.exe`** from the [latest release](https://github.com/FalconTechDev/basalt/releases/latest), run it, done. Windows 10 or 11, 64-bit. Your data stays in your vault folder; app settings are in `%APPDATA%\Basalt`.
 
 ## Contents
 
-[Notes](#notes) · [Boards](#boards) · [Graph](#graph) · [Export](#export) · [CLI and API](#cli-and-api) · [Plugins](#plugins-webassembly) · [Action log and undo](#action-log-and-undo) · [Terminal](#terminal) · [Quick start](#quick-start) · [Install](#install) · [Build from source](#build-from-source) · [Project layout](#project-layout) · [Status and provenance](#status-and-provenance) · [Contributing](#contributing) · [License](#license)
+[Notes](#notes) · [Boards](#boards) · [Graph](#graph) · [Export](#export) · [CLI and API](#cli-and-api) · [Plugins](#plugins-webassembly) · [Action log and undo](#action-log-and-undo) · [Terminal](#terminal) · [Download](#download) · [Quick start](#quick-start) · [Build from source](#build-from-source) · [Project layout](#project-layout) · [Status and provenance](#status-and-provenance) · [Contributing](#contributing) · [License](#license)
 
 ---
 
@@ -128,10 +160,6 @@ There is a terminal inside the app, both under the editor and as a card on a boa
 | `Ctrl+N` | New note |
 | `Alt+D` | Draw in a note |
 | `Space` + drag, `Ctrl` + wheel, `F` | Board: pan, zoom, fit |
-
-## Install
-
-Download `Basalt-Setup-<version>.exe` from [Releases](https://github.com/FalconTechDev/basalt/releases) and run it. Basalt is Windows-only for now. App data lives in `%APPDATA%\Basalt`; per-vault settings are in a `.basalt` folder inside the vault.
 
 ## Build from source
 
