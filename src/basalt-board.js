@@ -393,14 +393,23 @@
           if (data.length > 1600000) throw new Error("big"); return { data, w, h };
         } finally { URL.revokeObjectURL(url); }
       }
-      async addImageFile(blob, x, y) {
-        if (this.ro) return; try { const r = await this.imgData(blob), cw = Math.min(360, Math.max(160, r.w)), ch = Math.round(cw * r.h / r.w) + 22 + 36, id = this.addCard(x - cw / 2, y - ch / 2, ""), m = this.yn.get(id); this.doc.transact(() => { m.set("img", r.data); m.set("w", cw); m.set("h", ch); }); } catch (e) { new api.Notice(e && e.message === "big" ? "Изображение слишком большое для доски: уменьшите его и вставьте снова" : "Не удалось вставить изображение"); }
+      // a picture pasted or dropped from outside lands in the vault root (the "move images" mini-feature then files it away); the card keeps following it
+      async saveImage(blob, name) {
+        const MIMEX = { "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp", "image/bmp": "bmp", "image/svg+xml": "svg", "image/avif": "avif" };
+        let ext = (name && /\.(\w{2,5})$/.exec(name) || [])[1] || MIMEX[blob.type] || "png"; ext = ext.toLowerCase();
+        const pad = (n) => String(n).padStart(2, "0"), d = new Date(), stamp = "" + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+        const base = name ? name.replace(/\.[^.]+$/, "").replace(/[\\/:*?"<>|#^\[\]]/g, "-") : "Pasted image " + stamp;
+        let cand = base + "." + ext, i = 1; while (app.vault.getAbstractFileByPath(cand)) cand = base + " " + (++i) + "." + ext;
+        await app.vault.createBinary(cand, await blob.arrayBuffer()); return cand;
       }
-      pickImage(at) { const i = document.createElement("input"); i.type = "file"; i.accept = "image/*"; i.multiple = true; i.onchange = () => { const c = at || this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2); let n = 0; for (const f of i.files) this.addImageFile(f, c.x + n++ * 30, c.y + n * 30); }; i.click(); }
+      async addImageFile(blob, x, y, name, existing) {
+        if (this.ro) return; try { const r = await this.imgData(blob), cw = Math.min(360, Math.max(160, r.w)), ch = Math.round(cw * r.h / r.w) + 22 + 36, id = this.addCard(x - cw / 2, y - ch / 2, ""), m = this.yn.get(id); this.doc.transact(() => { m.set("img", r.data); m.set("w", cw); m.set("h", ch); }); let ip = existing; if (!ip) { try { ip = await this.saveImage(blob, name); } catch (er) { ip = ""; } } if (ip) this.doc.transact(() => { m.set("file", ip); m.set("kind", ip.split("/").pop()); }); } catch (e) { new api.Notice(e && e.message === "big" ? "Изображение слишком большое для доски: уменьшите его и вставьте снова" : "Не удалось вставить изображение"); }
+      }
+      pickImage(at) { const i = document.createElement("input"); i.type = "file"; i.accept = "image/*"; i.multiple = true; i.onchange = () => { const c = at || this.worldPt(this.root.clientWidth / 2, this.root.clientHeight / 2); let n = 0; for (const f of i.files) this.addImageFile(f, c.x + n++ * 30, c.y + n * 30, f.name); }; i.click(); }
       importDomFiles(fs, w) {
         let i = 0; for (const f of fs) {
           const at = { x: w.x + i * 30, y: w.y + i * 30 }, ext = (f.name.split(".").pop() || "").toLowerCase(); i++;
-          if (/^image\//.test(f.type)) this.addImageFile(f, at.x, at.y);
+          if (/^image\//.test(f.type)) this.addImageFile(f, at.x, at.y, f.name);
           else if (ext === EXT) f.text().then((t) => { try { const d = this.readBoardDoc(t); this.importBoardData(d, new Set(d.nodes.map((q) => q.id)), at, true); } catch (e) { new api.Notice("Это не файл доски"); } });
           else if (ext === "canvas") f.text().then((t) => canvasData(JSON.parse(t))).then((d) => this.importBoardData(d, new Set(d.nodes.map((q) => q.id)), at, false)).catch(() => new api.Notice("Не удалось прочитать холст"));
           else if (TEXT_EXT.test(ext)) f.text().then((t) => this.addCard(at.x - 130, at.y - 30, this.fileCardText({ name: f.name.replace(/\.[^.]+$/, "") }, t, ext)));
@@ -452,6 +461,7 @@
           this.yn.forEach((m) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t || t.toString() === body) return; this.doc.transact(() => { t.delete(0, t.length); t.insert(0, body); }, "file-sync"); });
         };
         this.registerEvent(app.vault.on("modify", (f) => this._onFile(f)));
+        this.registerEvent(app.vault.on("rename", (f, old) => { if (this.ro || !f || f.children) return; this.yn.forEach((m) => { if (m.get("file") === old) { this.doc.transact(() => { m.set("file", f.path); if (m.get("kind") === old.split("/").pop()) m.set("kind", f.name || f.path.split("/").pop()); }, "file-sync"); } }); }));
         // writes that go straight to the disk (the share sync does that) do not always raise "modify": look at the file times too
         this._fm = new Map();
         this.registerInterval(window.setInterval(async () => {
@@ -520,7 +530,7 @@
           try {
             if (ext === "canvas") { const data = await canvasData(JSON.parse(await app.vault.adapter.read(f.path))); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, false); }
             else if (ext === EXT) { await this.addBoardCard(f, at.x, at.y); }
-            else if (/^(png|jpe?g|gif|webp|bmp|svg|avif)$/.test(ext)) { const buf = await app.vault.adapter.readBinary(f.path); this.addImageFile(new Blob([buf], { type: ext === "svg" ? "image/svg+xml" : "image/" + (ext === "jpg" ? "jpeg" : ext) }), at.x, at.y); }
+            else if (/^(png|jpe?g|gif|webp|bmp|svg|avif)$/.test(ext)) { const buf = await app.vault.adapter.readBinary(f.path); this.addImageFile(new Blob([buf], { type: ext === "svg" ? "image/svg+xml" : "image/" + (ext === "jpg" ? "jpeg" : ext) }), at.x, at.y, null, f.path); }
             else if (ext === "md" || ext === "txt") { this.addFileCard(at.x - 130, at.y - 30, f, await app.vault.adapter.read(f.path)); }
             else if (TEXT_EXT.test(ext)) { const body = await app.vault.adapter.read(f.path); this.addCard(at.x - 130, at.y - 30, this.fileCardText(f, body, ext)); }
             else this.addCard(at.x - 130, at.y - 30, "[[" + (f.path || f.name) + "]]");
