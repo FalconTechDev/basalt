@@ -59,6 +59,7 @@
         this.cards = this.world.createDiv({ cls: "osb-cards" });
         // a card that is only a rectangle (far away or zoomed out) has no listeners of its own: these two serve all of them
         this.cards.addEventListener("pointerdown", (ev) => { const el = ev.target.closest && ev.target.closest(".osb-card.is-lite"); if (!el || ev.button !== 0 || this.draw) return; const id = el.dataset.id; if (ev.shiftKey || ev.ctrlKey || ev.metaKey) { ev.preventDefault(); ev.stopPropagation(); const n2 = new Set(this.sel); n2.has(id) ? n2.delete(id) : n2.add(id); this.select(n2); this.contentEl.focus(); return; } const t = this.geo.get(id); if (t && t.grp) { const now = performance.now(); if (this._lastMd && this._lastMd.id === id && now - this._lastMd.t < 380 && !this.ro) { this._lastMd = null; ev.preventDefault(); ev.stopPropagation(); setTimeout(() => this.edit(id), 0); return; } this._lastMd = { id, t: now }; } this.startMove(ev, id); });
+        this.cards.addEventListener("dblclick", (ev) => { const bc = ev.target.closest && ev.target.closest(".osb-card"); const bm = bc && this.yn.get(bc.dataset.id), bf = bm && bm.get("file"); if (bf && /\.board$/i.test(bf)) { const tf = app.vault.getAbstractFileByPath(bf); ev.stopPropagation(); ev.preventDefault(); if (tf) app.workspace.getLeaf("tab").openFile(tf); else new api.Notice("Доска не найдена: " + bf); } }, true);
         this.cards.addEventListener("dblclick", (ev) => { const el = ev.target.closest && ev.target.closest(".osb-card.is-lite"); if (!el || this.ro) return; ev.stopPropagation(); this.edit(el.dataset.id); });
         this.inkSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); this.inkSvg.setAttribute("class", "osb-ink"); this.inkSvg.innerHTML = '<defs><marker id="osb-inkarrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="context-stroke"/></marker></defs>'; this.world.appendChild(this.inkSvg);
         this.layer = this.root.createDiv({ cls: "osb-cursors" });
@@ -424,15 +425,27 @@
         this.yn.observeDeep((evs, tr) => {
           if (tr && tr.origin === "file-sync") return;
           const hit = new Set(); for (const ev of evs) { const id = ev.path && ev.path[0]; if (id && ev.target instanceof window.__bsY.Y.Text) hit.add(id); }
-          for (const id of hit) { const m = this.yn.get(id); const path = m && m.get("file"); if (!path || this.ro) continue; clearTimeout(this._ft.get(id)); this._ft.set(id, setTimeout(() => { const mm = this.yn.get(id); if (mm && mm.get("text")) write(mm.get("file"), mm.get("text").toString()); }, 700)); }
+          for (const id of hit) { const m = this.yn.get(id); const path = m && m.get("file"); if (!path || this.ro || !/\.(md|markdown|txt)$/i.test(path)) continue; clearTimeout(this._ft.get(id)); this._ft.set(id, setTimeout(() => { const mm = this.yn.get(id); if (mm && mm.get("text")) write(mm.get("file"), mm.get("text").toString()); }, 700)); }
         });
         this.registerEvent(app.vault.on("modify", async (f) => {
-          if (!f || f.children) return; let body = null;
+          if (!f || f.children) return; if (f.extension === EXT) { this.refreshBoardCards(f); return; } if (!/^(md|markdown|txt)$/i.test(f.extension || "")) return; let body = null;
           this.yn.forEach((m, id) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t) return; if (body === null) body = "pending"; });
           if (body === null) return; body = await app.vault.read(f);
           if (this._fw.get(f.path) === body) return;
           this.yn.forEach((m, id) => { if (m.get("file") !== f.path) return; const t = m.get("text"); if (!t || t.toString() === body) return; this.doc.transact(() => { t.delete(0, t.length); t.insert(0, body); }, "file-sync"); });
         }));
+      }
+      // a board dropped on a board becomes a card that shows it, follows its changes and opens it on double click
+      async boardPicture(f) {
+        const r = await boardThumb(f, 640); if (!r || !r.bmp) return ""; return r.bmp.toDataURL("image/png");
+      }
+      async addBoardCard(f, x, y) {
+        if (this.ro) return; const pic = await this.boardPicture(f), id = this.addCard(x - 160, y - 95, ""), m = this.yn.get(id); if (!m) return;
+        this.doc.transact(() => { m.set("file", f.path); m.set("kind", f.basename || f.name || ""); m.set("w", 320); m.set("h", 210); if (pic) m.set("img", pic); });
+        this.bindFiles();
+      }
+      refreshBoardCards(f) {
+        clearTimeout(this._bt); this._bt = setTimeout(async () => { const ids = []; this.yn.forEach((m, id) => { if (m.get("file") === f.path) ids.push(id); }); if (!ids.length) return; const pic = await this.boardPicture(f); if (!pic) return; this.doc.transact(() => { for (const id of ids) { const m = this.yn.get(id); if (m && m.get("img") !== pic) m.set("img", pic); } }, "file-sync"); }, 600);
       }
       addFileCard(x, y, f, body) {
         const id = this.addCard(x, y, String(body || "")); if (!id) return id; const m = this.yn.get(id);
@@ -451,7 +464,7 @@
         let n = 0; for (const f of list) { if (!f || f.children || f.path === this.path) continue; const ext = String(f.extension || "").toLowerCase(), at = { x: w.x + n * 40, y: w.y + n * 40 }; n++;
           try {
             if (ext === "canvas") { const data = await canvasData(JSON.parse(await app.vault.adapter.read(f.path))); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, false); }
-            else if (ext === EXT) { const data = this.readBoardDoc(await app.vault.adapter.read(f.path)); this.importBoardData(data, new Set(data.nodes.map((q) => q.id)), at, true); }
+            else if (ext === EXT) { await this.addBoardCard(f, at.x, at.y); }
             else if (/^(png|jpe?g|gif|webp|bmp|svg|avif)$/.test(ext)) { const buf = await app.vault.adapter.readBinary(f.path); this.addImageFile(new Blob([buf], { type: ext === "svg" ? "image/svg+xml" : "image/" + (ext === "jpg" ? "jpeg" : ext) }), at.x, at.y); }
             else if (ext === "md" || ext === "txt") { this.addFileCard(at.x - 130, at.y - 30, f, await app.vault.adapter.read(f.path)); }
             else if (TEXT_EXT.test(ext)) { const body = await app.vault.adapter.read(f.path); this.addCard(at.x - 130, at.y - 30, this.fileCardText(f, body, ext)); }
@@ -1173,7 +1186,7 @@
       edit(id) { if (this.draw) return; this.flush(); const m = this.yn.get(id); if (!m || this.ro || m.get("locked")) return; let e = this.ensureEl(id); if (!e) return; if (e.lite) e = this.upgrade(id, e); e.el.classList.add("is-editing"); e.ta.focus(); }
       renderMd(id) {
         const e = this.els.get(id), m = this.yn.get(id); if (!e || e.lite || !m || e.el.classList.contains("is-editing")) return; const txt = m.get("text").toString(); if (e.mdOk && e.mdTxt === txt) return; e.mdTxt = txt; e.mdOk = true; e.mdEl.empty();
-        if (!txt.trim()) { e.mdEl.createDiv({ cls: "osb-md-empty", text: "Двойной щелчок — писать" }); return; }
+        if (!txt.trim()) { const bf = m.get("file"); e.mdEl.createDiv({ cls: "osb-md-empty", text: bf && /\.board$/i.test(bf) ? "Двойной щелчок — открыть доску" : "Двойной щелчок — писать" }); return; }
         let src = txt, cutAt = 0; if (!e.mdFull && txt.length > MD_CAP) { cutAt = txt.lastIndexOf("\n\n", MD_CAP); if (cutAt < MD_CAP * 0.5) cutAt = MD_CAP; src = txt.slice(0, cutAt); }
         try { const R = api.MarkdownRenderer; if (R && R.renderMarkdown) R.renderMarkdown(src, e.mdEl, this.path || "", this); else e.mdEl.setText(src); } catch (er) { e.mdEl.setText(src); }
         if (cutAt) { const more = e.mdEl.createDiv({ cls: "osb-md-more", text: "Показать всё (ещё " + (txt.length - cutAt) + " симв.)" }); more.addEventListener("pointerdown", (ev) => ev.stopPropagation()); more.onclick = (ev) => { ev.stopPropagation(); e.mdFull = true; e.mdOk = false; this.renderMd(id); }; }
