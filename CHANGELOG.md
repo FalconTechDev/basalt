@@ -17,11 +17,13 @@ All notable changes. The format follows [Keep a Changelog](https://keepachangelo
 ## [0.3.9]
 
 ### Added
+- Linux x64 (`.tar.gz`) and macOS arm64 / x64 (`.zip`) builds from stock Electron 39.8.6, made by `build-unix.mjs` (see `docs/BUILD-UNIX.md`). The macOS builds are unsigned, untested on a Mac and have no terminal helper; the Linux build includes the terminal and command-line helpers.
 - Dropping a board from the vault onto a board adds a board card: a picture drawn with the board's own link rules, refreshed when the file changes, opened with a double click, linked in the graph.
 - Notes and `.txt` files dropped on a board become live file cards (edits go both ways).
 - Dropping or pasting `.board`, `.canvas`, images and text files from the computer or from an opened folder's file manager works; Ctrl+V takes files from the clipboard.
 
 ### Fixed
+- The launcher finds the app through `process.resourcesPath` (needed inside a macOS `.app`); the in-app updater no longer tries to run the Windows installer on other systems; without `basalt-pty` the terminal says so.
 - Idle CPU: a graph tab swap loop and a share animation loop kept the window repainting.
 - Boards written as plain JSON (no ydoc) open with their cards, and the board file now keeps link sides, shapes and card fields.
 - Round toggle thumbs and click-outside closing in the graph panels; English strings in the interface.

@@ -37,6 +37,8 @@ Basalt is a desktop app for people who think in links. Write notes in Markdown, 
 1. Open the [**latest release**](https://github.com/FalconTechDev/basalt/releases/latest) and download `Basalt-Setup-<version>.exe` under Assets.
 2. Run it and follow the installer.
 
+**Linux (x64):** download `Basalt-<version>-linux-x64.tar.gz`, unpack it and run `./basalt.sh`. **macOS (Apple silicon and Intel):** download `Basalt-<version>-mac-arm64.zip` or `-mac-x64.zip`. These builds are new: the Linux one passed the smoke test in a headless run under WSL2 but has had little real use, and the macOS ones are unsigned, not notarized and have **not been run on a Mac** (first launch needs right-click, Open or `xattr -cr Basalt.app`). The macOS builds have no integrated terminal yet. Details in [docs/BUILD-UNIX.md](docs/BUILD-UNIX.md).
+
  Windows 10 or 11, 64-bit. App settings are in `%APPDATA%\Basalt`, per-vault settings in a `.basalt` folder inside the vault.
 
 ## Contents
@@ -156,6 +158,7 @@ node build-css.mjs                 # src-css/*.css -> src/app.css
 node build-markdown.mjs            # markdown-engine (Rust -> WASM) -> src/worker.js
 node build-canvas.mjs              # canvas/graph/search engines (Rust -> WASM) and their hooks; needs cargo
 node build-installer.mjs [--version 0.1.0] [--skip-build]
+node build-unix.mjs [--version 0.3.9]   # Linux tar.gz and macOS zips from stock Electron zips, see docs/BUILD-UNIX.md
 ```
 
 `build-installer.mjs` stages `runtime/` and the app into `dist/stage` and runs Inno Setup, producing `dist/Basalt-Setup-<version>.exe`. Without `--skip-build` it first runs `brand.mjs` and `build-canvas.mjs --no-cargo`; with `--skip-build` it packages exactly what is in `src/` and the runtime as they are. For a throw-away test copy on an isolated profile see `tools/test-runtime.ps1` and `tools/smoke-local.sh`.
