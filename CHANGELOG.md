@@ -18,6 +18,7 @@ All notable changes. The format follows [Keep a Changelog](https://keepachangelo
 
 ### Fixed
 - Ctrl+V on a board works wherever the focus is: a picture from the clipboard, a file copied in the file manager (a `.board` becomes cards, images and text files become cards) or plain text.
+- Pictures pasted or dropped from outside are saved as files in the vault root (the "move images" feature can file them away); the card follows the file when it is moved or renamed.
 - The README no longer lists the integrated terminal, which is not part of the app at the moment.
 
 ## [0.3.9]
