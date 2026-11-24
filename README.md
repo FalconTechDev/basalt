@@ -30,9 +30,16 @@ Basalt is a desktop app for people who think in links. Write notes in Markdown, 
 - **CLI and local API** for scripts, hooks and automation, with or without the window open.
 - **Plugins** as sandboxed WebAssembly modules, installed from GitHub releases.
 
+## Download and install
+
+1. Open the [**latest release**](https://github.com/FalconTechDev/basalt/releases/latest) and download `Basalt-Setup-<version>.exe` under Assets.
+2. Run it and follow the installer.
+
+ Windows 10 or 11, 64-bit. App settings are in `%APPDATA%\Basalt`, per-vault settings in a `.basalt` folder inside the vault.
+
 ## Contents
 
-[Notes](#notes) · [Boards](#boards) · [Graph](#graph) · [Export](#export) · [CLI and API](#cli-and-api) · [Plugins](#plugins-webassembly) · [Action log and undo](#action-log-and-undo) · [Terminal](#terminal) · [Quick start](#quick-start) · [Install](#install) · [Build from source](#build-from-source) · [Project layout](#project-layout) · [Status and provenance](#status-and-provenance) · [Contributing](#contributing) · [License](#license)
+[Install](#download-and-install) · [Notes](#notes) · [Boards](#boards) · [Graph](#graph) · [Export](#export) · [CLI and API](#cli-and-api) · [Plugins](#plugins-webassembly) · [Action log and undo](#action-log-and-undo) · [Terminal](#terminal) · [Quick start](#quick-start) · [Build from source](#build-from-source) · [Project layout](#project-layout) · [Status and provenance](#status-and-provenance) · [Contributing](#contributing) · [License](#license)
 
 ---
 
@@ -128,10 +135,6 @@ There is a terminal inside the app, both under the editor and as a card on a boa
 | `Ctrl+N` | New note |
 | `Alt+D` | Draw in a note |
 | `Space` + drag, `Ctrl` + wheel, `F` | Board: pan, zoom, fit |
-
-## Install
-
-Download `Basalt-Setup-<version>.exe` from the [latest release](https://github.com/FalconTechDev/basalt/releases/latest) and run it. Windows 10 or 11, 64-bit. App settings are in `%APPDATA%\Basalt`, per-vault settings in a `.basalt` folder inside the vault.
 
 ## Build from source
 
