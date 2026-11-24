@@ -32,7 +32,7 @@ Basalt is a desktop app for people who think in links. Write notes in Markdown, 
 
 ## Contents
 
-[Notes](#notes) · [Boards](#boards) · [Graph](#graph) · [Export](#export) · [CLI and API](#cli-and-api) · [Plugins](#plugins-webassembly) · [Action log and undo](#action-log-and-undo) · [Terminal](#terminal) · [Quick start](#quick-start) · [Install](#install) · [Build from source](#build-from-source) · [Project layout](#project-layout) · [Status and provenance](#status-and-provenance) · [License](#license)
+[Notes](#notes) · [Boards](#boards) · [Graph](#graph) · [Export](#export) · [CLI and API](#cli-and-api) · [Plugins](#plugins-webassembly) · [Action log and undo](#action-log-and-undo) · [Terminal](#terminal) · [Quick start](#quick-start) · [Install](#install) · [Build from source](#build-from-source) · [Project layout](#project-layout) · [Status and provenance](#status-and-provenance) · [Contributing](#contributing) · [License](#license)
 
 ---
 
