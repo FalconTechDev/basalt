@@ -10,7 +10,7 @@ Obsidian desktop app (version 1.12.7) and has since been largely rewritten. See 
 
 Obsidian is proprietary software. Its licence does not allow redistributing or modifying the app. The pieces below still derive from it.
 They stay in the repository because the app does not run without them. **A public release of a build that contains them is not covered
-by this project's MIT licence and may not be allowed by Obsidian's terms.** This is an open legal question for the owner (see the
+by this project's AGPL-3.0 licence and may not be allowed by Obsidian's terms.** This is an open legal question for the owner (see the
 report that came with this audit).
 
 | Item | Where | State |
