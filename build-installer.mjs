@@ -23,15 +23,15 @@ if (!args.includes("--skip-build")) {
 }
 
 const runtime = path.join(root, "runtime");
-if (!fs.existsSync(path.join(runtime, "Basalt.exe"))) throw new Error("runtime/Basalt.exe is missing: run run.ps1 once so the runtime is created");
+if (!fs.existsSync(path.join(runtime, "Basalt.exe"))) throw new Error("runtime/Basalt.exe is missing: run run.ps1 once so the runtime is created from stock Electron");
 
 fs.rmSync(stage, { recursive: true, force: true });
 fs.mkdirSync(stage, { recursive: true });
 
 // the runtime, without the two junctions that point at the working copies
 const skip = new Set([path.join(runtime, "resources", "app"), path.join(runtime, "resources", "app-src")].map((p) => p.toLowerCase()));
-// btime and get-fonts are native modules written by the Obsidian authors (package.json says UNLICENSED), left in the runtime by
-// run.ps1 and in stub/node_modules; they must not be shipped. Both are optional: the app falls back (no birth-time write, system font list).
+// btime and get-fonts are native modules written by the Obsidian authors (package.json says UNLICENSED); the stock runtime has
+// none, but old stub/node_modules copies may, and they must not be shipped. Both are optional: the app falls back (no birth-time write, system font list).
 const NOT_SHIPPED = /[\\/](btime|get-fonts)([\\/]|$)/i;
 fs.cpSync(runtime, stage, { recursive: true, filter: (from) => !skip.has(from.toLowerCase()) && !NOT_SHIPPED.test(from) });
 

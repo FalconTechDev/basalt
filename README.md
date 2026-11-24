@@ -39,7 +39,7 @@ node build-canvas.mjs            # движки (Rust → WASM), скрипты,
 node build-installer.mjs         # dist/Basalt-Setup-<версия>.exe
 ```
 
-Каталог `runtime` создаёт `run.ps1` при первом запуске: он копирует среду Electron из установленного Obsidian (для публичного выпуска её нужно заменить обычной сборкой Electron). Проверка без окна: см. `tools/`.
+Каталог `runtime` создаёт `run.ps1` при первом запуске: он распаковывает обычную сборку Electron 39.8.6 (zip из кэша `%LOCALAPPDATA%\electron\Cache` или из `BASALT_ELECTRON_ZIP`), переименовывает `electron.exe` в `Basalt.exe`, оставляет локали en-US и ru и ставит иконку (`tools/set-exe-icon.ps1`). Строки версии у exe остаются «Electron». Проверка без окна: см. `tools/`.
 
 ## О проекте и его происхождении
 
