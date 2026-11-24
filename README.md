@@ -37,13 +37,13 @@ Basalt is a desktop app for people who think in links. Write notes in Markdown, 
 1. Open the [**latest release**](https://github.com/FalconTechDev/basalt/releases/latest) and download `Basalt-Setup-<version>.exe` under Assets.
 2. Run it and follow the installer.
 
-**Linux (x64):** download `Basalt-<version>-linux-x64.tar.gz`, unpack it and run `./basalt.sh`. **macOS (Apple silicon and Intel):** download `Basalt-<version>-mac-arm64.zip` or `-mac-x64.zip`. These builds are new: the Linux one passed the smoke test in a headless run under WSL2 but has had little real use, and the macOS ones are unsigned, not notarized and have **not been run on a Mac** (first launch needs right-click, Open or `xattr -cr Basalt.app`). The macOS builds have no integrated terminal yet. Details in [docs/BUILD-UNIX.md](docs/BUILD-UNIX.md).
+**Linux (x64):** download `Basalt-<version>-linux-x64.tar.gz`, unpack it and run `./basalt.sh`. **macOS (Apple silicon and Intel):** download `Basalt-<version>-mac-arm64.zip` or `-mac-x64.zip`. These builds are new: the Linux one passed the smoke test in a headless run under WSL2 but has had little real use, and the macOS ones are unsigned, not notarized and have **not been run on a Mac** (first launch needs right-click, Open or `xattr -cr Basalt.app`).  Details in [docs/BUILD-UNIX.md](docs/BUILD-UNIX.md).
 
  Windows 10 or 11, 64-bit. App settings are in `%APPDATA%\Basalt`, per-vault settings in a `.basalt` folder inside the vault.
 
 ## Contents
 
-[Install](#download-and-install) · [Notes](#notes) · [Boards](#boards) · [Graph](#graph) · [Export](#export) · [CLI and API](#cli-and-api) · [Plugins](#plugins-webassembly) · [Action log and undo](#action-log-and-undo) · [Terminal](#terminal) · [Quick start](#quick-start) · [Build from source](#build-from-source) · [Project layout](#project-layout) · [Status and provenance](#status-and-provenance) · [Contributing](#contributing) · [License](#license)
+[Install](#download-and-install) · [Notes](#notes) · [Boards](#boards) · [Graph](#graph) · [Export](#export) · [CLI and API](#cli-and-api) · [Plugins](#plugins-webassembly) · [Action log and undo](#action-log-and-undo) · [Command line shell](#command-line-shell) · [Quick start](#quick-start) · [Build from source](#build-from-source) · [Project layout](#project-layout) · [Status and provenance](#status-and-provenance) · [Contributing](#contributing) · [License](#license)
 
 ---
 
@@ -61,7 +61,7 @@ Everything is reachable from the **command palette** (`Ctrl+P`), which also list
 
 ## Boards
 
-A board is a `.board` file in your vault: an infinite canvas of cards joined by links. A card can hold Markdown, an image, a page, a terminal or code. Links have labels and shapes, cards can be grouped into **frames**, and you can draw on top of everything with a pen, a highlighter, lines and shapes (shapes snap to clean geometry). Large boards stay fast because the canvas runs on a Rust engine compiled to WebAssembly.
+A board is a `.board` file in your vault: an infinite canvas of cards joined by links. A card can hold Markdown, an image, a page, a note or a whole other board. Links have labels and shapes, cards can be grouped into **frames**, and you can draw on top of everything with a pen, a highlighter, lines and shapes (shapes snap to clean geometry). Large boards stay fast because the canvas runs on a Rust engine compiled to WebAssembly.
 
 Boards are **collaborative**. Peers find each other over WebRTC with a room name and password, every peer keeps a full copy, and edits merge through a CRDT (Yjs), so there is no server to run. An activity feed shows who changed what.
 
@@ -118,9 +118,9 @@ Put it in `<vault>/.basalt/wasm-plugins/<id>/`, or install one from the built-in
 
 Basalt keeps a journal of what changed in the vault. From the command palette you can open the **Action log**, undo the last action, or take a snapshot on demand; boards additionally keep their own version history and can be restored or diffed from the CLI (`board history`, `board diff`). The log fills as you work, so a fresh vault starts empty.
 
-## Terminal
+## Command line shell
 
-There is a terminal inside the app, both under the editor and as a card on a board, so a command, its output and the notes about it can live on the same canvas. The `basalt-cli` shell (`Tab` completes, arrows pick) and `basalt-cli daemon start` (Basalt in the background, no window) cover the headless side.
+The `basalt-cli` shell (`Tab` completes, arrows pick) and `basalt-cli daemon start` (Basalt in the background, no window) cover the headless side.
 
 ---
 
@@ -173,7 +173,7 @@ node build-unix.mjs [--version 0.3.9]   # Linux tar.gz and macOS zips from stock
 | `stub/` | Electron main process entry |
 | `cli/` | `basalt` command line (Node, no dependencies), Rust `basalt-cli` client and tests |
 | `canvas-engine/`, `graph-engine/`, `search-engine/`, `markdown-engine/`, `app-core/` | Rust crates compiled to WebAssembly |
-| `pty-helper/` | Rust helper behind the terminal |
+| `pty-helper/` | Rust terminal helper (not wired into the app at the moment) |
 | `plugins-sdk/` | WebAssembly plugin SDK and the `hello-wasm` example |
 | `installer/` | Inno Setup script |
 | `branding/` | Logo and icons |
@@ -183,7 +183,7 @@ node build-unix.mjs [--version 0.3.9]   # Linux tar.gz and macOS zips from stock
 
 ## Status and provenance
 
-Basalt is a young project and is under active development. It began as a modified copy of a proprietary application and is being replaced piece by piece: the shell, search, graph, action log, boards, terminal, CLI, API and main process are Basalt's own code today, while a small part of the original code is still inside the generated `src/app.js`. It also bundles third-party open source libraries.
+Basalt is a young project and is under active development. It began as a modified copy of a proprietary application and is being replaced piece by piece: the shell, search, graph, action log, boards, CLI, API and main process are Basalt's own code today, while a small part of the original code is still inside the generated `src/app.js`. It also bundles third-party open source libraries.
 
 Basalt is not affiliated with, endorsed by or sponsored by Obsidian / Dynalist Inc. The exact picture, with what still derives from the original and what that means for redistribution, is in [THIRD_PARTY.md](THIRD_PARTY.md) and [docs/REPLACING_INHERITED_CODE.md](docs/REPLACING_INHERITED_CODE.md).
 
