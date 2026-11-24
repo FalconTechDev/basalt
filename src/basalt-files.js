@@ -235,7 +235,7 @@
           const dir = ws ? !!f.isDir : !!f.children, r = document.createElement("div");
           const active = ws ? f.path === ws.activePath() : act && act.path === f.path;
           r.className = "bsf-r" + (dir ? " is-dir" : "") + (dir && this.open.has(f.path) ? " is-open" : "") + (active ? " is-active" : "") + (this.sel.has(f.path) ? " is-sel" : "") + (this.focus === f.path ? " is-focus" : "");
-          r.dataset.path = f.path; r.draggable = !ws; r.style.paddingLeft = 6 + depth * 14 + "px";
+          r.dataset.path = f.path; r.draggable = !ws || !f.isDir; r.style.paddingLeft = 6 + depth * 14 + "px";
           const extName = ws ? f.extension || "" : f.extension !== "md" && f.extension !== "canvas" ? f.extension : "";
           const ext = "";
           r.innerHTML = (dir ? svg("car", "bsf-car") : '<span class="bsf-sp"></span>') + `<span class="bsf-i">${svg(dir ? "folder" : kindOf(f))}</span><span class="bsf-n"></span>${!dir && pins.has(f.path) ? svg("pin", "bsf-pin") : ""}${ext}`;
@@ -270,7 +270,7 @@
         r.addEventListener("auxclick", (e) => { if (e.button === 1 && !isDir) { e.preventDefault(); ws ? this.wsOpen(f, true) : this.openFile(f, true); } });
         r.addEventListener("contextmenu", (e) => { e.preventDefault(); if (!this.sel.has(f.path)) { this.sel = new Set([f.path]); this.render(); } ws ? this.wsMenu(f, e) : this.menuFor(f, e); });
         r.addEventListener("dragstart", (e) => {
-          if (ws) return;
+          if (ws) { if (f.isDir) { e.preventDefault(); return; } const ps = this.sel.has(f.path) ? Array.from(this.sel) : [f.path], abs = ps.map((p) => { const row = this.rowList.find((x) => x.f.path === p); return row && !row.f.isDir ? row.f.abs : null; }).filter(Boolean); e.dataTransfer.effectAllowed = "copy"; e.dataTransfer.setData("text/x-basalt-abs", JSON.stringify(abs)); e.dataTransfer.setData("text/plain", abs.join("\n")); return; }
           const paths = this.sel.has(f.path) ? Array.from(this.sel) : [f.path]; this.dragging = paths; e.dataTransfer.effectAllowed = "copyMove"; setTimeout(() => { for (const p of paths) { const el = this.treeEl.querySelector('[data-path="' + CSS.escape(p) + '"]'); if (el) el.classList.add("is-dragging"); } }, 0);
           try { const files = paths.map((p) => app.vault.getAbstractFileByPath(p)).filter((x) => x && !x.children); const d = files.length > 1 ? app.dragManager.dragFiles(e, files) : f.children ? app.dragManager.dragFolder(e, f) : app.dragManager.dragFile(e, f); app.dragManager.onDragStart(e, d); } catch (err) { /* drop into notes unavailable */ }
         });
