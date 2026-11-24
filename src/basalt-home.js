@@ -52,7 +52,8 @@
   };
   const svg = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" stroke-linejoin="miter">${ICON[k]}</svg>`;
   const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const ago = (ms) => { const s = (Date.now() - ms) / 1000; if (s < 90) return "только что"; if (s < 3600) return Math.round(s / 60) + " мин"; if (s < 86400) return Math.round(s / 3600) + " ч"; if (s < 86400 * 30) return Math.round(s / 86400) + " дн"; return new Date(ms).toLocaleDateString(); };
+  const tr = (s) => (window.__bsT ? window.__bsT(s) : s); /* Russian source strings, English with any other interface language */
+  const ago = (ms) => { const s = (Date.now() - ms) / 1000; if (s < 90) return tr("только что"); if (s < 3600) return tr(Math.round(s / 60) + " мин"); if (s < 86400) return tr(Math.round(s / 3600) + " ч"); if (s < 86400 * 30) return tr(Math.round(s / 86400) + " дн"); return new Date(ms).toLocaleDateString(); };
   const cmd = (id) => { try { app.commands.executeCommandById(id); } catch (e) { /* missing */ } };
 
   function build(state) {

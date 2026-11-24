@@ -51,7 +51,7 @@
     // 6. a quiet clock in the status bar
     if (app.statusBar && app.statusBar.registerStatusBarItem) {
       const clock = app.statusBar.registerStatusBarItem(); clock.classList.add("bp-clock");
-      const tick = () => { const d = new Date(); clock.textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); clock.title = d.toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); };
+      const tick = () => { const d = new Date(); clock.textContent = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); clock.title = d.toLocaleDateString((window.__bsLang || "ru") === "ru" ? "ru-RU" : "en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); };
       tick(); setInterval(tick, 20000);
     }
 
@@ -64,7 +64,7 @@
       const host = document.querySelector(".bsh-search"); if (!host) return;
       const hr = new Date().getHours(), w = hr < 5 ? "Доброй ночи" : hr < 12 ? "Доброе утро" : hr < 18 ? "Добрый день" : "Добрый вечер";
       const g = document.createElement("div"); g.className = "bsh-greeting"; const ic = document.createElement("span"); ic.className = "bsh-gr-i"; g.appendChild(ic); try { window.__bsApi.setIcon(ic, hr < 5 ? "lucide-moon-star" : hr < 12 ? "lucide-sunrise" : hr < 18 ? "lucide-sun" : "lucide-moon"); } catch (e) { /* no icon */ }
-      const tx = document.createElement("div"); tx.className = "bsh-gr-x"; const t1 = document.createElement("div"); t1.className = "bsh-gr-t"; t1.textContent = w; const t2 = document.createElement("div"); t2.className = "bsh-gr-d"; const ds = new Date().toLocaleDateString("ru-RU", { weekday: "long", day: "numeric", month: "long" }); t2.textContent = ds.charAt(0).toUpperCase() + ds.slice(1); tx.append(t1, t2); g.appendChild(tx);
+      const tx = document.createElement("div"); tx.className = "bsh-gr-x"; const t1 = document.createElement("div"); t1.className = "bsh-gr-t"; t1.textContent = window.__bsT ? window.__bsT(w) : w; const t2 = document.createElement("div"); t2.className = "bsh-gr-d"; const ds = new Date().toLocaleDateString((window.__bsLang || "ru") === "ru" ? "ru-RU" : "en-US", { weekday: "long", day: "numeric", month: "long" }); t2.textContent = ds.charAt(0).toUpperCase() + ds.slice(1); tx.append(t1, t2); g.appendChild(tx);
       host.parentElement.insertBefore(g, host);
     };
     setInterval(greet, 1200);

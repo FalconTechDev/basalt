@@ -11,7 +11,7 @@
   const keys = Object.keys(D).sort((a, b) => b.length - a.length), esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const RX = new RegExp(keys.map(esc).join("|"), "g");
   // "N file" / "N files": the dictionary has the singular, the count decides the form
-  const PL = { file: "files", node: "nodes", entry: "entries", object: "objects", place: "places", version: "versions", session: "sessions", edit: "edits", check: "checks", card: "cards", folder: "folders", link: "links", line: "lines", import: "imports", symbol: "symbols", call: "calls", record: "records", match: "matches", change: "changes" };
+  const PL = { file: "files", node: "nodes", entry: "entries", object: "objects", place: "places", version: "versions", session: "sessions", edit: "edits", check: "checks", card: "cards", folder: "folders", link: "links", line: "lines", import: "imports", symbol: "symbols", call: "calls", record: "records", match: "matches", change: "changes", note: "notes", board: "boards", step: "steps" };
   const SING = Object.fromEntries(Object.entries(PL).map(([s, p]) => [p, s])), PLRX = new RegExp("(\\d{1,9})\\s(" + Object.keys(PL).concat(Object.values(PL)).join("|") + ")(?![A-Za-z])", "g");
   const cache = new Map();
   function tr(s, exactOnly) {
