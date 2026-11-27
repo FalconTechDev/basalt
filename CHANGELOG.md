@@ -14,6 +14,13 @@ All notable changes. The format follows [Keep a Changelog](https://keepachangelo
 - `docs/REPLACING_INHERITED_CODE.md`: measured share of inherited code (about 3 % of `src/app.js`) and the replacement plan.
 - `build-app.mjs` no longer needs git history once a function has been replaced.
 
+## [0.3.11]
+
+### Fixed
+- Board export no longer captures dialogs, notices, menus, bars or scrollbars into the picture.
+- "Copy path" in the file menu had no action: it is now two items, the full path on disk and the path inside the vault.
+- The app reported itself as 0.1.0 and kept offering an update; the installer now stamps the packaged version.
+
 ## [0.3.10]
 
 ### Fixed

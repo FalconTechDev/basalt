@@ -363,7 +363,7 @@
         const p = head.createSpan({ cls: "bswf-path", text: rel }); p.title = this.path;
         const btn = (icon, tip, fn) => { const x = document.createElement("button"); x.title = tip; try { A2.setIcon(x, icon); } catch (e) { x.textContent = "•"; } x.addEventListener("click", fn); head.appendChild(x); return x; };
         btn("lucide-folder-open", "Показать в папке", () => { try { window.__bsReveal(this.path); } catch (e) { /* ok */ } });
-        btn("lucide-copy", "Копировать путь", () => { navigator.clipboard.writeText(this.path).then(() => new A2.Notice("Путь скопирован")); });
+        btn("lucide-copy", "Копировать путь", () => { try { require("electron").clipboard.writeText(this.path); } catch (er) { navigator.clipboard.writeText(this.path); } new A2.Notice("Скопировано: " + this.path); });
         const ext = extOf(this.path);
         let buf;
         try {

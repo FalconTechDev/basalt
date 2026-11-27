@@ -783,7 +783,10 @@
         const sel0 = o.scope === "sel" ? Array.from(this.sel).filter((x) => this.yn.get(x)) : null; if (sel0) for (const id of sel0.slice()) { const g = this.yn.get(id); if (!g || !g.get("group")) continue; for (const [i2, m2] of this.yn.entries()) if (!m2.get("group") && (m2.get("frame") === id || (!m2.get("frame") && m2.get("x") + m2.get("w") / 2 >= g.get("x") && m2.get("x") + m2.get("w") / 2 <= g.get("x") + g.get("w") && m2.get("y") + m2.get("h") / 2 >= g.get("y") && m2.get("y") + m2.get("h") / 2 <= g.get("y") + g.get("h"))) && !sel0.includes(i2)) sel0.push(i2); }
         const selIds = sel0, selSet = selIds ? new Set(selIds) : null, ids = selIds || (o.scope === "rect" ? [] : Array.from(this.yn.keys()));
         const keep = { cam: Object.assign({}, this.cam), sel: this.sel, edge: this.selEdge }; this.exporting = true; this.contentEl.classList.add("osb-exporting"); root.classList.add("is-exporting"); root.classList.toggle("is-exp-white", !!o.pageLight); root.classList.toggle("is-text-garbled", !!o.privacy); if (o.ink === false) this.contentEl.classList.add("osb-noink"); if (o.bgCss) root.style.setProperty("background-color", o.bgCss, "important");
-        this.sel = new Set(); this.selEdge = null; this.mark(); const sleep = (ms) => new Promise((r) => setTimeout(r, ms)), raf = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        this.sel = new Set(); this.selEdge = null; this.mark();
+        // the picture is taken from the window: nothing that floats over the board (dialogs, notices, menus, tooltips, bars) may get into it
+        const veil = document.createElement("style"); veil.textContent = "body > *:not(.app-container) { visibility: hidden !important; } .status-bar, .canvas-controls, .osb-feed, .osb-peers { visibility: hidden !important; } .is-exporting .osb-card, .is-exporting .osb-card * { scrollbar-width: none !important; } .is-exporting ::-webkit-scrollbar { width: 0 !important; height: 0 !important; }"; document.head.appendChild(veil);
+        const sleep = (ms) => new Promise((r) => setTimeout(r, ms)), raf = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         const shot = async () => { const r = root.getBoundingClientRect(), img = await contents.capturePage({ x: Math.round((r.left + 1) * zf), y: Math.round((r.top + 1) * zf), width: Math.round((r.width - 2) * zf), height: Math.round((r.height - 2) * zf) }); return createImageBitmap(new Blob([img.toPNG()], { type: "image/png" })); };
         const prep = () => { if (!selSet) return; for (const [id, e] of this.els) e.el.style.visibility = selSet.has(id) ? "" : "hidden"; for (const [id, r] of this.edgeEls) { const m = this.ye.get(id); r.g.style.visibility = m && selSet.has(m.get("a")) && selSet.has(m.get("b")) ? "" : "hidden"; } };
         try {
@@ -800,7 +803,7 @@
           }
           if (o.logo) this.exportLogo(ctx, cv.width, cv.height, o.light, ppu / k); return cv;
         } finally {
-          for (const [, e] of this.els) e.el.style.visibility = ""; for (const [, r] of this.edgeEls) r.g.style.visibility = "";
+          veil.remove(); for (const [, e] of this.els) e.el.style.visibility = ""; for (const [, r] of this.edgeEls) r.g.style.visibility = "";
           this.exporting = false; this.contentEl.classList.remove("osb-exporting", "osb-noink"); root.style.removeProperty("background-color"); root.classList.remove("is-exporting", "is-exp-white", "is-text-garbled"); this.cam = keep.cam; this.sel = keep.sel; this.selEdge = keep.edge; this.applyCam(); this.mark();
         }
       }

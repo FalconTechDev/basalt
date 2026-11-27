@@ -356,7 +356,9 @@ function ng04RegisterEventMenus(ws) {
   const T = () => env().gm;
 
   ws.on("file-menu", (menu, file, source, evt) => {
-    menu.addItem((item) => item.setSection("info.copy").setTitle(T().interface.menu.copyPath()).setIcon("lucide-clipboard"));
+    const copyReal = (text) => { try { window.require("electron").clipboard.writeText(text); } catch (e) { navigator.clipboard.writeText(text); } new window.__bsApi.Notice("Скопировано: " + text, 3500); };
+    menu.addItem((item) => item.setSection("info.copy").setTitle("Копировать полный путь (с диска)").setIcon("lucide-clipboard").onClick(() => copyReal(window.require("path").normalize(app.vault.adapter.getFullPath(file.path)))));
+    menu.addItem((item) => item.setSection("info.copy").setTitle("Копировать путь от папки хранилища").setIcon("lucide-clipboard-copy").onClick(() => copyReal(file.path)));
     const isFile = file instanceof Ng04HostRef.TFile;
     if (isFile) {
       menu.addItem((item) => item

@@ -42,6 +42,9 @@ fs.cpSync(path.join(root, "src"), path.join(stage, "resources", "app-src"), {
   filter: (from) => !/app\.js\.orig$/.test(from),
 });
 
+// the app compares this number with the latest release: it must be the version being packaged, or it asks to update forever
+{ const up = path.join(stage, "resources", "app-src", "basalt-update.js"), code = fs.readFileSync(up, "utf8"); if (!/VERSION = "[^"]*"/.test(code)) throw new Error("no VERSION in basalt-update.js"); fs.writeFileSync(up, code.replace(/VERSION = "[^"]*"/, `VERSION = "${version}"`)); }
+
 const count = (d) => fs.readdirSync(d, { withFileTypes: true }).reduce((n, e) => n + (e.isDirectory() ? count(path.join(d, e.name)) : 1), 0);
 // `basalt` in a terminal must reach OUR command line: the old Obsidian shim (Basalt.com) cannot find the app, so it is replaced
 const cliExe = path.join(root, "src", "bin", "basalt-cli.exe");

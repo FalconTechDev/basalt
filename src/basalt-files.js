@@ -184,7 +184,7 @@
           menu.addSeparator();
         }
         menu.addItem((i) => i.setTitle("Показать в папке").setIcon("lucide-folder-open").onClick(() => this.wsShow(f)));
-        menu.addItem((i) => i.setTitle("Копировать путь").setIcon("lucide-copy").onClick(() => { navigator.clipboard.writeText(f.abs).then(() => new api.Notice("Путь скопирован")); }));
+        { const copy = (t) => { try { require("electron").clipboard.writeText(t); } catch (er) { navigator.clipboard.writeText(t); } new api.Notice("Скопировано: " + t, 3500); }; menu.addItem((i) => i.setTitle("Копировать полный путь").setIcon("lucide-copy").onClick(() => copy(require("path").normalize(f.abs)))); menu.addItem((i) => i.setTitle("Копировать путь от открытой папки").setIcon("lucide-copy").onClick(() => copy(f.path))); }
         menu.showAtMouseEvent(e);
       }
 
@@ -392,7 +392,7 @@
         if (f.path !== "/" && !many) menu.addItem((i) => i.setTitle("Переименовать").setIcon("lucide-pencil").onClick(() => this.rename(f)));
         if (!f.children && !many) menu.addItem((i) => i.setTitle("Дублировать").setIcon("lucide-copy").onClick(async () => { const dot = f.name.lastIndexOf("."), stem = f.name.slice(0, dot), ext = f.name.slice(dot), dir = f.parent && f.parent.path !== "/" ? f.parent.path + "/" : ""; let n = `${stem} копия`, i = 1; while (app.vault.getAbstractFileByPath(dir + n + ext)) n = `${stem} копия ${++i}`; try { await app.vault.copy(f, dir + n + ext); } catch (err) { console.error("[files] copy", err); this.fail("создать копию"); } }));
         try { app.workspace.trigger("file-menu", menu, f, "file-explorer"); } catch (err) { /* plugins */ }
-        if (f.path !== "/" && !many) menu.addItem((i) => i.setTitle("Копировать путь").setIcon("lucide-clipboard-copy").onClick(() => { navigator.clipboard.writeText(f.path).then(() => new api.Notice("Путь скопирован: " + f.path, 2500)); }));
+
         if (f.path !== "/") { menu.addSeparator(); menu.addItem((i) => { i.setTitle(many ? `Удалить (${this.sel.size})` : "Удалить").setIcon("lucide-trash-2"); if (i.setWarning) i.setWarning(true); i.onClick(() => this.remove(many ? list() : [f])); }); }
         menu.showAtMouseEvent(e);
       }

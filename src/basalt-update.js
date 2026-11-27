@@ -2,7 +2,7 @@
 // shows what is new, downloads the installer asset and runs it silently; the installer closes and restarts Basalt.
 (() => {
   "use strict";
-  const REPO = "FalconTechDev/basalt", VERSION = "0.1.0";
+  const REPO = "FalconTechDev/basalt", VERSION = "0.3.11";
   const https = window.require("https"), fs = window.require("fs"), path = window.require("path"), os = window.require("os"), cp = window.require("child_process");
   const num = (v) => String(v).replace(/^v/i, "").split(/[.-]/).map((x) => parseInt(x, 10) || 0);
   const newer = (a, b) => { const x = num(a), y = num(b); for (let i = 0; i < 3; i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); } return false; };
